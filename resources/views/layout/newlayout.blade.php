@@ -6,7 +6,7 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
 
-  <title>MMS - Home</title>
+  <title>eAMS Module</title>
   <link rel="icon" type="image/gif/jpg" href="images/actavis-logo.png">
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="{{url('plugins/fontawesome-free/css/all.min.css')}}">
