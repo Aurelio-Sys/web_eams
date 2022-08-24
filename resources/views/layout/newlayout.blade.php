@@ -135,7 +135,7 @@ to get the desired effect
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="{{url('/home')}}" class="brand-link">
-      <span class="brand-text font-weight-light">PT Actavis Indonesia</span>
+      <span class="brand-text font-weight-light">eAMS IMI</span>
     </a>
 
     <!-- Sidebar -->
