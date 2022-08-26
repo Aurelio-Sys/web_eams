@@ -7,7 +7,7 @@
   
 
   <title>eAMS Module</title>
-  <link rel="icon" type="image/gif/jpg" href="images/actavis-logo.png">
+  <link rel="icon" type="image/gif/jpg" href="images/imgheadxx.png">
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="{{url('plugins/fontawesome-free/css/all.min.css')}}">
   <!-- IonIcons -->
