@@ -357,10 +357,10 @@ div #munculgambar .gambar:hover{
           <div class="form-group row justify-content-center" id="cdevrepairtype">
               <label for="crepaircode" class="col-md-5 col-form-label text-md-left">Repair Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
               <div class="col-md-7" style="vertical-align:middle;">
-                <!-- <input class=" d-inline" type="radio" name="crepairtype" id="cargcheck" value="group">
+                <input class=" d-inline" type="radio" name="crepairtype" id="cargcheck" value="group">
                 <label class="form-check-label" for="cargcheck">
                   Repair Group
-                </label> -->
+                </label>
 
                 <input class="d-inline ml-5" type="radio"  name="crepairtype" id="carccheck" value="code">
                 <label class="form-check-label" for="carccheck">

@@ -203,7 +203,7 @@ class wocontroller extends Controller
     }
     
     // WO maint
-    public function wobrowse(){
+    public function wobrowse(){         // route : womaint  blade : workorder.wobrowse
         if (strpos(Session::get('menu_access'), 'WO01') !== false) {
             // dd(Session::all());
             $usernow = DB::table('users')
@@ -938,8 +938,7 @@ class wocontroller extends Controller
 
     public function createwo(Request $req){
         // dd($req->all());
-         // dd($req->get('c_failure'));
-        //  dd($req->crepaircode1);
+
         $eng1 = '';
         $eng2 = '';
         $eng3 = '';
@@ -1008,13 +1007,13 @@ class wocontroller extends Controller
         }
 
         if(isset($req->crepaircode[0])){
-            $rc1 = $req->c_repaircode[0];
+            $rc1 = $req->crepaircode[0];
         }
         if(isset($req->crepaircode[1])){
-            $rc2 = $req->c_repaircode[1];
+            $rc2 = $req->crepaircode[1];
         }
         if(isset($req->crepaircode[2])){
-            $rc3 = $req->c_repaircode[2];
+            $rc3 = $req->crepaircode[2];
         }
         if(isset($req->crepairgroup)){
             $rg1 = $req->crepairgroup;
@@ -2120,7 +2119,7 @@ class wocontroller extends Controller
         }
     }
 
-    public function wocloselist(){
+    public function wocloselist(){      //route : woreport      blade : workorder.woclose
         
         //dd(Session()->get('username'));
         if (strpos(Session::get('menu_access'), 'WO03') !== false) {

@@ -167,7 +167,7 @@ class ServiceController extends Controller{
 
         // $sendmail = (new Emaill())->delay(Carbon::now()->addSeconds(3));
 
-        EmailScheduleJobs::dispatch('','','3','','',$runningnbr,'');
+        //nanti dibuka EmailScheduleJobs::dispatch('','','3','','',$runningnbr,'');
     
         echo "email sent";
 
@@ -244,7 +244,7 @@ class ServiceController extends Controller{
     
     public function approval(Request $req){ /* blade : service.servicereq-approval */
         // dd($req->all());
-        // dd($desc);
+
         $wotype = $req->wotype;
         $imcode = $req->impactcode1;
         $imdesc = $req->impact;
@@ -297,20 +297,19 @@ class ServiceController extends Controller{
                             'sr_access' => 0,
                     ]);
 
-                EmailScheduleJobs::dispatch($wo,$asset,$a,'',$requestor,$srnumber,$rejectnote);
+                //nanti dibuka EmailScheduleJobs::dispatch($wo,$asset,$a,'',$requestor,$srnumber,$rejectnote);
 
                 toast('Service Request '.$req->srnumber.'  Rejected Successfully ','success');
                 return back();
 
             break;
 
-            case 'approve' :
-                //jika diapprove
-                
+            case 'approve' : //jika diapprove
                 $statusakses = DB::table('service_req_mstr')
                                 ->where('sr_number','=', $req->srnumber)
                                 ->first();
 
+                /* ditutup sementara
                 if($statusakses->sr_access == 0){
                     DB::table('service_req_mstr')
                         ->where('sr_number','=', $req->srnumber)
@@ -323,7 +322,8 @@ class ServiceController extends Controller{
                 if($statusakses->sr_status != '1'){
                     toast('SR '.$req->srnumber.' status has changed, please recheck', 'error');
                     return back();
-                }
+                } */
+                                
 
                 $running = DB::table('running_mstr')
                     ->first();
@@ -342,7 +342,7 @@ class ServiceController extends Controller{
 
                 $tampungarray = [];
                 $tampungarray2 = [];
-
+           
                 if($req->rad_repgroup == "code"){
                     $tampungarray = $req->enjiners;
                     $tampungarray2 = $req->repaircode;
@@ -482,11 +482,10 @@ class ServiceController extends Controller{
                     DB::table('wo_mstr')
                         ->insert($arrayarray);
                 }elseif($req->rad_repgroup == "group"){
+                    
                     $tampungarray = $req->enjiners;
                     $jmlarray = count($tampungarray);
-                    
-                    // dd($jmlarray);
-                    // dd($tampungarray);
+
                     $arrayarray = [];
                     if($req->tmpfail1 == '-'){
                         $fail1 = null;
@@ -525,7 +524,7 @@ class ServiceController extends Controller{
 
                     // dd($array_impact);
                     $countarray = count($array_impact);
-                    // dd($countarray);
+                    
                     $desc = "";
         
                     // $tampungdesc = [];
@@ -547,8 +546,6 @@ class ServiceController extends Controller{
         
         
                     $desc = substr($desc, 0, strlen($desc) - 1);
-
-                    
 
                     $arrayarray = [];
 
@@ -625,7 +622,7 @@ class ServiceController extends Controller{
                 $requestor = $req->hiddenreq;
                 $srnumber = $req->srnumber;
                 $rejectnote = $req->rejectreason;
-                EmailScheduleJobs::dispatch($wo,$asset,$a,$tampungarray,$requestor,$srnumber,$rejectnote);
+                //nanti dibuka EmailScheduleJobs::dispatch($wo,$asset,$a,$tampungarray,$requestor,$srnumber,$rejectnote);
 
                 toast('Service Request '.$req->srnumber.'  Approved to Work Order '.$runningnbr.' ','success');
                 return back();

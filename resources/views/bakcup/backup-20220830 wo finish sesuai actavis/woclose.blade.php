@@ -4,7 +4,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6 mt-2">
-            <h1 class="m-0 text-dark">Work Order Reporting</h1>
+            <h1 class="m-0 text-dark">Work Order Finish</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -29,13 +29,13 @@ hr.new1{
   flex-wrap:  wrap;
   margin-top: 20px;
 }
-.images .img,
-.images .pic {
+.images  .img,
+.images  .pic {
   flex-basis: 31%;
   margin-bottom: 10px;
   border-radius: 4px;
 }
-.images .img {
+.images  .img {
   width: 112px;
   height: 93px;
   background-size: cover;
@@ -48,15 +48,15 @@ hr.new1{
   position: relative;
   overflow: hidden;
 }
-.images .img:nth-child(3n) {
+.images  .img:nth-child(3n) {
   margin-right: 0;
 }
-.images .img span {
+.images  .img span {
   display: none;
   text-transform: capitalize;
   z-index: 2;
 }
-.images .img::after {
+.images  .img::after {
   content: '';
   width: 100%;
   height: 100%;
@@ -65,12 +65,12 @@ hr.new1{
   opacity: 0;
   position: absolute;
 }
-.images .img:hover::after {
+.images  .img:hover::after {
   display: block;
   background-color: #000;
   opacity: .5;
 }
-.images .img:hover span {
+.images  .img:hover span {
   display: block;
   color: #fff;
 }
@@ -84,7 +84,77 @@ hr.new1{
   font-size: 12px;
   cursor: pointer;
 }
+
+/* other  */
+.images_oth {
+  display: flex;
+  flex-wrap:  wrap;
+  margin-top: 20px;
+}
+.images_oth  .img_oth,
+.images_oth  .pic_other {
+  flex-basis: 31%;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+.images_oth  .img_oth {
+  width: 112px;
+  height: 93px;
+  background-size: cover;
+  margin-right: 10px;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.images_oth  .img_oth:nth-child(3n) {
+  margin-right: 0;
+}
+.images_oth  .img_oth span {
+  display: none;
+  text-transform: capitalize;
+  z-index: 2;
+}
+.images_oth  .img_oth::after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  transition: opacity .1s ease-in;
+  border-radius: 4px;
+  opacity: 0;
+  position: absolute;
+}
+.images_oth  .img_oth:hover::after {
+  display: block;
+  background-color: #000;
+  opacity: .5;
+}
+.images_oth  .img_oth:hover span {
+  display: block;
+  color: #fff;
+}
+.images_oth .pic_other {
+  background-color: #F5F7FA;
+  align-self: center;
+  text-align: center;
+  padding: 40px 0;
+  text-transform: uppercase;
+  color: #848EA1;
+  font-size: 12px;
+  cursor: pointer;
+}
 </style>
+
+{{--
+  Daftar Perubahan :
+  A210928 : upload image saat save selain auto
+  A211022 : file yang diupload bukan hanya berupa gambar
+  A211025 : untuk yang PM, yang dibutuhkan adalah upload file, bukan hanya gambar. dan tidak memerlukan inputan repair code.
+  A211026 : default repair code hanya satu saja, karena actualnya teknisi tidak akan input rerpair code. default repair code hanya satu untuk other
+--}}
 <!--Table Menu-->
 <div class="container-fluid mb-2" >
 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
@@ -152,7 +222,7 @@ hr.new1{
 <div class="table-responsive col-12">
   <table class="table table-borderless mini-table mt-4" id="dataTable" width="100%" cellspacing="0">
     <thead>
-      <tr style="text-align: center;">
+      <tr>
         <th>Work Order Number</th>
         <th>Asset</th>
         <th>WO type</th>
@@ -179,7 +249,7 @@ hr.new1{
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form class="form-horizontal" id="newedit" method="post" action="/reportingwo">
+      <form class="form-horizontal" id="newedit" method="post" action="/reportingwo" enctype="multipart/form-data">
         {{ csrf_field() }}
         <div class="modal-body">
         <input type="hidden" name="repairtype" id="repairtype">
@@ -208,23 +278,23 @@ hr.new1{
           
         </div>
           
-          <div id="divrepairtype">
+        <div id="divrepairtype">
           <div class="form-group row col-md-12 ">
             <label for="repaircode" class="col-md-4 col-form-label text-md-left">Repair Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-6" style="vertical-align:middle;">
-              <input class=" d-inline" type="radio" name="repairtype" id="argcheck" value="group">
+              <!-- A211026 <input class=" d-inline" type="radio" name="repairtype" id="argcheck" value="group">
               <label class="form-check-label" for="argcheck">
                 Repair Group
-              </label>
+              </label> -->
             
-              <input class="d-inline ml-5" type="radio"  name="repairtype" id="arccheck" value="code">
+              <input class="d-inline" type="radio"  name="repairtype" id="arccheck" value="code">
               <label class="form-check-label" for="arccheck">
                 Repair Code
               </label>
-              <input class="d-inline ml-5" type="radio"  name="repairtype" id="arcmanual" value="manual">
+              <!-- A211026 <input class="d-inline ml-5" type="radio"  name="repairtype" id="arcmanual" value="manual">
               <label class="form-check-label" for="arcmanual">
                 Manual
-              </label>
+              </label> -->
             </div>
           </div>
 
@@ -270,51 +340,19 @@ hr.new1{
               <div class="col-md-6">
                 <input type="hidden" id="inputrepair1">
                 <select id="repaircode1" type="text" class="form-control repaircode1" name="repaircode1[]"  autofocus>
-                <option value="" selected disabled>--Select Repair Code--</option>
-            @foreach ($repaircode as $repaircode2)
-              <option value="{{$repaircode2->repm_code}}">{{$repaircode2->repm_code}} -- {{$repaircode2->repm_desc}}</option>
-            @endforeach
-              </select>
-              </div>
-            </div>
-            <div id="testdiv">
-            
-            </div>
-            <div class="form-group row col-md-12 divrepcode" >
-              <label for="repaircode2" class="col-md-4 col-form-label text-md-left">Repair Code 2</label>
-              <div class="col-md-6">
-              <input type="hidden" id="inputrepair2">
-                <select id="repaircode2" type="text" class="form-control repaircode2" name="repaircode2[]"  autofocus>
-                <option value="" selected disabled>--Select Repair Code--</option>
-              @foreach ($repaircode as $repaircode3)
-                <option value="{{$repaircode3->repm_code}}">{{$repaircode3->repm_code}} -- {{$repaircode3->repm_desc}}</option>
-              @endforeach
+                  <option value="" selected disabled>--Select Repair Code--</option>
+                  @foreach ($repaircode as $repaircode2)
+                    <option value="{{$repaircode2->repm_code}}">{{$repaircode2->repm_code}} -- {{$repaircode2->repm_desc}}</option>
+                  @endforeach
                 </select>
               </div>
             </div>
-            <div id="testdiv2">
-            
-            </div>
-            <div class="form-group row col-md-12 divrepcode" >
-              <label for="repaircode3" class="col-md-4 col-form-label text-md-left">Repair Code 3</label>
-              <div class="col-md-6">
-                <input type="hidden" id="inputrepair3">
-                <select id="repaircode3" type="text" class="form-control repaircode3" name="repaircode3[]"  autofocus>
-                <option value="" selected disabled>--Select Repair Code--</option>
-              @foreach ($repaircode as $repaircode4)
-                <option value="{{$repaircode4->repm_code}}">{{$repaircode4->repm_code}} -- {{$repaircode4->repm_desc}}</option>
-              @endforeach
-                </select>
-              </div>
-            </div>
-            <div id="testdiv3">
-            
-            </div>
+            <!-- A211026 disini sebetulnya ada coding untuk menampilkan instruksi dari repair 1, Repair Code 2 dan 3 tapi yang ini dihapus karena tidak digunakan. coding aslinya sudah di backup di "backup-20211026 sblm PM attach file" -->
           </div>
         </div>
           <div id="preventiveonly" style="display:none">
             
-            <div class="form-group row col-md-12 c_lastmeasurement">
+            <div class="form-group row col-md-12 c_lastmeasurementdiv">
               <label for="c_repairhour" class="col-md-4 col-form-label text-md-left">Last Measurement</label>
               <div class="col-md-6">
                 <input id="c_lastmeasurement" type="number" class="form-control c_repairhour" name="c_lastmeasurement" min='1' step="0.01">
@@ -396,13 +434,20 @@ hr.new1{
             </div>
           </div>
           <div class="form-group row col-md-12">
-            <label for="c_note" class="col-md-4 col-form-label text-md-left">Reporting Note <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+            <label for="c_note" class="col-md-4 col-form-label text-md-left">Reporting Note 
+              <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-6">
-            <textarea id="c_note" class="form-control c_note" name="c_note" autofocus></textarea>
+              <textarea id="c_note" class="form-control c_note" name="c_note" autofocus></textarea>
             </div>
           </div>
+          <div class="form-group row col-md-12">
+            <label for="c_part" class="col-md-4 col-form-label text-md-left">Upload File</label>
+            <div class="col-md-6">
+              <input type="file" name="filenamewo[]" class="form-control" multiple>
+            </div>
+          </div>
+          <!-- A211025
           <div class="form-group row justify-content-center">
-            <!-- <label class="col-md-12 col-form-label text-md-center"><b>Completed</b></label> -->
             <label class="col-md-12 col-form-label text-md-left">Photo Upload :  </label>
           </div>
           <div class="form-group row justify-content-center" style="margin-bottom: 10%;">
@@ -411,7 +456,7 @@ hr.new1{
                       add
                   </div>
               </div>
-          </div>
+          </div> -->
           <input type="hidden" id="hidden_var" name="hidden_var" value="0" />
           <input type="hidden" id="repairtypenow" name="repairpartnow"  />
       </div>
@@ -427,11 +472,88 @@ hr.new1{
     </div>
   </div>
 </div>
-<div class="modal fade" id="loadingtable" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <h1 class="animate__animated animate__bounce" style="display:inline;width:100%;text-align:center;color:white;font-size:larger;text-align:center">Loading...</h1>      
+
+<!--Modal View Other-->
+<div class="modal fade" id="viewOtherModal" role="dialog" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center" id="exampleModalLabel">Work Order View</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="form-horizontal" id="neweditother" method="post" action="/reportingwoother" enctype="multipart/form-data">
+        {{ csrf_field() }}
+        
+        <div class="modal-body">
+          <div class="form-group row justify-content-center">
+            <label for="o_wonbr" class="col-md-4 col-form-label text-md-left">Work Order Number</label>
+            <div class="col-md-8">
+              <input id="o_wonbr" type="text" class="form-control" name="o_wonbr" readonly>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
+            <label for="o_srnbr" class="col-md-4 col-form-label text-md-left">SR Number</label>
+            <div class="col-md-8">
+              <input id="o_srnbr" type="text" class="form-control" name="o_srnbr" readonly>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
+            <label for="o_asset" class="col-md-4 col-form-label text-md-left">Asset</label>
+            <div class="col-md-8">
+              <input type="text" readonly id="o_asset" type="text" class="form-control o_asset" name="o_asset" >
+              <input type="hidden" name="o_assetcode" id="o_assetcode">
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
+            <label for="o_action" class="col-md-4 col-form-label text-md-left">Action Taken</label>
+            <div class="col-md-8">
+              <textarea class="form-control" name="o_action" id="o_action" rows="4" required></textarea>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
+            <label for="o_part" class="col-md-4 col-form-label text-md-left">Sparepart</label>
+            <div class="col-md-8">
+              <textarea class="form-control" name="o_part" id="o_part"></textarea>
+            </div>
+          </div>
+          <!-- A211022
+          <div class="form-group row justify-content-center m-0 p-0">
+            <label class="col-md-12 col-form-label text-md-left">Photo Upload :  </label>
+          </div>
+          <div class="form-group row justify-content-center" style="margin-bottom: 10%;">
+              <div class="col-md-12 images_oth m-0">
+                  <div class="col-md-4 pic_other">
+                      add
+                  </div>
+              </div>
+          </div> -->
+          <div class="form-group row justify-content-center">
+            <label for="o_part" class="col-md-4 col-form-label text-md-left">Upload File</label>
+            <div class="col-md-8">
+              <input type="file" name="filenames[]" class="form-control" multiple>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success bt-action" id="btnconf">Save</button>
+          <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
+            <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+          </button>
+        </div>
+      </form>
     </div>
   </div>
+</div>
+
+<div class="modal fade" id="loadingtable" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <h1 class="animate__animated animate__bounce" style="display:inline;width:100%;text-align:center;color:white;font-size:larger;text-align:center">Loading...</h1>      
+  </div>
+</div>
 
 
 <!--Modal Delete-->
@@ -579,29 +701,29 @@ $(document).on('click', '#btnsearch', function() {
     document.getElementById('repairtype').value= 'code';
   });
   
-  $(document).on('change','#argcheck',function(e){
-    document.getElementById('divgroup').style.display='';
-    document.getElementById('divrepair').style.display='none';
-    document.getElementById('divmanual').style.display='none';
-    $("#manualcount").val(null).trigger('change');
-    $("#repairgroup").val(null).trigger('change');
-    $("#repaircode1").val(null).trigger('change');
-    $("#repaircode2").val(null).trigger('change');
-    $("#repaircode3").val(null).trigger('change');
-    document.getElementById('repairtype').value= 'group';
-  });
+  // $(document).on('change','#argcheck',function(e){
+  //   document.getElementById('divgroup').style.display='';
+  //   document.getElementById('divrepair').style.display='none';
+  //   document.getElementById('divmanual').style.display='none';
+  //   $("#manualcount").val(null).trigger('change');
+  //   $("#repairgroup").val(null).trigger('change');
+  //   $("#repaircode1").val(null).trigger('change');
+  //   $("#repaircode2").val(null).trigger('change');
+  //   $("#repaircode3").val(null).trigger('change');
+  //   document.getElementById('repairtype').value= 'group';
+  // });
 
-  $(document).on('change','#arcmanual',function(e){
-    document.getElementById('divmanual').style.display='';
-    document.getElementById('divgroup').style.display='none';
-    document.getElementById('divrepair').style.display='none';
-    $("#manualcount").val(null).trigger('change');
-    $("#repairgroup").val(null).trigger('change');
-    $("#repaircode1").val(null).trigger('change');
-    $("#repaircode2").val(null).trigger('change');
-    $("#repaircode3").val(null).trigger('change');
-    document.getElementById('repairtype').value= 'manual';
-  });
+  // $(document).on('change','#arcmanual',function(e){
+  //   document.getElementById('divmanual').style.display='';
+  //   document.getElementById('divgroup').style.display='none';
+  //   document.getElementById('divrepair').style.display='none';
+  //   $("#manualcount").val(null).trigger('change');
+  //   $("#repairgroup").val(null).trigger('change');
+  //   $("#repaircode1").val(null).trigger('change');
+  //   $("#repaircode2").val(null).trigger('change');
+  //   $("#repaircode3").val(null).trigger('change');
+  //   document.getElementById('repairtype').value= 'manual';
+  // });
 
   $('#repairgroup').select2({
         placeholder: "Select Data",
@@ -629,6 +751,7 @@ $(document).on('click', '#btnsearch', function() {
   spare3: 0
   }
 
+  /* A211026
   $(document).on('submit','#newedit',function(event){
     event.preventDefault();
 
@@ -687,6 +810,8 @@ $(document).on('click', '#btnsearch', function() {
         document.getElementById('newedit').submit();
     }
   });
+  A211026 */
+
   $(document).on('click','.reopen',function(){
   
     var wonbr = $(this).closest('tr').find('input[name="wonbrr"]').val();
@@ -713,6 +838,7 @@ $(document).on('click', '#btnsearch', function() {
   }
 
     $(document).on('click', '.jobview', function() {
+
       var wonbr = $(this).closest('tr').find('input[name="wonbrr"]').val();
       // $('#loadingtable').modal('hide');
       $('#loadingtable').modal('show');
@@ -738,34 +864,32 @@ $(document).on('click', '#btnsearch', function() {
           var assetlastmt= result[0].asset_last_mtc;
           var assetlastus= result[0].asset_last_usage_mtc;
           var assettype  = result[0].asset_measure;
-          // alert(wotype);
-          // alert(rprstatus);
+          
+
           document.getElementById('repairtypenow').value = wotype;
           var event = new Event('change',{"bubbles": true});
           document.getElementById('statuswo').value = wostatus;
-          // alert(repair1);
           document.getElementById('v_counter').value     = counter;
           document.getElementById('c_wonbr').value       = wonbr;
           document.getElementById('c_srnbr').value       = srnbr;
           document.getElementById('c_asset').value       = asscode + '-' + asset;
           document.getElementById('c_assethid').value    = asscode;
           document.getElementById('repaircode1').value   = repair1;
+          /* A211026
           document.getElementById('repaircode2').value   = repair2;
           document.getElementById('repaircode3').value   = repair3;
-          if(wotype == 'auto'){
-            document.getElementById('divrepairtype').style.display = 'none';
-            document.getElementById('assettype').value = assettype;
-            document.getElementById('c_lastmeasurement').value = assetlastus;
-            document.getElementById('c_lastmeasurementdate').value = assetlastmt;
-            document.getElementById('preventiveonly').style.display = '';
-          }
-          else{
-              document.getElementById('divrepairtype').style.display = '';
-              document.getElementById('preventiveonly').style.display = 'none';
-            if(rprstatus == 'code'){
+          */
 
-              document.getElementById('argcheck').checked = false;
-              document.getElementById('arccheck').checked = true;
+          if(wotype == 'auto'){
+            document.getElementById('divrepairtype').style.display = '';
+            document.getElementById('assettype').value = assettype;
+            // document.getElementById('c_lastmeasurement').value = assetlastus;
+            // document.getElementById('c_lastmeasurementdate').value = assetlastmt;
+            document.getElementById('preventiveonly').style.display = 'none';
+             if(rprstatus == 'code'){
+
+              //document.getElementById('argcheck').checked = false;
+              //document.getElementById('arccheck').checked = true;
               document.getElementById('divrepair').style.display='';
               document.getElementById('divgroup').style.display='none';
               document.getElementById('repairgroup').value=null;
@@ -782,8 +906,8 @@ $(document).on('click', '#btnsearch', function() {
               }         
             }
             else if(rprstatus == 'group'){
-              document.getElementById('argcheck').checked = true;
-              document.getElementById('arccheck').checked = false;
+              //document.getElementById('argcheck').checked = true;
+              //document.getElementById('arccheck').checked = false;
               document.getElementById('divgroup').style.display='';
               document.getElementById('divrepair').style.display='none';
               $("#repairgroup").val(rprgroup).trigger('change');
@@ -793,14 +917,26 @@ $(document).on('click', '#btnsearch', function() {
               document.getElementById('repairtype').value = 'group';
             }
           }
+          else{
+              document.getElementById('divrepairtype').style.display = 'none';
+              document.getElementById('preventiveonly').style.display = '';
+          }
+
+          /* untuk view other */
+          document.getElementById('o_wonbr').value       = wonbr;
+          document.getElementById('o_srnbr').value       = srnbr;
+          document.getElementById('o_asset').value       = asscode + '-' + asset;
+          document.getElementById('o_assetcode').value   = asscode;
 
           $('#repaircode1').select2({
             placeholder: "Select Data",
             width:'100%',
             theme: 'bootstrap4',
             allowClear : true,
-            repair1
+            //repair1
           });
+
+          /*
           $('#repaircode2').select2({
             placeholder: "Select Data",
             width:'100%',
@@ -815,8 +951,15 @@ $(document).on('click', '#btnsearch', function() {
             allowClear : true,
             repair3
 
-          });
-          uploadImage();
+          }); 
+
+          if (wotype == 'auto') {
+            uploadImage();
+          } else {
+            uploadImage_oth();
+          }
+          */
+          
           if($('#loadingtable').hasClass('show')){
             
             setTimeout(function(){
@@ -824,9 +967,17 @@ $(document).on('click', '#btnsearch', function() {
 
             },500);
           }
-          setTimeout(function(){
+          
+          /* beda inputan finish jika beda type*/
+          if (wotype == 'auto') {
+            setTimeout(function(){
               $('#viewModal').modal('show');  
             },1000);
+          } else {
+            setTimeout(function(){
+              $('#viewOtherModal').modal('show');  
+            },1000);
+          }
         }
       })
     });
@@ -1442,6 +1593,7 @@ $(document).on('click', '#btnsearch', function() {
 
 });
 
+  /* A211026 
   $(document).on('change','#repaircode1',function(event){
     var rc1 = document.getElementById('repaircode1').value;
     // alert(rc1);
@@ -1546,7 +1698,7 @@ $(document).on('click', '#btnsearch', function() {
       }
     })
     }
-  })
+  }) A211026 */
   $(document).on('change','#repaircode2',function(event){
     var rc2 = document.getElementById('repaircode2').value;
     $("#testdiv2").html('');
@@ -1778,16 +1930,8 @@ $(document).on('click', '#btnsearch', function() {
       for(var co = 0; co < count1; co++){
         col +='<tr>';
         col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+(co+1)+'</b></p></td>';
-        col+='<td style="height: 20px;border:2px solid"><select id="ins'+co+'" name="ins[]" style="border:none;width:100%"><option value=""></option>';
-        col+='@foreach($instruction as $instruction1)';
-        col+='<option value="{{$instruction1->ins_code}}">{{$instruction1->ins_code}} -- {{$instruction1->ins_desc}}</option>';
-        col+='@endforeach</select></td>';
-        col+='<td style="height: 20px;border:2px solid"><select id="part'+co+'" name="part[]" style="border:none;width:100%"><option value=""></option>';
-        col+='@foreach($sparepart as $sparepart1)';
-        col+='<option value="{{$sparepart1->spm_code}}">{{$sparepart1->spm_code}} -- {{$sparepart1->spm_desc}}</option>';
-        col+='@endforeach</select></td>';
-
-        
+        col+='<td style="height: 20px;border:2px solid"><input type="text" id="ins'+co+'" name="ins[]" style="border:none;width:100%;height:100%;"></td>';
+        col+='<td style="height: 20px;border:2px solid"><input type="text" id="part'+co+'" name="part[]" style="border:none;width:100%"></td>';       
         col+='<td style="height: 20px;border:2px solid"><input type="text" name="desc[]" style="border:none;width:100%"></td>';
         col+='<td style="margin-top:0;height:40px;border:2px solid"><input type="number" name="qty5['+co+']" min=1 value=1 style="border:0px;width:100%"></td>';
         col+='<td style="margin-top:0;height:40px;border:2px solid"><input type="number" name="rph5['+co+']" min=1 value=1 style="border:0px;width:100%"></td>';
@@ -1974,13 +2118,18 @@ $(document).on('click', '#btnsearch', function() {
 
   $(document).on('click','.aprint',function(event){
     var wonbr = $(this).closest('tr').find('input[name="wonbrr"]').val();
-    var url = "{{url('openprint2','id')}}";
-        // var newo = JSON.stringify(wonbr);
-        url = url.replace('id', wonbr);
-        // alert(url);
-        window.open(url,'_blank')
-        // document.getElementsByClassName('aprint').href=url;
-        // alert('aa');
+    var wotype = $(this).closest('tr').find('input[name="wotypee"]').val();
+
+    if (wotype == 'auto') {
+      var url = "{{url('openprint2','id')}}";
+    } else {
+      var url = "{{url('openprint','id')}}";
+    }
+
+    url = url.replace('id', wonbr);
+
+    window.open(url,'_blank')
+
   });
 
   function uploadImage() {
@@ -1991,31 +2140,61 @@ $(document).on('click', '#btnsearch', function() {
     var initest = $('.images .img span #imgname')
         
     button.on('click', function () {
-      // alert('aaa');
       uploader.click();
     })
         
     uploader.on('change', function () {
       var reader = new FileReader();
       i = 0;
+
       reader.onload = function(event) {
-      images.prepend('<div id="img" class="img" style="background-image: url(\'' + event.target.result + '\');" rel="'+ event.target.result  +'"><span>remove<input type="hidden" style="display:none;" id="imgname" name="imgname[]" value=""/></span></div>')
-      // alert(JSON.stringify(uploader));
+      images.prepend('<div id="img" class="img" style="background-image: url(\'' + event.target.result + '\');" rel="'+ event.target.result  +
+      '"><span>remove<input type="hidden" style="display:none;" id="imgname" name="imgname[]" value=""/></span></div>')
         document.getElementById('imgname').value = uploader[0].files.item(0).name+','+event.target.result; 
         document.getElementById('hidden_var').value = 1;
-      }
-      reader.readAsDataURL(uploader[0].files[0])
-            // potoArr.push(uploader[0].files[0]);
 
-            // console.log(potoArr);
-        })
+    }
 
+    reader.readAsDataURL(uploader[0].files[0])
+    
+    })
 
-        images.on('click', '.img', function () {        
-          $(this).remove();
-        })
-      
-      // confirmPhoto(potoArr);
+    images.on('click', '.img', function () {        
+      $(this).remove();
+    })      
+  }
+
+  /* Upload type Other */
+  function uploadImage_oth() {
+    var button_oth = $('.images_oth .pic_other')
+    var uploader_oth = $('<input type="file" accept="image/jpeg, image/png, image/jpg" />')
+    var images_oth = $('.images_oth')
+    var potoArr = [];
+    var initest = $('.images_oth .img_oth span #imgname')
+
+    button_oth.on('click', function () {
+      uploader_oth.click();
+    })
+        
+    uploader_oth.on('change', function () {
+      var reader = new FileReader();
+      i = 0;
+
+      reader.onload = function(event) {
+      images_oth.prepend('<div id="img_oth" class="img_oth" style="background-image: url(\'' + event.target.result + '\');" rel="'+ event.target.result  +
+      '"><span>remove<input type="hidden" style="display:none;" id="imgname" name="imgname[]" value=""/></span></div>')
+        document.getElementById('imgname').value = uploader_oth[0].files.item(0).name+','+event.target.result; 
+        document.getElementById('hidden_var').value = 1;
+
+    }
+
+    reader.readAsDataURL(uploader_oth[0].files[0])
+    
+    })
+
+    images_oth.on('click', '.img_oth', function () {        
+      $(this).remove();
+    })      
   }
 
 
