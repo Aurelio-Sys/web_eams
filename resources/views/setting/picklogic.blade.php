@@ -18,7 +18,7 @@
         <div class="modal-header">
         </div>
         <div class="modal-body">
-            <input type="hidden" name="hdlogic" id="hdlogic" value="{{$rsdata->pick_code}}">
+            <input type="hidden" name="hdlogic" id="hdlogic" value="{{$pick}}">
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="rdlogic" id="rdloc" value="loc" checked>
                 <label class="form-check-label" for="rdloc">

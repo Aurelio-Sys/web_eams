@@ -483,13 +483,6 @@ to get the desired effect
                 </ul> <!-- ul users -->
               </li> <!-- li users -->
 
-               <li class="nav-item">
-                  <a href="{{url('qxwsa')}}" class="nav-link">
-                    <i class="nav-icon far fa-circle"></i>
-                    <p>WSA Qxtend Maintenance</p>
-                  </a>
-                </li>
-
               @if(str_contains( Session::get('menu_access'), 'MT03'))
                 <li class="nav-item">
                   <a href="/sitemaster" class="nav-link">
@@ -538,6 +531,11 @@ to get the desired effect
                       </a>
                     </li>
                   @endif
+                  <li class="nav-item">
+                    <a href="{{url('qxwsa')}}" class="nav-link">
+                      <p>WSA Qxtend Maintenance</p>
+                    </a>
+                  </li>
                 </ul><!-- ul Control File -->
               </li> <!-- li Control File -->
 

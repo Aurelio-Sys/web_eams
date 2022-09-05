@@ -5460,9 +5460,16 @@ class SettingController extends Controller
 
         $rsdata = DB::table('pick_mstr')
             ->wherePick_active(1)
-            ->first();
-
-        return view('setting.picklogic', ['rsdata' => $rsdata]);
+            ->get();
+            
+        if (!$rsdata->isEmpty()) {
+            $pick = $rsdata->first();
+            $pick = $pick->pick_code;
+         } else {
+            $pick = "loc";
+         }
+        
+        return view('setting.picklogic', ['pick' => $pick]);
     }
 
     public function picksave(Request $req){
@@ -5478,7 +5485,7 @@ class SettingController extends Controller
             ->insert([
                 'pick_code' => $req->rdlogic,
                 'pick_active' => 1,
-                'pick_created_at' => Carbon::now()->toDateTimeString(),
+                'created_at' => Carbon::now()->toDateTimeString(),
                 'pick_edited_by' => Session::get('username'),                    
             ]);
 
