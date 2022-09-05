@@ -247,6 +247,36 @@ to get the desired effect
                     </a>
                   </li>
                 @endif
+                @if(str_contains( Session::get('menu_access'), 'WO04'))
+                  <li class="nav-item ">
+                    <a href="/wonreleasebrowse" class="nav-link">
+                      <i class="nav-icon far fa-circle"></i>
+                      <p>
+                        Work Order Release Browse
+                      </p>
+                    </a>
+                  </li>
+                @endif
+                @if(str_contains( Session::get('menu_access'), 'WO07'))
+                  <li class="nav-item ">
+                    <a href="/wonreleasebrowse" class="nav-link">
+                      <i class="nsav-icon far fa-circle"></i>
+                      <p>
+                        Warehouse Confirm Browse
+                      </p>
+                    </a>
+                  </li>
+                @endif
+                @if(str_contains( Session::get('menu_access'), 'WO08'))
+                  <li class="nav-item ">
+                    <a href="/wonreleasebrowse" class="nav-link">
+                      <i class="nsav-icon far fa-circle"></i>
+                      <p>
+                        Engineer Confirm Browse
+                      </p>
+                    </a>
+                  </li>
+                @endif
                 @if(str_contains( Session::get('menu_access'), 'WO02'))
                   <li class="nav-item ">
                     <a href="/wojoblist" class="nav-link">
@@ -257,7 +287,6 @@ to get the desired effect
                     </a>
                   </li>
                 @endif
-
                 @if(str_contains( Session::get('menu_access'), 'WO03'))
                   <li class="nav-item">
                     <a href="/woreport" class="nav-link">
@@ -453,6 +482,14 @@ to get the desired effect
                   @endif -->
                 </ul> <!-- ul users -->
               </li> <!-- li users -->
+
+               <li class="nav-item">
+                  <a href="{{url('qxwsa')}}" class="nav-link">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>WSA Qxtend Maintenance</p>
+                  </a>
+                </li>
+
               @if(str_contains( Session::get('menu_access'), 'MT03'))
                 <li class="nav-item">
                   <a href="/sitemaster" class="nav-link">

@@ -1,5 +1,8 @@
 <?php
 
+use Master\QxWsaMTController;
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -325,6 +328,9 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/skillsearch', 'SettingController@skillsearch');
 	route::get('/skillmaster/pagination', 'SettingController@skillpagination');
 
+	//Qxwsa Master
+	Route::resource('qxwsa', QxWsaMTController::class);
+
 	//report
 	Route::get('users', 'UserChartController@index');
 	Route::get('/rptwo', 'UserChartController@rptwo');
@@ -444,24 +450,24 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// 27.07.2021 booking tyas
 	route::get('/booking', 'BookingController@booking');
-   route::post('/createbooking', 'BookingController@createbooking');
-   route::post('/editbooking', 'BookingController@editbooking');
-   route::post('/appbooking', 'BookingController@appbooking');
-   route::post('/deletebooking', 'BookingController@deletebooking');
-   route::post('/cekbooking', 'BookingController@cekbooking');
-   route::get('/booking/pagination', 'BookingController@bookingpage');
+	route::post('/createbooking', 'BookingController@createbooking');
+	route::post('/editbooking', 'BookingController@editbooking');
+	route::post('/appbooking', 'BookingController@appbooking');
+	route::post('/deletebooking', 'BookingController@deletebooking');
+	route::post('/cekbooking', 'BookingController@cekbooking');
+   	route::get('/booking/pagination', 'BookingController@bookingpage');
    
-   // wo type main
-   route::get('/wotyp', 'wotypController@home');
-   route::post('/createwotyp', 'wotypController@create');
-   route::post('/editwotyp', 'wotypController@edit');
-   route::post('/deletewotyp', 'wotypController@delete');
+   	// wo type main
+   	route::get('/wotyp', 'wotypController@home');
+   	route::post('/createwotyp', 'wotypController@create');
+	route::post('/editwotyp', 'wotypController@edit');
+	route::post('/deletewotyp', 'wotypController@delete');
    
     // imp main
-   route::get('/imp', 'impController@home');
-   route::post('/createimp', 'impController@create');
-	route::post('/editimp', 'impController@edit');
-	route::post('/deleteimp', 'impController@delete');
+   	route::get('/imp', 'impController@home');
+   	route::post('/createimp', 'impController@create');
+   	route::post('/editimp', 'impController@edit');
+   	route::post('/deleteimp', 'impController@delete');
 });
 
 Auth::routes();
