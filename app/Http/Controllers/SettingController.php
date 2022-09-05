@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Models\Qxwsa as ModelsQxwsa;
+use App\Models\SiteMstr;
+use App\Services\WSAServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -572,6 +576,38 @@ class SettingController extends Controller
                 return view('setting.table-site', ['data' => $data]);
             }
         }
+    }
+
+    //untuk load site dari QAD dengan WSA
+    public function loadsite(){
+        $domain = ModelsQxwsa::first();
+
+        $sitedata = (new WSAServices())->wsagetsite($domain->wsas_domain);
+
+        if ($sitedata === false) {
+            toast('WSA Failed', 'error')->persistent('Dismiss');
+            return redirect()->back();
+        } else {
+
+            if ($sitedata[1] == "false") {
+                toast('Data Site tidak ditemukan', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+                
+                foreach ($sitedata[0] as $datas) {
+                    $sites = SiteMstr::firstOrNew(['site_code'=>$datas->t_site,
+                                                    'site_desc'=> $datas->t_site_desc]);
+                        $sites->site_code = $datas->t_site;
+                        $sites->site_desc = $datas->t_site_desc;
+                        $sites->created_at = Carbon::now()->toDateTimeString();
+                        $sites->updated_at = Carbon::now()->toDateTimeString();
+                        $sites->save();
+                }
+            }
+        }
+
+        toast('Site Loaded.', 'success');
+        return back();
     }
 
     // Approval Maint

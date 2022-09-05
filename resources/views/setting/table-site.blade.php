@@ -2,6 +2,7 @@
 <tr>
     <td>{{$show->site_code}}</td>
     <td>{{$show->site_desc}}</td>
+    <!--
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal" 
         data-sitecode="{{$show->site_code}}" data-desc="{{$show->site_desc}}">
@@ -11,6 +12,7 @@
         data-sitecode="{{$show->site_code}}" data-desc="{{$show->site_desc}}">
             <i class="icon-table fa fa-trash fa-lg"></i></a>
     </td>
+    -->
 </tr>
 @empty
 <tr>
@@ -20,7 +22,7 @@
 </tr>
 @endforelse
 <tr>
-  <td style="border: none !important;">
+  <td style="border: none !important;" colspan="2">
     {{ $data->links() }}
   </td>
 </tr>

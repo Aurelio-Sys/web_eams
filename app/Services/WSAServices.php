@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Model\Master\Qxwsa;
+use App\Models\Qxwsa as ModelsQxwsa;
 
 class WSAServices
 {
@@ -19,7 +19,7 @@ class WSAServices
     }
     
     public function wsagetsite($dom){
-        $wsa = Qxwsa::first();
+        $wsa = ModelsQxwsa::first();
 
         // Validasi WSA
         $qxUrl          = $wsa->wsas_url;

@@ -79,6 +79,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('/editsite', 'SettingController@editsite');
 	route::post('/deletesite', 'SettingController@deletesite');
 	route::get('/sitesearch', 'SettingController@sitesearch');
+	route::post('/loadsite', 'SettingController@loadsite');
 	route::get('/sitemaster/pagination', 'SettingController@sitepagination');
 
 	//area master
