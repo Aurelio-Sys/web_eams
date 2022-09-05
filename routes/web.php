@@ -433,10 +433,12 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('/acceptance', 'ServiceController@acceptance');
 	route::get('/useracceptance/search', 'ServiceController@useracceptancesearch');
 
-	//running number tommy
+	// Setting
 	route::get('/runningmstr', 'SettingController@runningmstr');
 	route::post('/updaterunning', 'SettingController@updaterunning');
-
+	route::get('/picklogic', 'SettingController@picklogic');
+	route::post('/picksave', 'SettingController@picksave');
+	
 	//image tommy
 	route::get('/imageview', 'ServiceController@imageview');
 
@@ -452,8 +454,8 @@ Route::group(['middleware' => ['auth']], function() {
    // wo type main
    route::get('/wotyp', 'wotypController@home');
    route::post('/createwotyp', 'wotypController@create');
-	route::post('/editwotyp', 'wotypController@edit');
-	route::post('/deletewotyp', 'wotypController@delete');
+   route::post('/editwotyp', 'wotypController@edit');
+   route::post('/deletewotyp', 'wotypController@delete');
    
     // imp main
    route::get('/imp', 'impController@home');

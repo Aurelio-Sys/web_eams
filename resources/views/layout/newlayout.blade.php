@@ -477,14 +477,34 @@ to get the desired effect
                   </a>
                 </li>
               @endif
-              @if(str_contains(Session::get('menu_access'), 'MT99'))
-                <li class="nav-item">
-                  <a href="{{url('/runningmstr')}}" class="nav-link">
-                    <i class="nav-icon far fa-circle"></i>
-                    <p>Running Number</p>
-                  </a>
-                </li>
-              @endif
+
+              <li class="nav-item has-treeview">
+                <a href="javascript:void(0)" class="nav-link">
+                  <i class="nav-icon far fa-circle"></i>
+                  <p>
+                    Control File
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  @if(str_contains(Session::get('menu_access'), 'MT99'))
+                    <li class="nav-item">
+                      <a href="{{url('/runningmstr')}}" class="nav-link">
+                        <p>Running Number</p>
+                      </a>
+                    </li>
+                  @endif
+                  @if(str_contains(Session::get('menu_access'), 'MT30'))
+                    <li class="nav-item">
+                      <a href="{{url('/picklogic')}}" class="nav-link">
+                        <p>Picking Logic</p>
+                      </a>
+                    </li>
+                  @endif
+                </ul><!-- ul Control File -->
+              </li> <!-- li Control File -->
+
+              
                 @if(str_contains(Session::get('menu_access'), 'MT13'))
                 <li class="nav-item">
                   <a href="{{url('/wotyp')}}" class="nav-link">
@@ -524,7 +544,7 @@ to get the desired effect
                       </a>
                     </li>
                   @endif
-                  @if(str_contains( Session::get('menu_access'), 'MT13'))
+                  @if(str_contains( Session::get('menu_access'), 'MT28'))
                     <li class="nav-item">
                       <a href="/fnmaster" class="nav-link">
                         <p>Failure Code</p>
@@ -605,7 +625,7 @@ to get the desired effect
                       </a>
                     </li>
                   @endif
-                  @if(str_contains( Session::get('menu_access'), 'MT13')) 
+                  @if(str_contains( Session::get('menu_access'), 'MT28')) 
 					         <li class="nav-item">
                       <a href="/repgroup" class="nav-link">
                         <p>Repair Group</p>
@@ -647,7 +667,7 @@ to get the desired effect
                       </a>
                     </li>
                   @endif			 -->		  
-                  @if(str_contains( Session::get('menu_access'), 'MT14'))
+                  @if(str_contains( Session::get('menu_access'), 'MT27'))
                     <li class="nav-item">
                       <a href="/toolmaster" class="nav-link">
                         <p>Tools</p>

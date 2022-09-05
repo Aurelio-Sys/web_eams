@@ -5417,6 +5417,38 @@ class SettingController extends Controller
 
 /* End Departemen Master */
 
+/* Picking Logic */
+    public function picklogic(){
+        $runningdata = DB::table('running_mstr')
+                        ->first();
+
+        return view('setting.picklogic', ['alert' => $runningdata]);
+    }
+
+    public function picksave(Request $req){
+        //dd($req->all());
+
+        DB::table('pick_mstr')
+            ->where('pick_active','=',1)
+            ->update([
+                'pick_active'   => 0,
+            ]);
+
+        DB::table('pick_mstr')
+            ->insert([
+                'pick_code' => $req->rdlogic,
+                'pick_desc' => "belum",
+                'pick_active' => 1,
+                'pick_created_at' => Carbon::now()->toDateTimeString(),
+                'pick_edited_by' => Session::get('username'),                    
+            ]);
+
+        toast("Data is Successfully Updated !", "success");
+                
+        return back();
+    }
+/* End Picking Logic */
+
     // running number master
     public function runningmstr(){
         $runningdata = DB::table('running_mstr')
