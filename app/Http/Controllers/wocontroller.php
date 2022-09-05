@@ -143,7 +143,7 @@ class wocontroller extends Controller
         }
     }
 
-    public function wocreatedirectmenu(){
+    public function wocreatedirectmenu(){ // route : wocreatedirectmenu   blade : workorder.wocreatedirect
         // dd(Session::all())
         if (strpos(Session::get('menu_access'), 'WO05') !== false) {
             $usernow = DB::table('users')

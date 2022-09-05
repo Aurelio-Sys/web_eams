@@ -28,7 +28,7 @@
       </div>
     </div>
     <div class="form-group row">
-      <label for="wotype" class="col-md-2 col-lg-3 col-form-label my-auto">Service Request Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+      <label for="wotype" class="col-md-2 col-lg-3 col-form-label my-auto">SR Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
       <div class="col-md-5 col-sm-12">
         <select class="form-control" id="wotype" name="wotype" required>
           <option></option>

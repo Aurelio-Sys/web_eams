@@ -546,7 +546,7 @@ to get the desired effect
                 <li class="nav-item">
                   <a href="{{url('/wotyp')}}" class="nav-link">
                     <i class="nav-icon far fa-circle"></i>
-                    <p>WO Type Maintenance</p>
+                    <p>SR Type Maintenance</p>
                   </a>
                 </li>
               @endif

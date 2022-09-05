@@ -5458,7 +5458,11 @@ class SettingController extends Controller
         $runningdata = DB::table('running_mstr')
                         ->first();
 
-        return view('setting.picklogic', ['alert' => $runningdata]);
+        $rsdata = DB::table('pick_mstr')
+            ->wherePick_active(1)
+            ->first();
+
+        return view('setting.picklogic', ['rsdata' => $rsdata]);
     }
 
     public function picksave(Request $req){
@@ -5473,7 +5477,6 @@ class SettingController extends Controller
         DB::table('pick_mstr')
             ->insert([
                 'pick_code' => $req->rdlogic,
-                'pick_desc' => "belum",
                 'pick_active' => 1,
                 'pick_created_at' => Carbon::now()->toDateTimeString(),
                 'pick_edited_by' => Session::get('username'),                    

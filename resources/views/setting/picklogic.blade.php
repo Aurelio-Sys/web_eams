@@ -18,27 +18,28 @@
         <div class="modal-header">
         </div>
         <div class="modal-body">
+            <input type="hidden" name="hdlogic" id="hdlogic" value="{{$rsdata->pick_code}}">
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="rdlogic" id="rdlogic1" value="loc" checked>
-                <label class="form-check-label" for="rdlogic1">
+                <input class="form-check-input" type="radio" name="rdlogic" id="rdloc" value="loc" checked>
+                <label class="form-check-label" for="rdloc">
                     Location
                 </label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="rdlogic" id="rdlogic2" value="lot">
-                <label class="form-check-label" for="rdlogic2">
+                <input class="form-check-input" type="radio" name="rdlogic" id="rdlot" value="lot">
+                <label class="form-check-label" for="rdlot">
                     Lot/Serial
                 </label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="rdlogic" id="rdlogic3" value="date">
-                <label class="form-check-label" for="rdlogic3">
+                <input class="form-check-input" type="radio" name="rdlogic" id="rddate" value="date">
+                <label class="form-check-label" for="rddate">
                     Date
                 </label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="rdlogic" id="rdlogic4" value="exp">
-                <label class="form-check-label" for="rdlogic4">
+                <input class="form-check-input" type="radio" name="rdlogic" id="rdexp" value="exp">
+                <label class="form-check-label" for="rdexp">
                     Expired Date
                 </label>
             </div>
@@ -54,6 +55,27 @@
 
 @section('scripts')
 <script>
-   
+
+window.onload = function(){  
+    var hdlogic = document.getElementById("hdlogic").value;
+    
+    switch(hdlogic) {
+        case "loc":
+            document.getElementById('rdloc').checked = true;
+            break;
+        case "lot":
+            document.getElementById('rdlot').checked = true;
+            break;
+        case "date":
+            document.getElementById('rddate').checked = true;
+            break;
+        case "exp":
+            document.getElementById('rdexp').checked = true;
+            break;
+        default:
+            document.getElementById('rdloc').checked = true;
+      }
+} 
+
 </script>
 @endsection

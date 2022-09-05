@@ -179,12 +179,12 @@ hr.new1{
                   Repair Code
                 </label>
               </div>
-              <!-- <div class="col-md-4" id="arcmanualdiv" style="display: none;">
+              <div class="col-md-4" id="arcmanualdiv" style="display: none;">
                 <input class="d-inline" type="radio"  name="repairtype" id="arcmanual" value="manual" style="display:none">
                 <label class="form-check-label" for="arcmanual">
                   Manual
                 </label>
-              </div> -->
+              </div>
             </div>
           </div>
 
@@ -240,7 +240,7 @@ hr.new1{
             <div id="testdiv">
             
             </div>
-            <!-- <div class="form-group row col-md-12 divrepcode" >
+            <div class="form-group row col-md-12 divrepcode" >
               <label for="repaircode2" class="col-md-3 col-form-label text-md-left">Repair Code 2</label>
               <div class="col-md-7">
               <input type="hidden" id="inputrepair2">
@@ -269,7 +269,7 @@ hr.new1{
             </div>
             <div id="testdiv3">
             
-            </div> -->
+            </div>
           </div> 
 
     <div class="form-group row col-md-12">
@@ -834,32 +834,28 @@ $("#newedit").submit(function(e) {
   });
   $(document).on('change','#cpreventive',function(e){
     if(this.checked == true){
-      //document.getElementById('manualonly').style.display='none';
-      //document.getElementById('argcheckdiv').style.display="";
+      document.getElementById('manualonly').style.display='none';
+      document.getElementById('argcheckdiv').style.display="";
       document.getElementById('arccheckdiv').style.display="";
-      //document.getElementById('arcmanualdiv').style.display="";
+      document.getElementById('arcmanualdiv').style.display="";
     }
   });
 
   $(document).on('change','#cwomanual',function(e){
 
     if(this.checked==true){
-      //document.getElementById('manualonly').style.display='';
-      //document.getElementById('argcheckdiv').style.display="";
+      document.getElementById('manualonly').style.display='';
+      document.getElementById('argcheckdiv').style.display="";
       document.getElementById('arccheckdiv').style.display="";
-      //document.getElementById('arcmanualdiv').style.display="none";
+      document.getElementById('arcmanualdiv').style.display="none";
     }
   });
 
    $(document).on('change','#arccheck',function(e){
-    // alert('aaa');
     document.getElementById('divrepair').style.display='';
     document.getElementById('divgroup').style.display='none';  
     document.getElementById('divmanual').style.display='none';
     
-    
-
-    // alert('aaa');
 
     $("#manualcount").val(null).trigger('change');
     $("#repairgroup").val(null).trigger('change');
