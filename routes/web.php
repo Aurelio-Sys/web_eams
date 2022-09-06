@@ -89,6 +89,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('/editarea', 'SettingController@editarea');
 	route::post('/deletearea', 'SettingController@deletearea');
 	route::get('/areasearch', 'SettingController@areasearch');
+	route::post('/loadloc', 'SettingController@loadloc');
 	route::get('/areamaster/pagination', 'SettingController@areapagination');
 
 	//asset type master

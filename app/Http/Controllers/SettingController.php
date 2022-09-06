@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Qxwsa as ModelsQxwsa;
 use App\Models\SiteMstr;
+use App\Models\LocMstr;
 use App\Services\WSAServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -1006,6 +1007,41 @@ class SettingController extends Controller
                 return view('setting.table-area', ['data' => $data]);
             }
         }
+    }
+
+    //untuk load location dari QAD dengan WSA
+    public function loadloc(){
+        $domain = ModelsQxwsa::first();
+
+        $locdata = (new WSAServices())->wsagetloc($domain->wsas_domain);
+
+        if ($locdata === false) {
+            toast('WSA Failed', 'error')->persistent('Dismiss');
+            return redirect()->back();
+        } else {
+
+            if ($locdata[1] == "false") {
+                toast('Data Location tidak ditemukan', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+               
+                foreach ($locdata[0] as $datas) {
+                    $rsloc = LocMstr::firstOrNew(['loc_site'=>$datas->t_site,
+                                'loc_code'=>$datas->t_loc,
+                                'loc_desc'=> $datas->t_loc_desc]);
+
+                    $rsloc->loc_site = $datas->t_site;
+                    $rsloc->loc_code = $datas->t_loc;
+                    $rsloc->loc_desc = $datas->t_loc_desc;
+                    $rsloc->created_at = Carbon::now()->toDateTimeString();
+                    $rsloc->updated_at = Carbon::now()->toDateTimeString();
+                    $rsloc->save();
+                }
+            }
+        }
+
+        toast('Location Loaded.', 'success');
+        return back();
     }
 /* End Area Master */
 

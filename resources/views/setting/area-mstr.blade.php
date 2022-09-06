@@ -11,9 +11,20 @@
           <hr>
         </div>
         <div class="row">                 
-          <div class="col-sm-2">    
-            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Location Create</button>
-          </div><!-- /.col -->  
+            <!-- <div class="col-sm-2">    
+                <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Location Create</button>
+            </div> --> <!-- /.col -->  
+
+            <form action="/loadloc" method="post" id="submit">
+                {{ method_field('post') }}
+                {{ csrf_field() }}
+                <div class="col-md-4">
+                    <input type="submit" class="btn btn-primary" id="btnload" value="Load Data" />
+                    <button type="button" class="btn btn-info" id="s_btnloading" style="display:none;">
+                        <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
+                    </button>
+                </div>
+            </form>
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
 @endsection
