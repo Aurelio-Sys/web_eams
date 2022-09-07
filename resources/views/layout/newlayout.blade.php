@@ -247,16 +247,16 @@ to get the desired effect
                     </a>
                   </li>
                 @endif
-                @if(str_contains( Session::get('menu_access'), 'WO04'))
+                
                   <li class="nav-item ">
-                    <a href="/wonreleasebrowse" class="nav-link">
+                    <a href="/worelease" class="nav-link">
                       <i class="nav-icon far fa-circle"></i>
                       <p>
                         Work Order Release Browse
                       </p>
                     </a>
                   </li>
-                @endif
+               
                 @if(str_contains( Session::get('menu_access'), 'WO07'))
                   <li class="nav-item ">
                     <a href="/wonreleasebrowse" class="nav-link">
