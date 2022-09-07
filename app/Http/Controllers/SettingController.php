@@ -3620,8 +3620,6 @@ class SettingController extends Controller
             }
         }
 
-        // $part = $req->te_part;
-
         DB::table('ins_mstr')
         ->where('ins_code','=',$req->te_code)
         ->update([
@@ -3639,6 +3637,32 @@ class SettingController extends Controller
 
         toast('Instruction Updated.', 'success');
         return back();
+    }
+
+    //add sparepart
+    public function addpart(Request $req)
+    {
+        //dd($req->all());
+        if ($req->ajax()) {
+            $data = DB::table('insd_det')
+                    ->join('sp_mstr','spm_code','insd_part')
+                    ->where('insd_code','=',$req->code)
+                    ->get();
+
+            $output = '';
+            foreach ($data as $data) {
+                $output .= '<tr>'.
+                            '<td><input type="text" class="form-control" name="partcode[]" readonly value="'.$data->insd_part.'" size="13"></td>'.
+                            '<td>'.$data->spm_desc.'</td>'.
+                            '<td><input type="text" class="form-control" name="partum[]" readonly value="'.$data->insd_um.'" size="13"></td>'.
+                            '<td><input type="text" class="form-control" name="partqty[]" readonly value="'.$data->insd_qty.'" size="13"></td>'.
+                            '<td><input type="checkbox" name="cek[]" class="cek" id="cek" value="0">
+                            <input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>'.
+                            '</tr>';
+            }
+
+            return response($output);
+        }
     }
 
     //untuk delete Instruction Detail
