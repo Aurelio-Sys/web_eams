@@ -18,16 +18,18 @@
     </div>
     -->
     <div class="row">
-        <form action="/loadsite" method="post" id="submit">
-            {{ method_field('post') }}
-            {{ csrf_field() }}
-            <div class="col-md-2">
-                <input type="submit" class="btn btn-primary" id="btnload" value="Load Data" />
-                <button type="button" class="btn btn-info" id="s_btnloading" style="display:none;">
-                    <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
-                </button>
-            </div>
-        </form>
+        <div class="col-md-2">
+            <form action="/loadsite" method="post" id="submit">
+                {{ method_field('post') }}
+                {{ csrf_field() }}
+                
+                    <input type="submit" class="btn btn-block btn-primary" id="btnload" value="Load Data" />
+                    <button type="button" class="btn btn-info" id="s_btnloading" style="display:none;">
+                        <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
+                    </button>
+                
+            </form>
+        </div>
     </div>
 </div><!-- /.container-fluid -->
 @endsection

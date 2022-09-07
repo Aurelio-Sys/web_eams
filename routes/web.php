@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WO\WORelease;
 use Master\QxWsaMTController;
 use Illuminate\Support\Facades\Route;
 
@@ -472,6 +473,10 @@ Route::group(['middleware' => ['auth']], function() {
    	route::post('/createimp', 'impController@create');
    	route::post('/editimp', 'impController@edit');
    	route::post('/deleteimp', 'impController@delete');
+
+	// wo release
+	Route::get('/worelease', [WORelease::class, 'browse']);
+	Route::get('/worelease/releasedetail/{id}', [WORelease::class, 'detailrelease'])->name('ReleaseDetail');
 });
 
 Auth::routes();
