@@ -282,11 +282,10 @@
                 <h4 class="mb-3" style="margin-left:5px;"><strong>Sparepart Data</strong></h4>
                 <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
                     <thead>
-                        <th>Code</th>
-                        <th>Description</th>
-                        <th>UM</th>
-                        <th>Qty Required</th>
-                        <th>Delete</th>
+                        <th width="55%">Sparepart</th>
+                        <th width="15%">UM</th>
+                        <th width="15%">Qty Required</th>
+                        <th width="15%">Delete</th>
                     </thead>
                     <tbody id='ed_detailapp'></tbody>
                     <tfoot>
@@ -636,13 +635,13 @@
         cols += '<td data-label="Barang">';
         cols += '<select id="barang" class="form-control barang selectpicker" name="partcode[]" data-live-search="true" required autofocus>';
         cols += '<option value = ""> -- Select Data -- </option>'
-        @foreach($datapart as $da)
+        @foreach($dataPart as $da)
         cols += '<option value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
         @endforeach
         cols += '</select>';
         cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
-        cols += '<td>Desc</td>'
-
+        cols += '<td><input type="text" name="partum[]" id="partum" class="form-control"></td>';
+        cols += '<td><input type="text" name="partqty[]" id="partqty" class="form-control"></td>';
         cols += '<td data-title="Action"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
         cols += '</tr>'
         newRow.append(cols);
