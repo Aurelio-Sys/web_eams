@@ -655,7 +655,7 @@ to get the desired effect
                     <li class="nav-item">
                       <!-- <a href="/repmasterb" class="nav-link"> -->
                       <!-- <a href="/repdet" class="nav-link"> -->
-                      <a href="/repcode" class="nav-link">
+                      <a href="/repcode" class="nav-link"> 
                         <p>Repair Code</p>
                       </a>
                     </li>
@@ -681,27 +681,27 @@ to get the desired effect
                       </a>
                     </li>
                   @endif -->
-                <!--  @if(str_contains( Session::get('menu_access'), 'MT17'))
+                  <!-- @if(str_contains( Session::get('menu_access'), 'MT17'))
                     <li class="nav-item">
                       <a href="/reppart" class="nav-link">
                         <p>Repair Part</p>
                       </a>
                     </li>
-                  @endif-->
-                  <!-- @if(str_contains( Session::get('menu_access'), 'MT25'))
+                  @endif
+                  @if(str_contains( Session::get('menu_access'), 'MT25'))
                     <li class="nav-item">
                       <a href="/reppartgroup" class="nav-link">
                         <p>Repair Part Group</p>
                       </a>
                     </li>
-                  @endif -->
-                  <!-- @if(str_contains( Session::get('menu_access'), 'MT18'))
+                  @endif
+                  @if(str_contains( Session::get('menu_access'), 'MT18'))
                     <li class="nav-item">
                       <a href="/repins" class="nav-link">
                         <p>Repair Instruction</p>
                       </a>
                     </li>
-                  @endif			 -->		  
+                  @endif	 -->	  
                   @if(str_contains( Session::get('menu_access'), 'MT27'))
                     <li class="nav-item">
                       <a href="/toolmaster" class="nav-link">

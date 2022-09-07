@@ -251,63 +251,6 @@
     </div>
 </div>
 
-<!-- Modal Add Sparepart -->
-<div class="modal fade" id="addmodal" role="dialog" aria-hidden="true" data-backdrop="static">
-    <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel">Add Sparepart</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        </div>
-        <form class="form-horizontal" method="post" action="/addpart">
-            {{ csrf_field() }}
-            <div class="modal-body">
-                <div class="form-group row">
-                    <label for="ta_code" class="col-md-4 col-form-label text-md-right">Instruction Code</label>
-                    <div class="col-md-6">
-                        <input id="ta_code" type="text" class="form-control" name="ta_code" readonly/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="ta_desc" class="col-md-4 col-form-label text-md-right">Instruction Desc</label>
-                    <div class="col-md-6">
-                        <input id="ta_desc" type="text" class="form-control" name="ta_desc" readonly/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    
-                </div>
-                <h4 class="mb-3" style="margin-left:5px;"><strong>Sparepart Data</strong></h4>
-                <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
-                    <thead>
-                        <th>Code</th>
-                        <th>Description</th>
-                        <th>UM</th>
-                        <th>Qty Required</th>
-                        <th>Delete</th>
-                    </thead>
-                    <tbody id='ed_detailapp'></tbody>
-                    <tfoot>
-                      <tr>
-                        <td colspan="4">
-                          <input type="button" class="btn btn-lg btn-block btn-focus" id="ed_addrow" value="Add Item" style="background-color:#1234A5; color:white; font-size:16px" />
-                        </td>
-                      </tr>
-                    </tfoot>
-                </table>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-success bt-action" id="btnedit">Save</button>
-            </div>
-        </form>
-    </div>
-    </div>
-</div>
-
 <!-- Modal Delete -->
 <div class="modal fade" id="deleteModal" role="dialog" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
@@ -608,49 +551,6 @@
             theme : 'bootstrap4',
             
         });
-
-        $(document).on('click', '.adddata', function(e){
-            $('#addmodal').modal('show');
-
-            var code = $(this).data('code');
-            var desc = $(this).data('desc');
-
-            document.getElementById('ta_code').value = code;
-            document.getElementById('ta_desc').value = desc;
-
-            $.ajax({
-                url:"addpart?code="+code,
-                success: function(data) {
-                console.log(data);
-                $('#ed_detailapp').html('').append(data);
-              }
-            })
-
-       });
-
-       $("#ed_addrow").on("click", function() {
-
-        var newRow = $("<tr>");
-        var cols = "";
-
-        cols += '<td data-label="Barang">';
-        cols += '<select id="barang" class="form-control barang selectpicker" name="partcode[]" data-live-search="true" required autofocus>';
-        cols += '<option value = ""> -- Select Data -- </option>'
-        @foreach($datapart as $da)
-        cols += '<option value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
-        @endforeach
-        cols += '</select>';
-        cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
-        cols += '<td>Desc</td>'
-
-        cols += '<td data-title="Action"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
-        cols += '</tr>'
-        newRow.append(cols);
-        $("#ed_detailapp").append(newRow);
-        counter++;
-
-        selectRefresh();
-      });
 
     </script>
 

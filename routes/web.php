@@ -235,6 +235,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('/deleteins', 'SettingController@deleteins');
 	route::get('/inssearch', 'SettingController@inssearch');
 	route::get('/insmaster/pagination', 'SettingController@inspagination');
+	route::get('/addpart', 'SettingController@addpart');
 
 	//instruction Group
 	route::get('/insgroup', 'SettingController@insgroup');
@@ -246,6 +247,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('/deleteinsg', 'SettingController@deleteinsg');
 	route::get('/insgsearch', 'SettingController@insgsearch');
 	route::get('/insgroup/pagination', 'SettingController@insgpagination');
+
 
 	//repair part
 	route::get('/reppart', 'SettingController@reppart');

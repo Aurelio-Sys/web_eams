@@ -26,12 +26,6 @@
         data-check_mea="{{$show->ins_check_mea}}"
         data-part="{{$show->ins_part}}" data-ref="{{$show->ins_ref}}">
             <i class="icon-table fa fa-edit fa-lg"></i></a>
-
-        &ensp;
-        <a href="javascript:void(0)" class="adddata" data-toggle="tooltip"  title="Add Sparepart" data-target="#addmodal"
-        data-code="{{$show->ins_code}}" data-desc="{{$show->ins_desc}}">
-                <i class="icon-table fa fa-plus-square fa-lg"></i></a>
-                
         &ensp;
         <a href="javascript:void(0)" class="deletedata" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal"
         data-code="{{$show->ins_code}}" data-desc="{{$show->ins_desc}}">
