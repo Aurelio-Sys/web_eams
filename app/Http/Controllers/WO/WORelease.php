@@ -49,6 +49,35 @@ class WORelease extends Controller
                 ->where('wo_id','=',$id)
                 ->first();
 
-        return view('workorder.worelease-detail', compact('data'));
+        $spdata = DB::table('sp_mstr')
+                    ->orderBy('spm_code')
+                    ->get();
+
+        if($data->wo_repair_code1 != ""){
+
+        }
+
+        if($data->wo_repair_code2 != ""){
+
+        }
+
+        if($data->wo_repair_code3 != ""){
+
+        }
+
+        $sparepart1 = DB::table('wo_mstr')
+                        ->leftJoin('rep_master','wo_mstr.wo_repair_code1','rep_master.repm_code')
+                        ->leftJoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
+                        ->leftJoin('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
+                        ->where('wo_id','=',$id)
+                        ->get();
+
+        // dd($sparepart1);
+
+        return view('workorder.worelease-detail', compact('data','spdata'));
+    }
+    
+    public function requesttowh(Request $request){
+        
     }
 }

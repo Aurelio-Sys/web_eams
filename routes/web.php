@@ -477,6 +477,7 @@ Route::group(['middleware' => ['auth']], function() {
 	// wo release
 	Route::get('/worelease', [WORelease::class, 'browse']);
 	Route::get('/worelease/releasedetail/{id}', [WORelease::class, 'detailrelease'])->name('ReleaseDetail');
+	Route::post('/worelease/requestwh', [WORelease::class, 'requesttowh'])->name('requestWH');
 });
 
 Auth::routes();

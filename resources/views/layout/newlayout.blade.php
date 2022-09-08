@@ -8,8 +8,11 @@
 
   <title>eAMS Module</title>
   <link rel="icon" type="image/gif/jpg" href="images/imgheadxx.png">
+  <link rel="stylesheet" href="{{url('assets/css/bootstrap-select.min.css')}}">
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="{{url('plugins/fontawesome-free/css/all.min.css')}}">
+
+  
   <!-- IonIcons -->
   <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 
@@ -831,6 +834,8 @@ to get the desired effect
 <script src="{{url('dist/js/demo.js')}}"></script>
 <!-- <script src="dist/js/pages/dashboard3.js"></script> -->
 <script src="{{url('vendors/chart.js/dist/Chart.bundle.min.js')}}"></script>
+
+<script src="{{url('assets/js/bootstrap-select.min.js')}}"></script>
 
 @yield('scripts')
 <script type="text/javascript">
