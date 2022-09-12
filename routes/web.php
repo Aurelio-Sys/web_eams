@@ -234,12 +234,14 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/cekins', 'SettingController@cekins');
 	route::get('/viewtool', 'SettingController@viewtool');
 	route::get('/viewpart', 'SettingController@viewpart');
+	route::get('/viewum', 'SettingController@viewum');
 	route::post('/createins', 'SettingController@createins');
 	route::post('/editins', 'SettingController@editins');
 	route::post('/deleteins', 'SettingController@deleteins');
 	route::get('/inssearch', 'SettingController@inssearch');
 	route::get('/insmaster/pagination', 'SettingController@inspagination');
 	route::get('/addpart', 'SettingController@addpart');
+	route::post('/saveaddpart', 'SettingController@saveaddpart');
 
 	//instruction Group
 	route::get('/insgroup', 'SettingController@insgroup');

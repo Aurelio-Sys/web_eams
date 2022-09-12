@@ -1083,6 +1083,22 @@ class SettingController extends Controller
         }
     }
 
+    // cari UM dari spare part
+    public function viewum(Request $req)
+    {
+        $cek = DB::table('sp_mstr')
+            ->where('spm_code','=',$req->input('code'))
+            ->get();
+
+        if ($cek->count() == 0) {
+            return "tidak";
+        } else {
+            $cekum = $cek->where("spm_code","=",$req->input('code'))->first();
+            $um = $cekum->spm_um; 
+            return $um;
+        }
+    }
+
     //untuk create asset type
     public function createassettype(Request $req)
     {
@@ -3759,7 +3775,7 @@ class SettingController extends Controller
                             '<td><input type="text" class="form-control" name="partcode[]" readonly value="'.$data->insd_part.'" size="13"></td>'.
                             '<td>'.$data->spm_desc.'</td>'.
                             '<td><input type="text" class="form-control" name="partum[]" readonly value="'.$data->insd_um.'" size="13"></td>'.
-                            '<td><input type="text" class="form-control" name="partqty[]" readonly value="'.$data->insd_qty.'" size="13"></td>'.
+                            '<td><input type="number" class="form-control" name="partqty[]" readonly value="'.$data->insd_qty.'" size="13"></td>'.
                             '<td><input type="checkbox" name="cek[]" class="cek" id="cek" value="0">
                             <input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>'.
                             '</tr>';
@@ -3767,6 +3783,30 @@ class SettingController extends Controller
 
             return response($output);
         }
+    }
+
+    //untuk simpan sparepart di instruction
+    public function saveaddpart(Request $req)
+    {
+        dd($req->all());
+        $flg = 0;
+        foreach($req->partcode as $partcode){
+            DB::table('insd_det')
+            ->insert([
+                'insd_code'     => $req->ta_code,
+                'insd_part'   => $req->partcode[$flg],  
+                'insd_um'     => $req->partum[$flg],
+                'insd_qty'   => $req->partqty[$flg],   
+                'created_at'    => Carbon::now()->toDateTimeString(),
+                'updated_at'    => Carbon::now()->toDateTimeString(),
+                'edited_by'     => Session::get('username'),
+            ]);
+
+            $flg += 1;
+        }    
+
+        toast('Sparepart Added.', 'success');
+        return back();
     }
 
     //untuk delete Instruction Detail
