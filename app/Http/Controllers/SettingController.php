@@ -6,6 +6,9 @@ namespace App\Http\Controllers;
 use App\Models\Qxwsa as ModelsQxwsa;
 use App\Models\SiteMstr;
 use App\Models\LocMstr;
+use App\Models\SPGroupMstr;
+use App\Models\SPMstr;
+use App\Models\SPTypeMstr;
 use App\Services\WSAServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -2685,6 +2688,37 @@ class SettingController extends Controller
             }
         }
     }
+
+    public function loadsptype(Request $req){
+        $domain = ModelsQxwsa::first();
+
+        $spdata = (new WSAServices())->wsagetsptype($domain->wsas_domain);
+
+        if ($spdata === false) {
+            toast('WSA Failed', 'error')->persistent('Dismiss');
+            return redirect()->back();
+        } else {
+
+            if ($spdata[1] == "false") {
+                toast('Data Spare Part Type tidak ditemukan', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+                
+                foreach ($spdata[0] as $datas) {
+                    $spg = SPTypeMstr::firstOrNew(['spt_code'=>$datas->t_codevalue,
+                                              'spt_desc'=> $datas->t_comment]);
+                        $spg->spt_code = $datas->t_codevalue;
+                        $spg->spt_desc = $datas->t_comment;
+                        $spg->created_at = Carbon::now()->toDateTimeString();
+                        $spg->updated_at = Carbon::now()->toDateTimeString();
+                        $spg->save();
+                }
+            }
+        }
+
+        toast('Spare Part Type Loaded.', 'success');
+        return back();
+    }
 /* End Spare Part Type Master */
 
 /* Spare Part Group Master */
@@ -2822,6 +2856,37 @@ class SettingController extends Controller
                 return view('setting.table-sp-group', ['data' => $data, 'datasearch' => $datasearch]);
             }
         }
+    }
+
+    public function loadspgroup(Request $req){
+        $domain = ModelsQxwsa::first();
+
+        $spdata = (new WSAServices())->wsagetspgroup($domain->wsas_domain);
+
+        if ($spdata === false) {
+            toast('WSA Failed', 'error')->persistent('Dismiss');
+            return redirect()->back();
+        } else {
+
+            if ($spdata[1] == "false") {
+                toast('Data Spare Part Group tidak ditemukan', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+                
+                foreach ($spdata[0] as $datas) {
+                    $spg = SPGroupMstr::firstOrNew(['spg_code'=>$datas->t_codevalue,
+                                              'spg_desc'=> $datas->t_comment]);
+                        $spg->spg_code = $datas->t_codevalue;
+                        $spg->spg_desc = $datas->t_comment;
+                        $spg->created_at = Carbon::now()->toDateTimeString();
+                        $spg->updated_at = Carbon::now()->toDateTimeString();
+                        $spg->save();
+                }
+            }
+        }
+
+        toast('Spare Part Group Loaded.', 'success');
+        return back();
     }
 /* End Spare Part Group Master */
 
@@ -3025,6 +3090,45 @@ class SettingController extends Controller
                 return view('setting.table-sp-mstr', ['data' => $data, 'datatype' => $datatype, 'datagroup' => $datagroup, 'datasupp' => $datasupp, 'datasearch' => $datasearch]);
             }
         }
+    }
+
+    public function loadsparepart(Request $req){
+        $domain = ModelsQxwsa::first();
+
+        $spdata = (new WSAServices())->wsagetsp($domain->wsas_domain);
+
+        if ($spdata === false) {
+            toast('WSA Failed', 'error')->persistent('Dismiss');
+            return redirect()->back();
+        } else {
+
+            if ($spdata[1] == "false") {
+                toast('Data Spare Part tidak ditemukan', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+                
+                foreach ($spdata[0] as $datas) {
+                    $sp = SPMstr::firstOrNew(['spm_code'=>$datas->t_spcode,
+                                              'spm_desc'=> $datas->t_spname,
+                                              ]);
+                        $sp->spm_dom = $datas->t_dom;
+                        $sp->spm_site = $datas->t_site;
+                        $sp->spm_code = $datas->t_spcode;
+                        $sp->spm_desc = $datas->t_spname;
+                        $sp->spm_um = $datas->t_spum;
+                        $sp->spm_loc = $datas->t_loc;
+                        $sp->spm_lot = $datas->t_lotser;
+                        $sp->spm_group = $datas->t_group;
+                        $sp->spm_type = $datas->t_sptype;
+                        $sp->created_at = Carbon::now()->toDateTimeString();
+                        $sp->updated_at = Carbon::now()->toDateTimeString();
+                        $sp->save();
+                }
+            }
+        }
+
+        toast('Spare Part Loaded.', 'success');
+        return back();
     }
 /* End Spare Part Master */
 

@@ -83,7 +83,9 @@
                 <th>Code</th>
                 <th>Description</th>
                 <th>Site</th>
+                <!--
                 <th style="width: 15%;">Action</th>
+                -->
             </tr>
         </thead>
         <tbody>

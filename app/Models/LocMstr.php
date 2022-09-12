@@ -9,6 +9,9 @@ class LocMstr extends Model
     public $table = 'loc_mstr';
 
     protected $fillable = [
-        'id'
+        'id',
+        'loc_site',
+        'loc_code',
+        'loc_desc'
     ];
 }

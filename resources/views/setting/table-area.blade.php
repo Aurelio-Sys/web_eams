@@ -3,6 +3,7 @@
     <td>{{$show->loc_code}}</td>
     <td>{{$show->loc_desc}}</td>
     <td>{{$show->loc_site}} - {{$show->site_desc}}</td>
+    <!--
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editarea' data-toggle="tooltip"  title="Modify Data" data-target="#editModal" 
         data-locationid="{{$show->loc_code}}" data-desc="{{$show->loc_desc}}" data-site="{{$show->loc_site}}" 
@@ -13,6 +14,7 @@
         data-locationid="{{$show->loc_code}}" data-desc="{{$show->loc_desc}}" data-site="{{$show->loc_site}}">
             <i class="icon-table fa fa-trash fa-lg"></i></a>
     </td>
+    -->
 </tr>
 @empty
 <tr>

@@ -260,26 +260,26 @@ to get the desired effect
                     </a>
                   </li>
                
-                @if(str_contains( Session::get('menu_access'), 'WO07'))
+                
                   <li class="nav-item ">
                     <a href="/wonreleasebrowse" class="nav-link">
-                      <i class="nsav-icon far fa-circle"></i>
+                      <i class="nav-icon far fa-circle"></i>
                       <p>
                         Warehouse Confirm Browse
                       </p>
                     </a>
                   </li>
-                @endif
-                @if(str_contains( Session::get('menu_access'), 'WO08'))
+                
+                
                   <li class="nav-item ">
                     <a href="/wonreleasebrowse" class="nav-link">
-                      <i class="nsav-icon far fa-circle"></i>
+                      <i class="nav-icon far fa-circle"></i>
                       <p>
                         Engineer Confirm Browse
                       </p>
                     </a>
                   </li>
-                @endif
+                
                 @if(str_contains( Session::get('menu_access'), 'WO02'))
                   <li class="nav-item ">
                     <a href="/wojoblist" class="nav-link">
