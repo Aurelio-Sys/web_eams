@@ -3531,6 +3531,7 @@ class SettingController extends Controller
 
         if($req->ajax()){
             $data = DB::table('sp_mstr')
+                ->orderBy('spm_code')
                 ->get();
 
             $array = json_decode(json_encode($data), true);
@@ -3663,15 +3664,19 @@ class SettingController extends Controller
             $data = DB::table('insd_det')
                     ->join('sp_mstr','spm_code','insd_part')
                     ->where('insd_code','=',$req->code)
+                    ->orderBy('insd_part')
+                    ->get();
+
+            $dspm = DB::table('sp_mstr')
+                    ->orderBy('spm_code')
                     ->get();
 
             $output = '';
             foreach ($data as $data) {
-                $output .= '<tr>'.
-                            '<td><input type="text" class="form-control" name="partcode[]" readonly value="'.$data->insd_part.'" size="13"></td>'.
-                            '<td>'.$data->spm_desc.'</td>'.
+                $output .= '<tr>
+                            <input type="text" class="form-control" name="partcode[]" readonly value="'.$data->insd_part.'" size="13"></td>'.
                             '<td><input type="text" class="form-control" name="partum[]" readonly value="'.$data->insd_um.'" size="13"></td>'.
-                            '<td><input type="number" class="form-control" name="partqty[]" readonly value="'.$data->insd_qty.'" size="13"></td>'.
+                            '<td><input type="number" class="form-control" name="partqty[]" readonly value="'.$data->insd_qty.'" size="13" autocomplete="off"></td>'.
                             '<td><input type="checkbox" name="cek[]" class="cek" id="cek" value="0">
                             <input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>'.
                             '</tr>';
@@ -3684,18 +3689,18 @@ class SettingController extends Controller
     //untuk simpan sparepart di instruction
     public function saveaddpart(Request $req)
     {
-        dd($req->all());
+        //dd($req->all());
         $flg = 0;
         foreach($req->partcode as $partcode){
             DB::table('insd_det')
             ->insert([
                 'insd_code'     => $req->ta_code,
                 'insd_part'   => $req->partcode[$flg],  
-                'insd_um'     => $req->partum[$flg],
+                'insd_um'     => "blm", /* $req->partum[$flg], */
                 'insd_qty'   => $req->partqty[$flg],   
                 'created_at'    => Carbon::now()->toDateTimeString(),
                 'updated_at'    => Carbon::now()->toDateTimeString(),
-                'edited_by'     => Session::get('username'),
+                'insd_edited_by'     => Session::get('username'),
             ]);
 
             $flg += 1;

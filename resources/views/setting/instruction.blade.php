@@ -681,7 +681,7 @@
         cols += '</select>';
         cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
         cols += '<td><input type="text" name="partum[]" id="partum" class="form-control"></td>';
-        cols += '<td><input type="number" name="partqty[]" id="partqty" class="form-control"></td>';
+        cols += '<td><input type="number" name="partqty[]" id="partqty" class="form-control"autocomplete="off"></td>';
         cols += '<td data-title="Action"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
         cols += '</tr>'
         newRow.append(cols);
