@@ -263,7 +263,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/addpart">
+            <form class="form-horizontal" method="post" action="/saveaddpart">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
@@ -670,9 +670,10 @@
 
         var newRow = $("<tr>");
         var cols = "";
+        var um = "";
 
         cols += '<td data-label="Barang">';
-        cols += '<select id="barang" class="form-control barang selectpicker" name="partcode[]" data-live-search="true" required autofocus>';
+        cols += '<select id="partcode" class="form-control barang selectpicker" name="partcode[]" data-live-search="true" required autofocus>';
         cols += '<option value = ""> -- Select Data -- </option>'
         @foreach($dataPart as $da)
         cols += '<option value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
@@ -680,7 +681,7 @@
         cols += '</select>';
         cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
         cols += '<td><input type="text" name="partum[]" id="partum" class="form-control"></td>';
-        cols += '<td><input type="text" name="partqty[]" id="partqty" class="form-control"></td>';
+        cols += '<td><input type="number" name="partqty[]" id="partqty" class="form-control"></td>';
         cols += '<td data-title="Action"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
         cols += '</tr>'
         newRow.append(cols);
@@ -688,6 +689,25 @@
         counter++;
 
         selectPicker();
+    });
+
+    $(document).on('change', '#partcode', function() {          
+        var code = $('#partcode').val();
+        var site = "";
+        var loc = "";
+
+          $.ajax({
+            url:"/viewum?code="+code,
+            success: function(data) {
+              
+              if (data != "tidak") {
+                //alert("Asset Already Registered!!");
+                /* document.getElementById('t_loc').value = '';
+                document.getElementById('t_loc').focus(); */
+              }
+              console.log(data);
+            }
+          })
     });
 </script>
 
