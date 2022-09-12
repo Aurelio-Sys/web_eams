@@ -180,6 +180,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('/deletespt', 'SettingController@deletespt');
 	route::get('/sptsearch', 'SettingController@sptsearch');
 	route::get('/sptmaster/pagination', 'SettingController@sptpagination');
+	route::post('/loadsptype','SettingController@loadsptype');
 
 	//spare part type group
 	route::get('/spgmaster', 'SettingController@spgmaster');
@@ -189,6 +190,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('/deletespg', 'SettingController@deletespg');
 	route::get('/spgsearch', 'SettingController@spgsearch');
 	route::get('/spgmaster/pagination', 'SettingController@spgpagination');
+	route::post('/loadspgroup', 'SettingController@loadspgroup');
 
 	//spare part master
 	route::get('/spmmaster', 'SettingController@spmmaster');
@@ -198,6 +200,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('/deletespm', 'SettingController@deletespm');
 	route::get('/spmsearch', 'SettingController@spmsearch');
 	route::get('/spmmaster/pagination', 'SettingController@spmpagination');
+	Route::post('/loadsparepart', 'SettingController@loadsparepart');
 
 	//tool master
 	route::get('/toolmaster', 'SettingController@toolmaster');

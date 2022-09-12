@@ -44,7 +44,7 @@
 </tr>
 @endforelse
 <tr>
-  <td style="border: none !important;">
+  <td style="border: none !important;" colspan="6">
     {{ $data->links() }}
   </td>
 </tr>

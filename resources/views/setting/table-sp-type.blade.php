@@ -2,6 +2,7 @@
 <tr>
     <td>{{$show->spt_code}}</td>
     <td>{{$show->spt_desc}}</td>
+    <!--
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal" 
         data-code="{{$show->spt_code}}" data-desc="{{$show->spt_desc}}">
@@ -11,6 +12,7 @@
         data-code="{{$show->spt_code}}" data-desc="{{$show->spt_desc}}">
             <i class="icon-table fa fa-trash fa-lg"></i></a>
     </td>
+    -->
 </tr>
 @empty
 <tr>
