@@ -108,7 +108,9 @@
                 <th width="5%">UM</th>
                 <th width="20%">Type</th>
                 <th width="20%">Group</th>
+                <!--
                 <th width="10%">Action</th>
+                -->
             </tr>
         </thead>
         <tbody>

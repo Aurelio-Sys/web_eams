@@ -22,6 +22,7 @@
     <td>{{$show->spm_um}}</td>
     <td>{{$show->spm_type}} -- {{$desc}} </td>
     <td>{{$show->spm_group}} -- {{$desc1}} </td>
+    <!--
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal"
         data-code="{{$show->spm_code}}" data-desc="{{$show->spm_desc}}" data-type="{{$show->spm_type}}" 
@@ -35,6 +36,7 @@
         data-code="{{$show->spm_code}}" data-desc="{{$show->spm_desc}}" >
             <i class="icon-table fa fa-trash fa-lg"></i></a>
     </td>
+    -->
 </tr>
 @empty
 <tr>
