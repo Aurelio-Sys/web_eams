@@ -681,7 +681,7 @@
         @endforeach
         cols += '</select>';
         cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
-        cols += '<td><input type="text" name="partum[]" id="partum" class="form-control"></td>';
+        cols += '<td><input type="text" name="partum[]" id="partum" class="form-control partum"></td>';
         cols += '<td><input type="number" name="partqty[]" id="partqty" class="form-control"autocomplete="off"></td>';
         cols += '<td data-title="Action"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
         cols += '</tr>'
@@ -690,7 +690,7 @@
         counter++;
 
         selectPicker();
-        selectRefresh();
+        //selectRefresh();
     });
 
     $(document).on('change','#cek',function(e){
@@ -706,16 +706,16 @@
         }        
     });
 
-    $(document).on('change', '#partcode', function() {          
-        var code = $('#partcode').val();
-        var site = "";
-        var loc = "";
+    $(document).on('change', '.selectpicker', function() {          
+        var um = $(this).closest('tr').find('.partum');
+		var item = $(this).val();
 
           $.ajax({
-            url:"/viewum?code="+code,
-            success: function(data) {
+            url:"/viewum?code="+item,
+            success: function(data) { 
               console.log(data);
-              document.getElementById('partum').value = data;
+              //$(this).closest("tr").find('.partum').val(data);
+              um.val(data);
             }
           })
     });
