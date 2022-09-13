@@ -4,6 +4,7 @@ namespace App\Http\Controllers\WO;
 
 use App\Http\Controllers\Controller;
 use App\Services\CreateTempTable;
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -114,6 +115,39 @@ class WORelease extends Controller
     }
 
     public function submitrelease(Request $req){
-        dd($req->all());
+        
+        DB::beginTransaction();
+
+        try{
+
+            foreach($req->repcode as $a => $key){
+                DB::table('wo_dets')->insert([
+                    'wo_dets_nbr' => $req->hide_wonum,
+                    'wo_dets_rc' => $req->repcode[$a],
+                    'wo_dets_sp' => $req->partneed[$a],
+                    'wo_dets_sp_qty' => $req->qtyrequest[$a],
+                ]);
+            }
+
+            DB::table('wo_mstr')
+                ->where('wo_nbr','=',$req->hide_wonum)
+                ->update([
+                    'wo_status' => 'Released'
+                ]);
+    
+            
+            DB::commit();
+    
+            toast('WO Successfuly Released !','success');
+            return redirect()->route('browseRelease');
+
+        } catch (Exception $e){
+            // dd($e);
+            DB::rollBack();
+            toast('WO Release Failed','error');
+            return redirect()->route('browseRelease');
+        }
+
+        
     }
 }

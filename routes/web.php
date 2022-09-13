@@ -480,7 +480,7 @@ Route::group(['middleware' => ['auth']], function() {
    	route::post('/deleteimp', 'impController@delete');
 
 	// wo release
-	Route::get('/worelease', [WORelease::class, 'browse']);
+	Route::get('/worelease', [WORelease::class, 'browse'])->name('browseRelease');
 	Route::get('/worelease/releasedetail/{id}', [WORelease::class, 'detailrelease'])->name('ReleaseDetail');
 	Route::post('/worelease/requestwh', [WORelease::class, 'requesttowh'])->name('requestWH');
 	Route::post('/submitrelease', [WORelease::class,'submitrelease'])->name('submitRelease');
