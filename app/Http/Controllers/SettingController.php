@@ -3802,8 +3802,8 @@ class SettingController extends Controller
                     'insd_code'     => $req->ta_code,
                     'insd_part'   => $req->partcode[$flg],  
                     'insd_part_desc' => $descspm,
-                    'insd_um'     => "blm", /* $req->partum[$flg], */
-                    'insd_qty'   => $req->partqty[$flg],   
+                    'insd_um'     => $req->partum[$flg] == NULL ? "NN" : $req->partum[$flg], 
+                    'insd_qty'   => $req->partqty[$flg] == NULL ? 0 : $req->partqty[$flg],
                     'created_at'    => Carbon::now()->toDateTimeString(),
                     'updated_at'    => Carbon::now()->toDateTimeString(),
                     'insd_edited_by'     => Session::get('username'),
