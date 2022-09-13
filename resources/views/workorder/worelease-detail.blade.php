@@ -47,9 +47,11 @@
 </div>
 
 <div class="table-responsive col-lg-12 col-md-12">
-    <form action="" method="post" id="submit">
+    <form action="/submitrelease" method="post" id="submit">
         {{ method_field('post') }}
         {{ csrf_field() }}
+
+        <input type="hidden" name="hide_wonum" value="{{$data->wo_nbr}}"/>
 
         <div class="modal-header">
         </div>
@@ -60,6 +62,7 @@
                     <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0">
                         <thead>
                             <tr>
+                                <td style="text-align: center; width: 12% !important; font-weight: bold;">Repair Code</td>
                                 <td style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</td>
                                 <td style="text-align: center; width: 15% !important; font-weight: bold;">Qty Req.</td>
                                 <td style="text-align: center; width: 15% !important; font-weight: bold;">Qty to Request</td>
@@ -67,21 +70,37 @@
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
+
+                            @forelse ( $combineSP as $datas )
                             <tr>
                                 <td style="vertical-align:middle;text-align:center;">
-                                    sparepart code -- desc
+                                    {{$datas->repair_code}}
+                                    <input type="hidden" name="repcode[]" value="{{$datas->repair_code}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
-                                    1
+                                    {{$datas->insd_part}}
+                                    <input type="hidden" name="partneed[]" value="{{$datas->insd_part}}" />
+                                </td>
+                                <td style="vertical-align:middle;text-align:center;">
+                                    {{$datas->insd_qty}}
+                                    <input type="hidden" name="qtyreq[]" value="{{$datas->insd_part}}" />
                                 </td>
                                 <td>
-                                    <input type="number" class="form-control" step="1" min="0" name="qtyrequest[]" required />
+                                    <input type="number" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$datas->insd_qty}}" required />
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
+                                    <input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete">
+                                    <!--
                                     <input type="checkbox" class="qaddel" value="">
                                     <input type="hidden" class="op" name="op[]" value="M" />
+                                    -->
                                 </td>
                             </tr>
+                            @empty
+
+                            @endforelse
+
+
                         </tbody>
                         <tfoot>
                             <tr>
@@ -139,13 +158,12 @@
             var newRow = $("<tr>");
             var cols = "";
 
-            cols += '<td>';
+            cols += '<td colspan="2">';
             cols += '<select name="spcode[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" required autofocus >';
             cols += '<option value = ""> -- Select Data -- </option>';
             @foreach($spdata as $da)
             cols += '<option value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
             @endforeach
-            cols += '</select>';
             cols += '</select>';
             cols += '</td>';
 
