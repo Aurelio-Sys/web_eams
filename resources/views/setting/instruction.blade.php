@@ -117,14 +117,14 @@
                             <input id="t_ref" type="text" class="form-control" name="t_ref" autocomplete="off" autofocus maxlength="50" />
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <!-- <div class="form-group row">
                         <label for="t_part" class="col-md-4 col-form-label text-md-right">Part Code</label>
                         <div class="col-md-6">
                             <select id="t_part" name="t_part[]" class="form-control" multiple="multiple">
                                 <option value="">--Select Parts--</option>
                             </select>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="form-group row">
                         <label for="t_tool" class="col-md-4 col-form-label text-md-right">Tools Code</label>
                         <div class="col-md-6">
@@ -200,14 +200,14 @@
                             <input id="te_ref" type="text" class="form-control" name="te_ref" autocomplete="off" autofocus maxlength="50" />
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <!-- <div class="form-group row">
                         <label for="te_part" class="col-md-4 col-form-label text-md-right">Parts Code</label>
                         <div class="col-md-6">
                             <select id="te_part" name="te_part[]" class="form-control" multiple="multiple">
                                 <option value="">--Select Parts--</option>
                             </select>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="form-group row">
                         <label for="te_tool" class="col-md-4 col-form-label text-md-right">Tools Code</label>
                         <div class="col-md-6">
@@ -275,7 +275,8 @@
                     <div class="form-group row">
                         <label for="ta_desc" class="col-md-4 col-form-label text-md-right">Instruction Desc</label>
                         <div class="col-md-6">
-                            <input id="ta_desc" type="text" class="form-control" name="ta_desc" readonly />
+                            <!-- <input id="ta_desc" type="text" class="form-control" name="ta_desc" readonly /> -->
+                            <textarea id="ta_desc" type="text" class="form-control" name="ta_desc" readonly></textarea>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -689,6 +690,20 @@
         counter++;
 
         selectPicker();
+        selectRefresh();
+    });
+
+    $(document).on('change','#cek',function(e){
+        var checkbox = $(this), // Selected or current checkbox
+        value = checkbox.val(); // Value of checkbox
+
+        if (checkbox.is(':checked'))
+        {
+            $(this).closest("tr").find('.tick').val(1);
+        } else
+        {
+            $(this).closest("tr").find('.tick').val(0);
+        }        
     });
 
     $(document).on('change', '#partcode', function() {          
@@ -699,13 +714,8 @@
           $.ajax({
             url:"/viewum?code="+code,
             success: function(data) {
-              
-              if (data != "tidak") {
-                //alert("Asset Already Registered!!");
-                /* document.getElementById('t_loc').value = '';
-                document.getElementById('t_loc').focus(); */
-              }
               console.log(data);
+              document.getElementById('partum').value = data;
             }
           })
     });

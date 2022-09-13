@@ -1086,16 +1086,11 @@ class SettingController extends Controller
     // cari UM dari spare part
     public function viewum(Request $req)
     {
-        $cek = DB::table('sp_mstr')
-            ->where('spm_code','=',$req->input('code'))
-            ->get();
+        if ($req->ajax()) {
 
-        if ($cek->count() == 0) {
-            return "tidak";
-        } else {
-            $cekum = $cek->where("spm_code","=",$req->input('code'))->first();
-            $um = $cekum->spm_um; 
-            return $um;
+            $output = DB::table('sp_mstr')->where('spm_code','=',$req->input('code'))->value('spm_um');
+
+            return response($output);
         }
     }
 
@@ -3763,7 +3758,7 @@ class SettingController extends Controller
     //add sparepart
     public function addpart(Request $req)
     {
-        //dd($req->all());
+        // dd($req->all());
         if ($req->ajax()) {
             $data = DB::table('insd_det')
                     ->join('sp_mstr','spm_code','insd_part')
@@ -3771,14 +3766,12 @@ class SettingController extends Controller
                     ->orderBy('insd_part')
                     ->get();
 
-            $dspm = DB::table('sp_mstr')
-                    ->orderBy('spm_code')
-                    ->get();
-
             $output = '';
             foreach ($data as $data) {
-                $output .= '<tr>
-                            <input type="text" class="form-control" name="partcode[]" readonly value="'.$data->insd_part.'" size="13"></td>'.
+                $descspm = DB::table('sp_mstr')->where('spm_code','=',$data->insd_part)->value('spm_desc');
+                $output .= '<tr>'.
+                            '<td>'.$data->insd_part.' -- '.$descspm.
+                            '<input type="hidden" name="partcode[]" value="'.$data->insd_part.'"></td>'.
                             '<td><input type="text" class="form-control" name="partum[]" readonly value="'.$data->insd_um.'" size="13"></td>'.
                             '<td><input type="number" class="form-control" name="partqty[]" readonly value="'.$data->insd_qty.'" size="13" autocomplete="off"></td>'.
                             '<td><input type="checkbox" name="cek[]" class="cek" id="cek" value="0">
@@ -3793,20 +3786,29 @@ class SettingController extends Controller
     //untuk simpan sparepart di instruction
     public function saveaddpart(Request $req)
     {
-        //dd($req->all());
+        // dd($req->all());
+        DB::table('insd_det')
+            ->where('insd_code', '=', $req->ta_code)
+            ->delete();
+        
         $flg = 0;
         foreach($req->partcode as $partcode){
-            DB::table('insd_det')
-            ->insert([
-                'insd_code'     => $req->ta_code,
-                'insd_part'   => $req->partcode[$flg],  
-                'insd_um'     => "blm", /* $req->partum[$flg], */
-                'insd_qty'   => $req->partqty[$flg],   
-                'created_at'    => Carbon::now()->toDateTimeString(),
-                'updated_at'    => Carbon::now()->toDateTimeString(),
-                'insd_edited_by'     => Session::get('username'),
-            ]);
+            if($req->tick[$flg] == 0) {
 
+                $descspm = DB::table('sp_mstr')->where('spm_code','=',$req->partcode[$flg])->value('spm_desc');
+
+                DB::table('insd_det')
+                ->insert([
+                    'insd_code'     => $req->ta_code,
+                    'insd_part'   => $req->partcode[$flg],  
+                    'insd_part_desc' => $descspm,
+                    'insd_um'     => "blm", /* $req->partum[$flg], */
+                    'insd_qty'   => $req->partqty[$flg],   
+                    'created_at'    => Carbon::now()->toDateTimeString(),
+                    'updated_at'    => Carbon::now()->toDateTimeString(),
+                    'insd_edited_by'     => Session::get('username'),
+                ]);
+            }
             $flg += 1;
         }    
 

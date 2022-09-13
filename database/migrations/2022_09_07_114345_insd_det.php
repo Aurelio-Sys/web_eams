@@ -17,6 +17,7 @@ class InsdDet extends Migration
             $table->increments('insd_id');
             $table->string('insd_code');  //string 100 karakter
             $table->string('insd_part');
+            $table->string('insd_part_desc');
             $table->string('insd_um');
             $table->decimal('insd_qty',8,2);
             $table->tinyInteger('insd_active')->default('1');
