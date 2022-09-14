@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\WO\WORelease;
+use App\Http\Controllers\WO\WHSConfirm;
 use Master\QxWsaMTController;
 use Illuminate\Support\Facades\Route;
 
@@ -484,6 +485,12 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/worelease/releasedetail/{id}', [WORelease::class, 'detailrelease'])->name('ReleaseDetail');
 	Route::post('/worelease/requestwh', [WORelease::class, 'requesttowh'])->name('requestWH');
 	Route::post('/submitrelease', [WORelease::class,'submitrelease'])->name('submitRelease');
+
+	// whs confirm
+	Route::get('/whsconfirm', [WHSConfirm::class, 'browse'])->name('browseRelease');
+	Route::get('/whsconfirm/detailwhs/{id}', [WHSConfirm::class, 'detailwhs'])->name('WhsconfDetail');
+	// Route::post('/whsconfirm/requestwh', [WHSConfirm::class, 'requesttowh'])->name('requestWH');
+	// Route::post('/submitrelease', [WHSConfirm::class,'submitrelease'])->name('submitRelease');
 });
 
 Auth::routes();

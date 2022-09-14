@@ -262,7 +262,7 @@ to get the desired effect
                
                 
                   <li class="nav-item ">
-                    <a href="/wonreleasebrowse" class="nav-link">
+                    <a href="/whsconfirm" class="nav-link">
                       <i class="nav-icon far fa-circle"></i>
                       <p>
                         Warehouse Confirm

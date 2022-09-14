@@ -855,7 +855,7 @@ class wocontroller extends Controller
                 
         $asset = $req->c_asset.' - '.$assettable->asset_desc;
         
-        EmailScheduleJobs::dispatch($runningnbr,$asset,'5','','','','');
+        // dimatiin dulu buat trial EmailScheduleJobs::dispatch($runningnbr,$asset,'5','','','','');
 
         toast('WO '.$runningnbr.' Successfuly Created !','success');
         return back();
@@ -930,7 +930,7 @@ class wocontroller extends Controller
                 
         $asset = $req->c_asset.' - '.$assettable->asset_desc;
         
-        EmailScheduleJobs::dispatch($runningnbr,$asset,'1','','','','');
+        // dimatiin dulu buat trial EmailScheduleJobs::dispatch($runningnbr,$asset,'1','','','','');
 
         toast('WO Successfuly Created !','success');
         return back();
@@ -1094,7 +1094,7 @@ class wocontroller extends Controller
                 
         $asset = $req->c_asset.' - '.$assettable->asset_desc;
         
-        EmailScheduleJobs::dispatch($runningnbr,$asset,'1','','','','');
+        // dimatiin dulu buat trial EmailScheduleJobs::dispatch($runningnbr,$asset,'1','','','','');
 
         toast($runningnbr.' Successfuly Created !','success');
         return back();
