@@ -255,7 +255,7 @@ to get the desired effect
                     <a href="/worelease" class="nav-link">
                       <i class="nav-icon far fa-circle"></i>
                       <p>
-                        Work Order Release Browse
+                        Work Order Release
                       </p>
                     </a>
                   </li>
@@ -265,7 +265,7 @@ to get the desired effect
                     <a href="/wonreleasebrowse" class="nav-link">
                       <i class="nav-icon far fa-circle"></i>
                       <p>
-                        Warehouse Confirm Browse
+                        Warehouse Confirm
                       </p>
                     </a>
                   </li>
@@ -275,7 +275,7 @@ to get the desired effect
                     <a href="/confeng" class="nav-link">
                       <i class="nav-icon far fa-circle"></i>
                       <p>
-                        Engineer Confirm Browse
+                        Engineer Confirm
                       </p>
                     </a>
                   </li>
