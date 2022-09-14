@@ -4,6 +4,7 @@ namespace App\Http\Controllers\WO;
 
 use App\Http\Controllers\Controller;
 use App\Services\CreateTempTable;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -54,6 +55,14 @@ class WORelease extends Controller
             ->where('wo_id', '=', $id)
             ->first();
 
+        $rpdata = DB::table('rep_master')
+                ->orderBy('repm_code')
+                ->get();
+
+        $insdata = DB::table('ins_mstr')
+                ->orderBy('ins_code')
+                ->get();
+
         $spdata = DB::table('sp_mstr')
             ->orderBy('spm_code')
             ->get();
@@ -61,7 +70,7 @@ class WORelease extends Controller
         if ($data->wo_repair_code1 != "") {
 
             $sparepart1 = DB::table('wo_mstr')
-                ->select('wo_repair_code1 as repair_code','insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
+                ->select('wo_repair_code1 as repair_code','ins_code','insd_part_desc','insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
                 ->leftJoin('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
                 ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                 ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -78,7 +87,7 @@ class WORelease extends Controller
         if ($data->wo_repair_code2 != "") {
             // dump('repaircode2');
             $sparepart2 = DB::table('wo_mstr')
-                ->select('wo_repair_code2 as repair_code','insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
+                ->select('wo_repair_code2 as repair_code','ins_code','insd_part_desc','insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
                 ->leftJoin('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
                 ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                 ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -95,7 +104,7 @@ class WORelease extends Controller
         if ($data->wo_repair_code3 != "") {
             // dump('repaircode3');
             $sparepart3 = DB::table('wo_mstr')
-                ->select('wo_repair_code3 as repair_code','insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
+                ->select('wo_repair_code3 as repair_code','ins_code','insd_part_desc','insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
                 ->leftJoin('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
                 ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                 ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -111,7 +120,7 @@ class WORelease extends Controller
 
         // dd($combineSP);
 
-        return view('workorder.worelease-detail', compact('data', 'spdata','combineSP'));
+        return view('workorder.worelease-detail', compact('data', 'spdata','combineSP','rpdata','insdata'));
     }
 
     public function submitrelease(Request $req){
@@ -120,19 +129,22 @@ class WORelease extends Controller
 
         try{
 
-            foreach($req->repcode as $a => $key){
+            foreach($req->partneed as $a => $key){
                 DB::table('wo_dets')->insert([
                     'wo_dets_nbr' => $req->hide_wonum,
                     'wo_dets_rc' => $req->repcode[$a],
                     'wo_dets_sp' => $req->partneed[$a],
                     'wo_dets_sp_qty' => $req->qtyrequest[$a],
+                    'wo_dets_ins' => $req->inscode[$a] ?? null,
+                    'wo_dets_created_at' => Carbon::now()->toDateTimeString(),
                 ]);
             }
 
             DB::table('wo_mstr')
                 ->where('wo_nbr','=',$req->hide_wonum)
                 ->update([
-                    'wo_status' => 'Released'
+                    'wo_status' => 'Released',
+                    'wo_updated_at' => Carbon::now()->toDateTimeString(),
                 ]);
     
             
