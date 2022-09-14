@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\WO\ConfirmEng;
 use App\Http\Controllers\WO\WORelease;
+use Illuminate\Support\Facades\Auth;
 use Master\QxWsaMTController;
 use Illuminate\Support\Facades\Route;
 
@@ -484,6 +486,11 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/worelease/releasedetail/{id}', [WORelease::class, 'detailrelease'])->name('ReleaseDetail');
 	Route::post('/worelease/requestwh', [WORelease::class, 'requesttowh'])->name('requestWH');
 	Route::post('/submitrelease', [WORelease::class,'submitrelease'])->name('submitRelease');
+
+	// wo confirm engineer
+	Route::get('/confeng', [ConfirmEng::class, 'index'])->name('browseConfEng');
+	Route::get('/confeng/confirmdetail/{id}', [ConfirmEng::class, 'detailconfirm'])->name('ConfDetail');
+	
 });
 
 Auth::routes();
