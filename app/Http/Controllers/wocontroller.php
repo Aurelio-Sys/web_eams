@@ -41,55 +41,59 @@ use Response;
 
 class wocontroller extends Controller
 {
-    private function httpHeader($req) {
-        return array('Content-type: text/xml;charset="utf-8"',
+    private function httpHeader($req)
+    {
+        return array(
+            'Content-type: text/xml;charset="utf-8"',
             'Accept: text/xml',
             'Cache-Control: no-cache',
             'Pragma: no-cache',
             'SOAPAction: ""',        // jika tidak pakai SOAPAction, isinya harus ada tanda petik 2 --> ""
-            'Content-length: ' . strlen(preg_replace("/\s+/", " ", $req)));
+            'Content-length: ' . strlen(preg_replace("/\s+/", " ", $req))
+        );
     }
-//wo browse
-    public function wobrowsemenu(){
+    //wo browse
+    public function wobrowsemenu()
+    {
         //dd(Session::get('department'));    
-            if (strpos(Session::get('menu_access'), 'WO05') !== false) {
-                $usernow = DB::table('users')
-                    ->leftjoin('eng_mstr','users.username','eng_mstr.eng_code')
-                    ->where('username','=',session()->get('username'))
-                    ->first();
+        if (strpos(Session::get('menu_access'), 'WO05') !== false) {
+            $usernow = DB::table('users')
+                ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+                ->where('username', '=', session()->get('username'))
+                ->first();
 
-                $data = DB::table('wo_mstr')
-                    ->join('asset_mstr','asset_mstr.asset_code','wo_mstr.wo_asset')
-                    ->orderby('wo_created_at','desc')
-                    ->orderBy('wo_mstr.wo_id', 'desc')
-                    //->whereWo_nbr('WO-21-0036')
-                    //->get();
-                    ->paginate(10);
-                //dd($data);
+            $data = DB::table('wo_mstr')
+                ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset')
+                ->orderby('wo_created_at', 'desc')
+                ->orderBy('wo_mstr.wo_id', 'desc')
+                //->whereWo_nbr('WO-21-0036')
+                //->get();
+                ->paginate(10);
+            //dd($data);
 
-                $custrnow = DB::table('wo_mstr')
-                            ->selectRaw('wo_creator,min(name) as creator_desc')
-                            // ->join('eng_mstr','wo_mstr.wo_creator','eng_mstr.eng_code')
-                            ->join('users','wo_mstr.wo_creator','users.username')
-                            ->groupBy('wo_creator')
-                            ->get();
-                            // dd($custrnow);
+            $custrnow = DB::table('wo_mstr')
+                ->selectRaw('wo_creator,min(name) as creator_desc')
+                // ->join('eng_mstr','wo_mstr.wo_creator','eng_mstr.eng_code')
+                ->join('users', 'wo_mstr.wo_creator', 'users.username')
+                ->groupBy('wo_creator')
+                ->get();
+            // dd($custrnow);
 
-                $depart = DB::table('dept_mstr')
-                        ->get();
-                $engineer = DB::table('eng_mstr')
-                        ->where('eng_active','=','Yes')
-                        ->get();
-                $asset = DB::table('asset_mstr')
-                        ->where('asset_active','=','Yes')
-                        ->get();
-                $failure = DB::table('fn_mstr')
-                        ->get();
-                $impact = DB::table('imp_mstr')
-                        ->get();
-                $wottype = DB::table('wotyp_mstr')
-                        ->get();
-                return view('workorder.woview', ['impact'=>$impact,'wottype'=>$wottype,'custrnow' => $custrnow, 'data' => $data,'user' => $engineer,'engine'=>$engineer,'asset1'=>$asset,'asset2'=>$asset,'failure' =>$failure,'usernow' =>$usernow,'dept'=>$depart,'fromhome' => '']);
+            $depart = DB::table('dept_mstr')
+                ->get();
+            $engineer = DB::table('eng_mstr')
+                ->where('eng_active', '=', 'Yes')
+                ->get();
+            $asset = DB::table('asset_mstr')
+                ->where('asset_active', '=', 'Yes')
+                ->get();
+            $failure = DB::table('fn_mstr')
+                ->get();
+            $impact = DB::table('imp_mstr')
+                ->get();
+            $wottype = DB::table('wotyp_mstr')
+                ->get();
+            return view('workorder.woview', ['impact' => $impact, 'wottype' => $wottype, 'custrnow' => $custrnow, 'data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '']);
         } else {
             toast('Anda tidak memiliki akses menu, Silahkan kontak admin', 'error');
             return back();
@@ -97,22 +101,23 @@ class wocontroller extends Controller
     }
 
     //wo create menu
-    public function wocreatemenu(){
+    public function wocreatemenu()
+    {
         // dd(Session::all())
         if (strpos(Session::get('menu_access'), 'WO04') !== false) {
             $usernow = DB::table('users')
-                    ->leftjoin('eng_mstr','users.username','eng_mstr.eng_code')
-                    // ->select('approver')
-                    ->where('username','=',session()->get('username'))
-                    ->get();
+                ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+                // ->select('approver')
+                ->where('username', '=', session()->get('username'))
+                ->get();
             // dd($usernow);
-            
+
             $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+
                 ->whereRaw('wo_sr_nbr is null')
-                ->where('wo_status','=','plan')
-                ->where('wo_creator','=',Session()->get('username'))
+                ->where('wo_status', '=', 'plan')
+                ->where('wo_creator', '=', Session()->get('username'))
                 // ->where(function($query){
                 //     $query->where('wo_engineer1','=',Session()->get('username'))
                 //     ->orwhere('wo_engineer2','=',Session()->get('username'))
@@ -120,127 +125,129 @@ class wocontroller extends Controller
                 //     ->orwhere('wo_engineer4','=',Session()->get('username'))
                 //     ->orwhere('wo_engineer5','=',Session()->get('username'));
                 // })
-                ->orderby('wo_created_at','desc')
+                ->orderby('wo_created_at', 'desc')
                 ->orderBy('wo_mstr.wo_id', 'desc')
                 ->paginate(10);
             //  dd($data);
             $depart = DB::table('dept_mstr')
-                    ->get();
+                ->get();
             $engineer = DB::table('eng_mstr')
-                    ->where('eng_active','=','Yes')
-                    ->get();
+                ->where('eng_active', '=', 'Yes')
+                ->get();
             $asset = DB::table('asset_mstr')
-                    ->where('asset_active','=','Yes')
-                    ->get();
+                ->where('asset_active', '=', 'Yes')
+                ->get();
             $failure = DB::table('fn_mstr')
-                    ->get();
-            
-                    
-            return view('workorder.wocreate', ['data' => $data,'user' => $engineer,'engine'=>$engineer,'asset1'=>$asset,'asset2'=>$asset,'failure' =>$failure,'usernow' =>$usernow,'dept'=>$depart,'fromhome' => '']);
+                ->get();
+
+
+            return view('workorder.wocreate', ['data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '']);
         } else {
             toast('Anda tidak memiliki akses menu, Silahkan kontak admin', 'error');
             return back();
         }
     }
 
-    public function wocreatedirectmenu(){ // route : wocreatedirectmenu   blade : workorder.wocreatedirect
+    public function wocreatedirectmenu()
+    { // route : wocreatedirectmenu   blade : workorder.wocreatedirect
         // dd(Session::all())
         if (strpos(Session::get('menu_access'), 'WO05') !== false) {
             $usernow = DB::table('users')
-                    ->leftjoin('eng_mstr','users.username','eng_mstr.eng_code')
-                    // ->select('approver')
-                    ->where('username','=',session()->get('username'))
-                    ->get();
+                ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+                // ->select('approver')
+                ->where('username', '=', session()->get('username'))
+                ->get();
             // dd($usernow);
             $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                ->where('wo_type','=','direct')
-                ->where('wo_status','=','open')
-                ->where(function($query){
-                    $query->where('wo_engineer1','=',Session()->get('username'))
-                    ->orwhere('wo_engineer2','=',Session()->get('username'))
-                    ->orwhere('wo_engineer3','=',Session()->get('username'))
-                    ->orwhere('wo_engineer4','=',Session()->get('username'))
-                    ->orwhere('wo_engineer5','=',Session()->get('username'));
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->where('wo_type', '=', 'direct')
+                ->where('wo_status', '=', 'open')
+                ->where(function ($query) {
+                    $query->where('wo_engineer1', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer5', '=', Session()->get('username'));
                 })
-                ->orderby('wo_created_at','desc')
+                ->orderby('wo_created_at', 'desc')
                 ->orderBy('wo_mstr.wo_id', 'desc')
                 ->paginate(10);
             // dd($data);
             $depart = DB::table('dept_mstr')
-                        ->get();
+                ->get();
             $engineer = DB::table('eng_mstr')
-                        ->where('eng_active','=','Yes')
-                        ->where('eng_code','<>',Session::get('username'))
-                        ->orderBy('eng_code')
-                        ->get();
+                ->where('eng_active', '=', 'Yes')
+                ->where('eng_code', '<>', Session::get('username'))
+                ->orderBy('eng_code')
+                ->get();
 
             $asset = DB::table('asset_mstr')
-                    ->where('asset_active','=','Yes')
-                    ->orderBy('asset_code')
-                    ->get();
+                ->where('asset_active', '=', 'Yes')
+                ->orderBy('asset_code')
+                ->get();
             $failure = DB::table('fn_mstr')
-                        ->get();
+                ->get();
             $repaircode = DB::table('rep_master')
-                        ->get();
+                ->get();
             $sparepart = DB::table('sp_mstr')
-                        ->get();
+                ->get();
             $repairgroup = DB::table('xxrepgroup_mstr')
-                            ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
-                            ->distinct('xxrepgroup_nbr')
-                            ->get();
+                ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
+                ->distinct('xxrepgroup_nbr')
+                ->get();
             $instruction = DB::table('ins_mstr')
-                        ->get();
+                ->get();
             $impact = DB::table('imp_mstr')
-                        ->get();
+                ->get();
             $wottype = DB::table('wotyp_mstr')
-                        ->get();
-            return view('workorder.wocreatedirect', ['impact'=>$impact, 'wottype'=>$wottype,'instruction' => $instruction,'data' => $data,'user' => $engineer,'engine'=>$engineer,'asset1'=>$asset,'asset2'=>$asset,'failure' =>$failure,'usernow' =>$usernow,'dept'=>$depart,'fromhome' => '','repairgroup'=>$repairgroup, 'repaircode'=>$repaircode,'sparepart'=>$sparepart]);
+                ->get();
+            return view('workorder.wocreatedirect', ['impact' => $impact, 'wottype' => $wottype, 'instruction' => $instruction, 'data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '', 'repairgroup' => $repairgroup, 'repaircode' => $repaircode, 'sparepart' => $sparepart]);
         } else {
             toast('Anda tidak memiliki akses menu, Silahkan kontak admin', 'error');
             return back();
         }
     }
-    
+
     // WO maint
-    public function wobrowse(){         // route : womaint  blade : workorder.wobrowse
+    public function wobrowse()
+    {         // route : womaint  blade : workorder.wobrowse
         if (strpos(Session::get('menu_access'), 'WO01') !== false) {
             // dd(Session::all());
             $usernow = DB::table('users')
-                    ->leftjoin('eng_mstr','users.username','eng_mstr.eng_code')
-                    // ->select('approver')
-                    ->where('username','=',session()->get('username'))
-                    ->get();
+                ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+                // ->select('approver')
+                ->where('username', '=', session()->get('username'))
+                ->get();
             // dd($usernow);
             $data = DB::table('wo_mstr')
-                    ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                    ->orderby('wo_created_at','desc')
-                    ->orderBy('wo_mstr.wo_nbr', 'desc')
-                    ->paginate(10);
-                    // dd($data);
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->orderby('wo_created_at', 'desc')
+                ->orderBy('wo_mstr.wo_nbr', 'desc')
+                ->paginate(10);
+            // dd($data);
             //   dd($data);
             $depart = DB::table('dept_mstr')
-                        ->get();
+                ->get();
             $engineer = DB::table('eng_mstr')
-                        ->where('eng_active','=','Yes')
-                        ->get();
+                ->where('eng_active', '=', 'Yes')
+                ->get();
             $asset = DB::table('asset_mstr')
-                        ->where('asset_active','=','Yes')
-                        ->orderBy('asset_code')
-                        ->get();
+                ->where('asset_active', '=', 'Yes')
+                ->orderBy('asset_code')
+                ->get();
             $failure = DB::table('fn_mstr')
-                        ->get();
+                ->get();
             $repaircode = DB::table('rep_master')
-                        ->get();
-			$repairgroup = DB::table('xxrepgroup_mstr')
-                        ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
-                        ->distinct('xxrepgroup_nbr')
-						->get();
+                ->get();
+            $repairgroup = DB::table('xxrepgroup_mstr')
+                ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
+                ->distinct('xxrepgroup_nbr')
+                ->get();
             $impact = DB::table('imp_mstr')
-                        ->get();
+                ->get();
             $wottype = DB::table('wotyp_mstr')
-                        ->get();
-            return view('workorder.wobrowse', ['impact' => $impact, 'wottype'=>$wottype,'repairgroup' => $repairgroup,'data' => $data,'user' => $engineer,'engine'=>$engineer,'asset1'=>$asset,'asset2'=>$asset,'failure' =>$failure,'usernow' =>$usernow,'dept'=>$depart,'fromhome' => '','repaircode' => $repaircode]);
+                ->get();
+            return view('workorder.wobrowse', ['impact' => $impact, 'wottype' => $wottype, 'repairgroup' => $repairgroup, 'data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '', 'repaircode' => $repaircode]);
         } else {
             toast('Anda tidak memiliki akses menu, Silahkan kontak admin', 'error');
             return back();
@@ -248,47 +255,49 @@ class wocontroller extends Controller
     }
 
     //tyas, link dari Home 
-    public function wobrowseopen(){
+    public function wobrowseopen()
+    {
         if (strpos(Session::get('menu_access'), 'WO01') !== false) {
             // dd(Session::all());
             $usernow = DB::table('users')
-                    ->leftjoin('eng_mstr','users.username','eng_mstr.eng_code')
-                    // ->select('approver')
-                    ->where('username','=',session()->get('username'))
-                    ->get();
+                ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+                // ->select('approver')
+                ->where('username', '=', session()->get('username'))
+                ->get();
             // dd($usernow);
             $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                ->WHERE('wo_status','=','open')
-                ->orderby('wo_updated_at','desc')
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->WHERE('wo_status', '=', 'open')
+                ->orderby('wo_updated_at', 'desc')
                 ->orderBy('wo_mstr.wo_nbr', 'desc')
                 ->paginate(10);
             //   dd($data);
             $depart = DB::table('dept_mstr')
-                    ->get();
+                ->get();
             $engineer = DB::table('eng_mstr')
-                    ->where('eng_active','=','Yes')
-                    ->get();
+                ->where('eng_active', '=', 'Yes')
+                ->get();
             $asset = DB::table('asset_mstr')
-                    ->orderBy('asset_code')
-                    ->get();
+                ->orderBy('asset_code')
+                ->get();
             dd($asset);
             $failure = DB::table('fn_mstr')
-                    ->get();
+                ->get();
             $repaircode = DB::table('rep_master')
-                    ->get();
+                ->get();
             $repairgroup = DB::table('xxrepgroup_mstr')
-                        ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
-                        ->distinct('xxrepgroup_nbr')
-                        ->get();
-            return view('workorder.wobrowse', ['repairgroup' => $repairgroup,'data' => $data,'user' => $engineer,'engine'=>$engineer,'asset1'=>$asset,'asset2'=>$asset,'failure' =>$failure,'usernow' =>$usernow,'dept'=>$depart,'fromhome' => '','repaircode' => $repaircode]);
+                ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
+                ->distinct('xxrepgroup_nbr')
+                ->get();
+            return view('workorder.wobrowse', ['repairgroup' => $repairgroup, 'data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '', 'repaircode' => $repaircode]);
         } else {
             toast('Anda tidak memiliki akses menu, Silahkan kontak admin', 'error');
             return back();
         }
     }
 
-    public function createdirectwo(Request $req){ /* blade : workorder.wocreatedirect */
+    public function createdirectwo(Request $req)
+    { /* blade : workorder.wocreatedirect */
         //dd($req->all());
         $fn1 = null;
         $fn2 = null;
@@ -309,129 +318,125 @@ class wocontroller extends Controller
         $wotype = null;
         $action = null;
         $sp = null;
-        if(isset($req->o_part)){
+        if (isset($req->o_part)) {
             $sp = $req->o_part;
         }
-        if(isset($req->o_action)){
+        if (isset($req->o_action)) {
             $action = $req->o_action;
         }
-        if($req->cwotype == 'manual'){
+        if ($req->cwotype == 'manual') {
             $wotype = 'other';
-        }
-        else{
+        } else {
             $wotype = 'auto';
         }
-        if(isset($req->c_engineeroth[0])){
+        if (isset($req->c_engineeroth[0])) {
             $eng2 = $req->c_engineeroth[0];
         }
-        if(isset($req->c_engineeroth[1])){
+        if (isset($req->c_engineeroth[1])) {
             $eng3 = $req->c_engineeroth[1];
         }
-        if(isset($req->c_engineeroth[2])){
+        if (isset($req->c_engineeroth[2])) {
             $eng4 = $req->c_engineeroth[2];
         }
-        if(isset($req->c_engineeroth[3])){
+        if (isset($req->c_engineeroth[3])) {
             $eng5 = $req->c_engineeroth[3];
         }
-        foreach($req->c_impact as $cimpact){
-            if($cimpact != ''){
-                
-               $testimp = DB::table('imp_mstr')
-               ->where('imp_code','=',$cimpact)
-               ->first();
-               $cimpactdesclist .= $testimp->imp_desc.';';
-            //    dd($cimpact,$testimp); 
+        foreach ($req->c_impact as $cimpact) {
+            if ($cimpact != '') {
+
+                $testimp = DB::table('imp_mstr')
+                    ->where('imp_code', '=', $cimpact)
+                    ->first();
+                $cimpactdesclist .= $testimp->imp_desc . ';';
+                //    dd($cimpact,$testimp); 
             }
-            $cimpactlist .= $cimpact.';';
+            $cimpactlist .= $cimpact . ';';
         }
         //dd($req->get('c_engineer')[0]);
         //dd($req->get('c_engineer')[4]);
         $tablern = DB::table('running_mstr')
-                ->first();
-        $tempnewrunnbr = strval(intval($tablern->wd_nbr)+1);
-	    $newtemprunnbr = '';
-	    if(strlen($tempnewrunnbr) < 4){
-	      $newtemprunnbr = str_pad($tempnewrunnbr,4,'0',STR_PAD_LEFT);
-	    }
-        $runningnbr = $tablern->wd_prefix.'-'.$tablern->year.'-'.$newtemprunnbr;
-        if($wotype == 'auto'){
-            if(isset($req->repairtype)){
-                if ($req->repairtype == 'manual'){
+            ->first();
+        $tempnewrunnbr = strval(intval($tablern->wd_nbr) + 1);
+        $newtemprunnbr = '';
+        if (strlen($tempnewrunnbr) < 4) {
+            $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+        }
+        $runningnbr = $tablern->wd_prefix . '-' . $tablern->year . '-' . $newtemprunnbr;
+        if ($wotype == 'auto') {
+            if (isset($req->repairtype)) {
+                if ($req->repairtype == 'manual') {
                     //  dd($req->manualcount);
-                        DB::table('wo_manual_detail')
-                                ->where('wo_manual_wo_nbr','=',$runningnbr)
-                                ->delete();
-                        
-                        for($pop = 0; $pop <$req->manualcount;$pop++){
-                            if($req->ins[$pop] != null && $req->part[$pop] != null && $req->desc[$pop] != null){
-                                $arraymanual = array([
-                                    'wo_manual_wo_nbr'      => $runningnbr,
-                                    'wo_manual_number'      => $pop + 1,
-                                    'wo_manual_ins'         => $req->ins[$pop],
-                                    'wo_manual_part'        => $req->part[$pop],
-                                    'wo_manual_desc'        => $req->desc[$pop],
-                                    'wo_manual_flag'        => $req->group5[$pop],
-                                    'wo_manual_flag2'       => $req->group51[$pop],
-                                    'wo_manual_qty'         => $req->qty5[$pop],
-                                    'wo_manual_repair_hour' => $req->rph5[$pop],
-                                    'wo_manual_created_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
-                                ]);
-                                    // dd($arraydettemp);
-                                    DB::table('wo_manual_detail')->insert($arraymanual);
-                            }
-                            
+                    DB::table('wo_manual_detail')
+                        ->where('wo_manual_wo_nbr', '=', $runningnbr)
+                        ->delete();
+
+                    for ($pop = 0; $pop < $req->manualcount; $pop++) {
+                        if ($req->ins[$pop] != null && $req->part[$pop] != null && $req->desc[$pop] != null) {
+                            $arraymanual = array([
+                                'wo_manual_wo_nbr'      => $runningnbr,
+                                'wo_manual_number'      => $pop + 1,
+                                'wo_manual_ins'         => $req->ins[$pop],
+                                'wo_manual_part'        => $req->part[$pop],
+                                'wo_manual_desc'        => $req->desc[$pop],
+                                'wo_manual_flag'        => $req->group5[$pop],
+                                'wo_manual_flag2'       => $req->group51[$pop],
+                                'wo_manual_qty'         => $req->qty5[$pop],
+                                'wo_manual_repair_hour' => $req->rph5[$pop],
+                                'wo_manual_created_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
+                            ]);
+                            // dd($arraydettemp);
+                            DB::table('wo_manual_detail')->insert($arraymanual);
                         }
-                        $finisht = $req->c_finishtime.':'.$req->c_finishtimeminute;
-                        $rprtype = 'manual';
-                }
-                else if($req->repairtype == 'code'){
+                    }
+                    $finisht = $req->c_finishtime . ':' . $req->c_finishtimeminute;
+                    $rprtype = 'manual';
+                } else if ($req->repairtype == 'code') {
                     // dd('aaa');   
                     $c_wotype = 'code';
                     DB::table('wo_rc_detail')
-                    ->where('wrd_wo_nbr','=',$runningnbr)
-                    ->delete();
-                    
-                    if($req->has('repaircode1')){
+                        ->where('wrd_wo_nbr', '=', $runningnbr)
+                        ->delete();
+
+                    if ($req->has('repaircode1')) {
                         $rc1 = $req->repaircode1[0];
-                        
+
                         $dborigin = DB::table('rep_master')
-                            ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
-                            ->leftjoin('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
+                            ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                            ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
                             // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
-                            ->leftjoin('sp_mstr','ins_mstr.ins_part','sp_mstr.spm_code')
-                            ->where('rep_master.repm_code','=',$rc1)
+                            ->leftjoin('sp_mstr', 'ins_mstr.ins_part', 'sp_mstr.spm_code')
+                            ->where('rep_master.repm_code', '=', $rc1)
                             // ->groupBy('spt_code')
                             ->orderBy('repdet_step')
                             ->get();
-                            // dd($dborigin,$rc1);
+                        // dd($dborigin,$rc1);
                         $countdb1 = count($dborigin);
                         // dd($countdb1);
                         $flagname = '';
-                        for($i = 0; $i<$countdb1;$i++){
-                            $newname = 'group'.$i;
-                            if(isset($req->group1[$i])){
+                        for ($i = 0; $i < $countdb1; $i++) {
+                            $newname = 'group' . $i;
+                            if (isset($req->group1[$i])) {
                                 $flagname .= $req->group1[$i];
                                 $flagnow = $req->group1[$i];
                                 $funow   = $req->group11[$i];
                                 $notenow = $req->note1[$i];
                             }
-                        // dd($req->all());
-                        $arraydets1 = array([
-                            'wo_dets_nbr'       => $runningnbr,
-                            'wo_dets_rc'        => $req->repaircode1[0],
-                            'wo_dets_sp'        => $req->spm1[$i],
-                            'wo_dets_sp_qty'    => $req->qty1[$i],
-                            'wo_dets_ins'       => $req->ins1[$i],
-                            //'wo_dets_flag'      => $flagnow,
-                            //'wo_dets_fu'        => $funow,
-                            //'wo_dets_fu_note'   => $notenow,
-                            'wo_dets_rep_hour'  => $req->rph1[$i],
-                            'wo_dets_standard'  => $req->std1[$i],
-                            'wo_dets_created_at'=> Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        ]);
-                        // dd($arraydets1);
+                            // dd($req->all());
+                            $arraydets1 = array([
+                                'wo_dets_nbr'       => $runningnbr,
+                                'wo_dets_rc'        => $req->repaircode1[0],
+                                'wo_dets_sp'        => $req->spm1[$i],
+                                'wo_dets_sp_qty'    => $req->qty1[$i],
+                                'wo_dets_ins'       => $req->ins1[$i],
+                                //'wo_dets_flag'      => $flagnow,
+                                //'wo_dets_fu'        => $funow,
+                                //'wo_dets_fu_note'   => $notenow,
+                                'wo_dets_rep_hour'  => $req->rph1[$i],
+                                'wo_dets_standard'  => $req->std1[$i],
+                                'wo_dets_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+                            // dd($arraydets1);
                             DB::table('wo_dets')->insert($arraydets1);
-                            
                         }
                         // dd($flagname);
                         $arrayrc1 = array([
@@ -441,54 +446,50 @@ class wocontroller extends Controller
                             'wrd_created_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             'wrd_updated_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
                         ]);
-                            // dd($arraydettemp);
-                            DB::table('wo_rc_detail')->insert($arrayrc1);
+                        // dd($arraydettemp);
+                        DB::table('wo_rc_detail')->insert($arrayrc1);
 
-                            // for($i2 = 0; $i2 < count($req->spm1); $i2++){  
-                            //     $arraydets1 = array([
-                            //         'wo_dets_nbr'       => $req->c_wonbr,
-                            //         'wo_dets_rc'        => $req->repaircode1[0],
-                            //         'wo_dets_sp'        => $req->spm1[$i2],
-                            //         'wo_dets_sp_qty'    => $req->qty1[$i2],
-                            //         'wo_dets_ins'       => $req->ins1[$i2],
-                            //         'wo_dets_rep_hour'  => $req->rph1[$i2],
-                            //         'wo_dets_standard'  => $req->std1[$i2],
-                            //         'wo_dets_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                            //     ]);
-                            //         // dd($arraydettemp);
-                            //         DB::table('wo_dets')->insert($arraydets1);
-                            // }
+                        // for($i2 = 0; $i2 < count($req->spm1); $i2++){  
+                        //     $arraydets1 = array([
+                        //         'wo_dets_nbr'       => $req->c_wonbr,
+                        //         'wo_dets_rc'        => $req->repaircode1[0],
+                        //         'wo_dets_sp'        => $req->spm1[$i2],
+                        //         'wo_dets_sp_qty'    => $req->qty1[$i2],
+                        //         'wo_dets_ins'       => $req->ins1[$i2],
+                        //         'wo_dets_rep_hour'  => $req->rph1[$i2],
+                        //         'wo_dets_standard'  => $req->std1[$i2],
+                        //         'wo_dets_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        //     ]);
+                        //         // dd($arraydettemp);
+                        //         DB::table('wo_dets')->insert($arraydets1);
+                        // }
 
-                            for($ii = 0; $ii < $req->sparepartnum1;$ii++){
-                                $arrayspare1 = array([
-                                    'wo_dets_nbr'       => $runningnbr,
-                                    'wo_dets_rc'        => $req->repaircode1[0],
-                                    'wo_dets_sp'        => $req->partspare1[$ii],
-                                    'wo_dets_sp_qty'    => $req->qtyspare1[$ii],
-                                    'wo_dets_ins'       => $req->insspare1[$ii],
-                                    'wo_dets_rep_hour'  => $req->rphspare1[$ii],
-                                    'wo_dets_standard'  => $req->descspare1[$ii],
-                                    'wo_dets_flag'      => $req->groupspare1[$ii],
-                                    'wo_dets_fu'        => $req->groupspare11[$ii],
-                                    'wo_dets_fu_note'   => $req->note11[$ii],
-                                    'wo_dets_type'      => 'addition',
-                                    'wo_dets_created_at'=> Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                                ]);
-                                DB::table('wo_dets')->insert($arrayspare1);
-                            }
-
-
-
-
+                        for ($ii = 0; $ii < $req->sparepartnum1; $ii++) {
+                            $arrayspare1 = array([
+                                'wo_dets_nbr'       => $runningnbr,
+                                'wo_dets_rc'        => $req->repaircode1[0],
+                                'wo_dets_sp'        => $req->partspare1[$ii],
+                                'wo_dets_sp_qty'    => $req->qtyspare1[$ii],
+                                'wo_dets_ins'       => $req->insspare1[$ii],
+                                'wo_dets_rep_hour'  => $req->rphspare1[$ii],
+                                'wo_dets_standard'  => $req->descspare1[$ii],
+                                'wo_dets_flag'      => $req->groupspare1[$ii],
+                                'wo_dets_fu'        => $req->groupspare11[$ii],
+                                'wo_dets_fu_note'   => $req->note11[$ii],
+                                'wo_dets_type'      => 'addition',
+                                'wo_dets_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+                            DB::table('wo_dets')->insert($arrayspare1);
+                        }
                     }
-                    if($req->has('repaircode2')){
+                    if ($req->has('repaircode2')) {
                         $rc2 = $req->repaircode2[0];
                         $dborigin2 = DB::table('rep_master')
-                            ->join('rep_det','rep_master.repm_code','rep_det.repdet_code')
-                            ->join('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
+                            ->join('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                            ->join('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
                             // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
-                            ->leftjoin('sp_mstr','ins_mstr.ins_part','sp_mstr.spm_code')
-                            ->where('rep_master.repm_code','=',$rc2)
+                            ->leftjoin('sp_mstr', 'ins_mstr.ins_part', 'sp_mstr.spm_code')
+                            ->where('rep_master.repm_code', '=', $rc2)
                             ->orderBy('repdet_step')
                             ->get();
 
@@ -496,33 +497,33 @@ class wocontroller extends Controller
                         // dd($req->all)
                         $flagname2 = '';
                         // dd($countdb2);
-                        for($i = 0; $i<$countdb2;$i++){
-                            $newname2 = 'group'.$i;
+                        for ($i = 0; $i < $countdb2; $i++) {
+                            $newname2 = 'group' . $i;
                             // dd($newname2);
-                            if(isset($req->group2[$newname2])){
+                            if (isset($req->group2[$newname2])) {
                                 $flagname .= $req->group1[$i];
                                 $flagnow = $req->group2[$i];
                                 $funow   = $req->group21[$i];
                                 $notenow = $req->note2[$i];
                             }
-                        
-                        $arraydets2 = array([
-                            'wo_dets_nbr'       => $runningnbr,
-                            'wo_dets_rc'        => $req->repaircode2[0],
-                            'wo_dets_sp'        => $req->spm2[$i],
-                            'wo_dets_sp_qty'    => $req->qty2[$i],
-                            'wo_dets_ins'       => $req->ins2[$i],
-                            'wo_dets_flag'      => $flagnow,
-                            'wo_dets_fu'        => $funow,
-                            'wo_dets_fu_note'   => $notenow,
-                            'wo_dets_rep_hour'  => $req->rph2[$i],
-                            'wo_dets_standard'  => $req->std2[$i],
-                            'wo_dets_created_at'=> Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        ]);
+
+                            $arraydets2 = array([
+                                'wo_dets_nbr'       => $runningnbr,
+                                'wo_dets_rc'        => $req->repaircode2[0],
+                                'wo_dets_sp'        => $req->spm2[$i],
+                                'wo_dets_sp_qty'    => $req->qty2[$i],
+                                'wo_dets_ins'       => $req->ins2[$i],
+                                'wo_dets_flag'      => $flagnow,
+                                'wo_dets_fu'        => $funow,
+                                'wo_dets_fu_note'   => $notenow,
+                                'wo_dets_rep_hour'  => $req->rph2[$i],
+                                'wo_dets_standard'  => $req->std2[$i],
+                                'wo_dets_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
                             DB::table('wo_dets')->insert($arraydets2);
                         }
 
-                        
+
                         $arrayrc2 = array([
                             'wrd_wo_nbr'      => $runningnbr,
                             'wrd_repair_code' => $req->repaircode2[0],
@@ -530,68 +531,66 @@ class wocontroller extends Controller
                             'wrd_created_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             'wrd_updated_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
                         ]);
-                            // dd($arraydettemp);
-                            DB::table('wo_rc_detail')->insert($arrayrc2);
+                        // dd($arraydettemp);
+                        DB::table('wo_rc_detail')->insert($arrayrc2);
 
 
-                            for($iii = 0; $iii < $req->sparepartnum2;$iii++){
-                                $arrayspare2 = array([
-                                    'wo_dets_nbr'       => $runningnbr,
-                                    'wo_dets_rc'        => $req->repaircode2[0],
-                                    'wo_dets_sp'        => $req->partspare2[$iii],
-                                    'wo_dets_sp_qty'    => $req->qtyspare2[$iii],
-                                    'wo_dets_ins'       => $req->insspare2[$iii],
-                                    'wo_dets_rep_hour'  => $req->rphspare2[$iii],
-                                    'wo_dets_standard'  => $req->descspare2[$iii],
-                                    'wo_dets_flag'      => $req->groupspare2[$iii],
-                                    'wo_dets_fu'        => $req->groupspare21[$iii],
-                                    'wo_dets_fu_note'   => $req->note22[$iii],
-                                    'wo_dets_type'      => 'addition',
-                                    'wo_dets_created_at'=> Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                                ]);
-                                DB::table('wo_dets')->insert($arrayspare2);
-
-                                
+                        for ($iii = 0; $iii < $req->sparepartnum2; $iii++) {
+                            $arrayspare2 = array([
+                                'wo_dets_nbr'       => $runningnbr,
+                                'wo_dets_rc'        => $req->repaircode2[0],
+                                'wo_dets_sp'        => $req->partspare2[$iii],
+                                'wo_dets_sp_qty'    => $req->qtyspare2[$iii],
+                                'wo_dets_ins'       => $req->insspare2[$iii],
+                                'wo_dets_rep_hour'  => $req->rphspare2[$iii],
+                                'wo_dets_standard'  => $req->descspare2[$iii],
+                                'wo_dets_flag'      => $req->groupspare2[$iii],
+                                'wo_dets_fu'        => $req->groupspare21[$iii],
+                                'wo_dets_fu_note'   => $req->note22[$iii],
+                                'wo_dets_type'      => 'addition',
+                                'wo_dets_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+                            DB::table('wo_dets')->insert($arrayspare2);
+                        }
                     }
-                    }
-                        // dd($flagname);
-                        
-                    if($req->has('repaircode3')){
+                    // dd($flagname);
+
+                    if ($req->has('repaircode3')) {
                         $rc3 = $req->repaircode3[0];
                         $dborigin3 = DB::table('rep_master')
-                        ->join('rep_det','rep_master.repm_code','rep_det.repdet_code')
-                        ->join('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
-                        // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
-                        ->leftjoin('sp_mstr','ins_mstr.ins_part','sp_mstr.spm_code')
-                        ->where('rep_master.repm_code','=',$rc3)
-                        // ->groupBy('spt_code')
-                        ->orderBy('repdet_step')
-                        ->get();
+                            ->join('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                            ->join('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+                            // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
+                            ->leftjoin('sp_mstr', 'ins_mstr.ins_part', 'sp_mstr.spm_code')
+                            ->where('rep_master.repm_code', '=', $rc3)
+                            // ->groupBy('spt_code')
+                            ->orderBy('repdet_step')
+                            ->get();
                         $countdb3 = count($dborigin3);
-                        
+
                         $flagname = '';
-                        for($i = 0; $i<$countdb3;$i++){
-                            $newname = 'group'.$i;
-                            if(isset($req->group3[$i])){
+                        for ($i = 0; $i < $countdb3; $i++) {
+                            $newname = 'group' . $i;
+                            if (isset($req->group3[$i])) {
                                 $flagname .= $req->group3[$i];
                                 $flagnow = $req->group3[$i];
                                 $funow   = $req->group31[$i];
                                 $notenow = $req->note3[$i];
                             }
-                        
-                        $arraydets3 = array([
-                            'wo_dets_nbr'       => $runningnbr,
-                            'wo_dets_rc'        => $req->repaircode3[0],
-                            'wo_dets_sp'        => $req->spm3[$i],
-                            'wo_dets_sp_qty'    => $req->qty3[$i],
-                            'wo_dets_ins'       => $req->ins3[$i],
-                            'wo_dets_flag'      => $flagnow,
-                            'wo_dets_fu'        => $funow,
-                            'wo_dets_fu_note'   => $notenow,
-                            'wo_dets_rep_hour'  => $req->rph3[$i],
-                            'wo_dets_standard'  => $req->std3[$i],
-                            'wo_dets_created_at'=> Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        ]);
+
+                            $arraydets3 = array([
+                                'wo_dets_nbr'       => $runningnbr,
+                                'wo_dets_rc'        => $req->repaircode3[0],
+                                'wo_dets_sp'        => $req->spm3[$i],
+                                'wo_dets_sp_qty'    => $req->qty3[$i],
+                                'wo_dets_ins'       => $req->ins3[$i],
+                                'wo_dets_flag'      => $flagnow,
+                                'wo_dets_fu'        => $funow,
+                                'wo_dets_fu_note'   => $notenow,
+                                'wo_dets_rep_hour'  => $req->rph3[$i],
+                                'wo_dets_standard'  => $req->std3[$i],
+                                'wo_dets_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
                             DB::table('wo_dets')->insert($arraydets3);
                         }
                         $arrayrc3 = array([
@@ -601,85 +600,82 @@ class wocontroller extends Controller
                             'wrd_created_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             'wrd_updated_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
                         ]);
-                            // dd($arraydettemp);
-                            DB::table('wo_rc_detail')->insert($arrayrc3);
+                        // dd($arraydettemp);
+                        DB::table('wo_rc_detail')->insert($arrayrc3);
 
-                            // for($i4 = 0; $i4 < count($req->spm3); $i4++){  
-                            //     $arraydets3 = array([
-                            //         'wo_dets_nbr'       => $req->c_wonbr,
-                            //         'wo_dets_rc'        => $req->repaircode3[0],
-                            //         'wo_dets_sp'        => $req->spm3[$i4],
-                            //         'wo_dets_sp_qty'    => $req->qty3[$i4],
-                            //         'wo_dets_ins'       => $req->ins3[$i4],
-                            //         'wo_dets_rep_hour'  => $req->rph3[$i4],
-                            //         'wo_dets_standard'  => $req->std3[$i4],
-                            //         'wo_dets_flag'      => $req->group3[$i4],
-                            //         'wo_dets_created_at'=> Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                            //     ]);
-                            //         // dd($arraydettemp);
-                            //         DB::table('wo_dets')->insert($arraydets3);
-                            // }
+                        // for($i4 = 0; $i4 < count($req->spm3); $i4++){  
+                        //     $arraydets3 = array([
+                        //         'wo_dets_nbr'       => $req->c_wonbr,
+                        //         'wo_dets_rc'        => $req->repaircode3[0],
+                        //         'wo_dets_sp'        => $req->spm3[$i4],
+                        //         'wo_dets_sp_qty'    => $req->qty3[$i4],
+                        //         'wo_dets_ins'       => $req->ins3[$i4],
+                        //         'wo_dets_rep_hour'  => $req->rph3[$i4],
+                        //         'wo_dets_standard'  => $req->std3[$i4],
+                        //         'wo_dets_flag'      => $req->group3[$i4],
+                        //         'wo_dets_created_at'=> Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        //     ]);
+                        //         // dd($arraydettemp);
+                        //         DB::table('wo_dets')->insert($arraydets3);
+                        // }
 
-                            for($iiii = 0; $iiii < $req->sparepartnum3;$iiii++){
-                                $arrayspare3 = array([
-                                    'wo_dets_nbr'       => $runningnbr,
-                                    'wo_dets_rc'        => $req->repaircode3[0],
-                                    'wo_dets_sp'        => $req->partspare3[$iiii],
-                                    'wo_dets_sp_qty'    => $req->qtyspare3[$iiii],
-                                    'wo_dets_ins'       => $req->insspare3[$iiii],
-                                    'wo_dets_rep_hour'  => $req->rphspare3[$iiii],
-                                    'wo_dets_standard'  => $req->descspare3[$iiii],
-                                    'wo_dets_flag'      => $req->groupspare3[$iiii],
-                                    'wo_dets_fu'        => $req->groupspare31[$iiii],
-                                    'wo_dets_fu_note'   => $req->note33[$iiii],
-                                    'wo_dets_type'      => 'addition',
-                                    'wo_dets_created_at'=> Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                                ]);
-                                DB::table('wo_dets')->insert($arrayspare3);
+                        for ($iiii = 0; $iiii < $req->sparepartnum3; $iiii++) {
+                            $arrayspare3 = array([
+                                'wo_dets_nbr'       => $runningnbr,
+                                'wo_dets_rc'        => $req->repaircode3[0],
+                                'wo_dets_sp'        => $req->partspare3[$iiii],
+                                'wo_dets_sp_qty'    => $req->qtyspare3[$iiii],
+                                'wo_dets_ins'       => $req->insspare3[$iiii],
+                                'wo_dets_rep_hour'  => $req->rphspare3[$iiii],
+                                'wo_dets_standard'  => $req->descspare3[$iiii],
+                                'wo_dets_flag'      => $req->groupspare3[$iiii],
+                                'wo_dets_fu'        => $req->groupspare31[$iiii],
+                                'wo_dets_fu_note'   => $req->note33[$iiii],
+                                'wo_dets_type'      => 'addition',
+                                'wo_dets_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+                            DB::table('wo_dets')->insert($arrayspare3);
+                        }
                     }
-                    }
-                
-                    
+
+
                     //  dd($req->all());
-                    $finisht = $req->c_finishtime.':'.$req->c_finishtimeminute;
+                    $finisht = $req->c_finishtime . ':' . $req->c_finishtimeminute;
                     $rprtype = 'code';
                     // dd($finisht);
-                
+
                     // dd($arrayy);
-                }
-                    
-            
-                else if($req->repairtype == 'group'){
+                } else if ($req->repairtype == 'group') {
                     $rprg = $req->repairgroup[0];
                     DB::table('wo_rc_detail')
-                    ->where('wrd_wo_nbr','=',$runningnbr)
-                    ->delete();
+                        ->where('wrd_wo_nbr', '=', $runningnbr)
+                        ->delete();
 
                     $repairlen = count($req->repaircodeselection);
-                    for($i = 0; $i<$repairlen; $i++){
+                    for ($i = 0; $i < $repairlen; $i++) {
                         $rg = $req->repaircodeselection[$i];
                         $dborigin = DB::table('rep_master')
-                                    ->join('rep_det','rep_master.repm_code','rep_det.repdet_code')
-                                    ->join('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
-                                    // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
-                                    ->leftjoin('sp_mstr','ins_mstr.ins_part','sp_mstr.spm_code')
-                                    ->where('rep_master.repm_code','=',$rg)
-                                    // ->groupBy('spt_code')
-                                    ->orderBy('repdet_step')
-                                    ->get();
+                            ->join('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                            ->join('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+                            // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
+                            ->leftjoin('sp_mstr', 'ins_mstr.ins_part', 'sp_mstr.spm_code')
+                            ->where('rep_master.repm_code', '=', $rg)
+                            // ->groupBy('spt_code')
+                            ->orderBy('repdet_step')
+                            ->get();
                         $countdb1 = count($dborigin);
                         // dd($dborigin);
                         $flagname = '';
-                        for($j = 0; $j<$countdb1;$j++){
-                            $newname = 'group'.$i;
-                            if(isset($req->group4[$i][$j])){
+                        for ($j = 0; $j < $countdb1; $j++) {
+                            $newname = 'group' . $i;
+                            if (isset($req->group4[$i][$j])) {
                                 $flagnow = $req->group4[$i][$j];
                                 $funow   = $req->group41[$i][$j];
                                 $notenow = $req->note[$i][$j];
 
                                 $flagname .= $req->group4[$i][$j];
                             }
-                            
+
                             $arraydetsgrp = array([
                                 'wo_dets_nbr'       => $runningnbr,
                                 'wo_dets_rc'        => $rg,
@@ -692,14 +688,13 @@ class wocontroller extends Controller
                                 'wo_dets_rep_hour'  => $req->rph4[$i][$j],
                                 'wo_dets_standard'  => $req->std4[$i][$j],
                                 'wo_dets_flag'      => $req->group4[$i][$j],
-                                'wo_dets_created_at'=> Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                'wo_dets_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
                             DB::table('wo_dets')->insert($arraydetsgrp);
-                            
                         }
-                        
 
-                        
+
+
                         $arrayrc1 = array([
                             'wrd_wo_nbr'      => $req->$runningnbr,
                             'wrd_repair_code' => $rg,
@@ -708,27 +703,27 @@ class wocontroller extends Controller
                             'wrd_updated_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
                         ]);
                         DB::table('wo_rc_detail')->insert($arrayrc1);
-    
-                            // dd($arraydettemp);   
+
+                        // dd($arraydettemp);   
                         // for($i5 = 0; $i5 < $countdb1; $i5++){  
                         //     // eval('$spnow = $req->sparepart'.strval($countrepair).');');
 
-                                
-                                
+
+
                         // }
                         // dd('stop');
 
-                        eval('$spartnow = $req->partspare'.strval($i+1).';');
-                        eval('$insspnow = $req->insspare'.strval($i+1).';');
-                        eval('$spstdnow = $req->descspare'.strval($i+1).';');
-                        eval('$spqtynow = $req->qtyspare'.strval($i+1).';');
-                        eval('$rphspnow = $req->rphspare'.strval($i+1).';');
-                        eval('$spflagnow = $req->groupspare'.strval($i+1).';');
-                        eval('$spfunow = $req->groupspare'.strval($i+1).'1;');
-                        eval('$spfunotenow = $req->groupspare'.strval($i+1).';');
+                        eval('$spartnow = $req->partspare' . strval($i + 1) . ';');
+                        eval('$insspnow = $req->insspare' . strval($i + 1) . ';');
+                        eval('$spstdnow = $req->descspare' . strval($i + 1) . ';');
+                        eval('$spqtynow = $req->qtyspare' . strval($i + 1) . ';');
+                        eval('$rphspnow = $req->rphspare' . strval($i + 1) . ';');
+                        eval('$spflagnow = $req->groupspare' . strval($i + 1) . ';');
+                        eval('$spfunow = $req->groupspare' . strval($i + 1) . '1;');
+                        eval('$spfunotenow = $req->groupspare' . strval($i + 1) . ';');
 
-                        for($iiiii = 0; $iiiii < $req->sparepartnum[$i];$iiiii++){
-                            
+                        for ($iiiii = 0; $iiiii < $req->sparepartnum[$i]; $iiiii++) {
+
                             $arraysparegrp = array([
                                 'wo_dets_nbr'       => $runningnbr,
                                 'wo_dets_rc'        => $rg,
@@ -741,14 +736,14 @@ class wocontroller extends Controller
                                 'wo_dets_fu'        => $spfunow[$iiiii],
                                 'wo_dets_fu_note'   => $spfunotenow[$iiiii],
                                 'wo_dets_type'      => 'addition',
-                                'wo_dets_created_at'=> Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                'wo_dets_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
                             DB::table('wo_dets')->insert($arraysparegrp);
-                    }
+                        }
 
                         // dd($flagname);
                     }
-                    $finisht = $req->c_finishtime.':'.$req->c_finishtimeminute;
+                    $finisht = $req->c_finishtime . ':' . $req->c_finishtimeminute;
                     $rprtype = 'group';
                 }
             }
@@ -792,28 +787,28 @@ class wocontroller extends Controller
         // dd($dataarray);
         DB::table('wo_mstr')->insert($dataarray);
         DB::table('running_mstr')
-        ->where('wd_nbr', '=', $tablern->wd_nbr)
-        ->update([
-            'wd_nbr' => $newtemprunnbr
-        ]);
+            ->where('wd_nbr', '=', $tablern->wd_nbr)
+            ->update([
+                'wd_nbr' => $newtemprunnbr
+            ]);
 
         $albumraw = $req->imgname;
-        if(isset($req->imgname)){
-            foreach($albumraw as $olah1){
-                $waktu = (string)date('dmY',strtotime(Carbon::now())).(string)date('His',strtotime(Carbon::now()));
+        if (isset($req->imgname)) {
+            foreach ($albumraw as $olah1) {
+                $waktu = (string)date('dmY', strtotime(Carbon::now())) . (string)date('His', strtotime(Carbon::now()));
                 // dd($waktu);
                 $jadi1 = explode(',', $olah1);
                 // a..png
                 $jadi2 = base64_decode($jadi1[2]);
-                $lenstr = strripos($jadi1[0],'.');
-                $test = substr($jadi1[0],$lenstr);
+                $lenstr = strripos($jadi1[0], '.');
+                $test = substr($jadi1[0], $lenstr);
                 // dd($test);
-                $test3 = str_replace($test,'',$jadi1[0]);
+                $test3 = str_replace($test, '', $jadi1[0]);
                 // dd($test3);
-                $test4 = str_replace('.','',$test3);
-                $test44 = str_replace(' ','',$test4);
-                $test5 = $test44.$waktu.$test;
-                $alamaturl = '../public/upload/'.$test5;
+                $test4 = str_replace('.', '', $test3);
+                $test44 = str_replace(' ', '', $test4);
+                $test5 = $test44 . $waktu . $test;
+                $alamaturl = '../public/upload/' . $test5;
                 file_put_contents($alamaturl, $jadi2);
 
                 DB::table('acceptance_image')
@@ -821,84 +816,81 @@ class wocontroller extends Controller
                         'file_srnumber' => $req->c_srnbr,
                         'file_wonumber' => $runningnbr,
                         'file_name' => $jadi1[0], //nama file asli
-                        'file_url' => $alamaturl, 
+                        'file_url' => $alamaturl,
                         'uploaded_at' => Carbon::now()->toDateTimeString(),
                     ]);
             }
         }
 
-        if($req->hasfile('filenamewo')){
-            foreach($req->file('filenamewo') as $upload){
-                $filename = $runningnbr . '-' .$upload->getClientOriginalName();
-                
+        if ($req->hasfile('filenamewo')) {
+            foreach ($req->file('filenamewo') as $upload) {
+                $filename = $runningnbr . '-' . $upload->getClientOriginalName();
+
                 // Simpan File Upload pada Public
                 $savepath = public_path('uploadwofinish/');
                 $upload->move($savepath, $filename);
-                
+
                 // Simpan ke DB Upload
                 DB::table('acceptance_image')
                     ->insert([
                         'file_srnumber' => $req->c_srnbr,
                         'file_wonumber' => $runningnbr,
-                        'file_name'     => $filename,//$upload->getClientOriginalName(), //nama file asli
-                        'file_url'      => $savepath.$filename, 
+                        'file_name'     => $filename, //$upload->getClientOriginalName(), //nama file asli
+                        'file_url'      => $savepath . $filename,
                         'uploaded_at'   => Carbon::now()->toDateTimeString(),
-                    ]); 
+                    ]);
             }
-
         }
 
-                    
-        $assettable = DB::table('asset_mstr')
-            ->where('asset_code','=',$req->c_asset)
-            ->first();
-                
-        $asset = $req->c_asset.' - '.$assettable->asset_desc;
-        
-        EmailScheduleJobs::dispatch($runningnbr,$asset,'5','','','','');
 
-        toast('WO '.$runningnbr.' Successfuly Created !','success');
+        $assettable = DB::table('asset_mstr')
+            ->where('asset_code', '=', $req->c_asset)
+            ->first();
+
+        $asset = $req->c_asset . ' - ' . $assettable->asset_desc;
+
+        EmailScheduleJobs::dispatch($runningnbr, $asset, '5', '', '', '', '');
+
+        toast('WO ' . $runningnbr . ' Successfuly Created !', 'success');
         return back();
     }
 
-    public function createenwo(Request $req){
+    public function createenwo(Request $req)
+    {
         //  dd($req->all());
-        
-        
+
+
         $fn1 = '';
         $fn2 = '';
         $fn3 = '';
-        if(array_key_exists(0,$req->get('c_failure'))){
+        if (array_key_exists(0, $req->get('c_failure'))) {
             $fn1 = $req->get('c_failure')[0];
-        }
-        else{
+        } else {
             $fn1 = null;
         }
-        if(array_key_exists(1,$req->get('c_failure'))){
+        if (array_key_exists(1, $req->get('c_failure'))) {
             $fn2 = $req->get('c_failure')[1];
-        }
-        else{
+        } else {
             $fn3 = null;
         }
-        if(array_key_exists(2,$req->get('c_failure'))){
+        if (array_key_exists(2, $req->get('c_failure'))) {
             $fn3 = $req->get('c_failure')[2];
-        }
-        else{
+        } else {
             $fn3 = null;
         }
         //dd($req->get('c_engineer')[0]);
-        
-        
+
+
         //dd($req->get('c_engineer')[4]);
         $tablern = DB::table('running_mstr')
-                ->first();
-        $tempnewrunnbr = strval(intval($tablern->wo_nbr)+1);
-	    $newtemprunnbr = '';
-	    if(strlen($tempnewrunnbr) < 4){
-	      $newtemprunnbr = str_pad($tempnewrunnbr,4,'0',STR_PAD_LEFT);
-	    }
-        $runningnbr = $tablern->wo_prefix.'-'.$tablern->year.'-'.$newtemprunnbr;
-        
+            ->first();
+        $tempnewrunnbr = strval(intval($tablern->wo_nbr) + 1);
+        $newtemprunnbr = '';
+        if (strlen($tempnewrunnbr) < 4) {
+            $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+        }
+        $runningnbr = $tablern->wo_prefix . '-' . $tablern->year . '-' . $newtemprunnbr;
+
         $dataarray = array(
             'wo_nbr'           => $runningnbr,
             'wo_dept'          => Session::get('department'),
@@ -920,23 +912,24 @@ class wocontroller extends Controller
         // dd($dataarray);
         DB::table('wo_mstr')->insert($dataarray);
         DB::table('running_mstr')
-        ->where('wo_nbr', '=', $tablern->wo_nbr)
-        ->update([
-            'wo_nbr' => $newtemprunnbr
-        ]);
+            ->where('wo_nbr', '=', $tablern->wo_nbr)
+            ->update([
+                'wo_nbr' => $newtemprunnbr
+            ]);
         $assettable = DB::table('asset_mstr')
-            ->where('asset_code','=',$req->c_asset)
+            ->where('asset_code', '=', $req->c_asset)
             ->first();
-                
-        $asset = $req->c_asset.' - '.$assettable->asset_desc;
-        
-        EmailScheduleJobs::dispatch($runningnbr,$asset,'1','','','','');
 
-        toast('WO Successfuly Created !','success');
+        $asset = $req->c_asset . ' - ' . $assettable->asset_desc;
+
+        EmailScheduleJobs::dispatch($runningnbr, $asset, '1', '', '', '', '');
+
+        toast('WO Successfuly Created !', 'success');
         return back();
     }
 
-    public function createwo(Request $req){
+    public function createwo(Request $req)
+    {
         // dd($req->all());
 
         $eng1 = '';
@@ -954,81 +947,74 @@ class wocontroller extends Controller
         $cimpactlist = '';
         $cimpactdesclist = '';
         $c_wotype = null;
-        if($req->cwotype == 'preventive'){
+        if ($req->cwotype == 'preventive') {
             $c_wotype = 'auto';
-        }
-        else{
+        } else {
             $c_wotype = 'other';
         }
 
-        foreach($req->c_impact as $cimpact){
-            if($cimpact != ''){
-                
-               $testimp = DB::table('imp_mstr')
-               ->where('imp_code','=',$cimpact)
-               ->first();
-               $cimpactdesclist .= $testimp->imp_desc.';';
-            //    dd($cimpact,$testimp); 
+        foreach ($req->c_impact as $cimpact) {
+            if ($cimpact != '') {
+
+                $testimp = DB::table('imp_mstr')
+                    ->where('imp_code', '=', $cimpact)
+                    ->first();
+                $cimpactdesclist .= $testimp->imp_desc . ';';
+                //    dd($cimpact,$testimp); 
             }
-            $cimpactlist .= $cimpact.';';
+            $cimpactlist .= $cimpact . ';';
         }
         // dd($cimpactlist);        
         //dd($req->get('c_engineer')[0]);
-        if(array_key_exists(0,$req->get('c_engineer'))){
+        if (array_key_exists(0, $req->get('c_engineer'))) {
             $eng1 = $req->get('c_engineer')[0];
-        }
-        else{
+        } else {
             $eng1 = null;
         }
-        if(array_key_exists(1,$req->get('c_engineer'))){
+        if (array_key_exists(1, $req->get('c_engineer'))) {
             $eng2 = $req->get('c_engineer')[1];
-        }
-        else{
+        } else {
             $eng2 = null;
         }
-        if(array_key_exists(2,$req->get('c_engineer'))){
+        if (array_key_exists(2, $req->get('c_engineer'))) {
             $eng3 = $req->get('c_engineer')[2];
-        }
-        else{
+        } else {
             $eng3 = null;
         }
-        if(array_key_exists(3,$req->get('c_engineer'))){
+        if (array_key_exists(3, $req->get('c_engineer'))) {
             $eng4 = $req->get('c_engineer')[3];
-        }
-        else{
+        } else {
             $eng4 = null;
         }
-        if(array_key_exists(4,$req->get('c_engineer'))){
+        if (array_key_exists(4, $req->get('c_engineer'))) {
             $eng5 = $req->get('c_engineer')[4];
-
-        }
-        else{
+        } else {
             $eng5 = null;
         }
 
-        if(isset($req->crepaircode[0])){
+        if (isset($req->crepaircode[0])) {
             $rc1 = $req->crepaircode[0];
         }
-        if(isset($req->crepaircode[1])){
+        if (isset($req->crepaircode[1])) {
             $rc2 = $req->crepaircode[1];
         }
-        if(isset($req->crepaircode[2])){
+        if (isset($req->crepaircode[2])) {
             $rc3 = $req->crepaircode[2];
         }
-        if(isset($req->crepairgroup)){
+        if (isset($req->crepairgroup)) {
             $rg1 = $req->crepairgroup;
         }
-        
+
         //dd($req->get('c_engineer')[4]);
         $tablern = DB::table('running_mstr')
-                ->first();
-        $tempnewrunnbr = strval(intval($tablern->wo_nbr)+1);
-	    $newtemprunnbr = '';
-	    if(strlen($tempnewrunnbr) < 4){
-	      $newtemprunnbr = str_pad($tempnewrunnbr,4,'0',STR_PAD_LEFT);
-	    }
-        $runningnbr = $tablern->wo_prefix.'-'.$tablern->year.'-'.$newtemprunnbr;
-        
+            ->first();
+        $tempnewrunnbr = strval(intval($tablern->wo_nbr) + 1);
+        $newtemprunnbr = '';
+        if (strlen($tempnewrunnbr) < 4) {
+            $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+        }
+        $runningnbr = $tablern->wo_prefix . '-' . $tablern->year . '-' . $newtemprunnbr;
+
         $dataarray = array(
             'wo_nbr'           => $runningnbr,
             'wo_dept'          => Session::get('department'),
@@ -1057,7 +1043,7 @@ class wocontroller extends Controller
             'wo_type'          => $c_wotype
         );
         // dd($dataarray);
-        if($c_wotype == 'auto'){
+        if ($c_wotype == 'auto') {
             /* jika asset dalam kondidi PM, WO tetap masih bisa terbentuk
             $checkasset = DB::table('asset_mstr')
                             ->where('asset_code','=',$req->c_asset)
@@ -1077,45 +1063,43 @@ class wocontroller extends Controller
             }*/
 
             DB::table('wo_mstr')->insert($dataarray);
-
-        }
-        else{
+        } else {
             DB::table('wo_mstr')->insert($dataarray);
         }
-        
-        DB::table('running_mstr')
-        ->where('wo_nbr', '=', $tablern->wo_nbr)
-        ->update([
-            'wo_nbr' => $newtemprunnbr
-        ]);
-        $assettable = DB::table('asset_mstr')
-            ->where('asset_code','=',$req->c_asset)
-            ->first();
-                
-        $asset = $req->c_asset.' - '.$assettable->asset_desc;
-        
-        EmailScheduleJobs::dispatch($runningnbr,$asset,'1','','','','');
 
-        toast($runningnbr.' Successfuly Created !','success');
+        DB::table('running_mstr')
+            ->where('wo_nbr', '=', $tablern->wo_nbr)
+            ->update([
+                'wo_nbr' => $newtemprunnbr
+            ]);
+        $assettable = DB::table('asset_mstr')
+            ->where('asset_code', '=', $req->c_asset)
+            ->first();
+
+        $asset = $req->c_asset . ' - ' . $assettable->asset_desc;
+
+        EmailScheduleJobs::dispatch($runningnbr, $asset, '1', '', '', '', '');
+
+        toast($runningnbr . ' Successfuly Created !', 'success');
         return back();
     }
 
-    public function editwodirect(Request $req){   
+    public function editwodirect(Request $req)
+    {
         // dd($req->all());
         $dataaccess = DB::table('wo_mstr')
-                    ->where('wo_nbr','=', $req->e_nowo)
-                    ->first();
-        if($dataaccess->wo_access == 0){
+            ->where('wo_nbr', '=', $req->e_nowo)
+            ->first();
+        if ($dataaccess->wo_access == 0) {
             DB::table('wo_mstr')
-                ->where('wo_nbr','=', $req->e_nowo)
-                ->update(['wo_access' => 1]);   
-        }
-        else{
-            toast('WO '.$req->e_nowo.' is being used right now', 'error');
+                ->where('wo_nbr', '=', $req->e_nowo)
+                ->update(['wo_access' => 1]);
+        } else {
+            toast('WO ' . $req->e_nowo . ' is being used right now', 'error');
             return redirect()->route('wocreatedirectmenu');
         }
-        if($dataaccess->wo_status != 'open'){
-            toast('WO '.$req->e_nowo.' status has changed, please recheck', 'error');
+        if ($dataaccess->wo_status != 'open') {
+            toast('WO ' . $req->e_nowo . ' status has changed, please recheck', 'error');
             return redirect()->route('wocreatedirectmenu');
         }
         $wonbr       = $req->e_nowo;
@@ -1126,8 +1110,8 @@ class wocontroller extends Controller
         $woduedate   = $req->e_duedate;
         $wopriority  = $req->e_priority;
         $department  = $req->e_department;
-            DB::table('wo_mstr')
-            ->where('wo_nbr','=', $wonbr)
+        DB::table('wo_mstr')
+            ->where('wo_nbr', '=', $wonbr)
             ->update([
                 'wo_engineer1'  => $woengineer1,
                 'wo_priority'   => $wopriority,
@@ -1142,26 +1126,26 @@ class wocontroller extends Controller
                 'wo_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                 'wo_access' => 0
             ]);
-            
-            toast('WO successfully updated', 'success');
-            return redirect()->route('wocreatedirectmenu');
-        }
 
-    public function editwoeng(Request $req){
+        toast('WO successfully updated', 'success');
+        return redirect()->route('wocreatedirectmenu');
+    }
+
+    public function editwoeng(Request $req)
+    {
         $dataaccess = DB::table('wo_mstr')
-                    ->where('wo_nbr','=', $req->e_nowo)
-                    ->first();
-        if($dataaccess->wo_access == 0){
+            ->where('wo_nbr', '=', $req->e_nowo)
+            ->first();
+        if ($dataaccess->wo_access == 0) {
             DB::table('wo_mstr')
-                ->where('wo_nbr','=', $req->e_nowo)
-                ->update(['wo_access' => 1]);   
-        }
-        else{
-            toast('WO '.$req->e_nowo.' is being used right now', 'error');
+                ->where('wo_nbr', '=', $req->e_nowo)
+                ->update(['wo_access' => 1]);
+        } else {
+            toast('WO ' . $req->e_nowo . ' is being used right now', 'error');
             return redirect()->route('wocreatemenu');
         }
-        if($dataaccess->wo_status != 'open'){
-            toast('WO '.$req->e_nowo.' status has changed, please recheck', 'error');
+        if ($dataaccess->wo_status != 'open') {
+            toast('WO ' . $req->e_nowo . ' status has changed, please recheck', 'error');
             return redirect()->route('wocreatedirectmenu');
         }
         // dd($req->all());
@@ -1173,8 +1157,8 @@ class wocontroller extends Controller
         $woduedate   = $req->e_duedate;
         $wopriority  = $req->e_priority;
         $department  = $req->e_department;
-            DB::table('wo_mstr')
-            ->where('wo_nbr','=', $wonbr)
+        DB::table('wo_mstr')
+            ->where('wo_nbr', '=', $wonbr)
             ->update([
                 'wo_engineer1'  => $woengineer1,
                 'wo_priority'   => $wopriority,
@@ -1186,16 +1170,17 @@ class wocontroller extends Controller
                 'wo_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                 'wo_access'     => 0
             ]);
-            
-            toast('WO '.$req->e_nowo.' successfully updated', 'success');
-            return redirect()->route('wocreatemenu');
-        }
 
-    public function editwo(Request $req){
+        toast('WO ' . $req->e_nowo . ' successfully updated', 'success');
+        return redirect()->route('wocreatemenu');
+    }
+
+    public function editwo(Request $req)
+    {
         //dd($req->all());
         $dataaccess = DB::table('wo_mstr')
-                    ->where('wo_nbr','=', $req->e_nowo)
-                    ->first();
+            ->where('wo_nbr', '=', $req->e_nowo)
+            ->first();
         // if($dataaccess->wo_access == 0){
         //     DB::table('wo_mstr')
         //         ->where('wo_nbr','=', $req->e_nowo)
@@ -1233,27 +1218,27 @@ class wocontroller extends Controller
         $eimpactlist = '';
         $eimpactdesclist = '';
         // dd($repairgroup,$repairtype);
-        if(isset($req->erepaircode[0])){
+        if (isset($req->erepaircode[0])) {
             $rc1 = $req->erepaircode[0];
         }
-        if(isset($req->erepaircode[1])){
+        if (isset($req->erepaircode[1])) {
             $rc2 = $req->erepaircode[1];
         }
-        if(isset($req->erepaircode[2])){
+        if (isset($req->erepaircode[2])) {
             $rc3 = $req->erepaircode[2];
         }
-        foreach($req->e_impact as $eimpact){
-            if($eimpact != ''){
-               $testimp = DB::table('imp_mstr')
-               ->where('imp_code','=',$eimpact)
-               ->first();
-               $eimpactdesclist .= $testimp->imp_desc.';';
+        foreach ($req->e_impact as $eimpact) {
+            if ($eimpact != '') {
+                $testimp = DB::table('imp_mstr')
+                    ->where('imp_code', '=', $eimpact)
+                    ->first();
+                $eimpactdesclist .= $testimp->imp_desc . ';';
             }
-            $eimpactlist .= $eimpact.';';
+            $eimpactlist .= $eimpact . ';';
         }
 
-            DB::table('wo_mstr')
-            ->where('wo_nbr','=', $wonbr)
+        DB::table('wo_mstr')
+            ->where('wo_nbr', '=', $wonbr)
             ->update([
                 'wo_engineer1'    => $woengineer1,
                 'wo_engineer2'    => $woengineer2,
@@ -1277,31 +1262,35 @@ class wocontroller extends Controller
                 'wo_updated_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                 'wo_access'       => 0
             ]);
-            
-            toast('WO '.$req->e_nowo.' successfully updated', 'success');
-            return redirect()->route('womaint');
-        }
-    
 
-    public function closewo(Request $req){
+        toast('WO ' . $req->e_nowo . ' successfully updated', 'success');
+        return redirect()->route('womaint');
+    }
+
+
+    public function closewo(Request $req)
+    {
         //dd($req->all());
         DB::table("wo_mstr")
             ->where('wo_nbr', '=', $req->tmp_wonbr)
-            ->update(['wo_status' => 'delete',
-            'wo_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+            ->update([
+                'wo_status' => 'delete',
+                'wo_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
             ]);
         DB::table("service_req_mstr")
             ->where('wo_number', '=', $req->tmp_wonbr)
-            ->update(['sr_status' => 4,
-            'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+            ->update([
+                'sr_status' => 4,
+                'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
             ]);
 
         //session()->flash('updated', 'User berhasil dihapus');
-        toast('Work Order '.$req->tmp_wonbr.' Successfuly deleted!','success');
+        toast('Work Order ' . $req->tmp_wonbr . ' Successfuly deleted!', 'success');
         return back();
     }
 
-    public function wopaging(Request $req){
+    public function wopaging(Request $req)
+    {
         // dd($req->all());
         //   dd($req->get('woperiod'));
         //  dd(Carbon::today()->subDay(2));
@@ -1315,21 +1304,21 @@ class wocontroller extends Controller
             $engineer    = $req->get('woengineer');
 
             $usernow = DB::table('users')
-                    ->leftjoin('eng_mstr','users.username','eng_mstr.eng_code')
-                    // ->select('approver')
-                    ->where('username','=',session()->get('username'))
-                    ->get();
+                ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+                // ->select('approver')
+                ->where('username', '=', session()->get('username'))
+                ->get();
 
-            if ($wonumber == '' and $asset == '' and $status == '' and $priority == '' and $engineer =='') {
+            if ($wonumber == '' and $asset == '' and $status == '' and $priority == '' and $engineer == '') {
                 // dd('aaa');        
                 $data = DB::table('wo_mstr')
-                        ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                        ->orderby($sort_by, $sort_type)
-                        ->orderBy('wo_mstr.wo_id', 'desc')
-                        ->paginate(10);
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->orderby($sort_by, $sort_type)
+                    ->orderBy('wo_mstr.wo_id', 'desc')
+                    ->paginate(10);
 
                 // dd($data);
-                    return view('workorder.table-wobrowse', ['data' => $data,'usernow' =>$usernow]);
+                return view('workorder.table-wobrowse', ['data' => $data, 'usernow' => $usernow]);
             } else {
                 $kondisi = "wo_mstr.wo_id > 0";
 
@@ -1338,13 +1327,15 @@ class wocontroller extends Controller
                 }
                 if ($asset != '') {
                     $kondisi .= " and asset_code = '" . $asset . "'";
-                }if ($status != '') {
-                    $kondisi .= " and wo_status = '" . $status . "'";
-                }if ($priority != ''){
-                    $kondisi .= " and wo_priority = '". $priority . "'";
                 }
-                if ($engineer != ''){
-                    $kondisi .= " and (wo_engineer1 = '". $engineer . "' or wo_engineer2 = '".$engineer."' or wo_engineer3 = '".$engineer."' or wo_engineer4 = '".$engineer."' or wo_engineer5 = '".$engineer."')";
+                if ($status != '') {
+                    $kondisi .= " and wo_status = '" . $status . "'";
+                }
+                if ($priority != '') {
+                    $kondisi .= " and wo_priority = '" . $priority . "'";
+                }
+                if ($engineer != '') {
+                    $kondisi .= " and (wo_engineer1 = '" . $engineer . "' or wo_engineer2 = '" . $engineer . "' or wo_engineer3 = '" . $engineer . "' or wo_engineer4 = '" . $engineer . "' or wo_engineer5 = '" . $engineer . "')";
                 }
                 // if($period != ''){
                 //     if($period == '1'){
@@ -1357,22 +1348,23 @@ class wocontroller extends Controller
                 //         $kondisi .= " and wo_created_at < '". Carbon::today()->subDay(5) . "'";
                 //     }
                 // }
-                
+
                 // dd($kondisi);
                 $data = DB::table('wo_mstr')
-                    ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
                     ->whereRaw($kondisi)
                     ->orderBy($sort_by, $sort_type)
                     ->orderBy('wo_mstr.wo_id', 'desc')
                     ->paginate(10);
                 // dd($data);
                 // dd($_SERVER['REQUEST_URI']);                
-                    return view('workorder.table-wobrowse', ['data' => $data,'usernow' => $usernow]);
+                return view('workorder.table-wobrowse', ['data' => $data, 'usernow' => $usernow]);
             }
         }
     }
 
-    public function wopagingview(Request $req){
+    public function wopagingview(Request $req)
+    {
         // dd('aaa');
         // dd($req->all());
         //   dd($req->get('woperiod'));
@@ -1387,23 +1379,23 @@ class wocontroller extends Controller
             $engineer    = $req->get('woengineer');
             $creator   = $req->get('wocreator');
             $usernow = DB::table('users')
-                    ->leftjoin('eng_mstr','users.username','eng_mstr.eng_code')
-                    // ->select('approver')
-                    ->where('username','=',session()->get('username'))
-                    ->get();
+                ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+                // ->select('approver')
+                ->where('username', '=', session()->get('username'))
+                ->get();
 
-            if ($wonumber == '' and $asset == '' and $status == '' and $priority == '' and $engineer =='' and $creator == '') {
-                        $data = DB::table('wo_mstr')
-                            ->selectRaw('wo_mstr.*,asset_mstr.*,file_wonumber')
-                            ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                            ->leftjoin('acceptance_image', 'acceptance_image.file_wonumber', 'wo_mstr.wo_nbr')
-                            ->orderby($sort_by, $sort_type)
-                            ->orderBy('wo_mstr.wo_id', 'desc')
-                            ->distinct('wo_nbr')
-                            ->paginate(10);
-                   
-                
-                    return view('workorder.table-woview', ['data' => $data,'usernow' =>$usernow]);
+            if ($wonumber == '' and $asset == '' and $status == '' and $priority == '' and $engineer == '' and $creator == '') {
+                $data = DB::table('wo_mstr')
+                    ->selectRaw('wo_mstr.*,asset_mstr.*,file_wonumber')
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->leftjoin('acceptance_image', 'acceptance_image.file_wonumber', 'wo_mstr.wo_nbr')
+                    ->orderby($sort_by, $sort_type)
+                    ->orderBy('wo_mstr.wo_id', 'desc')
+                    ->distinct('wo_nbr')
+                    ->paginate(10);
+
+
+                return view('workorder.table-woview', ['data' => $data, 'usernow' => $usernow]);
             } else {
                 // dd($creator);
                 $kondisi = "wo_mstr.wo_id > 0";
@@ -1413,15 +1405,18 @@ class wocontroller extends Controller
                 }
                 if ($asset != '') {
                     $kondisi .= " and asset_code = '" . $asset . "'";
-                }if ($status != '') {
-                    $kondisi .= " and wo_status = '" . $status . "'";
-                }if ($priority != ''){
-                    $kondisi .= " and wo_priority = '". $priority . "'";
-                }if($creator != ''){
-                    $kondisi .= " and wo_creator = '". $creator . "'";
                 }
-                if ($engineer != ''){
-                    $kondisi .= " and (wo_engineer1 = '". $engineer . "' or wo_engineer2 = '".$engineer."' or wo_engineer3 = '".$engineer."' or wo_engineer4 = '".$engineer."' or wo_engineer5 = '".$engineer."')";
+                if ($status != '') {
+                    $kondisi .= " and wo_status = '" . $status . "'";
+                }
+                if ($priority != '') {
+                    $kondisi .= " and wo_priority = '" . $priority . "'";
+                }
+                if ($creator != '') {
+                    $kondisi .= " and wo_creator = '" . $creator . "'";
+                }
+                if ($engineer != '') {
+                    $kondisi .= " and (wo_engineer1 = '" . $engineer . "' or wo_engineer2 = '" . $engineer . "' or wo_engineer3 = '" . $engineer . "' or wo_engineer4 = '" . $engineer . "' or wo_engineer5 = '" . $engineer . "')";
                 }
                 // if($period != ''){
                 //     if($period == '1'){
@@ -1434,7 +1429,7 @@ class wocontroller extends Controller
                 //         $kondisi .= " and wo_created_at < '". Carbon::today()->subDay(5) . "'";
                 //     }
                 // }
-                
+
                 // dd($kondisi);
                 $data = DB::table('wo_mstr')
                     ->selectRaw('min(wo_mstr.wo_id) as wo_id,wo_mstr.wo_nbr ,min(wo_mstr.wo_schedule) as wo_schedule, 
@@ -1444,8 +1439,8 @@ class wocontroller extends Controller
                     min(asset_mstr.asset_code) as asset_code,min(asset_mstr.asset_desc) as asset_desc,
                     min(acceptance_image.file_wonumber) as file_wonumber,min(wo_mstr.wo_engineer1) as wo_engineer1, 
                     min(wo_asset) as wo_asset, min(wo_type) as wo_type')
-                    
-                    ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
+
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
                     ->leftjoin('acceptance_image', 'acceptance_image.file_wonumber', 'wo_mstr.wo_nbr')
                     ->whereRaw($kondisi)
                     // ->orderBy('wo_id', 'desc')
@@ -1456,16 +1451,17 @@ class wocontroller extends Controller
                     // ->distinct()
                     // ->tosql();
                     ->paginate(10);
-                    // ;
+                // ;
                 // dd($data );
-                    // dd($sort_by,$sort_type);
+                // dd($sort_by,$sort_type);
                 // dd($_SERVER['REQUEST_URI']);                
-                    return view('workorder.table-woview', ['data' => $data,'usernow' => $usernow]);
+                return view('workorder.table-woview', ['data' => $data, 'usernow' => $usernow]);
             }
         }
     }
 
-    public function wopagingcreate(Request $req){
+    public function wopagingcreate(Request $req)
+    {
         //   dd($req->get('woperiod'));
         //  dd(Carbon::today()->subDay(2));
         if ($req->ajax()) {
@@ -1478,22 +1474,22 @@ class wocontroller extends Controller
             $period    = $req->get('woperiod');
 
             $usernow = DB::table('users')
-                    ->leftjoin('eng_mstr','users.username','eng_mstr.eng_code')
-                    // ->select('approver')
-                    ->where('username','=',session()->get('username'))
-                    ->get();
+                ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+                // ->select('approver')
+                ->where('username', '=', session()->get('username'))
+                ->get();
 
-            if ($wonumber == '' and $asset == '' and $status == '' and $priority == '' and $period =='') {
-                        $data = DB::table('wo_mstr')
-                            ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                            ->where('wo_creator','=',session()->get('username'))
-                            ->where('wo_status','=','plan')
-                            ->orderby($sort_by, $sort_type)
-                            ->orderBy('wo_mstr.wo_id', 'desc')
-                            ->paginate(10);
+            if ($wonumber == '' and $asset == '' and $status == '' and $priority == '' and $period == '') {
+                $data = DB::table('wo_mstr')
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->where('wo_creator', '=', session()->get('username'))
+                    ->where('wo_status', '=', 'plan')
+                    ->orderby($sort_by, $sort_type)
+                    ->orderBy('wo_mstr.wo_id', 'desc')
+                    ->paginate(10);
                 //    dd('aaa');
-                
-                    return view('workorder.table-wocreate', ['data' => $data,'usernow' =>$usernow]);
+
+                return view('workorder.table-wocreate', ['data' => $data, 'usernow' => $usernow]);
             } else {
                 $kondisi = "wo_mstr.wo_id > 0";
 
@@ -1502,37 +1498,39 @@ class wocontroller extends Controller
                 }
                 if ($asset != '') {
                     $kondisi .= " and asset_code = '" . $asset . "'";
-                }if ($status != '') {
+                }
+                if ($status != '') {
                     $kondisi .= " and wo_status = '" . $status . "'";
-                }if ($priority != ''){
-                    $kondisi .= " and wo_priority = '". $priority . "'";
-                }if($period != ''){
-                    if($period == '1'){
-                        $kondisi .= " and wo_created_at > '". Carbon::today()->subDay(2) . "'";
-                    }
-                    else if($period == '2'){
-                        $kondisi .= " and wo_created_at BETWEEN'". Carbon::today()->subDay(3) . "'AND '".Carbon::today()->subDay(5)."'";
-                    }
-                    else if($period == '3'){
-                        $kondisi .= " and wo_created_at < '". Carbon::today()->subDay(5) . "'";
+                }
+                if ($priority != '') {
+                    $kondisi .= " and wo_priority = '" . $priority . "'";
+                }
+                if ($period != '') {
+                    if ($period == '1') {
+                        $kondisi .= " and wo_created_at > '" . Carbon::today()->subDay(2) . "'";
+                    } else if ($period == '2') {
+                        $kondisi .= " and wo_created_at BETWEEN'" . Carbon::today()->subDay(3) . "'AND '" . Carbon::today()->subDay(5) . "'";
+                    } else if ($period == '3') {
+                        $kondisi .= " and wo_created_at < '" . Carbon::today()->subDay(5) . "'";
                     }
                 }
-                
+
                 // dd($kondisi);
                 $data = DB::table('wo_mstr')
-                    ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
                     ->whereRaw($kondisi)
-                    ->where('wo_creator','=',session()->get('username'))
+                    ->where('wo_creator', '=', session()->get('username'))
                     ->orderBy($sort_by, $sort_type)
                     ->orderBy('wo_mstr.wo_id', 'desc')
                     ->paginate(10);
                 // dd($data);
                 // dd($_SERVER['REQUEST_URI']);                
-                    return view('workorder.table-wocreate', ['data' => $data,'usernow' => $usernow]);
+                return view('workorder.table-wocreate', ['data' => $data, 'usernow' => $usernow]);
             }
         }
     }
-    public function wopagingcreatedirect(Request $req){
+    public function wopagingcreatedirect(Request $req)
+    {
         //   dd($req->get('woperiod'));
         //  dd(Carbon::today()->subDay(2));
         if ($req->ajax()) {
@@ -1545,23 +1543,23 @@ class wocontroller extends Controller
             $period    = $req->get('woperiod');
 
             $usernow = DB::table('users')
-                    ->leftjoin('eng_mstr','users.username','eng_mstr.eng_code')
-                    // ->select('approver')
-                    ->where('username','=',session()->get('username'))
-                    ->get();
+                ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+                // ->select('approver')
+                ->where('username', '=', session()->get('username'))
+                ->get();
 
-            if ($wonumber == '' and $asset == '' and $status == '' and $priority == '' and $period =='') {
+            if ($wonumber == '' and $asset == '' and $status == '' and $priority == '' and $period == '') {
                 $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                ->where('wo_type','=','direct')
-                ->where('wo_status','=','open')
-                ->where('wo_engineer1','=',Session()->get('username'))
-                ->orderby($sort_by,$sort_type)
-                ->orderBy('wo_mstr.wo_id', 'desc')
-                ->paginate(10);
-                   
-                
-                    return view('workorder.table-wocreatedirect', ['data' => $data,'usernow' =>$usernow]);
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->where('wo_type', '=', 'direct')
+                    ->where('wo_status', '=', 'open')
+                    ->where('wo_engineer1', '=', Session()->get('username'))
+                    ->orderby($sort_by, $sort_type)
+                    ->orderBy('wo_mstr.wo_id', 'desc')
+                    ->paginate(10);
+
+
+                return view('workorder.table-wocreatedirect', ['data' => $data, 'usernow' => $usernow]);
             } else {
                 $kondisi = "wo_mstr.wo_id > 0";
 
@@ -1570,30 +1568,31 @@ class wocontroller extends Controller
                 }
                 if ($asset != '') {
                     $kondisi .= " and asset_code = '" . $asset . "'";
-                }if ($status != '') {
+                }
+                if ($status != '') {
                     $kondisi .= " and wo_status = '" . $status . "'";
-                }if ($priority != ''){
-                    $kondisi .= " and wo_priority = '". $priority . "'";
-                }if($period != ''){
-                    if($period == '1'){
-                        $kondisi .= " and wo_created_at > '". Carbon::today()->subDay(2) . "'";
-                    }
-                    else if($period == '2'){
-                        $kondisi .= " and wo_created_at BETWEEN'". Carbon::today()->subDay(3) . "'AND '".Carbon::today()->subDay(5)."'";
-                    }
-                    else if($period == '3'){
-                        $kondisi .= " and wo_created_at < '". Carbon::today()->subDay(5) . "'";
+                }
+                if ($priority != '') {
+                    $kondisi .= " and wo_priority = '" . $priority . "'";
+                }
+                if ($period != '') {
+                    if ($period == '1') {
+                        $kondisi .= " and wo_created_at > '" . Carbon::today()->subDay(2) . "'";
+                    } else if ($period == '2') {
+                        $kondisi .= " and wo_created_at BETWEEN'" . Carbon::today()->subDay(3) . "'AND '" . Carbon::today()->subDay(5) . "'";
+                    } else if ($period == '3') {
+                        $kondisi .= " and wo_created_at < '" . Carbon::today()->subDay(5) . "'";
                     }
                 }
                 $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                ->whereRaw($kondisi)
-                ->where('wo_type','=','direct')
-                ->where('wo_status','=','open')
-                ->where('wo_engineer1','=',Session()->get('username'))
-                ->orderby('wo_created_at','desc')
-                ->orderBy('wo_mstr.wo_id', 'desc')
-                ->paginate(10);
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->whereRaw($kondisi)
+                    ->where('wo_type', '=', 'direct')
+                    ->where('wo_status', '=', 'open')
+                    ->where('wo_engineer1', '=', Session()->get('username'))
+                    ->orderby('wo_created_at', 'desc')
+                    ->orderBy('wo_mstr.wo_id', 'desc')
+                    ->paginate(10);
                 // dd($kondisi);    
                 // $data = DB::table('wo_mstr')
                 //     ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
@@ -1603,11 +1602,12 @@ class wocontroller extends Controller
                 //     ->paginate(10);
                 // dd($data);
                 // dd($_SERVER['REQUEST_URI']);                
-                    return view('workorder.table-wocreatedirect', ['data' => $data,'usernow' => $usernow]);
+                return view('workorder.table-wocreatedirect', ['data' => $data, 'usernow' => $usernow]);
             }
         }
     }
-    public function wopagingstart(Request $req){
+    public function wopagingstart(Request $req)
+    {
         // dd('aaa');
         //   dd($req->get('woperiod'));
         //  dd(Carbon::today()->subDay(2));
@@ -1621,31 +1621,31 @@ class wocontroller extends Controller
             // $period    = $req->get('woperiod');
 
             $usernow = DB::table('users')
-                    ->leftjoin('eng_mstr','users.username','eng_mstr.eng_code')
-                    // ->select('approver')
-                    ->where('username','=',session()->get('username'))
-                    ->get();
+                ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+                // ->select('approver')
+                ->where('username', '=', session()->get('username'))
+                ->get();
 
-            if ($wonumber == '' and $asset == '' and $status == '' and $priority == '' ) {
-                        
-                            $data = DB::table('wo_mstr')
-                            ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                            ->where(function($status){
-                                $status->where('wo_status','=','open')
-                                ->orwhere('wo_status','=','started');
-                            })
-                            ->where(function($query){
-                                $query->where('wo_engineer1','=',Session()->get('username'))
-                                ->orwhere('wo_engineer2','=',Session()->get('username'))
-                                ->orwhere('wo_engineer3','=',Session()->get('username'))
-                                ->orwhere('wo_engineer4','=',Session()->get('username'))
-                                ->orwhere('wo_engineer5','=',Session()->get('username'));
-                            })
-                            ->orderby('wo_created_at','desc')
-                            ->orderBy('wo_mstr.wo_id', 'desc')
-                            ->paginate(10);
-                
-                    return view('workorder.table-wostart', ['data' => $data,'usernow' =>$usernow]);
+            if ($wonumber == '' and $asset == '' and $status == '' and $priority == '') {
+
+                $data = DB::table('wo_mstr')
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->where(function ($status) {
+                        $status->where('wo_status', '=', 'open')
+                            ->orwhere('wo_status', '=', 'started');
+                    })
+                    ->where(function ($query) {
+                        $query->where('wo_engineer1', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                    })
+                    ->orderby('wo_created_at', 'desc')
+                    ->orderBy('wo_mstr.wo_id', 'desc')
+                    ->paginate(10);
+
+                return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
             } else {
                 $kondisi = "wo_mstr.wo_id > 0";
 
@@ -1654,15 +1654,16 @@ class wocontroller extends Controller
                 }
                 if ($asset != '') {
                     $kondisi .= " and asset_code = '" . $asset . "'";
-                }if ($status != '') {
-                    $kondisi .= " and wo_status ='".$status."'";
                 }
-                else{
+                if ($status != '') {
+                    $kondisi .= " and wo_status ='" . $status . "'";
+                } else {
                     $kondisi .= " and (wo_status = 'open' or wo_status = 'started')";
-                }if ($priority != ''){
-                    $kondisi .= " and wo_priority = '". $priority . "'";
                 }
-                
+                if ($priority != '') {
+                    $kondisi .= " and wo_priority = '" . $priority . "'";
+                }
+
                 // dd($kondisi);
                 // $data = DB::table('wo_mstr')
                 //     ->selectRaw('wo_mstr.*,asset_mstr.*,file_wonumber')
@@ -1674,26 +1675,27 @@ class wocontroller extends Controller
                 //     ->distinct('wo_nbr')
                 //     ->paginate(10);
                 $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                ->whereRaw($kondisi)
-                ->where(function($query){
-                    $query->where('wo_engineer1','=',Session()->get('username'))
-                    ->orwhere('wo_engineer2','=',Session()->get('username'))
-                    ->orwhere('wo_engineer3','=',Session()->get('username'))
-                    ->orwhere('wo_engineer4','=',Session()->get('username'))
-                    ->orwhere('wo_engineer5','=',Session()->get('username'));
-                })
-                ->orderby('wo_created_at','desc')
-                ->orderBy('wo_mstr.wo_id', 'desc')
-                
-                ->paginate(10);
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->whereRaw($kondisi)
+                    ->where(function ($query) {
+                        $query->where('wo_engineer1', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                    })
+                    ->orderby('wo_created_at', 'desc')
+                    ->orderBy('wo_mstr.wo_id', 'desc')
+
+                    ->paginate(10);
                 // dd($data);
                 // dd($_SERVER['REQUEST_URI']);                
-                    return view('workorder.table-wostart', ['data' => $data,'usernow' => $usernow]);
+                return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
             }
         }
     }
-    public function wopagingreport(Request $req){
+    public function wopagingreport(Request $req)
+    {
         // dd('aaa');
         //   dd($req->get('woperiod'));
         //  dd(Carbon::today()->subDay(2));
@@ -1707,31 +1709,31 @@ class wocontroller extends Controller
             // $period    = $req->get('woperiod');
 
             $usernow = DB::table('users')
-                    ->leftjoin('eng_mstr','users.username','eng_mstr.eng_code')
-                    // ->select('approver')
-                    ->where('username','=',session()->get('username'))
-                    ->get();
+                ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+                // ->select('approver')
+                ->where('username', '=', session()->get('username'))
+                ->get();
 
-            if ($wonumber == '' and $asset == '' and $status == '' and $priority == '' ) {
-                        
-                            $data = DB::table('wo_mstr')
-                            ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                            ->where(function($status){
-                                $status->where('wo_status','=','started')
-                                ->orwhere('wo_status','=','finish');
-                            })
-                            ->where(function($query){
-                                $query->where('wo_engineer1','=',Session()->get('username'))
-                                ->orwhere('wo_engineer2','=',Session()->get('username'))
-                                ->orwhere('wo_engineer3','=',Session()->get('username'))
-                                ->orwhere('wo_engineer4','=',Session()->get('username'))
-                                ->orwhere('wo_engineer5','=',Session()->get('username'));
-                            })
-                            ->orderby('wo_created_at','desc')
-                            ->orderBy('wo_mstr.wo_id', 'desc')
-                            ->paginate(10);
-                
-                    return view('workorder.table-woclose', ['data' => $data,'usernow' =>$usernow]);
+            if ($wonumber == '' and $asset == '' and $status == '' and $priority == '') {
+
+                $data = DB::table('wo_mstr')
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->where(function ($status) {
+                        $status->where('wo_status', '=', 'started')
+                            ->orwhere('wo_status', '=', 'finish');
+                    })
+                    ->where(function ($query) {
+                        $query->where('wo_engineer1', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                    })
+                    ->orderby('wo_created_at', 'desc')
+                    ->orderBy('wo_mstr.wo_id', 'desc')
+                    ->paginate(10);
+
+                return view('workorder.table-woclose', ['data' => $data, 'usernow' => $usernow]);
             } else {
                 $kondisi = "wo_mstr.wo_id > 0";
 
@@ -1740,14 +1742,14 @@ class wocontroller extends Controller
                 }
                 if ($asset != '') {
                     $kondisi .= " and wo_asset = '" . $asset . "'";
-                }if ($status != '') {
-                    $kondisi .= " and wo_status = '".$status."'";
                 }
-                else{
+                if ($status != '') {
+                    $kondisi .= " and wo_status = '" . $status . "'";
+                } else {
                     $kondisi .= " and (wo_status = 'started' or wo_status = 'finish')";
                 }
-                if ($priority != ''){
-                    $kondisi .= " and wo_priority = '". $priority . "'";
+                if ($priority != '') {
+                    $kondisi .= " and wo_priority = '" . $priority . "'";
                 }
                 // DD($kondisi);
                 // dd($kondisi);
@@ -1762,36 +1764,37 @@ class wocontroller extends Controller
                 //     ->distinct('wo_nbr')
                 //     ->paginate(10);
                 $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                ->whereRaw($kondisi)
-                ->where(function($query){
-                    $query->where('wo_engineer1','=',Session()->get('username'))
-                    ->orwhere('wo_engineer2','=',Session()->get('username'))
-                    ->orwhere('wo_engineer3','=',Session()->get('username'))
-                    ->orwhere('wo_engineer4','=',Session()->get('username'))
-                    ->orwhere('wo_engineer5','=',Session()->get('username'));
-                })
-                ->orderBy('wo_status','desc')
-                ->orderby('wo_created_at','desc')
-                ->orderBy('wo_mstr.wo_id', 'desc')
-                ->paginate(10);
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->whereRaw($kondisi)
+                    ->where(function ($query) {
+                        $query->where('wo_engineer1', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                    })
+                    ->orderBy('wo_status', 'desc')
+                    ->orderby('wo_created_at', 'desc')
+                    ->orderBy('wo_mstr.wo_id', 'desc')
+                    ->paginate(10);
                 // dd($data);
                 // dd($_SERVER['REQUEST_URI']);                
-                    return view('workorder.table-woclose', ['data' => $data,'usernow' => $usernow]);
+                return view('workorder.table-woclose', ['data' => $data, 'usernow' => $usernow]);
             }
         }
     }
 
-    public function geteditwo(Request $req){
-            //dd($req->get('nomorwo'));
-            // dd('aaa');
-            $nowo = $req->get('nomorwo');
-			$currwo = DB::table('wo_mstr')
-					->where('wo_mstr.wo_nbr','=',$nowo)
-					->first();
-						
-            $data = DB::table('wo_mstr')
-                ->selectRaw('wo_type,wo_nbr,wo_reviewer_appdate,wo_approver_appdate,wo_repair_type,
+    public function geteditwo(Request $req)
+    {
+        //dd($req->get('nomorwo'));
+        // dd('aaa');
+        $nowo = $req->get('nomorwo');
+        $currwo = DB::table('wo_mstr')
+            ->where('wo_mstr.wo_nbr', '=', $nowo)
+            ->first();
+
+        $data = DB::table('wo_mstr')
+            ->selectRaw('wo_type,wo_nbr,wo_reviewer_appdate,wo_approver_appdate,wo_repair_type,
                 wo_repair_group,xxrepgroup_nbr,xxrepgroup_desc,wo_status,asset_desc,wo_approval_note,
                 wo_creator,wo_reject_reason,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status,
                 wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,wo_engineer2 as woen2, 
@@ -1804,168 +1807,168 @@ class wocontroller extends Controller
                 wo_finish_time,wo_repair_hour,asset_last_mtc,asset_last_usage_mtc,asset_measure,loc_code,
                 loc_desc,astype_code,astype_desc,wo_new_type,wo_impact,wo_impact_desc,wo_action,wotyp_desc,asset_daya,
                 wo_reject_reason')
-                ->leftjoin('eng_mstr as u1','wo_mstr.wo_engineer1','u1.eng_code')
-                ->leftjoin('eng_mstr as u2','wo_mstr.wo_engineer2','u2.eng_code')
-                ->leftjoin('eng_mstr as u3','wo_mstr.wo_engineer3','u3.eng_code')
-                ->leftjoin('eng_mstr as u4','wo_mstr.wo_engineer4','u4.eng_code')
-                ->leftjoin('eng_mstr as u5','wo_mstr.wo_engineer5','u5.eng_code')
-                ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                ->leftjoin('asset_type','asset_mstr.asset_type','asset_type.astype_code')
-                ->leftjoin('loc_mstr','asset_mstr.asset_loc','loc_mstr.loc_code')
-                ->leftjoin('fn_mstr as fn1','wo_mstr.wo_failure_code1','fn1.fn_code')
-                ->leftjoin('fn_mstr as fn2','wo_mstr.wo_failure_code2','fn2.fn_code')
-                ->leftjoin('fn_mstr as fn3','wo_mstr.wo_failure_code3','fn3.fn_code')
-                ->leftjoin('rep_master as r1','wo_mstr.wo_repair_code1','r1.repm_code')
-                ->leftjoin('rep_master as r2','wo_mstr.wo_repair_code2','r2.repm_code')
-                ->leftjoin('rep_master as r3','wo_mstr.wo_repair_code3','r3.repm_code')
-                ->leftJoin('dept_mstr','wo_mstr.wo_dept','dept_mstr.dept_code')
-                ->leftJoin('wotyp_mstr','wo_mstr.wo_new_type','wotyp_mstr.wotyp_code')
-                ->leftjoin('xxrepgroup_mstr','xxrepgroup_mstr.xxrepgroup_nbr','wo_mstr.wo_repair_group')
-                ->where('wo_mstr.wo_nbr','=',$nowo)
-                ->get();
-                // dd($data);
-                
-			//dd($data);
-            return $data;
+            ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
+            ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
+            ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
+            ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
+            ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
+            ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+            ->leftjoin('asset_type', 'asset_mstr.asset_type', 'asset_type.astype_code')
+            ->leftjoin('loc_mstr', 'asset_mstr.asset_loc', 'loc_mstr.loc_code')
+            ->leftjoin('fn_mstr as fn1', 'wo_mstr.wo_failure_code1', 'fn1.fn_code')
+            ->leftjoin('fn_mstr as fn2', 'wo_mstr.wo_failure_code2', 'fn2.fn_code')
+            ->leftjoin('fn_mstr as fn3', 'wo_mstr.wo_failure_code3', 'fn3.fn_code')
+            ->leftjoin('rep_master as r1', 'wo_mstr.wo_repair_code1', 'r1.repm_code')
+            ->leftjoin('rep_master as r2', 'wo_mstr.wo_repair_code2', 'r2.repm_code')
+            ->leftjoin('rep_master as r3', 'wo_mstr.wo_repair_code3', 'r3.repm_code')
+            ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
+            ->leftJoin('wotyp_mstr', 'wo_mstr.wo_new_type', 'wotyp_mstr.wotyp_code')
+            ->leftjoin('xxrepgroup_mstr', 'xxrepgroup_mstr.xxrepgroup_nbr', 'wo_mstr.wo_repair_group')
+            ->where('wo_mstr.wo_nbr', '=', $nowo)
+            ->get();
+        // dd($data);
+
+        //dd($data);
+        return $data;
     }
 
-    public function approvewo(Request $req){
-         
-         $engineernow = $req->engappr[0];
-         $engineerexplode = explode(',',$engineernow);
-        //  dd($engineerexplode[4]);
-         $engnow1 = '';
-         $engnow2 = '';
-         $engnow3 = '';
-         $engnow4 = '';
-         $engnow5 = '';
+    public function approvewo(Request $req)
+    {
 
-         if(array_key_exists(0,$engineerexplode)){
-             $engnow1 = $engineerexplode[0];
-         }
-         if(array_key_exists(1,$engineerexplode)){
+        $engineernow = $req->engappr[0];
+        $engineerexplode = explode(',', $engineernow);
+        //  dd($engineerexplode[4]);
+        $engnow1 = '';
+        $engnow2 = '';
+        $engnow3 = '';
+        $engnow4 = '';
+        $engnow5 = '';
+
+        if (array_key_exists(0, $engineerexplode)) {
+            $engnow1 = $engineerexplode[0];
+        }
+        if (array_key_exists(1, $engineerexplode)) {
             $engnow2 = $engineerexplode[1];
         }
-        if(array_key_exists(2,$engineerexplode)){
+        if (array_key_exists(2, $engineerexplode)) {
             $engnow3 = $engineerexplode[2];
         }
-        if(array_key_exists(3,$engineerexplode)){
+        if (array_key_exists(3, $engineerexplode)) {
             $engnow4 = $engineerexplode[3];
         }
-        if(array_key_exists(4,$engineerexplode)){
+        if (array_key_exists(4, $engineerexplode)) {
             $engnow5 = $engineerexplode[4];
         }
         $dataaccess = DB::table('wo_mstr')
-                    ->where('wo_nbr','=', $req->aprwonbr)
-                    ->first();
-                    
-        if($dataaccess->wo_access == 0){
+            ->where('wo_nbr', '=', $req->aprwonbr)
+            ->first();
+
+        if ($dataaccess->wo_access == 0) {
             DB::table('wo_mstr')
-                ->where('wo_nbr','=', $req->aprwonbr)
-                ->update(['wo_access' => 1]);   
-        }
-        else{
-            toast('WO '.$req->aprwonbr.' is being used right now', 'error');
+                ->where('wo_nbr', '=', $req->aprwonbr)
+                ->update(['wo_access' => 1]);
+        } else {
+            toast('WO ' . $req->aprwonbr . ' is being used right now', 'error');
             return redirect()->route('womaint');
         }
-        if($dataaccess->wo_status != 'plan'){
-            toast('WO '.$req->aprwonbr.' status has changed, please recheck', 'error');
+        if ($dataaccess->wo_status != 'plan') {
+            toast('WO ' . $req->aprwonbr . ' status has changed, please recheck', 'error');
             return redirect()->route('womaint');
         }
-        if($req->switch =='approve'){
+        if ($req->switch == 'approve') {
             // dd($req->all());
-            if($req->repairtypeapp == 'auto'){
+            if ($req->repairtypeapp == 'auto') {
                 DB::table('wo_mstr')
-                ->where('wo_nbr',$req->aprwonbr)
-                ->update([
-                    'wo_status'     =>'open',
-                    'wo_engineer1'  =>  $engnow1,
-                    'wo_engineer2'  =>  $engnow2,
-                    'wo_engineer3'  =>  $engnow3,
-                    'wo_engineer4'  =>  $engnow4,
-                    'wo_engineer5'  =>  $engnow5,
-                    'wo_approver'   => Session::get('username'),
-                    'wo_access'     => 0
-                ]);
-                toast('Work order '.$req->aprwonbr.' approved successfuly', 'success');
+                    ->where('wo_nbr', $req->aprwonbr)
+                    ->update([
+                        'wo_status'     => 'open',
+                        'wo_engineer1'  =>  $engnow1,
+                        'wo_engineer2'  =>  $engnow2,
+                        'wo_engineer3'  =>  $engnow3,
+                        'wo_engineer4'  =>  $engnow4,
+                        'wo_engineer5'  =>  $engnow5,
+                        'wo_approver'   => Session::get('username'),
+                        'wo_access'     => 0
+                    ]);
+                toast('Work order ' . $req->aprwonbr . ' approved successfuly', 'success');
                 return redirect()->route('womaint');
-            }
-            else{
-                $exprc = explode(',',$req->repaircodeapp);
+            } else {
+                $exprc = explode(',', $req->repaircodeapp);
                 $exprg = $req->repairgroupapp;
                 $exprt = $req->repairtype;
                 // dd(count($teets));
-                
-                $countexprc = count($exprc); 
+
+                $countexprc = count($exprc);
                 $rc1 = null;
                 $rc2 = null;
                 $rc3 = null;
-                if(isset($exprc[0])){
+                if (isset($exprc[0])) {
                     $rc1 = $exprc[0];
                 }
-                if(isset($exprc[1])){
+                if (isset($exprc[1])) {
                     $rc2 = $exprc[1];
                 }
-                if(isset($exprc[2])){
+                if (isset($exprc[2])) {
                     $rc3 = $exprc[2];
                 }
                 DB::table('wo_mstr')
-                ->where('wo_nbr',$req->aprwonbr)
-                ->update([
-                    'wo_status'=>'open',
-                    'wo_engineer1'  =>  $engnow1,
-                    'wo_engineer2'  =>  $engnow2,
-                    'wo_engineer3'  =>  $engnow3,
-                    'wo_engineer4'  =>  $engnow4,
-                    'wo_engineer5'  =>  $engnow5,
-                    'wo_repair_code1' =>$rc1,
-                    'wo_repair_code2'=>$rc2,
-                    'wo_repair_code3'=>$rc3,
-                    'wo_repair_group'=>$exprg,
-                    'wo_repair_type'=>$exprt,
-                    'wo_approver' => Session::get('username'),
-                    'wo_access'     => 0
+                    ->where('wo_nbr', $req->aprwonbr)
+                    ->update([
+                        'wo_status' => 'open',
+                        'wo_engineer1'  =>  $engnow1,
+                        'wo_engineer2'  =>  $engnow2,
+                        'wo_engineer3'  =>  $engnow3,
+                        'wo_engineer4'  =>  $engnow4,
+                        'wo_engineer5'  =>  $engnow5,
+                        'wo_repair_code1' => $rc1,
+                        'wo_repair_code2' => $rc2,
+                        'wo_repair_code3' => $rc3,
+                        'wo_repair_group' => $exprg,
+                        'wo_repair_type' => $exprt,
+                        'wo_approver' => Session::get('username'),
+                        'wo_access'     => 0
                     ]);
 
-                toast('Work order '.$req->aprwonbr.' approved successfuly', 'success');
+                toast('Work order ' . $req->aprwonbr . ' approved successfuly', 'success');
                 return redirect()->route('womaint');
-                }
             }
-        else{
+        } else {
             DB::table('wo_mstr')
-            ->where('wo_nbr',$req->aprwonbr)
-            ->update(['wo_status'=>'closed']);
-            toast('Work order '.$req->aprwonbr.' has been rejected', 'success');
+                ->where('wo_nbr', $req->aprwonbr)
+                ->update(['wo_status' => 'closed']);
+            toast('Work order ' . $req->aprwonbr . ' has been rejected', 'success');
             return redirect()->route('womaint');
-        }    
+        }
     }
 
-    public function getfailure(Request $req){
-        
-        
-            //dd($req->get('nomorwo'));
-            $asswo = $req->get('asset');
-            $asset2 = DB::table('asset_mstr')
-                    ->where('asset_mstr.asset_code','=',$asswo)
-                    ->first();
-            
-            $failure = DB::table('fn_mstr')
-                ->selectRaw('fn_code,fn_desc')
-                ->where(function($query) use($asset2){
-                    $query->where('fn_mstr.fn_assetgroup','=',$asset2->asset_group)
-                    ->orwhere('fn_assetgroup','=',null);
-                })
-                ->get();
-                
-            return $failure;
+    public function getfailure(Request $req)
+    {
+
+
+        //dd($req->get('nomorwo'));
+        $asswo = $req->get('asset');
+        $asset2 = DB::table('asset_mstr')
+            ->where('asset_mstr.asset_code', '=', $asswo)
+            ->first();
+
+        $failure = DB::table('fn_mstr')
+            ->selectRaw('fn_code,fn_desc')
+            ->where(function ($query) use ($asset2) {
+                $query->where('fn_mstr.fn_assetgroup', '=', $asset2->asset_group)
+                    ->orwhere('fn_assetgroup', '=', null);
+            })
+            ->get();
+
+        return $failure;
     }
-    
-    public function wojoblist(Request $req){
+
+    public function wojoblist(Request $req)
+    {
         //dd(Session()->get('username'));
         if (strpos(Session::get('menu_access'), 'WO02') !== false) {
             $getuser = DB::table('users')
-                    ->where('username','=',Session()->get('username'))
-                    ->first();
+                ->where('username', '=', Session()->get('username'))
+                ->first();
 
             //  if($getuser->role_user == 'ADM'){
             //     $data = DB::table('wo_mstr')
@@ -1980,225 +1983,222 @@ class wocontroller extends Controller
             //  }   
             //  else{    
             $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                ->where(function($status){
-                    $status->where('wo_status','=','open')
-                    ->orwhere('wo_status','=','started');
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->where(function ($status) {
+                    $status->where('wo_status', '=', 'ENG Confirmed')
+                        ->orwhere('wo_status', '=', 'started');
                 })
-                ->where(function($query){
-                    $query->where('wo_engineer1','=',Session()->get('username'))
-                    ->orwhere('wo_engineer2','=',Session()->get('username'))
-                    ->orwhere('wo_engineer3','=',Session()->get('username'))
-                    ->orwhere('wo_engineer4','=',Session()->get('username'))
-                    ->orwhere('wo_engineer5','=',Session()->get('username'));
+                ->where(function ($query) {
+                    $query->where('wo_engineer1', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer5', '=', Session()->get('username'));
                 })
-                ->orderby('wo_created_at','desc')
+                ->orderby('wo_created_at', 'desc')
                 ->orderBy('wo_mstr.wo_id', 'desc')
                 ->paginate(10);
-                // dd($data);
+            // dd($data);
             // }
-                // dd($data);
+            // dd($data);
             $engineer = DB::table('users')
-                    ->join('roles','users.role_user','roles.role_code')
-                    ->where('role_desc','=','Engineer')
-                    ->get();
+                ->join('roles', 'users.role_user', 'roles.role_code')
+                ->where('role_desc', '=', 'Engineer')
+                ->get();
             $asset = DB::table('wo_mstr')
-                    ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
-                    ->join('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                    ->where(function($status){
-                        $status->where('wo_status','=','open')
-                        ->orwhere('wo_status','=','started');
-                       
-                    })
-                    ->where(function($query){
-                        $query->where('wo_engineer1','=',Session()->get('username'))
-                        ->orwhere('wo_engineer2','=',Session()->get('username'))
-                        ->orwhere('wo_engineer3','=',Session()->get('username'))
-                        ->orwhere('wo_engineer4','=',Session()->get('username'))
-                        ->orwhere('wo_engineer5','=',Session()->get('username'));
-                    })
-                    ->groupBy('asset_code')
-                    ->orderBy('asset_code')
-                    ->get();
-            if($req->ajax()){
+                ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
+                ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->where(function ($status) {
+                    $status->where('wo_status', '=', 'ENG Confirmed')
+                        ->orwhere('wo_status', '=', 'started');
+                })
+                ->where(function ($query) {
+                    $query->where('wo_engineer1', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                })
+                ->groupBy('asset_code')
+                ->orderBy('asset_code')
+                ->get();
+            if ($req->ajax()) {
                 return view('workorder.table-wostart', ['data' => $data]);
+            } else {
+                return view('workorder.wostart', ['data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset]);
             }
-            else{
-                return view('workorder.wostart', ['data' => $data,'user' => $engineer,'engine'=>$engineer,'asset1'=>$asset,'asset2'=>$asset]);
-            }
-            
         } else {
             toast('you dont have access, please contact admin', 'error');
             return back();
         }
     }
 
-    public function editjob(Request $req){
+    public function editjob(Request $req)
+    {
         // dd($req->all());
         $dataaccess = DB::table('wo_mstr')
-                    ->where('wo_nbr','=', $req->v_nowo)
-                    ->first();
-        if($dataaccess->wo_access == 0){
+            ->where('wo_nbr', '=', $req->v_nowo)
+            ->first();
+        if ($dataaccess->wo_access == 0) {
             DB::table('wo_mstr')
-                ->where('wo_nbr','=', $req->v_nowo)
-                ->update(['wo_access' => 1]);   
-        }
-        else{
-            toast('WO '.$req->v_nowo.' is being used right now', 'error');
+                ->where('wo_nbr', '=', $req->v_nowo)
+                ->update(['wo_access' => 1]);
+        } else {
+            toast('WO ' . $req->v_nowo . ' is being used right now', 'error');
             return redirect()->route('wojoblist');
         }
-        if($dataaccess->wo_status != $req->statuswo){
-            toast('WO '.$req->v_nowo.' status has changed, please recheck', 'error');
+        if ($dataaccess->wo_status != $req->statuswo) {
+            toast('WO ' . $req->v_nowo . ' status has changed, please recheck', 'error');
             return redirect()->route('wojoblist');
         }
         $statuswo = $req->statuswo;
         $nomorwo = $req->v_nowo;
         //dd($req->all());
-        if($statuswo =='open'){
+        if ($statuswo == 'ENG Confirmed') {
             DB::table('wo_mstr')
-            ->where('wo_nbr','=',$nomorwo)
-            ->update([
-                'wo_status' => 'started',
-                'wo_start_date' => Carbon::now('ASIA/JAKARTA')->toDateString(),
-                'wo_start_time' => Carbon::now('ASIA/JAKARTA')->toTimeString(),
-                'wo_access'     => 0
-            ]);
-            if($req->v_nosr != null || $req->v_nosr != ''){
-                DB::table('service_req_mstr')
-                ->where('wo_number','=',$nomorwo)
+                ->where('wo_nbr', '=', $nomorwo)
                 ->update([
-                    'sr_status' => 3,
-                    'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                ]); 
+                    'wo_status' => 'started',
+                    'wo_start_date' => Carbon::now('ASIA/JAKARTA')->toDateString(),
+                    'wo_start_time' => Carbon::now('ASIA/JAKARTA')->toTimeString(),
+                    'wo_access'     => 0
+                ]);
+            if ($req->v_nosr != null || $req->v_nosr != '') {
+                DB::table('service_req_mstr')
+                    ->where('wo_number', '=', $nomorwo)
+                    ->update([
+                        'sr_status' => 3,
+                        'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    ]);
             }
-            toast('Work order '.$nomorwo.' started successfuly', 'success');
+            toast('Work order ' . $nomorwo . ' started successfuly', 'success');
             return redirect()->route('wojoblist');
-        
-        }
-        else if($statuswo == 'started'){
+        } else if ($statuswo == 'started') {
             DB::table('wo_mstr')
-            ->where('wo_nbr','=',$nomorwo)
-            ->update([
-                'wo_status' => 'open',
-                'wo_start_date' => null,
-                'wo_start_time' => null,
-                'wo_access'     => 0
-            ]);
-            if($req->v_nosr != null || $req->v_nosr != ''){
-                DB::table('service_req_mstr')
-                ->where('wo_number','=',$nomorwo)
+                ->where('wo_nbr', '=', $nomorwo)
                 ->update([
-                    'sr_status' => 2,
-                    'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                ]); 
+                    'wo_status' => 'open',
+                    'wo_start_date' => null,
+                    'wo_start_time' => null,
+                    'wo_access'     => 0
+                ]);
+            if ($req->v_nosr != null || $req->v_nosr != '') {
+                DB::table('service_req_mstr')
+                    ->where('wo_number', '=', $nomorwo)
+                    ->update([
+                        'sr_status' => 2,
+                        'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    ]);
             }
 
             $data = DB::table('eng_mstr')
-                    ->join('users','eng_mstr.eng_code','=','users.username')
-                    ->where('approver','=','1')
-                    ->get();
-                        // dd($data);
-            foreach($data as $data){
-            $user = App\User::where('id','=', $data->id)->first(); 
-            
-            $details = [
-                        'body' => 'WO has been canceled by '.session::get('username'),
-                        'url' => 'womaint',
-                        'nbr' => $nomorwo,
-                        'note' => 'Please check'
-                    ]; // isi data yang dioper
-                
-                
-                    $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
-        }
-    
-        toast('Work order '.$nomorwo.' has been canceled', 'success');
-        return redirect()->route('wojoblist');
-        
-        //dd($statuswo);
+                ->join('users', 'eng_mstr.eng_code', '=', 'users.username')
+                ->where('approver', '=', '1')
+                ->get();
+            // dd($data);
+            foreach ($data as $data) {
+                $user = App\User::where('id', '=', $data->id)->first();
+
+                $details = [
+                    'body' => 'WO has been canceled by ' . session::get('username'),
+                    'url' => 'womaint',
+                    'nbr' => $nomorwo,
+                    'note' => 'Please check'
+                ]; // isi data yang dioper
+
+
+                $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
+            }
+
+            toast('Work order ' . $nomorwo . ' has been canceled', 'success');
+            return redirect()->route('wojoblist');
+
+            //dd($statuswo);
         }
     }
 
-    public function wocloselist(){      //route : woreport      blade : workorder.woclose
-        
+    public function wocloselist()
+    {      //route : woreport      blade : workorder.woclose
+
         //dd(Session()->get('username'));
         if (strpos(Session::get('menu_access'), 'WO03') !== false) {
             $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                ->where(function($status){
-                    $status->where('wo_status','=','started')
-                    ->orwhere('wo_status','=','finish');
-                   
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->where(function ($status) {
+                    $status->where('wo_status', '=', 'started')
+                        ->orwhere('wo_status', '=', 'finish');
                 })
-                ->where(function($query){
-                    $query->where('wo_engineer1','=',Session()->get('username'))
-                    ->orwhere('wo_engineer2','=',Session()->get('username'))
-                    ->orwhere('wo_engineer3','=',Session()->get('username'))
-                    ->orwhere('wo_engineer4','=',Session()->get('username'))
-                    ->orwhere('wo_engineer5','=',Session()->get('username'));
+                ->where(function ($query) {
+                    $query->where('wo_engineer1', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer5', '=', Session()->get('username'));
                 })
-                ->orderBy('wo_status','desc')
-                ->orderby('wo_created_at','desc')
+                ->orderBy('wo_status', 'desc')
+                ->orderby('wo_created_at', 'desc')
                 ->orderBy('wo_mstr.wo_id', 'desc')
                 ->paginate(10);
             $engineer = DB::table('users')
-                    ->join('roles','users.role_user','roles.role_code')
-                    ->where('role_desc','=','Engineer')
-                    ->get();
+                ->join('roles', 'users.role_user', 'roles.role_code')
+                ->where('role_desc', '=', 'Engineer')
+                ->get();
             $asset = DB::table('wo_mstr')
-                    ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
-                    ->join('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                    ->where(function($status){
-                        $status->where('wo_status','=','started')
-                        ->orwhere('wo_status','=','finish');
-                    })
-                    ->where(function($query){
-                        $query->where('wo_engineer1','=',Session()->get('username'))
-                        ->orwhere('wo_engineer2','=',Session()->get('username'))
-                        ->orwhere('wo_engineer3','=',Session()->get('username'))
-                        ->orwhere('wo_engineer4','=',Session()->get('username'))
-                        ->orwhere('wo_engineer5','=',Session()->get('username'));
-                    })
-                    ->groupBy('asset_code')
-                    ->orderBy('asset_code')
-                    ->get();
+                ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
+                ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->where(function ($status) {
+                    $status->where('wo_status', '=', 'started')
+                        ->orwhere('wo_status', '=', 'finish');
+                })
+                ->where(function ($query) {
+                    $query->where('wo_engineer1', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                })
+                ->groupBy('asset_code')
+                ->orderBy('asset_code')
+                ->get();
             $repaircode = DB::table('rep_master')
-                        ->get();
+                ->get();
 
             $sparepart = DB::table('sp_mstr')
-                        ->get();
+                ->get();
             $repairgroup = DB::table('xxrepgroup_mstr')
-                        ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
-                        ->distinct('xxrepgroup_nbr')
-                        ->get();
+                ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
+                ->distinct('xxrepgroup_nbr')
+                ->get();
             $instruction = DB::table('ins_mstr')
-                        ->get();
-            return view('workorder.woclose', ['data' => $data,'user' => $engineer,'engine'=>$engineer,'asset1'=>$asset,'asset2'=>$asset,'repaircode'=>$repaircode,'sparepart'=>$sparepart,'repairgroup'=>$repairgroup,'instruction' => $instruction]);
+                ->get();
+            return view('workorder.woclose', ['data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'repaircode' => $repaircode, 'sparepart' => $sparepart, 'repairgroup' => $repairgroup, 'instruction' => $instruction]);
         } else {
             toast('you dont have access, please contact admin', 'error');
             return back();
         }
     }
 
-    public function reportingwo(Request $req){
+    public function reportingwo(Request $req)
+    {
         //dd($req->all());    
         $dataaccess = DB::table('wo_mstr')
-                    ->where('wo_nbr','=', $req->c_wonbr)
-                    ->first();
-        if($dataaccess->wo_access == 0){
+            ->where('wo_nbr', '=', $req->c_wonbr)
+            ->first();
+        if ($dataaccess->wo_access == 0) {
             DB::table('wo_mstr')
-                ->where('wo_nbr','=', $req->c_wonbr)
-                ->update(['wo_access' => 1,
-                    'wo_access_user' => session::get('username')]);   
-        }
-        else{
-            if($dataaccess->wo_access_user != session::get('username')){
-                toast('WO '.$req->c_wonbr.' is being used right now', 'error');
+                ->where('wo_nbr', '=', $req->c_wonbr)
+                ->update([
+                    'wo_access' => 1,
+                    'wo_access_user' => session::get('username')
+                ]);
+        } else {
+            if ($dataaccess->wo_access_user != session::get('username')) {
+                toast('WO ' . $req->c_wonbr . ' is being used right now', 'error');
                 return redirect()->route('woreport');
             }
         }
-        if($dataaccess->wo_status == 'finish'){
-            toast('WO '.$req->c_wonbr.' status has changed, please refresh page', 'error');
+        if ($dataaccess->wo_status == 'finish') {
+            toast('WO ' . $req->c_wonbr . ' status has changed, please refresh page', 'error');
             return redirect()->route('woreport');
         }
         // if($req->repairpartnow == 'auto'){
@@ -2238,9 +2238,9 @@ class wocontroller extends Controller
         //             ->update(['asset_on_use' => null,
         //                 'asset_last_mtc' => $req->c_finishdate]);
         //         }
-                
+
         //         $albumraw = $req->imgname;
-        
+
         //         // dd($albumraw);
         //         $k = 0;
         //         if(isset($req->imgname)){
@@ -2258,7 +2258,7 @@ class wocontroller extends Controller
         //                 $test4 = str_replace('.','',$test3);
         //                 $test44 = str_replace(' ','',$test4);
         //                 $test5 = $test44.$waktu.$test;
-                        
+
         //                 $alamaturl = '../public/upload/'.$test5;
         //                 file_put_contents($alamaturl, $jadi2);
 
@@ -2275,79 +2275,78 @@ class wocontroller extends Controller
 
         //             }
         //         }
-                
+
         //         toast('data reported successfuly', 'success');
         //         return redirect()->route('woreport');
         // }
         // else{
         //     dd('aaa');
-            if ($req->repairtype == 'manual'){
-                // dd($req->all());
-                // dd(count($req->ins));
-                DB::table('wo_manual_detail')
-                        ->where('wo_manual_wo_nbr','=',$req->c_wonbr)
-                        ->delete();
-                for($pop = 0; $pop <$req->manualcount;$pop++){
-                    if($req->part[$pop] != null && $req->desc[$pop] != null){
-                        $arraymanual = array([
-                            'wo_manual_wo_nbr'      => $req->c_wonbr,
-                            'wo_manual_number'      => $pop + 1,
-                            'wo_manual_ins'         => $req->ins[$pop],
-                            'wo_manual_part'        => $req->part[$pop],
-                            'wo_manual_desc'        => $req->desc[$pop],
-                            'wo_manual_flag'        => $req->group5[$pop],
-                            'wo_manual_flag2'       => $req->group51[$pop],
-                            'wo_manual_qty'         => $req->qty5[$pop],
-                            'wo_manual_repair_hour' => $req->rph5[$pop],
-                            'wo_manual_created_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
-                           ]);
-                            // dd($arraydettemp);
-                            DB::table('wo_manual_detail')->insert($arraymanual);
-                    } 
+        if ($req->repairtype == 'manual') {
+            // dd($req->all());
+            // dd(count($req->ins));
+            DB::table('wo_manual_detail')
+                ->where('wo_manual_wo_nbr', '=', $req->c_wonbr)
+                ->delete();
+            for ($pop = 0; $pop < $req->manualcount; $pop++) {
+                if ($req->part[$pop] != null && $req->desc[$pop] != null) {
+                    $arraymanual = array([
+                        'wo_manual_wo_nbr'      => $req->c_wonbr,
+                        'wo_manual_number'      => $pop + 1,
+                        'wo_manual_ins'         => $req->ins[$pop],
+                        'wo_manual_part'        => $req->part[$pop],
+                        'wo_manual_desc'        => $req->desc[$pop],
+                        'wo_manual_flag'        => $req->group5[$pop],
+                        'wo_manual_flag2'       => $req->group51[$pop],
+                        'wo_manual_qty'         => $req->qty5[$pop],
+                        'wo_manual_repair_hour' => $req->rph5[$pop],
+                        'wo_manual_created_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
+                    ]);
+                    // dd($arraydettemp);
+                    DB::table('wo_manual_detail')->insert($arraymanual);
                 }
-                $finisht = $req->c_finishtime.':'.$req->c_finishtimeminute;
-                $arrayy = [
-                    'wo_updated_at'    =>Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                    'wo_status'        => 'finish',
-                    'wo_repair_code1'  => null,
-                    'wo_repair_code2'  => null,
-                    'wo_repair_code3'  => null,
-                    'wo_repair_group'  => null,
-                    'wo_repair_type'   => 'manual',
-                    // 'wo_repair_hour'   => $req->c_repairhour,
-                    'wo_finish_date'   => $req->c_finishdate,
-                    'wo_finish_time'   => $finisht,
-                    'wo_approval_note' => $req->c_note,
-                    'wo_system_date'   => Carbon::now('ASIA/JAKARTA')->toDateString(),
-                    'wo_system_time'   => Carbon::now('ASIA/JAKARTA')->toTimeString(),
-                    'wo_access'        => 0
-                ];
+            }
+            $finisht = $req->c_finishtime . ':' . $req->c_finishtimeminute;
+            $arrayy = [
+                'wo_updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                'wo_status'        => 'finish',
+                'wo_repair_code1'  => null,
+                'wo_repair_code2'  => null,
+                'wo_repair_code3'  => null,
+                'wo_repair_group'  => null,
+                'wo_repair_type'   => 'manual',
+                // 'wo_repair_hour'   => $req->c_repairhour,
+                'wo_finish_date'   => $req->c_finishdate,
+                'wo_finish_time'   => $finisht,
+                'wo_approval_note' => $req->c_note,
+                'wo_system_date'   => Carbon::now('ASIA/JAKARTA')->toDateString(),
+                'wo_system_time'   => Carbon::now('ASIA/JAKARTA')->toTimeString(),
+                'wo_access'        => 0
+            ];
 
-                DB::table('wo_mstr')->where('wo_nbr','=',$req->c_wonbr)->update($arrayy);
+            DB::table('wo_mstr')->where('wo_nbr', '=', $req->c_wonbr)->update($arrayy);
 
-                /* simpan file A211025 */
-                if($req->hasfile('filenamewo')){
-                    foreach($req->file('filenamewo') as $upload){
-                        $filename = $req->c_wonbr . '-' .$upload->getClientOriginalName();
-                        
-                        // Simpan File Upload pada Public
-                        $savepath = public_path('uploadwofinish/');
-                        $upload->move($savepath, $filename);
-                        
-                        // Simpan ke DB Upload
-                        DB::table('acceptance_image')
-                            ->insert([
-                                'file_srnumber' => $req->c_srnbr,
-                                'file_wonumber' => $req->c_wonbr,
-                                'file_name'     => $filename,//$upload->getClientOriginalName(), //nama file asli
-                                'file_url'      => $savepath.$filename, 
-                                'uploaded_at'   => Carbon::now()->toDateTimeString(),
-                            ]); 
-                    }
+            /* simpan file A211025 */
+            if ($req->hasfile('filenamewo')) {
+                foreach ($req->file('filenamewo') as $upload) {
+                    $filename = $req->c_wonbr . '-' . $upload->getClientOriginalName();
 
-                } /* end simpan file A211025 */
+                    // Simpan File Upload pada Public
+                    $savepath = public_path('uploadwofinish/');
+                    $upload->move($savepath, $filename);
 
-                /* A211025
+                    // Simpan ke DB Upload
+                    DB::table('acceptance_image')
+                        ->insert([
+                            'file_srnumber' => $req->c_srnbr,
+                            'file_wonumber' => $req->c_wonbr,
+                            'file_name'     => $filename, //$upload->getClientOriginalName(), //nama file asli
+                            'file_url'      => $savepath . $filename,
+                            'uploaded_at'   => Carbon::now()->toDateTimeString(),
+                        ]);
+                }
+            } /* end simpan file A211025 */
+
+            /* A211025
                 $albumraw = $req->imgname;
                 if(isset($req->imgname)){
                     foreach($albumraw as $olah1){
@@ -2378,65 +2377,62 @@ class wocontroller extends Controller
                     }
                 } */
 
-                if($req->c_srnbr != null){
-                    DB::table('service_req_mstr')->where('wo_number','=',$req->c_wonbr)->update(['sr_status' => '4','sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toTimeString()]);
-                }
-                toast('data reported successfuly', 'success');
-                return redirect()->route('woreport');
+            if ($req->c_srnbr != null) {
+                DB::table('service_req_mstr')->where('wo_number', '=', $req->c_wonbr)->update(['sr_status' => '4', 'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toTimeString()]);
             }
-            
-            else if($req->repairtype == 'code'){
-                $rc1 = null;
-                $rc2 = null;
-                $rc3 = null;
+            toast('data reported successfuly', 'success');
+            return redirect()->route('woreport');
+        } else if ($req->repairtype == 'code') {
+            $rc1 = null;
+            $rc2 = null;
+            $rc3 = null;
 
-                /* A211026 disini sebetulnya ada coding untuk menyimpan data detail repair 1 2 3, tapi yang ini dihapus karena tidak digunakan. coding aslinya sudah di backup di "backup-20211026 sblm PM attach file" */
-            
-                //dd($req->all());
-                $finisht = $req->c_finishtime.':'.$req->c_finishtimeminute;
+            /* A211026 disini sebetulnya ada coding untuk menyimpan data detail repair 1 2 3, tapi yang ini dihapus karena tidak digunakan. coding aslinya sudah di backup di "backup-20211026 sblm PM attach file" */
 
-                $arrayy = [
-                    'wo_updated_at'    =>Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                    'wo_status'        => 'finish',
-                    'wo_repair_code1'  => $rc1,
-                    'wo_repair_code2'  => $rc2,
-                    'wo_repair_code3'  => $rc3,
-                    'wo_repair_group'  => null,
-                    'wo_repair_type'   => 'code',
-                    // 'wo_repair_hour'   => $req->c_repairhour,
-                    'wo_finish_date'   => $req->c_finishdate,
-                    'wo_finish_time'   => $finisht,
-                    'wo_approval_note' => $req->c_note,
-                    'wo_system_date'   => Carbon::now('ASIA/JAKARTA')->toDateString(),
-                    'wo_system_time'   => Carbon::now('ASIA/JAKARTA')->toTimeString(),
-                    'wo_access'        => 0
-                ];
+            //dd($req->all());
+            $finisht = $req->c_finishtime . ':' . $req->c_finishtimeminute;
 
-                DB::table('wo_mstr')->where('wo_nbr','=',$req->c_wonbr)->update($arrayy);
-            
-                /* simpan file A211025 */
-                if($req->hasfile('filenamewo')){
-                    foreach($req->file('filenamewo') as $upload){
-                        $filename = $req->c_wonbr . '-' .$upload->getClientOriginalName();
-                        
-                        // Simpan File Upload pada Public
-                        $savepath = public_path('uploadwofinish/');
-                        $upload->move($savepath, $filename);
-                        
-                        // Simpan ke DB Upload
-                        DB::table('acceptance_image')
-                            ->insert([
-                                'file_srnumber' => $req->c_srnbr,
-                                'file_wonumber' => $req->c_wonbr,
-                                'file_name'     => $filename,//$upload->getClientOriginalName(), //nama file asli
-                                'file_url'      => $savepath.$filename, 
-                                'uploaded_at'   => Carbon::now()->toDateTimeString(),
-                            ]); 
-                    }
+            $arrayy = [
+                'wo_updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                'wo_status'        => 'finish',
+                'wo_repair_code1'  => $rc1,
+                'wo_repair_code2'  => $rc2,
+                'wo_repair_code3'  => $rc3,
+                'wo_repair_group'  => null,
+                'wo_repair_type'   => 'code',
+                // 'wo_repair_hour'   => $req->c_repairhour,
+                'wo_finish_date'   => $req->c_finishdate,
+                'wo_finish_time'   => $finisht,
+                'wo_approval_note' => $req->c_note,
+                'wo_system_date'   => Carbon::now('ASIA/JAKARTA')->toDateString(),
+                'wo_system_time'   => Carbon::now('ASIA/JAKARTA')->toTimeString(),
+                'wo_access'        => 0
+            ];
 
-                } /* end simpan file A211025 */
+            DB::table('wo_mstr')->where('wo_nbr', '=', $req->c_wonbr)->update($arrayy);
 
-                /* A211025
+            /* simpan file A211025 */
+            if ($req->hasfile('filenamewo')) {
+                foreach ($req->file('filenamewo') as $upload) {
+                    $filename = $req->c_wonbr . '-' . $upload->getClientOriginalName();
+
+                    // Simpan File Upload pada Public
+                    $savepath = public_path('uploadwofinish/');
+                    $upload->move($savepath, $filename);
+
+                    // Simpan ke DB Upload
+                    DB::table('acceptance_image')
+                        ->insert([
+                            'file_srnumber' => $req->c_srnbr,
+                            'file_wonumber' => $req->c_wonbr,
+                            'file_name'     => $filename, //$upload->getClientOriginalName(), //nama file asli
+                            'file_url'      => $savepath . $filename,
+                            'uploaded_at'   => Carbon::now()->toDateTimeString(),
+                        ]);
+                }
+            } /* end simpan file A211025 */
+
+            /* A211025
                 $albumraw = $req->imgname;
                 $k = 0;
                 if(isset($req->imgname)){
@@ -2482,159 +2478,156 @@ class wocontroller extends Controller
                     }
                 } A211025 */
 
-                if($req->c_srnbr != null){
-                    DB::table('service_req_mstr')->where('wo_number','=',$req->c_wonbr)->update(['sr_status' => '4','sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toTimeString()]);
-                }
-                toast('data reported successfuly', 'success');
-                return redirect()->route('woreport');
-
-            
-                // dd($arrayy);
+            if ($req->c_srnbr != null) {
+                DB::table('service_req_mstr')->where('wo_number', '=', $req->c_wonbr)->update(['sr_status' => '4', 'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toTimeString()]);
             }
-            else if($req->repairtype == 'group'){
-                //dd($req->all());        
-                DB::table('wo_rc_detail')
-                ->where('wrd_wo_nbr','=',$req->c_wonbr)
+            toast('data reported successfuly', 'success');
+            return redirect()->route('woreport');
+
+
+            // dd($arrayy);
+        } else if ($req->repairtype == 'group') {
+            //dd($req->all());        
+            DB::table('wo_rc_detail')
+                ->where('wrd_wo_nbr', '=', $req->c_wonbr)
                 ->delete();
-                
-                $repairlen = count($req->repaircodeselection);
-                for($i = 0; $i<$repairlen; $i++){
-                    $rg = $req->repaircodeselection[$i];
-                    //dd($rg);
-                    $dborigin = DB::table('rep_master')
-                                ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
-                                ->leftjoin('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
-                                // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
-                                ->leftjoin('sp_mstr','ins_mstr.ins_part','sp_mstr.spm_code')
-                                ->where('rep_master.repm_code','=',$rg)
-                                // ->groupBy('spt_code')
-                                ->orderBy('repdet_step')
-                                ->get();
-                    $countdb1 = count($dborigin);
-                    // dd($countdb1);
-                    //dd($dborigin);
-                    $flagname = '';
-                    for($j = 0; $j<$countdb1;$j++){
-                        $newname = 'group'.$i;
-                        if(isset($req->group4[$i][$j])){
-                            $flagnow = $req->group4[$i][$j];
-                            $funow   = $req->group41[$i][$j];
-                            $notenow = $req->note[$i][$j];
 
-                            $flagname .= $req->group4[$i][$j];
-                        }
-                        
-                        $arraydetsgrp = array([
-                            'wo_dets_nbr'       => $req->c_wonbr,
-                            'wo_dets_rc'        => $rg,
-                            'wo_dets_sp'        => $req->spm4[$i][$j],
-                            'wo_dets_sp_qty'    => $req->qty4[$i][$j],
-                            'wo_dets_ins'       => $req->insm4[$i][$j],
-                            'wo_dets_flag'      => $flagnow,
-                            'wo_dets_fu'        => $funow,
-                            'wo_dets_fu_note'   => $notenow,
-                            'wo_dets_rep_hour'  => $req->rph4[$i][$j],
-                            'wo_dets_standard'  => $req->std4[$i][$j],
-                            'wo_dets_flag'      => $req->group4[$i][$j],
-                            'wo_dets_created_at'=> Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        ]);
-                        DB::table('wo_dets')->insert($arraydetsgrp);
-                        
+            $repairlen = count($req->repaircodeselection);
+            for ($i = 0; $i < $repairlen; $i++) {
+                $rg = $req->repaircodeselection[$i];
+                //dd($rg);
+                $dborigin = DB::table('rep_master')
+                    ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                    ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+                    // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
+                    ->leftjoin('sp_mstr', 'ins_mstr.ins_part', 'sp_mstr.spm_code')
+                    ->where('rep_master.repm_code', '=', $rg)
+                    // ->groupBy('spt_code')
+                    ->orderBy('repdet_step')
+                    ->get();
+                $countdb1 = count($dborigin);
+                // dd($countdb1);
+                //dd($dborigin);
+                $flagname = '';
+                for ($j = 0; $j < $countdb1; $j++) {
+                    $newname = 'group' . $i;
+                    if (isset($req->group4[$i][$j])) {
+                        $flagnow = $req->group4[$i][$j];
+                        $funow   = $req->group41[$i][$j];
+                        $notenow = $req->note[$i][$j];
+
+                        $flagname .= $req->group4[$i][$j];
                     }
-                    
 
-                    
-                    $arrayrc1 = array([
-                        'wrd_wo_nbr'      => $req->c_wonbr,
-                        'wrd_repair_code' => $rg,
-                        'wrd_flag'        => $flagname,
-                        'wrd_created_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        'wrd_updated_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
-                       ]);
-                    DB::table('wo_rc_detail')->insert($arrayrc1);
- 
-                        // dd($arraydettemp);   
-                    // for($i5 = 0; $i5 < $countdb1; $i5++){  
-                    //     // eval('$spnow = $req->sparepart'.strval($countrepair).');');
-
-                            
-                            
-                    // }
-                    // dd('stop');
-
-                    eval('$spartnow = $req->partspare'.strval($i+1).';');
-                    eval('$insspnow = $req->insspare'.strval($i+1).';');
-                    eval('$spstdnow = $req->descspare'.strval($i+1).';');
-                    eval('$spqtynow = $req->qtyspare'.strval($i+1).';');
-                    eval('$rphspnow = $req->rphspare'.strval($i+1).';');
-                    eval('$spflagnow = $req->groupspare'.strval($i+1).';');
-                    eval('$spfunow = $req->groupspare'.strval($i+1).'1;');
-                    eval('$spfunotenow = $req->groupspare'.strval($i+1).';');
-
-                    for($iiiii = 0; $iiiii < $req->sparepartnum[$i];$iiiii++){
-                         
-                        $arraysparegrp = array([
-                            'wo_dets_nbr'       => $req->c_wonbr,
-                            'wo_dets_rc'        => $rg,
-                            'wo_dets_sp'        => $spartnow[$iiiii],
-                            'wo_dets_sp_qty'    => $spqtynow[$iiiii],
-                            'wo_dets_ins'       => $insspnow[$iiiii],
-                            'wo_dets_rep_hour'  => $rphspnow[$iiiii],
-                            'wo_dets_standard'  => $spstdnow[$iiiii],
-                            'wo_dets_flag'      => $spflagnow[$iiiii],
-                            'wo_dets_fu'        => $spfunow[$iiiii],
-                            'wo_dets_fu_note'   => $spfunotenow[$iiiii],
-                            'wo_dets_type'      => 'addition',
-                            'wo_dets_created_at'=> Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        ]);
-                        DB::table('wo_dets')->insert($arraysparegrp);
-                   }
-
-                    // dd($flagname);
+                    $arraydetsgrp = array([
+                        'wo_dets_nbr'       => $req->c_wonbr,
+                        'wo_dets_rc'        => $rg,
+                        'wo_dets_sp'        => $req->spm4[$i][$j],
+                        'wo_dets_sp_qty'    => $req->qty4[$i][$j],
+                        'wo_dets_ins'       => $req->insm4[$i][$j],
+                        'wo_dets_flag'      => $flagnow,
+                        'wo_dets_fu'        => $funow,
+                        'wo_dets_fu_note'   => $notenow,
+                        'wo_dets_rep_hour'  => $req->rph4[$i][$j],
+                        'wo_dets_standard'  => $req->std4[$i][$j],
+                        'wo_dets_flag'      => $req->group4[$i][$j],
+                        'wo_dets_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    ]);
+                    DB::table('wo_dets')->insert($arraydetsgrp);
                 }
-                $finisht = $req->c_finishtime.':'.$req->c_finishtimeminute;
-                // dd($finisht);
-                $arrayy = [
-                    'wo_updated_at'    =>Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                    'wo_status'        => 'finish',
-                    'wo_repair_code1'  => null,
-                    'wo_repair_code2'  => null,
-                    'wo_repair_code3'  => null,
-                    'wo_repair_group'  => $req->repairgroup[0],
-                    'wo_repair_type'   => 'group',
-                    // 'wo_repair_hour'   => $req->c_repairhour,
-                    'wo_finish_date'   => $req->c_finishdate,
-                    'wo_finish_time'   => $finisht,
-                    'wo_approval_note' => $req->c_note,
-                    'wo_system_date'   => Carbon::now('ASIA/JAKARTA')->toDateString(),
-                    'wo_system_time'   => Carbon::now('ASIA/JAKARTA')->toTimeString(),
-                    'wo_access'        => 0
-                ];
-                DB::table('wo_mstr')->where('wo_nbr','=',$req->c_wonbr)->update($arrayy);
 
-                /* simpan file A211025 */
-                if($req->hasfile('filenamewo')){
-                    foreach($req->file('filenamewo') as $upload){
-                        $filename = $req->c_wonbr . '-' .$upload->getClientOriginalName();
-                        
-                        // Simpan File Upload pada Public
-                        $savepath = public_path('uploadwofinish/');
-                        $upload->move($savepath, $filename);
-                        
-                        // Simpan ke DB Upload
-                        DB::table('acceptance_image')
-                            ->insert([
-                                'file_srnumber' => $req->c_srnbr,
-                                'file_wonumber' => $req->c_wonbr,
-                                'file_name'     => $filename,//$upload->getClientOriginalName(), //nama file asli
-                                'file_url'      => $savepath.$filename, 
-                                'uploaded_at'   => Carbon::now()->toDateTimeString(),
-                            ]); 
-                    }
 
-                } /* end simpan file A211025 */
-                
-                /* A211025
+
+                $arrayrc1 = array([
+                    'wrd_wo_nbr'      => $req->c_wonbr,
+                    'wrd_repair_code' => $rg,
+                    'wrd_flag'        => $flagname,
+                    'wrd_created_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    'wrd_updated_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
+                ]);
+                DB::table('wo_rc_detail')->insert($arrayrc1);
+
+                // dd($arraydettemp);   
+                // for($i5 = 0; $i5 < $countdb1; $i5++){  
+                //     // eval('$spnow = $req->sparepart'.strval($countrepair).');');
+
+
+
+                // }
+                // dd('stop');
+
+                eval('$spartnow = $req->partspare' . strval($i + 1) . ';');
+                eval('$insspnow = $req->insspare' . strval($i + 1) . ';');
+                eval('$spstdnow = $req->descspare' . strval($i + 1) . ';');
+                eval('$spqtynow = $req->qtyspare' . strval($i + 1) . ';');
+                eval('$rphspnow = $req->rphspare' . strval($i + 1) . ';');
+                eval('$spflagnow = $req->groupspare' . strval($i + 1) . ';');
+                eval('$spfunow = $req->groupspare' . strval($i + 1) . '1;');
+                eval('$spfunotenow = $req->groupspare' . strval($i + 1) . ';');
+
+                for ($iiiii = 0; $iiiii < $req->sparepartnum[$i]; $iiiii++) {
+
+                    $arraysparegrp = array([
+                        'wo_dets_nbr'       => $req->c_wonbr,
+                        'wo_dets_rc'        => $rg,
+                        'wo_dets_sp'        => $spartnow[$iiiii],
+                        'wo_dets_sp_qty'    => $spqtynow[$iiiii],
+                        'wo_dets_ins'       => $insspnow[$iiiii],
+                        'wo_dets_rep_hour'  => $rphspnow[$iiiii],
+                        'wo_dets_standard'  => $spstdnow[$iiiii],
+                        'wo_dets_flag'      => $spflagnow[$iiiii],
+                        'wo_dets_fu'        => $spfunow[$iiiii],
+                        'wo_dets_fu_note'   => $spfunotenow[$iiiii],
+                        'wo_dets_type'      => 'addition',
+                        'wo_dets_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    ]);
+                    DB::table('wo_dets')->insert($arraysparegrp);
+                }
+
+                // dd($flagname);
+            }
+            $finisht = $req->c_finishtime . ':' . $req->c_finishtimeminute;
+            // dd($finisht);
+            $arrayy = [
+                'wo_updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                'wo_status'        => 'finish',
+                'wo_repair_code1'  => null,
+                'wo_repair_code2'  => null,
+                'wo_repair_code3'  => null,
+                'wo_repair_group'  => $req->repairgroup[0],
+                'wo_repair_type'   => 'group',
+                // 'wo_repair_hour'   => $req->c_repairhour,
+                'wo_finish_date'   => $req->c_finishdate,
+                'wo_finish_time'   => $finisht,
+                'wo_approval_note' => $req->c_note,
+                'wo_system_date'   => Carbon::now('ASIA/JAKARTA')->toDateString(),
+                'wo_system_time'   => Carbon::now('ASIA/JAKARTA')->toTimeString(),
+                'wo_access'        => 0
+            ];
+            DB::table('wo_mstr')->where('wo_nbr', '=', $req->c_wonbr)->update($arrayy);
+
+            /* simpan file A211025 */
+            if ($req->hasfile('filenamewo')) {
+                foreach ($req->file('filenamewo') as $upload) {
+                    $filename = $req->c_wonbr . '-' . $upload->getClientOriginalName();
+
+                    // Simpan File Upload pada Public
+                    $savepath = public_path('uploadwofinish/');
+                    $upload->move($savepath, $filename);
+
+                    // Simpan ke DB Upload
+                    DB::table('acceptance_image')
+                        ->insert([
+                            'file_srnumber' => $req->c_srnbr,
+                            'file_wonumber' => $req->c_wonbr,
+                            'file_name'     => $filename, //$upload->getClientOriginalName(), //nama file asli
+                            'file_url'      => $savepath . $filename,
+                            'uploaded_at'   => Carbon::now()->toDateTimeString(),
+                        ]);
+                }
+            } /* end simpan file A211025 */
+
+            /* A211025
                 $albumraw = $req->imgname;
                 $k = 0;
                 if(isset($req->imgname)){
@@ -2680,50 +2673,51 @@ class wocontroller extends Controller
                     }
                 } */
 
-                if($req->c_srnbr != null){
-                    DB::table('service_req_mstr')->where('wo_number','=',$req->c_wonbr)->update(['sr_status' => '4','sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toTimeString()]);
-                }
-                toast('data reported successfuly', 'success');
-                return redirect()->route('woreport');
-                // dd($arrayy);
-                }   
+            if ($req->c_srnbr != null) {
+                DB::table('service_req_mstr')->where('wo_number', '=', $req->c_wonbr)->update(['sr_status' => '4', 'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toTimeString()]);
             }
+            toast('data reported successfuly', 'success');
+            return redirect()->route('woreport');
+            // dd($arrayy);
+        }
+    }
     // }
-       
-    // public function reopenwo(Request $req){
-        
-        //     $dwonbr = $req->get('tmp_rowonbr');
-        //     DB::table('wo_mstr')
-        //     ->where('wo_nbr','=',$dwonbr)
-        //     ->update([
-        //         'wo_start_date'  => null,
-        //         'wo_start_time'  => null,
-        //         'wo_finish_date' => null,
-        //         'wo_finish_time' => null,
-        //         'wo_repair_code1' => null,
-        //         'wo_repair_code2' => null,
-        //         'wo_repair_code3' => null,
-        //         'wo_repair_hour' => null,
-        //         'wo_system_date' => null,
-        //         'wo_system_time' => null,
-        //         'wo_status' => 'open',  
-        //         'wo_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString()      
-        //         ]);
-        //     DB::table('wo_detail')
-        //     ->where('detail_wo_nbr','=',$dwonbr)
-        //     ->delete();
-        //     DB::table("service_req_mstr")
-        //         ->where('wo_number', '=', $req->tmp_wonbr)
-        //         ->update(['sr_status' => 2,
-        //         'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-        //         ]);
 
-        //     toast('data has been reopened', 'success');
-        //     return redirect()->route('womaint');
+    // public function reopenwo(Request $req){
+
+    //     $dwonbr = $req->get('tmp_rowonbr');
+    //     DB::table('wo_mstr')
+    //     ->where('wo_nbr','=',$dwonbr)
+    //     ->update([
+    //         'wo_start_date'  => null,
+    //         'wo_start_time'  => null,
+    //         'wo_finish_date' => null,
+    //         'wo_finish_time' => null,
+    //         'wo_repair_code1' => null,
+    //         'wo_repair_code2' => null,
+    //         'wo_repair_code3' => null,
+    //         'wo_repair_hour' => null,
+    //         'wo_system_date' => null,
+    //         'wo_system_time' => null,
+    //         'wo_status' => 'open',  
+    //         'wo_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString()      
+    //         ]);
+    //     DB::table('wo_detail')
+    //     ->where('detail_wo_nbr','=',$dwonbr)
+    //     ->delete();
+    //     DB::table("service_req_mstr")
+    //         ->where('wo_number', '=', $req->tmp_wonbr)
+    //         ->update(['sr_status' => 2,
+    //         'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+    //         ]);
+
+    //     toast('data has been reopened', 'success');
+    //     return redirect()->route('womaint');
     // }
 
     // tyas reporting wo untuk selain yang preventive
-    public function reportingwoother(Request $req) {
+    public function reportingwoother(Request $req)
+    {
 
         /* A211022
         $albumraw = $req->imgname;
@@ -2753,367 +2747,359 @@ class wocontroller extends Controller
             }
         } A211022 */
 
-        if($req->hasfile('filenames')){
-            foreach($req->file('filenames') as $upload){
-                $filename = $req->o_wonbr . '-' .$upload->getClientOriginalName();
-                
+        if ($req->hasfile('filenames')) {
+            foreach ($req->file('filenames') as $upload) {
+                $filename = $req->o_wonbr . '-' . $upload->getClientOriginalName();
+
                 // Simpan File Upload pada Public
                 $savepath = public_path('uploadwofinish/');
                 $upload->move($savepath, $filename);
-                
+
                 // Simpan ke DB Upload
                 DB::table('acceptance_image')
                     ->insert([
                         'file_srnumber' => $req->o_srnbr,
                         'file_wonumber' => $req->o_wonbr,
-                        'file_name'     => $filename,//$upload->getClientOriginalName(), //nama file asli
-                        'file_url'      => $savepath.$filename, 
+                        'file_name'     => $filename, //$upload->getClientOriginalName(), //nama file asli
+                        'file_url'      => $savepath . $filename,
                         'uploaded_at'   => Carbon::now()->toDateTimeString(),
-                    ]); 
+                    ]);
             }
-
         }
 
         //update tabel wo
         DB::table('wo_mstr')
-            ->where('wo_nbr','=',$req->o_wonbr)
+            ->where('wo_nbr', '=', $req->o_wonbr)
             ->update([
                 'wo_action'         => $req->o_action,
                 'wo_sparepart'      => $req->o_part,
                 'wo_status'         => 'finish',
-                'wo_finish_time'    => Carbon::now('ASIA/JAKARTA')->toTimeString(), 
-                'wo_finish_date'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(), 
-                'wo_system_time'    => Carbon::now('ASIA/JAKARTA')->toTimeString(), 
-                'wo_system_date'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(), 
-                'wo_updated_at'     => Carbon::now('ASIA/JAKARTA')->toDateTimeString()      
-        ]); 
-          
+                'wo_finish_time'    => Carbon::now('ASIA/JAKARTA')->toTimeString(),
+                'wo_finish_date'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                'wo_system_time'    => Carbon::now('ASIA/JAKARTA')->toTimeString(),
+                'wo_system_date'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                'wo_updated_at'     => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
+            ]);
+
         //update tabel sr
         DB::table("service_req_mstr")
             ->where('wo_number', '=', $req->o_wonbr)
             ->update([
                 'sr_status' => 4,
                 'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-        ]); 
-        
+            ]);
+
         toast('Data Reported Successfuly', 'success');
         return redirect()->route('woreport');
     }
 
-    public function openprint(Request $req,$wo){
+    public function openprint(Request $req, $wo)
+    {
         // dd($wo);
         $repair = [];
         $countdb = [];
         $checkstr = [];
         $statusrepair = DB::table('wo_mstr')
-                        ->where('wo_mstr.wo_nbr','=',$wo)
-                        ->first();
+            ->where('wo_mstr.wo_nbr', '=', $wo)
+            ->first();
         $womstr = DB::table('wo_mstr')
-                ->where('wo_nbr','=',$wo)
-                ->leftjoin('users','wo_mstr.wo_creator','users.username')
-                ->leftJoin('dept_mstr','wo_mstr.wo_dept','dept_mstr.dept_code')
-                ->first();
+            ->where('wo_nbr', '=', $wo)
+            ->leftjoin('users', 'wo_mstr.wo_creator', 'users.username')
+            ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
+            ->first();
         $wodet = DB::table('wo_detail')
-                ->join('sp_mstr','wo_detail.detail_spare_part','sp_mstr.spm_code')
-                ->where('detail_wo_nbr','=',$wo)
-                ->get();
+            ->join('sp_mstr', 'wo_detail.detail_spare_part', 'sp_mstr.spm_code')
+            ->where('detail_wo_nbr', '=', $wo)
+            ->get();
         // dd($wodet);
         $data = DB::table('wo_mstr')
-                ->selectRaw('wo_nbr,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status,
+            ->selectRaw('wo_nbr,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status,
                 wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,wo_engineer2 as woen2, 
                 wo_engineer3 as woen3,wo_engineer4 as woen4,wo_engineer5 as woen5,u1.eng_desc as u11,
                 u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, 
                 loc_code,loc_desc,astype_code,astype_desc,wo_new_type,wotyp_desc,wo_impact,wo_impact_desc,
                 wo_reviewer,wo_approver,wo_created_at,wo_reviewer_appdate,wo_approver_appdate,wo_action,wo_sparepart')
-                ->leftjoin('eng_mstr as u1','wo_mstr.wo_engineer1','u1.eng_code')
-                ->leftjoin('eng_mstr as u2','wo_mstr.wo_engineer2','u2.eng_code')
-                ->leftjoin('eng_mstr as u3','wo_mstr.wo_engineer3','u3.eng_code')
-                ->leftjoin('eng_mstr as u4','wo_mstr.wo_engineer4','u4.eng_code')
-                ->leftjoin('eng_mstr as u5','wo_mstr.wo_engineer5','u5.eng_code')
-                ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                ->leftJoin('dept_mstr','wo_mstr.wo_dept','dept_mstr.dept_code')
-                ->leftjoin('wotyp_mstr','wo_mstr.wo_new_type','wotyp_mstr.wotyp_code')
-                ->leftjoin('asset_type','asset_mstr.asset_type','asset_type.astype_code')
-                ->leftjoin('loc_mstr','asset_mstr.asset_loc','loc_mstr.loc_code')
-                
-                ->where('wo_mstr.wo_nbr','=',$wo)
-                ->get();
-                // dd($data);
-                $statusrepair = DB::table('wo_mstr')
-                                ->where('wo_mstr.wo_nbr','=',$wo)
-                                ->first();
-                                // dd($statusrepair);
-                $arrayrepaircode = [];
-                $repairlist = [];
-                $arrayrepairdetail = [];
-                $arrayrepairinst = [];
-                $arraysptdesc = [];
-                $currspt_desc = '';
-                // $repair = '';
-                $countrepairitr = 0;
-                $engineerlist = DB::table('wo_mstr')
-                                ->selectRaw('a.name as eng1,b.name as eng2,c.name as eng3,d.name as eng4,e.name as eng5')
-                                ->leftjoin('users as a','wo_mstr.wo_engineer1','a.username')
-                                ->leftjoin('users as b','wo_mstr.wo_engineer2','b.username')
-                                ->leftjoin('users as c','wo_mstr.wo_engineer3','c.username')
-                                ->leftjoin('users as d','wo_mstr.wo_engineer4','d.username')
-                                ->leftjoin('users as e','wo_mstr.wo_engineer5','e.username')
-                                ->where('wo_mstr.wo_nbr',$wo)
-                                ->first();
+            ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
+            ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
+            ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
+            ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
+            ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
+            ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+            ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
+            ->leftjoin('wotyp_mstr', 'wo_mstr.wo_new_type', 'wotyp_mstr.wotyp_code')
+            ->leftjoin('asset_type', 'asset_mstr.asset_type', 'asset_type.astype_code')
+            ->leftjoin('loc_mstr', 'asset_mstr.asset_loc', 'loc_mstr.loc_code')
 
-                        // dd($engineerlist);
-                        // dd($statusrepair);
-                        if($statusrepair->wo_repair_type == 'manual'){
-                            $data = DB::table('wo_mstr')
-                                    ->selectRaw('wo_nbr,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,
+            ->where('wo_mstr.wo_nbr', '=', $wo)
+            ->get();
+        // dd($data);
+        $statusrepair = DB::table('wo_mstr')
+            ->where('wo_mstr.wo_nbr', '=', $wo)
+            ->first();
+        // dd($statusrepair);
+        $arrayrepaircode = [];
+        $repairlist = [];
+        $arrayrepairdetail = [];
+        $arrayrepairinst = [];
+        $arraysptdesc = [];
+        $currspt_desc = '';
+        // $repair = '';
+        $countrepairitr = 0;
+        $engineerlist = DB::table('wo_mstr')
+            ->selectRaw('a.name as eng1,b.name as eng2,c.name as eng3,d.name as eng4,e.name as eng5')
+            ->leftjoin('users as a', 'wo_mstr.wo_engineer1', 'a.username')
+            ->leftjoin('users as b', 'wo_mstr.wo_engineer2', 'b.username')
+            ->leftjoin('users as c', 'wo_mstr.wo_engineer3', 'c.username')
+            ->leftjoin('users as d', 'wo_mstr.wo_engineer4', 'd.username')
+            ->leftjoin('users as e', 'wo_mstr.wo_engineer5', 'e.username')
+            ->where('wo_mstr.wo_nbr', $wo)
+            ->first();
+
+        // dd($engineerlist);
+        // dd($statusrepair);
+        if ($statusrepair->wo_repair_type == 'manual') {
+            $data = DB::table('wo_mstr')
+                ->selectRaw('wo_nbr,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,
                                     wo_status,wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,
                                     wo_engineer2 as woen2, wo_engineer3 as woen3,wo_engineer4 as woen4,
                                     wo_engineer5 as woen5,u1.eng_desc as u11,u2.eng_desc as u22, u3.eng_desc as u33, 
                                     u4.eng_desc as u44, u5.eng_desc as u55,loc_code,loc_desc,astype_code,astype_desc,wo_new_type,wotyp_desc,wo_impact,wo_impact_desc,
-                                    wo_reviewer,wo_approver,wo_created_at,wo_reviewer_appdate,wo_approver_appdate,wo_action,wo_sparepart' )
-                                    ->leftjoin('eng_mstr as u1','wo_mstr.wo_engineer1','u1.eng_code')
-                                    ->leftjoin('eng_mstr as u2','wo_mstr.wo_engineer2','u2.eng_code')
-                                    ->leftjoin('eng_mstr as u3','wo_mstr.wo_engineer3','u3.eng_code')
-                                    ->leftjoin('eng_mstr as u4','wo_mstr.wo_engineer4','u4.eng_code')
-                                    ->leftjoin('eng_mstr as u5','wo_mstr.wo_engineer5','u5.eng_code')
-                                    ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                                    ->leftjoin('wotyp_mstr','wo_mstr.wo_new_type','wotyp_mstr.wotyp_code')
-                                    ->leftjoin('asset_type','asset_mstr.asset_type','asset_type.astype_code')
-                                    ->leftjoin('loc_mstr','asset_mstr.asset_loc','loc_mstr.loc_code')
-                                    ->leftJoin('dept_mstr','wo_mstr.wo_dept','dept_mstr.dept_code')
-                                    ->where('wo_mstr.wo_nbr','=',$wo)
-                                    ->get();
-                            $datamanual = DB::table('wo_manual_detail')
-                                            ->where('wo_manual_wo_nbr','=',$wo)
-                                            ->get();
-                            $countdb = count($datamanual);
-                            
-                        }
-                else if($statusrepair->wo_repair_type == 'group'){
-                        $data = DB::table('wo_mstr')
-                            ->selectRaw('wo_nbr,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status,wo_asset,asset_desc,wo_schedule,
+                                    wo_reviewer,wo_approver,wo_created_at,wo_reviewer_appdate,wo_approver_appdate,wo_action,wo_sparepart')
+                ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
+                ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
+                ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
+                ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
+                ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->leftjoin('wotyp_mstr', 'wo_mstr.wo_new_type', 'wotyp_mstr.wotyp_code')
+                ->leftjoin('asset_type', 'asset_mstr.asset_type', 'asset_type.astype_code')
+                ->leftjoin('loc_mstr', 'asset_mstr.asset_loc', 'loc_mstr.loc_code')
+                ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
+                ->where('wo_mstr.wo_nbr', '=', $wo)
+                ->get();
+            $datamanual = DB::table('wo_manual_detail')
+                ->where('wo_manual_wo_nbr', '=', $wo)
+                ->get();
+            $countdb = count($datamanual);
+        } else if ($statusrepair->wo_repair_type == 'group') {
+            $data = DB::table('wo_mstr')
+                ->selectRaw('wo_nbr,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status,wo_asset,asset_desc,wo_schedule,
                             wo_duedate,wo_engineer1 as woen1,wo_engineer2 as woen2, wo_engineer3 as woen3,wo_engineer4 as woen4,wo_engineer5 as woen5,u1.eng_desc as u11,u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, 
                             loc_code,loc_desc,astype_code,astype_desc,wo_new_type,wotyp_desc,wo_impact,wo_impact_desc,wo_reviewer,wo_approver,wo_created_at,wo_reviewer_appdate,wo_approver_appdate,wo_action,wo_sparepart')
-                            ->leftjoin('eng_mstr as u1','wo_mstr.wo_engineer1','u1.eng_code')
-                            ->leftjoin('eng_mstr as u2','wo_mstr.wo_engineer2','u2.eng_code')
-                            ->leftjoin('eng_mstr as u3','wo_mstr.wo_engineer3','u3.eng_code')
-                            ->leftjoin('eng_mstr as u4','wo_mstr.wo_engineer4','u4.eng_code')
-                            ->leftjoin('eng_mstr as u5','wo_mstr.wo_engineer5','u5.eng_code')
-                            ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                            ->leftjoin('wotyp_mstr','wo_mstr.wo_new_type','wotyp_mstr.wotyp_code')
-                            ->leftjoin('asset_type','asset_mstr.asset_type','asset_type.astype_code')
-                            ->leftjoin('loc_mstr','asset_mstr.asset_loc','loc_mstr.loc_code')
-                            ->leftJoin('dept_mstr','wo_mstr.wo_dept','dept_mstr.dept_code')
-                            ->where('wo_mstr.wo_nbr','=',$wo)
-                            ->get();
-                                // dd($data);
-                    // for($pa = 1; $pa <= 5; $pa++)
-                    // $engineername = DB::table('wo_mstr')
-                    //                 ->join('users','wo_mstr.wo_asset','asset_mstr.asset_code')
-                    //                 ->join('loc_mstr as a','asset_mstr.asset_site','a.loc_site')
-                    //                 ->join('loc_mstr as b','asset_mstr.asset_loc','b.loc_code')        
-                    //                 ->where('wo_mstr.wo_nbr','=',$wo)  
-                    //                 ->first();
-                    $grouprepair = DB::table('xxrepgroup_mstr')
-                                    ->where('xxrepgroup_nbr','=',$statusrepair->wo_repair_group)
-                                    ->get();
-                    foreach($grouprepair as $grouprepair){
-                        array_push($arrayrepaircode,$grouprepair->xxrepgroup_rep_code);
-                    }
-                    // dd($arrayrepaircode);
-                    $countrepairitr = count($arrayrepaircode);
-                    for($i = 0; $i<count($arrayrepaircode);$i++){
-                        // dd($i);
-                        $repairdesc = DB::table('rep_master')
-                                        ->where('rep_master.repm_code','=',$arrayrepaircode[$i])
-                                        ->first();
+                ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
+                ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
+                ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
+                ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
+                ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->leftjoin('wotyp_mstr', 'wo_mstr.wo_new_type', 'wotyp_mstr.wotyp_code')
+                ->leftjoin('asset_type', 'asset_mstr.asset_type', 'asset_type.astype_code')
+                ->leftjoin('loc_mstr', 'asset_mstr.asset_loc', 'loc_mstr.loc_code')
+                ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
+                ->where('wo_mstr.wo_nbr', '=', $wo)
+                ->get();
+            // dd($data);
+            // for($pa = 1; $pa <= 5; $pa++)
+            // $engineername = DB::table('wo_mstr')
+            //                 ->join('users','wo_mstr.wo_asset','asset_mstr.asset_code')
+            //                 ->join('loc_mstr as a','asset_mstr.asset_site','a.loc_site')
+            //                 ->join('loc_mstr as b','asset_mstr.asset_loc','b.loc_code')        
+            //                 ->where('wo_mstr.wo_nbr','=',$wo)  
+            //                 ->first();
+            $grouprepair = DB::table('xxrepgroup_mstr')
+                ->where('xxrepgroup_nbr', '=', $statusrepair->wo_repair_group)
+                ->get();
+            foreach ($grouprepair as $grouprepair) {
+                array_push($arrayrepaircode, $grouprepair->xxrepgroup_rep_code);
+            }
+            // dd($arrayrepaircode);
+            $countrepairitr = count($arrayrepaircode);
+            for ($i = 0; $i < count($arrayrepaircode); $i++) {
+                // dd($i);
+                $repairdesc = DB::table('rep_master')
+                    ->where('rep_master.repm_code', '=', $arrayrepaircode[$i])
+                    ->first();
 
-                        if(!is_null($repairdesc)) {
-                            array_push($repairlist,$repairdesc->repm_desc);    
-                        } 
-
-                        $repair[$i] = DB::table('wo_mstr')
-                                ->join('xxrepgroup_mstr','wo_mstr.wo_repair_group','xxrepgroup_mstr.xxrepgroup_nbr')
-                                ->join('wo_dets',function($join){
-                                    $join->on('wo_dets.wo_dets_nbr','=','wo_mstr.wo_nbr');
-                                    $join->on('wo_dets.wo_dets_rc','=','xxrepgroup_mstr.xxrepgroup_rep_code');
-                                })
-                                ->join('rep_master','wo_dets.wo_dets_rc','rep_master.repm_code')
-                                // ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
-                                ->join('ins_mstr','wo_dets.wo_dets_ins','ins_mstr.ins_code')
-                                ->leftjoin('sp_mstr','wo_dets.wo_dets_sp','sp_mstr.spm_code')
-                                ->where('wo_mstr.wo_nbr','=',$wo)
-                                ->where('xxrepgroup_mstr.xxrepgroup_rep_code','=',$arrayrepaircode[$i])
-                                ->get();
-                        // $repair[$i] = DB::table('xxrepgroup_mstr')
-                        //                 ->leftjoin('rep_master','xxrepgroup_mstr.xxrepgroup_rep_code','rep_master.repm_code')
-                        //                 ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
-                        //                 // ->join('rep_partgroup','rep_master.repm_part','rep_partgroup.reppg_code')
-                        //                 // ->join('sp_mstr','rep_partgroup.reppg_part','sp_mstr.spm_code')
-                        //                 // ->join('sp_type','sp_mstr.spm_type','sp_type.spt_code')
-                        //                 ->leftjoin('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
-                        //                 // ->leftjoin('sp_group','ins_mstr.ins_part','sp_group.spg_code')
-                        //                 // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
-                        //                 ->leftjoin('sp_mstr','ins_mstr.ins_part','sp_mstr.spm_code')
-                        //                 // ->leftjoin('tool_mstr','ins_mstr.ins_tool','tool_mstr.tool_code')
-                        //                 ->where('xxrepgroup_mstr.xxrepgroup_nbr','=',$statusrepair->wo_repair_group)
-                                        
-                        //                 ->distinct('ins_mstr.ins_code')
-                        //                 ->orderBy('repm_ins','asc')
-                                        
-                        //                 ->get();
-                                        // dd(count($repair[$i]));
-                                        foreach($repair[$i] as $grouptool){
-                                            $newarr = explode(",",$grouptool->ins_tool);
-                                            for($po = 0; $po < count($newarr);$po++){
-                                                $arr= DB::table('tool_mstr')
-                                                            ->where('tool_code','=',$newarr[$po])
-                                                            ->first();
-                                                if(isset($arr->tool_desc)){
-                                                    $newarr[$po] = $arr->tool_desc;
-                                                }
-                                                else{
-                                                    $newarr[$po] = '';
-                                                }
-                                                
-                                            }
-                                            $exparr = implode(",",$newarr);
-                                            $grouptool->ins_tool = $exparr;
-                                        }
-                        // dd($repair,$arrayrepaircode[$i],$i);
-                        $check[$i] = DB::table('wo_mstr')
-                                        ->selectRaw('wrd_flag')
-                                        ->leftjoin('wo_rc_detail as a','wo_mstr.wo_nbr','a.wrd_wo_nbr')
-                                        ->where('wo_mstr.wo_nbr','=',$wo)
-                                        ->where('a.wrd_repair_code','=',$arrayrepaircode[$i])
-                                        ->first();
-                        if(isset($check[$i])==true){
-                            $checkstr[$i] = $check[$i]->wrd_flag;
-                        }
-                        else{
-                            $checkstr[$i] = 0;
-                        }
-                        // dd($repair[$i]);
-                        // dd(count($repair[$i]));    
-                        $countdb[$i] = count($repair[$i]);
-                    }
-                    // foreach($repair as $repair){
-                    //     // dd($repair);
-                    //     foreach($repair as $repair2){
-                    //         dd($repair2);
-                    //     }
-                                    
-                    // }
-                    // dd($check[0]);
-                    // // dd($)
-                    // dd('aaa');
-                    
+                if (!is_null($repairdesc)) {
+                    array_push($repairlist, $repairdesc->repm_desc);
                 }
-                else if ($statusrepair->wo_repair_type == 'code'){
-                    $data = DB::table('wo_mstr')
-                            ->selectRaw('wo_nbr,wo_repair_code1,wo_repair_code2,wo_repair_code3,wo_priority,wo_dept,dept_desc,
+
+                $repair[$i] = DB::table('wo_mstr')
+                    ->join('xxrepgroup_mstr', 'wo_mstr.wo_repair_group', 'xxrepgroup_mstr.xxrepgroup_nbr')
+                    ->join('wo_dets', function ($join) {
+                        $join->on('wo_dets.wo_dets_nbr', '=', 'wo_mstr.wo_nbr');
+                        $join->on('wo_dets.wo_dets_rc', '=', 'xxrepgroup_mstr.xxrepgroup_rep_code');
+                    })
+                    ->join('rep_master', 'wo_dets.wo_dets_rc', 'rep_master.repm_code')
+                    // ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
+                    ->join('ins_mstr', 'wo_dets.wo_dets_ins', 'ins_mstr.ins_code')
+                    ->leftjoin('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')
+                    ->where('wo_mstr.wo_nbr', '=', $wo)
+                    ->where('xxrepgroup_mstr.xxrepgroup_rep_code', '=', $arrayrepaircode[$i])
+                    ->get();
+                // $repair[$i] = DB::table('xxrepgroup_mstr')
+                //                 ->leftjoin('rep_master','xxrepgroup_mstr.xxrepgroup_rep_code','rep_master.repm_code')
+                //                 ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
+                //                 // ->join('rep_partgroup','rep_master.repm_part','rep_partgroup.reppg_code')
+                //                 // ->join('sp_mstr','rep_partgroup.reppg_part','sp_mstr.spm_code')
+                //                 // ->join('sp_type','sp_mstr.spm_type','sp_type.spt_code')
+                //                 ->leftjoin('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
+                //                 // ->leftjoin('sp_group','ins_mstr.ins_part','sp_group.spg_code')
+                //                 // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
+                //                 ->leftjoin('sp_mstr','ins_mstr.ins_part','sp_mstr.spm_code')
+                //                 // ->leftjoin('tool_mstr','ins_mstr.ins_tool','tool_mstr.tool_code')
+                //                 ->where('xxrepgroup_mstr.xxrepgroup_nbr','=',$statusrepair->wo_repair_group)
+
+                //                 ->distinct('ins_mstr.ins_code')
+                //                 ->orderBy('repm_ins','asc')
+
+                //                 ->get();
+                // dd(count($repair[$i]));
+                foreach ($repair[$i] as $grouptool) {
+                    $newarr = explode(",", $grouptool->ins_tool);
+                    for ($po = 0; $po < count($newarr); $po++) {
+                        $arr = DB::table('tool_mstr')
+                            ->where('tool_code', '=', $newarr[$po])
+                            ->first();
+                        if (isset($arr->tool_desc)) {
+                            $newarr[$po] = $arr->tool_desc;
+                        } else {
+                            $newarr[$po] = '';
+                        }
+                    }
+                    $exparr = implode(",", $newarr);
+                    $grouptool->ins_tool = $exparr;
+                }
+                // dd($repair,$arrayrepaircode[$i],$i);
+                $check[$i] = DB::table('wo_mstr')
+                    ->selectRaw('wrd_flag')
+                    ->leftjoin('wo_rc_detail as a', 'wo_mstr.wo_nbr', 'a.wrd_wo_nbr')
+                    ->where('wo_mstr.wo_nbr', '=', $wo)
+                    ->where('a.wrd_repair_code', '=', $arrayrepaircode[$i])
+                    ->first();
+                if (isset($check[$i]) == true) {
+                    $checkstr[$i] = $check[$i]->wrd_flag;
+                } else {
+                    $checkstr[$i] = 0;
+                }
+                // dd($repair[$i]);
+                // dd(count($repair[$i]));    
+                $countdb[$i] = count($repair[$i]);
+            }
+            // foreach($repair as $repair){
+            //     // dd($repair);
+            //     foreach($repair as $repair2){
+            //         dd($repair2);
+            //     }
+
+            // }
+            // dd($check[0]);
+            // // dd($)
+            // dd('aaa');
+
+        } else if ($statusrepair->wo_repair_type == 'code') {
+            $data = DB::table('wo_mstr')
+                ->selectRaw('wo_nbr,wo_repair_code1,wo_repair_code2,wo_repair_code3,wo_priority,wo_dept,dept_desc,
                             wo_note,wo_sr_nbr,wo_status,wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,
                             wo_engineer2 as woen2, wo_engineer3 as woen3,wo_engineer4 as woen4,wo_engineer5 as woen5,
                             u1.eng_desc as u11,u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, 
                             u5.eng_desc as u55,loc_code,loc_desc,astype_code,astype_desc,wo_new_type,wotyp_desc,
-                            wo_impact,wo_impact_desc,wo_reviewer,wo_approver,wo_created_at,wo_reviewer_appdate,wo_approver_appdate,wo_action,wo_sparepart' )
-                            ->leftjoin('eng_mstr as u1','wo_mstr.wo_engineer1','u1.eng_code')
-                            ->leftjoin('eng_mstr as u2','wo_mstr.wo_engineer2','u2.eng_code')
-                            ->leftjoin('eng_mstr as u3','wo_mstr.wo_engineer3','u3.eng_code')
-                            ->leftjoin('eng_mstr as u4','wo_mstr.wo_engineer4','u4.eng_code')
-                            ->leftjoin('eng_mstr as u5','wo_mstr.wo_engineer5','u5.eng_code')
-                            ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                            ->leftjoin('wotyp_mstr','wo_mstr.wo_new_type','wotyp_mstr.wotyp_code')
-                            ->leftjoin('asset_type','asset_mstr.asset_type','asset_type.astype_code')
-                            ->leftjoin('loc_mstr','asset_mstr.asset_loc','loc_mstr.loc_code')
-                            ->leftJoin('dept_mstr','wo_mstr.wo_dept','dept_mstr.dept_code')
-                            ->where('wo_mstr.wo_nbr','=',$wo)
-                            ->get();
-                        // dd($data[0]->wo_repair_code1);
-                    if(isset($data[0]->wo_repair_code1)){
-                        array_push($arrayrepaircode,$data[0]->wo_repair_code1);
-                    }
-                    if(isset($data[0]->wo_repair_code2)){
-                        array_push($arrayrepaircode,$data[0]->wo_repair_code2);
-                    }
-                    if(isset($data[0]->wo_repair_code3)){
-                        array_push($arrayrepaircode,$data[0]->wo_repair_code3);
-                    }
-                    $countrepairitr = count($arrayrepaircode);
-                    // dd($arrayrepaircode);
-                    for($i = 0; $i<count($arrayrepaircode);$i++){
-                        // dd($arrayrepaircode);
-                        $repairdesc = DB::table('rep_master')
-                                        ->where('rep_master.repm_code','=',$arrayrepaircode[$i])
-                                        ->first();
-                                        
-                        if(!is_null($repairdesc)) {
-                            array_push($repairlist,$repairdesc->repm_desc);    
-                        }                
-                        
-                        $repair[$i] = DB::table('wo_mstr')
-                                ->leftjoin('wo_dets','wo_dets.wo_dets_nbr','wo_mstr.wo_nbr')
-                                ->leftjoin('ins_mstr','wo_dets.wo_dets_ins','ins_mstr.ins_code')
-                                ->leftjoin('rep_master','wo_dets.wo_dets_rc','rep_master.repm_code')
-                                // ->join('rep_det','rep_master.repm_code','rep_det.repdet_code')
-                                
-                                ->leftjoin('sp_mstr','wo_dets.wo_dets_sp','sp_mstr.spm_code')
-                                ->where('wo_mstr.wo_nbr','=',$wo)
-                                ->where('wo_dets.wo_dets_rc','=',$arrayrepaircode[$i])
-                                
-                                // ->groupBy('wo_mstr.wo_nbr','ins_mstr.ins_code')
-                                ->distinct('ins_mstr.ins_code')
-                                ->orderBy('repm_ins','asc')
-                                ->get();
-                        // dd($repair);
-                        // $repair[$i] = DB::table('rep_master')
-                        //                 ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
-                        //                 ->leftjoin('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
-                        //                 // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
-                        //                 ->leftjoin('sp_mstr','ins_mstr.ins_part','sp_mstr.spm_code')
-                        //                 ->where('rep_master.repm_code','=',$arrayrepaircode[$i])
-                        //                 ->distinct('ins_mstr.ins_code')
-                        //                 ->orderBy('repm_ins','asc')
-                                        
-                        //                 ->get();
-        
-                        // dd($repair);
-                                        foreach($repair[$i] as $grouptool){
-                                            $newarr = explode(",",$grouptool->ins_tool);
-                                            for($j = 0; $j < count($newarr);$j++){
-                                                $arr= DB::table('tool_mstr')
-                                                        ->where('tool_code','=',$newarr[$j])
-                                                        ->first();
-                                                if(isset($arr->tool_desc)){
-                                                    $newarr[$j] = $arr->tool_desc;
-                                                }
-                                                else{
-                                                    $newarr[$j] = '';
-                                                }           
-                                            }
-                                            $exparr = implode(",",$newarr);
-                                            $grouptool->ins_tool = $exparr;
-                                        }
-                                        
-                        $check[$i] = DB::table('wo_mstr')
-                                        ->selectRaw('wrd_flag')
-                                        ->leftjoin('wo_rc_detail as a','wo_mstr.wo_nbr','a.wrd_wo_nbr')
-                                        ->where('wo_mstr.wo_nbr','=',$wo)
-                                        ->where('a.wrd_repair_code','=',$arrayrepaircode[$i])
-                                        ->first();
-                        if(isset($check[$i])==true){
-                            $checkstr[$i] = $check[$i]->wrd_flag;
-                        }
-                        else{
-                            $checkstr[$i] = 0;
-                        }
-                        // if(count($repair[$i])!= )
-                        
-                        // dd(count($repair[1]));
-                        $countdb[$i] = count($repair[$i]);
-                    }          
+                            wo_impact,wo_impact_desc,wo_reviewer,wo_approver,wo_created_at,wo_reviewer_appdate,wo_approver_appdate,wo_action,wo_sparepart')
+                ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
+                ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
+                ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
+                ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
+                ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->leftjoin('wotyp_mstr', 'wo_mstr.wo_new_type', 'wotyp_mstr.wotyp_code')
+                ->leftjoin('asset_type', 'asset_mstr.asset_type', 'asset_type.astype_code')
+                ->leftjoin('loc_mstr', 'asset_mstr.asset_loc', 'loc_mstr.loc_code')
+                ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
+                ->where('wo_mstr.wo_nbr', '=', $wo)
+                ->get();
+            // dd($data[0]->wo_repair_code1);
+            if (isset($data[0]->wo_repair_code1)) {
+                array_push($arrayrepaircode, $data[0]->wo_repair_code1);
+            }
+            if (isset($data[0]->wo_repair_code2)) {
+                array_push($arrayrepaircode, $data[0]->wo_repair_code2);
+            }
+            if (isset($data[0]->wo_repair_code3)) {
+                array_push($arrayrepaircode, $data[0]->wo_repair_code3);
+            }
+            $countrepairitr = count($arrayrepaircode);
+            // dd($arrayrepaircode);
+            for ($i = 0; $i < count($arrayrepaircode); $i++) {
+                // dd($arrayrepaircode);
+                $repairdesc = DB::table('rep_master')
+                    ->where('rep_master.repm_code', '=', $arrayrepaircode[$i])
+                    ->first();
+
+                if (!is_null($repairdesc)) {
+                    array_push($repairlist, $repairdesc->repm_desc);
                 }
-                // dd($data[0]->wo_nbr);
+
+                $repair[$i] = DB::table('wo_mstr')
+                    ->leftjoin('wo_dets', 'wo_dets.wo_dets_nbr', 'wo_mstr.wo_nbr')
+                    ->leftjoin('ins_mstr', 'wo_dets.wo_dets_ins', 'ins_mstr.ins_code')
+                    ->leftjoin('rep_master', 'wo_dets.wo_dets_rc', 'rep_master.repm_code')
+                    // ->join('rep_det','rep_master.repm_code','rep_det.repdet_code')
+
+                    ->leftjoin('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')
+                    ->where('wo_mstr.wo_nbr', '=', $wo)
+                    ->where('wo_dets.wo_dets_rc', '=', $arrayrepaircode[$i])
+
+                    // ->groupBy('wo_mstr.wo_nbr','ins_mstr.ins_code')
+                    ->distinct('ins_mstr.ins_code')
+                    ->orderBy('repm_ins', 'asc')
+                    ->get();
+                // dd($repair);
+                // $repair[$i] = DB::table('rep_master')
+                //                 ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
+                //                 ->leftjoin('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
+                //                 // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
+                //                 ->leftjoin('sp_mstr','ins_mstr.ins_part','sp_mstr.spm_code')
+                //                 ->where('rep_master.repm_code','=',$arrayrepaircode[$i])
+                //                 ->distinct('ins_mstr.ins_code')
+                //                 ->orderBy('repm_ins','asc')
+
+                //                 ->get();
+
+                // dd($repair);
+                foreach ($repair[$i] as $grouptool) {
+                    $newarr = explode(",", $grouptool->ins_tool);
+                    for ($j = 0; $j < count($newarr); $j++) {
+                        $arr = DB::table('tool_mstr')
+                            ->where('tool_code', '=', $newarr[$j])
+                            ->first();
+                        if (isset($arr->tool_desc)) {
+                            $newarr[$j] = $arr->tool_desc;
+                        } else {
+                            $newarr[$j] = '';
+                        }
+                    }
+                    $exparr = implode(",", $newarr);
+                    $grouptool->ins_tool = $exparr;
+                }
+
+                $check[$i] = DB::table('wo_mstr')
+                    ->selectRaw('wrd_flag')
+                    ->leftjoin('wo_rc_detail as a', 'wo_mstr.wo_nbr', 'a.wrd_wo_nbr')
+                    ->where('wo_mstr.wo_nbr', '=', $wo)
+                    ->where('a.wrd_repair_code', '=', $arrayrepaircode[$i])
+                    ->first();
+                if (isset($check[$i]) == true) {
+                    $checkstr[$i] = $check[$i]->wrd_flag;
+                } else {
+                    $checkstr[$i] = 0;
+                }
+                // if(count($repair[$i])!= )
+
+                // dd(count($repair[1]));
+                $countdb[$i] = count($repair[$i]);
+            }
+        }
+        // dd($data[0]->wo_nbr);
         // $repair = DB::table('wo_mstr')
         //         ->selectRaw('r1.repm_desc as r11,r2.repm_desc as r22, r3.repm_desc as r33')
         //         ->leftjoin('rep_master as r1','wo_mstr.wo_repair_code1','r1.repm_code')
@@ -3157,7 +3143,7 @@ class wocontroller extends Controller
         //         // ->groupBy('spt_code')
         //         ->orderBy('spt_desc')
         //         ->get();
-                
+
         // $collcon = $repair1->concat($repair2)->concat($repair3);
         // $array = [];
         // dd($repairlist);
@@ -3179,15 +3165,13 @@ class wocontroller extends Controller
         $sparepartarray = [];
         $printdate = Carbon::now('ASIA/JAKARTA')->toDateString();
         // dd($repair);
-        foreach($repair as $repair){
-            foreach ($repair as $repair1){
+        foreach ($repair as $repair) {
+            foreach ($repair as $repair1) {
                 // dd($repair1);
-                if(!in_array($repair1->spm_desc,$sparepartarray)){
-                    array_push($sparepartarray,$repair1->spm_desc);
+                if (!in_array($repair1->spm_desc, $sparepartarray)) {
+                    array_push($sparepartarray, $repair1->spm_desc);
                 }
-                
             }
-            
         }
 
         /* A211014 */
@@ -3197,12 +3181,13 @@ class wocontroller extends Controller
             ->first();
 
         // $pdf = PDF::loadview('workorder.pdfprint-template',['womstr' => $womstr,'wodet' => $wodet, 'data' => $data,'printdate' =>$printdate,'repair'=>$repair,'sparepart'=>$array])->setPaper('A4','portrait');
-        $pdf = PDF::loadview('workorder.pdfprint-template',['sparepart'=>$sparepartarray,'womstr' => $womstr,'repairlist'=>$repairlist,'data' => $data,'repair'=>$repair,'counter'=>0,'countdb'=>$countdb,'check'=>$checkstr,'countrepairitre' => $countrepairitr,'printdate'=>$printdate,'engineerlist'=>$engineerlist,'users'=>$users,'datasr'=>$datasr])->setPaper('A4','portrait');
-         //return view('picklistbrowse.shipperprint-template',['printdata1' => $printdata1, 'printdata2' => $printdata2, 'runningnbr' => $runningnbr,'user' => $user,'last' =>$countprint]);
-         return $pdf->stream($wo.'.pdf');
+        $pdf = PDF::loadview('workorder.pdfprint-template', ['sparepart' => $sparepartarray, 'womstr' => $womstr, 'repairlist' => $repairlist, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb, 'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printdate' => $printdate, 'engineerlist' => $engineerlist, 'users' => $users, 'datasr' => $datasr])->setPaper('A4', 'portrait');
+        //return view('picklistbrowse.shipperprint-template',['printdata1' => $printdata1, 'printdata2' => $printdata2, 'runningnbr' => $runningnbr,'user' => $user,'last' =>$countprint]);
+        return $pdf->stream($wo . '.pdf');
     }
 
-    public function openprint2(Request $req,$wo){
+    public function openprint2(Request $req, $wo)
+    {
         // dd($wo);
         // dd($wodet);
         // dd('aaa');
@@ -3210,9 +3195,9 @@ class wocontroller extends Controller
         $countdb = [];
         $checkstr = [];
         $statusrepair = DB::table('wo_mstr')
-                        ->where('wo_mstr.wo_nbr','=',$wo)
-                        ->first();
-                        // dd($statusrepair);
+            ->where('wo_mstr.wo_nbr', '=', $wo)
+            ->first();
+        // dd($statusrepair);
         $arrayrepaircode = [];
         $arrayrepairdetail = [];
         $arrayrepairinst = [];
@@ -3220,51 +3205,49 @@ class wocontroller extends Controller
         $currspt_desc = '';
         // $repair = '';
         $countrepairitr = 0;
-        $wotype = substr($wo,0,2);
+        $wotype = substr($wo, 0, 2);
         // dd($statusrepair);
         $engineerlist = DB::table('wo_mstr')
-                        ->selectRaw('a.name as eng1,b.name as eng2,c.name as eng3,d.name as eng4,e.name as eng5')
-                        ->leftjoin('users as a','wo_mstr.wo_engineer1','a.username')
-                        ->leftjoin('users as b','wo_mstr.wo_engineer2','b.username')
-                        ->leftjoin('users as c','wo_mstr.wo_engineer3','c.username')
-                        ->leftjoin('users as d','wo_mstr.wo_engineer4','d.username')
-                        ->leftjoin('users as e','wo_mstr.wo_engineer5','e.username')
-                        ->where('wo_mstr.wo_nbr',$wo)
-                        ->first();
-        if($statusrepair->wo_repair_type == 'manual'){
+            ->selectRaw('a.name as eng1,b.name as eng2,c.name as eng3,d.name as eng4,e.name as eng5')
+            ->leftjoin('users as a', 'wo_mstr.wo_engineer1', 'a.username')
+            ->leftjoin('users as b', 'wo_mstr.wo_engineer2', 'b.username')
+            ->leftjoin('users as c', 'wo_mstr.wo_engineer3', 'c.username')
+            ->leftjoin('users as d', 'wo_mstr.wo_engineer4', 'd.username')
+            ->leftjoin('users as e', 'wo_mstr.wo_engineer5', 'e.username')
+            ->where('wo_mstr.wo_nbr', $wo)
+            ->first();
+        if ($statusrepair->wo_repair_type == 'manual') {
             $data = DB::table('wo_mstr')
-                    ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                    ->leftjoin('loc_mstr as a','asset_mstr.asset_site','a.loc_site')
-                    ->leftjoin('loc_mstr as b','asset_mstr.asset_loc','b.loc_code')        
-                    ->where('wo_mstr.wo_nbr','=',$wo)  
-                    ->first();
-            
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->leftjoin('loc_mstr as a', 'asset_mstr.asset_site', 'a.loc_site')
+                ->leftjoin('loc_mstr as b', 'asset_mstr.asset_loc', 'b.loc_code')
+                ->where('wo_mstr.wo_nbr', '=', $wo)
+                ->first();
+
             $datamanual = DB::table('wo_manual_detail')
-                            ->where('wo_manual_wo_nbr','=',$wo)
-                            ->get();
+                ->where('wo_manual_wo_nbr', '=', $wo)
+                ->get();
             // dd($datamanual);
             $countdb = count($datamanual);
-            
-        }
-        else if($statusrepair->wo_repair_type == 'group'){
-            
+        } else if ($statusrepair->wo_repair_type == 'group') {
+
             $data = DB::table('wo_mstr')
-                    ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                    ->leftjoin('loc_mstr as a','asset_mstr.asset_site','a.loc_site')
-                    ->leftjoin('loc_mstr as b','asset_mstr.asset_loc','b.loc_code')        
-                    ->where('wo_mstr.wo_nbr','=',$wo)  
-                    ->first();
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->leftjoin('loc_mstr as a', 'asset_mstr.asset_site', 'a.loc_site')
+                ->leftjoin('loc_mstr as b', 'asset_mstr.asset_loc', 'b.loc_code')
+                ->where('wo_mstr.wo_nbr', '=', $wo)
+                ->first();
             // dd($data);
 
             $grouprepair = DB::table('xxrepgroup_mstr')
-                            ->where('xxrepgroup_nbr','=',$statusrepair->wo_repair_group)
-                            ->get();
-            foreach($grouprepair as $grouprepair){
-                array_push($arrayrepaircode,$grouprepair->xxrepgroup_rep_code);
+                ->where('xxrepgroup_nbr', '=', $statusrepair->wo_repair_group)
+                ->get();
+            foreach ($grouprepair as $grouprepair) {
+                array_push($arrayrepaircode, $grouprepair->xxrepgroup_rep_code);
             }
             // dd($arrayrepaircode);
             $countrepairitr = count($arrayrepaircode);
-            for($i = 0; $i<count($arrayrepaircode);$i++){
+            for ($i = 0; $i < count($arrayrepaircode); $i++) {
                 // $repair[$i] = DB::table('xxrepgroup_mstr')
                 //                 ->leftjoin('rep_master','xxrepgroup_mstr.xxrepgroup_rep_code','rep_master.repm_code')
                 //                 ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
@@ -3280,94 +3263,90 @@ class wocontroller extends Controller
                 //                 ->where('xxrepgroup_mstr.xxrepgroup_rep_code','=',$arrayrepaircode[$i])
                 //                 ->distinct('ins_mstr.ins_code')
                 //                 ->orderBy('repm_ins','asc')
-                                
+
                 //                 ->get();
 
                 $repair[$i] = DB::table('wo_mstr')
-                                ->join('xxrepgroup_mstr','wo_mstr.wo_repair_group','xxrepgroup_mstr.xxrepgroup_nbr')
-                                ->join('wo_dets',function($join){
-                                    $join->on('wo_dets.wo_dets_nbr','=','wo_mstr.wo_nbr');
-                                    $join->on('wo_dets.wo_dets_rc','=','xxrepgroup_mstr.xxrepgroup_rep_code');
-                                })
-                                ->join('rep_master','wo_dets.wo_dets_rc','rep_master.repm_code')
-                                // ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
-                                ->join('ins_mstr','wo_dets.wo_dets_ins','ins_mstr.ins_code')
-                                ->leftjoin('sp_mstr','wo_dets.wo_dets_sp','sp_mstr.spm_code')
-                                ->where('wo_mstr.wo_nbr','=',$wo)
-                                ->where('xxrepgroup_mstr.xxrepgroup_rep_code','=',$arrayrepaircode[$i])
-                                ->get();
+                    ->join('xxrepgroup_mstr', 'wo_mstr.wo_repair_group', 'xxrepgroup_mstr.xxrepgroup_nbr')
+                    ->join('wo_dets', function ($join) {
+                        $join->on('wo_dets.wo_dets_nbr', '=', 'wo_mstr.wo_nbr');
+                        $join->on('wo_dets.wo_dets_rc', '=', 'xxrepgroup_mstr.xxrepgroup_rep_code');
+                    })
+                    ->join('rep_master', 'wo_dets.wo_dets_rc', 'rep_master.repm_code')
+                    // ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
+                    ->join('ins_mstr', 'wo_dets.wo_dets_ins', 'ins_mstr.ins_code')
+                    ->leftjoin('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')
+                    ->where('wo_mstr.wo_nbr', '=', $wo)
+                    ->where('xxrepgroup_mstr.xxrepgroup_rep_code', '=', $arrayrepaircode[$i])
+                    ->get();
                 //dd($repair);
-                                foreach($repair[$i] as $grouptool){
-                                    $newarr = explode(",",$grouptool->ins_tool);
-                                    for($po = 0; $po < count($newarr);$po++){
-                                        $arr= DB::table('tool_mstr')
-                                                    ->where('tool_code','=',$newarr[$po])
-                                                    ->first();
-                                        if(isset($arr->tool_desc)){
-                                            $newarr[$po] = $arr->tool_desc;
-                                        }
-                                        else{
-                                            $newarr[$po] = '';
-                                        }
-                                        
-                                    }
-                                    $exparr = implode(",",$newarr);
-                                    $grouptool->ins_tool = $exparr;
-                                }
+                foreach ($repair[$i] as $grouptool) {
+                    $newarr = explode(",", $grouptool->ins_tool);
+                    for ($po = 0; $po < count($newarr); $po++) {
+                        $arr = DB::table('tool_mstr')
+                            ->where('tool_code', '=', $newarr[$po])
+                            ->first();
+                        if (isset($arr->tool_desc)) {
+                            $newarr[$po] = $arr->tool_desc;
+                        } else {
+                            $newarr[$po] = '';
+                        }
+                    }
+                    $exparr = implode(",", $newarr);
+                    $grouptool->ins_tool = $exparr;
+                }
                 // dd($repair,$arrayrepaircode[$i]);
                 $check[$i] = DB::table('wo_mstr')
-                                ->selectRaw('wrd_flag')
-                                ->leftjoin('wo_rc_detail as a','wo_mstr.wo_nbr','a.wrd_wo_nbr')
-                                ->where('wo_mstr.wo_nbr','=',$wo)
-                                ->where('a.wrd_repair_code','=',$arrayrepaircode[$i])
-                                ->first();
-                if(isset($check[$i])==true){
+                    ->selectRaw('wrd_flag')
+                    ->leftjoin('wo_rc_detail as a', 'wo_mstr.wo_nbr', 'a.wrd_wo_nbr')
+                    ->where('wo_mstr.wo_nbr', '=', $wo)
+                    ->where('a.wrd_repair_code', '=', $arrayrepaircode[$i])
+                    ->first();
+                if (isset($check[$i]) == true) {
                     $checkstr[$i] = $check[$i]->wrd_flag;
-                }
-                else{
+                } else {
                     $checkstr[$i] = 0;
-                }    
+                }
                 $countdb[$i] = count($repair[$i]);
             }
-        }
-        else if ($statusrepair->wo_repair_type == 'code'){
+        } else if ($statusrepair->wo_repair_type == 'code') {
             // dd($statusrepair);
             $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                ->leftjoin('loc_mstr as a','asset_mstr.asset_site','a.loc_site')
-                ->leftjoin('loc_mstr as b','asset_mstr.asset_loc','b.loc_code')        
-                ->where('wo_mstr.wo_nbr','=',$wo)  
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->leftjoin('loc_mstr as a', 'asset_mstr.asset_site', 'a.loc_site')
+                ->leftjoin('loc_mstr as b', 'asset_mstr.asset_loc', 'b.loc_code')
+                ->where('wo_mstr.wo_nbr', '=', $wo)
                 ->first();
-                // dd($data);
-            if(isset($data->wo_repair_code1)){
-                array_push($arrayrepaircode,$data->wo_repair_code1);
+            // dd($data);
+            if (isset($data->wo_repair_code1)) {
+                array_push($arrayrepaircode, $data->wo_repair_code1);
             }
-            if(isset($data->wo_repair_code2)){
-                array_push($arrayrepaircode,$data->wo_repair_code2);
+            if (isset($data->wo_repair_code2)) {
+                array_push($arrayrepaircode, $data->wo_repair_code2);
             }
-            if(isset($data->wo_repair_code3)){
-                array_push($arrayrepaircode,$data->wo_repair_code3);
+            if (isset($data->wo_repair_code3)) {
+                array_push($arrayrepaircode, $data->wo_repair_code3);
             }
             $countrepairitr = count($arrayrepaircode);
             // dd($arrayrepaircode);
-            for($i = 0; $i<count($arrayrepaircode);$i++){
+            for ($i = 0; $i < count($arrayrepaircode); $i++) {
                 // dd($arrayrepaircode[$i]);
-                    $repair[$i] = DB::table('wo_mstr')
-                                ->join('wo_dets','wo_dets.wo_dets_nbr','wo_mstr.wo_nbr')
-                                ->join('ins_mstr','wo_dets.wo_dets_ins','ins_mstr.ins_code')
-                                ->join('rep_master','wo_dets.wo_dets_rc','rep_master.repm_code')
-                                // ->join('rep_det','rep_master.repm_code','rep_det.repdet_code')
-                                
-                                ->leftjoin('sp_mstr','wo_dets.wo_dets_sp','sp_mstr.spm_code')
-                                ->where('wo_mstr.wo_nbr','=',$wo)
-                                ->where('wo_dets.wo_dets_rc','=',$arrayrepaircode[$i])
-                                
-                                // ->groupBy('wo_mstr.wo_nbr','ins_mstr.ins_code')
-                                ->distinct('ins_mstr.ins_code')
-                                ->orderBy('repm_ins','asc')
-                                ->get();
-                                // dd('aaa');
-                    // dd($repair);
+                $repair[$i] = DB::table('wo_mstr')
+                    ->join('wo_dets', 'wo_dets.wo_dets_nbr', 'wo_mstr.wo_nbr')
+                    ->join('ins_mstr', 'wo_dets.wo_dets_ins', 'ins_mstr.ins_code')
+                    ->join('rep_master', 'wo_dets.wo_dets_rc', 'rep_master.repm_code')
+                    // ->join('rep_det','rep_master.repm_code','rep_det.repdet_code')
+
+                    ->leftjoin('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')
+                    ->where('wo_mstr.wo_nbr', '=', $wo)
+                    ->where('wo_dets.wo_dets_rc', '=', $arrayrepaircode[$i])
+
+                    // ->groupBy('wo_mstr.wo_nbr','ins_mstr.ins_code')
+                    ->distinct('ins_mstr.ins_code')
+                    ->orderBy('repm_ins', 'asc')
+                    ->get();
+                // dd('aaa');
+                // dd($repair);
                 // $repair[$i] = DB::table('rep_master')
                 //                 ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
                 //                 ->leftjoin('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
@@ -3378,65 +3357,63 @@ class wocontroller extends Controller
                 //                 ->orderBy('repm_ins','asc')
                 //                 ->get();
 
-                                foreach($repair[$i] as $grouptool){
-                                    $newarr = explode(",",$grouptool->ins_tool);
-                                    for($j = 0; $j < count($newarr);$j++){
-                                        $arr= DB::table('tool_mstr')
-                                                ->where('tool_code','=',$newarr[$j])
-                                                ->first();
-                                        if(isset($arr->tool_desc)){
-                                            $newarr[$j] = $arr->tool_desc;
-                                        }
-                                        else{
-                                            $newarr[$j] = '';
-                                        }           
-                                    }
-                                    $exparr = implode(",",$newarr);
-                                    $grouptool->ins_tool = $exparr;
-                                }
+                foreach ($repair[$i] as $grouptool) {
+                    $newarr = explode(",", $grouptool->ins_tool);
+                    for ($j = 0; $j < count($newarr); $j++) {
+                        $arr = DB::table('tool_mstr')
+                            ->where('tool_code', '=', $newarr[$j])
+                            ->first();
+                        if (isset($arr->tool_desc)) {
+                            $newarr[$j] = $arr->tool_desc;
+                        } else {
+                            $newarr[$j] = '';
+                        }
+                    }
+                    $exparr = implode(",", $newarr);
+                    $grouptool->ins_tool = $exparr;
+                }
 
                 $check[$i] = DB::table('wo_mstr')
-                                ->selectRaw('wrd_flag')
-                                ->leftjoin('wo_rc_detail as a','wo_mstr.wo_nbr','a.wrd_wo_nbr')
-                                ->where('wo_mstr.wo_nbr','=',$wo)
-                                ->where('a.wrd_repair_code','=',$arrayrepaircode[$i])
-                                ->first();
-                if(isset($check[$i])==true){
+                    ->selectRaw('wrd_flag')
+                    ->leftjoin('wo_rc_detail as a', 'wo_mstr.wo_nbr', 'a.wrd_wo_nbr')
+                    ->where('wo_mstr.wo_nbr', '=', $wo)
+                    ->where('a.wrd_repair_code', '=', $arrayrepaircode[$i])
+                    ->first();
+                if (isset($check[$i]) == true) {
                     $checkstr[$i] = $check[$i]->wrd_flag;
-                }
-                else{
+                } else {
                     $checkstr[$i] = 0;
                 }
                 // if(count($repair[$i])!= )
-                
+
                 // dd(count($repair[1]));
                 $countdb[$i] = count($repair[$i]);
             }
-        }   
+        }
         // foreach ($repair as $repair1){
         //     if(count($repair1) == 0){
         //         dd(count($repair1));
         //     }
-            
+
         // }
         $printdate = Carbon::now('ASIA/JAKARTA')->toDateTimeString();
         $printname = session::get('username');
         // dd($repair);
-        
-        if($statusrepair->wo_repair_type == 'manual'){
-            $pdf = PDF::loadview('workorder.pdfprint2-template',['wotype'=>$wotype,'data' => $data,'datamanual'=>$datamanual,'counter'=>0,'countdb'=>$countdb,'printdate'=>$printdate,'engineerlist'=>$engineerlist])->setPaper('A4','portrait');
+
+        if ($statusrepair->wo_repair_type == 'manual') {
+            $pdf = PDF::loadview('workorder.pdfprint2-template', ['wotype' => $wotype, 'data' => $data, 'datamanual' => $datamanual, 'counter' => 0, 'countdb' => $countdb, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
+        } else {
+            $pdf = PDF::loadview('workorder.pdfprint2-template', ['wotype' => $wotype, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb, 'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printname' => $printname, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
         }
-        else{
-            $pdf = PDF::loadview('workorder.pdfprint2-template',['wotype'=>$wotype,'data' => $data,'repair'=>$repair,'counter'=>0,'countdb'=>$countdb,'check'=>$checkstr,'countrepairitre' => $countrepairitr,'printname'=>$printname,'printdate'=>$printdate,'engineerlist'=>$engineerlist])->setPaper('A4','portrait');
-        }
-        
-        
+
+
         //  return view('picklistbrowse.shipperprint-template',['printdata1' => $printdata1, 'printdata2' => $printdata2, 'runningnbr' => $runningnbr,'user' => $user,'last' =>$countprint]);
-         return $pdf->stream($wo.'.pdf');
+        return $pdf->stream($wo . '.pdf');
         // return view('workorder.pdfprint2-template',['data' => $data,'repair'=>$repair,'counter'=>0,'countdb'=>$countdb,'check'=>$checkstr,'countrepairitre' => $countrepairitr,'printname'=>$printname,'printdate'=>$printdate,'engineerlist'=>$engineerlist]);
     }
-    
-    public function donlodwo(Request $req) {
+
+    public function donlodwo(Request $req)
+    {
         // dd('Fungsi belum berjalan');
         //dd($req->all());
         $wonbr    = $req->wonumber;
@@ -3449,118 +3426,117 @@ class wocontroller extends Controller
         // $stats = DB::table('wo_mstr')
         //         ->selectRaw('wo_nbr,wo_asset,wo_schedule,wo_duedate,wo_status,wo_priority,CAST(wo_created_at AS DATE) AS wo_created_at,wo_creator')
         //         ->get();
-        return Excel::download(new ViewExport2($wonbr,$status,$asset,$priority,$period,$creator,$engineer),'Work Order.xlsx');
+        return Excel::download(new ViewExport2($wonbr, $status, $asset, $priority, $period, $creator, $engineer), 'Work Order.xlsx');
     }
-    
-    public function getrepair1(Request $req, $rc1){
+
+    public function getrepair1(Request $req, $rc1)
+    {
         // dd($rc1);
-        
+
         $repair1 = DB::table('rep_master')
-                    ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
-                    ->leftjoin('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
-                    // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
-                    ->leftjoin('sp_mstr','ins_mstr.ins_part','sp_mstr.spm_code')
-                    ->where('rep_master.repm_code','=',$rc1)
-                    ->distinct('ins_mstr.ins_code')
-                    ->orderBy('repm_ins','asc')
-                    
-                    ->get();
-                // dd($repair1);
-                    foreach($repair1 as $grouptool){
-                        $newarr = explode(",",$grouptool->ins_tool);
-                        for($i = 0; $i < count($newarr);$i++){
-                            $arr= DB::table('tool_mstr')
-                                    ->where('tool_code','=',$newarr[$i])
-                                    ->first();
-                            if(isset($arr->tool_desc)){
-                                $newarr[$i] = $arr->tool_desc;
-                            }
-                            else{
-                                $newarr[$i] = '';
-                            }           
-                        }
-                        $exparr = implode(",",$newarr);
-                        $grouptool->ins_tool = $exparr;
-                    }
-            
+            ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+            ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+            // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
+            ->leftjoin('sp_mstr', 'ins_mstr.ins_part', 'sp_mstr.spm_code')
+            ->where('rep_master.repm_code', '=', $rc1)
+            ->distinct('ins_mstr.ins_code')
+            ->orderBy('repm_ins', 'asc')
+
+            ->get();
+        // dd($repair1);
+        foreach ($repair1 as $grouptool) {
+            $newarr = explode(",", $grouptool->ins_tool);
+            for ($i = 0; $i < count($newarr); $i++) {
+                $arr = DB::table('tool_mstr')
+                    ->where('tool_code', '=', $newarr[$i])
+                    ->first();
+                if (isset($arr->tool_desc)) {
+                    $newarr[$i] = $arr->tool_desc;
+                } else {
+                    $newarr[$i] = '';
+                }
+            }
+            $exparr = implode(",", $newarr);
+            $grouptool->ins_tool = $exparr;
+        }
+
         $countrepair1 = count($repair1);
         // dd($repair1);
         return $repair1;
     }
-    
-    public function getgroup1(Request $req, $rg1){
-        
+
+    public function getgroup1(Request $req, $rg1)
+    {
+
         $group1 = DB::table('xxrepgroup_mstr')
             // ->selectRaw("xxrepgroup_nbr, xxrepgroup_desc, xxrepgroup_rep_code, xxrepgroup_rep_desc,spt_desc, spm_code, spm_desc, ins_code , ins_desc, repdet_std ")
-            ->leftjoin('rep_master','xxrepgroup_mstr.xxrepgroup_rep_code','rep_master.repm_code')
-            ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
+            ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
+            ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
             // ->join('rep_partgroup','rep_master.repm_part','rep_partgroup.reppg_code')
             // ->join('sp_mstr','rep_partgroup.reppg_part','sp_mstr.spm_code')
             // ->join('sp_type','sp_mstr.spm_type','sp_type.spt_code')
-            ->leftjoin('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
+            ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
             // ->leftjoin('sp_group','ins_mstr.ins_part','sp_group.spg_code')
             // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
-            ->leftjoin('sp_mstr','ins_mstr.ins_part','sp_mstr.spm_code')
+            ->leftjoin('sp_mstr', 'ins_mstr.ins_part', 'sp_mstr.spm_code')
             // ->leftjoin('tool_mstr','ins_mstr.ins_tool','tool_mstr.tool_code')
-            ->where('xxrepgroup_mstr.xxrepgroup_nbr','=',$rg1)
+            ->where('xxrepgroup_mstr.xxrepgroup_nbr', '=', $rg1)
             ->distinct('ins_mstr.ins_code')
-            ->orderBy('repm_ins','asc')
-            
+            ->orderBy('repm_ins', 'asc')
+
             // ->orderBy('insg_line','asc')
 
             // ->orderby('xxrepgroup_rep_code','asc')
             // ->orderby('spt_desc','asc')
             // ->orderBy('insg_line','asc')
             ->get();
-        
-            // dd($group1);
-            foreach($group1 as $grouptool){
-                $newarr = explode(",",$grouptool->ins_tool);
-                for($i = 0; $i < count($newarr);$i++){
-                    $arr= DB::table('tool_mstr')
-                                ->where('tool_code','=',$newarr[$i])
-                                ->first();
-                    if(isset($arr->tool_desc)){
-                        $newarr[$i] = $arr->tool_desc;
-                    }
-                    else{
-                        $newarr[$i] = '';
-                    }
-                    
+
+        // dd($group1);
+        foreach ($group1 as $grouptool) {
+            $newarr = explode(",", $grouptool->ins_tool);
+            for ($i = 0; $i < count($newarr); $i++) {
+                $arr = DB::table('tool_mstr')
+                    ->where('tool_code', '=', $newarr[$i])
+                    ->first();
+                if (isset($arr->tool_desc)) {
+                    $newarr[$i] = $arr->tool_desc;
+                } else {
+                    $newarr[$i] = '';
                 }
-                // dd($newarr);
-                if(end($newarr)!= ''){
-                    $exparr = implode(",",$newarr);
-                }
-                else{
-                    $exparr = implode(" ",$newarr);
-                }
-                $grouptool->ins_tool = $exparr;
             }
-            
-    
+            // dd($newarr);
+            if (end($newarr) != '') {
+                $exparr = implode(",", $newarr);
+            } else {
+                $exparr = implode(" ", $newarr);
+            }
+            $grouptool->ins_tool = $exparr;
+        }
+
+
         $countrepair1 = count($group1);
         // dd($group1);
         // dd($group1);
         return $group1;
     }
 
-    public function statusreportingwo(Request $req){
+    public function statusreportingwo(Request $req)
+    {
         //dd($req->all());
         $wonumber = $req->aprwonbr2;
         $srnbr = $req->aprsrnbr2;
         $wonote = $req->ac_reportnote;
 
-        if($req->hasfile('fileother')){
-            foreach($req->file('fileother') as $upload){
-                $filename = $wonumber . '-' .$upload->getClientOriginalName();
-                
+        if ($req->hasfile('fileother')) {
+            foreach ($req->file('fileother') as $upload) {
+                $filename = $wonumber . '-' . $upload->getClientOriginalName();
+
                 $cekfile = DB::table('acceptance_image')
                     ->whereFile_wonumber($wonumber)
                     ->wherefile_name($filename)
                     ->count();
 
-                if($cekfile > 0) {
+                if ($cekfile > 0) {
                     toast('File names cannot be same.', 'error');
                     return back();
                 }
@@ -3568,179 +3544,170 @@ class wocontroller extends Controller
                 // Simpan File Upload pada Public
                 $savepath = public_path('uploadwofinish/');
                 $upload->move($savepath, $filename);
-                
+
                 // Simpan ke DB Upload
                 DB::table('acceptance_image')
                     ->insert([
                         'file_srnumber' => $srnbr,
                         'file_wonumber' => $wonumber,
-                        'file_name'     => $filename,//$upload->getClientOriginalName(), //nama file asli
-                        'file_url'      => $savepath.$filename, 
+                        'file_name'     => $filename, //$upload->getClientOriginalName(), //nama file asli
+                        'file_url'      => $savepath . $filename,
                         'uploaded_at'   => Carbon::now()->toDateTimeString(),
-                    ]); 
+                    ]);
             }
-
         }
 
-        if($srnbr == null){
+        if ($srnbr == null) {
             // dd('1');
-            if($req->switch2 =='approve'){
+            if ($req->switch2 == 'approve') {
                 //dd('aa');
                 // $exprc = explode(',',$req->repaircodeapp);
 
-                if($req->formtype == 1){
+                if ($req->formtype == 1) {
                     DB::table('wo_mstr')
                         ->where('wo_nbr', '=', $wonumber)
                         ->update([
                             'wo_status' => 'closed',
-                            'wo_approval_note' => $wonote , //B211019
+                            'wo_approval_note' => $wonote, //B211019
                             'wo_reviewer' => Session::get('username'),
                             'wo_approver' => Session::get('username'),
                             'wo_approver_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString(),
                             'wo_reviewer_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString()
                         ]);
-                        $wonow = DB::table('wo_mstr')
-                            ->where('wo_nbr','=',$wonumber)
-                            ->first();
-                        DB::table('asset_mstr')
-                            ->where('asset_code','=',$wonow->wo_asset)
-                            ->update(['asset_on_use' => NULL]);
-                        toast('Work Order '.$wonumber.' Approved by reviewer ', 'success');
-                        return redirect()->route('womaint');
-                }
-                else if($req->formtype == 2){
+                    $wonow = DB::table('wo_mstr')
+                        ->where('wo_nbr', '=', $wonumber)
+                        ->first();
+                    DB::table('asset_mstr')
+                        ->where('asset_code', '=', $wonow->wo_asset)
+                        ->update(['asset_on_use' => NULL]);
+                    toast('Work Order ' . $wonumber . ' Approved by reviewer ', 'success');
+                    return redirect()->route('womaint');
+                } else if ($req->formtype == 2) {
                     DB::table('wo_mstr')
                         ->where('wo_nbr', '=', $wonumber)
                         ->update([
                             'wo_status' => 'closed',
-                            'wo_approval_note' => $wonote , //B211019
+                            'wo_approval_note' => $wonote, //B211019
                             'wo_reviewer' => Session::get('username'),
                             'wo_approver' => Session::get('username'),
                             'wo_approver_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString(),
                             'wo_reviewer_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString()
                         ]);
-                        $wonow = DB::table('wo_mstr')
-                            ->where('wo_nbr','=',$wonumber)
-                            ->first();
-                        DB::table('asset_mstr')
-                            ->where('asset_code','=',$wonow->wo_asset)
-                            ->update(['asset_on_use' => NULL]);
-                        toast('Work Order '.$wonumber.' Approved by reviewer ', 'success');
-                        return redirect()->route('womaint');
+                    $wonow = DB::table('wo_mstr')
+                        ->where('wo_nbr', '=', $wonumber)
+                        ->first();
+                    DB::table('asset_mstr')
+                        ->where('asset_code', '=', $wonow->wo_asset)
+                        ->update(['asset_on_use' => NULL]);
+                    toast('Work Order ' . $wonumber . ' Approved by reviewer ', 'success');
+                    return redirect()->route('womaint');
                 }
+            } /* if($req->switch2 =='approve') */ else {
 
-
-            } /* if($req->switch2 =='approve') */
-            else{
-                
                 DB::table('wo_mstr')
-                ->where('wo_nbr',$wonumber)
-                // ->update(['wo_status'=>'closed','wo_reject_reason'=>$req->uncompletenote]); --> A210927
-                ->update([
-                    'wo_status'=>'reprocess',
-                    'wo_reject_reason'=>$req->uncompletenote,
-                    'wo_approval_note' => $wonote , //B211019
-                    'wo_reviewer' => Session::get('username'),
-                    'wo_approver' => Session::get('username'),
-                    'wo_approver_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString(),
-                    'wo_reviewer_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString()
-                ]);
+                    ->where('wo_nbr', $wonumber)
+                    // ->update(['wo_status'=>'closed','wo_reject_reason'=>$req->uncompletenote]); --> A210927
+                    ->update([
+                        'wo_status' => 'reprocess',
+                        'wo_reject_reason' => $req->uncompletenote,
+                        'wo_approval_note' => $wonote, //B211019
+                        'wo_reviewer' => Session::get('username'),
+                        'wo_approver' => Session::get('username'),
+                        'wo_approver_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString(),
+                        'wo_reviewer_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString()
+                    ]);
 
                 $wonow = DB::table('wo_mstr')
-                            ->where('wo_nbr','=',$wonumber)
-                            ->first();
+                    ->where('wo_nbr', '=', $wonumber)
+                    ->first();
 
                 /* DB::table('asset_mstr')
                     ->where('asset_code','=',$wonow->wo_asset)
                     ->update(['asset_on_use' => NULL]); A211019 */
 
-                toast('Work Order '.$wonumber.' incomplete ', 'success');
+                toast('Work Order ' . $wonumber . ' incomplete ', 'success');
                 return redirect()->route('womaint');
             } /* else if($req->switch2 =='approve')*/
+        } else { /* if($srnbr == null) */
 
-
-        } else{ /* if($srnbr == null) */  
-
-            if($req->switch2 =='approve'){
+            if ($req->switch2 == 'approve') {
                 // $exprc = explode(',',$req->repaircodeapp);
-                if($req->formtype == 1){
+                if ($req->formtype == 1) {
                     DB::table('wo_mstr')
                         ->where('wo_nbr', '=', $wonumber)
                         ->update([
                             'wo_status' => 'completed',
-                            'wo_approval_note' => $wonote , //B211019
+                            'wo_approval_note' => $wonote, //B211019
                             'wo_reviewer' => Session::get('username'),
                             'wo_reviewer_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString()
-                    ]);
+                        ]);
 
                     // A210927
-                    if($srnbr !== null){
+                    if ($srnbr !== null) {
                         DB::table('service_req_mstr')
                             ->where('sr_number', '=', $srnbr)
                             ->update([
                                 'sr_status' => '7',
-                        ]);
+                            ]);
                     }
 
-                    toast('Work Order '.$wonumber.' Approved by reviewer ', 'success');
+                    toast('Work Order ' . $wonumber . ' Approved by reviewer ', 'success');
                     return redirect()->route('womaint');
-                }
-                else if ($req->formtype == 2){
-            
+                } else if ($req->formtype == 2) {
+
                     // dd('lg maintenance');
-                    
+
                     // $albumraw = $req->imgname;
-                        DB::table('wo_mstr')
-                                ->where('wo_nbr', '=', $wonumber)
-                                ->update([
-                                    'wo_status' => 'closed',
-                                    'wo_approval_note' => $wonote , //B211019
-                                    'wo_approver' => Session::get('username'),
-                                    'wo_approver_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString()
-                                    
-                                ]);
+                    DB::table('wo_mstr')
+                        ->where('wo_nbr', '=', $wonumber)
+                        ->update([
+                            'wo_status' => 'closed',
+                            'wo_approval_note' => $wonote, //B211019
+                            'wo_approver' => Session::get('username'),
+                            'wo_approver_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString()
+
+                        ]);
 
                     // A210927
-                    if($srnbr !== null){
+                    if ($srnbr !== null) {
                         DB::table('service_req_mstr')
-                                ->where('sr_number', '=', $srnbr)
-                                ->update([
-                                    'sr_status' => '7',
-                                ]);
+                            ->where('sr_number', '=', $srnbr)
+                            ->update([
+                                'sr_status' => '7',
+                            ]);
                     }
-            
-                    toast('Work Order '.$wonumber.' Completed ', 'success');
+
+                    toast('Work Order ' . $wonumber . ' Completed ', 'success');
                     return redirect()->route('womaint');
                 }
 
                 // A210927
-                if($srnbr !== null){
+                if ($srnbr !== null) {
                     DB::table('service_req_mstr')
-                            ->where('sr_number', '=', $srnbr)
-                            ->update([
-                                'sr_status' => '7',
-                            ]);
+                        ->where('sr_number', '=', $srnbr)
+                        ->update([
+                            'sr_status' => '7',
+                        ]);
                 }
-            
-            }else{
-        
+            } else {
+
                 DB::table('wo_mstr')
-                ->where('wo_nbr',$wonumber)
-                // ->update(['wo_status'=>'closed','wo_reject_reason'=>$req->uncompletenote]); --> A210927
-                ->update([
-                    'wo_status'=>'reprocess',
-                    'wo_reject_reason'=>$req->uncompletenote,
-                    'wo_approval_note' => $wonote , //B211019
-                ]);
-                toast('Work Order '.$wonumber.' reprocess ', 'success');
+                    ->where('wo_nbr', $wonumber)
+                    // ->update(['wo_status'=>'closed','wo_reject_reason'=>$req->uncompletenote]); --> A210927
+                    ->update([
+                        'wo_status' => 'reprocess',
+                        'wo_reject_reason' => $req->uncompletenote,
+                        'wo_approval_note' => $wonote, //B211019
+                    ]);
+                toast('Work Order ' . $wonumber . ' reprocess ', 'success');
 
                 // A210927  --> A211019 --> A211101
-                if($srnbr !== null){
+                if ($srnbr !== null) {
                     DB::table('service_req_mstr')
-                            ->where('sr_number', '=', $srnbr)
-                            ->update([
-                                'sr_status' => '8',
-                            ]);
+                        ->where('sr_number', '=', $srnbr)
+                        ->update([
+                            'sr_status' => '8',
+                        ]);
                 }
 
                 return redirect()->route('womaint');
@@ -3748,35 +3715,34 @@ class wocontroller extends Controller
 
             //EmailScheduleJobs::dispatch($wonumber,'','6','','',$srnbr,''); // A211021
         } /* else if($srnbr == null)   */
-
     }
 
-    public function downloadfile(Request $req, $wo){ /* blade : workorder.table-wobrowse */
+    public function downloadfile(Request $req, $wo)
+    { /* blade : workorder.table-wobrowse */
         $zip = new ZipArchive;
 
         $assetnow = DB::table('wo_mstr')
-                    ->where('wo_nbr','=',$wo)
-                    ->first();
+            ->where('wo_nbr', '=', $wo)
+            ->first();
 
         $listdownload = DB::table('asset_upload')
-                        ->where('asset_code','=',$assetnow->wo_asset)
-                        ->get();
+            ->where('asset_code', '=', $assetnow->wo_asset)
+            ->get();
 
         /* A211103 */
         $listfinish = DB::table('acceptance_image')
             ->whereFile_wonumber($wo)
             ->get();
 
-         $fileName = $wo.'_'.$assetnow->wo_asset.'.zip';
+        $fileName = $wo . '_' . $assetnow->wo_asset . '.zip';
 
-         if(count($listdownload) > 0 || count($listfinish) > 0){
-            if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE)
-            {
-                foreach ($listdownload as $listdown){
+        if (count($listdownload) > 0 || count($listfinish) > 0) {
+            if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE) {
+                foreach ($listdownload as $listdown) {
                     $files = File::get($listdown->filepath);
                     $relativeNameInZipFile = basename($listdown->filepath);
                     $zip->addFile($listdown->filepath, $relativeNameInZipFile);
-                } 
+                }
 
                 /* A211103 */
                 foreach ($listfinish as $listfinish) {
@@ -3787,79 +3753,79 @@ class wocontroller extends Controller
 
                 $zip->close();
             }
-        
+
             return response()->download(public_path($fileName));
-        }
-        else{
-             toast('Tidak ada dokumen untuk pada WO '.$wo.'!','error');
+        } else {
+            toast('Tidak ada dokumen untuk pada WO ' . $wo . '!', 'error');
             return back();
         }
     }
 
-    public function getpreventivecreate($asset){
+    public function getpreventivecreate($asset)
+    {
         $assetnow = DB::table('asset_mstr')
-                    ->where('asset_code','=',$asset)
-                    ->first();
+            ->where('asset_code', '=', $asset)
+            ->first();
 
         // return 
     }
 
     public function downloadwofinish($id)
     {
-        
-        $datafile = DB::table('acceptance_image')
-                    ->where('accept_img_id','=',$id)
-                    ->first();
 
-        if($datafile){
+        $datafile = DB::table('acceptance_image')
+            ->where('accept_img_id', '=', $id)
+            ->first();
+
+        if ($datafile) {
 
             $lastindex = strrpos($datafile->file_url, "/");
-            $filename = substr($datafile->file_wonumber.'-'.$datafile->file_name, $lastindex + 1);
+            $filename = substr($datafile->file_wonumber . '-' . $datafile->file_name, $lastindex + 1);
 
             return Response::download($datafile->file_url, $datafile->file_name);
-        }else{
+        } else {
             toast('There is no file', 'error');
             return back();
         }
     }
 
-    public function delfilewofinish($id){
+    public function delfilewofinish($id)
+    {
 
         $data1 = DB::table('acceptance_image')
-                    ->where('accept_img_id',$id)
-                    ->first();
+            ->where('accept_img_id', $id)
+            ->first();
 
-        if($data1){
+        if ($data1) {
             $lastindex = strrpos($data1->file_url, "/");
             $filename = substr($data1->file_url, $lastindex + 1);
 
-            $filename = public_path('/uploadwofinish/'.$filename);
+            $filename = public_path('/uploadwofinish/' . $filename);
 
-            if(File::exists($filename)) {
+            if (File::exists($filename)) {
                 File::delete($filename);
 
                 DB::table('acceptance_image')
-                            ->where('accept_img_id',$id)
-                            ->delete();
+                    ->where('accept_img_id', $id)
+                    ->delete();
             }
         }
 
         $gambar = DB::table('acceptance_image')
-                    ->where('file_wonumber', '=', $data1->file_wonumber)
-                    ->get();
+            ->where('file_wonumber', '=', $data1->file_wonumber)
+            ->get();
 
         $output = "";
-        foreach($gambar as $gambar) {
+        foreach ($gambar as $gambar) {
             $output .= '<tr>
                     <td><a href="#" class="btn deleterow btn-danger"><i class="icon-table fa fa-trash fa-lg"></i></a>
                     &nbsp
-                    <input type="hidden" value="'.$gambar->accept_img_id.'" class="rowval"/>
-                    <td><a href="/downloadwofinish/'.$gambar->accept_img_id.'" target="_blank">'.$gambar->file_name.'</a></td>
+                    <input type="hidden" value="' . $gambar->accept_img_id . '" class="rowval"/>
+                    <td><a href="/downloadwofinish/' . $gambar->accept_img_id . '" target="_blank">' . $gambar->file_name . '</a></td>
                 </tr>';
         }
 
         return response($output);
     }
-
 }
 //tanggal betulin 24 may 2021 - 1553
