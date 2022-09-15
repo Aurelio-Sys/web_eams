@@ -846,17 +846,10 @@ class wocontroller extends Controller
         $assettable = DB::table('asset_mstr')
             ->where('asset_code', '=', $req->c_asset)
             ->first();
-<<<<<<< HEAD
-                
-        $asset = $req->c_asset.' - '.$assettable->asset_desc;
-        
-        // dimatiin dulu buat trial EmailScheduleJobs::dispatch($runningnbr,$asset,'5','','','','');
-=======
->>>>>>> a54df3303ba9520e828f15376cc28915f4ca233d
 
         $asset = $req->c_asset . ' - ' . $assettable->asset_desc;
 
-        EmailScheduleJobs::dispatch($runningnbr, $asset, '5', '', '', '', '');
+        //EmailScheduleJobs::dispatch($runningnbr, $asset, '5', '', '', '', '');
 
         toast('WO ' . $runningnbr . ' Successfuly Created !', 'success');
         return back();
@@ -926,17 +919,10 @@ class wocontroller extends Controller
         $assettable = DB::table('asset_mstr')
             ->where('asset_code', '=', $req->c_asset)
             ->first();
-<<<<<<< HEAD
-                
-        $asset = $req->c_asset.' - '.$assettable->asset_desc;
-        
-        // dimatiin dulu buat trial EmailScheduleJobs::dispatch($runningnbr,$asset,'1','','','','');
-=======
->>>>>>> a54df3303ba9520e828f15376cc28915f4ca233d
 
         $asset = $req->c_asset . ' - ' . $assettable->asset_desc;
 
-        EmailScheduleJobs::dispatch($runningnbr, $asset, '1', '', '', '', '');
+        //EmailScheduleJobs::dispatch($runningnbr, $asset, '1', '', '', '', '');
 
         toast('WO Successfuly Created !', 'success');
         return back();
@@ -1089,17 +1075,10 @@ class wocontroller extends Controller
         $assettable = DB::table('asset_mstr')
             ->where('asset_code', '=', $req->c_asset)
             ->first();
-<<<<<<< HEAD
-                
-        $asset = $req->c_asset.' - '.$assettable->asset_desc;
-        
-        // dimatiin dulu buat trial EmailScheduleJobs::dispatch($runningnbr,$asset,'1','','','','');
-=======
->>>>>>> a54df3303ba9520e828f15376cc28915f4ca233d
 
         $asset = $req->c_asset . ' - ' . $assettable->asset_desc;
 
-        EmailScheduleJobs::dispatch($runningnbr, $asset, '1', '', '', '', '');
+        //EmailScheduleJobs::dispatch($runningnbr, $asset, '1', '', '', '', '');
 
         toast($runningnbr . ' Successfuly Created !', 'success');
         return back();
