@@ -98,10 +98,10 @@
   Daftar Perubahan :
   A211027 : Jika tipe PM, cancel jobnya dihide
 --}}
-<div class="col-12 form-group row">
+<div class="col-12 form-group row p-0 m-0">
 
   <div class="table-responsive col-12">
-    <table class="table table-borderless mini-table mt-4" id="dataTable" width="100%" cellspacing="0">
+    <table class="table table-bordered mini-table mt-4" id="dataTable" width="100%" cellspacing="0">
       <thead>
         <tr style="text-align: center;">
           <th>Work Order Number</th>
