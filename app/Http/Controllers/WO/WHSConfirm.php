@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\WO;
+use App\Models\Qxwsa as ModelsQxwsa;
+use App\Services\WSAServices;
 
 use App\Http\Controllers\Controller;
 use App\Services\CreateTempTable;
@@ -69,6 +71,9 @@ class WHSConfirm extends Controller
             ->orderBy('site_code')
             ->get();
 
+        $wodetdata = DB::table('wo_dets')
+            ->get();
+
         if ($data->wo_repair_code1 != "") {
             $sparepart1 = DB::table('wo_mstr')
                 ->select('wo_repair_code1 as repair_code','ins_code','insd_part_desc','insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
@@ -111,9 +116,47 @@ class WHSConfirm extends Controller
             $combineSP = $sparepart1->merge($sparepart2)->merge($sparepart3);
         }
 
-        // dd($combineSP);
+        // load stock
+        $domain = ModelsQxwsa::first();
+
+        $stokdata = (new WSAServices())->wsastok($domain->wsas_domain);
+
+        if ($stokdata === false) {
+            toast('WSA Failed', 'error')->persistent('Dismiss');
+            return redirect()->back();
+        } else {
+
+            if ($stokdata[1] == "false") {
+                toast('Stok tidak ditemukan', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+
+                Schema::create('temp_stok', function ($table) {
+                    $table->increments('id');
+                    $table->string('stok_site');
+                    $table->string('stok_loc');
+                    $table->string('stok_part');
+                    $table->string('stok_qty');
+                    $table->temporary();
+                });
+
+                foreach ($stokdata[0] as $datas) {
+                    DB::table('temp_stok')->insert([
+                        'stok_site' => $datas->t_site,
+                        'stok_loc' => $datas->t_loc,
+                        'stok_part' => $datas->t_part,
+                        'stok_qty' => $datas->t_qty,
+                    ]);
+                }
+
+                $qstok = DB::table('temp_stok')
+                    ->get();
+
+                Schema::dropIfExists('temp_stok');
+            }
+        }
 
         return view('workorder.whsconf-detail', compact('data', 'spdata','combineSP','rpdata','insdata',
-        'locdata','sitedata'));
+        'locdata','sitedata','qstok','wodetdata'));
     }
 }

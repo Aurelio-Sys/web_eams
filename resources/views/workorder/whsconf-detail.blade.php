@@ -86,6 +86,33 @@
                         <tbody id='detailapp'>
 
                             @forelse ( $combineSP as $datas )
+                                <!-- qty required -->
+                                @if($datas->insd_part == "")
+                                    @php($cqty = 0)
+                                @else
+                                    @php($cqty = $datas->insd_qty)
+                                @endif
+
+                                <!-- qty request -->
+                                @php($qqtyreq = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->count())
+                                @if($qqtyreq == 0)
+                                    @php($dqtyreq = 0)
+                                @else
+                                    @php($sqtyreq = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->first())
+                                    @php($dqtyreq = $sqtyreq->wo_dets_sp_qty)
+                                @endif
+
+                                <!-- default lokasi -->
+                                @php($qsite = $spdata->where('sp_code','=',$datas->insd_part)->count())
+                                @if($qsite == 0)
+                                    @php($dsite = "")
+                                    @php($dloc = "")
+                                @else
+                                    @php($ssite = $spdata->where('sp_code','=',$datas->insd_part)->first())
+                                    @php($dsite = $ssite->spm_site)
+                                    @php($dsite = $ssite->spm_loc)
+                                @endif
+
                             <tr>
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$datas->repair_code}}
@@ -100,17 +127,19 @@
                                     <input type="hidden" name="partneed[]" value="{{$datas->insd_part}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    {{$datas->insd_qty}}
-                                    <input type="hidden" name="qtyreq[]" value="{{$datas->insd_qty}}" />
+                                    {{ $cqty }}
+                                    <input type="hidden" name="qtyreq[]" value="{{$cqty}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    {{$datas->insd_qty}}
-                                    <input type="hidden" name="qtyreq[]" value="{{$datas->insd_qty}}" />
+                                    {{ $dqtyreq }} {{ $dsite }}
+                                    <input type="hidden" name="qtyreq[]" value="{{ $dqtyreq }}" />
                                 </td>
                                 <td>
+                                    {{ $dsite }}
                                     <select name="t_site[]" class="form-control t_site">
+                                        <option value="">-- Select --</option>
                                     @foreach($sitedata as $rssite)
-                                        <option value="{{ $rssite->site_code }}">{{ $rssite->site_code }}</option>
+                                        <option value="{{ $rssite->site_code }}" {{$dsite == $rssite->site_code ? "selected" : ""}}>{{ $rssite->site_code }}</option>
                                     @endforeach
                                     </select>
                                 </td>

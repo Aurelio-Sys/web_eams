@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\WO\ConfirmEng;
 use App\Http\Controllers\WO\WORelease;
+use App\Http\Controllers\WO\WHSConfirm;
 use App\Http\Controllers\wocontroller;
 use Illuminate\Support\Facades\Auth;
 use Master\QxWsaMTController;
@@ -492,6 +493,10 @@ Route::group(['middleware' => ['auth']], function() {
 	// wo confirm engineer
 	Route::get('/confeng', [ConfirmEng::class, 'index'])->name('browseConfEng');
 	Route::get('/confeng/confirmdetail/{id}', [ConfirmEng::class, 'detailconfirm'])->name('ConfDetail');
+
+	// wo release
+	Route::get('/whsconfirm', [WHSConfirm::class, 'browse'])->name('browseRelease');
+	Route::get('/whsconfirm/detailwhs/{id}', [WHSConfirm::class, 'detailwhs'])->name('WhsconfDetail');
 	
 });
 
