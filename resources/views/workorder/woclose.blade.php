@@ -1479,21 +1479,21 @@
               col += '</div>';
 
               col += '<div class="table-responsive col-12">';
-              col += '<table class="table table-borderless mt-0" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">';
+              col += '<table class="table table-bordered mt-0" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">';
               col += '<thead>';
               col += '<tr style="text-align: center;style="border:2px solid"">';
               col += '<th rowspan="2" style="border:2px solid;width:5%"><p style="height:100%">No</p></th>';
-              col += '<th rowspan="2" style="border:2px solid;width:20%"><p style="height:100%">Instruksi</p></th>';
-              col += '<th rowspan="2" style="border:2px solid;width:10%"><p style="height:100%">Sparepart</p></th>';
+              col += '<th rowspan="2" style="border:2px solid;width:25%"><p style="height:100%">Instruksi</p></th>';
               col += '<th rowspan="2" style="border:2px solid;width:20%"><p style="height:100%">Standard</p></th>';
-              col += '<th rowspan="2" style="border:2px solid;width:5%"><p style="height:100%">Qty</p></th>';
-              col += '<th rowspan="2" style="border:2px solid;width:5%"><p style="height:100%">Hour(s)</p></th>';
+              col += '<th colspan="2" style="border:2px solid;width:15%"><p style="height:50%">Do</p></th>';
               col += '<th colspan="2" style="border:2px solid;width:15%"><p style="height:50%">Result</p></th>';
               col += '<th rowspan="2" style="border:2px solid;width:20%"><p style="height:100%">Note</p></th>';
               col += '</tr>';
               col += '<tr style="text-align: center;">';
-              col += '<th style="border:2px solid">OK</th>';
-              col += '<th style="border:2px solid">F.U.</th>';
+              col += '<th style="border:2px solid; width:10%;">Done</th>';
+              col += '<th style="border:2px solid; width:10%;">Not Done</th>';
+              col += '<th style="border:2px solid; width:10%;">OK</th>';
+              col += '<th style="border:2px solid; width:10%;">Not OK</th>';
               col += '</tr>';
               col += '</thead>';
               col += '<tbody style="border:2px solid" >';
@@ -1509,13 +1509,13 @@
                   col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>' + result[i].ins_desc + '</b></p></td>';
                   col += '<input type="hidden" name="ins1[]" value="' + result[i].ins_code + '">';
                 }
-                if (result[i].spm_desc == null) {
-                  col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>-</b></p></td>';
-                  col += '<input type="hidden" name="spm1[]" value="">';
-                } else {
-                  col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>' + result[i].spm_desc + '</b></p></td>';
-                  col += '<input type="hidden" name="spm1[]" value="' + result[i].spm_code + '">';
-                }
+                // if (result[i].spm_desc == null) {
+                //   col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>-</b></p></td>';
+                //   col += '<input type="hidden" name="spm1[]" value="">';
+                // } else {
+                //   col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>' + result[i].spm_desc + '</b></p></td>';
+                //   col += '<input type="hidden" name="spm1[]" value="' + result[i].spm_code + '">';
+                // }
 
 
                 if (result[i].ins_check == null) {
@@ -1525,8 +1525,12 @@
                   col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>' + result[i].ins_check + '</b></p></td>';
                   col += '<input type="hidden" name="std1[]" value="' + result[i].ins_check + '">';
                 }
-                col += '<td style="margin-top:0;height:40px;border:2px solid"><input type="number" name="qty1[]" min=1 value=1 style="border:0px;width:100%;height:100%"></td>';
-                col += '<td style="margin-top:0;height:40px;border:2px solid"><input type="number" name="rph1[]" min=1 value=1 step="0.1" style="border:0px;width:100%;height:100%"></td>';
+
+                col += '<input type="hidden" name="dook1[' + i + ']" value="n' + i + '">';
+                col += '<td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid"><input type="checkbox" name="dook1[' + i + ']" id="item' + i + '" value="y' + i + '"></td>';
+                col += '<input type="hidden" name="donok11[' + i + ']" value="n' + i + '">';
+                col += '<td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid"><input type="checkbox" name="donok11[' + i + ']" id="item' + i + '" value="y' + i + '"></td>';
+
 
                 col += '<input type="hidden" name="group1[' + i + ']" value="n' + i + '">';
                 col += '<td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid"><input type="checkbox" name="group1[' + i + ']" id="item' + i + '" value="y' + i + '"></td>';

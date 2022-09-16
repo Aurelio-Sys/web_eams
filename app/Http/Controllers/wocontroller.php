@@ -1784,8 +1784,7 @@ class wocontroller extends Controller
         }
     }
 
-    public function geteditwo(Request $req)
-    {
+    public function geteditwoold(Request $req){
         //dd($req->get('nomorwo'));
         // dd('aaa');
         $nowo = $req->get('nomorwo');
@@ -1826,10 +1825,93 @@ class wocontroller extends Controller
             ->leftjoin('xxrepgroup_mstr', 'xxrepgroup_mstr.xxrepgroup_nbr', 'wo_mstr.wo_repair_group')
             ->where('wo_mstr.wo_nbr', '=', $nowo)
             ->get();
+
+            return $data;
+    }
+
+    public function geteditwo($wo)
+    {
+
+        
+        //dd($req->get('nomorwo'));
+        // dd('aaa');
+        $nowo = $wo;
+        $currwo = DB::table('wo_mstr')
+            ->where('wo_mstr.wo_nbr', '=', $nowo)
+            ->first();
+
+        $data = DB::table('wo_mstr')
+            ->selectRaw('wo_type,wo_nbr,wo_reviewer_appdate,wo_approver_appdate,wo_repair_type,
+                wo_repair_group,xxrepgroup_nbr,xxrepgroup_desc,wo_status,asset_desc,wo_approval_note,
+                wo_creator,wo_reject_reason,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status,
+                wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,wo_engineer2 as woen2, 
+                wo_engineer3 as woen3,wo_engineer4 as woen4,wo_engineer5 as woen5,u1.eng_desc as u11,
+                u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, 
+                wo_mstr.wo_failure_code1 as wofc1, wo_mstr.wo_failure_code2 as wofc2, 
+                wo_mstr.wo_failure_code3 as wofc3, fn1.fn_desc as fd1, fn2.fn_desc as fd2, 
+                fn3.fn_desc as fd3,r1.repm_desc as r11,r2.repm_desc as r22,r3.repm_desc as r33,
+                r1.repm_code as rr11,r2.repm_code as rr22,r3.repm_code as rr33, wo_finish_date,
+                wo_finish_time,wo_repair_hour,asset_last_mtc,asset_last_usage_mtc,asset_measure,loc_code,
+                loc_desc,astype_code,astype_desc,wo_new_type,wo_impact,wo_impact_desc,wo_action,wotyp_desc,asset_daya,
+                wo_reject_reason')
+            ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
+            ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
+            ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
+            ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
+            ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
+            ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+            ->leftjoin('asset_type', 'asset_mstr.asset_type', 'asset_type.astype_code')
+            ->leftjoin('loc_mstr', 'asset_mstr.asset_loc', 'loc_mstr.loc_code')
+            ->leftjoin('fn_mstr as fn1', 'wo_mstr.wo_failure_code1', 'fn1.fn_code')
+            ->leftjoin('fn_mstr as fn2', 'wo_mstr.wo_failure_code2', 'fn2.fn_code')
+            ->leftjoin('fn_mstr as fn3', 'wo_mstr.wo_failure_code3', 'fn3.fn_code')
+            ->leftjoin('rep_master as r1', 'wo_mstr.wo_repair_code1', 'r1.repm_code')
+            ->leftjoin('rep_master as r2', 'wo_mstr.wo_repair_code2', 'r2.repm_code')
+            ->leftjoin('rep_master as r3', 'wo_mstr.wo_repair_code3', 'r3.repm_code')
+            ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
+            ->leftJoin('wotyp_mstr', 'wo_mstr.wo_new_type', 'wotyp_mstr.wotyp_code')
+            ->leftjoin('xxrepgroup_mstr', 'xxrepgroup_mstr.xxrepgroup_nbr', 'wo_mstr.wo_repair_group')
+            ->where('wo_mstr.wo_nbr', '=', $nowo)
+            ->get();
         // dd($data);
 
-        //dd($data);
-        return $data;
+        // dd($data);
+        // return $data;
+
+            $engineer = DB::table('users')
+                ->join('roles', 'users.role_user', 'roles.role_code')
+                ->where('role_desc', '=', 'Engineer')
+                ->get();
+            $asset = DB::table('wo_mstr')
+                ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
+                ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->where(function ($status) {
+                    $status->where('wo_status', '=', 'started')
+                        ->orwhere('wo_status', '=', 'finish');
+                })
+                ->where(function ($query) {
+                    $query->where('wo_engineer1', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                })
+                ->groupBy('asset_code')
+                ->orderBy('asset_code')
+                ->get();
+            $repaircode = DB::table('rep_master')
+                ->get();
+
+            $sparepart = DB::table('sp_mstr')
+                ->get();
+            $repairgroup = DB::table('xxrepgroup_mstr')
+                ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
+                ->distinct('xxrepgroup_nbr')
+                ->get();
+            $instruction = DB::table('ins_mstr')
+                ->get();
+
+        return view('workorder.wofinish-done', compact('data','engineer','asset','repaircode','sparepart','repairgroup','instruction'));
     }
 
     public function approvewo(Request $req)
@@ -1986,6 +2068,7 @@ class wocontroller extends Controller
                 ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
                 ->where(function ($status) {
                     $status->where('wo_status', '=', 'ENG Confirmed')
+                        ->orWhere('wo_status','=', 'open')
                         ->orwhere('wo_status', '=', 'started');
                 })
                 ->where(function ($query) {
@@ -2054,7 +2137,7 @@ class wocontroller extends Controller
         $statuswo = $req->statuswo;
         $nomorwo = $req->v_nowo;
         //dd($req->all());
-        if ($statuswo == 'ENG Confirmed') {
+        if ($statuswo == 'ENG Confirmed' || $statuswo == 'open') {
             DB::table('wo_mstr')
                 ->where('wo_nbr', '=', $nomorwo)
                 ->update([
