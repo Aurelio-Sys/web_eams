@@ -159,4 +159,67 @@ class WHSConfirm extends Controller
         return view('workorder.whsconf-detail', compact('data', 'spdata','combineSP','rpdata','insdata',
         'locdata','sitedata','qstok','wodetdata'));
     }
+
+    public function cekstok(Request $req)
+    {
+        if ($req->ajax()) {
+            dd($req->all());
+            $t_site = $req->get('t_site');
+      
+            $data = DB::table('loc_mstr')
+                    ->where('loc_site','=',$t_site)
+                    ->get();
+
+            $output = '<option value="" >Select</option>';
+            foreach($data as $data){
+
+                $output .= '<option value="'.$data->loc_code.'" >'.$data->loc_code.' -- '.$data->loc_desc.'</option>';
+                           
+            }
+
+            return response($output);
+        }
+    }
+
+    public function whssubmit(Request $req){
+        // dd($req->all());
+        DB::beginTransaction();
+
+        try{
+            
+            foreach($req->partneed as $a => $key){
+                DB::table('wo_dets')
+                    ->where('wo_dets_nbr',$req->hide_wonum)
+                    ->where('wo_dets_rc',$req->repcode[$a])
+                    ->where('wo_dets_ins',$req->inscode[$a])
+                    ->where('wo_dets_sp',$req->partneed[$a])
+                    ->update([
+                    'wo_dets_wh_site' => $req->t_site[$a],
+                    'wo_dets_wh_loc' => $req->t_loc[$a],
+                    'wo_dets_wh_qty' => $req->qtyconf[$a],
+                    'wo_dets_wh_conf' => $req->tick[$a],
+                    'wo_dets_wh_date' => Carbon::now()->toDateTimeString(),
+                ]);
+            }    
+
+            DB::table('wo_mstr')
+                ->where('wo_nbr',$req->hide_wonum)
+                ->update([
+                    'wo_status' => 'whsconfirm',
+                ]);
+            
+            DB::commit();
+    
+            toast('Confirm Successfuly !','success');
+            return redirect()->route('browseWhconfirm');
+
+        } catch (Exception $e){
+            // dd($e);
+            DB::rollBack();
+            toast('Confirm Failed','error');
+            return redirect()->route('browseWhconfirm');
+        }
+
+        
+    }
 }

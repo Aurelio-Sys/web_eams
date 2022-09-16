@@ -493,8 +493,12 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/confeng/confirmdetail/{id}', [ConfirmEng::class, 'detailconfirm'])->name('ConfDetail');
 
 	// wo release
-	Route::get('/whsconfirm', [WHSConfirm::class, 'browse'])->name('browseRelease');
+	Route::get('/whsconfirm', [WHSConfirm::class, 'browse'])->name('browseWhconfirm');
 	Route::get('/whsconfirm/detailwhs/{id}', [WHSConfirm::class, 'detailwhs'])->name('WhsconfDetail');
+	Route::post('/whssubmit', [WHSConfirm::class,'whssubmit'])->name('WhsconfSubmit');
+	//Route::get('/whsconfirm/cekstok',[WHSConfirm::class, 'cekstok']);
+	route::get('/whsconfirm/cekstok', 'WHSConfirm@cekstok');
+	
 	
 });
 

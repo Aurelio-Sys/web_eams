@@ -56,7 +56,7 @@
 </div>
 
 <div class="table-responsive col-lg-12 col-md-12">
-    <form action="/submitrelease" method="post" id="submit">
+    <form action="/whssubmit" method="post" id="submit">
         {{ method_field('post') }}
         {{ csrf_field() }}
 
@@ -103,14 +103,30 @@
                                 @endif
 
                                 <!-- default lokasi -->
-                                @php($qsite = $spdata->where('sp_code','=',$datas->insd_part)->count())
+                                @php($qsite = $spdata->where('spm_code','=',$datas->insd_part)->count())
                                 @if($qsite == 0)
                                     @php($dsite = "")
                                     @php($dloc = "")
                                 @else
-                                    @php($ssite = $spdata->where('sp_code','=',$datas->insd_part)->first())
+                                    @php($ssite = $spdata->where('spm_code','=',$datas->insd_part)->first())
                                     @php($dsite = $ssite->spm_site)
-                                    @php($dsite = $ssite->spm_loc)
+                                    @php($dloc = $ssite->spm_loc)
+                                @endif
+
+                                <!-- stok -->
+                                @php($cstok = $qstok->where('stok_site','=',$dsite)->where('stok_loc','=',$dloc)->where('stok_part','=',$datas->insd_part)->count())
+                                @if($cstok == 0)
+                                    @php($dstok = 0)
+                                @else
+                                    @php($rsstok = $qstok->where('stok_site','=',$dsite)->where('stok_loc','=',$dloc)->where('stok_part','=',$datas->insd_part)->first())
+                                    @php($dstok = $rsstok->stok_qty)
+                                @endif
+
+                                <!-- Qty Confirm -->
+                                @if($dqtyreq > $dstok)
+                                    @php($dconf = $dstok)
+                                @else
+                                    @php($dconf = $dqtyreq)
                                 @endif
 
                             <tr>
@@ -131,11 +147,10 @@
                                     <input type="hidden" name="qtyreq[]" value="{{$cqty}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    {{ $dqtyreq }} {{ $dsite }}
-                                    <input type="hidden" name="qtyreq[]" value="{{ $dqtyreq }}" />
+                                    {{ $dqtyreq }}
+                                    <input type="hidden" name="qtyrequest[]" value="{{ $dqtyreq }}" />
                                 </td>
                                 <td>
-                                    {{ $dsite }}
                                     <select name="t_site[]" class="form-control t_site">
                                         <option value="">-- Select --</option>
                                     @foreach($sitedata as $rssite)
@@ -145,21 +160,25 @@
                                 </td>
                                 <td>
                                     <select name="t_loc[]" class="form-control t_loc">
-
+                                        <option value="">-- Select --</option>
+                                    @php($rsloc = $locdata->where('loc_site','=',$dsite))
+                                    @foreach($rsloc as $rsloc)
+                                        <option value="{{ $rsloc->loc_code }}" {{$dloc == $rsloc->loc_code ? "selected" : ""}}>{{ $rsloc->loc_code }} -- {{ $rsloc->loc_desc }}</option>
+                                    @endforeach
                                     </select>
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    {{$datas->insd_qty}}
-                                    <input type="hidden" name="qtyreq[]" value="{{$datas->insd_qty}}" />
+                                    {{$dstok}}
+                                    <input type="hidden" name="qtystok[]" value="{{$dstok}}" class="qtystok"/>
                                 </td>
                                 <td>
-                                    <input type="number" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$datas->insd_qty}}" required />
+                                    <input type="number" class="form-control qtyconf" step="1" min="0" name="qtyconf[]" value="{{$dconf}}" required />
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
                                     <!-- <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"> -->
                                     
-                                    <input type="checkbox" class="qaddel" value="">
-                                    <input type="hidden" class="op" name="op[]" value="M" />
+                                    <input type="checkbox" class="qaddel" name="qaddel[]" value="">
+                                    <input type="hidden" class="tick" name="tick[]" value="0" />
                                     
                                 </td>
                             </tr>
@@ -171,9 +190,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="10">
-                                    <input type="button" class="btn btn-lg btn-block btn-focus" id="addrow" value="Add New Spare Part" style="background-color:#1234A5; color:white; font-size:16px" />
-                                </td>
+                                
                             </tr>
                         </tfoot>
                     </table>
@@ -182,7 +199,7 @@
         </div>
 
         <div class="modal-footer">
-            <a class="btn btn-danger" href="/worelease" id="btnback">Back</a>
+            <a class="btn btn-danger" href="/whsconfirm" id="btnback">Back</a>
             <button type="submit" class="btn btn-success bt-action" id="btnconf">Confirm</button>
             <button type="button" class="btn bt-action" id="btnloading" style="display:none">
                 <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
@@ -197,88 +214,14 @@
     var counter = 1;
 
     function selectPicker() {
-
         $('.selectpicker').selectpicker().focus();
-
     }
 
     $(document).ready(function() {
-        $("#addrow").on("click", function() {
-
-
-
-            var rowCount = $('#createTable tr').length;
-
-            var currow = rowCount - 2;
-
-            // alert(currow);
-
-            var lastline = parseInt($('#createTable tr:eq(' + currow + ') td:eq(0) input[type="number"]').val()) + 1;
-
-            if (lastline !== lastline) {
-                // check apa NaN
-                lastline = 1;
-            }
-
-            // alert(lastline);
-
-            var newRow = $("<tr>");
-            var cols = "";
-
-
-            cols += '<td>';
-            cols += '<select name="repcode[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-width="150px" required autofocus >';
-            cols += '<option value = ""> -- Select Data -- </option>';
-            @foreach($rpdata as $rd)
-            cols += '<option value="{{$rd->repm_code}}"> {{$rd->repm_code}} -- {{$rd->repm_desc}} </option>';
-            @endforeach
-            cols += '</select>';
-            cols += '</td>';
-
-            cols += '<td>';
-            cols += '<select name="inscode[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-width="150px" required autofocus >';
-            cols += '<option value = ""> -- Select Data -- </option>';
-            @foreach($insdata as $insdats)
-            cols += '<option value="{{$insdats->ins_code}}"> {{$insdats->ins_code}} -- {{$insdats->ins_desc}} </option>';
-            @endforeach
-            cols += '</select>';
-            cols += '</td>';
-
-            cols += '<td>';
-            cols += '<select name="partneed[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-width="150px" required autofocus >';
-            cols += '<option value = ""> -- Select Data -- </option>';
-            @foreach($spdata as $da)
-            cols += '<option value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
-            @endforeach
-            cols += '</select>';
-            cols += '</td>';
-
-            cols += '<td>';
-            cols += '<input type="number" class="form-control qtyreq" name="qtyreq[]" step="1" min="1" required />';
-            cols += '</td>';
-
-            cols += '<td>';
-            cols += '<input type="number" class="form-control qtyrequest" name="qtyrequest[]" step="1" min="1" required />';
-            cols += '</td>';
-
-            cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
-            cols += '<input type="hidden" class="op" name="op[]" value="A"/>';
-            cols += '</tr>'
-            counter++;
-
-            newRow.append(cols);
-            $("#detailapp").append(newRow);
-
-            // selectRefresh();
-
-            selectPicker();
-        });
 
         $("table.order-list").on("click", ".ibtnDel", function(event) {
             var row = $(this).closest("tr");
             var line = row.find(".line").val();
-            // var colCount = $("#createTable tr").length;
-
 
             if (line == counter - 1) {
                 // kalo line terakhir delete kurangin counter
@@ -286,12 +229,6 @@
             }
 
             $(this).closest("tr").remove();
-
-            // if(colCount == 2){
-            //   // Row table kosong. sisa header & footer
-            //   counter = 1;
-            // }
-
         });
 
         $(document).on('click', '.qaddel', function() {
@@ -330,6 +267,36 @@
             width : '100%',
             theme : 'bootstrap4',
             
+        });
+
+        $(document).on('change', '.t_loc', function() {
+            var qtystok = $(this).closest('tr').find('.qtystok');
+            var loc = $(this).val();
+            var site = $(this).closest('tr').find('.t_site').val();
+            var part = $(this).closest('tr').find('.partneed').val();
+            //var dsite = $(ssite).val()
+
+                $.ajax({
+                  url:"/cekstok?site="+site+",loc="+loc+",part="+part,
+                  success:function(data){
+                      console.log(data);
+                      /* loc.html('').append(data);
+                      loc.val(data); */
+                  }
+                })
+        });
+
+        $(document).on('change','.qaddel',function(e){
+            var checkbox = $(this), // Selected or current checkbox
+            value = checkbox.val(); // Value of checkbox
+    
+            if (checkbox.is(':checked'))
+            {
+                $(this).closest("tr").find('.tick').val(1);
+            } else
+            {
+                $(this).closest("tr").find('.tick').val(0);
+            }        
         });
     });
 </script>
