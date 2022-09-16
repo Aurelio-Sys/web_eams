@@ -3,6 +3,7 @@
 use App\Http\Controllers\WO\ConfirmEng;
 use App\Http\Controllers\WO\WORelease;
 use App\Http\Controllers\WO\WHSConfirm;
+use App\Http\Controllers\wocontroller;
 use Illuminate\Support\Facades\Auth;
 use Master\QxWsaMTController;
 use Illuminate\Support\Facades\Route;
@@ -375,7 +376,8 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('/editwo','wocontroller@editwo'); 
 	route::post('/editwoeng','wocontroller@editwoeng'); 
 	route::post('/closewo','wocontroller@closewo'); 
-	route::get('/womaint/getnowo','wocontroller@geteditwo');
+	route::get('/womaint/getnowo','wocontroller@geteditwoold');
+	route::get('/womaint/getnowo/{wo}',[wocontroller::class, 'geteditwo'])->name('editWO');
 	route::get('/womaint/getfailure','wocontroller@getfailure');
 	route::post('/approvewo','wocontroller@approvewo'); 
 	route::get('/openprint/{wo}','wocontroller@openprint');
