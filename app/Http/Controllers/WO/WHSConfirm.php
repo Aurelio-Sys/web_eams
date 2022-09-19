@@ -160,27 +160,6 @@ class WHSConfirm extends Controller
         'locdata','sitedata','qstok','wodetdata'));
     }
 
-    public function cekstok(Request $req)
-    {
-        if ($req->ajax()) {
-            dd($req->all());
-            $t_site = $req->get('t_site');
-      
-            $data = DB::table('loc_mstr')
-                    ->where('loc_site','=',$t_site)
-                    ->get();
-
-            $output = '<option value="" >Select</option>';
-            foreach($data as $data){
-
-                $output .= '<option value="'.$data->loc_code.'" >'.$data->loc_code.' -- '.$data->loc_desc.'</option>';
-                           
-            }
-
-            return response($output);
-        }
-    }
-
     public function whssubmit(Request $req){
         // dd($req->all());
         DB::beginTransaction();
@@ -188,6 +167,11 @@ class WHSConfirm extends Controller
         try{
             
             foreach($req->partneed as $a => $key){
+                if ($req->tick[$a] == 0) {
+                    $qty = 0;
+                } else {
+                    $qty = $req->qtyconf[$a];
+                }
                 DB::table('wo_dets')
                     ->where('wo_dets_nbr',$req->hide_wonum)
                     ->where('wo_dets_rc',$req->repcode[$a])
@@ -196,17 +180,17 @@ class WHSConfirm extends Controller
                     ->update([
                     'wo_dets_wh_site' => $req->t_site[$a],
                     'wo_dets_wh_loc' => $req->t_loc[$a],
-                    'wo_dets_wh_qty' => $req->qtyconf[$a],
+                    'wo_dets_wh_qty' => $qty,
                     'wo_dets_wh_conf' => $req->tick[$a],
                     'wo_dets_wh_date' => Carbon::now()->toDateTimeString(),
                 ]);
             }    
 
-            DB::table('wo_mstr')
+            /* DB::table('wo_mstr')
                 ->where('wo_nbr',$req->hide_wonum)
                 ->update([
                     'wo_status' => 'whsconfirm',
-                ]);
+                ]); */
             
             DB::commit();
     

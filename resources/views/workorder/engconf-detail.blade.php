@@ -56,7 +56,7 @@
 </div>
 
 <div class="table-responsive col-lg-12 col-md-12">
-    <form action="/whssubmit" method="post" id="submit">
+    <form action="/engsubmit" method="post" id="submit">
         {{ method_field('post') }}
         {{ csrf_field() }}
 
@@ -76,9 +76,6 @@
                                 <td style="text-align: center; width: 20% !important; font-weight: bold;">Spare Part</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty Required</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty Request</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Site</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Location</td>
-                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Stock</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty Confirm</td>
                                 <td style="text-align: center; width: 5% !important; font-weight: bold;">Confirm</td>
                             </tr>
@@ -89,46 +86,21 @@
                                 <!-- qty required -->
                                 @if($datas->insd_part == "")
                                     @php($cqty = 0)
-                                    @php($ccek = 0)
                                 @else
                                     @php($cqty = $datas->insd_qty)
-                                    @php($ccek = 1)
                                 @endif
 
                                 <!-- qty request -->
                                 @php($qqtyreq = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->count())
                                 @if($qqtyreq == 0)
                                     @php($dqtyreq = 0)
+                                    @php($dconf = 0)
+                                    @php($dcek = 0)
                                 @else
                                     @php($sqtyreq = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->first())
                                     @php($dqtyreq = $sqtyreq->wo_dets_sp_qty)
-                                @endif
-
-                                <!-- default lokasi -->
-                                @php($qsite = $spdata->where('spm_code','=',$datas->insd_part)->count())
-                                @if($qsite == 0)
-                                    @php($dsite = "")
-                                    @php($dloc = "")
-                                @else
-                                    @php($ssite = $spdata->where('spm_code','=',$datas->insd_part)->first())
-                                    @php($dsite = $ssite->spm_site)
-                                    @php($dloc = $ssite->spm_loc)
-                                @endif
-
-                                <!-- stok -->
-                                @php($cstok = $qstok->where('stok_site','=',$dsite)->where('stok_loc','=',$dloc)->where('stok_part','=',$datas->insd_part)->count())
-                                @if($cstok == 0)
-                                    @php($dstok = 0)
-                                @else
-                                    @php($rsstok = $qstok->where('stok_site','=',$dsite)->where('stok_loc','=',$dloc)->where('stok_part','=',$datas->insd_part)->first())
-                                    @php($dstok = $rsstok->stok_qty)
-                                @endif
-
-                                <!-- Qty Confirm -->
-                                @if($dqtyreq > $dstok)
-                                    @php($dconf = $dstok)
-                                @else
-                                    @php($dconf = $dqtyreq)
+                                    @php($dconf = $sqtyreq->wo_dets_wh_qty)
+                                    @php($dcek = $sqtyreq->wo_dets_wh_conf)
                                 @endif
 
                             <tr>
@@ -142,56 +114,29 @@
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$datas->insd_part}} -- {{$datas->insd_part_desc}}
-                                    <input type="hidden" class="partneed" name="partneed[]" value="{{$datas->insd_part}}" />
+                                    <input type="hidden" name="partneed[]" value="{{$datas->insd_part}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    {{ number_format($cqty,2) }}
+                                    {{ $cqty }}
                                     <input type="hidden" name="qtyreq[]" value="{{$cqty}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    {{ number_format($dqtyreq,2) }}
-                                    <input type="hidden" name="qtyrequest[]" value="{{ $dqtyreq }}" class="dqtyreq" />
+                                    {{ $dqtyreq }}
+                                    <input type="hidden" name="qtyrequest[]" value="{{ $dqtyreq }}" />
                                 </td>
                                 <td>
-                                    <select name="t_site[]" class="form-control t_site">
-                                        <option value="">-- Select --</option>
-                                    @foreach($sitedata as $rssite)
-                                        <option value="{{ $rssite->site_code }}" {{$dsite == $rssite->site_code ? "selected" : ""}}>{{ $rssite->site_code }}</option>
-                                    @endforeach
-                                    </select>
-                                </td>
-                                <td>
-                                    <select name="t_loc[]" class="form-control t_loc">
-                                        <option value="">-- Select --</option>
-                                    @php($rsloc = $locdata->where('loc_site','=',$dsite))
-                                    @foreach($rsloc as $rsloc)
-                                        <option value="{{ $rsloc->loc_code }}" {{$dloc == $rsloc->loc_code ? "selected" : ""}}>{{ $rsloc->loc_code }} -- {{ $rsloc->loc_desc }}</option>
-                                    @endforeach
-                                    </select>
-                                </td>
-                                <td style="vertical-align:middle;text-align:right;">
-                                    <p class="qtystok" >{{ number_format($dstok,2) }}</p>
-                                    <input type="hidden" name="qtystok[]" value="{{$dstok}}" class="qtystok"/>
-                                </td>
-                                <td>
-                                    <input type="number" class="form-control qtyconf" step="1" min="0" name="qtyconf[]" value="{{$dconf}}" required />
+                                    {{ $dconf }}
+                                    <input type="hidden" name="qtyconf[]" value="{{ $dconf }}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
-                                    <!-- <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"> -->
-                                    @if($ccek == 0)
-                                        <input type="checkbox" class="qaddel" name="qaddel[]" value="" checked>
-                                        <input type="hidden" class="tick" name="tick[]" value="1" />
-                                    @else
-                                        <input type="checkbox" class="qaddel" name="qaddel[]" value="">
-                                        <input type="hidden" class="tick" name="tick[]" value="0" />
-                                    @endif
+                                    <input type="checkbox" class="qaddel" name="qaddel[]" value="">
+                                    <input type="hidden" class="tick" name="tick[]" value="0" />
+                                    
                                 </td>
                             </tr>
                             @empty
 
                             @endforelse
-
-
                         </tbody>
                         <tfoot>
                             <tr>
@@ -204,7 +149,7 @@
         </div>
 
         <div class="modal-footer">
-            <a class="btn btn-danger" href="/whsconfirm" id="btnback">Back</a>
+            <a class="btn btn-danger" href="/confeng" id="btnback">Back</a>
             <button type="submit" class="btn btn-success bt-action" id="btnconf">Confirm</button>
             <button type="button" class="btn bt-action" id="btnloading" style="display:none">
                 <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
@@ -223,74 +168,6 @@
     }
 
     $(document).ready(function() {
-
-        $("table.order-list").on("click", ".ibtnDel", function(event) {
-            var row = $(this).closest("tr");
-            var line = row.find(".line").val();
-
-            if (line == counter - 1) {
-                // kalo line terakhir delete kurangin counter
-                counter -= 1
-            }
-
-            $(this).closest("tr").remove();
-        });
-
-        $(document).on('click', '.qaddel', function() {
-            var checkbox = $(this), // Selected or current checkbox
-            value = checkbox.val(); // Value of checkbox
-
-            if (checkbox.is(':checked')) {
-                $(this).closest("tr").find('.op').val('R');
-            } else {
-                $(this).closest("tr").find('.op').val('M');
-            }
-
-        });
-
-        $(document).on('change', '.t_site', function() {
-            var loc = $(this).closest('tr').find('.t_loc');
-            var site = $(this).val();
-        
-              $.ajax({
-                  url:"/locasset?t_site="+site,
-                  success:function(data){
-                      console.log(data);
-                      loc.html('').append(data);
-                      loc.val(data);
-                  }
-              }) 
-        });
-
-        $(".t_loc").select2({
-            width : '100%',
-            theme : 'bootstrap4',
-            
-        });
-
-        $(".t_site").select2({
-            width : '100%',
-            theme : 'bootstrap4',
-            
-        });
-
-        $(document).on('change', '.t_loc', function() {
-            var qtystok = $(this).closest('tr').find('.qtystok');
-            var loc = $(this).val();
-            var site = $(this).closest('tr').find('.t_site').val();
-            var part = $(this).closest('tr').find('.partneed').val();
-            var dqtyreq = $(this).closest('tr').find('.dqtyreq').val();
-            var qtyconf = $(this).closest('tr').find('.qtyconf').val();
-
-            @foreach ($qstok as $qstok)
-                if(part == "{{$qstok->stok_part}}" && site == "{{$qstok->stok_site}}" && loc == "{{$qstok->stok_loc}}") {
-                    qtystok.html({{$qstok->stok_qty}});
-                    if(dqtyreq > {{$qstok->stok_qty}}) {
-                        qtyconf.val("{{$qstok->stok_qty}}");
-                    }
-                }
-            @endforeach
-        });
 
         $(document).on('change','.qaddel',function(e){
             var checkbox = $(this), // Selected or current checkbox

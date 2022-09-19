@@ -14,7 +14,7 @@ class AddWhconfirmToWoDets extends Migration
     public function up()
     {
         Schema::table('wo_dets', function (Blueprint $table) {
-            //
+            // add field for Warehouse Confirm
             $table->string('wo_dets_wh_site')->nullable();
             $table->string('wo_dets_wh_loc')->nullable();
             $table->decimal('wo_dets_wh_qty')->nullable();
@@ -36,7 +36,7 @@ class AddWhconfirmToWoDets extends Migration
             $table->dropColumn('wo_dets_wh_loc');
             $table->dropColumn('wo_dets_wh_qty');
             $table->dropColumn('wo_dets_wh_conf');
-            $table->dropColumn('wo_dets_wh_datephp artisan migrate');
+            $table->dropColumn('wo_dets_wh_date');
         });
     }
 }

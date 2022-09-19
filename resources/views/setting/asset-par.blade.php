@@ -32,7 +32,7 @@
 <div class="col-12 form-group row">
     <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Parent Code</label>
     <div class="col-md-4 col-sm-4 mb-2 input-group">
-        <input id="s_code" type="text" class="form-control" name="s_code"
+        <input id="s_code" type="text" class="form-control selectpicker" name="s_code"
         value="" autofocus autocomplete="off"/>
     </div>
     <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Parent Description</label>
@@ -106,7 +106,7 @@
                     <div class="form-group row">
                         <label for="t_code" class="col-md-4 col-form-label text-md-right">Asset Parent Code</label>
                         <div class="col-md-6">
-                            <select id="t_code" name="t_code" class="form-control" required>
+                            <select id="t_code" name="t_code" class="form-control selectpicker" required>
                                 <option value="">-- Select Data --</option>
                                 @foreach($dataasset as $da)
                                 <option value="{{$da->asset_code}}">{{$da->asset_code}} -- {{$da->asset_desc}}</option>
@@ -223,6 +223,14 @@
 
 @section('scripts')
     <script>
+        var counter = 1;
+
+        function selectPicker() {
+
+            $('.selectpicker').selectpicker().focus();
+    
+        }
+
        $(document).on('click', '#editdata', function(e){
            $('#editModal').modal('show');
 
@@ -361,8 +369,8 @@
           var cols = "";
 
           cols += '<td data-label="Barang">';
-          cols += '<select id="barang" class="form-control barang selectpicker" name="barang[]" data-live-search="true" required autofocus>';
-          cols += '<option value = ""> -- Select Data -- </option>'
+          cols += '<select id="barang" class="form-control barang selectpicker" name="barang[]" data-live-search="true" required>';
+            cols += '<option value = ""> -- Select Data -- </option>'
           @foreach($dataasset as $da)
           cols += '<option value="{{$da->asset_code}}"> {{$da->asset_code}} -- {{$da->asset_desc}} </option>';
           @endforeach
@@ -375,7 +383,8 @@
           $("#detailapp").append(newRow);
           counter++;
 
-          selectRefresh();
+          {{--  selectRefresh();  --}}
+          selectPicker();
         });
 
         $("table.order-list").on("click", ".ibtnDel", function(event) {
@@ -389,7 +398,7 @@
           var cols = "";
 
 
-          cols += '<td data-label="Barang">';
+          cols += '<td data-label="Barang" colspan="2">';
           cols += '<select id="barang" class="form-control barang selectpicker" name="barang[]" data-live-search="true" required autofocus>';
           cols += '<option value = ""> -- Select Data -- </option>'
           @foreach($dataasset as $da)
@@ -397,7 +406,6 @@
           @endforeach
           cols += '</select>';
           cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
-          cols += '<td>Desc</td>'
 
           cols += '<td data-title="Action"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
           cols += '</tr>'
@@ -405,7 +413,8 @@
           $("#ed_detailapp").append(newRow);
           counter++;
 
-          selectRefresh();
+          {{--  selectRefresh();  --}}
+          selectPicker();
         });
 
         $(document).on('change','#cek',function(e){
@@ -420,6 +429,12 @@
             {
                 $(this).closest("tr").find('.tick').val(0);
             }        
+        });
+
+        $("#t_code").select2({
+            width: '100%',
+            theme: 'bootstrap4',
+    
         });
 
     </script>
