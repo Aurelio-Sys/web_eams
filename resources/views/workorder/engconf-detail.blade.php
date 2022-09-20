@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-9">
-            <h1 class="m-0 text-dark">Warehouse Confirm Detail</h1>
+            <h1 class="m-0 text-dark">Engineer Confirm Detail</h1>
         </div><!-- /.col -->
     </div><!-- /.row -->
 </div><!-- /.container-fluid -->
@@ -20,21 +20,21 @@
 </style>
 <div class="row">
     <div class="form-group row col-md-12">
-        <label class="col-md-2 col-form-label text-md-right">Work Order</label>
+        <label class="col-md-1 col-form-label text-md-right">Work Order</label>
         <div class="col-md-2">
             <input type="text" class="form-control" id="wo_num" name="wo_num" value="{{$data->wo_nbr}}" readonly>
         </div>
         <label class="col-md-1 col-form-label text-md-right">Asset</label>
         <div class="col-md-3">
-            <input type="text" class="form-control" id="asset" name="asset" value="{{$data->asset_desc}}" readonly>
+            <input type="text" class="form-control" id="asset" name="asset" value="{{$data->asset_code}} -- {{$data->asset_desc}}" readonly>
         </div>
-        <label class="col-md-2 col-form-label text-md-right">Schedule Date</label>
+        <label class="col-md-1 col-form-label text-md-right">Schedule Date</label>
         <div class="col-md-2">
             <input type="text" class="form-control" id="schedule_date" name="schedule_date" value="{{$data->wo_schedule}}" readonly>
         </div>
     </div>
     <div class="form-group row col-md-12">
-        <label class="col-md-2 col-form-label text-md-right">SR Number</label>
+        <label class="col-md-1 col-form-label text-md-right">SR Number</label>
         <div class="col-md-2">
             <input type="text" class="form-control" id="sr_num" name="sr_num" value="{{$data->wo_sr_nbr != null ? $data->wo_sr_nbr : '-'}}" readonly>
         </div>
@@ -42,9 +42,22 @@
         <div class="col-md-3">
             <input type="text" class="form-control" id="prior" name="prior" value="{{$data->wo_priority}}" readonly>
         </div>
-        <label class="col-md-2 col-form-label text-md-right">Due Date</label>
+        <label class="col-md-1 col-form-label text-md-right">Due Date</label>
         <div class="col-md-2">
             <input type="text" class="form-control" id="duedate" name="duedate" value="{{$data->wo_duedate}}" readonly>
+        </div>
+    </div>
+    <div class="form-group row col-md-12">
+        <!-- WO Detail -->
+        @php($qdetdata = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->first())
+
+        <label class="col-md-1 col-form-label text-md-right">WHS Confirm</label>
+        <div class="col-md-2">
+            <input type="text" class="form-control" id="sr_num" name="sr_num" value="{{$qdetdata->wo_dets_wh_date != null ? date('Y-m-d', strtotime($qdetdata->wo_dets_wh_date)) : '-'}}" readonly>
+        </div>
+        <label class="col-md-1 col-form-label text-md-right">WHS Confirm</label>
+        <div class="col-md-3">
+            <input type="text" class="form-control" id="prior" name="prior" value="{{$qdetdata->wo_dets_wh_date != null ? date('Y-m-d', strtotime($qdetdata->wo_dets_wh_date)) : '-'}}" readonly>
         </div>
     </div>
 </div>
@@ -61,9 +74,9 @@
         {{ csrf_field() }}
 
         <input type="hidden" name="hide_wonum" value="{{$data->wo_nbr}}" />
-
+{{--  
         <div class="modal-header">
-        </div>
+        </div>  --}}
 
         <div class="modal-body">
             <div class="form-group row">
@@ -71,13 +84,14 @@
                     <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Repair Code</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Instruction Code</td>
-                                <td style="text-align: center; width: 20% !important; font-weight: bold;">Spare Part</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty Required</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty Request</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty Confirm</td>
-                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Confirm</td>
+                                <td style="text-align: center; width: 8% !important; font-weight: bold;">Repair Code</td>
+                                <td style="text-align: center; width: 30% !important; font-weight: bold;">Instruction Code</td>
+                                <td style="text-align: center; width: 25% !important; font-weight: bold;">Spare Part</td>
+                                <td style="text-align: center; width: 8% !important; font-weight: bold;">Qty Required</td>
+                                <td style="text-align: center; width: 8% !important; font-weight: bold;">Qty Request</td>
+                                <td style="text-align: center; width: 8% !important; font-weight: bold;">WHS Confirm</td>
+                                <td style="text-align: center; width: 8% !important; font-weight: bold;">Qty Confirm</td>
+                                <td style="text-align: center; width: 8% !important; font-weight: bold;">Confirm</td>
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
@@ -109,7 +123,7 @@
                                     <input type="hidden" name="repcode[]" value="{{$datas->repair_code}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
-                                    {{$datas->ins_code}}
+                                    {{$datas->ins_code}} -- {{ $datas->ins_desc }}
                                     <input type="hidden" name="inscode[]" value="{{$datas->ins_code}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
@@ -118,20 +132,39 @@
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     {{ $cqty }}
-                                    <input type="hidden" name="qtyreq[]" value="{{$cqty}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     {{ $dqtyreq }}
-                                    <input type="hidden" name="qtyrequest[]" value="{{ $dqtyreq }}" />
-                                </td>
-                                <td>
-                                    {{ $dconf }}
-                                    <input type="hidden" name="qtyconf[]" value="{{ $dconf }}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
-                                    <input type="checkbox" class="qaddel" name="qaddel[]" value="">
-                                    <input type="hidden" class="tick" name="tick[]" value="0" />
+                                    @if($sqtyreq->wo_dets_wh_conf == 1)
+                                        {{date('Y-m-d', strtotime($qdetdata->wo_dets_wh_date))}}
+                                    @endif
+                                </td>
+                                <td style="vertical-align:middle;text-align:right;">
+                                    @if($sqtyreq->wo_dets_eng_conf == 1)
+                                        @php($cqtyreq = $sqtyreq->wo_dets_eng_qty)
+                                    @elseif($sqtyreq->wo_dets_wh_conf == 1)
+                                        @php($cqtyreq = $sqtyreq->wo_dets_wh_qty)
+                                    @else
+                                        @php($cqtyreq = 0)
+                                    @endif
                                     
+                                    <input type="number" class="form-control" name="qtyconf[]" value="{{$cqtyreq}}" readonly/>
+                                </td>
+                                <td style="vertical-align:middle;text-align:center;">
+                                    @if($sqtyreq->wo_dets_eng_conf == 1)
+                                        {{date('Y-m-d', strtotime($qdetdata->wo_dets_eng_date))}}
+                                        <input type="hidden" class="tick" name="tick[]" value="1" />
+                                    @else
+                                        @if($cqty == 0)
+                                            <input type="checkbox" class="qaddel" name="qaddel[]" value="" checked>
+                                            <input type="hidden" class="tick" name="tick[]" value="1" />
+                                        @else
+                                            <input type="checkbox" class="qaddel" name="qaddel[]" value="">
+                                            <input type="hidden" class="tick" name="tick[]" value="0" />
+                                        @endif
+                                    @endif
                                 </td>
                             </tr>
                             @empty

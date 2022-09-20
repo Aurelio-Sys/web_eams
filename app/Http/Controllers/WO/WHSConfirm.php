@@ -72,6 +72,7 @@ class WHSConfirm extends Controller
             ->get();
 
         $wodetdata = DB::table('wo_dets')
+            ->whereWo_dets_nbr($data->wo_nbr)
             ->get();
 
         if ($data->wo_repair_code1 != "") {

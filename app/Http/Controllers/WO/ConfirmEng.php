@@ -70,16 +70,19 @@ class ConfirmEng extends Controller
             ->get();
 
         $wodetdata = DB::table('wo_dets')
+            ->whereWo_dets_nbr($data->wo_nbr)
             ->get();
 
         if ($data->wo_repair_code1 != "") {
             $sparepart1 = DB::table('wo_mstr')
-                ->select('wo_repair_code1 as repair_code','ins_code','insd_part_desc','insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
+                ->select('wo_repair_code1 as repair_code','ins_code','ins_desc','insd_part_desc','insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
                 ->leftJoin('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
                 ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                 ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
                 ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
                 ->where('wo_id', '=', $id)
+                ->orderBy('repair_code')
+                ->orderBy('ins_code')
                 ->orderBy('insd_det.insd_part')
                 ->get();
 
@@ -88,12 +91,14 @@ class ConfirmEng extends Controller
 
         if ($data->wo_repair_code2 != "") {
             $sparepart2 = DB::table('wo_mstr')
-                ->select('wo_repair_code2 as repair_code','ins_code','insd_part_desc','insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
+                ->select('wo_repair_code2 as repair_code','ins_code','ins_desc','insd_part_desc','insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
                 ->leftJoin('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
                 ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                 ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
                 ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
                 ->where('wo_id', '=', $id)
+                ->orderBy('repair_code')
+                ->orderBy('ins_code')
                 ->orderBy('insd_det.insd_part')
                 ->get();
 
@@ -102,12 +107,14 @@ class ConfirmEng extends Controller
 
         if ($data->wo_repair_code3 != "") {
             $sparepart3 = DB::table('wo_mstr')
-                ->select('wo_repair_code3 as repair_code','ins_code','insd_part_desc','insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
+                ->select('wo_repair_code3 as repair_code','ins_code','ins_desc','insd_part_desc','insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
                 ->leftJoin('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
                 ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                 ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
                 ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
                 ->where('wo_id', '=', $id)
+                ->orderBy('repair_code')
+                ->orderBy('ins_code')
                 ->orderBy('insd_det.insd_part')
                 ->get();
 
@@ -122,26 +129,38 @@ class ConfirmEng extends Controller
         // dd($req->all());
         DB::beginTransaction();
 
+        $cek = "";
+
         try{
             
             foreach($req->partneed as $a => $key){
-                DB::table('wo_dets')
-                    ->where('wo_dets_nbr',$req->hide_wonum)
-                    ->where('wo_dets_rc',$req->repcode[$a])
-                    ->where('wo_dets_ins',$req->inscode[$a])
-                    ->where('wo_dets_sp',$req->partneed[$a])
-                    ->update([
-                    'wo_dets_eng_qty' => $req->qtyconf[$a],
-                    'wo_dets_eng_conf' => $req->tick[$a],
-                    'wo_dets_eng_date' => Carbon::now()->toDateTimeString(),
-                ]);
+                /* Yang disimpan adalah data yang ceklis nya Yes */
+                if($req->tick[$a] == 1) {
+                    DB::table('wo_dets')
+                        ->where('wo_dets_nbr',$req->hide_wonum)
+                        ->where('wo_dets_rc',$req->repcode[$a])
+                        ->where('wo_dets_ins',$req->inscode[$a])
+                        ->where('wo_dets_sp',$req->partneed[$a])
+                        ->update([
+                        'wo_dets_eng_qty' => $req->qtyconf[$a],
+                        'wo_dets_eng_conf' => $req->tick[$a],
+                        'wo_dets_eng_date' => Carbon::now()->toDateTimeString(),
+                    ]);
+                }
+
+                if($req->tick[$a] == 0) {
+                    $cek = "ada";
+                }
             }    
 
-            DB::table('wo_mstr')
+            /* jika semua detail sudah dilakukan confirm, status wo akan berubah */
+            if ($cek == "") {
+                DB::table('wo_mstr')
                 ->where('wo_nbr',$req->hide_wonum)
                 ->update([
                     'wo_status' => 'engconfirm',
                 ]);
+            }
             
             DB::commit();
     
