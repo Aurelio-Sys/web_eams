@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Http\Controllers\WO;
+
 use App\Models\Qxwsa as ModelsQxwsa;
 use App\Services\WSAServices;
 
 use App\Http\Controllers\Controller;
 use App\Services\CreateTempTable;
+use App\Services\QxtendServices;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
@@ -42,7 +44,7 @@ class WHSConfirm extends Controller
         $data = $data->paginate(2);
 
         return view('workorder.whsconfirm-browse', ['asset1' => $asset1, 'data' => $data]);
-    } 
+    }
 
     public function detailwhs($id)
     {
@@ -52,12 +54,12 @@ class WHSConfirm extends Controller
             ->first();
 
         $rpdata = DB::table('rep_master')
-                ->orderBy('repm_code')
-                ->get();
+            ->orderBy('repm_code')
+            ->get();
 
         $insdata = DB::table('ins_mstr')
-                ->orderBy('ins_code')
-                ->get();
+            ->orderBy('ins_code')
+            ->get();
 
         $spdata = DB::table('sp_mstr')
             ->orderBy('spm_code')
@@ -77,7 +79,7 @@ class WHSConfirm extends Controller
 
         if ($data->wo_repair_code1 != "") {
             $sparepart1 = DB::table('wo_mstr')
-                ->select('wo_repair_code1 as repair_code','ins_code','insd_part_desc','insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
+                ->select('wo_repair_code1 as repair_code', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
                 ->leftJoin('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
                 ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                 ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -91,7 +93,7 @@ class WHSConfirm extends Controller
 
         if ($data->wo_repair_code2 != "") {
             $sparepart2 = DB::table('wo_mstr')
-                ->select('wo_repair_code2 as repair_code','ins_code','insd_part_desc','insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
+                ->select('wo_repair_code2 as repair_code', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
                 ->leftJoin('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
                 ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                 ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -105,7 +107,7 @@ class WHSConfirm extends Controller
 
         if ($data->wo_repair_code3 != "") {
             $sparepart3 = DB::table('wo_mstr')
-                ->select('wo_repair_code3 as repair_code','ins_code','insd_part_desc','insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
+                ->select('wo_repair_code3 as repair_code', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
                 ->leftJoin('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
                 ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                 ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -157,8 +159,17 @@ class WHSConfirm extends Controller
             }
         }
 
-        return view('workorder.whsconf-detail', compact('data', 'spdata','combineSP','rpdata','insdata',
-        'locdata','sitedata','qstok','wodetdata'));
+        return view('workorder.whsconf-detail', compact(
+            'data',
+            'spdata',
+            'combineSP',
+            'rpdata',
+            'insdata',
+            'locdata',
+            'sitedata',
+            'qstok',
+            'wodetdata'
+        ));
     }
 
     public function whssubmit(Request $req){
@@ -174,10 +185,10 @@ class WHSConfirm extends Controller
                     $qty = $req->qtyconf[$a];
                 }
                 DB::table('wo_dets')
-                    ->where('wo_dets_nbr',$req->hide_wonum)
-                    ->where('wo_dets_rc',$req->repcode[$a])
-                    ->where('wo_dets_ins',$req->inscode[$a])
-                    ->where('wo_dets_sp',$req->partneed[$a])
+                    ->where('wo_dets_nbr', $req->hide_wonum)
+                    ->where('wo_dets_rc', $req->repcode[$a])
+                    ->where('wo_dets_ins', $req->inscode[$a])
+                    ->where('wo_dets_sp', $req->partneed[$a])
                     ->update([
                     'wo_dets_wh_site' => $req->t_site[$a],
                     'wo_dets_wh_loc' => $req->t_loc[$a],
@@ -194,17 +205,14 @@ class WHSConfirm extends Controller
                 ]); */
             
             DB::commit();
-    
-            toast('Confirm Successfuly !','success');
-            return redirect()->route('browseWhconfirm');
 
-        } catch (Exception $e){
+            toast('Confirm Successfuly !', 'success');
+            return redirect()->route('browseWhconfirm');
+        } catch (Exception $e) {
             // dd($e);
             DB::rollBack();
-            toast('Confirm Failed','error');
+            toast('Confirm Failed', 'error');
             return redirect()->route('browseWhconfirm');
         }
-
-        
     }
 }

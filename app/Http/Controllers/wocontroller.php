@@ -1873,8 +1873,26 @@ class wocontroller extends Controller
             ->leftjoin('xxrepgroup_mstr', 'xxrepgroup_mstr.xxrepgroup_nbr', 'wo_mstr.wo_repair_group')
             ->where('wo_mstr.wo_nbr', '=', $nowo)
             ->get();
-        // dd($data);
+        
 
+        $datadetail = DB::table('wo_dets')
+                    ->leftJoin('ins_mstr','wo_dets.wo_dets_ins','ins_mstr.ins_code')
+                    ->where('wo_dets_nbr','=',$nowo)
+                    ->groupBy('wo_dets_ins')
+                    ->get();
+
+        $detailsp = DB::table('wo_dets')
+                    ->leftJoin('ins_mstr','wo_dets.wo_dets_ins','ins_mstr.ins_code')
+                    ->leftjoin('insd_det',function ($join){
+                        $join->on('wo_dets.wo_dets_ins','=','insd_det.insd_code');
+                        $join->on('wo_dets.wo_dets_sp','=','insd_det.insd_part');
+                    })
+                    ->leftJoin('sp_mstr','wo_dets.wo_dets_sp','sp_mstr.spm_code')
+                    ->where('wo_dets_nbr','=',$nowo)
+                    ->get();
+
+        // dd($detailsp);
+                
         // dd($data);
         // return $data;
 
@@ -1911,7 +1929,7 @@ class wocontroller extends Controller
             $instruction = DB::table('ins_mstr')
                 ->get();
 
-        return view('workorder.wofinish-done', compact('data','engineer','asset','repaircode','sparepart','repairgroup','instruction'));
+        return view('workorder.wofinish-done', compact('data','engineer','asset','repaircode','sparepart','repairgroup','instruction','datadetail','detailsp'));
     }
 
     public function approvewo(Request $req)
