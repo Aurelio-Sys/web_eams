@@ -280,13 +280,18 @@
             var loc = $(this).closest('tr').find('.t_loc').val();
             var part = $(this).closest('tr').find('.partneed').val();
             var dqtyreq = $(this).closest('tr').find('.dqtyreq').val();
-            var qtyconf = $(this).val();
+            var qtyconf = $(this).closest('tr').find('.qtyconf');
+
+            console.log(qtyconf);
 
             @foreach ($qstok as $qstok)
                 if(part == "{{$qstok->stok_part}}" && site == "{{$qstok->stok_site}}" && loc == "{{$qstok->stok_loc}}") {
                     qtystok.html({{$qstok->stok_qty}});
                     if(dqtyreq > {{$qstok->stok_qty}}) {
-                        {{--  qtyconf.val({{$qstok->stok_qty}});  --}}
+                        {{--  $(this).closest('tr').find('.qtyconf').val({{$qstok->stok_qty}});  --}}
+                        qtyconf.val({{$qstok->stok_qty}});
+                    } else {
+                        qtyconf.val(dqtyreq);
                     }
                 }
             @endforeach
