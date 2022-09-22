@@ -145,7 +145,7 @@
                 @if($data->first()->wo_repair_type == "group")
                 <!-- jika pilih group -->
                 <div class="col-md-12 p-0" id="divgroup">
-                    <div class="form-group row col-md-12 divrepgroup">
+                    <!-- <div class="form-group row col-md-12 divrepgroup">
                         <label for="repairgroup" class="col-md-4 col-form-label text-md-left">Repair Group <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-6">
                             <input type="hidden" id="inputgroup1">
@@ -156,9 +156,172 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
+                    </div> -->
                     <div id="testdivgroup">
+                        @foreach ( $data2 as $datagroup )
 
+                        <div class="form-group row col-md-12 divrepcode">
+                            <label class="col-md-12 col-form-label text-md-left">Repair code : {{$datagroup->xxrepgroup_rep_code}} -- {{$datagroup->repm_desc}} </label>
+                            <label class="col-md-5 col-form-label text-md-left">Instruction :</label>
+                        </div>
+                        <div class="table-responsive col-12">
+                            <table class="table table-bordered mt-0" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">
+                                <thead>
+                                    <tr style="text-align: center;border:2px solid">
+                                        <th rowspan="2" style="border:2px solid;width:5%;">
+                                            <p style="height:100%">No</p>
+                                        </th>
+                                        <th rowspan="2" style="border:2px solid;width:25%">
+                                            <p style="height:100%">Instruksi</p>
+                                        </th>
+                                        <th rowspan="2" style="border:2px solid;width:20%">
+                                            <p style="height:100%">Standard</p>
+                                        </th>
+                                        <th colspan="2" style="border:2px solid;width:15%">
+                                            <p style="height:50%">Do</p>
+                                        </th>
+                                        <th colspan="2" style="border:2px solid;width:15%">
+                                            <p style="height:50%">Result</p>
+                                        </th>
+                                        <th rowspan="2" style="border:2px solid;width:20%">
+                                            <p style="height:100%">Note</p>
+                                        </th>
+                                    </tr>
+                                    <tr style="text-align: center;">
+                                        <th style="border:2px solid; width:10%;">Done</th>
+                                        <th style="border:2px solid; width:10%;">Not Done</th>
+                                        <th style="border:2px solid; width:10%;">OK</th>
+                                        <th style="border:2px solid; width:10%;">Not OK</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                    $i = 1;
+                                    @endphp
+                                    @forelse ( $datadetail as $insdet )
+                                    @if ($insdet->wo_dets_rc == $datagroup->repm_code)
+                                    <tr>
+                                        <td style="margin-top:0;height:40px;border:2px solid">
+                                            {{$i++}}
+                                        </td>
+                                        <td style="margin-top:0;height:40px;border:2px solid">
+                                            {{$insdet->ins_desc}}
+                                        </td>
+                                        <td style="margin-top:0;height:40px;border:2px solid">
+                                            {{$insdet->ins_check}}
+                                        </td>
+                                        <fieldset id="do">
+                                            <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
+                                                <input type="radio" value="y" name="do{{$i}}">
+                                            </td>
+                                            <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
+                                                <input type="radio" value="n" name="do{{$i}}">
+                                            </td>
+                                        </fieldset>
+                                        <fieldset id="result">
+                                            <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
+                                                <input type="radio" value="y" name="result{{$i}}">
+                                            </td>
+                                            <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
+                                                <input type="radio" value="n" name="result{{$i}}">
+                                            </td>
+                                        </fieldset>
+                                        <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
+                                            <textarea name="note1[]" id="note[]" style="border:0;width:100%"></textarea>
+                                        </td>
+                                    </tr>
+
+
+                                    @endif
+                                    @empty
+                                    <tr>
+                                        <td colspan="12" style="color: red; text-align: center;">
+                                            No Data Available
+                                        </td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="form-group row col-md-12">
+                            <label class="col-md-5 col-form-label text-md-left">Spare Part :</label>
+                        </div>
+                        <div class="table-responsive col-12">
+                            <table class="table table-bordered mt-0" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">
+                                <thead>
+                                    <tr style="text-align: center;border:2px solid">
+                                        <th style="border:2px solid;width:5%;">
+                                            <p style="height:100%">No</p>
+                                        </th>
+                                        <th style="border:2px solid;width:10%">
+                                            <p style="height:100%">Inst. Code</p>
+                                        </th>
+                                        <th style="border:2px solid;width:10%">
+                                            <p style="height:100%">Spare Part</p>
+                                        </th>
+                                        <th style="border:2px solid;width:20%">
+                                            <p style="height:100%">Description</p>
+                                        </th>
+                                        <th style="border:2px solid;width:5%">
+                                            <p style="height:100%">UM</p>
+                                        </th>
+                                        <th style="border:2px solid;width:10%">
+                                            <p style="height:100%">Qty Required</p>
+                                        </th>
+                                        <th style="border:2px solid; width: 10%;">
+                                            <p style="height:100%">Qty Used</p>
+                                        </th>
+                                        <th style="border:2px solid; width: 10%;">
+                                            <p style="height:100%">Qty Confirmed</p>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                    $i = 1;
+                                    @endphp
+                                    @forelse ( $detailsp as $spdet )
+                                    @if($spdet->wo_dets_rc == $datagroup->repm_code)
+                                    <tr>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{$i++}}
+                                        </td>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{$spdet->wo_dets_ins}}
+                                        </td>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{$spdet->wo_dets_sp}}
+                                        </td>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{$spdet->spm_desc}}
+                                        </td>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{($spdet->insd_um != null) ? $spdet->insd_um : $spdet->spm_um }}
+                                        </td>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_eng_qty}}
+                                        </td>
+                                        <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
+                                            <input type="number" step="1" min="0" class="form-control" style="width: 100%;" value="{{$spdet->wo_dets_eng_qty}}">
+                                        </td>
+                                        <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
+                                            {{$spdet->wo_dets_eng_qty}}
+                                        </td>
+                                    </tr>
+                                    @endif
+                                    @empty
+                                    <tr>
+                                        <td colspan="12" style="color: red; text-align: center;">
+                                            No Data Available
+                                        </td>
+                                    </tr>
+
+                                    @endforelse
+
+                                </tbody>
+                            </table>
+                        </div>
+                        @endforeach
                     </div>
                 </div>
                 <!-- group -->
@@ -240,7 +403,7 @@
                                     @php
                                     $i = 1;
                                     @endphp
-                                    @foreach ( $datadetail as $insdet )
+                                    @forelse ( $datadetail as $insdet )
                                     @if ($insdet->wo_dets_rc == $data->first()->rr11)
                                     <tr>
                                         <td style="margin-top:0;height:40px;border:2px solid">
@@ -272,8 +435,16 @@
                                             <textarea name="note1[]" id="note[]" style="border:0;width:100%"></textarea>
                                         </td>
                                     </tr>
+
+
                                     @endif
-                                    @endforeach
+                                    @empty
+                                    <tr>
+                                        <td colspan="12" style="color: red; text-align: center;">
+                                            No Data Available
+                                        </td>
+                                    </tr>
+                                    @endforelse
 
                                 </tbody>
                             </table>
@@ -297,7 +468,7 @@
                                         <th style="border:2px solid;width:20%">
                                             <p style="height:100%">Description</p>
                                         </th>
-                                        <th style="border:2px solid;width:15%">
+                                        <th style="border:2px solid;width:5%">
                                             <p style="height:100%">UM</p>
                                         </th>
                                         <th style="border:2px solid;width:10%">
@@ -306,13 +477,17 @@
                                         <th style="border:2px solid; width: 10%;">
                                             <p style="height:100%">Qty Used</p>
                                         </th>
+                                        <th style="border:2px solid; width: 10%;">
+                                            <p style="height:100%">Qty Confirmed</p>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @php
                                     $i = 1;
                                     @endphp
-                                    @foreach ( $detailsp as $spdet )
+                                    @forelse ( $detailsp as $spdet )
+                                    @if($spdet->wo_dets_rc == $data->first()->rr11)
                                     <tr>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$i++}}
@@ -330,13 +505,24 @@
                                             {{($spdet->insd_um != null) ? $spdet->insd_um : $spdet->spm_um }}
                                         </td>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
-                                            {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_sp_qty}}
+                                            {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_eng_qty}}
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                            <input type="number" step="1" min="0" class="form-control" style="width: 100%;" value="{{$spdet->wo_dets_sp_qty}}">
+                                            <input type="number" step="1" min="0" class="form-control" style="width: 100%;" value="{{$spdet->wo_dets_eng_qty}}">
+                                        </td>
+                                        <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
+                                            {{$spdet->wo_dets_eng_qty}}
                                         </td>
                                     </tr>
-                                    @endforeach
+                                    @endif
+                                    @empty
+                                    <tr>
+                                        <td colspan="12" style="color: red; text-align: center;">
+                                            No Data Available
+                                        </td>
+                                    </tr>
+
+                                    @endforelse
 
                                 </tbody>
                             </table>
@@ -364,10 +550,10 @@
                             <label class="col-md-5 col-form-label text-md-left">Instruction :</label>
                         </div>
                         <div class="table-responsive col-12">
-                            <table class="table table-bordered mt-0" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">';
+                            <table class="table table-bordered mt-0" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">
                                 <thead>
-                                    <tr style="text-align: center;style=" border:2px solid"">
-                                        <th rowspan="2" style="border:2px solid;width:5%">
+                                    <tr style="text-align: center;border:2px solid">
+                                        <th rowspan="2" style="border:2px solid;width:5%;">
                                             <p style="height:100%">No</p>
                                         </th>
                                         <th rowspan="2" style="border:2px solid;width:25%">
@@ -393,6 +579,133 @@
                                         <th style="border:2px solid; width:10%;">Not OK</th>
                                     </tr>
                                 </thead>
+                                <tbody>
+                                    @php
+                                    $i = 1;
+                                    @endphp
+                                    @forelse ( $datadetail as $insdet )
+                                    @if ($insdet->wo_dets_rc == $data->first()->rr22)
+                                    <tr>
+                                        <td style="margin-top:0;height:40px;border:2px solid">
+                                            {{$i++}}
+                                        </td>
+                                        <td style="margin-top:0;height:40px;border:2px solid">
+                                            {{$insdet->ins_desc}}
+                                        </td>
+                                        <td style="margin-top:0;height:40px;border:2px solid">
+                                            {{$insdet->ins_check}}
+                                        </td>
+                                        <fieldset id="do">
+                                            <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
+                                                <input type="radio" value="y" name="do{{$i}}">
+                                            </td>
+                                            <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
+                                                <input type="radio" value="n" name="do{{$i}}">
+                                            </td>
+                                        </fieldset>
+                                        <fieldset id="result">
+                                            <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
+                                                <input type="radio" value="y" name="result{{$i}}">
+                                            </td>
+                                            <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
+                                                <input type="radio" value="n" name="result{{$i}}">
+                                            </td>
+                                        </fieldset>
+                                        <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
+                                            <textarea name="note1[]" id="note[]" style="border:0;width:100%"></textarea>
+                                        </td>
+                                    </tr>
+
+
+                                    @endif
+                                    @empty
+                                    <tr>
+                                        <td colspan="12" style="color: red; text-align: center;">
+                                            No Data Available
+                                        </td>
+                                    </tr>
+                                    @endforelse
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="form-group row col-md-12">
+                            <label class="col-md-5 col-form-label text-md-left">Spare Part :</label>
+                        </div>
+                        <div class="table-responsive col-12">
+                            <table class="table table-bordered mt-0" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">
+                                <thead>
+                                    <tr style="text-align: center;border:2px solid">
+                                        <th style="border:2px solid;width:5%;">
+                                            <p style="height:100%">No</p>
+                                        </th>
+                                        <th style="border:2px solid;width:10%">
+                                            <p style="height:100%">Inst. Code</p>
+                                        </th>
+                                        <th style="border:2px solid;width:10%">
+                                            <p style="height:100%">Spare Part</p>
+                                        </th>
+                                        <th style="border:2px solid;width:20%">
+                                            <p style="height:100%">Description</p>
+                                        </th>
+                                        <th style="border:2px solid;width:5%">
+                                            <p style="height:100%">UM</p>
+                                        </th>
+                                        <th style="border:2px solid;width:10%">
+                                            <p style="height:100%">Qty Required</p>
+                                        </th>
+                                        <th style="border:2px solid; width: 10%;">
+                                            <p style="height:100%">Qty Used</p>
+                                        </th>
+                                        <th style="border:2px solid; width: 10%;">
+                                            <p style="height:100%">Qty Confirmed</p>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                    $i = 1;
+                                    @endphp
+                                    @forelse ( $detailsp as $spdet )
+                                    @if ($spdet->wo_dets_rc == $data->first()->rr22)
+                                    <tr>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{$i++}}
+                                        </td>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{$spdet->wo_dets_ins}}
+                                        </td>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{$spdet->wo_dets_sp}}
+                                        </td>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{$spdet->spm_desc}}
+                                        </td>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{($spdet->insd_um != null) ? $spdet->insd_um : $spdet->spm_um }}
+                                        </td>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_eng_qty}}
+                                        </td>
+                                        <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
+                                            <input type="number" step="1" min="0" class="form-control" style="width: 100%;" value="{{$spdet->wo_dets_eng_qty}}">
+                                        </td>
+                                        <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
+                                            {{$spdet->wo_dets_eng_qty}}
+                                        </td>
+                                    </tr>
+                                    @endif
+                                    @empty
+                                    <tr>
+                                        <td colspan="12" style="color: red; text-align: center;">
+                                            No Data Available
+                                        </td>
+                                    </tr>
+
+                                    @endforelse
+
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     @endif
@@ -417,10 +730,10 @@
                             <label class="col-md-5 col-form-label text-md-left">Instruction :</label>
                         </div>
                         <div class="table-responsive col-12">
-                            <table class="table table-bordered mt-0" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">';
+                            <table class="table table-bordered mt-0" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">
                                 <thead>
-                                    <tr style="text-align: center;style=" border:2px solid"">
-                                        <th rowspan="2" style="border:2px solid;width:5%">
+                                    <tr style="text-align: center;border:2px solid">
+                                        <th rowspan="2" style="border:2px solid;width:5%;">
                                             <p style="height:100%">No</p>
                                         </th>
                                         <th rowspan="2" style="border:2px solid;width:25%">
@@ -446,6 +759,133 @@
                                         <th style="border:2px solid; width:10%;">Not OK</th>
                                     </tr>
                                 </thead>
+                                <tbody>
+                                    @php
+                                    $i = 1;
+                                    @endphp
+                                    @forelse ( $datadetail as $insdet )
+                                    @if ($insdet->wo_dets_rc == $data->first()->rr33)
+                                    <tr>
+                                        <td style="margin-top:0;height:40px;border:2px solid">
+                                            {{$i++}}
+                                        </td>
+                                        <td style="margin-top:0;height:40px;border:2px solid">
+                                            {{$insdet->ins_desc}}
+                                        </td>
+                                        <td style="margin-top:0;height:40px;border:2px solid">
+                                            {{$insdet->ins_check}}
+                                        </td>
+                                        <fieldset id="do">
+                                            <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
+                                                <input type="radio" value="y" name="do{{$i}}">
+                                            </td>
+                                            <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
+                                                <input type="radio" value="n" name="do{{$i}}">
+                                            </td>
+                                        </fieldset>
+                                        <fieldset id="result">
+                                            <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
+                                                <input type="radio" value="y" name="result{{$i}}">
+                                            </td>
+                                            <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
+                                                <input type="radio" value="n" name="result{{$i}}">
+                                            </td>
+                                        </fieldset>
+                                        <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
+                                            <textarea name="note1[]" id="note[]" style="border:0;width:100%"></textarea>
+                                        </td>
+                                    </tr>
+
+
+                                    @endif
+                                    @empty
+                                    <tr>
+                                        <td colspan="12" style="color: red; text-align: center;">
+                                            No Data Available
+                                        </td>
+                                    </tr>
+                                    @endforelse
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="form-group row col-md-12">
+                            <label class="col-md-5 col-form-label text-md-left">Spare Part :</label>
+                        </div>
+                        <div class="table-responsive col-12">
+                            <table class="table table-bordered mt-0" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">
+                                <thead>
+                                    <tr style="text-align: center;border:2px solid">
+                                        <th style="border:2px solid;width:5%;">
+                                            <p style="height:100%">No</p>
+                                        </th>
+                                        <th style="border:2px solid;width:10%">
+                                            <p style="height:100%">Inst. Code</p>
+                                        </th>
+                                        <th style="border:2px solid;width:10%">
+                                            <p style="height:100%">Spare Part</p>
+                                        </th>
+                                        <th style="border:2px solid;width:20%">
+                                            <p style="height:100%">Description</p>
+                                        </th>
+                                        <th style="border:2px solid;width:5%">
+                                            <p style="height:100%">UM</p>
+                                        </th>
+                                        <th style="border:2px solid;width:10%">
+                                            <p style="height:100%">Qty Required</p>
+                                        </th>
+                                        <th style="border:2px solid; width: 10%;">
+                                            <p style="height:100%">Qty Used</p>
+                                        </th>
+                                        <th style="border:2px solid; width: 10%;">
+                                            <p style="height:100%">Qty Confirmed</p>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                    $i = 1;
+                                    @endphp
+                                    @forelse ( $detailsp as $spdet )
+                                    @if ($spdet->wo_dets_rc == $data->first()->rr33)
+                                    <tr>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{$i++}}
+                                        </td>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{$spdet->wo_dets_ins}}
+                                        </td>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{$spdet->wo_dets_sp}}
+                                        </td>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{$spdet->spm_desc}}
+                                        </td>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{($spdet->insd_um != null) ? $spdet->insd_um : $spdet->spm_um }}
+                                        </td>
+                                        <td style="margin-top:0;min-height:50px;border:2px solid">
+                                            {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_eng_qty}}
+                                        </td>
+                                        <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
+                                            <input type="number" step="1" min="0" class="form-control" style="width: 100%;" value="{{$spdet->wo_dets_eng_qty}}">
+                                        </td>
+                                        <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
+                                            {{$spdet->wo_dets_eng_qty}}
+                                        </td>
+                                    </tr>
+                                    @endif
+                                    @empty
+                                    <tr>
+                                        <td colspan="12" style="color: red; text-align: center;">
+                                            No Data Available
+                                        </td>
+                                    </tr>
+
+                                    @endforelse
+
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     @endif
