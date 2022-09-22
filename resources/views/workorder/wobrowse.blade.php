@@ -128,7 +128,7 @@ div #munculgambar .gambar:hover{
               <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
                 <option value="">--Select Asset--</option>
                 @foreach($asset1 as $assetsearch)
-                <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_desc}}</option>
+                <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
                 @endforeach
               </select>
             </div>
@@ -144,6 +144,9 @@ div #munculgambar .gambar:hover{
                 @else
                 <option value="open">Open</option>
                 @endif
+                <option value="Released">Released</option>
+                <option value="whsconfirm">Warehouse Confirm</option>
+                <option value="engconfirm">Engineer Confirm</option>
                 <option value="started">Started</option>
                 <option value="finish">Finish</option>
                 <option value="finish">Completed</option>
@@ -202,15 +205,16 @@ div #munculgambar .gambar:hover{
   <table class="table table-bordered mt-0" id="dataTable" width="100%" cellspacing="0" style="width:100%;padding: .2rem !important;">
     <thead>
       <tr style="text-align: center;">
-        <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="9%">Work Order Number<span id="name_icon"></span></th>
-        <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="18%">Asset<span id="username_icon"></span></th>
-        <th class="sorting" data-sorting_type="asc" data-column_name="wo_schedule" width="8%">Schedule Date<span id="name_icon"></span></th>
-        <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="8%">Due Date<span id="username_icon"></span></th>
-        <th class="sorting" data-sorting_type="asc" data-column_name="wo_status" width="5%">Status<span id="username_icon"></span></th>
-        <!-- <th class="sorting" data-sorting_type="asc" data-column_name="wo_priority" width="5%">Priority</th> -->
-        <th class="sorting" data-sorting_type="asc" data-column_name="wo_priority" width="5%">Type</th>
-        <th class="sorting" data-sorting_type="asc" data-column_name="wo_created_at" width="5%">Requested Date<span id="username_icon"></span></th>
-        <th class="sorting" data-sorting_type="asc" data-column_name="wo_creator" width="5%">Requested by</th>
+        <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="7%">WO Number<span id="name_icon"></span></th>
+        <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="10%">Asset<span id="username_icon"></span></th>
+        <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="32%">Desc<span id="username_icon"></span></th>
+        <th class="sorting" data-sorting_type="asc" data-column_name="wo_schedule" width="7%">Schedule Date<span id="name_icon"></span></th>
+        <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="7%">Due Date<span id="username_icon"></span></th>
+        <th class="sorting" data-sorting_type="asc" data-column_name="wo_status" width="7%">Status<span id="username_icon"></span></th>
+        <!-- <th class="sorting" data-sorting_type="asc" data-column_name="wo_priority" width="7%">Priority</th> -->
+        <th class="sorting" data-sorting_type="asc" data-column_name="wo_priority" width="7%">Type</th>
+        <th class="sorting" data-sorting_type="asc" data-column_name="wo_created_at" width="7%">Req Date<span id="username_icon"></span></th>
+        <th class="sorting" data-sorting_type="asc" data-column_name="wo_creator" width="7%">Requested by</th>
         <th width="15%">Action</th>
       </tr>
     </thead>
@@ -817,7 +821,7 @@ div #munculgambar .gambar:hover{
 
 <!--Modal View-->
 <div class="modal fade" id="viewModal" role="dialog" aria-hidden="true" data-backdrop="static">
-  <div class="modal-dialog modal-md" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-center" id="exampleModalLabel">Work Order View</h5>
@@ -827,131 +831,120 @@ div #munculgambar .gambar:hover{
       </div>
       <input type="hidden" id="v_counter" value=0>
       <div class="modal-body">
-        <div class="form-group row justify-content-center">
-          <label for="v_nowo" class="col-md-5 col-form-label text-md-left">Work Order Number</label>
-          <div class="col-md-7">
+        <div class="form-group row">
+          <label for="v_nowo" class="col-md-2 col-form-label text-md-left">WO Number</label>
+          <div class="col-md-4">
             <input id="v_nowo" type="text" class="form-control" name="v_nowo" autocomplete="off" readonly autofocus>
           </div>
-        </div>
-        <div class="form-group row justify-content-center">
-          <label for="v_nosr" class="col-md-5 col-form-label text-md-left">SR Number</label>
-          <div class="col-md-7">
-            <input id="v_nosr" type="text" class="form-control" name="v_nosr" readonly autofocus>
-          </div>
-        </div>
-        <div class="form-group row justify-content-center">
-          <label for="v_creator" class="col-md-5 col-form-label text-md-left">Requested By</label>
-          <div class="col-md-7">
+          <label for="v_creator" class="col-md-2 col-form-label text-md-left">Requested By</label>
+          <div class="col-md-4">
             <input id="v_creator" readonly class="form-control" name="v_creator" value="{{ old('v_creator') }}" autofocus>
           </div>
         </div>
-        <div class="form-group row justify-content-center">
-          <label for="v_dept" class="col-md-5 col-form-label text-md-left">Department</label>
-          <div class="col-md-7">
+        <div class="form-group row">
+          <label for="v_nosr" class="col-md-2 col-form-label text-md-left">SR Number</label>
+          <div class="col-md-4">
+            <input id="v_nosr" type="text" class="form-control" name="v_nosr" readonly autofocus>
+          </div>
+          <label for="v_dept" class="col-md-2 col-form-label text-md-left">Department</label>
+          <div class="col-md-4">
             <input id="v_dept" readonly class="form-control" name="v_dept" value="{{ old('v_dept') }}" autofocus>
           </div>
         </div>
-        <div class="form-group row justify-content-center">
-          <label for="v_asset" class="col-md-5 col-form-label text-md-left">Asset Code</label>
-          <div class="col-md-7">
+        <div class="form-group row">
+          <label for="v_asset" class="col-md-2 col-form-label text-md-left">Asset Code</label>
+          <div class="col-md-4">
             <input type="text" readonly id="v_asset" type="text" class="form-control v_asset" name="v_asset" autofocus>
           </div>
-        </div>
-        <div class="form-group row justify-content-center">
-          <label for="v_assetdesc" class="col-md-5 col-form-label text-md-left">Asset Desc</label>
-          <div class="col-md-7">
-            <input type="text" readonly id="v_assetdesc" type="text" class="form-control v_assetdesc" name="v_assetdesc" autofocus>
-          </div>
-        </div>
-        <div class="form-group row justify-content-center">
-          <label for="v_loc" class="col-md-5 col-form-label text-md-left">Location</label>
-          <div class="col-md-7">
+          <label for="v_loc" class="col-md-2 col-form-label text-md-left">Location</label>
+          <div class="col-md-4">
             <input id="v_loc" type="text" class="form-control" name="v_loc" value="{{ old('v_loc') }}" autofocus readonly>
           </div>
         </div>
-        <div class="form-group row justify-content-center">
-          <label for="v_proc" class="col-md-5 col-form-label text-md-left">Process / Technology</label>
-          <div class="col-md-7">
-            <input id="v_proc" type="text" class="form-control" name="v_proc" value="{{ old('v_proc') }}" autofocus readonly>
+        <div class="form-group row">
+          <label for="v_assetdesc" class="col-md-2 col-form-label text-md-left">Asset Desc</label>
+          <div class="col-md-4">
+            <input type="text" readonly id="v_assetdesc" type="text" class="form-control v_assetdesc" name="v_assetdesc" autofocus>
           </div>
-        </div>
-        <div class="form-group row justify-content-center">
-          <label for="v_wottype" class="col-md-5 col-form-label text-md-left">Work Order Type</label>
-          <div class="col-md-7">
-            <input id="v_wottype" type="text" class="form-control" name="v_wottype" value="{{ old('v_wottype') }}" autofocus readonly>
-          </div>
-        </div>
-        <div class="form-group row justify-content-center">
-          <label for="v_impact" class="col-md-5 col-form-label text-md-left">Impact</label>
-          <div class="col-md-7">
-            <textarea id="v_impact" class="form-control" name="v_impact" value="{{ old('v_impact') }}" autofocus readonly></textarea>
-          </div>
-        </div>
-        <div class="form-group row justify-content-center">
-          <label for="v_note" class="col-md-5 col-form-label text-md-left">Note</label>
-          <div class="col-md-7">
-            <textarea id="v_note" readonly class="form-control" name="v_note" value="{{ old('v_note') }}" autofocus></textarea>
-          </div>
-        </div>
-        <div class="form-group row justify-content-center">
-          <label for="v_priority" class="col-md-5 col-form-label text-md-left">Priority</label>
-          <div class="col-md-7">
-            <input id="v_priority" type="text" class="form-control" name="v_priority" value="{{ old('v_priority') }}" autofocus readonly>
-          </div>
-        </div>
-        <div class="form-group row justify-content-center">
-          <label for="v_engineerl" class="col-md-5 col-form-label text-md-left">Engineer List</label>
-          <div class="col-md-7">
-            <textarea id="v_engineerl" class="form-control v_engineerl" name="v_engineerl" autofocus readonly></textarea>
-          </div>
-        </div>
-        <div class="form-group row justify-content-center">
-          <label for="v_mtcby" class="col-md-5 col-form-label text-md-left">Maintenance By</label>
-          <div class="col-md-7">
+          <label for="v_mtcby" class="col-md-2 col-form-label text-md-left">Maintenance By</label>
+          <div class="col-md-4">
             <input id="v_mtcby" type="text" class="form-control" name="v_mtcby" readonly>
           </div>
         </div>
+        <div class="form-group row">
+          <label for="v_engineerl" class="col-md-2 col-form-label text-md-left">Engineer List</label>
+          <div class="col-md-4">
+            <textarea id="v_engineerl" class="form-control v_engineerl" name="v_engineerl" autofocus readonly></textarea>
+          </div>
+          <label for="v_note" class="col-md-2 col-form-label text-md-left">Note</label>
+          <div class="col-md-4">
+            <textarea id="v_note" readonly class="form-control" name="v_note" value="{{ old('v_note') }}" autofocus></textarea>
+          </div>
+        </div>
+
         <!-- 
+          <label for="v_priority" class="col-md-2 col-form-label text-md-left">Priority</label>
+            <div class="col-md-4">
+              <input id="v_priority" type="text" class="form-control" name="v_priority" value="{{ old('v_priority') }}" autofocus readonly>
+            </div>
+          <label for="v_wottype" class="col-md-2 col-form-label text-md-left">WO Type</label>
+            <div class="col-md-4">
+              <input id="v_wottype" type="text" class="form-control" name="v_wottype" value="{{ old('v_wottype') }}" autofocus readonly>
+            </div>
+          
+          
+            <label for="v_impact" class="col-md-2 col-form-label text-md-left">Impact</label>
+            <div class="col-md-4">
+              <textarea id="v_impact" class="form-control" name="v_impact" value="{{ old('v_impact') }}" autofocus readonly></textarea>
+            </div>
+          <label for="v_proc" class="col-md-2 col-form-label text-md-left">Process / Technology</label>
+            <div class="col-md-4">
+              <input id="v_proc" type="text" class="form-control" name="v_proc" value="{{ old('v_proc') }}" autofocus readonly>
+            </div>
           <div class="form-group row justify-content-center" id="divviewcode" style="display: none;">
-            <label for="v_repaircode" class="col-md-5 col-form-label text-md-left">Repair Code</label>
-            <div class="col-md-7">
+            <label for="v_repaircode" class="col-md-2 col-form-label text-md-left">Repair Code</label>
+            <div class="col-md-4">
               <textarea id="v_repaircode" readonly  class="form-control" name="v_repaircode" value="{{ old('v_repaircode') }}"   autofocus></textarea>
             </div>
           </div>
           <div class="form-group row justify-content-center" id="divviewgroup" style="display: none;">
-            <label for="v_repairgroup" class="col-md-5 col-form-label text-md-left">Repair Group</label>
-            <div class="col-md-7">
+            <label for="v_repairgroup" class="col-md-2 col-form-label text-md-left">Repair Group</label>
+            <div class="col-md-4">
               <input  id="v_repairgroup" readonly  class="form-control" name="v_repairgroup" value="{{ old('v_repairgroup') }}"  autofocus>
             </div>
           </div>
           <div class="form-group row justify-content-center" id="divviewmanual" style="display: none;">
-            <label for="v_repairmanual" class="col-md-5 col-form-label text-md-left">Repair</label>
-            <div class="col-md-7">
+            <label for="v_repairmanual" class="col-md-2 col-form-label text-md-left">Repair</label>
+            <div class="col-md-4">
               <input  id="v_repairmanual" readonly  class="form-control" name="v_repairmanual" value="Manual"  autofocus>
             </div>
           </div> -->
-        <div class="form-group row justify-content-center">
-          <label for="v_schedule" class="col-md-5 col-form-label text-md-left">Schedule Date</label>
-          <div class="col-md-7">
-            <input id="v_schedule" readonly type="date" class="form-control" name="v_schedule" value="{{ old('v_schedule') }}" autofocus>
-          </div>
+        <div class="form-group row">
+          
+            <label for="v_schedule" class="col-md-2 col-form-label text-md-left">Schedule Date</label>
+            <div class="col-md-4">
+              <input id="v_schedule" readonly type="date" class="form-control" name="v_schedule" value="{{ old('v_schedule') }}" autofocus>
+            </div>
+          
+          
+            <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
+            <div class="col-md-4">
+              <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
+            </div>
+          
         </div>
-        <div class="form-group row justify-content-center">
-          <label for="v_duedate" class="col-md-5 col-form-label text-md-left">Due Date</label>
-          <div class="col-md-7">
-            <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
-          </div>
-        </div>
-        <div class="form-group row justify-content-center" id="reportnote">
-          <label for="v_reportnote" class="col-md-5 col-form-label text-md-left">Reporting Note</label>
-          <div class="col-md-7">
-            <textarea id="v_reportnote" class="form-control v_reportnote" name="v_reportnote" autofocus readonly></textarea>
-          </div>
-        </div>
-        <div class="form-group row justify-content-center" id="divunconf" style="display: none;">
-          <label for="v_unconfirm" class="col-md-5 col-form-label text-md-left">Uncomplete reason</label>
-          <div class="col-md-7">
-            <textarea id="v_unconfirm" readonly class="form-control" name="v_unconfirm" value="{{ old('v_unconfirm') }}" autofocus></textarea>
+        <div class="form-group row">
+
+            <label for="v_reportnote" class="col-md-2 col-form-label text-md-left">Reporting Note</label>
+            <div class="col-md-4">
+              <textarea id="v_reportnote" class="form-control v_reportnote" name="v_reportnote" autofocus readonly></textarea>
+            </div>
+
+          <div id="divunconf" style="display: none;">
+            <label for="v_unconfirm" class="col-md-2 col-form-label text-md-left">Uncomplete reason</label>
+            <div class="col-md-4">
+              <textarea id="v_unconfirm" readonly class="form-control" name="v_unconfirm" value="{{ old('v_unconfirm') }}" autofocus></textarea>
+            </div>
           </div>
         </div>
       </div>
@@ -978,14 +971,14 @@ div #munculgambar .gambar:hover{
         <div class="modal-body">
           <input type="hidden" id="v_counter">
           <input type="hidden" name="statuswo" id="statuswo">
-          <div class="form-group row justify-content-center">
+          
             <label for="ac_wonbr2" class="col-md-5 col-form-label text-md-left">Work Order Number</label>
             <div class="col-md-7">
               <input id="ac_wonbr2" type="text" class="form-control ac_wonbr2" name="ac_wonbr2" autofocus readonly>
               <!-- <input type="hidden" id="c_assetcode"> -->
             </div>
           </div>
-          <div class="form-group row justify-content-center">
+          
             <label for="ac_srnbr2" class="col-md-5 col-form-label text-md-left">SR Number</label>
             <div class="col-md-7">
               <input id="ac_srnbr2" type="text" class="form-control ac_srnbr2" name="ac_srnbr2" autofocus readonly>
@@ -2312,16 +2305,16 @@ div #munculgambar .gambar:hover{
         document.getElementById('v_schedule').value = schedule;
         document.getElementById('v_duedate').value = duedate;
         document.getElementById('v_engineerl').innerHTML = arreng;
-        document.getElementById('v_impact').innerHTML = strimp;
-        document.getElementById('v_wottype').value = vwottype;
+        {{--  document.getElementById('v_impact').innerHTML = strimp;  --}}
+        {{--  document.getElementById('v_wottype').value = vwottype;  --}}
         document.getElementById('v_asset').value = asset;
         document.getElementById('v_assetdesc').value = assdesc;
         document.getElementById('v_loc').value = loccode;
-        document.getElementById('v_proc').value = astypecode;
+        {{--  document.getElementById('v_proc').value = astypecode;  --}}
         document.getElementById('counterfail').value = counterfail;
         document.getElementById('apprwonbr2').value = wonbr;
         document.getElementById('apprwonbr').value = wonbr;
-        document.getElementById('v_priority').value = prio;
+        {{--  document.getElementById('v_priority').value = prio;  --}}
         document.getElementById('v_note').value = note;
         document.getElementById('v_dept').value = wodept;
         document.getElementById('v_creator').value = creator;

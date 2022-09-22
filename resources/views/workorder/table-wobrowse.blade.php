@@ -7,6 +7,7 @@
 @forelse ($data as $show)
 <tr>
   <td>{{ $show->wo_nbr }}</td>
+  <td style="text-align: left;">{{ $show->asset_code }}</td>
   <td style="text-align: left;">{{ $show->asset_desc }}</td>
   <td>{{ date('d-m-Y',strtotime($show->wo_schedule)) }}</td>
   <td>{{ date('d-m-Y',strtotime($show->wo_duedate)) }}</td>
@@ -74,7 +75,7 @@
 </tr>
 @endforelse
 <tr>
-  <td style="border: none !important;" colspan="9">
+  <td style="border: none !important;" colspan="10">
     {{ $data->links() }}
   </td>
 </tr>

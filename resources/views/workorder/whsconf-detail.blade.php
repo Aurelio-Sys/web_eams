@@ -74,13 +74,13 @@
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Repair Code</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Instruction Code</td>
                                 <td style="text-align: center; width: 20% !important; font-weight: bold;">Spare Part</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty Required</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty Request</td>
+                                <td style="text-align: center; width: 7% !important; font-weight: bold;">Qty Required</td>
+                                <td style="text-align: center; width: 7% !important; font-weight: bold;">Qty Request</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Site</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Location</td>
                                 <td style="text-align: center; width: 5% !important; font-weight: bold;">Stock</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty Confirm</td>
-                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Confirm</td>
+                                <td style="text-align: center; width: 7% !important; font-weight: bold;">Qty Confirm</td>
+                                <td style="text-align: center; width: 8% !important; font-weight: bold;">Confirm</td>
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
@@ -178,12 +178,17 @@
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
                                     <!-- <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"> -->
-                                    @if($ccek == 0)
-                                        <input type="checkbox" class="qaddel" name="qaddel[]" value="" checked>
+                                    @if($sqtyreq->wo_dets_wh_conf == 1)
+                                        {{date('Y-m-d', strtotime($sqtyreq->wo_dets_wh_date))}}
                                         <input type="hidden" class="tick" name="tick[]" value="1" />
                                     @else
-                                        <input type="checkbox" class="qaddel" name="qaddel[]" value="">
-                                        <input type="hidden" class="tick" name="tick[]" value="0" />
+                                        @if($ccek == 0)
+                                            <input type="checkbox" class="qaddel" name="qaddel[]" value="" checked>
+                                            <input type="hidden" class="tick" name="tick[]" value="1" />
+                                        @else
+                                            <input type="checkbox" class="qaddel" name="qaddel[]" value="">
+                                            <input type="hidden" class="tick" name="tick[]" value="0" />
+                                        @endif
                                     @endif
                                 </td>
                             </tr>

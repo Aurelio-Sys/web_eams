@@ -230,6 +230,7 @@ class wocontroller extends Controller
                 ->get();
             $engineer = DB::table('eng_mstr')
                 ->where('eng_active', '=', 'Yes')
+                ->orderBy('eng_code')
                 ->get();
             $asset = DB::table('asset_mstr')
                 ->where('asset_active', '=', 'Yes')
