@@ -174,25 +174,25 @@
 
 
             cols += '<td>';
-            cols += '<select name="repcode[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-width="150px" required autofocus >';
+            cols += '<select name="repcode[]" style="display: inline-block !important;" class="form-control selectpicker repcode" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px" required autofocus >';
             cols += '<option value = ""> -- Select Data -- </option>';
-            @foreach($rpdata as $rd)
+            @foreach($rc as $rd)
             cols += '<option value="{{$rd->repm_code}}"> {{$rd->repm_code}} -- {{$rd->repm_desc}} </option>';
             @endforeach
             cols += '</select>';
             cols += '</td>';
 
             cols += '<td>';
-            cols += '<select name="inscode[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-width="150px" required autofocus >';
+            cols += '<select name="inscode[]" style="display: inline-block !important;" class="form-control selectpicker insclass" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px" required autofocus >';
             cols += '<option value = ""> -- Select Data -- </option>';
             @foreach($insdata as $insdats)
-            cols += '<option value="{{$insdats->ins_code}}"> {{$insdats->ins_code}} -- {{$insdats->ins_desc}} </option>';
+            cols += '<option data-repcode2="{{$insdats->repm_code}}" value="{{$insdats->repdet_ins}}"> {{$insdats->repdet_ins}} -- {{$insdats->ins_desc}} </option>';
             @endforeach
             cols += '</select>';
             cols += '</td>';
 
             cols += '<td>';
-            cols += '<select name="partneed[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-width="150px" required autofocus >';
+            cols += '<select name="partneed[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="200px" required autofocus >';
             cols += '<option value = ""> -- Select Data -- </option>';
             @foreach($spdata as $da)
             cols += '<option value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
@@ -250,6 +250,30 @@
             } else {
                 $(this).closest("tr").find('.op').val('M');
             }
+
+        });
+
+        $(document).on('change', 'select.repcode', function() {
+            
+            // console. log(jQuery(). jquery);
+            var rc = $(this).val();
+            var a =  $(this).closest("tr").find('div').find('.insclass option');
+            // console.log(a);
+            
+            a.each(function(e){
+                
+                console.log($(this).val());
+                if($(this).data('repcode2') == rc){
+                    
+                    $(this).show();
+                    $(this).prop('disabled',false);
+                }else{
+                    $(this).hide();
+                    $(this).prop('disabled',true);
+                }
+                
+            })
+            $(this).closest("tr").find('.insclass').selectpicker('refresh');
 
         });
     });

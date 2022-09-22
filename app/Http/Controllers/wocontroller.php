@@ -1843,7 +1843,7 @@ class wocontroller extends Controller
 
         $data = DB::table('wo_mstr')
             ->selectRaw('wo_type,wo_nbr,wo_reviewer_appdate,wo_approver_appdate,wo_repair_type,
-                wo_repair_group,xxrepgroup_nbr,xxrepgroup_desc,wo_status,asset_desc,wo_approval_note,
+                wo_repair_group,xxrepgroup_nbr,xxrepgroup_desc,xxrepgroup_rep_code,wo_status,asset_desc,wo_approval_note,
                 wo_creator,wo_reject_reason,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status,
                 wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,wo_engineer2 as woen2, 
                 wo_engineer3 as woen3,wo_engineer4 as woen4,wo_engineer5 as woen5,u1.eng_desc as u11,
@@ -1876,11 +1876,27 @@ class wocontroller extends Controller
             ->get();
         
 
+        // dd($data);
+        $data2 = "";
+        if($currwo->wo_repair_type == "group"){
+            $data2 = DB::table('wo_mstr')
+                    ->select('wo_nbr','wo_repair_type','wo_repair_group','xxrepgroup_nbr', 'xxrepgroup_desc',
+                            'xxrepgroup_rep_code','repm_code','repm_desc')
+                    ->leftJoin('xxrepgroup_mstr','xxrepgroup_mstr.xxrepgroup_nbr','wo_mstr.wo_repair_group')
+                    ->leftJoin('rep_master','xxrepgroup_mstr.xxrepgroup_rep_code','rep_master.repm_code')
+                    ->where('wo_mstr.wo_nbr','=',$nowo)
+                    ->get();
+
+                    // dd($data2);
+        }
+
         $datadetail = DB::table('wo_dets')
                     ->leftJoin('ins_mstr','wo_dets.wo_dets_ins','ins_mstr.ins_code')
                     ->where('wo_dets_nbr','=',$nowo)
-                    ->groupBy('wo_dets_ins')
+                    ->groupBy('wo_dets_rc','wo_dets_ins')
                     ->get();
+
+        // dd($datadetail);
 
         $detailsp = DB::table('wo_dets')
                     ->leftJoin('ins_mstr','wo_dets.wo_dets_ins','ins_mstr.ins_code')
@@ -1930,7 +1946,7 @@ class wocontroller extends Controller
             $instruction = DB::table('ins_mstr')
                 ->get();
 
-        return view('workorder.wofinish-done', compact('data','engineer','asset','repaircode','sparepart','repairgroup','instruction','datadetail','detailsp'));
+        return view('workorder.wofinish-done', compact('data','data2','engineer','asset','repaircode','sparepart','repairgroup','instruction','datadetail','detailsp'));
     }
 
     public function approvewo(Request $req)

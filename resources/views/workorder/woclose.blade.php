@@ -1853,7 +1853,7 @@
             var tempres = JSON.stringify(data);
             var result = JSON.parse(tempres);
             // console.log(data);
-            // console.log(result);
+            console.log(result);
             var len = result.length;
             var col = '';
             var currenttype;
