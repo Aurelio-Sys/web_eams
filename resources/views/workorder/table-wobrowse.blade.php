@@ -64,7 +64,9 @@
     @endif 
     --}}
     &nbsp;
+    @if($show->wo_status == 'finish' || $show->wo_status == 'closed')  
       <a id="adownload" target="_blank" href="{{url('wodownloadfile/'.$show->wo_nbr)}}" data-toggle="tooltip"  title="Download asset document" ><i class="icon-table fas fa-download fa-lg"></i></a>  
+    @endif    
   </td>
 </tr>
 @empty

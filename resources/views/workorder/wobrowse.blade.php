@@ -866,19 +866,29 @@ div #munculgambar .gambar:hover{
           <div class="col-md-4">
             <input type="text" readonly id="v_assetdesc" type="text" class="form-control v_assetdesc" name="v_assetdesc" autofocus>
           </div>
-          <label for="v_mtcby" class="col-md-2 col-form-label text-md-left">Maintenance By</label>
+          <label for="v_wottype" class="col-md-2 col-form-label text-md-left">WO Type</label>
           <div class="col-md-4">
-            <input id="v_mtcby" type="text" class="form-control" name="v_mtcby" readonly>
+            <input id="v_wottype" type="text" class="form-control" name="v_wottype" value="{{ old('v_wottype') }}" autofocus readonly>
           </div>
+        </div>
+        <div class="form-group row">
+          <label for="v_note" class="col-md-2 col-form-label text-md-left">Note</label>
+          <div class="col-md-4">
+            <textarea id="v_note" readonly class="form-control" name="v_note" value="{{ old('v_note') }}" autofocus></textarea>
+          </div>
+          <label for="v_impact" class="col-md-2 col-form-label text-md-left">Impact</label>
+            <div class="col-md-4">
+              <textarea id="v_impact" class="form-control" name="v_impact" value="{{ old('v_impact') }}" autofocus readonly></textarea>
+            </div>
         </div>
         <div class="form-group row">
           <label for="v_engineerl" class="col-md-2 col-form-label text-md-left">Engineer List</label>
           <div class="col-md-4">
             <textarea id="v_engineerl" class="form-control v_engineerl" name="v_engineerl" autofocus readonly></textarea>
           </div>
-          <label for="v_note" class="col-md-2 col-form-label text-md-left">Note</label>
+          <label for="v_mtcby" class="col-md-2 col-form-label text-md-left">Maintenance By</label>
           <div class="col-md-4">
-            <textarea id="v_note" readonly class="form-control" name="v_note" value="{{ old('v_note') }}" autofocus></textarea>
+            <input id="v_mtcby" type="text" class="form-control" name="v_mtcby" readonly>
           </div>
         </div>
 
@@ -887,16 +897,10 @@ div #munculgambar .gambar:hover{
             <div class="col-md-4">
               <input id="v_priority" type="text" class="form-control" name="v_priority" value="{{ old('v_priority') }}" autofocus readonly>
             </div>
-          <label for="v_wottype" class="col-md-2 col-form-label text-md-left">WO Type</label>
-            <div class="col-md-4">
-              <input id="v_wottype" type="text" class="form-control" name="v_wottype" value="{{ old('v_wottype') }}" autofocus readonly>
-            </div>
           
           
-            <label for="v_impact" class="col-md-2 col-form-label text-md-left">Impact</label>
-            <div class="col-md-4">
-              <textarea id="v_impact" class="form-control" name="v_impact" value="{{ old('v_impact') }}" autofocus readonly></textarea>
-            </div>
+          
+            
           <label for="v_proc" class="col-md-2 col-form-label text-md-left">Process / Technology</label>
             <div class="col-md-4">
               <input id="v_proc" type="text" class="form-control" name="v_proc" value="{{ old('v_proc') }}" autofocus readonly>
@@ -971,14 +975,14 @@ div #munculgambar .gambar:hover{
         <div class="modal-body">
           <input type="hidden" id="v_counter">
           <input type="hidden" name="statuswo" id="statuswo">
-          
+          <div class="form-group row justify-content-center">
             <label for="ac_wonbr2" class="col-md-5 col-form-label text-md-left">Work Order Number</label>
             <div class="col-md-7">
               <input id="ac_wonbr2" type="text" class="form-control ac_wonbr2" name="ac_wonbr2" autofocus readonly>
               <!-- <input type="hidden" id="c_assetcode"> -->
             </div>
           </div>
-          
+          <div class="form-group row justify-content-center">
             <label for="ac_srnbr2" class="col-md-5 col-form-label text-md-left">SR Number</label>
             <div class="col-md-7">
               <input id="ac_srnbr2" type="text" class="form-control ac_srnbr2" name="ac_srnbr2" autofocus readonly>
@@ -2305,8 +2309,8 @@ div #munculgambar .gambar:hover{
         document.getElementById('v_schedule').value = schedule;
         document.getElementById('v_duedate').value = duedate;
         document.getElementById('v_engineerl').innerHTML = arreng;
-        {{--  document.getElementById('v_impact').innerHTML = strimp;  --}}
-        {{--  document.getElementById('v_wottype').value = vwottype;  --}}
+        document.getElementById('v_impact').innerHTML = strimp;
+        document.getElementById('v_wottype').value = vwottype;
         document.getElementById('v_asset').value = asset;
         document.getElementById('v_assetdesc').value = assdesc;
         document.getElementById('v_loc').value = loccode;
