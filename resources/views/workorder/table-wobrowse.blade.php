@@ -7,6 +7,7 @@
 @forelse ($data as $show)
 <tr>
   <td>{{ $show->wo_nbr }}</td>
+  <td style="text-align: left;">{{ $show->asset_code }}</td>
   <td style="text-align: left;">{{ $show->asset_desc }}</td>
   <td>{{ date('d-m-Y',strtotime($show->wo_schedule)) }}</td>
   <td>{{ date('d-m-Y',strtotime($show->wo_duedate)) }}</td>
@@ -63,7 +64,9 @@
     @endif 
     --}}
     &nbsp;
+    @if($show->wo_status == 'finish' || $show->wo_status == 'closed')  
       <a id="adownload" target="_blank" href="{{url('wodownloadfile/'.$show->wo_nbr)}}" data-toggle="tooltip"  title="Download asset document" ><i class="icon-table fas fa-download fa-lg"></i></a>  
+    @endif    
   </td>
 </tr>
 @empty
@@ -74,7 +77,7 @@
 </tr>
 @endforelse
 <tr>
-  <td style="border: none !important;" colspan="9">
+  <td style="border: none !important;" colspan="10">
     {{ $data->links() }}
   </td>
 </tr>

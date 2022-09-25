@@ -177,32 +177,45 @@ class WHSConfirm extends Controller
         DB::beginTransaction();
 
         try{
-            
+            // cek qty
             foreach($req->partneed as $a => $key){
-                if ($req->tick[$a] == 0) {
-                    $qty = 0;
-                } else {
-                    $qty = $req->qtyconf[$a];
+                if($req->tick[$a] == 1) {
+                    if($req->qtyconf[$a] > $req->qtystok[$a]) {
+                        toast('Quantity  !', 'error');
+                        return redirect()->route('browseWhconfirm');
+                    }
                 }
-                DB::table('wo_dets')
-                    ->where('wo_dets_nbr', $req->hide_wonum)
-                    ->where('wo_dets_rc', $req->repcode[$a])
-                    ->where('wo_dets_ins', $req->inscode[$a])
-                    ->where('wo_dets_sp', $req->partneed[$a])
-                    ->update([
-                    'wo_dets_wh_site' => $req->t_site[$a],
-                    'wo_dets_wh_loc' => $req->t_loc[$a],
-                    'wo_dets_wh_qty' => $qty,
-                    'wo_dets_wh_conf' => $req->tick[$a],
-                    'wo_dets_wh_date' => Carbon::now()->toDateTimeString(),
-                ]);
+            }
+
+            $cekstatus = "";
+            foreach($req->partneed as $a => $key){
+                if ($req->tick[$a] == 1) {
+                    DB::table('wo_dets')
+                        ->where('wo_dets_nbr', $req->hide_wonum)
+                        ->where('wo_dets_rc', $req->repcode[$a])
+                        ->where('wo_dets_ins', $req->inscode[$a])
+                        ->where('wo_dets_sp', $req->partneed[$a])
+                        ->update([
+                        'wo_dets_wh_site' => $req->t_site[$a],
+                        'wo_dets_wh_loc' => $req->t_loc[$a],
+                        'wo_dets_wh_qty' => $req->qtyconf[$a],
+                        'wo_dets_wh_conf' => $req->tick[$a],
+                        'wo_dets_wh_date' => Carbon::now()->toDateTimeString(),
+                        'wo_dets_wh_user' => $req->session()->get('username'),
+                    ]);
+                } else {
+                    $cekstatus = "nol";
+                }
+                
             }    
 
-            /* DB::table('wo_mstr')
-                ->where('wo_nbr',$req->hide_wonum)
-                ->update([
-                    'wo_status' => 'whsconfirm',
-                ]); */
+            if ($cekstatus == "") {
+                DB::table('wo_mstr')
+                    ->where('wo_nbr',$req->hide_wonum)
+                    ->update([
+                        'wo_status' => 'whsconfirm',
+                    ]);
+            }
             
             DB::commit();
 

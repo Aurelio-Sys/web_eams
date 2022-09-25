@@ -53,7 +53,7 @@ class wocontroller extends Controller
         );
     }
     //wo browse
-    public function wobrowsemenu()
+    public function wobrowsemenu() /* route : wobrowse  blade : workorder.woview */
     {
         //dd(Session::get('department'));    
         if (strpos(Session::get('menu_access'), 'WO05') !== false) {
@@ -83,9 +83,11 @@ class wocontroller extends Controller
                 ->get();
             $engineer = DB::table('eng_mstr')
                 ->where('eng_active', '=', 'Yes')
+                ->orderBy('eng_code')
                 ->get();
             $asset = DB::table('asset_mstr')
                 ->where('asset_active', '=', 'Yes')
+                ->orderBy('asset_code')
                 ->get();
             $failure = DB::table('fn_mstr')
                 ->get();
@@ -230,6 +232,7 @@ class wocontroller extends Controller
                 ->get();
             $engineer = DB::table('eng_mstr')
                 ->where('eng_active', '=', 'Yes')
+                ->orderBy('eng_code')
                 ->get();
             $asset = DB::table('asset_mstr')
                 ->where('asset_active', '=', 'Yes')
@@ -1177,7 +1180,7 @@ class wocontroller extends Controller
 
     public function editwo(Request $req)
     {
-        //dd($req->all());
+        // dd($req->all());
         $dataaccess = DB::table('wo_mstr')
             ->where('wo_nbr', '=', $req->e_nowo)
             ->first();
@@ -1209,6 +1212,7 @@ class wocontroller extends Controller
         $department  = $req->e_department;
         $repairtype  = $req->erepairtype;
         $repairgroup = $req->erepairgroup;
+        $note        = $req->e_note;
         $rc1 = null;
         $rc2 = null;
         $rc3 = null;
@@ -1259,6 +1263,7 @@ class wocontroller extends Controller
                 'wo_new_type'     => $req->e_wottype,
                 'wo_impact'       => $eimpactlist,
                 'wo_impact_desc'  => $eimpactdesclist,
+                'wo_note'         => $note,
                 'wo_updated_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                 'wo_access'       => 0
             ]);
