@@ -99,7 +99,7 @@
     <form class="form-horizontal" id="newedit" method="post" action="/reportingwo">
         {{ csrf_field() }}
         <div class="modal-body">
-            <input type="hidden" name="repairtype" id="repairtype">
+            <input type="hidden" name="repairtype" id="repairtype" value="{{$data->first()->wo_repair_type}}">
             <input type="hidden" id="v_counter">
             <input type="hidden" name="statuswo" id="statuswo">
             <div class="form-group row col-md-12">
@@ -366,7 +366,7 @@
                     </div> -->
                     <div id="testdiv">
                         <div class="form-group row col-md-12 divrepcode">
-                            <label class="col-md-12 col-form-label text-md-left">Repair code : {{$data->first()->rr11}} -- {{$data->first()->r11}} </label>
+                            <label class="col-md-12 col-form-label text-md-left" style="color: blue; font-weight: bold;">Repair code : {{$data->first()->rr11}} -- {{$data->first()->r11}} </label>
                             <label class="col-md-5 col-form-label text-md-left">Instruction :</label>
                         </div>
                         <div class="table-responsive col-12">
@@ -402,39 +402,48 @@
                                 <tbody>
                                     @php
                                     $i = 1;
+                                    $k = 0;
                                     @endphp
                                     @forelse ( $datadetail as $insdet )
                                     @if ($insdet->wo_dets_rc == $data->first()->rr11)
                                     <tr>
+
                                         <td style="margin-top:0;height:40px;border:2px solid">
                                             {{$i++}}
                                         </td>
+                                        <input type="hidden" name="wonbr_hidden1[]" value="{{$data->first()->wo_nbr}}" />
+                                        <input type="hidden" name="rc_hidden1[]" value="{{$data->first()->rr11}}" />
                                         <td style="margin-top:0;height:40px;border:2px solid">
                                             {{$insdet->ins_desc}}
+                                            <input type="hidden" name="inscode_hidden1[]" value="{{$insdet->ins_code}}" />
                                         </td>
                                         <td style="margin-top:0;height:40px;border:2px solid">
                                             {{$insdet->ins_check}}
                                         </td>
                                         <fieldset id="do">
                                             <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                                <input type="radio" value="y" name="do{{$i}}">
+                                                <input type="radio" value="y" name="do1[{{$k}}]" required>
                                             </td>
                                             <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                                <input type="radio" value="n" name="do{{$i}}">
+                                                <input type="radio" value="n" name="do1[{{$k}}]">
                                             </td>
                                         </fieldset>
                                         <fieldset id="result">
                                             <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                                <input type="radio" value="y" name="result{{$i}}">
+                                                <input type="radio" value="y" name="result1[{{$k}}]" required>
                                             </td>
                                             <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                                <input type="radio" value="n" name="result{{$i}}">
+                                                <input type="radio" value="n" name="result1[{{$k}}]">
                                             </td>
                                         </fieldset>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
                                             <textarea name="note1[]" id="note[]" style="border:0;width:100%"></textarea>
                                         </td>
                                     </tr>
+
+                                    @php
+                                    $k++;
+                                    @endphp
 
 
                                     @endif
@@ -491,12 +500,16 @@
                                     <tr>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$i++}}
+                                            <input type="hidden" name="wonbr_hidden2[]" value="{{$spdet->wo_dets_nbr}}" />
+                                            <input type="hidden" name="rc_hidden2[]" value="{{$spdet->wo_dets_rc}}" />
                                         </td>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$spdet->wo_dets_ins}}
+                                            <input type="hidden" name="inscode_hidden2[]" value="{{$spdet->wo_dets_ins}}" />
                                         </td>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$spdet->wo_dets_sp}}
+                                            <input type="hidden" name="spcode_hidden2[]" value="{{$spdet->wo_dets_sp}}" />
                                         </td>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$spdet->spm_desc}}
@@ -508,10 +521,10 @@
                                             {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_eng_qty}}
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                            <input type="number" step="1" min="0" class="form-control" style="width: 100%;" value="{{$spdet->wo_dets_eng_qty}}">
+                                            <input type="number" step="1" min="0" max="{{$spdet->wo_dets_eng_qty}}" class="form-control" name="qtyused1[]" style="width: 100%;" value="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}">
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                            {{$spdet->wo_dets_eng_qty}}
+                                            {{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0' }}
                                         </td>
                                     </tr>
                                     @endif
@@ -546,7 +559,7 @@
                     </div> -->
                     <div id="testdiv2">
                         <div class="form-group row col-md-12 divrepcode">
-                            <label class="col-md-12 col-form-label text-md-left">Repair code : {{$data->first()->rr22}} -- {{$data->first()->r22}} </label>
+                            <label class="col-md-12 col-form-label text-md-left" style="color: blue; font-weight: bold;">Repair code : {{$data->first()->rr22}} -- {{$data->first()->r22}} </label>
                             <label class="col-md-5 col-form-label text-md-left">Instruction :</label>
                         </div>
                         <div class="table-responsive col-12">
@@ -582,6 +595,7 @@
                                 <tbody>
                                     @php
                                     $i = 1;
+                                    $l = 0;
                                     @endphp
                                     @forelse ( $datadetail as $insdet )
                                     @if ($insdet->wo_dets_rc == $data->first()->rr22)
@@ -589,32 +603,39 @@
                                         <td style="margin-top:0;height:40px;border:2px solid">
                                             {{$i++}}
                                         </td>
+                                        <input type="hidden" name="wonbr2_hidden1[]" value="{{$data->first()->wo_nbr}}" />
+                                        <input type="hidden" name="rc2_hidden1[]" value="{{$data->first()->rr22}}" />
                                         <td style="margin-top:0;height:40px;border:2px solid">
                                             {{$insdet->ins_desc}}
+                                            <input type="hidden" name="inscode2_hidden1[]" value="{{$insdet->ins_code}}" />
                                         </td>
                                         <td style="margin-top:0;height:40px;border:2px solid">
                                             {{$insdet->ins_check}}
                                         </td>
                                         <fieldset id="do">
                                             <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                                <input type="radio" value="y" name="do{{$i}}">
+                                                <input type="radio" value="y" name="do2[{{$l}}]" required>
                                             </td>
                                             <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                                <input type="radio" value="n" name="do{{$i}}">
+                                                <input type="radio" value="n" name="do2[{{$l}}]">
                                             </td>
                                         </fieldset>
                                         <fieldset id="result">
                                             <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                                <input type="radio" value="y" name="result{{$i}}">
+                                                <input type="radio" value="y" name="result2[{{$l}}]" required>
                                             </td>
                                             <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                                <input type="radio" value="n" name="result{{$i}}">
+                                                <input type="radio" value="n" name="result2[{{$l}}]">
                                             </td>
                                         </fieldset>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                            <textarea name="note1[]" id="note[]" style="border:0;width:100%"></textarea>
+                                            <textarea name="note2[]" id="note[]" style="border:0;width:100%"></textarea>
                                         </td>
                                     </tr>
+
+                                    @php
+                                    $l++;
+                                    @endphp
 
 
                                     @endif
@@ -671,12 +692,16 @@
                                     <tr>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$i++}}
+                                            <input type="hidden" name="wonbr2_hidden2[]" value="{{$spdet->wo_dets_nbr}}" />
+                                            <input type="hidden" name="rc2_hidden2[]" value="{{$spdet->wo_dets_rc}}" />
                                         </td>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$spdet->wo_dets_ins}}
+                                            <input type="hidden" name="inscode2_hidden2[]" value="{{$spdet->wo_dets_ins}}" />
                                         </td>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$spdet->wo_dets_sp}}
+                                            <input type="hidden" name="spcode2_hidden2[]" value="{{$spdet->wo_dets_sp}}" />
                                         </td>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$spdet->spm_desc}}
@@ -688,10 +713,10 @@
                                             {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_eng_qty}}
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                            <input type="number" step="1" min="0" class="form-control" style="width: 100%;" value="{{$spdet->wo_dets_eng_qty}}">
+                                            <input type="number" step="1" min="0" max="{{$spdet->wo_dets_eng_qty}}" name="qtyused2[]" class="form-control" style="width: 100%;" value="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}">
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                            {{$spdet->wo_dets_eng_qty}}
+                                            {{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0' }}
                                         </td>
                                     </tr>
                                     @endif
@@ -726,7 +751,7 @@
                     </div> -->
                     <div id="testdiv3">
                         <div class="form-group row col-md-12 divrepcode">
-                            <label class="col-md-12 col-form-label text-md-left">Repair code : {{$data->first()->rr33}} -- {{$data->first()->r33}} </label>
+                            <label class="col-md-12 col-form-label text-md-left" style="color: blue; font-weight: bold;">Repair code : {{$data->first()->rr33}} -- {{$data->first()->r33}} </label>
                             <label class="col-md-5 col-form-label text-md-left">Instruction :</label>
                         </div>
                         <div class="table-responsive col-12">
@@ -762,39 +787,47 @@
                                 <tbody>
                                     @php
                                     $i = 1;
+                                    $m = 0;
                                     @endphp
                                     @forelse ( $datadetail as $insdet )
                                     @if ($insdet->wo_dets_rc == $data->first()->rr33)
                                     <tr>
                                         <td style="margin-top:0;height:40px;border:2px solid">
                                             {{$i++}}
+                                            <input type="hidden" name="wonbr3_hidden1[]" value="{{$data->first()->wo_nbr}}" />
+                                            <input type="hidden" name="rc3_hidden1[]" value="{{$data->first()->rr33}}" />
                                         </td>
                                         <td style="margin-top:0;height:40px;border:2px solid">
                                             {{$insdet->ins_desc}}
+                                            <input type="hidden" name="inscode3_hidden1[]" value="{{$insdet->ins_code}}" />
                                         </td>
                                         <td style="margin-top:0;height:40px;border:2px solid">
                                             {{$insdet->ins_check}}
                                         </td>
                                         <fieldset id="do">
                                             <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                                <input type="radio" value="y" name="do{{$i}}">
+                                                <input type="radio" value="y" name="do3[{{$m}}]" required>
                                             </td>
                                             <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                                <input type="radio" value="n" name="do{{$i}}">
+                                                <input type="radio" value="n" name="do3[{{$m}}]">
                                             </td>
                                         </fieldset>
                                         <fieldset id="result">
                                             <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                                <input type="radio" value="y" name="result{{$i}}">
+                                                <input type="radio" value="y" name="result3[{{$m}}]" required>
                                             </td>
                                             <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                                <input type="radio" value="n" name="result{{$i}}">
+                                                <input type="radio" value="n" name="result3[{{$m}}]">
                                             </td>
                                         </fieldset>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                            <textarea name="note1[]" id="note[]" style="border:0;width:100%"></textarea>
+                                            <textarea name="note3[]" id="note[]" style="border:0;width:100%"></textarea>
                                         </td>
                                     </tr>
+
+                                    @php
+                                        $m++;
+                                    @endphp
 
 
                                     @endif
@@ -852,14 +885,18 @@
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$i++}}
                                         </td>
+                                        <input type="hidden" name="wonbr3_hidden2[]" value="{{$spdet->wo_dets_nbr}}" />
+                                        <input type="hidden" name="rc3_hidden2[]" value="{{$spdet->wo_dets_rc}}" />
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$spdet->wo_dets_ins}}
+                                            <input type="hidden" name="inscode3_hidden2[]" value="{{$spdet->wo_dets_ins}}" />
                                         </td>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$spdet->wo_dets_sp}}
                                         </td>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$spdet->spm_desc}}
+                                            <input type="hidden" name="spcode3_hidden2[]" value="{{$spdet->wo_dets_sp}}" />
                                         </td>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{($spdet->insd_um != null) ? $spdet->insd_um : $spdet->spm_um }}
@@ -868,10 +905,10 @@
                                             {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_eng_qty}}
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                            <input type="number" step="1" min="0" class="form-control" style="width: 100%;" value="{{$spdet->wo_dets_eng_qty}}">
+                                        <input type="number" step="1" min="0" max="{{$spdet->wo_dets_eng_qty}}" name="qtyused3[]" class="form-control" style="width: 100%;" value="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}">
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                            {{$spdet->wo_dets_eng_qty}}
+                                            {{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0' }}
                                         </td>
                                     </tr>
                                     @endif

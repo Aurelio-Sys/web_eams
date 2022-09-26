@@ -19,7 +19,7 @@
   <input type="hidden" name='wonbrr' value="{{$show->wo_nbr}}"> 
   <input type="hidden" name='wotypee' value="{{$show->wo_type}}"> 
   @if($show->wo_status == 'started')
-    <button type="button" class="btn btn-success btn-action jobview" style="width: 80%;">View</button>
+    <!-- <button type="button" class="btn btn-success btn-action jobview" style="width: 80%;">View</button> -->
     <a class="btn btn-success btn-action" href="{{route('editWO', $show->wo_nbr)}}"><i class="fas fa-check-square"></i></a>
   
   @endif

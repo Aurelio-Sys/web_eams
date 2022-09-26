@@ -1789,7 +1789,8 @@ class wocontroller extends Controller
         }
     }
 
-    public function geteditwoold(Request $req){
+    public function geteditwoold(Request $req)
+    {
         //dd($req->get('nomorwo'));
         // dd('aaa');
         $nowo = $req->get('nomorwo');
@@ -1831,13 +1832,13 @@ class wocontroller extends Controller
             ->where('wo_mstr.wo_nbr', '=', $nowo)
             ->get();
 
-            return $data;
+        return $data;
     }
 
     public function geteditwo($wo)
     {
 
-        
+
         //dd($req->get('nomorwo'));
         // dd('aaa');
         $nowo = $wo;
@@ -1878,79 +1879,87 @@ class wocontroller extends Controller
             ->leftjoin('xxrepgroup_mstr', 'xxrepgroup_mstr.xxrepgroup_nbr', 'wo_mstr.wo_repair_group')
             ->where('wo_mstr.wo_nbr', '=', $nowo)
             ->get();
-        
+
 
         // dd($data);
         $data2 = "";
-        if($currwo->wo_repair_type == "group"){
+        if ($currwo->wo_repair_type == "group") {
             $data2 = DB::table('wo_mstr')
-                    ->select('wo_nbr','wo_repair_type','wo_repair_group','xxrepgroup_nbr', 'xxrepgroup_desc',
-                            'xxrepgroup_rep_code','repm_code','repm_desc')
-                    ->leftJoin('xxrepgroup_mstr','xxrepgroup_mstr.xxrepgroup_nbr','wo_mstr.wo_repair_group')
-                    ->leftJoin('rep_master','xxrepgroup_mstr.xxrepgroup_rep_code','rep_master.repm_code')
-                    ->where('wo_mstr.wo_nbr','=',$nowo)
-                    ->get();
+                ->select(
+                    'wo_nbr',
+                    'wo_repair_type',
+                    'wo_repair_group',
+                    'xxrepgroup_nbr',
+                    'xxrepgroup_desc',
+                    'xxrepgroup_rep_code',
+                    'repm_code',
+                    'repm_desc'
+                )
+                ->leftJoin('xxrepgroup_mstr', 'xxrepgroup_mstr.xxrepgroup_nbr', 'wo_mstr.wo_repair_group')
+                ->leftJoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
+                ->where('wo_mstr.wo_nbr', '=', $nowo)
+                ->get();
 
-                    // dd($data2);
+            // dd($data2);
         }
 
         $datadetail = DB::table('wo_dets')
-                    ->leftJoin('ins_mstr','wo_dets.wo_dets_ins','ins_mstr.ins_code')
-                    ->where('wo_dets_nbr','=',$nowo)
-                    ->groupBy('wo_dets_rc','wo_dets_ins')
-                    ->get();
+            ->leftJoin('ins_mstr', 'wo_dets.wo_dets_ins', 'ins_mstr.ins_code')
+            ->where('wo_dets_nbr', '=', $nowo)
+            ->groupBy('wo_dets_rc', 'wo_dets_ins')
+            ->get();
 
         // dd($datadetail);
 
         $detailsp = DB::table('wo_dets')
-                    ->leftJoin('ins_mstr','wo_dets.wo_dets_ins','ins_mstr.ins_code')
-                    ->leftjoin('insd_det',function ($join){
-                        $join->on('wo_dets.wo_dets_ins','=','insd_det.insd_code');
-                        $join->on('wo_dets.wo_dets_sp','=','insd_det.insd_part');
-                    })
-                    ->leftJoin('sp_mstr','wo_dets.wo_dets_sp','sp_mstr.spm_code')
-                    ->where('wo_dets_nbr','=',$nowo)
-                    ->get();
+            ->leftJoin('ins_mstr', 'wo_dets.wo_dets_ins', 'ins_mstr.ins_code')
+            ->leftjoin('insd_det', function ($join) {
+                $join->on('wo_dets.wo_dets_ins', '=', 'insd_det.insd_code');
+                $join->on('wo_dets.wo_dets_sp', '=', 'insd_det.insd_part');
+            })
+            ->leftJoin('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')
+            ->where('wo_dets_nbr', '=', $nowo)
+            ->get();
 
         // dd($detailsp);
-                
+
         // dd($data);
         // return $data;
 
-            $engineer = DB::table('users')
-                ->join('roles', 'users.role_user', 'roles.role_code')
-                ->where('role_desc', '=', 'Engineer')
-                ->get();
-            $asset = DB::table('wo_mstr')
-                ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
-                ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-                ->where(function ($status) {
-                    $status->where('wo_status', '=', 'started')
-                        ->orwhere('wo_status', '=', 'finish');
-                })
-                ->where(function ($query) {
-                    $query->where('wo_engineer1', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer5', '=', Session()->get('username'));
-                })
-                ->groupBy('asset_code')
-                ->orderBy('asset_code')
-                ->get();
-            $repaircode = DB::table('rep_master')
-                ->get();
+        $engineer = DB::table('users')
+            ->join('roles', 'users.role_user', 'roles.role_code')
+            ->where('role_desc', '=', 'Engineer')
+            ->get();
+        $asset = DB::table('wo_mstr')
+            ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
+            ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+            ->where(function ($status) {
+                $status->where('wo_status', '=', 'started')
+                    ->orwhere('wo_status', '=', 'finish');
+            })
+            ->where(function ($query) {
+                $query->where('wo_engineer1', '=', Session()->get('username'))
+                    ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                    ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                    ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                    ->orwhere('wo_engineer5', '=', Session()->get('username'));
+            })
+            ->groupBy('asset_code')
+            ->orderBy('asset_code')
+            ->get();
+        $repaircode = DB::table('rep_master')
+            ->get();
 
-            $sparepart = DB::table('sp_mstr')
-                ->get();
-            $repairgroup = DB::table('xxrepgroup_mstr')
-                ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
-                ->distinct('xxrepgroup_nbr')
-                ->get();
-            $instruction = DB::table('ins_mstr')
-                ->get();
+        $sparepart = DB::table('sp_mstr')
+            ->get();
+        $repairgroup = DB::table('xxrepgroup_mstr')
+            ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
+            ->distinct('xxrepgroup_nbr')
+            ->get();
+        $instruction = DB::table('ins_mstr')
+            ->get();
 
-        return view('workorder.wofinish-done', compact('data','data2','engineer','asset','repaircode','sparepart','repairgroup','instruction','datadetail','detailsp'));
+        return view('workorder.wofinish-done', compact('data', 'data2', 'engineer', 'asset', 'repaircode', 'sparepart', 'repairgroup', 'instruction', 'datadetail', 'detailsp'));
     }
 
     public function approvewo(Request $req)
@@ -2107,7 +2116,7 @@ class wocontroller extends Controller
                 ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
                 ->where(function ($status) {
                     $status->where('wo_status', '=', 'ENG Confirmed')
-                        ->orWhere('wo_status','=', 'open')
+                        ->orWhere('wo_status', '=', 'open')
                         ->orwhere('wo_status', '=', 'started');
                 })
                 ->where(function ($query) {
@@ -2302,7 +2311,7 @@ class wocontroller extends Controller
 
     public function reportingwo(Request $req)
     {
-        //dd($req->all());    
+
         $dataaccess = DB::table('wo_mstr')
             ->where('wo_nbr', '=', $req->c_wonbr)
             ->first();
@@ -2505,9 +2514,195 @@ class wocontroller extends Controller
             toast('data reported successfuly', 'success');
             return redirect()->route('woreport');
         } else if ($req->repairtype == 'code') {
-            $rc1 = null;
-            $rc2 = null;
-            $rc3 = null;
+            // dd($req->all());
+            // dd($req->has('rc_hidden1'));
+            $rc1 = $req->has('rc_hidden1') ? $req->rc_hidden1[0] : null;
+            $rc2 = $req->has('rc2_hidden1') ? $req->rc2_hidden1[0] : null;
+            $rc3 = $req->has('rc3_hidden1') ? $req->rc3_hidden1[0] : null;
+
+            // dd($rc1,$rc2,$rc3);
+
+            // dd($req->wonbr_hidden1);
+            /* new code */
+            $getupdate_ins = DB::table('wo_dets')
+                ->where('wo_dets_nbr', '=', $req->c_wonbr)
+                ->get();
+
+            // dd(array_search('CTF-I001',$req->inscode_hidden1));
+
+            $temparray = [];
+            /* Repair code 1 dengan type wo "code" */
+            if ($req->has('rc_hidden1')) {
+
+                foreach ($getupdate_ins as $key => $datains) {
+                    if (in_array($datains->wo_dets_nbr, $req->wonbr_hidden1) && in_array($datains->wo_dets_rc, $req->rc_hidden1) && in_array($datains->wo_dets_ins, $req->inscode_hidden1)) {
+
+                        $ky1 = array_search($datains->wo_dets_nbr, $req->wonbr_hidden1);
+                        $ky2 = array_search($datains->wo_dets_rc, $req->rc_hidden1);
+                        $ky3 = array_search($datains->wo_dets_ins, $req->inscode_hidden1);
+
+                        DB::table('wo_dets')
+                            ->where('wo_dets_nbr', $req->wonbr_hidden1[$ky1])
+                            ->where('wo_dets_rc', $req->rc_hidden1[$ky2])
+                            ->where('wo_dets_ins', $req->inscode_hidden1[$ky3])
+                            ->update([
+                                'wo_dets_flag' => $req->result1[$ky3],
+                                'wo_dets_do_flag' => $req->do1[$ky3],
+                                'wo_dets_fu_note' => $req->note1[$ky3],
+                            ]);
+                    }
+                }
+
+
+
+                foreach ($req->wonbr_hidden2 as $key => $value) {
+                    DB::table('wo_dets')
+                        ->where('wo_dets_nbr', $req->wonbr_hidden2[$key])
+                        ->where('wo_dets_rc', $req->rc_hidden2[$key])
+                        ->where('wo_dets_ins', $req->inscode_hidden2[$key])
+                        ->where('wo_dets_sp', $req->spcode_hidden2[$key])
+                        ->update([
+                            'wo_dets_qty_used' => $req->qtyused1[$key]
+                        ]);
+                }
+
+                // dd($temparray);
+            }
+
+            /* Repair code 2 dengan type wo "code" */
+            if ($req->has('rc2_hidden1')) {
+
+                foreach ($getupdate_ins as $key => $datains) {
+                    if (in_array($datains->wo_dets_nbr, $req->wonbr2_hidden1) && in_array($datains->wo_dets_rc, $req->rc2_hidden1) && in_array($datains->wo_dets_ins, $req->inscode2_hidden1)) {
+
+                        $ky1 = array_search($datains->wo_dets_nbr, $req->wonbr2_hidden1);
+                        $ky2 = array_search($datains->wo_dets_rc, $req->rc2_hidden1);
+                        $ky3 = array_search($datains->wo_dets_ins, $req->inscode2_hidden1);
+
+                        DB::table('wo_dets')
+                            ->where('wo_dets_nbr', $req->wonbr2_hidden1[$ky1])
+                            ->where('wo_dets_rc', $req->rc2_hidden1[$ky2])
+                            ->where('wo_dets_ins', $req->inscode2_hidden1[$ky3])
+                            ->update([
+                                'wo_dets_flag' => $req->result2[$ky3],
+                                'wo_dets_do_flag' => $req->do2[$ky3],
+                                'wo_dets_fu_note' => $req->note2[$ky3],
+                            ]);
+                    }
+                }
+
+                foreach ($req->wonbr2_hidden2 as $key => $value) {
+                    DB::table('wo_dets')
+                        ->where('wo_dets_nbr', $req->wonbr2_hidden2[$key])
+                        ->where('wo_dets_rc', $req->rc2_hidden2[$key])
+                        ->where('wo_dets_ins', $req->inscode2_hidden2[$key])
+                        ->where('wo_dets_sp', $req->spcode2_hidden2[$key])
+                        ->update([
+                            'wo_dets_qty_used' => $req->qtyused2[$key]
+                        ]);
+                }
+
+                // foreach ($getupdate_ins as $key => $datains) {
+
+                //     // dump($key);
+
+                //     if (in_array($datains->wo_dets_nbr, $req->wonbr2_hidden2) && in_array($datains->wo_dets_rc, $req->rc2_hidden2) && in_array($datains->wo_dets_ins, $req->inscode2_hidden2) && in_array($datains->wo_dets_sp, $req->spcode2_hidden2)) {
+                //         $ky1 = array_search($datains->wo_dets_nbr, $req->wonbr2_hidden2);
+                //         DB::table('wo_dets')
+                //             ->where('wo_dets_nbr', $req->wonbr2_hidden2[$ky1])
+                //             ->where('wo_dets_rc', $req->rc2_hidden2[$ky1])
+                //             ->where('wo_dets_ins', $req->inscode2_hidden2[$ky1])
+                //             ->where('wo_dets_sp', $req->spcode2_hidden2[$ky1])
+                //             ->update([
+                //                 'wo_dets_qty_used' => $req->qtyused2[$ky1]
+                //             ]);
+
+                //         $temparray[] = [
+                //             'wonbr' => $req->wonbr2_hidden2[$ky1],
+                //             'rc'    => $req->rc2_hidden2[$ky1],
+                //             'inscode' => $req->inscode2_hidden2[$ky1],
+                //             'spcode' => $req->spcode2_hidden2[$ky1],
+                //             'qtyused' => $req->qtyused2[$ky1],
+                //             'site'  => $datains->wo_dets_wh_site,
+                //             'location' => $datains->wo_dets_wh_loc
+                //         ];
+                //     }
+                // }
+            }
+
+            /* Repair code 3 dengan type wo "code" */
+            if ($req->has('rc3_hidden1')) {
+
+                foreach ($getupdate_ins as $key => $datains) {
+                    if (in_array($datains->wo_dets_nbr, $req->wonbr3_hidden1) && in_array($datains->wo_dets_rc, $req->rc3_hidden1) && in_array($datains->wo_dets_ins, $req->inscode3_hidden1)) {
+
+                        $ky1 = array_search($datains->wo_dets_nbr, $req->wonbr3_hidden1);
+                        $ky2 = array_search($datains->wo_dets_rc, $req->rc3_hidden1);
+                        $ky3 = array_search($datains->wo_dets_ins, $req->inscode3_hidden1);
+
+                        DB::table('wo_dets')
+                            ->where('wo_dets_nbr', $req->wonbr3_hidden1[$ky1])
+                            ->where('wo_dets_rc', $req->rc3_hidden1[$ky2])
+                            ->where('wo_dets_ins', $req->inscode3_hidden1[$ky3])
+                            ->update([
+                                'wo_dets_flag' => $req->result3[$ky3],
+                                'wo_dets_do_flag' => $req->do3[$ky3],
+                                'wo_dets_fu_note' => $req->note3[$ky3],
+                            ]);
+                    }
+                }
+
+                foreach ($req->wonbr3_hidden2 as $key => $value) {
+                    DB::table('wo_dets')
+                        ->where('wo_dets_nbr', $req->wonbr3_hidden2[$key])
+                        ->where('wo_dets_rc', $req->rc3_hidden2[$key])
+                        ->where('wo_dets_ins', $req->inscode3_hidden2[$key])
+                        ->where('wo_dets_sp', $req->spcode3_hidden2[$key])
+                        ->update([
+                            'wo_dets_qty_used' => $req->qtyused3[$key]
+                        ]);
+                }
+
+                // foreach ($getupdate_ins as $key => $datains) {
+
+                //     // dump($key);
+
+                //     if (in_array($datains->wo_dets_nbr, $req->wonbr3_hidden2) && in_array($datains->wo_dets_rc, $req->rc3_hidden2) && in_array($datains->wo_dets_ins, $req->inscode3_hidden2) && in_array($datains->wo_dets_sp, $req->spcode3_hidden2)) {
+                //         $ky1 = array_search($datains->wo_dets_nbr, $req->wonbr3_hidden2);
+                //         DB::table('wo_dets')
+                //             ->where('wo_dets_nbr', $req->wonbr3_hidden2[$ky1])
+                //             ->where('wo_dets_rc', $req->rc3_hidden2[$ky1])
+                //             ->where('wo_dets_ins', $req->inscode3_hidden2[$ky1])
+                //             ->where('wo_dets_sp', $req->spcode3_hidden2[$ky1])
+                //             ->update([
+                //                 'wo_dets_qty_used' => $req->qtyused2[$ky1]
+                //             ]);
+
+                //         $temparray[] = [
+                //             'wonbr' => $req->wonbr3_hidden2[$ky1],
+                //             'rc'    => $req->rc3_hidden2[$ky1],
+                //             'inscode' => $req->inscode3_hidden2[$ky1],
+                //             'spcode' => $req->spcode3_hidden2[$ky1],
+                //             'qtyused' => $req->qtyused3[$ky1],
+                //             'site'  => $datains->wo_dets_wh_site,
+                //             'location' => $datains->wo_dets_wh_loc
+                //         ];
+                //     }
+                // }
+            }
+
+
+            /* get data buat qxtend issue unplanned */
+            $dataqxtend = DB::table('wo_dets')
+                        ->select('wo_dets_nbr','wo_dets_sp','wo_dets_wh_site','wo_dets_wh_loc',DB::raw('SUM(wo_dets_qty_used) as qtytoqx'))
+                        ->where('wo_dets_nbr','=',$req->c_wonbr)
+                        ->groupBy('wo_dets_sp','wo_dets_wh_site','wo_dets_wh_loc')
+                        ->get();
+            
+            // dd($dataqxtend);
+
+            /* QXTEND issue - unplanned */
+
 
             /* A211026 disini sebetulnya ada coding untuk menyimpan data detail repair 1 2 3, tapi yang ini dihapus karena tidak digunakan. coding aslinya sudah di backup di "backup-20211026 sblm PM attach file" */
 
