@@ -160,6 +160,7 @@
                     <div id="testdivgroup">
                         @php
                             $h = 1;
+                            $n = 0;
                         @endphp
                         @foreach ( $data2 as $datagroup )
                         
@@ -200,41 +201,41 @@
                                 <tbody>
                                     @php
                                     $i = 1;
-                                    $n = 0;
+                                    
                                     @endphp
                                     @forelse ( $datadetail as $insdet )
                                     @if ($insdet->wo_dets_rc == $datagroup->repm_code)
                                     <tr>
                                         <td style="margin-top:0;height:40px;border:2px solid">
                                             {{$i++}}
-                                            <input type="hidden" name="wonbr{{$h}}_hidden1[]" value="{{$datagroup->xxrepgroup_rep_code}}" />
-                                            <input type="hidden" name="rc{{$h}}_hidden1[]" value="{{$datagroup->repm_code}}" />
+                                            <input type="hidden" name="wonbr_hidden1[]" value="{{$datagroup->xxrepgroup_rep_code}}" />
+                                            <input type="hidden" name="rc_hidden1[]" value="{{$datagroup->repm_code}}" />
                                         </td>
                                         <td style="margin-top:0;height:40px;border:2px solid">
                                             {{$insdet->ins_desc}}
-                                            <input type="hidden" name="inscode{{$h}}_hidden1[]" value="{{$insdet->ins_code}}" />
+                                            <input type="hidden" name="inscode_hidden1[]" value="{{$insdet->ins_code}}" />
                                         </td>
                                         <td style="margin-top:0;height:40px;border:2px solid">
                                             {{$insdet->ins_check}}
                                         </td>
                                         <fieldset id="do">
                                             <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                                <input type="radio" value="y" name="do{{$h}}[{{$n}}]" required>
+                                                <input type="radio" value="y" name="do[0][{{$n}}]" required>
                                             </td>
                                             <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                                <input type="radio" value="n" name="do{{$h}}[{{$n}}]">
+                                                <input type="radio" value="n" name="do[0][{{$n}}]">
                                             </td>
                                         </fieldset>
                                         <fieldset id="result">
                                             <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                                <input type="radio" value="y" name="result{{$h}}[{{$n}}]" required>
+                                                <input type="radio" value="y" name="result[0][{{$n}}]" required>
                                             </td>
                                             <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                                <input type="radio" value="n" name="result{{$h}}[{{$n}}]">
+                                                <input type="radio" value="n" name="result[0][{{$n}}]">
                                             </td>
                                         </fieldset>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                            <textarea name="note{{$h}}[]" id="note[]" style="border:0;width:100%"></textarea>
+                                            <textarea name="note[]" id="note[]" style="border:0;width:100%"></textarea>
                                         </td>
                                     </tr>
 
@@ -298,15 +299,15 @@
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$i++}}
                                         </td>
-                                        <input type="hidden" name="wonbr{{$h}}_hidden2[]" value="{{$spdet->wo_dets_nbr}}" />
-                                        <input type="hidden" name="rc{{$h}}_hidden2[]" value="{{$spdet->wo_dets_rc}}" />
+                                        <input type="hidden" name="wonbr_hidden2[]" value="{{$spdet->wo_dets_nbr}}" />
+                                        <input type="hidden" name="rc_hidden2[]" value="{{$spdet->wo_dets_rc}}" />
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$spdet->wo_dets_ins}}
-                                            <input type="hidden" name="inscode{{$h}}_hidden2[]" value="{{$spdet->wo_dets_ins}}" />
+                                            <input type="hidden" name="inscode_hidden2[]" value="{{$spdet->wo_dets_ins}}" />
                                         </td>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$spdet->wo_dets_sp}}
-                                            <input type="hidden" name="spcode{{$h}}_hidden2[]" value="{{$spdet->wo_dets_sp}}" />
+                                            <input type="hidden" name="spcode_hidden2[]" value="{{$spdet->wo_dets_sp}}" />
                                         </td>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$spdet->spm_desc}}
@@ -318,7 +319,7 @@
                                             {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_eng_qty}}
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                            <input type="number" step="1" min="0" class="form-control" style="width: 100%;" max="{{$spdet->wo_dets_eng_qty}}" name="qtyused{{$h}}[]" value="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}">
+                                            <input type="number" step="1" min="0" class="form-control" style="width: 100%;" max="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}" name="qtyused[]" value="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}">
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
                                             {{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0' }}
@@ -545,7 +546,7 @@
                                             {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_eng_qty}}
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                            <input type="number" step="1" min="0" max="{{$spdet->wo_dets_eng_qty}}" class="form-control" name="qtyused1[]" style="width: 100%;" value="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}">
+                                            <input type="number" step="1" min="0" max="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}" class="form-control" name="qtyused1[]" style="width: 100%;" value="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}">
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
                                             {{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0' }}
@@ -737,7 +738,7 @@
                                             {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_eng_qty}}
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                            <input type="number" step="1" min="0" max="{{$spdet->wo_dets_eng_qty}}" name="qtyused2[]" class="form-control" style="width: 100%;" value="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}">
+                                            <input type="number" step="1" min="0" max="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}" name="qtyused2[]" class="form-control" style="width: 100%;" value="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}">
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
                                             {{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0' }}
@@ -929,7 +930,7 @@
                                             {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_eng_qty}}
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                        <input type="number" step="1" min="0" max="{{$spdet->wo_dets_eng_qty}}" name="qtyused3[]" class="form-control" style="width: 100%;" value="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}">
+                                        <input type="number" step="1" min="0" max="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}" name="qtyused3[]" class="form-control" style="width: 100%;" value="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}">
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
                                             {{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0' }}
@@ -1082,6 +1083,12 @@
         // if (document.getElementById('arccheck').checked) {
         //     $('#arccheck').change();
         // }
+
+        $('#newedit').submit(function(event) {
+            document.getElementById('btnconf').style.display = 'none';
+            document.getElementById('btnclose').style.display = 'none';
+            document.getElementById('btnloading').style.display = '';
+        });
 
 
 
