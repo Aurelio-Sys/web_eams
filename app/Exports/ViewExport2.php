@@ -95,16 +95,16 @@ class ViewExport2 implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
                 $kondisi .= "(wo_engineer1 = '".$this->engineer."' or wo_engineer2 = '".$this->engineer."' or wo_engineer3 = '".$this->engineer."' or wo_engineer4 = '".$this->engineer."' or wo_engineer5 = '".$this->engineer."')";
             }
         }
-        //dd($kondisi);
+        // dd($kondisi);
         if($kondisi == ''){
-            //dd('test1');
+            // dd('test1');
             return  DB::table('wo_mstr')
                 ->selectRaw("wo_nbr,(case when wo_type = 'auto' then 'PM' else 'WO' end) as Type,
                     wo_sr_nbr,wo_note,wo_asset,asset_desc,
-                    IsNull(wo_mstr.wo_engineer1,'-') as 'eng1', IsNull(u1.eng_desc,'-') as 'nm1',
-                    IsNull(wo_mstr.wo_engineer2,'-') as 'eng2', IsNull(u2.eng_desc,'-') as 'nm2', IsNull(wo_engineer3, '-') as 'eng3',
-                    IsNull(u3.eng_desc, '-') as 'nm3', IsNull(wo_engineer4, '-') as 'eng4', IsNull(u4.eng_desc, '-') as 'nm4',
-                    IsNull(wo_engineer5, '-') as 'eng5', IsNull(u5.eng_desc, '-') as 'nm5',
+                    IfNull(wo_mstr.wo_engineer1,'-') as 'eng1', IfNull(u1.eng_desc,'-') as 'nm1',
+                    IfNull(wo_mstr.wo_engineer2,'-') as 'eng2', IfNull(u2.eng_desc,'-') as 'nm2', IfNull(wo_engineer3, '-') as 'eng3',
+                    IfNull(u3.eng_desc, '-') as 'nm3', IfNull(wo_engineer4, '-') as 'eng4', IfNull(u4.eng_desc, '-') as 'nm4',
+                    IfNull(wo_engineer5, '-') as 'eng5', IfNull(u5.eng_desc, '-') as 'nm5',
                     dept_desc, wo_schedule, wo_finish_date, wo_duedate, wo_status, wo_priority, CAST(wo_created_at AS DATE) AS wo_created_at2, wo_creator")
                 ->leftjoin('eng_mstr as u1','wo_mstr.wo_engineer1','u1.eng_code')
                 ->leftjoin('eng_mstr as u2','wo_mstr.wo_engineer2','u2.eng_code')
@@ -123,10 +123,10 @@ class ViewExport2 implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
             return  DB::table('wo_mstr')
             ->selectRaw("wo_nbr,(case when wo_type = 'auto' then 'PM' else 'WO' end) as Type,
                 wo_sr_nbr,wo_note,wo_asset,asset_desc,
-                IsNull(wo_mstr.wo_engineer1,'-') as 'eng1', IsNull(u1.eng_desc,'-') as 'nm1',
-                IsNull(wo_mstr.wo_engineer2,'-') as 'eng2', IsNull(u2.eng_desc,'-') as 'nm2', IsNull(wo_engineer3, '-') as 'eng3',
-                IsNull(u3.eng_desc, '-') as 'nm3', IsNull(wo_engineer4, '-') as 'eng4', IsNull(u4.eng_desc, '-') as 'nm4',
-                IsNull(wo_engineer5, '-') as 'eng5', IsNull(u5.eng_desc, '-') as 'nm5',
+                IfNull(wo_mstr.wo_engineer1,'-') as 'eng1', IfNull(u1.eng_desc,'-') as 'nm1',
+                IfNull(wo_mstr.wo_engineer2,'-') as 'eng2', IfNull(u2.eng_desc,'-') as 'nm2', IfNull(wo_engineer3, '-') as 'eng3',
+                IfNull(u3.eng_desc, '-') as 'nm3', IfNull(wo_engineer4, '-') as 'eng4', IfNull(u4.eng_desc, '-') as 'nm4',
+                IfNull(wo_engineer5, '-') as 'eng5', IfNull(u5.eng_desc, '-') as 'nm5',
                 dept_desc, wo_schedule, wo_finish_date, wo_duedate, wo_status, wo_priority, CAST(wo_created_at AS DATE) AS wo_created_at2, wo_creator")
             ->leftjoin('eng_mstr as u1','wo_mstr.wo_engineer1','u1.eng_code')
             ->leftjoin('eng_mstr as u2','wo_mstr.wo_engineer2','u2.eng_code')

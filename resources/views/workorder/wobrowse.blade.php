@@ -2520,7 +2520,7 @@ div #munculgambar .gambar:hover{
         col += '<select id="c_engineer' + i + '" type="text" class="form-control c_engineer" name="c_engineer[]" required>';
         col += '<option value="">--Select Engineer--</option>';
         @foreach($user as $user2)
-        col += '<option value="{{$user2->eng_code}}">{{$user2->eng_desc}}</option>';
+        col += '<option value="{{$user2->eng_code}}">{{$user2->eng_code}} -- {{$user2->eng_desc}}</option>';
         @endforeach
         col += '</select>';
         col += '</div>';

@@ -678,7 +678,7 @@
     // document.getElementById('tmppriority').value  = wopriority;
     // document.getElementById('tmpengineer').value    = woengineer;
 
-    window.open("/donlodwo?wonumber=" + wonumber + "&asset=" + woasset + "&status=" + wostatus + "&priority=" + wopriority + "&engineer=" + woengineer + "&creator" + wocreator, '_blank');
+    window.open("/donlodwo?wonumber=" + wonumber + "&asset=" + woasset + "&status=" + wostatus + "&priority=" + wopriority + "&engineer=" + woengineer + "&creator=" + wocreator, '_blank');
   });
 
   $(document).on('click', '.imageview', function() {

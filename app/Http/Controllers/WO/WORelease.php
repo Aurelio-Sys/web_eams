@@ -56,6 +56,7 @@ class WORelease extends Controller
 
     public function detailrelease($id)
     {
+        // dd('test?');
         $data = DB::table('wo_mstr')
             ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
             ->where('wo_id', '=', $id)
