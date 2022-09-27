@@ -77,6 +77,7 @@ class WHSConfirm extends Controller
             ->whereWo_dets_nbr($data->wo_nbr)
             ->get();
 
+        /* Semua data release sudah masuk di wo_dets 
         if ($data->wo_repair_code1 != "") {
             $sparepart1 = DB::table('wo_mstr')
                 ->select('wo_repair_code1 as repair_code', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
@@ -118,6 +119,20 @@ class WHSConfirm extends Controller
 
             $combineSP = $sparepart1->merge($sparepart2)->merge($sparepart3);
         }
+        */
+
+        $combineSP = DB::table('wo_mstr')
+            ->select('wo_dets_rc as repair_code', 'wo_dets_id as repdet_step', 'wo_dets_ins as ins_code', 'insd_part_desc', 'wo_dets_sp as insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_dets_wh_conf as whconf' , 'wo_dets_sp_qty')
+            ->leftJoin('wo_dets','wo_mstr.wo_nbr','wo_dets.wo_dets_nbr')
+            ->leftJoin('insd_det', function($join)
+            {
+                $join->on('wo_dets.wo_dets_ins', '=', 'insd_det.insd_code');
+                $join->on('wo_dets.wo_dets_sp', '=', 'insd_det.insd_part');
+            })
+            ->where('wo_id', '=', $id)
+            ->orderBy('ins_code', 'asc')
+            ->orderBy('repdet_step', 'asc')
+            ->get();
 
         // load stock
         $domain = ModelsQxwsa::first();
@@ -139,7 +154,10 @@ class WHSConfirm extends Controller
                     $table->string('stok_site');
                     $table->string('stok_loc');
                     $table->string('stok_part');
-                    $table->string('stok_qty');
+                    $table->decimal('stok_qty',13,2);
+                    $table->string('stok_lot');
+                    $table->string('stok_exp');
+                    $table->string('stok_date');
                     $table->temporary();
                 });
 
@@ -149,10 +167,14 @@ class WHSConfirm extends Controller
                         'stok_loc' => $datas->t_loc,
                         'stok_part' => $datas->t_part,
                         'stok_qty' => $datas->t_qty,
+                        'stok_lot' => $datas->t_lot,
+                        'stok_exp' => $datas->t_exp,
+                        'stok_date' => $datas->t_date,
                     ]);
                 }
 
                 $qstok = DB::table('temp_stok')
+                    ->orderBy('stok_date')
                     ->get();
 
                 Schema::dropIfExists('temp_stok');
@@ -213,7 +235,7 @@ class WHSConfirm extends Controller
                 DB::table('wo_mstr')
                     ->where('wo_nbr',$req->hide_wonum)
                     ->update([
-                        'wo_status' => 'whsconfirm',
+                        'wo_status' => 'open',
                     ]);
             }
             
@@ -226,6 +248,69 @@ class WHSConfirm extends Controller
             DB::rollBack();
             toast('Confirm Failed', 'error');
             return redirect()->route('browseWhconfirm');
+        }
+    }
+
+    public function searchlot(Request $req) {
+        // dd($req->all());
+        // load stock
+
+        if ($req->ajax()) {
+
+            $domain = ModelsQxwsa::first();
+
+            $stokdata = (new WSAServices())->wsastok($domain->wsas_domain);
+
+            if ($stokdata === false) {
+                toast('WSA Failed', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+
+                if ($stokdata[1] == "false") {
+                    toast('Stok tidak ditemukan', 'error')->persistent('Dismiss');
+                    return redirect()->back();
+                } else {
+
+                    Schema::create('temp_stok', function ($table) {
+                        $table->increments('id');
+                        $table->string('stok_site');
+                        $table->string('stok_loc');
+                        $table->string('stok_part');
+                        $table->decimal('stok_qty',13,2);
+                        $table->string('stok_lot');
+                        $table->string('stok_exp');
+                        $table->string('stok_date');
+                        $table->temporary();
+                    });
+
+                    foreach ($stokdata[0] as $datas) {
+                        DB::table('temp_stok')->insert([
+                            'stok_site' => $datas->t_site,
+                            'stok_loc' => $datas->t_loc,
+                            'stok_part' => $datas->t_part,
+                            'stok_qty' => $datas->t_qty,
+                            'stok_lot' => $datas->t_lot,
+                            'stok_exp' => $datas->t_exp,
+                            'stok_date' => $datas->t_date,
+                        ]);
+                    }
+
+                    $qstok = DB::table('temp_stok')
+                        ->orderBy('stok_date')
+                        ->get();
+
+                    Schema::dropIfExists('temp_stok');
+                }
+            }
+//    dd($req->t_part)       ;  
+            $qlot = $qstok->where('stok_site','=',$req->t_site)->where('stok_part','=',$req->t_part);
+
+            $output = '<option value="" >Select</option>';
+            foreach($qlot as $qlot){
+                $output .= '<option value="'.$qlot->stok_lot.'" >'.$qlot->stok_lot.'</option>';
+            }
+            dd($output);
+            return response($output);
         }
     }
 }

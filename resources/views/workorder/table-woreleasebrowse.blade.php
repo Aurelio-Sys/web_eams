@@ -1,7 +1,8 @@
 @forelse ( $data as $datas )
 <tr>
     <td>{{ $datas->wo_nbr }}</td>
-    <td>{{ $datas->asset_code }} -- {{ $datas->asset_desc }}</td>
+    <td style="text-align: left;">{{ $datas->asset_code }} -- {{ $datas->asset_desc }}</td>
+    <td>{{ $datas->wo_status }}</td>
     <td>{{ $datas->wo_schedule }}</td>
     <td>{{ $datas->wo_duedate }}</td>
     <td>{{ $datas->wo_priority }}</td>
@@ -15,7 +16,7 @@
 </tr>
 @endforelse
 <tr>
-    <td style="border: none !important;" colspan="6">
+    <td style="border: none !important;" colspan="7">
         {{ $data->appends($_GET)->links() }}
     </td>
 </tr>
