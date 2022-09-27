@@ -158,7 +158,7 @@ class ConfirmEng extends Controller
                 DB::table('wo_mstr')
                 ->where('wo_nbr',$req->hide_wonum)
                 ->update([
-                    'wo_status' => 'engconfirm',
+                    'wo_status' => 'open',
                 ]);
             }
             

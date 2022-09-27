@@ -34,6 +34,8 @@ use Svg\Tag\Rect;
 use App\Jobs\EmailScheduleJobs;
 use App;
 use App\Exports\ViewExport2;
+use App\Models\Qxwsa;
+use Exception;
 use Maatwebsite\Excel\Facades\Excel;
 use ZipArchive;
 use Response;
@@ -2115,7 +2117,7 @@ class wocontroller extends Controller
             $data = DB::table('wo_mstr')
                 ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
                 ->where(function ($status) {
-                    $status->where('wo_status', '=', 'ENG Confirmed')
+                    $status->where('wo_status', '=', 'engconfirm')
                         ->orWhere('wo_status', '=', 'open')
                         ->orwhere('wo_status', '=', 'started');
                 })
@@ -2412,590 +2414,772 @@ class wocontroller extends Controller
         // }
         // else{
         //     dd('aaa');
-        if ($req->repairtype == 'manual') {
-            // dd($req->all());
-            // dd(count($req->ins));
-            DB::table('wo_manual_detail')
-                ->where('wo_manual_wo_nbr', '=', $req->c_wonbr)
-                ->delete();
-            for ($pop = 0; $pop < $req->manualcount; $pop++) {
-                if ($req->part[$pop] != null && $req->desc[$pop] != null) {
-                    $arraymanual = array([
-                        'wo_manual_wo_nbr'      => $req->c_wonbr,
-                        'wo_manual_number'      => $pop + 1,
-                        'wo_manual_ins'         => $req->ins[$pop],
-                        'wo_manual_part'        => $req->part[$pop],
-                        'wo_manual_desc'        => $req->desc[$pop],
-                        'wo_manual_flag'        => $req->group5[$pop],
-                        'wo_manual_flag2'       => $req->group51[$pop],
-                        'wo_manual_qty'         => $req->qty5[$pop],
-                        'wo_manual_repair_hour' => $req->rph5[$pop],
-                        'wo_manual_created_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
-                    ]);
-                    // dd($arraydettemp);
-                    DB::table('wo_manual_detail')->insert($arraymanual);
-                }
-            }
-            $finisht = $req->c_finishtime . ':' . $req->c_finishtimeminute;
-            $arrayy = [
-                'wo_updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                'wo_status'        => 'finish',
-                'wo_repair_code1'  => null,
-                'wo_repair_code2'  => null,
-                'wo_repair_code3'  => null,
-                'wo_repair_group'  => null,
-                'wo_repair_type'   => 'manual',
-                // 'wo_repair_hour'   => $req->c_repairhour,
-                'wo_finish_date'   => $req->c_finishdate,
-                'wo_finish_time'   => $finisht,
-                'wo_approval_note' => $req->c_note,
-                'wo_system_date'   => Carbon::now('ASIA/JAKARTA')->toDateString(),
-                'wo_system_time'   => Carbon::now('ASIA/JAKARTA')->toTimeString(),
-                'wo_access'        => 0
-            ];
+        DB::beginTransaction();
 
-            DB::table('wo_mstr')->where('wo_nbr', '=', $req->c_wonbr)->update($arrayy);
+        try {
 
-            /* simpan file A211025 */
-            if ($req->hasfile('filenamewo')) {
-                foreach ($req->file('filenamewo') as $upload) {
-                    $filename = $req->c_wonbr . '-' . $upload->getClientOriginalName();
-
-                    // Simpan File Upload pada Public
-                    $savepath = public_path('uploadwofinish/');
-                    $upload->move($savepath, $filename);
-
-                    // Simpan ke DB Upload
-                    DB::table('acceptance_image')
-                        ->insert([
-                            'file_srnumber' => $req->c_srnbr,
-                            'file_wonumber' => $req->c_wonbr,
-                            'file_name'     => $filename, //$upload->getClientOriginalName(), //nama file asli
-                            'file_url'      => $savepath . $filename,
-                            'uploaded_at'   => Carbon::now()->toDateTimeString(),
+            if ($req->repairtype == 'manual') {
+                // dd($req->all());
+                // dd(count($req->ins));
+                DB::table('wo_manual_detail')
+                    ->where('wo_manual_wo_nbr', '=', $req->c_wonbr)
+                    ->delete();
+                for ($pop = 0; $pop < $req->manualcount; $pop++) {
+                    if ($req->part[$pop] != null && $req->desc[$pop] != null) {
+                        $arraymanual = array([
+                            'wo_manual_wo_nbr'      => $req->c_wonbr,
+                            'wo_manual_number'      => $pop + 1,
+                            'wo_manual_ins'         => $req->ins[$pop],
+                            'wo_manual_part'        => $req->part[$pop],
+                            'wo_manual_desc'        => $req->desc[$pop],
+                            'wo_manual_flag'        => $req->group5[$pop],
+                            'wo_manual_flag2'       => $req->group51[$pop],
+                            'wo_manual_qty'         => $req->qty5[$pop],
+                            'wo_manual_repair_hour' => $req->rph5[$pop],
+                            'wo_manual_created_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
                         ]);
+                        // dd($arraydettemp);
+                        DB::table('wo_manual_detail')->insert($arraymanual);
+                    }
                 }
-            } /* end simpan file A211025 */
+                $finisht = $req->c_finishtime . ':' . $req->c_finishtimeminute;
+                $arrayy = [
+                    'wo_updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    'wo_status'        => 'finish',
+                    'wo_repair_code1'  => null,
+                    'wo_repair_code2'  => null,
+                    'wo_repair_code3'  => null,
+                    'wo_repair_group'  => null,
+                    'wo_repair_type'   => 'manual',
+                    // 'wo_repair_hour'   => $req->c_repairhour,
+                    'wo_finish_date'   => $req->c_finishdate,
+                    'wo_finish_time'   => $finisht,
+                    'wo_approval_note' => $req->c_note,
+                    'wo_system_date'   => Carbon::now('ASIA/JAKARTA')->toDateString(),
+                    'wo_system_time'   => Carbon::now('ASIA/JAKARTA')->toTimeString(),
+                    'wo_access'        => 0
+                ];
 
-            /* A211025
-                $albumraw = $req->imgname;
-                if(isset($req->imgname)){
-                    foreach($albumraw as $olah1){
-                        $waktu = (string)date('dmY',strtotime(Carbon::now())).(string)date('His',strtotime(Carbon::now()));
-                        // dd($waktu);
-                        $jadi1 = explode(',', $olah1);
-                        // a..png
-                        $jadi2 = base64_decode($jadi1[2]);
-                        $lenstr = strripos($jadi1[0],'.');
-                        $test = substr($jadi1[0],$lenstr);
-                        // dd($test);
-                        $test3 = str_replace($test,'',$jadi1[0]);
-                        // dd($test3);
-                        $test4 = str_replace('.','',$test3);
-                        $test44 = str_replace(' ','',$test4);
-                        $test5 = $test44.$waktu.$test;
-                        $alamaturl = '../public/upload/'.$test5;
-                        file_put_contents($alamaturl, $jadi2);
+                DB::table('wo_mstr')->where('wo_nbr', '=', $req->c_wonbr)->update($arrayy);
 
+                /* simpan file A211025 */
+                if ($req->hasfile('filenamewo')) {
+                    foreach ($req->file('filenamewo') as $upload) {
+                        $filename = $req->c_wonbr . '-' . $upload->getClientOriginalName();
+
+                        // Simpan File Upload pada Public
+                        $savepath = public_path('uploadwofinish/');
+                        $upload->move($savepath, $filename);
+
+                        // Simpan ke DB Upload
                         DB::table('acceptance_image')
                             ->insert([
                                 'file_srnumber' => $req->c_srnbr,
                                 'file_wonumber' => $req->c_wonbr,
-                                'file_name' => $jadi1[0], //nama file asli
-                                'file_url' => $alamaturl, 
-                                'uploaded_at' => Carbon::now()->toDateTimeString(),
+                                'file_name'     => $filename, //$upload->getClientOriginalName(), //nama file asli
+                                'file_url'      => $savepath . $filename,
+                                'uploaded_at'   => Carbon::now()->toDateTimeString(),
                             ]);
                     }
-                } */
+                } /* end simpan file A211025 */
 
-            if ($req->c_srnbr != null) {
-                DB::table('service_req_mstr')->where('wo_number', '=', $req->c_wonbr)->update(['sr_status' => '4', 'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toTimeString()]);
-            }
-            toast('data reported successfuly', 'success');
-            return redirect()->route('woreport');
-        } else if ($req->repairtype == 'code') {
-            // dd($req->all());
-            // dd($req->has('rc_hidden1'));
-            $rc1 = $req->has('rc_hidden1') ? $req->rc_hidden1[0] : null;
-            $rc2 = $req->has('rc2_hidden1') ? $req->rc2_hidden1[0] : null;
-            $rc3 = $req->has('rc3_hidden1') ? $req->rc3_hidden1[0] : null;
+                /* A211025
+                    $albumraw = $req->imgname;
+                    if(isset($req->imgname)){
+                        foreach($albumraw as $olah1){
+                            $waktu = (string)date('dmY',strtotime(Carbon::now())).(string)date('His',strtotime(Carbon::now()));
+                            // dd($waktu);
+                            $jadi1 = explode(',', $olah1);
+                            // a..png
+                            $jadi2 = base64_decode($jadi1[2]);
+                            $lenstr = strripos($jadi1[0],'.');
+                            $test = substr($jadi1[0],$lenstr);
+                            // dd($test);
+                            $test3 = str_replace($test,'',$jadi1[0]);
+                            // dd($test3);
+                            $test4 = str_replace('.','',$test3);
+                            $test44 = str_replace(' ','',$test4);
+                            $test5 = $test44.$waktu.$test;
+                            $alamaturl = '../public/upload/'.$test5;
+                            file_put_contents($alamaturl, $jadi2);
+    
+                            DB::table('acceptance_image')
+                                ->insert([
+                                    'file_srnumber' => $req->c_srnbr,
+                                    'file_wonumber' => $req->c_wonbr,
+                                    'file_name' => $jadi1[0], //nama file asli
+                                    'file_url' => $alamaturl, 
+                                    'uploaded_at' => Carbon::now()->toDateTimeString(),
+                                ]);
+                        }
+                    } */
 
-            // dd($rc1,$rc2,$rc3);
-
-            // dd($req->wonbr_hidden1);
-            /* new code */
-            $getupdate_ins = DB::table('wo_dets')
-                ->where('wo_dets_nbr', '=', $req->c_wonbr)
-                ->get();
-
-            // dd(array_search('CTF-I001',$req->inscode_hidden1));
-
-            $temparray = [];
-            /* Repair code 1 dengan type wo "code" */
-            if ($req->has('rc_hidden1')) {
-
-                foreach ($getupdate_ins as $key => $datains) {
-                    if (in_array($datains->wo_dets_nbr, $req->wonbr_hidden1) && in_array($datains->wo_dets_rc, $req->rc_hidden1) && in_array($datains->wo_dets_ins, $req->inscode_hidden1)) {
-
-                        $ky1 = array_search($datains->wo_dets_nbr, $req->wonbr_hidden1);
-                        $ky2 = array_search($datains->wo_dets_rc, $req->rc_hidden1);
-                        $ky3 = array_search($datains->wo_dets_ins, $req->inscode_hidden1);
-
-                        DB::table('wo_dets')
-                            ->where('wo_dets_nbr', $req->wonbr_hidden1[$ky1])
-                            ->where('wo_dets_rc', $req->rc_hidden1[$ky2])
-                            ->where('wo_dets_ins', $req->inscode_hidden1[$ky3])
-                            ->update([
-                                'wo_dets_flag' => $req->result1[$ky3],
-                                'wo_dets_do_flag' => $req->do1[$ky3],
-                                'wo_dets_fu_note' => $req->note1[$ky3],
-                            ]);
-                    }
+                if ($req->c_srnbr != null) {
+                    DB::table('service_req_mstr')->where('wo_number', '=', $req->c_wonbr)->update(['sr_status' => '4', 'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toTimeString()]);
                 }
+                toast('data reported successfuly', 'success');
+                return redirect()->route('woreport');
+            } else if ($req->repairtype == 'code') {
+                // dd($req->all());
+                // dd($req->has('rc_hidden1'));
+                $rc1 = $req->has('rc_hidden1') ? $req->rc_hidden1[0] : null;
+                $rc2 = $req->has('rc2_hidden1') ? $req->rc2_hidden1[0] : null;
+                $rc3 = $req->has('rc3_hidden1') ? $req->rc3_hidden1[0] : null;
 
+                // dd($rc1,$rc2,$rc3);
 
-
-                foreach ($req->wonbr_hidden2 as $key => $value) {
-                    DB::table('wo_dets')
-                        ->where('wo_dets_nbr', $req->wonbr_hidden2[$key])
-                        ->where('wo_dets_rc', $req->rc_hidden2[$key])
-                        ->where('wo_dets_ins', $req->inscode_hidden2[$key])
-                        ->where('wo_dets_sp', $req->spcode_hidden2[$key])
-                        ->update([
-                            'wo_dets_qty_used' => $req->qtyused1[$key]
-                        ]);
-                }
-
-                // dd($temparray);
-            }
-
-            /* Repair code 2 dengan type wo "code" */
-            if ($req->has('rc2_hidden1')) {
-
-                foreach ($getupdate_ins as $key => $datains) {
-                    if (in_array($datains->wo_dets_nbr, $req->wonbr2_hidden1) && in_array($datains->wo_dets_rc, $req->rc2_hidden1) && in_array($datains->wo_dets_ins, $req->inscode2_hidden1)) {
-
-                        $ky1 = array_search($datains->wo_dets_nbr, $req->wonbr2_hidden1);
-                        $ky2 = array_search($datains->wo_dets_rc, $req->rc2_hidden1);
-                        $ky3 = array_search($datains->wo_dets_ins, $req->inscode2_hidden1);
-
-                        DB::table('wo_dets')
-                            ->where('wo_dets_nbr', $req->wonbr2_hidden1[$ky1])
-                            ->where('wo_dets_rc', $req->rc2_hidden1[$ky2])
-                            ->where('wo_dets_ins', $req->inscode2_hidden1[$ky3])
-                            ->update([
-                                'wo_dets_flag' => $req->result2[$ky3],
-                                'wo_dets_do_flag' => $req->do2[$ky3],
-                                'wo_dets_fu_note' => $req->note2[$ky3],
-                            ]);
-                    }
-                }
-
-                foreach ($req->wonbr2_hidden2 as $key => $value) {
-                    DB::table('wo_dets')
-                        ->where('wo_dets_nbr', $req->wonbr2_hidden2[$key])
-                        ->where('wo_dets_rc', $req->rc2_hidden2[$key])
-                        ->where('wo_dets_ins', $req->inscode2_hidden2[$key])
-                        ->where('wo_dets_sp', $req->spcode2_hidden2[$key])
-                        ->update([
-                            'wo_dets_qty_used' => $req->qtyused2[$key]
-                        ]);
-                }
-
-                // foreach ($getupdate_ins as $key => $datains) {
-
-                //     // dump($key);
-
-                //     if (in_array($datains->wo_dets_nbr, $req->wonbr2_hidden2) && in_array($datains->wo_dets_rc, $req->rc2_hidden2) && in_array($datains->wo_dets_ins, $req->inscode2_hidden2) && in_array($datains->wo_dets_sp, $req->spcode2_hidden2)) {
-                //         $ky1 = array_search($datains->wo_dets_nbr, $req->wonbr2_hidden2);
-                //         DB::table('wo_dets')
-                //             ->where('wo_dets_nbr', $req->wonbr2_hidden2[$ky1])
-                //             ->where('wo_dets_rc', $req->rc2_hidden2[$ky1])
-                //             ->where('wo_dets_ins', $req->inscode2_hidden2[$ky1])
-                //             ->where('wo_dets_sp', $req->spcode2_hidden2[$ky1])
-                //             ->update([
-                //                 'wo_dets_qty_used' => $req->qtyused2[$ky1]
-                //             ]);
-
-                //         $temparray[] = [
-                //             'wonbr' => $req->wonbr2_hidden2[$ky1],
-                //             'rc'    => $req->rc2_hidden2[$ky1],
-                //             'inscode' => $req->inscode2_hidden2[$ky1],
-                //             'spcode' => $req->spcode2_hidden2[$ky1],
-                //             'qtyused' => $req->qtyused2[$ky1],
-                //             'site'  => $datains->wo_dets_wh_site,
-                //             'location' => $datains->wo_dets_wh_loc
-                //         ];
-                //     }
-                // }
-            }
-
-            /* Repair code 3 dengan type wo "code" */
-            if ($req->has('rc3_hidden1')) {
-
-                foreach ($getupdate_ins as $key => $datains) {
-                    if (in_array($datains->wo_dets_nbr, $req->wonbr3_hidden1) && in_array($datains->wo_dets_rc, $req->rc3_hidden1) && in_array($datains->wo_dets_ins, $req->inscode3_hidden1)) {
-
-                        $ky1 = array_search($datains->wo_dets_nbr, $req->wonbr3_hidden1);
-                        $ky2 = array_search($datains->wo_dets_rc, $req->rc3_hidden1);
-                        $ky3 = array_search($datains->wo_dets_ins, $req->inscode3_hidden1);
-
-                        DB::table('wo_dets')
-                            ->where('wo_dets_nbr', $req->wonbr3_hidden1[$ky1])
-                            ->where('wo_dets_rc', $req->rc3_hidden1[$ky2])
-                            ->where('wo_dets_ins', $req->inscode3_hidden1[$ky3])
-                            ->update([
-                                'wo_dets_flag' => $req->result3[$ky3],
-                                'wo_dets_do_flag' => $req->do3[$ky3],
-                                'wo_dets_fu_note' => $req->note3[$ky3],
-                            ]);
-                    }
-                }
-
-                foreach ($req->wonbr3_hidden2 as $key => $value) {
-                    DB::table('wo_dets')
-                        ->where('wo_dets_nbr', $req->wonbr3_hidden2[$key])
-                        ->where('wo_dets_rc', $req->rc3_hidden2[$key])
-                        ->where('wo_dets_ins', $req->inscode3_hidden2[$key])
-                        ->where('wo_dets_sp', $req->spcode3_hidden2[$key])
-                        ->update([
-                            'wo_dets_qty_used' => $req->qtyused3[$key]
-                        ]);
-                }
-
-                // foreach ($getupdate_ins as $key => $datains) {
-
-                //     // dump($key);
-
-                //     if (in_array($datains->wo_dets_nbr, $req->wonbr3_hidden2) && in_array($datains->wo_dets_rc, $req->rc3_hidden2) && in_array($datains->wo_dets_ins, $req->inscode3_hidden2) && in_array($datains->wo_dets_sp, $req->spcode3_hidden2)) {
-                //         $ky1 = array_search($datains->wo_dets_nbr, $req->wonbr3_hidden2);
-                //         DB::table('wo_dets')
-                //             ->where('wo_dets_nbr', $req->wonbr3_hidden2[$ky1])
-                //             ->where('wo_dets_rc', $req->rc3_hidden2[$ky1])
-                //             ->where('wo_dets_ins', $req->inscode3_hidden2[$ky1])
-                //             ->where('wo_dets_sp', $req->spcode3_hidden2[$ky1])
-                //             ->update([
-                //                 'wo_dets_qty_used' => $req->qtyused2[$ky1]
-                //             ]);
-
-                //         $temparray[] = [
-                //             'wonbr' => $req->wonbr3_hidden2[$ky1],
-                //             'rc'    => $req->rc3_hidden2[$ky1],
-                //             'inscode' => $req->inscode3_hidden2[$ky1],
-                //             'spcode' => $req->spcode3_hidden2[$ky1],
-                //             'qtyused' => $req->qtyused3[$ky1],
-                //             'site'  => $datains->wo_dets_wh_site,
-                //             'location' => $datains->wo_dets_wh_loc
-                //         ];
-                //     }
-                // }
-            }
-
-
-            /* get data buat qxtend issue unplanned */
-            $dataqxtend = DB::table('wo_dets')
-                        ->select('wo_dets_nbr','wo_dets_sp','wo_dets_wh_site','wo_dets_wh_loc',DB::raw('SUM(wo_dets_qty_used) as qtytoqx'))
-                        ->where('wo_dets_nbr','=',$req->c_wonbr)
-                        ->groupBy('wo_dets_sp','wo_dets_wh_site','wo_dets_wh_loc')
-                        ->get();
-            
-            // dd($dataqxtend);
-
-            /* QXTEND issue - unplanned */
-
-
-            /* A211026 disini sebetulnya ada coding untuk menyimpan data detail repair 1 2 3, tapi yang ini dihapus karena tidak digunakan. coding aslinya sudah di backup di "backup-20211026 sblm PM attach file" */
-
-            //dd($req->all());
-            $finisht = $req->c_finishtime . ':' . $req->c_finishtimeminute;
-
-            $arrayy = [
-                'wo_updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                'wo_status'        => 'finish',
-                'wo_repair_code1'  => $rc1,
-                'wo_repair_code2'  => $rc2,
-                'wo_repair_code3'  => $rc3,
-                'wo_repair_group'  => null,
-                'wo_repair_type'   => 'code',
-                // 'wo_repair_hour'   => $req->c_repairhour,
-                'wo_finish_date'   => $req->c_finishdate,
-                'wo_finish_time'   => $finisht,
-                'wo_approval_note' => $req->c_note,
-                'wo_system_date'   => Carbon::now('ASIA/JAKARTA')->toDateString(),
-                'wo_system_time'   => Carbon::now('ASIA/JAKARTA')->toTimeString(),
-                'wo_access'        => 0
-            ];
-
-            DB::table('wo_mstr')->where('wo_nbr', '=', $req->c_wonbr)->update($arrayy);
-
-            /* simpan file A211025 */
-            if ($req->hasfile('filenamewo')) {
-                foreach ($req->file('filenamewo') as $upload) {
-                    $filename = $req->c_wonbr . '-' . $upload->getClientOriginalName();
-
-                    // Simpan File Upload pada Public
-                    $savepath = public_path('uploadwofinish/');
-                    $upload->move($savepath, $filename);
-
-                    // Simpan ke DB Upload
-                    DB::table('acceptance_image')
-                        ->insert([
-                            'file_srnumber' => $req->c_srnbr,
-                            'file_wonumber' => $req->c_wonbr,
-                            'file_name'     => $filename, //$upload->getClientOriginalName(), //nama file asli
-                            'file_url'      => $savepath . $filename,
-                            'uploaded_at'   => Carbon::now()->toDateTimeString(),
-                        ]);
-                }
-            } /* end simpan file A211025 */
-
-            /* A211025
-                $albumraw = $req->imgname;
-                $k = 0;
-                if(isset($req->imgname)){
-                    foreach($albumraw as $olah1){
-                        $waktu = (string)date('dmY',strtotime(Carbon::now())).(string)date('His',strtotime(Carbon::now()));
-                        // dd($waktu);
-                        $jadi1 = explode(',', $olah1);
-                        // a..png
-                        $jadi2 = base64_decode($jadi1[2]);
-                        $lenstr = strripos($jadi1[0],'.');
-                        $test = substr($jadi1[0],$lenstr);
-                        // dd($test);
-                        $test3 = str_replace($test,'',$jadi1[0]);
-                        // dd($test3);
-                        $test4 = str_replace('.','',$test3);
-                        $test44 = str_replace(' ','',$test4);
-                        $test5 = $test44.$waktu.$test;
-                        // dd($test5);
-
-                        // dd($test2);
-
-                        // dd(substr($jadi1[0],$lenstr));
-                        // dd(strlen($jadi1[0]));
-
-                        // $test = preg_replace('/.(?=.*,)/','',$jadi1[0]);
-                        //  $test2 = explode('.',$test);
-                        // $test2 = 
-                        // dd($test);
-                        $alamaturl = '../public/upload/'.$test5;
-                        file_put_contents($alamaturl, $jadi2);
-
-                        DB::table('acceptance_image')
-                            ->insert([
-                                'file_srnumber' => $req->c_srnbr,
-                                'file_wonumber' => $req->c_wonbr,
-                                'file_name' => $jadi1[0], //nama file asli
-                                'file_url' => $alamaturl, 
-                                'uploaded_at' => Carbon::now()->toDateTimeString(),
-                            ]);
-
-                        // $k++;
-
-                    }
-                } A211025 */
-
-            if ($req->c_srnbr != null) {
-                DB::table('service_req_mstr')->where('wo_number', '=', $req->c_wonbr)->update(['sr_status' => '4', 'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toTimeString()]);
-            }
-            toast('data reported successfuly', 'success');
-            return redirect()->route('woreport');
-
-
-            // dd($arrayy);
-        } else if ($req->repairtype == 'group') {
-            //dd($req->all());        
-            DB::table('wo_rc_detail')
-                ->where('wrd_wo_nbr', '=', $req->c_wonbr)
-                ->delete();
-
-            $repairlen = count($req->repaircodeselection);
-            for ($i = 0; $i < $repairlen; $i++) {
-                $rg = $req->repaircodeselection[$i];
-                //dd($rg);
-                $dborigin = DB::table('rep_master')
-                    ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-                    ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-                    // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
-                    ->leftjoin('sp_mstr', 'ins_mstr.ins_part', 'sp_mstr.spm_code')
-                    ->where('rep_master.repm_code', '=', $rg)
-                    // ->groupBy('spt_code')
-                    ->orderBy('repdet_step')
+                // dd($req->wonbr_hidden1);
+                /* new code */
+                $getupdate_ins = DB::table('wo_dets')
+                    ->where('wo_dets_nbr', '=', $req->c_wonbr)
                     ->get();
-                $countdb1 = count($dborigin);
-                // dd($countdb1);
-                //dd($dborigin);
-                $flagname = '';
-                for ($j = 0; $j < $countdb1; $j++) {
-                    $newname = 'group' . $i;
-                    if (isset($req->group4[$i][$j])) {
-                        $flagnow = $req->group4[$i][$j];
-                        $funow   = $req->group41[$i][$j];
-                        $notenow = $req->note[$i][$j];
 
-                        $flagname .= $req->group4[$i][$j];
+                // dd(array_search('CTF-I001',$req->inscode_hidden1));
+
+                $temparray = [];
+                /* Repair code 1 dengan type wo "code" */
+                if ($req->has('rc_hidden1')) {
+
+                    foreach ($getupdate_ins as $key => $datains) {
+                        if (in_array($datains->wo_dets_nbr, $req->wonbr_hidden1) && in_array($datains->wo_dets_rc, $req->rc_hidden1) && in_array($datains->wo_dets_ins, $req->inscode_hidden1)) {
+
+                            $ky1 = array_search($datains->wo_dets_nbr, $req->wonbr_hidden1);
+                            $ky2 = array_search($datains->wo_dets_rc, $req->rc_hidden1);
+                            $ky3 = array_search($datains->wo_dets_ins, $req->inscode_hidden1);
+
+                            DB::table('wo_dets')
+                                ->where('wo_dets_nbr', $req->wonbr_hidden1[$ky1])
+                                ->where('wo_dets_rc', $req->rc_hidden1[$ky2])
+                                ->where('wo_dets_ins', $req->inscode_hidden1[$ky3])
+                                ->update([
+                                    'wo_dets_flag' => $req->result1[$ky3],
+                                    'wo_dets_do_flag' => $req->do1[$ky3],
+                                    'wo_dets_fu_note' => $req->note1[$ky3],
+                                ]);
+                        }
                     }
 
-                    $arraydetsgrp = array([
-                        'wo_dets_nbr'       => $req->c_wonbr,
-                        'wo_dets_rc'        => $rg,
-                        'wo_dets_sp'        => $req->spm4[$i][$j],
-                        'wo_dets_sp_qty'    => $req->qty4[$i][$j],
-                        'wo_dets_ins'       => $req->insm4[$i][$j],
-                        'wo_dets_flag'      => $flagnow,
-                        'wo_dets_fu'        => $funow,
-                        'wo_dets_fu_note'   => $notenow,
-                        'wo_dets_rep_hour'  => $req->rph4[$i][$j],
-                        'wo_dets_standard'  => $req->std4[$i][$j],
-                        'wo_dets_flag'      => $req->group4[$i][$j],
-                        'wo_dets_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                    ]);
-                    DB::table('wo_dets')->insert($arraydetsgrp);
+
+
+                    foreach ($req->wonbr_hidden2 as $key => $value) {
+                        DB::table('wo_dets')
+                            ->where('wo_dets_nbr', $req->wonbr_hidden2[$key])
+                            ->where('wo_dets_rc', $req->rc_hidden2[$key])
+                            ->where('wo_dets_ins', $req->inscode_hidden2[$key])
+                            ->where('wo_dets_sp', $req->spcode_hidden2[$key])
+                            ->update([
+                                'wo_dets_qty_used' => $req->qtyused1[$key]
+                            ]);
+                    }
+
+                    // dd($temparray);
+                }
+
+                /* Repair code 2 dengan type wo "code" */
+                if ($req->has('rc2_hidden1')) {
+
+                    foreach ($getupdate_ins as $key => $datains) {
+                        if (in_array($datains->wo_dets_nbr, $req->wonbr2_hidden1) && in_array($datains->wo_dets_rc, $req->rc2_hidden1) && in_array($datains->wo_dets_ins, $req->inscode2_hidden1)) {
+
+                            $ky1 = array_search($datains->wo_dets_nbr, $req->wonbr2_hidden1);
+                            $ky2 = array_search($datains->wo_dets_rc, $req->rc2_hidden1);
+                            $ky3 = array_search($datains->wo_dets_ins, $req->inscode2_hidden1);
+
+                            DB::table('wo_dets')
+                                ->where('wo_dets_nbr', $req->wonbr2_hidden1[$ky1])
+                                ->where('wo_dets_rc', $req->rc2_hidden1[$ky2])
+                                ->where('wo_dets_ins', $req->inscode2_hidden1[$ky3])
+                                ->update([
+                                    'wo_dets_flag' => $req->result2[$ky3],
+                                    'wo_dets_do_flag' => $req->do2[$ky3],
+                                    'wo_dets_fu_note' => $req->note2[$ky3],
+                                ]);
+                        }
+                    }
+
+                    foreach ($req->wonbr2_hidden2 as $key => $value) {
+                        DB::table('wo_dets')
+                            ->where('wo_dets_nbr', $req->wonbr2_hidden2[$key])
+                            ->where('wo_dets_rc', $req->rc2_hidden2[$key])
+                            ->where('wo_dets_ins', $req->inscode2_hidden2[$key])
+                            ->where('wo_dets_sp', $req->spcode2_hidden2[$key])
+                            ->update([
+                                'wo_dets_qty_used' => $req->qtyused2[$key]
+                            ]);
+                    }
+
+                    // foreach ($getupdate_ins as $key => $datains) {
+
+                    //     // dump($key);
+
+                    //     if (in_array($datains->wo_dets_nbr, $req->wonbr2_hidden2) && in_array($datains->wo_dets_rc, $req->rc2_hidden2) && in_array($datains->wo_dets_ins, $req->inscode2_hidden2) && in_array($datains->wo_dets_sp, $req->spcode2_hidden2)) {
+                    //         $ky1 = array_search($datains->wo_dets_nbr, $req->wonbr2_hidden2);
+                    //         DB::table('wo_dets')
+                    //             ->where('wo_dets_nbr', $req->wonbr2_hidden2[$ky1])
+                    //             ->where('wo_dets_rc', $req->rc2_hidden2[$ky1])
+                    //             ->where('wo_dets_ins', $req->inscode2_hidden2[$ky1])
+                    //             ->where('wo_dets_sp', $req->spcode2_hidden2[$ky1])
+                    //             ->update([
+                    //                 'wo_dets_qty_used' => $req->qtyused2[$ky1]
+                    //             ]);
+
+                    //         $temparray[] = [
+                    //             'wonbr' => $req->wonbr2_hidden2[$ky1],
+                    //             'rc'    => $req->rc2_hidden2[$ky1],
+                    //             'inscode' => $req->inscode2_hidden2[$ky1],
+                    //             'spcode' => $req->spcode2_hidden2[$ky1],
+                    //             'qtyused' => $req->qtyused2[$ky1],
+                    //             'site'  => $datains->wo_dets_wh_site,
+                    //             'location' => $datains->wo_dets_wh_loc
+                    //         ];
+                    //     }
+                    // }
+                }
+
+                /* Repair code 3 dengan type wo "code" */
+                if ($req->has('rc3_hidden1')) {
+
+                    foreach ($getupdate_ins as $key => $datains) {
+                        if (in_array($datains->wo_dets_nbr, $req->wonbr3_hidden1) && in_array($datains->wo_dets_rc, $req->rc3_hidden1) && in_array($datains->wo_dets_ins, $req->inscode3_hidden1)) {
+
+                            $ky1 = array_search($datains->wo_dets_nbr, $req->wonbr3_hidden1);
+                            $ky2 = array_search($datains->wo_dets_rc, $req->rc3_hidden1);
+                            $ky3 = array_search($datains->wo_dets_ins, $req->inscode3_hidden1);
+
+                            DB::table('wo_dets')
+                                ->where('wo_dets_nbr', $req->wonbr3_hidden1[$ky1])
+                                ->where('wo_dets_rc', $req->rc3_hidden1[$ky2])
+                                ->where('wo_dets_ins', $req->inscode3_hidden1[$ky3])
+                                ->update([
+                                    'wo_dets_flag' => $req->result3[$ky3],
+                                    'wo_dets_do_flag' => $req->do3[$ky3],
+                                    'wo_dets_fu_note' => $req->note3[$ky3],
+                                ]);
+                        }
+                    }
+
+                    foreach ($req->wonbr3_hidden2 as $key => $value) {
+                        DB::table('wo_dets')
+                            ->where('wo_dets_nbr', $req->wonbr3_hidden2[$key])
+                            ->where('wo_dets_rc', $req->rc3_hidden2[$key])
+                            ->where('wo_dets_ins', $req->inscode3_hidden2[$key])
+                            ->where('wo_dets_sp', $req->spcode3_hidden2[$key])
+                            ->update([
+                                'wo_dets_qty_used' => $req->qtyused3[$key]
+                            ]);
+                    }
+
+                    // foreach ($getupdate_ins as $key => $datains) {
+
+                    //     // dump($key);
+
+                    //     if (in_array($datains->wo_dets_nbr, $req->wonbr3_hidden2) && in_array($datains->wo_dets_rc, $req->rc3_hidden2) && in_array($datains->wo_dets_ins, $req->inscode3_hidden2) && in_array($datains->wo_dets_sp, $req->spcode3_hidden2)) {
+                    //         $ky1 = array_search($datains->wo_dets_nbr, $req->wonbr3_hidden2);
+                    //         DB::table('wo_dets')
+                    //             ->where('wo_dets_nbr', $req->wonbr3_hidden2[$ky1])
+                    //             ->where('wo_dets_rc', $req->rc3_hidden2[$ky1])
+                    //             ->where('wo_dets_ins', $req->inscode3_hidden2[$ky1])
+                    //             ->where('wo_dets_sp', $req->spcode3_hidden2[$ky1])
+                    //             ->update([
+                    //                 'wo_dets_qty_used' => $req->qtyused2[$ky1]
+                    //             ]);
+
+                    //         $temparray[] = [
+                    //             'wonbr' => $req->wonbr3_hidden2[$ky1],
+                    //             'rc'    => $req->rc3_hidden2[$ky1],
+                    //             'inscode' => $req->inscode3_hidden2[$ky1],
+                    //             'spcode' => $req->spcode3_hidden2[$ky1],
+                    //             'qtyused' => $req->qtyused3[$ky1],
+                    //             'site'  => $datains->wo_dets_wh_site,
+                    //             'location' => $datains->wo_dets_wh_loc
+                    //         ];
+                    //     }
+                    // }
                 }
 
 
+                /* get data buat qxtend issue unplanned */
+                $dataqxtend = DB::table('wo_dets')
+                    ->select('wo_dets_nbr', 'wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc', DB::raw('SUM(wo_dets_qty_used) as qtytoqx'))
+                    ->where('wo_dets_nbr', '=', $req->c_wonbr)
+                    ->groupBy('wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc')
+                    ->get();
 
-                $arrayrc1 = array([
-                    'wrd_wo_nbr'      => $req->c_wonbr,
-                    'wrd_repair_code' => $rg,
-                    'wrd_flag'        => $flagname,
-                    'wrd_created_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                    'wrd_updated_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
-                ]);
-                DB::table('wo_rc_detail')->insert($arrayrc1);
+                // dd($dataqxtend);
 
-                // dd($arraydettemp);   
-                // for($i5 = 0; $i5 < $countdb1; $i5++){  
-                //     // eval('$spnow = $req->sparepart'.strval($countrepair).');');
+                /* start Qxtend */
+
+                $qxwsa = Qxwsa::first();
+
+                // Var Qxtend
+                $qxUrl          = $qxwsa->qx_url; // Edit Here
+
+                $qxRcv          = $qxwsa->qx_rcv;
+
+                $timeout        = 0;
+
+                $domain         = $qxwsa->wsas_domain;
+
+                // XML Qextend ** Edit Here
+                
+                $qdocHead = '  
+                <soapenv:Envelope xmlns="urn:schemas-qad-com:xml-services"
+                  xmlns:qcom="urn:schemas-qad-com:xml-services:common"
+                  xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing">
+                  <soapenv:Header>
+                    <wsa:Action/>
+                    <wsa:To>urn:services-qad-com:' . $qxRcv . '</wsa:To>
+                    <wsa:MessageID>urn:services-qad-com::' . $qxRcv . '</wsa:MessageID>
+                    <wsa:ReferenceParameters>
+                      <qcom:suppressResponseDetail>true</qcom:suppressResponseDetail>
+                    </wsa:ReferenceParameters>
+                    <wsa:ReplyTo>
+                      <wsa:Address>urn:services-qad-com:</wsa:Address>
+                    </wsa:ReplyTo>
+                  </soapenv:Header>
+                  <soapenv:Body>
+                    <issueInventory>
+                      <qcom:dsSessionContext>
+                        <qcom:ttContext>
+                          <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                          <qcom:propertyName>domain</qcom:propertyName>
+                          <qcom:propertyValue>' . $domain . '</qcom:propertyValue>
+                        </qcom:ttContext>
+                        <qcom:ttContext>
+                          <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                          <qcom:propertyName>scopeTransaction</qcom:propertyName>
+                          <qcom:propertyValue>true</qcom:propertyValue>
+                        </qcom:ttContext>
+                        <qcom:ttContext>
+                          <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                          <qcom:propertyName>version</qcom:propertyName>
+                          <qcom:propertyValue>eB_2</qcom:propertyValue>
+                        </qcom:ttContext>
+                        <qcom:ttContext>
+                          <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                          <qcom:propertyName>mnemonicsRaw</qcom:propertyName>
+                          <qcom:propertyValue>false</qcom:propertyValue>
+                        </qcom:ttContext>
+                        <qcom:ttContext>
+                          <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                          <qcom:propertyName>username</qcom:propertyName>
+                          <qcom:propertyValue>mfg</qcom:propertyValue>
+                        </qcom:ttContext>
+                        <qcom:ttContext>
+                          <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                          <qcom:propertyName>password</qcom:propertyName>
+                          <qcom:propertyValue></qcom:propertyValue>
+                        </qcom:ttContext>
+                        <qcom:ttContext>
+                          <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                          <qcom:propertyName>action</qcom:propertyName>
+                          <qcom:propertyValue/>
+                        </qcom:ttContext>
+                        <qcom:ttContext>
+                          <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                          <qcom:propertyName>entity</qcom:propertyName>
+                          <qcom:propertyValue/>
+                        </qcom:ttContext>
+                        <qcom:ttContext>
+                          <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                          <qcom:propertyName>email</qcom:propertyName>
+                          <qcom:propertyValue/>
+                        </qcom:ttContext>
+                        <qcom:ttContext>
+                          <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                          <qcom:propertyName>emailLevel</qcom:propertyName>
+                          <qcom:propertyValue/>
+                        </qcom:ttContext>
+                      </qcom:dsSessionContext>
+                      <dsInventoryIssue>';
+
+                $qdocBody = '';
+                foreach($dataqxtend as $dtqx){
+
+                    // dump($dtqx);
+
+                $qdocBody .= ' <inventoryIssue>
+                                <ptPart>'.$dtqx->wo_dets_sp.'</ptPart>
+                                <lotserialQty>'.$dtqx->qtytoqx.'</lotserialQty>
+                                <site>'.$dtqx->wo_dets_wh_site.'</site>
+                                <location>'.$dtqx->wo_dets_wh_loc.'</location>
+                                <rmks>'.$dtqx->wo_dets_nbr.'</rmks>
+                            </inventoryIssue>';
+                }
+                $qdocfooter =   '</dsInventoryIssue>
+                                </issueInventory>
+                            </soapenv:Body>
+                        </soapenv:Envelope>';
+
+                $qdocRequest = $qdocHead . $qdocBody . $qdocfooter;
+
+                // dd($qdocRequest);
+
+                $curlOptions = array(
+                    CURLOPT_URL => $qxUrl,
+                    CURLOPT_CONNECTTIMEOUT => $timeout,        // in seconds, 0 = unlimited / wait indefinitely.
+                    CURLOPT_TIMEOUT => $timeout + 120, // The maximum number of seconds to allow cURL functions to execute. must be greater than CURLOPT_CONNECTTIMEOUT
+                    CURLOPT_HTTPHEADER => $this->httpHeader($qdocRequest),
+                    CURLOPT_POSTFIELDS => preg_replace("/\s+/", " ", $qdocRequest),
+                    CURLOPT_POST => true,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_SSL_VERIFYPEER => false,
+                    CURLOPT_SSL_VERIFYHOST => false
+                );
+
+                $getInfo = '';
+                $httpCode = 0;
+                $curlErrno = 0;
+                $curlError = '';
 
 
+                $qdocResponse = '';
 
-                // }
-                // dd('stop');
-
-                eval('$spartnow = $req->partspare' . strval($i + 1) . ';');
-                eval('$insspnow = $req->insspare' . strval($i + 1) . ';');
-                eval('$spstdnow = $req->descspare' . strval($i + 1) . ';');
-                eval('$spqtynow = $req->qtyspare' . strval($i + 1) . ';');
-                eval('$rphspnow = $req->rphspare' . strval($i + 1) . ';');
-                eval('$spflagnow = $req->groupspare' . strval($i + 1) . ';');
-                eval('$spfunow = $req->groupspare' . strval($i + 1) . '1;');
-                eval('$spfunotenow = $req->groupspare' . strval($i + 1) . ';');
-
-                for ($iiiii = 0; $iiiii < $req->sparepartnum[$i]; $iiiii++) {
-
-                    $arraysparegrp = array([
-                        'wo_dets_nbr'       => $req->c_wonbr,
-                        'wo_dets_rc'        => $rg,
-                        'wo_dets_sp'        => $spartnow[$iiiii],
-                        'wo_dets_sp_qty'    => $spqtynow[$iiiii],
-                        'wo_dets_ins'       => $insspnow[$iiiii],
-                        'wo_dets_rep_hour'  => $rphspnow[$iiiii],
-                        'wo_dets_standard'  => $spstdnow[$iiiii],
-                        'wo_dets_flag'      => $spflagnow[$iiiii],
-                        'wo_dets_fu'        => $spfunow[$iiiii],
-                        'wo_dets_fu_note'   => $spfunotenow[$iiiii],
-                        'wo_dets_type'      => 'addition',
-                        'wo_dets_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                    ]);
-                    DB::table('wo_dets')->insert($arraysparegrp);
+                $curl = curl_init();
+                if ($curl) {
+                    curl_setopt_array($curl, $curlOptions);
+                    $qdocResponse = curl_exec($curl);           // sending qdocRequest here, the result is qdocResponse.
+                    //
+                    $curlErrno = curl_errno($curl);
+                    $curlError = curl_error($curl);
+                    $first = true;
+                    foreach (curl_getinfo($curl) as $key => $value) {
+                        if (gettype($value) != 'array') {
+                            if (!$first) $getInfo .= ", ";
+                            $getInfo = $getInfo . $key . '=>' . $value;
+                            $first = false;
+                            if ($key == 'http_code') $httpCode = $value;
+                        }
+                    }
+                    curl_close($curl);
                 }
 
-                // dd($flagname);
-            }
-            $finisht = $req->c_finishtime . ':' . $req->c_finishtimeminute;
-            // dd($finisht);
-            $arrayy = [
-                'wo_updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                'wo_status'        => 'finish',
-                'wo_repair_code1'  => null,
-                'wo_repair_code2'  => null,
-                'wo_repair_code3'  => null,
-                'wo_repair_group'  => $req->repairgroup[0],
-                'wo_repair_type'   => 'group',
-                // 'wo_repair_hour'   => $req->c_repairhour,
-                'wo_finish_date'   => $req->c_finishdate,
-                'wo_finish_time'   => $finisht,
-                'wo_approval_note' => $req->c_note,
-                'wo_system_date'   => Carbon::now('ASIA/JAKARTA')->toDateString(),
-                'wo_system_time'   => Carbon::now('ASIA/JAKARTA')->toTimeString(),
-                'wo_access'        => 0
-            ];
-            DB::table('wo_mstr')->where('wo_nbr', '=', $req->c_wonbr)->update($arrayy);
+                if (is_bool($qdocResponse)) {
 
-            /* simpan file A211025 */
-            if ($req->hasfile('filenamewo')) {
-                foreach ($req->file('filenamewo') as $upload) {
-                    $filename = $req->c_wonbr . '-' . $upload->getClientOriginalName();
-
-                    // Simpan File Upload pada Public
-                    $savepath = public_path('uploadwofinish/');
-                    $upload->move($savepath, $filename);
-
-                    // Simpan ke DB Upload
-                    DB::table('acceptance_image')
-                        ->insert([
-                            'file_srnumber' => $req->c_srnbr,
-                            'file_wonumber' => $req->c_wonbr,
-                            'file_name'     => $filename, //$upload->getClientOriginalName(), //nama file asli
-                            'file_url'      => $savepath . $filename,
-                            'uploaded_at'   => Carbon::now()->toDateTimeString(),
-                        ]);
+                    DB::rollBack();
+                    toast('Something Wrong with Qxtend', 'error');
+                    return redirect()->route('woreport');
                 }
-            } /* end simpan file A211025 */
+                $xmlResp = simplexml_load_string($qdocResponse);
+                $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
+                $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
 
-            /* A211025
-                $albumraw = $req->imgname;
-                $k = 0;
-                if(isset($req->imgname)){
-                    foreach($albumraw as $olah1){
-                        $waktu = (string)date('dmY',strtotime(Carbon::now())).(string)date('His',strtotime(Carbon::now()));
-                        // dd($waktu);
-                        $jadi1 = explode(',', $olah1);
-                        // a..png
-                        $jadi2 = base64_decode($jadi1[2]);
-                        $lenstr = strripos($jadi1[0],'.');
-                        $test = substr($jadi1[0],$lenstr);
-                        // dd($test);
-                        $test3 = str_replace($test,'',$jadi1[0]);
-                        // dd($test3);
-                        $test4 = str_replace('.','',$test3);
-                        $test44 = str_replace(' ','',$test4);
-                        $test5 = $test44.$waktu.$test;
-                        // dd($test5);
 
-                        // dd($test2);
 
-                        // dd(substr($jadi1[0],$lenstr));
-                        // dd(strlen($jadi1[0]));
+                if ($qdocResult == "success" or $qdocResult == "warning") {
 
-                        // $test = preg_replace('/.(?=.*,)/','',$jadi1[0]);
-                        //  $test2 = explode('.',$test);
-                        // $test2 = 
-                        // dd($test);
-                        $alamaturl = '../public/upload/'.$test5;
-                        file_put_contents($alamaturl, $jadi2);
+                } else {
 
+                    DB::rollBack();
+                    toast('Qxtend Response Error', 'error');
+                    return redirect()->route('woreport');
+
+                }
+
+                
+
+                /* QXTEND issue - unplanned */
+
+
+                /* A211026 disini sebetulnya ada coding untuk menyimpan data detail repair 1 2 3, tapi yang ini dihapus karena tidak digunakan. coding aslinya sudah di backup di "backup-20211026 sblm PM attach file" */
+
+                //dd($req->all());
+                // $finisht = $req->c_finishtime . ':' . $req->c_finishtimeminute;
+
+                $arrayy = [
+                    'wo_updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    'wo_status'        => 'finish',
+                    'wo_repair_code1'  => $rc1,
+                    'wo_repair_code2'  => $rc2,
+                    'wo_repair_code3'  => $rc3,
+                    'wo_repair_group'  => null,
+                    'wo_repair_type'   => 'code',
+                    // 'wo_repair_hour'   => $req->c_repairhour,
+                    'wo_finish_date'   => $req->c_finishdate,
+                    // 'wo_finish_time'   => $finisht,
+                    'wo_approval_note' => $req->c_note,
+                    'wo_system_date'   => Carbon::now('ASIA/JAKARTA')->toDateString(),
+                    'wo_system_time'   => Carbon::now('ASIA/JAKARTA')->toTimeString(),
+                    'wo_access'        => 0
+                ];
+
+                DB::table('wo_mstr')->where('wo_nbr', '=', $req->c_wonbr)->update($arrayy);
+
+                /* simpan file A211025 */
+                if ($req->hasfile('filenamewo')) {
+                    foreach ($req->file('filenamewo') as $upload) {
+                        $filename = $req->c_wonbr . '-' . $upload->getClientOriginalName();
+
+                        // Simpan File Upload pada Public
+                        $savepath = public_path('uploadwofinish/');
+                        $upload->move($savepath, $filename);
+
+                        // Simpan ke DB Upload
                         DB::table('acceptance_image')
                             ->insert([
                                 'file_srnumber' => $req->c_srnbr,
                                 'file_wonumber' => $req->c_wonbr,
-                                'file_name' => $jadi1[0], //nama file asli
-                                'file_url' => $alamaturl, 
-                                'uploaded_at' => Carbon::now()->toDateTimeString(),
+                                'file_name'     => $filename, //$upload->getClientOriginalName(), //nama file asli
+                                'file_url'      => $savepath . $filename,
+                                'uploaded_at'   => Carbon::now()->toDateTimeString(),
                             ]);
-
-                        // $k++;
-
                     }
-                } */
+                } /* end simpan file A211025 */
 
-            if ($req->c_srnbr != null) {
-                DB::table('service_req_mstr')->where('wo_number', '=', $req->c_wonbr)->update(['sr_status' => '4', 'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toTimeString()]);
+                /* A211025
+                    $albumraw = $req->imgname;
+                    $k = 0;
+                    if(isset($req->imgname)){
+                        foreach($albumraw as $olah1){
+                            $waktu = (string)date('dmY',strtotime(Carbon::now())).(string)date('His',strtotime(Carbon::now()));
+                            // dd($waktu);
+                            $jadi1 = explode(',', $olah1);
+                            // a..png
+                            $jadi2 = base64_decode($jadi1[2]);
+                            $lenstr = strripos($jadi1[0],'.');
+                            $test = substr($jadi1[0],$lenstr);
+                            // dd($test);
+                            $test3 = str_replace($test,'',$jadi1[0]);
+                            // dd($test3);
+                            $test4 = str_replace('.','',$test3);
+                            $test44 = str_replace(' ','',$test4);
+                            $test5 = $test44.$waktu.$test;
+                            // dd($test5);
+    
+                            // dd($test2);
+    
+                            // dd(substr($jadi1[0],$lenstr));
+                            // dd(strlen($jadi1[0]));
+    
+                            // $test = preg_replace('/.(?=.*,)/','',$jadi1[0]);
+                            //  $test2 = explode('.',$test);
+                            // $test2 = 
+                            // dd($test);
+                            $alamaturl = '../public/upload/'.$test5;
+                            file_put_contents($alamaturl, $jadi2);
+    
+                            DB::table('acceptance_image')
+                                ->insert([
+                                    'file_srnumber' => $req->c_srnbr,
+                                    'file_wonumber' => $req->c_wonbr,
+                                    'file_name' => $jadi1[0], //nama file asli
+                                    'file_url' => $alamaturl, 
+                                    'uploaded_at' => Carbon::now()->toDateTimeString(),
+                                ]);
+    
+                            // $k++;
+    
+                        }
+                    } A211025 */
+
+                if ($req->c_srnbr != null) {
+                    DB::table('service_req_mstr')->where('wo_number', '=', $req->c_wonbr)->update(['sr_status' => '4', 'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toTimeString()]);
+                }
+
+                DB::commit();
+                toast('data reported successfuly', 'success');
+                return redirect()->route('woreport');
+
+
+                // dd($arrayy);
+            } else if ($req->repairtype == 'group') {
+                dd($req->all());   
+                DB::table('wo_rc_detail')
+                    ->where('wrd_wo_nbr', '=', $req->c_wonbr)
+                    ->delete();
+
+                $repairlen = count($req->repaircodeselection);
+                for ($i = 0; $i < $repairlen; $i++) {
+                    $rg = $req->repaircodeselection[$i];
+                    //dd($rg);
+                    $dborigin = DB::table('rep_master')
+                        ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                        ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+                        // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
+                        ->leftjoin('sp_mstr', 'ins_mstr.ins_part', 'sp_mstr.spm_code')
+                        ->where('rep_master.repm_code', '=', $rg)
+                        // ->groupBy('spt_code')
+                        ->orderBy('repdet_step')
+                        ->get();
+                    $countdb1 = count($dborigin);
+                    // dd($countdb1);
+                    //dd($dborigin);
+                    $flagname = '';
+                    for ($j = 0; $j < $countdb1; $j++) {
+                        $newname = 'group' . $i;
+                        if (isset($req->group4[$i][$j])) {
+                            $flagnow = $req->group4[$i][$j];
+                            $funow   = $req->group41[$i][$j];
+                            $notenow = $req->note[$i][$j];
+
+                            $flagname .= $req->group4[$i][$j];
+                        }
+
+                        $arraydetsgrp = array([
+                            'wo_dets_nbr'       => $req->c_wonbr,
+                            'wo_dets_rc'        => $rg,
+                            'wo_dets_sp'        => $req->spm4[$i][$j],
+                            'wo_dets_sp_qty'    => $req->qty4[$i][$j],
+                            'wo_dets_ins'       => $req->insm4[$i][$j],
+                            'wo_dets_flag'      => $flagnow,
+                            'wo_dets_fu'        => $funow,
+                            'wo_dets_fu_note'   => $notenow,
+                            'wo_dets_rep_hour'  => $req->rph4[$i][$j],
+                            'wo_dets_standard'  => $req->std4[$i][$j],
+                            'wo_dets_flag'      => $req->group4[$i][$j],
+                            'wo_dets_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
+                        DB::table('wo_dets')->insert($arraydetsgrp);
+                    }
+
+
+
+                    $arrayrc1 = array([
+                        'wrd_wo_nbr'      => $req->c_wonbr,
+                        'wrd_repair_code' => $rg,
+                        'wrd_flag'        => $flagname,
+                        'wrd_created_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        'wrd_updated_at'  => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
+                    ]);
+                    DB::table('wo_rc_detail')->insert($arrayrc1);
+
+                    // dd($arraydettemp);   
+                    // for($i5 = 0; $i5 < $countdb1; $i5++){  
+                    //     // eval('$spnow = $req->sparepart'.strval($countrepair).');');
+
+
+
+                    // }
+                    // dd('stop');
+
+                    eval('$spartnow = $req->partspare' . strval($i + 1) . ';');
+                    eval('$insspnow = $req->insspare' . strval($i + 1) . ';');
+                    eval('$spstdnow = $req->descspare' . strval($i + 1) . ';');
+                    eval('$spqtynow = $req->qtyspare' . strval($i + 1) . ';');
+                    eval('$rphspnow = $req->rphspare' . strval($i + 1) . ';');
+                    eval('$spflagnow = $req->groupspare' . strval($i + 1) . ';');
+                    eval('$spfunow = $req->groupspare' . strval($i + 1) . '1;');
+                    eval('$spfunotenow = $req->groupspare' . strval($i + 1) . ';');
+
+                    for ($iiiii = 0; $iiiii < $req->sparepartnum[$i]; $iiiii++) {
+
+                        $arraysparegrp = array([
+                            'wo_dets_nbr'       => $req->c_wonbr,
+                            'wo_dets_rc'        => $rg,
+                            'wo_dets_sp'        => $spartnow[$iiiii],
+                            'wo_dets_sp_qty'    => $spqtynow[$iiiii],
+                            'wo_dets_ins'       => $insspnow[$iiiii],
+                            'wo_dets_rep_hour'  => $rphspnow[$iiiii],
+                            'wo_dets_standard'  => $spstdnow[$iiiii],
+                            'wo_dets_flag'      => $spflagnow[$iiiii],
+                            'wo_dets_fu'        => $spfunow[$iiiii],
+                            'wo_dets_fu_note'   => $spfunotenow[$iiiii],
+                            'wo_dets_type'      => 'addition',
+                            'wo_dets_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
+                        DB::table('wo_dets')->insert($arraysparegrp);
+                    }
+
+                    // dd($flagname);
+                }
+                $finisht = $req->c_finishtime . ':' . $req->c_finishtimeminute;
+                // dd($finisht);
+                $arrayy = [
+                    'wo_updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    'wo_status'        => 'finish',
+                    'wo_repair_code1'  => null,
+                    'wo_repair_code2'  => null,
+                    'wo_repair_code3'  => null,
+                    'wo_repair_group'  => $req->repairgroup[0],
+                    'wo_repair_type'   => 'group',
+                    // 'wo_repair_hour'   => $req->c_repairhour,
+                    'wo_finish_date'   => $req->c_finishdate,
+                    'wo_finish_time'   => $finisht,
+                    'wo_approval_note' => $req->c_note,
+                    'wo_system_date'   => Carbon::now('ASIA/JAKARTA')->toDateString(),
+                    'wo_system_time'   => Carbon::now('ASIA/JAKARTA')->toTimeString(),
+                    'wo_access'        => 0
+                ];
+                DB::table('wo_mstr')->where('wo_nbr', '=', $req->c_wonbr)->update($arrayy);
+
+                /* simpan file A211025 */
+                if ($req->hasfile('filenamewo')) {
+                    foreach ($req->file('filenamewo') as $upload) {
+                        $filename = $req->c_wonbr . '-' . $upload->getClientOriginalName();
+
+                        // Simpan File Upload pada Public
+                        $savepath = public_path('uploadwofinish/');
+                        $upload->move($savepath, $filename);
+
+                        // Simpan ke DB Upload
+                        DB::table('acceptance_image')
+                            ->insert([
+                                'file_srnumber' => $req->c_srnbr,
+                                'file_wonumber' => $req->c_wonbr,
+                                'file_name'     => $filename, //$upload->getClientOriginalName(), //nama file asli
+                                'file_url'      => $savepath . $filename,
+                                'uploaded_at'   => Carbon::now()->toDateTimeString(),
+                            ]);
+                    }
+                } /* end simpan file A211025 */
+
+                /* A211025
+                    $albumraw = $req->imgname;
+                    $k = 0;
+                    if(isset($req->imgname)){
+                        foreach($albumraw as $olah1){
+                            $waktu = (string)date('dmY',strtotime(Carbon::now())).(string)date('His',strtotime(Carbon::now()));
+                            // dd($waktu);
+                            $jadi1 = explode(',', $olah1);
+                            // a..png
+                            $jadi2 = base64_decode($jadi1[2]);
+                            $lenstr = strripos($jadi1[0],'.');
+                            $test = substr($jadi1[0],$lenstr);
+                            // dd($test);
+                            $test3 = str_replace($test,'',$jadi1[0]);
+                            // dd($test3);
+                            $test4 = str_replace('.','',$test3);
+                            $test44 = str_replace(' ','',$test4);
+                            $test5 = $test44.$waktu.$test;
+                            // dd($test5);
+    
+                            // dd($test2);
+    
+                            // dd(substr($jadi1[0],$lenstr));
+                            // dd(strlen($jadi1[0]));
+    
+                            // $test = preg_replace('/.(?=.*,)/','',$jadi1[0]);
+                            //  $test2 = explode('.',$test);
+                            // $test2 = 
+                            // dd($test);
+                            $alamaturl = '../public/upload/'.$test5;
+                            file_put_contents($alamaturl, $jadi2);
+    
+                            DB::table('acceptance_image')
+                                ->insert([
+                                    'file_srnumber' => $req->c_srnbr,
+                                    'file_wonumber' => $req->c_wonbr,
+                                    'file_name' => $jadi1[0], //nama file asli
+                                    'file_url' => $alamaturl, 
+                                    'uploaded_at' => Carbon::now()->toDateTimeString(),
+                                ]);
+    
+                            // $k++;
+    
+                        }
+                    } */
+
+                if ($req->c_srnbr != null) {
+                    DB::table('service_req_mstr')->where('wo_number', '=', $req->c_wonbr)->update(['sr_status' => '4', 'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toTimeString()]);
+                }
+                toast('data reported successfuly', 'success');
+                return redirect()->route('woreport');
+                // dd($arrayy);
             }
-            toast('data reported successfuly', 'success');
+        } catch (Exception $e) {
+            DB::rollBack();
+            toast('Save Error', 'error');
             return redirect()->route('woreport');
-            // dd($arrayy);
         }
     }
     // }
