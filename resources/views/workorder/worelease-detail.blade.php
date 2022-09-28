@@ -80,6 +80,7 @@
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
+                            @php($dline = 1)
                             @forelse ( $combineSP as $datas )
                             
                             <!-- Desc Item -->
@@ -106,12 +107,15 @@
                                 @php($dqtyreq = $cwhsconf->wo_dets_wh_qty)
                                 @php($whsconf = $cwhsconf->wo_dets_wh_conf)
                                 @php($whsdate = $cwhsconf->wo_dets_wh_date)
+                                @php($dline = $cwhsconf->wo_dets_line)
                             @endif
 
                             <tr>
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$datas->repair_code}}
                                     <input type="hidden" name="repcode[]" value="{{$datas->repair_code}}" />
+                                    <input type="hidden" name="line[]" value="{{$dline}}" />
+                                    @php($dline = $dline + 1)
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$datas->ins_code}}
@@ -125,25 +129,33 @@
                                     {{$datas->insd_qty}}
                                     <input type="hidden" name="qtyreq[]" value="{{$datas->insd_qty}}" />
                                 </td>
-                                @if($whsconf == "1")
+                                @if($whsconf == "1") <!-- jika warehouse sudah melakukan confirm -->
                                     <td style="vertical-align:middle;text-align:right;">
                                         {{ number_format($dqtyreq,2) }}
                                         <input type="hidden" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$dqtyreq}}" />
                                     </td>
                                     <td style="vertical-align:middle;text-align:center;">
                                         {{date('Y-m-d', strtotime($whsdate))}}
+                                        <input type="hidden" class="tick" name="tick[]" value="0" />
                                     </td>
                                 @else
                                     <td>
-                                        <input type="number" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$dqtyreq}}" required />
+                                        <input type="number" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$datas->insd_qty}}" required />
                                     </td>
-                                    <td style="vertical-align:middle;text-align:center;">
-                                        <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete">
-                                    </td>
+                                    @if($datas->wo_status == "open") <!-- jika belum pernah direlease akan muncul tombol delete -->
+                                        <td style="vertical-align:middle;text-align:center;">
+                                            <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete">
+                                        </td>
+                                    @else <!-- jika sudah pernah dilakukan release namun warehouse belum confirm -->
+                                        <td  style="vertical-align:middle;text-align:center;">    
+                                            <input type="checkbox" class="qaddel" name="qaddel[]" value="">
+                                            <input type="hidden" class="tick" name="tick[]" value="0" />
+                                        </td>
+                                    @endif
                                 @endif
                             </tr>
                             @empty
-
+                    
                             @endforelse
 
 
@@ -307,6 +319,19 @@
             })
             $(this).closest("tr").find('.insclass').selectpicker('refresh');
 
+        });
+
+        $(document).on('change','.qaddel',function(e){
+            var checkbox = $(this), // Selected or current checkbox
+            value = checkbox.val(); // Value of checkbox
+    
+            if (checkbox.is(':checked'))
+            {
+                $(this).closest("tr").find('.tick').val(1);
+            } else
+            {
+                $(this).closest("tr").find('.tick').val(0);
+            }        
         });
     });
 </script>
