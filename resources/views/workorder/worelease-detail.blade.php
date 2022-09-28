@@ -97,13 +97,15 @@
                             @endif
 
                             <!-- Qty Conf -->
-                            @php($qwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->count())
+                            <!-- @php($qwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->count()) -->
+                            @php($qwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_line','=',$dline)->count())
                             @if($qwhsconf == 0)
                                 @php($dqtyreq = $datas->insd_qty)
                                 @php($whsconf = "")
                                 @php($whsdate = "")
                             @else
-                                @php($cwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->first())
+                                <!-- @php($cwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->first()) -->
+                                @php($cwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_line','=',$datas->wo_dets_line)->first())
                                 @php($dqtyreq = $cwhsconf->wo_dets_wh_qty)
                                 @php($whsconf = $cwhsconf->wo_dets_wh_conf)
                                 @php($whsdate = $cwhsconf->wo_dets_wh_date)
@@ -145,6 +147,7 @@
                                     @if($datas->wo_status == "open") <!-- jika belum pernah direlease akan muncul tombol delete -->
                                         <td style="vertical-align:middle;text-align:center;">
                                             <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete">
+                                            <input type="hidden" class="tick" name="tick[]" value="0" />
                                         </td>
                                     @else <!-- jika sudah pernah dilakukan release namun warehouse belum confirm -->
                                         <td  style="vertical-align:middle;text-align:center;">    
