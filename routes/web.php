@@ -495,10 +495,11 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/confeng/confirmdetail/{id}', [ConfirmEng::class, 'detailconfirm'])->name('ConfDetail');
 	Route::post('/engsubmit', [ConfirmEng::class,'engsubmit'])->name('EngconfSubmit');
 
-	// wo release
+	// WHS Confirm
 	Route::get('/whsconfirm', [WHSConfirm::class, 'browse'])->name('browseWhconfirm');
 	Route::get('/whsconfirm/detailwhs/{id}', [WHSConfirm::class, 'detailwhs'])->name('WhsconfDetail');
 	Route::post('/whssubmit', [WHSConfirm::class,'whssubmit'])->name('WhsconfSubmit');
+	Route::get('/searchlot', [WHSConfirm::class, 'searchlot'])->name('searchlot');
 	
 	
 });

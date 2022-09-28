@@ -74,41 +74,73 @@
                                 <td style="text-align: center; width: 12% !important; font-weight: bold;">Repair Code</td>
                                 <td style="text-align: center; width: 12% !important; font-weight: bold;">Instruction Code</td>
                                 <td style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</td>
-                                <td style="text-align: center; width: 15% !important; font-weight: bold;">Qty Req.</td>
+                                <td style="text-align: center; width: 15% !important; font-weight: bold;">Qty Required</td>
                                 <td style="text-align: center; width: 15% !important; font-weight: bold;">Qty to Request</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Delete</td>
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
-
                             @forelse ( $combineSP as $datas )
+                            
+                            <!-- Desc Item -->
+                            @if($datas->insd_part_desc == "")
+                                @php($qsp = $spdata->where('spm_code','=',$datas->insd_part)->count())
+                                @if($qsp == 0)
+                                    @php($descpart = "")
+                                @else
+                                @php($rssp = $spdata->where('spm_code','=',$datas->insd_part)->first())
+                                    @php($descpart = $rssp->spm_desc)
+                                @endif
+                            @else
+                                @php($descpart = $datas->insd_part_desc)
+                            @endif
+
+                            <!-- Qty Conf -->
+                            @php($qwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->count())
+                            @if($qwhsconf == 0)
+                                @php($dqtyreq = $datas->insd_qty)
+                                @php($whsconf = "")
+                                @php($whsdate = "")
+                            @else
+                                @php($cwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->first())
+                                @php($dqtyreq = $cwhsconf->wo_dets_wh_qty)
+                                @php($whsconf = $cwhsconf->wo_dets_wh_conf)
+                                @php($whsdate = $cwhsconf->wo_dets_wh_date)
+                            @endif
+
                             <tr>
-                                <td style="vertical-align:middle;text-align:center;">
+                                <td style="vertical-align:middle;text-align:left;">
                                     {{$datas->repair_code}}
                                     <input type="hidden" name="repcode[]" value="{{$datas->repair_code}}" />
                                 </td>
-                                <td style="vertical-align:middle;text-align:center;">
+                                <td style="vertical-align:middle;text-align:left;">
                                     {{$datas->ins_code}}
                                     <input type="hidden" name="inscode[]" value="{{$datas->ins_code}}" />
                                 </td>
-                                <td style="vertical-align:middle;text-align:center;">
-                                    {{$datas->insd_part}} -- {{$datas->insd_part_desc}}
+                                <td style="vertical-align:middle;text-align:left;">
+                                    {{$datas->insd_part}} -- {{$descpart}}
                                     <input type="hidden" name="partneed[]" value="{{$datas->insd_part}}" />
                                 </td>
-                                <td style="vertical-align:middle;text-align:center;">
+                                <td style="vertical-align:middle;text-align:right;">
                                     {{$datas->insd_qty}}
-                                    <input type="hidden" name="qtyreq[]" value="{{$datas->insd_part}}" />
+                                    <input type="hidden" name="qtyreq[]" value="{{$datas->insd_qty}}" />
                                 </td>
-                                <td>
-                                    <input type="number" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$datas->insd_qty}}" required />
-                                </td>
-                                <td style="vertical-align:middle;text-align:center;">
-                                    <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete">
-                                    <!--
-                                    <input type="checkbox" class="qaddel" value="">
-                                    <input type="hidden" class="op" name="op[]" value="M" />
-                                    -->
-                                </td>
+                                @if($whsconf == "1")
+                                    <td style="vertical-align:middle;text-align:right;">
+                                        {{ number_format($dqtyreq,2) }}
+                                        <input type="hidden" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$dqtyreq}}" />
+                                    </td>
+                                    <td style="vertical-align:middle;text-align:center;">
+                                        {{date('Y-m-d', strtotime($whsdate))}}
+                                    </td>
+                                @else
+                                    <td>
+                                        <input type="number" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$dqtyreq}}" required />
+                                    </td>
+                                    <td style="vertical-align:middle;text-align:center;">
+                                        <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete">
+                                    </td>
+                                @endif
                             </tr>
                             @empty
 

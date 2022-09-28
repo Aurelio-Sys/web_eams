@@ -71,12 +71,13 @@
                     <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Repair Code</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Instruction Code</td>
+                                <td style="text-align: center; width: 7% !important; font-weight: bold;">Repair Code</td>
+                                <td style="text-align: center; width: 7% !important; font-weight: bold;">Instruction Code</td>
                                 <td style="text-align: center; width: 20% !important; font-weight: bold;">Spare Part</td>
                                 <td style="text-align: center; width: 7% !important; font-weight: bold;">Qty Required</td>
                                 <td style="text-align: center; width: 7% !important; font-weight: bold;">Qty Request</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Site</td>
+                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Lot</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Location</td>
                                 <td style="text-align: center; width: 5% !important; font-weight: bold;">Stock</td>
                                 <td style="text-align: center; width: 7% !important; font-weight: bold;">Qty Confirm</td>
@@ -99,13 +100,17 @@
                                 @php($qqtyreq = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->count())
                                 @if($qqtyreq == 0)
                                     @php($dqtyreq = 0)
+                                    @php($whsconf = "")
+                                    @php($whsdate = "")
                                 @else
                                     @php($sqtyreq = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->first())
                                     @php($dqtyreq = $sqtyreq->wo_dets_sp_qty)
+                                    @php($whsconf = $sqtyreq->wo_dets_wh_conf)
+                                    @php($whsdate = $sqtyreq->wo_dets_wh_date)
                                 @endif
 
                                 <!-- default lokasi -->
-                                @php($qsite = $spdata->where('spm_code','=',$datas->insd_part)->count())
+                                <!-- @php($qsite = $spdata->where('spm_code','=',$datas->insd_part)->count())
                                 @if($qsite == 0)
                                     @php($dsite = "")
                                     @php($dloc = "")
@@ -114,14 +119,21 @@
                                     @php($dsite = $ssite->spm_site)
                                     @php($dloc = $ssite->spm_loc)
                                 @endif
+                                -->
 
                                 <!-- stok -->
                                 @php($cstok = $qstok->where('stok_site','=',$dsite)->where('stok_loc','=',$dloc)->where('stok_part','=',$datas->insd_part)->count())
                                 @if($cstok == 0)
                                     @php($dstok = 0)
+                                    @php($dsite = "")
+                                    @php($dloc = "")
+                                    @php($dlot = "")
                                 @else
                                     @php($rsstok = $qstok->where('stok_site','=',$dsite)->where('stok_loc','=',$dloc)->where('stok_part','=',$datas->insd_part)->first())
                                     @php($dstok = $rsstok->stok_qty)
+                                    @php($dsite = $rsstok->stok_site)
+                                    @php($dloc = $rsstok->stok_loc)
+                                    @php($dlot = $rsstok->stok_lot)
                                 @endif
 
                                 <!-- Qty Confirm -->
@@ -161,6 +173,15 @@
                                     </select>
                                 </td>
                                 <td>
+                                    @php($qlot = $qstok->where('stok_part','=',$datas->insd_part))
+                                    <select name="t_lot[]" class="form-control t_lot">
+                                        <option value="">-- Select --</option>
+                                    @foreach($qlot as $rslot)
+                                        <option value="{{ $rslot->stok_lot }}" {{$dlot == $rslot->stok_lot ? "selected" : ""}}>{{ $rslot->stok_lot }} -- Loc : {{ $rslot->stok_loc }}</option>
+                                    @endforeach
+                                    </select>
+                                </td>
+                                <td>
                                     <select name="t_loc[]" class="form-control t_loc">
                                         <option value="">-- Select --</option>
                                     @php($rsloc = $locdata->where('loc_site','=',$dsite))
@@ -178,8 +199,8 @@
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
                                     <!-- <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"> -->
-                                    @if($sqtyreq->wo_dets_wh_conf == 1)
-                                        {{date('Y-m-d', strtotime($sqtyreq->wo_dets_wh_date))}}
+                                    @if($whsconf == 1)
+                                        {{date('Y-m-d', strtotime($whsdate))}}
                                         <input type="hidden" class="tick" name="tick[]" value="1" />
                                     @else
                                         @if($ccek == 0)
@@ -253,6 +274,7 @@
 
         });
 
+        /* 
         $(document).on('change', '.t_site', function() {
             var loc = $(this).closest('tr').find('.t_loc');
             var site = $(this).val();
@@ -265,7 +287,8 @@
                       loc.val(data);
                   }
               }) 
-        });
+              
+        }); */
 
         $(".t_loc").select2({
             width : '100%',
@@ -279,6 +302,12 @@
             
         });
 
+        $(".t_lot").select2({
+            width : '100%',
+            theme : 'bootstrap4',
+            
+        });
+
         $(document).on('change', '.t_loc', function() {
             var qtystok = $(this).closest('tr').find('.qtystok');
             var site = $(this).closest('tr').find('.t_site').val();
@@ -286,8 +315,6 @@
             var part = $(this).closest('tr').find('.partneed').val();
             var dqtyreq = $(this).closest('tr').find('.dqtyreq').val();
             var qtyconf = $(this).closest('tr').find('.qtyconf');
-
-            console.log(qtyconf);
 
             @foreach ($qstok as $qstok)
                 if(part == "{{$qstok->stok_part}}" && site == "{{$qstok->stok_site}}" && loc == "{{$qstok->stok_loc}}") {
@@ -300,6 +327,22 @@
                     }
                 }
             @endforeach
+        });
+
+        /* jika site diubah, select lot dan location diubah sesuai dengan wsa stok */
+        $(document).on('change', '.t_site', function() {
+            var site = $(this).closest('tr').find('.t_site').val();
+            var part = $(this).closest('tr').find('.partneed').val();
+            var lot = $(this).closest('tr').find('.t_lot');
+
+            $.ajax({
+                url:"/searchlot?t_site="+site+"&t_part="+part,
+                success:function(data){
+                    console.log(data);
+                    lot.html('').append(data);
+                    lot.val(data);
+                }
+            }) 
         });
 
         $(document).on('change','.qaddel',function(e){

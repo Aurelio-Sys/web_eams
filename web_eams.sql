@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 30, 2022 at 06:52 AM
+-- Generation Time: Sep 27, 2022 at 04:46 AM
 -- Server version: 10.4.13-MariaDB
 -- PHP Version: 7.4.20
 
@@ -20,6 +20,32 @@ SET time_zone = "+00:00";
 --
 -- Database: `web_eams`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `acceptance_image`
+--
+
+CREATE TABLE `acceptance_image` (
+  `accept_img_id` int(11) NOT NULL,
+  `file_srnumber` varchar(30) DEFAULT NULL,
+  `file_wonumber` varchar(30) DEFAULT NULL,
+  `file_name` varchar(255) DEFAULT NULL,
+  `file_url` varchar(255) DEFAULT NULL,
+  `uploaded_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `acceptance_image`
+--
+
+INSERT INTO `acceptance_image` (`accept_img_id`, `file_srnumber`, `file_wonumber`, `file_name`, `file_url`, `uploaded_at`) VALUES
+(1, NULL, 'WD-22-0012', 'WD-22-0012-tender_slsacct.sql', 'C:\\xampp\\htdocs\\web_actavis\\public\\uploadwofinish/WD-22-0012-tender_slsacct.sql', '2022-02-11 15:40:07'),
+(2, 'SR-22-0021', 'WO-22-0060', 'WO-22-0060-0001.jpg', 'C:\\xampp\\htdocs\\web_actavis\\public\\uploadwofinish/WO-22-0060-0001.jpg', '2022-02-11 15:43:13'),
+(3, NULL, 'WD-22-0013', 'WD-22-0013-images (9).jfif', '/home/ptimicoi/public_html/MMS/public/uploadwofinish/WD-22-0013-images (9).jfif', '2022-07-19 14:57:17'),
+(4, NULL, 'WO-22-0066', 'WO-22-0066-images (9).jfif', '/home/ptimicoi/public_html/MMS/public/uploadwofinish/WO-22-0066-images (9).jfif', '2022-07-19 15:30:02'),
+(5, NULL, 'WO-21-0063', 'WO-21-0063-acceptance_image.sql', 'C:\\xampp\\htdocs\\web_eams\\public\\uploadwofinish/WO-21-0063-acceptance_image.sql', '2022-09-23 14:53:38');
 
 -- --------------------------------------------------------
 
@@ -181,7 +207,7 @@ INSERT INTO `asset_mstr` (`ID`, `asset_code`, `asset_desc`, `asset_site`, `asset
 (84, '01-AT-002', 'Anak timbangan kelas M1 MPF', 'ACT', 'MPF', NULL, NULL, 'Eksternal', NULL, NULL, 'DISP', 'CAL', NULL, 'C', NULL, NULL, 12, 0, NULL, '0.00', '0.00', '2022-04-10', NULL, 'Yes', 'code', 'other', NULL, NULL, '2022-04-05', '2022-04-05', 'admin', NULL, 'PM-21-3197'),
 (85, '01-AT-003', 'Anak timbangan kelas M1 MPF', 'ACT', 'MPF', NULL, NULL, 'Eksternal', NULL, NULL, 'DISP', 'CAL', NULL, 'C', NULL, NULL, 12, 0, NULL, '0.00', '0.00', '2022-04-10', NULL, 'Yes', 'code', 'other', NULL, NULL, '2022-04-05', '2022-04-05', 'admin', NULL, 'PM-21-3198'),
 (86, '01-AT-004', 'Anak timbangan kelas M1 MPF', 'ACT', 'MPF', NULL, NULL, 'Eksternal', NULL, NULL, 'DISP', 'CAL', NULL, 'C', NULL, NULL, 12, 0, NULL, '0.00', '0.00', '2022-04-10', NULL, 'Yes', 'code', 'other', NULL, NULL, '2022-04-05', '2022-04-05', 'admin', NULL, 'PM-21-3199'),
-(87, '01-AT-005', 'Anak timbangan kelas M1 MPF', 'ACT', 'MPF', NULL, NULL, 'Eksternal', NULL, NULL, 'DISP', 'CAL', NULL, 'C', NULL, NULL, 12, 0, NULL, '0.00', '0.00', '2022-04-10', NULL, 'Yes', 'code', 'other', NULL, NULL, '2022-04-05', '2022-04-05', 'admin', NULL, 'PM-21-3200'),
+(87, '01-AT-005', 'Anak timbangan kelas M1 MPF', '10-100', 'RAK1', NULL, NULL, 'Eksternal', NULL, NULL, 'ASSET1', 'A', NULL, 'C', NULL, 0, 12, 0, NULL, '0.00', '0.00', '2022-04-10', NULL, 'Yes', 'code', '', NULL, NULL, '2022-04-05', '2022-09-13', 'admin1', NULL, 'PM-21-3200'),
 (88, '01-AT-006', 'Anak timbangan kelas M1 MPF', 'ACT', 'MPF', NULL, NULL, 'Eksternal', NULL, NULL, 'DISP', 'CAL', NULL, 'C', NULL, NULL, 12, 0, NULL, '0.00', '0.00', '2022-04-10', NULL, 'Yes', 'code', 'other', NULL, NULL, '2022-04-05', '2022-04-05', 'admin', NULL, 'PM-21-3201'),
 (89, '01-AT-007', 'Anak timbangan kelas M1 MPF', 'ACT', 'MPF', NULL, NULL, 'Eksternal', NULL, NULL, 'DISP', 'CAL', NULL, 'C', NULL, NULL, 12, 0, NULL, '0.00', '0.00', '2022-04-10', NULL, 'Yes', 'code', 'other', NULL, NULL, '2022-04-05', '2022-04-05', 'admin', NULL, 'PM-21-3202'),
 (90, '01-AT-008', 'Anak timbangan kelas M1 MPF', 'ACT', 'MPF', NULL, NULL, 'Eksternal', NULL, NULL, 'DISP', 'CAL', NULL, 'C', NULL, NULL, 12, 0, NULL, '0.00', '0.00', '2022-04-10', NULL, 'Yes', 'code', 'other', NULL, NULL, '2022-04-05', '2022-04-05', 'admin', NULL, 'PM-21-3203'),
@@ -1599,7 +1625,7 @@ INSERT INTO `asset_mstr` (`ID`, `asset_code`, `asset_desc`, `asset_site`, `asset
 (1494, 'EQ-0208-02', 'HPLC - Prominence 20AT - Komposisi Gradient', 'ACT', 'QC3', NULL, NULL, 'Eksternal', NULL, NULL, 'LAB', 'CAL', NULL, 'C', NULL, NULL, 6, 0, NULL, '0.00', '0.00', '2022-04-10', NULL, 'Yes', 'code', 'other', NULL, NULL, '2022-04-05', '2022-04-05', 'admin', NULL, 'PM-21-4067'),
 (1495, 'EQ-0208-03', 'HPLC - Prominence 20AT - Linieritas Autoinjektor', 'ACT', 'QC3', NULL, NULL, 'Eksternal', NULL, NULL, 'LAB', 'CAL', NULL, 'C', NULL, NULL, 6, 0, NULL, '0.00', '0.00', '2022-04-10', NULL, 'Yes', 'code', 'other', NULL, NULL, '2022-04-05', '2022-04-05', 'admin', NULL, 'PM-21-4068'),
 (1496, 'EQ-0208-04', 'HPLC - Prominence 20AT - Carry over', 'ACT', 'QC3', NULL, NULL, 'Eksternal', NULL, NULL, 'LAB', 'CAL', NULL, 'C', NULL, NULL, 6, 0, NULL, '0.00', '0.00', '2022-04-10', NULL, 'Yes', 'code', 'other', NULL, NULL, '2022-04-05', '2022-04-05', 'admin', NULL, 'PM-21-4069'),
-(1497, 'EQ-0208-05', 'HPLC - Prominence 20AT - Linieritas Autoinjektor', 'ACT', 'QC3', NULL, NULL, 'Eksternal', NULL, NULL, 'LAB', 'CAL', NULL, 'C', NULL, NULL, 6, 0, NULL, '0.00', '0.00', '2022-04-10', NULL, 'Yes', 'code', 'other', NULL, NULL, '2022-04-05', '2022-04-05', 'admin', NULL, 'PM-21-4070'),
+(1497, 'EQ-0208-05', 'HPLC - Prominence 20AT - Linieritas Autoinjektor', 'ACT', 'QC3', NULL, NULL, 'Eksternal', NULL, NULL, 'LAB', 'CAL', NULL, 'C', NULL, NULL, 6, 0, NULL, '0.00', '0.00', '2022-04-10', NULL, 'Yes', 'code', 'other', NULL, NULL, '2022-04-05', '2022-04-05', 'admin', NULL, NULL),
 (1498, 'EQ-0208-06', 'HPLC - Prominence 20AT -? Gelombang (internal)', 'ACT', 'QC3', NULL, NULL, 'Eksternal', NULL, NULL, 'LAB', 'CAL', NULL, 'C', NULL, NULL, 6, 0, NULL, '0.00', '0.00', '2022-04-10', NULL, 'Yes', 'code', 'other', NULL, NULL, '2022-04-05', '2022-04-05', 'admin', NULL, 'PM-21-4071'),
 (1499, 'EQ-0208-07', 'HPLC - Prominence 20AT -? Gelombang (kafein)', 'ACT', 'QC3', NULL, NULL, 'Eksternal', NULL, NULL, 'LAB', 'CAL', NULL, 'C', NULL, NULL, 6, 0, NULL, '0.00', '0.00', '2022-04-10', NULL, 'Yes', 'code', 'other', NULL, NULL, '2022-04-05', '2022-04-05', 'admin', NULL, 'PM-21-4072'),
 (1500, 'EQ-0208-08', 'HPLC - Prominence 20AT - Noise Level', 'ACT', 'QC3', NULL, NULL, 'Eksternal', NULL, NULL, 'LAB', 'CAL', NULL, 'C', NULL, NULL, 6, 0, NULL, '0.00', '0.00', '2022-04-10', NULL, 'Yes', 'code', 'other', NULL, NULL, '2022-04-05', '2022-04-05', 'admin', NULL, 'PM-21-4073'),
@@ -2445,23 +2471,28 @@ INSERT INTO `asset_mstr` (`ID`, `asset_code`, `asset_desc`, `asset_site`, `asset
 
 CREATE TABLE `asset_par` (
   `ID` int(11) NOT NULL,
-  `aspar_par` varchar(10) NOT NULL,
-  `aspar_child` varchar(10) NOT NULL,
+  `aspar_par` varchar(20) NOT NULL,
+  `aspar_child` varchar(20) NOT NULL,
   `created_at` date DEFAULT NULL,
-  `updated_at` date DEFAULT NULL
+  `updated_at` date DEFAULT NULL,
+  `edited_by` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `asset_par`
 --
 
-INSERT INTO `asset_par` (`ID`, `aspar_par`, `aspar_child`, `created_at`, `updated_at`) VALUES
-(1, 'FS1231', 'A102', '2021-03-04', '2021-03-04'),
-(2, 'K1289', 'A102', '2021-03-04', '2021-03-04'),
-(3, 'K1289', 'A102', '2021-03-04', '2021-03-04'),
-(4, 'K1289', 'A102', '2021-03-04', '2021-03-04'),
-(12, 'A10', 'WVVDFE', '2021-03-04', '2021-03-04'),
-(13, 'A10', 'B1238', '2021-03-04', '2021-03-04');
+INSERT INTO `asset_par` (`ID`, `aspar_par`, `aspar_child`, `created_at`, `updated_at`, `edited_by`) VALUES
+(1, 'FS1231', 'A102', '2021-03-04', '2021-03-04', ''),
+(2, 'K1289', 'A102', '2021-03-04', '2021-03-04', ''),
+(3, 'K1289', 'A102', '2021-03-04', '2021-03-04', ''),
+(4, 'K1289', 'A102', '2021-03-04', '2021-03-04', ''),
+(12, 'A10', 'WVVDFE', '2021-03-04', '2021-03-04', ''),
+(13, 'A10', 'B1238', '2021-03-04', '2021-03-04', ''),
+(39, 'EQ-0227-01', 'EQ-0004-TM-001', '2022-09-18', '2022-09-18', 'admin1'),
+(40, 'EQ-0227-01', 'EQ-0121', '2022-09-18', '2022-09-18', 'admin1'),
+(41, 'EQ-0227-01', 'EQ-0425-02', '2022-09-18', '2022-09-18', 'admin1'),
+(42, 'EQ-0227-01', 'EQ-0440-01', '2022-09-18', '2022-09-18', 'admin1');
 
 -- --------------------------------------------------------
 
@@ -2490,6 +2521,32 @@ INSERT INTO `asset_type` (`ID`, `astype_code`, `astype_desc`, `created_at`, `upd
 (7, 'MOT4', 'Bis Tingkat', '2021-02-26', '2021-02-26'),
 (8, 'MAC1', 'Mesin Potong Rumput', '2021-02-26', '2021-02-26'),
 (10, 'ASSET1', 'Aset Besi EDIT', '2021-03-12', '2021-03-12');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `asset_upload`
+--
+
+CREATE TABLE `asset_upload` (
+  `id` int(11) NOT NULL,
+  `filepath` varchar(255) NOT NULL,
+  `asset_code` varchar(255) NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `asset_upload`
+--
+
+INSERT INTO `asset_upload` (`id`, `filepath`, `asset_code`, `created_at`, `updated_at`) VALUES
+(1, '/home/ptimicoi/public_html/MMS/public/uploadasset/20220603_083830-Snap 2021-08-03 at 09.50.05.png', 'CTF001', '2022-06-03 08:38:30', '2022-06-03 08:38:30'),
+(2, '/home/ptimicoi/public_html/MMS/public/uploadasset/20220718_135614-CAR_Akebono_MRP_MPS3.pdf', 'IMI-100', '2022-07-18 13:56:14', '2022-07-18 13:56:14'),
+(3, '/home/ptimicoi/public_html/MMS/public/uploadasset/20220718_135921-Akebono_Senin_28_Maret_2022.xlsx', 'IMI-101', '2022-07-18 13:59:21', '2022-07-18 13:59:21'),
+(4, '/home/ptimicoi/public_html/MMS//uploadasset/20220719_095506-wo.csv', 'AC', '2022-07-19 09:55:06', '2022-07-19 09:55:06'),
+(5, '/home/ptimicoi/public_html/MMS//uploadasset/20220719_100759-asgroup.csv', '01-01-Cut', '2022-07-19 10:07:59', '2022-07-19 10:07:59'),
+(6, '/home/ptimicoi/public_html/MMS//uploadasset/20220815_115542-suratjalan_2022_08_04_15_27_24.xlsx', '01-01-Cut', '2022-08-15 11:55:42', '2022-08-15 11:55:42');
 
 -- --------------------------------------------------------
 
@@ -2589,7 +2646,8 @@ INSERT INTO `eng_mstr` (`ID`, `eng_code`, `eng_desc`, `eng_dept`, `approver`, `e
 (10, 'imi01', 'Admin IMI', 'ENG', 1, '2022-07-07', 'Yes', '2022-07-07', '0.00', '', 'rio@ptimi.co.id', '', 'ADMIN', '2022-07-07', '2022-07-07', 'admin'),
 (11, 'azis', 'Azis', 'ENG', 0, '2022-07-07', 'Yes', '2022-07-07', '0.00', '', 'AzisAli.Murti@actavis', '', 'TECH', '2022-07-07', '2022-07-07', 'admin'),
 (12, 'sukarya', 'Sukarya', 'ENG', 0, '2022-07-07', 'Yes', '2022-07-07', '0.00', '', 'Sukarya.Sukarya@actavis', '', 'TECH', '2022-07-07', '2022-07-07', 'admin'),
-(13, 'spv02', 'Supervisor', 'IT', 0, NULL, 'Yes', NULL, NULL, '', 'tyas@ptimi', 'spv02', 'SPVSR', '2022-07-19', '2022-07-19', 'admin');
+(13, 'spv02', 'Supervisor', 'IT', 0, NULL, 'Yes', NULL, NULL, '', 'tyas@ptimi', 'spv02', 'SPVSR', '2022-07-19', '2022-07-19', 'admin'),
+(14, 'admin1', 'Admin 1', 'IT', 1, NULL, 'Yes', NULL, NULL, '', 'tyas@ptimi', '', 'ADMIN', '2022-09-02', '2022-09-02', 'admin');
 
 -- --------------------------------------------------------
 
@@ -2614,26 +2672,15 @@ CREATE TABLE `failed_jobs` (
 
 CREATE TABLE `fn_mstr` (
   `ID` int(11) NOT NULL,
-  `fn_code` varchar(8) NOT NULL,
-  `fn_num` int(3) NOT NULL,
-  `fn_desc` varchar(30) NOT NULL,
+  `fn_code` varchar(10) NOT NULL,
+  `fn_num` int(11) DEFAULT NULL,
+  `fn_desc` varchar(50) NOT NULL,
+  `fn_assetgroup` varchar(8) DEFAULT NULL,
+  `fn_impact` varchar(50) DEFAULT NULL,
   `created_at` date DEFAULT NULL,
-  `updated_at` date DEFAULT NULL
+  `updated_at` date DEFAULT NULL,
+  `edited_by` varchar(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `fn_mstr`
---
-
-INSERT INTO `fn_mstr` (`ID`, `fn_code`, `fn_num`, `fn_desc`, `created_at`, `updated_at`) VALUES
-(1, '1', 123, '123456789012345678901234567890', '2021-03-07', '2021-03-12'),
-(4, '4', 421, '21424', '2021-03-07', '2021-03-07'),
-(5, '1221', 0, 'asdfghjkl', '2021-03-07', '2021-03-12'),
-(6, '123', 123, '123123', '2021-03-07', '2021-03-07'),
-(7, '123124', 111, 'qwerty', '2021-03-07', '2021-03-07'),
-(8, '5435', 345, '5345435', '2021-03-07', '2021-03-07'),
-(9, 'FAIL1', 1, 'Salah Pasang', '2021-03-12', '2021-03-12'),
-(10, 'FAIL2', 1, 'Salah Potong', '2021-03-12', '2021-03-12');
 
 -- --------------------------------------------------------
 
@@ -2654,6 +2701,61 @@ INSERT INTO `imp_mstr` (`imp_code`, `imp_desc`) VALUES
 ('EHS', 'EHS'),
 ('QLTY', 'Quality'),
 ('RLT', 'Reliability');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `insd_det`
+--
+
+CREATE TABLE `insd_det` (
+  `insd_id` int(10) UNSIGNED NOT NULL,
+  `insd_code` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `insd_part` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `insd_part_desc` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `insd_um` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `insd_qty` decimal(8,2) NOT NULL,
+  `insd_active` tinyint(4) NOT NULL DEFAULT 1,
+  `insd_edited_by` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `insd_det`
+--
+
+INSERT INTO `insd_det` (`insd_id`, `insd_code`, `insd_part`, `insd_part_desc`, `insd_um`, `insd_qty`, `insd_active`, `insd_edited_by`, `created_at`, `updated_at`) VALUES
+(11, 'CTF-I002', 'CTF-P002', 'Main Motor Gearbox', 'blm', '2.00', 1, 'admin1', '2022-09-13 05:15:51', '2022-09-13 05:15:51'),
+(12, 'CTF-I002', 'CTF-P007', 'Compressed Air System', 'blm', '1.00', 1, 'admin1', '2022-09-13 05:15:51', '2022-09-13 05:15:51'),
+(17, 'CTF-I003', 'CTF-P001', 'Main Motor', 'blm', '1.00', 1, 'admin1', '2022-09-13 09:03:42', '2022-09-13 09:03:42'),
+(18, 'CTF-I003', 'CTF-P004', 'Cutting Station', 'NN', '0.00', 1, 'admin1', '2022-09-13 09:03:42', '2022-09-13 09:03:42'),
+(19, 'CTF-I001', 'CTF-P001', 'Main Motor', 'NN', '0.00', 1, 'admin1', '2022-09-13 09:16:33', '2022-09-13 09:16:33'),
+(20, 'CTF-I001', 'CTF-P002', 'Main Motor Gearbox', 'qw', '12.00', 1, 'admin1', '2022-09-13 09:16:33', '2022-09-13 09:16:33'),
+(21, 'CTF-I001', 'CTF-P005', 'Pneumatic Piston Dosing', 'EA', '0.00', 1, 'admin1', '2022-09-13 09:16:33', '2022-09-13 09:16:33'),
+(22, 'CTF-I001', 'CTF-P007', 'Compressed Air System', 'pcs', '0.00', 1, 'admin1', '2022-09-13 09:16:33', '2022-09-13 09:16:33'),
+(23, 'INS-C002', '90420', 'Label Olive Oil 500 ml ', 'EA', '4.00', 1, 'admin1', '2022-09-15 08:23:49', '2022-09-15 08:23:49'),
+(24, 'INS-C002', '80033', 'Jojoba Oil Liquid', 'L', '1.00', 1, 'admin1', '2022-09-15 08:23:49', '2022-09-15 08:23:49'),
+(25, 'INS-C003', '60005', 'Battery ', 'EA', '12.00', 1, 'admin1', '2022-09-15 08:24:22', '2022-09-15 08:24:22'),
+(26, 'INS-C003', '80042', 'Potassium Sorbate Powder', 'G', '100.00', 1, 'admin1', '2022-09-15 08:24:22', '2022-09-15 08:24:22'),
+(27, 'INS-C003', '60022', 'Battery Backup, Lithium ', 'EA', '2.00', 1, 'admin1', '2022-09-15 08:24:22', '2022-09-15 08:24:22');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ins_group`
+--
+
+CREATE TABLE `ins_group` (
+  `insg_id` int(11) NOT NULL,
+  `insg_code` varchar(20) NOT NULL,
+  `insg_desc` varchar(50) NOT NULL,
+  `insg_line` int(11) NOT NULL,
+  `insg_ins` varchar(20) NOT NULL,
+  `insg_created_at` date DEFAULT NULL,
+  `insg_updated_at` date DEFAULT NULL,
+  `insg_edited_by` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -2688,7 +2790,10 @@ INSERT INTO `ins_mstr` (`ins_id`, `ins_code`, `ins_desc`, `ins_part`, `ins_ref`,
 (4, 'CTF-I004', 'Pemeriksaan keseluruhan meliputi: kondisi fisik & ketajaman pisau,  kondisi shaft & penggantian bearing shaft, kondisi fisik block mounting', 'CTF-P004', NULL, '', NULL, 'Kondisi baik, ganti jika aus/worn out', NULL, NULL, '2022-05-13', '2022-05-13', 'admin'),
 (5, 'CTF-I005', 'Pemeriksaan kondisi & fungsi pressure sensor', 'CTF-P005', NULL, '', NULL, 'Kondisi baik, berfungsi baik', NULL, NULL, '2022-05-13', '2022-05-13', 'admin'),
 (6, 'CTF-I006', 'Pemeriksaan tegangan Voltase output DC power supply, catat hasil pengukuran', 'CTF-P006', NULL, '', NULL, 'Kondisi baik, voltage sesuai', NULL, NULL, '2022-05-13', '2022-05-13', 'admin'),
-(7, 'CTF-I007', 'Pemeriksaan meliputi: Tekanan compressed air supply (standard 6 bar), bak penampung regulator CA (buang jika ada air), kondisi hose penumatic', 'CTF-P007', NULL, '', NULL, 'Kondisi baik,  (standard 6 bar)', NULL, NULL, '2022-05-13', '2022-05-13', 'admin');
+(7, 'CTF-I007', 'Pemeriksaan meliputi: Tekanan compressed air supply (standard 6 bar), bak penampung regulator CA (buang jika ada air), kondisi hose penumatic', 'CTF-P007', NULL, '', NULL, 'Kondisi baik,  (standard 6 bar)', NULL, NULL, '2022-05-13', '2022-05-13', 'admin'),
+(9, 'INS-C001', 'Cek keadaan oli dan jumlah oli pada karter', '', NULL, '', NULL, 'Minimal 500ML dalam tabung', NULL, NULL, '2022-09-15', '2022-09-15', 'admin1'),
+(10, 'INS-C002', 'Pasang tangki bahan bakar dan isi dengan bensin', '', NULL, '', NULL, NULL, NULL, NULL, '2022-09-15', '2022-09-15', 'admin1'),
+(11, 'INS-C003', 'Cek bateray', '', NULL, '', NULL, 'Bateray Full', NULL, NULL, '2022-09-15', '2022-09-15', 'admin1');
 
 -- --------------------------------------------------------
 
@@ -2750,7 +2855,874 @@ INSERT INTO `loc_mstr` (`ID`, `loc_site`, `loc_code`, `loc_desc`, `created_at`, 
 (8, '10-100', 'RAK2', 'Susunan Rak 2', '2021-02-26', '2021-02-26'),
 (9, '10-202', 'DUA', 'Susunan Rak 1', '2021-03-01', '2021-03-01'),
 (10, 'site2', 'LOC1', 'Taman Menteng Edit', '2021-03-12', '2021-03-12'),
-(11, '10-303', '123456', '123456789012345678901234', '2021-03-12', '2021-03-12');
+(11, '10-303', '123456', '123456789012345678901234', '2021-03-12', '2021-03-12'),
+(13, '10-100', '', '', '2022-09-06', '2022-09-06'),
+(14, '10-200', '', '', '2022-09-06', '2022-09-06'),
+(15, '10-201', '', '', '2022-09-06', '2022-09-06'),
+(16, '10-202', '', '', '2022-09-06', '2022-09-06'),
+(17, '10-300', '', '', '2022-09-06', '2022-09-06'),
+(18, '10-301', '', '', '2022-09-06', '2022-09-06'),
+(19, '10-302', '', '', '2022-09-06', '2022-09-06'),
+(20, '10-303', '', '', '2022-09-06', '2022-09-06'),
+(21, '10-400', '', '', '2022-09-06', '2022-09-06'),
+(22, '10-500', '', '', '2022-09-06', '2022-09-06'),
+(23, '10-600', '', '', '2022-09-06', '2022-09-06'),
+(24, '11-100', '', '', '2022-09-06', '2022-09-06'),
+(25, '12-100', '', '', '2022-09-06', '2022-09-06'),
+(26, '20-100', '', '', '2022-09-06', '2022-09-06'),
+(27, '21-100', '', '', '2022-09-06', '2022-09-06'),
+(28, '22-100', '', '', '2022-09-06', '2022-09-06'),
+(29, '30-100', '', '', '2022-09-06', '2022-09-06'),
+(30, '31-100', '', '', '2022-09-06', '2022-09-06'),
+(31, '10-100', '010', 'Finished Goods', '2022-09-06', '2022-09-06'),
+(32, '10-100', '020', 'Components', '2022-09-06', '2022-09-06'),
+(33, '10-100', '030', 'Pending Inspection', '2022-09-06', '2022-09-06'),
+(34, '10-100', '035', 'MFG Pending Inspection', '2022-09-06', '2022-09-06'),
+(35, '10-100', '039', 'Inspection', '2022-09-06', '2022-09-06'),
+(36, '10-100', '040', 'Refrigerated Location', '2022-09-06', '2022-09-06'),
+(37, '10-100', '050', 'Locked Location', '2022-09-06', '2022-09-06'),
+(38, '10-100', '060', 'Reject/Scrap', '2022-09-06', '2022-09-06'),
+(39, '10-100', '070', 'Return/Rework', '2022-09-06', '2022-09-06'),
+(40, '10-100', '080', 'QC Hold', '2022-09-06', '2022-09-06'),
+(41, '10-100', '090', 'Quarantine', '2022-09-06', '2022-09-06'),
+(42, '10-100', '100', 'Supplier Consignment', '2022-09-06', '2022-09-06'),
+(43, '10-100', '110', 'Customer Consignment', '2022-09-06', '2022-09-06'),
+(44, '10-100', '120', 'Dock', '2022-09-06', '2022-09-06'),
+(45, '10-100', '130', 'Transit', '2022-09-06', '2022-09-06'),
+(46, '10-100', '140', 'DropShip', '2022-09-06', '2022-09-06'),
+(47, '10-100', '150', 'Service Return', '2022-09-06', '2022-09-06'),
+(48, '10-100', '160', 'Service Spares', '2022-09-06', '2022-09-06'),
+(49, '10-100', '170', 'Service Scrap', '2022-09-06', '2022-09-06'),
+(50, '10-100', '180', 'Service Repair', '2022-09-06', '2022-09-06'),
+(51, '10-100', '190', 'Service Engineer', '2022-09-06', '2022-09-06'),
+(52, '10-100', '191', 'Trunk Inventory 10-ENG01', '2022-09-06', '2022-09-06'),
+(53, '10-100', '192', 'Trunk Inventory 10-ENG02', '2022-09-06', '2022-09-06'),
+(54, '10-100', '193', 'Trunk Inventory 10-ENG03', '2022-09-06', '2022-09-06'),
+(55, '10-100', '194', 'Trunk Inventory 10-ENG04', '2022-09-06', '2022-09-06'),
+(56, '10-100', '200', 'Tech Service Engineer', '2022-09-06', '2022-09-06'),
+(57, '10-100', '210', 'Single Item Location', '2022-09-06', '2022-09-06'),
+(58, '10-100', '220', 'Single Lot Item Location', '2022-09-06', '2022-09-06'),
+(59, '10-100', 'BCKFLSH', 'LOKASI BACKFLUSH', '2022-09-06', '2022-09-06'),
+(60, '10-100', 'COLD', '', '2022-09-06', '2022-09-06'),
+(61, '10-100', 'MIRA', 'LOKASI BACKFLUSH MIRA', '2022-09-06', '2022-09-06'),
+(62, '10-100', 'POOL1', 'ASSET SIAP DIPAKAI', '2022-09-06', '2022-09-06'),
+(63, '10-100', 'POOL2', 'ASSET TIDAK SIAP PAKAI', '2022-09-06', '2022-09-06'),
+(64, '10-100', 'W-1A11', 'SR Aisle A Sec 1 Shelf 1', '2022-09-06', '2022-09-06'),
+(65, '10-100', 'W-1A110A', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(66, '10-100', 'W-1A110B', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(67, '10-100', 'W-1A110C', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(68, '10-100', 'W-1A110D', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(69, '10-100', 'W-1A110E', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(70, '10-100', 'W-1A110F', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(71, '10-100', 'W-1A111', 'SR Aisle A Sec 1 Shelf 11', '2022-09-06', '2022-09-06'),
+(72, '10-100', 'W-1A112', 'SR Aisle A Sec 1 Shelf 12', '2022-09-06', '2022-09-06'),
+(73, '10-100', 'W-1A113', 'SR Aisle A Sec 1 Shelf 13', '2022-09-06', '2022-09-06'),
+(74, '10-100', 'W-1A12', 'SR Aisle A Sec 1 Shelf 2', '2022-09-06', '2022-09-06'),
+(75, '10-100', 'W-1A13A', 'SR Aisle A Sec 1 Shelf 3 Drw A', '2022-09-06', '2022-09-06'),
+(76, '10-100', 'W-1A13B', 'SR Aisle A Sec 1 Shelf 3 Drw B', '2022-09-06', '2022-09-06'),
+(77, '10-100', 'W-1A13C', 'SR Aisle A Sec 1 Shelf 3 Drw C', '2022-09-06', '2022-09-06'),
+(78, '10-100', 'W-1A13D', 'SR Aisle A Sec 1 Shelf 3 Drw D', '2022-09-06', '2022-09-06'),
+(79, '10-100', 'W-1A13E', 'SR Aisle A Sec 1 Shelf 3 Drw E', '2022-09-06', '2022-09-06'),
+(80, '10-100', 'W-1A13F', 'SR Aisle A Sec 1 Shelf 3 Drw F', '2022-09-06', '2022-09-06'),
+(81, '10-100', 'W-1A14A', 'SR Aisle A Sec 1 Shelf 4 Drw A', '2022-09-06', '2022-09-06'),
+(82, '10-100', 'W-1A14B', 'SR Aisle A Sec 1 Shelf 4 Drw B', '2022-09-06', '2022-09-06'),
+(83, '10-100', 'W-1A14C', 'SR Aisle A Sec 1 Shelf 4 Drw C', '2022-09-06', '2022-09-06'),
+(84, '10-100', 'W-1A14D', 'SR Aisle A Sec 1 Shelf 4 Drw D', '2022-09-06', '2022-09-06'),
+(85, '10-100', 'W-1A14E', 'SR Aisle A Sec 1 Shelf 4 Drw E', '2022-09-06', '2022-09-06'),
+(86, '10-100', 'W-1A14F', 'SR Aisle A Sec 1 Shelf 4 Drw F', '2022-09-06', '2022-09-06'),
+(87, '10-100', 'W-1A15A', 'SR Aisle A Sec 1 Shelf 5 Drw A', '2022-09-06', '2022-09-06'),
+(88, '10-100', 'W-1A15B', 'SR Aisle A Sec 1 Shelf 5 Drw B', '2022-09-06', '2022-09-06'),
+(89, '10-100', 'W-1A15C', 'SR Aisle A Sec 1 Shelf 5 Drw C', '2022-09-06', '2022-09-06'),
+(90, '10-100', 'W-1A15D', 'SR Aisle A Sec 1 Shelf 5 Drw D', '2022-09-06', '2022-09-06'),
+(91, '10-100', 'W-1A15E', 'SR Aisle A Sec 1 Shelf 5 Drw E', '2022-09-06', '2022-09-06'),
+(92, '10-100', 'W-1A15F', 'SR Aisle A Sec 1 Shelf 5 Drw F', '2022-09-06', '2022-09-06'),
+(93, '10-100', 'W-1A16A', 'SR Aisle A Sec 1 Shelf 6 Drw A', '2022-09-06', '2022-09-06'),
+(94, '10-100', 'W-1A16B', 'SR Aisle A Sec 1 Shelf 6 Drw B', '2022-09-06', '2022-09-06'),
+(95, '10-100', 'W-1A16C', 'SR Aisle A Sec 1 Shelf 6 Drw C', '2022-09-06', '2022-09-06'),
+(96, '10-100', 'W-1A16D', 'SR Aisle A Sec 1 Shelf 6 Drw D', '2022-09-06', '2022-09-06'),
+(97, '10-100', 'W-1A16E', 'SR Aisle A Sec 1 Shelf 6 Drw E', '2022-09-06', '2022-09-06'),
+(98, '10-100', 'W-1A16F', 'SR Aisle A Sec 1 Shelf 6 Drw F', '2022-09-06', '2022-09-06'),
+(99, '10-100', 'W-1A17A', 'SR Aisle A Sec 1 Shelf 7 Drw A', '2022-09-06', '2022-09-06'),
+(100, '10-100', 'W-1A17B', 'SR Aisle A Sec 1 Shelf 7 Drw B', '2022-09-06', '2022-09-06'),
+(101, '10-100', 'W-1A17C', 'SR Aisle A Sec 1 Shelf 7 Drw C', '2022-09-06', '2022-09-06'),
+(102, '10-100', 'W-1A17D', 'SR Aisle A Sec 1 Shelf 7 Drw D', '2022-09-06', '2022-09-06'),
+(103, '10-100', 'W-1A17E', 'SR Aisle A Sec 1 Shelf 7 Drw E', '2022-09-06', '2022-09-06'),
+(104, '10-100', 'W-1A17F', 'SR Aisle A Sec 1 Shelf 7 Drw F', '2022-09-06', '2022-09-06'),
+(105, '10-100', 'W-1A18A', 'SR Aisle A Sec 1 Shelf 8 Drw A', '2022-09-06', '2022-09-06'),
+(106, '10-100', 'W-1A18B', 'SR Aisle A Sec 1 Shelf 8 Drw B', '2022-09-06', '2022-09-06'),
+(107, '10-100', 'W-1A18C', 'SR Aisle A Sec 1 Shelf 8 Drw C', '2022-09-06', '2022-09-06'),
+(108, '10-100', 'W-1A18D', 'SR Aisle A Sec 1 Shelf 8 Drw D', '2022-09-06', '2022-09-06'),
+(109, '10-100', 'W-1A18E', 'SR Aisle A Sec 1 Shelf 8 Drw E', '2022-09-06', '2022-09-06'),
+(110, '10-100', 'W-1A18F', 'SR Aisle A Sec 1 Shelf 8 Drw F', '2022-09-06', '2022-09-06'),
+(111, '10-100', 'W-1A19A', 'SR Aisle A Sec 1 Shelf 9 Drw A', '2022-09-06', '2022-09-06'),
+(112, '10-100', 'W-1A19B', 'SR Aisle A Sec 1 Shelf 9 Drw B', '2022-09-06', '2022-09-06'),
+(113, '10-100', 'W-1A19C', 'SR Aisle A Sec 1 Shelf 9 Drw C', '2022-09-06', '2022-09-06'),
+(114, '10-100', 'W-1A19D', 'SR Aisle A Sec 1 Shelf 9 Drw D', '2022-09-06', '2022-09-06'),
+(115, '10-100', 'W-1A19E', 'SR Aisle A Sec 1 Shelf 9 Drw E', '2022-09-06', '2022-09-06'),
+(116, '10-100', 'W-1A19F', 'SR Aisle A Sec 1 Shelf 9 Drw F', '2022-09-06', '2022-09-06'),
+(117, '10-100', 'W-1A21', 'SR Aisle A Sec 2 Shelf 1', '2022-09-06', '2022-09-06'),
+(118, '10-100', 'W-1A210A', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(119, '10-100', 'W-1A210B', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(120, '10-100', 'W-1A210C', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(121, '10-100', 'W-1A210D', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(122, '10-100', 'W-1A210E', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(123, '10-100', 'W-1A210F', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(124, '10-100', 'W-1A211', 'SR Aisle A Sec 2 Shelf 11', '2022-09-06', '2022-09-06'),
+(125, '10-100', 'W-1A212', 'SR Aisle A Sec 2 Shelf 12', '2022-09-06', '2022-09-06'),
+(126, '10-100', 'W-1A213', 'SR Aisle A Sec 2 Shelf 13', '2022-09-06', '2022-09-06'),
+(127, '10-100', 'W-1A22', 'SR Aisle A Sec 2 Shelf 2', '2022-09-06', '2022-09-06'),
+(128, '10-100', 'W-1A23A', 'SR Aisle A Sec 2 Shelf 3 Drw A', '2022-09-06', '2022-09-06'),
+(129, '10-100', 'W-1A23B', 'SR Aisle A Sec 2 Shelf 3 Drw B', '2022-09-06', '2022-09-06'),
+(130, '10-100', 'W-1A23C', 'SR Aisle A Sec 2 Shelf 3 Drw C', '2022-09-06', '2022-09-06'),
+(131, '10-100', 'W-1A23D', 'SR Aisle A Sec 2 Shelf 3 Drw D', '2022-09-06', '2022-09-06'),
+(132, '10-100', 'W-1A23E', 'SR Aisle A Sec 2 Shelf 3 Drw E', '2022-09-06', '2022-09-06'),
+(133, '10-100', 'W-1A23F', 'SR Aisle A Sec 2 Shelf 3 Drw F', '2022-09-06', '2022-09-06'),
+(134, '10-100', 'W-1A24A', 'SR Aisle A Sec 2 Shelf 4 Drw A', '2022-09-06', '2022-09-06'),
+(135, '10-100', 'W-1A24B', 'SR Aisle A Sec 2 Shelf 4 Drw B', '2022-09-06', '2022-09-06'),
+(136, '10-100', 'W-1A24C', 'SR Aisle A Sec 2 Shelf 4 Drw C', '2022-09-06', '2022-09-06'),
+(137, '10-100', 'W-1A24D', 'SR Aisle A Sec 2 Shelf 4 Drw D', '2022-09-06', '2022-09-06'),
+(138, '10-100', 'W-1A24E', 'SR Aisle A Sec 2 Shelf 4 Drw E', '2022-09-06', '2022-09-06'),
+(139, '10-100', 'W-1A24F', 'SR Aisle A Sec 2 Shelf 4 Drw F', '2022-09-06', '2022-09-06'),
+(140, '10-100', 'W-1A25A', 'SR Aisle A Sec 2 Shelf 5 Drw A', '2022-09-06', '2022-09-06'),
+(141, '10-100', 'W-1A25B', 'SR Aisle A Sec 2 Shelf 5 Drw B', '2022-09-06', '2022-09-06'),
+(142, '10-100', 'W-1A25C', 'SR Aisle A Sec 2 Shelf 5 Drw C', '2022-09-06', '2022-09-06'),
+(143, '10-100', 'W-1A25D', 'SR Aisle A Sec 2 Shelf 5 Drw D', '2022-09-06', '2022-09-06'),
+(144, '10-100', 'W-1A25E', 'SR Aisle A Sec 2 Shelf 5 Drw E', '2022-09-06', '2022-09-06'),
+(145, '10-100', 'W-1A25F', 'SR Aisle A Sec 2 Shelf 5 Drw F', '2022-09-06', '2022-09-06'),
+(146, '10-100', 'W-1A26A', 'SR Aisle A Sec 2 Shelf 6 Drw A', '2022-09-06', '2022-09-06'),
+(147, '10-100', 'W-1A26B', 'SR Aisle A Sec 2 Shelf 6 Drw B', '2022-09-06', '2022-09-06'),
+(148, '10-100', 'W-1A26C', 'SR Aisle A Sec 2 Shelf 6 Drw C', '2022-09-06', '2022-09-06'),
+(149, '10-100', 'W-1A26D', 'SR Aisle A Sec 2 Shelf 6 Drw D', '2022-09-06', '2022-09-06'),
+(150, '10-100', 'W-1A26E', 'SR Aisle A Sec 2 Shelf 6 Drw E', '2022-09-06', '2022-09-06'),
+(151, '10-100', 'W-1A26F', 'SR Aisle A Sec 2 Shelf 6 Drw F', '2022-09-06', '2022-09-06'),
+(152, '10-100', 'W-1A27A', 'SR Aisle A Sec 2 Shelf 7 Drw A', '2022-09-06', '2022-09-06'),
+(153, '10-100', 'W-1A27B', 'SR Aisle A Sec 2 Shelf 7 Drw B', '2022-09-06', '2022-09-06'),
+(154, '10-100', 'W-1A27C', 'SR Aisle A Sec 2 Shelf 7 Drw C', '2022-09-06', '2022-09-06'),
+(155, '10-100', 'W-1A27D', 'SR Aisle A Sec 2 Shelf 7 Drw D', '2022-09-06', '2022-09-06'),
+(156, '10-100', 'W-1A27E', 'SR Aisle A Sec 2 Shelf 7 Drw E', '2022-09-06', '2022-09-06'),
+(157, '10-100', 'W-1A27F', 'SR Aisle A Sec 2 Shelf 7 Drw F', '2022-09-06', '2022-09-06'),
+(158, '10-100', 'W-1A28A', 'SR Aisle A Sec 2 Shelf 8 Drw A', '2022-09-06', '2022-09-06'),
+(159, '10-100', 'W-1A28B', 'SR Aisle A Sec 2 Shelf 8 Drw B', '2022-09-06', '2022-09-06'),
+(160, '10-100', 'W-1A28C', 'SR Aisle A Sec 2 Shelf 8 Drw C', '2022-09-06', '2022-09-06'),
+(161, '10-100', 'W-1A28D', 'SR Aisle A Sec 2 Shelf 8 Drw D', '2022-09-06', '2022-09-06'),
+(162, '10-100', 'W-1A28E', 'SR Aisle A Sec 2 Shelf 8 Drw E', '2022-09-06', '2022-09-06'),
+(163, '10-100', 'W-1A28F', 'SR Aisle A Sec 2 Shelf 8 Drw F', '2022-09-06', '2022-09-06'),
+(164, '10-100', 'W-1A29A', 'SR Aisle A Sec 2 Shelf 9 Drw A', '2022-09-06', '2022-09-06'),
+(165, '10-100', 'W-1A29B', 'SR Aisle A Sec 2 Shelf 9 Drw B', '2022-09-06', '2022-09-06'),
+(166, '10-100', 'W-1A29C', 'SR Aisle A Sec 2 Shelf 9 Drw C', '2022-09-06', '2022-09-06'),
+(167, '10-100', 'W-1A29D', 'SR Aisle A Sec 2 Shelf 9 Drw D', '2022-09-06', '2022-09-06'),
+(168, '10-100', 'W-1A29E', 'SR Aisle A Sec 2 Shelf 9 Drw E', '2022-09-06', '2022-09-06'),
+(169, '10-100', 'W-1A29F', 'SR Aisle A Sec 2 Shelf 9 Drw F', '2022-09-06', '2022-09-06'),
+(170, '10-100', 'W-1B11', 'SR Aisle B Sec 1 Shelf 1', '2022-09-06', '2022-09-06'),
+(171, '10-100', 'W-1B12', 'SR Aisle B Sec 1 Shelf 2', '2022-09-06', '2022-09-06'),
+(172, '10-100', 'W-1B13A', 'SR Aisle B Sec 1 Shelf 3 Drw A', '2022-09-06', '2022-09-06'),
+(173, '10-100', 'W-1B13B', 'SR Aisle B Sec 1 Shelf 3 Drw B', '2022-09-06', '2022-09-06'),
+(174, '10-100', 'W-1B13C', 'SR Aisle B Sec 1 Shelf 3 Drw C', '2022-09-06', '2022-09-06'),
+(175, '10-100', 'W-1B13D', 'SR Aisle B Sec 1 Shelf 3 Drw D', '2022-09-06', '2022-09-06'),
+(176, '10-100', 'W-1B13E', 'SR Aisle B Sec 1 Shelf 3 Drw E', '2022-09-06', '2022-09-06'),
+(177, '10-100', 'W-1B13F', 'SR Aisle B Sec 1 Shelf 3 Drw F', '2022-09-06', '2022-09-06'),
+(178, '10-100', 'W-1B14A', 'SR Aisle B Sec 1 Shelf 4 Drw A', '2022-09-06', '2022-09-06'),
+(179, '10-100', 'W-1B14B', 'SR Aisle B Sec 1 Shelf 4 Drw B', '2022-09-06', '2022-09-06'),
+(180, '10-100', 'W-1B14C', 'SR Aisle B Sec 1 Shelf 4 Drw C', '2022-09-06', '2022-09-06'),
+(181, '10-100', 'W-1B14D', 'SR Aisle B Sec 1 Shelf 4 Drw D', '2022-09-06', '2022-09-06'),
+(182, '10-100', 'W-1B14E', 'SR Aisle B Sec 1 Shelf 4 Drw E', '2022-09-06', '2022-09-06'),
+(183, '10-100', 'W-1B14F', 'SR Aisle B Sec 1 Shelf 4 Drw F', '2022-09-06', '2022-09-06'),
+(184, '10-100', 'W-1B15A', 'SR Aisle B Sec 1 Shelf 5 Drw A', '2022-09-06', '2022-09-06'),
+(185, '10-100', 'W-1B15B', 'SR Aisle B Sec 1 Shelf 5 Drw B', '2022-09-06', '2022-09-06'),
+(186, '10-100', 'W-1B15C', 'SR Aisle B Sec 1 Shelf 5 Drw C', '2022-09-06', '2022-09-06'),
+(187, '10-100', 'W-1B15D', 'SR Aisle B Sec 1 Shelf 5 Drw D', '2022-09-06', '2022-09-06'),
+(188, '10-100', 'W-1B15E', 'SR Aisle B Sec 1 Shelf 5 Drw E', '2022-09-06', '2022-09-06'),
+(189, '10-100', 'W-1B15F', 'SR Aisle B Sec 1 Shelf 5 Drw F', '2022-09-06', '2022-09-06'),
+(190, '10-100', 'W-1B16A', 'SR Aisle B Sec 1 Shelf 6 Drw A', '2022-09-06', '2022-09-06'),
+(191, '10-100', 'W-1B16B', 'SR Aisle B Sec 1 Shelf 6 Drw B', '2022-09-06', '2022-09-06'),
+(192, '10-100', 'W-1B16C', 'SR Aisle B Sec 1 Shelf 6 Drw C', '2022-09-06', '2022-09-06'),
+(193, '10-100', 'W-1B16D', 'SR Aisle B Sec 1 Shelf 6 Drw D', '2022-09-06', '2022-09-06'),
+(194, '10-100', 'W-1B16E', 'SR Aisle B Sec 1 Shelf 6 Drw E', '2022-09-06', '2022-09-06'),
+(195, '10-100', 'W-1B16F', 'SR Aisle B Sec 1 Shelf 6 Drw F', '2022-09-06', '2022-09-06'),
+(196, '10-100', 'W-1B17A', 'SR Aisle B Sec 1 Shelf 7 Drw A', '2022-09-06', '2022-09-06'),
+(197, '10-100', 'W-1B17B', 'SR Aisle B Sec 1 Shelf 7 Drw B', '2022-09-06', '2022-09-06'),
+(198, '10-100', 'W-1B17C', 'SR Aisle B Sec 1 Shelf 7 Drw C', '2022-09-06', '2022-09-06'),
+(199, '10-100', 'W-1B17D', 'SR Aisle B Sec 1 Shelf 7 Drw D', '2022-09-06', '2022-09-06'),
+(200, '10-100', 'W-1B17E', 'SR Aisle B Sec 1 Shelf 7 Drw E', '2022-09-06', '2022-09-06'),
+(201, '10-100', 'W-1B17F', 'SR Aisle B Sec 1 Shelf 7 Drw F', '2022-09-06', '2022-09-06'),
+(202, '10-100', 'W-1B18A', 'SR Aisle B Sec 1 Shelf 8 Drw A', '2022-09-06', '2022-09-06'),
+(203, '10-100', 'W-1B18B', 'SR Aisle B Sec 1 Shelf 8 Drw B', '2022-09-06', '2022-09-06'),
+(204, '10-100', 'W-1B18C', 'SR Aisle B Sec 1 Shelf 8 Drw C', '2022-09-06', '2022-09-06'),
+(205, '10-100', 'W-1B18D', 'SR Aisle B Sec 1 Shelf 8 Drw D', '2022-09-06', '2022-09-06'),
+(206, '10-100', 'W-1B18E', 'SR Aisle B Sec 1 Shelf 8 Drw E', '2022-09-06', '2022-09-06'),
+(207, '10-100', 'W-1B18F', 'SR Aisle B Sec 1 Shelf 8 Drw F', '2022-09-06', '2022-09-06'),
+(208, '10-100', 'W-1B19A', 'SR Aisle B Sec 1 Shelf 9 Drw A', '2022-09-06', '2022-09-06'),
+(209, '10-100', 'W-1B19B', 'SR Aisle B Sec 1 Shelf 9 Drw B', '2022-09-06', '2022-09-06'),
+(210, '10-100', 'W-1B19C', 'SR Aisle B Sec 1 Shelf 9 Drw C', '2022-09-06', '2022-09-06'),
+(211, '10-100', 'W-1B19D', 'SR Aisle B Sec 1 Shelf 9 Drw D', '2022-09-06', '2022-09-06'),
+(212, '10-100', 'W-1B19E', 'SR Aisle B Sec 1 Shelf 9 Drw E', '2022-09-06', '2022-09-06'),
+(213, '10-100', 'W-1B19F', 'SR Aisle B Sec 1 Shelf 9 Drw F', '2022-09-06', '2022-09-06'),
+(214, '10-100', 'W-1B21', 'SR Aisle B Sec 2 Shelf 1', '2022-09-06', '2022-09-06'),
+(215, '10-100', 'W-1B210A', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(216, '10-100', 'W-1B210B', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(217, '10-100', 'W-1B210C', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(218, '10-100', 'W-1B210D', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(219, '10-100', 'W-1B210E', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(220, '10-100', 'W-1B210F', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(221, '10-100', 'W-1B211', 'SR Aisle B Sec 2 Shelf 11', '2022-09-06', '2022-09-06'),
+(222, '10-100', 'W-1B212', 'SR Aisle B Sec 2 Shelf 12', '2022-09-06', '2022-09-06'),
+(223, '10-100', 'W-1B213', 'SR Aisle B Sec 2 Shelf 13', '2022-09-06', '2022-09-06'),
+(224, '10-100', 'W-1B22', 'SR Aisle B Sec 2 Shelf 2', '2022-09-06', '2022-09-06'),
+(225, '10-100', 'W-1B23A', 'SR Aisle B Sec 2 Shelf 3 Drw A', '2022-09-06', '2022-09-06'),
+(226, '10-100', 'W-1B23B', 'SR Aisle B Sec 2 Shelf 3 Drw B', '2022-09-06', '2022-09-06'),
+(227, '10-100', 'W-1B23C', 'SR Aisle B Sec 2 Shelf 3 Drw C', '2022-09-06', '2022-09-06'),
+(228, '10-100', 'W-1B23D', 'SR Aisle B Sec 2 Shelf 3 Drw D', '2022-09-06', '2022-09-06'),
+(229, '10-100', 'W-1B23E', 'SR Aisle B Sec 2 Shelf 3 Drw E', '2022-09-06', '2022-09-06'),
+(230, '10-100', 'W-1B23F', 'SR Aisle B Sec 2 Shelf 3 Drw F', '2022-09-06', '2022-09-06'),
+(231, '10-100', 'W-1B24A', 'SR Aisle B Sec 2 Shelf 4 Drw A', '2022-09-06', '2022-09-06'),
+(232, '10-100', 'W-1B24B', 'SR Aisle B Sec 2 Shelf 4 Drw B', '2022-09-06', '2022-09-06'),
+(233, '10-100', 'W-1B24C', 'SR Aisle B Sec 2 Shelf 4 Drw C', '2022-09-06', '2022-09-06'),
+(234, '10-100', 'W-1B24D', 'SR Aisle B Sec 2 Shelf 4 Drw D', '2022-09-06', '2022-09-06'),
+(235, '10-100', 'W-1B24E', 'SR Aisle B Sec 2 Shelf 4 Drw E', '2022-09-06', '2022-09-06'),
+(236, '10-100', 'W-1B24F', 'SR Aisle B Sec 2 Shelf 4 Drw F', '2022-09-06', '2022-09-06'),
+(237, '10-100', 'W-1B25A', 'SR Aisle B Sec 2 Shelf 5 Drw A', '2022-09-06', '2022-09-06'),
+(238, '10-100', 'W-1B25B', 'SR Aisle B Sec 2 Shelf 5 Drw B', '2022-09-06', '2022-09-06'),
+(239, '10-100', 'W-1B25C', 'SR Aisle B Sec 2 Shelf 5 Drw C', '2022-09-06', '2022-09-06'),
+(240, '10-100', 'W-1B25D', 'SR Aisle B Sec 2 Shelf 5 Drw D', '2022-09-06', '2022-09-06'),
+(241, '10-100', 'W-1B25E', 'SR Aisle B Sec 2 Shelf 5 Drw E', '2022-09-06', '2022-09-06'),
+(242, '10-100', 'W-1B25F', 'SR Aisle B Sec 2 Shelf 5 Drw F', '2022-09-06', '2022-09-06'),
+(243, '10-100', 'W-1B26A', 'SR Aisle B Sec 2 Shelf 6 Drw A', '2022-09-06', '2022-09-06'),
+(244, '10-100', 'W-1B26B', 'SR Aisle B Sec 2 Shelf 6 Drw B', '2022-09-06', '2022-09-06'),
+(245, '10-100', 'W-1B26C', 'SR Aisle B Sec 2 Shelf 6 Drw C', '2022-09-06', '2022-09-06'),
+(246, '10-100', 'W-1B26D', 'SR Aisle B Sec 2 Shelf 6 Drw D', '2022-09-06', '2022-09-06'),
+(247, '10-100', 'W-1B26E', 'SR Aisle B Sec 2 Shelf 6 Drw E', '2022-09-06', '2022-09-06'),
+(248, '10-100', 'W-1B26F', 'SR Aisle B Sec 2 Shelf 6 Drw F', '2022-09-06', '2022-09-06'),
+(249, '10-100', 'W-1B27A', 'SR Aisle B Sec 2 Shelf 7 Drw A', '2022-09-06', '2022-09-06'),
+(250, '10-100', 'W-1B27B', 'SR Aisle B Sec 2 Shelf 7 Drw B', '2022-09-06', '2022-09-06'),
+(251, '10-100', 'W-1B27C', 'SR Aisle B Sec 2 Shelf 7 Drw C', '2022-09-06', '2022-09-06'),
+(252, '10-100', 'W-1B27D', 'SR Aisle B Sec 2 Shelf 7 Drw D', '2022-09-06', '2022-09-06'),
+(253, '10-100', 'W-1B27E', 'SR Aisle B Sec 2 Shelf 7 Drw E', '2022-09-06', '2022-09-06'),
+(254, '10-100', 'W-1B27F', 'SR Aisle B Sec 2 Shelf 7 Drw F', '2022-09-06', '2022-09-06'),
+(255, '10-100', 'W-1B28A', 'SR Aisle B Sec 2 Shelf 8 Drw A', '2022-09-06', '2022-09-06'),
+(256, '10-100', 'W-1B28B', 'SR Aisle B Sec 2 Shelf 8 Drw B', '2022-09-06', '2022-09-06'),
+(257, '10-100', 'W-1B28C', 'SR Aisle B Sec 2 Shelf 8 Drw C', '2022-09-06', '2022-09-06'),
+(258, '10-100', 'W-1B28D', 'SR Aisle B Sec 2 Shelf 8 Drw D', '2022-09-06', '2022-09-06'),
+(259, '10-100', 'W-1B28E', 'SR Aisle B Sec 2 Shelf 8 Drw E', '2022-09-06', '2022-09-06'),
+(260, '10-100', 'W-1B28F', 'SR Aisle B Sec 2 Shelf 8 Drw F', '2022-09-06', '2022-09-06'),
+(261, '10-100', 'W-1B29A', 'SR Aisle B Sec 2 Shelf 9 Drw A', '2022-09-06', '2022-09-06'),
+(262, '10-100', 'W-1B29B', 'SR Aisle B Sec 2 Shelf 9 Drw B', '2022-09-06', '2022-09-06'),
+(263, '10-100', 'W-1B29C', 'SR Aisle B Sec 2 Shelf 9 Drw C', '2022-09-06', '2022-09-06'),
+(264, '10-100', 'W-1B29D', 'SR Aisle B Sec 2 Shelf 9 Drw D', '2022-09-06', '2022-09-06'),
+(265, '10-100', 'W-1B29E', 'SR Aisle B Sec 2 Shelf 9 Drw E', '2022-09-06', '2022-09-06'),
+(266, '10-100', 'W-1B29F', 'SR Aisle B Sec 2 Shelf 9 Drw F', '2022-09-06', '2022-09-06'),
+(267, '10-100', 'W-A1', 'Location (Pole) A 1', '2022-09-06', '2022-09-06'),
+(268, '10-100', 'W-A10', 'Location (Pole) A 10', '2022-09-06', '2022-09-06'),
+(269, '10-100', 'W-A11', 'Location (Pole) A 11', '2022-09-06', '2022-09-06'),
+(270, '10-100', 'W-A12', 'Location (Pole) A 12', '2022-09-06', '2022-09-06'),
+(271, '10-100', 'W-A13', 'Location (Pole) A 13', '2022-09-06', '2022-09-06'),
+(272, '10-100', 'W-A14', 'Location (Pole) A 14', '2022-09-06', '2022-09-06'),
+(273, '10-100', 'W-A15', 'Location (Pole) A 15', '2022-09-06', '2022-09-06'),
+(274, '10-100', 'W-A16', 'Location (Pole) A 16', '2022-09-06', '2022-09-06'),
+(275, '10-100', 'W-A2', 'Location (Pole) A 2', '2022-09-06', '2022-09-06'),
+(276, '10-100', 'W-A3', 'Location (Pole) A 3', '2022-09-06', '2022-09-06'),
+(277, '10-100', 'W-A4', 'Location (Pole) A 4', '2022-09-06', '2022-09-06'),
+(278, '10-100', 'W-A5', 'Location (Pole) A 5', '2022-09-06', '2022-09-06'),
+(279, '10-100', 'W-A6', 'Location (Pole) A 6', '2022-09-06', '2022-09-06'),
+(280, '10-100', 'W-A7', 'Location (Pole) A 7', '2022-09-06', '2022-09-06'),
+(281, '10-100', 'W-A8', 'Location (Pole) A 8', '2022-09-06', '2022-09-06'),
+(282, '10-100', 'W-A9', 'Location (Pole) A 9', '2022-09-06', '2022-09-06'),
+(283, '10-100', 'W-B1', 'Location (Pole) B 1', '2022-09-06', '2022-09-06'),
+(284, '10-100', 'W-B10', 'Location (Pole) B 10', '2022-09-06', '2022-09-06'),
+(285, '10-100', 'W-B11', 'Location (Pole) B 11', '2022-09-06', '2022-09-06'),
+(286, '10-100', 'W-B12', 'Location (Pole) B 12', '2022-09-06', '2022-09-06'),
+(287, '10-100', 'W-B13', 'Location (Pole) B 13', '2022-09-06', '2022-09-06'),
+(288, '10-100', 'W-B14', 'Location (Pole) B 14', '2022-09-06', '2022-09-06'),
+(289, '10-100', 'W-B15', 'Location (Pole) B 15', '2022-09-06', '2022-09-06'),
+(290, '10-100', 'W-B16', 'Location (Pole) B 16', '2022-09-06', '2022-09-06'),
+(291, '10-100', 'W-B2', 'Location (Pole) B 2', '2022-09-06', '2022-09-06'),
+(292, '10-100', 'W-B3', 'Location (Pole) B 3', '2022-09-06', '2022-09-06'),
+(293, '10-100', 'W-B4', 'Location (Pole) B 4', '2022-09-06', '2022-09-06'),
+(294, '10-100', 'W-B5', 'Location (Pole) B 5', '2022-09-06', '2022-09-06'),
+(295, '10-100', 'W-B6', 'Location (Pole) B 6', '2022-09-06', '2022-09-06'),
+(296, '10-100', 'W-B7', 'Location (Pole) B 7', '2022-09-06', '2022-09-06'),
+(297, '10-100', 'W-B8', 'Location (Pole) B 8', '2022-09-06', '2022-09-06'),
+(298, '10-100', 'W-B9', 'Location (Pole) B 9', '2022-09-06', '2022-09-06'),
+(299, '10-100', 'W-D1A01A', 'Unit 1, Drawer A, Bin 01A', '2022-09-06', '2022-09-06'),
+(300, '10-100', 'W-D1A01B', 'Unit 1, Drawer A, Bin 01B', '2022-09-06', '2022-09-06'),
+(301, '10-100', 'W-D1A01C', 'Unit 1, Drawer A, Bin 01C', '2022-09-06', '2022-09-06'),
+(302, '10-100', 'W-D1A01D', 'Unit 1, Drawer A, Bin 01D', '2022-09-06', '2022-09-06'),
+(303, '10-100', 'W-D1A01E', 'Unit 1, Drawer A, Bin 01E', '2022-09-06', '2022-09-06'),
+(304, '10-100', 'W-D1A01F', 'Unit 1, Drawer A, Bin 01F', '2022-09-06', '2022-09-06'),
+(305, '10-100', 'W-D1A01G', 'Unit 1, Drawer A, Bin 01G', '2022-09-06', '2022-09-06'),
+(306, '10-100', 'W-D1A02A', 'Unit 1, Drawer A, Bin 02A', '2022-09-06', '2022-09-06'),
+(307, '10-100', 'W-D1A02B', 'Unit 1, Drawer A, Bin 02B', '2022-09-06', '2022-09-06'),
+(308, '10-100', 'W-D1A02C', 'Unit 1, Drawer A, Bin 02C', '2022-09-06', '2022-09-06'),
+(309, '10-100', 'W-D1A02D', 'Unit 1, Drawer A, Bin 02D', '2022-09-06', '2022-09-06'),
+(310, '10-100', 'W-D1A02E', 'Unit 1, Drawer A, Bin 02E', '2022-09-06', '2022-09-06'),
+(311, '10-100', 'W-D1A02F', 'Unit 1, Drawer A, Bin 02F', '2022-09-06', '2022-09-06'),
+(312, '10-100', 'W-D1A02G', 'Unit 1, Drawer A, Bin 02G', '2022-09-06', '2022-09-06'),
+(313, '10-100', 'W-D1A03A', 'Unit 1, Drawer A, Bin 03A', '2022-09-06', '2022-09-06'),
+(314, '10-100', 'W-D1A03B', 'Unit 1, Drawer A, Bin 03B', '2022-09-06', '2022-09-06'),
+(315, '10-100', 'W-D1A03C', 'Unit 1, Drawer A, Bin 03C', '2022-09-06', '2022-09-06'),
+(316, '10-100', 'W-D1A03D', 'Unit 1, Drawer A, Bin 03D', '2022-09-06', '2022-09-06'),
+(317, '10-100', 'W-D1A03E', 'Unit 1, Drawer A, Bin 03E', '2022-09-06', '2022-09-06'),
+(318, '10-100', 'W-D1A03F', 'Unit 1, Drawer A, Bin 03F', '2022-09-06', '2022-09-06'),
+(319, '10-100', 'W-D1A03G', 'Unit 1, Drawer A, Bin 03G', '2022-09-06', '2022-09-06'),
+(320, '10-100', 'W-D1A04A', 'Unit 1, Drawer A, Bin 04A', '2022-09-06', '2022-09-06'),
+(321, '10-100', 'W-D1A04B', 'Unit 1, Drawer A, Bin 04B', '2022-09-06', '2022-09-06'),
+(322, '10-100', 'W-D1A04C', 'Unit 1, Drawer A, Bin 04C', '2022-09-06', '2022-09-06'),
+(323, '10-100', 'W-D1A04D', 'Unit 1, Drawer A, Bin 04D', '2022-09-06', '2022-09-06'),
+(324, '10-100', 'W-D1A04E', 'Unit 1, Drawer A, Bin 04E', '2022-09-06', '2022-09-06'),
+(325, '10-100', 'W-D1A04F', 'Unit 1, Drawer A, Bin 04F', '2022-09-06', '2022-09-06'),
+(326, '10-100', 'W-D1A04G', 'Unit 1, Drawer A, Bin 04G', '2022-09-06', '2022-09-06'),
+(327, '10-100', 'W-D1A05A', 'Unit 1, Drawer A, Bin 05A', '2022-09-06', '2022-09-06'),
+(328, '10-100', 'W-D1A05B', 'Unit 1, Drawer A, Bin 05B', '2022-09-06', '2022-09-06'),
+(329, '10-100', 'W-D1A05C', 'Unit 1, Drawer A, Bin 05C', '2022-09-06', '2022-09-06'),
+(330, '10-100', 'W-D1A05D', 'Unit 1, Drawer A, Bin 05D', '2022-09-06', '2022-09-06'),
+(331, '10-100', 'W-D1A05E', 'Unit 1, Drawer A, Bin 05E', '2022-09-06', '2022-09-06'),
+(332, '10-100', 'W-D1A05F', 'Unit 1, Drawer A, Bin 05F', '2022-09-06', '2022-09-06'),
+(333, '10-100', 'W-D1A05G', 'Unit 1, Drawer A, Bin 05G', '2022-09-06', '2022-09-06'),
+(334, '10-100', 'W-D1A06A', 'Unit 1, Drawer A, Bin 06A', '2022-09-06', '2022-09-06'),
+(335, '10-100', 'W-D1A06B', 'Unit 1, Drawer A, Bin 06B', '2022-09-06', '2022-09-06'),
+(336, '10-100', 'W-D1A06C', 'Unit 1, Drawer A, Bin 06C', '2022-09-06', '2022-09-06'),
+(337, '10-100', 'W-D1A06D', 'Unit 1, Drawer A, Bin 06D', '2022-09-06', '2022-09-06'),
+(338, '10-100', 'W-D1A06E', 'Unit 1, Drawer A, Bin 06E', '2022-09-06', '2022-09-06'),
+(339, '10-100', 'W-D1A06F', 'Unit 1, Drawer A, Bin 06F', '2022-09-06', '2022-09-06'),
+(340, '10-100', 'W-D1A06G', 'Unit 1, Drawer A, Bin 06G', '2022-09-06', '2022-09-06'),
+(341, '10-100', 'W-D1A07A', 'Unit 1, Drawer A, Bin 07A', '2022-09-06', '2022-09-06'),
+(342, '10-100', 'W-D1A07B', 'Unit 1, Drawer A, Bin 07B', '2022-09-06', '2022-09-06'),
+(343, '10-100', 'W-D1A07C', 'Unit 1, Drawer A, Bin 07C', '2022-09-06', '2022-09-06'),
+(344, '10-100', 'W-D1A07D', 'Unit 1, Drawer A, Bin 07D', '2022-09-06', '2022-09-06'),
+(345, '10-100', 'W-D1A07E', 'Unit 1, Drawer A, Bin 07E', '2022-09-06', '2022-09-06'),
+(346, '10-100', 'W-D1A07F', 'Unit 1, Drawer A, Bin 07F', '2022-09-06', '2022-09-06'),
+(347, '10-100', 'W-D1A07G', 'Unit 1, Drawer A, Bin 07G', '2022-09-06', '2022-09-06'),
+(348, '10-100', 'W-D1A08A', 'Unit 1, Drawer A, Bin 08A', '2022-09-06', '2022-09-06'),
+(349, '10-100', 'W-D1A08B', 'Unit 1, Drawer A, Bin 08B', '2022-09-06', '2022-09-06'),
+(350, '10-100', 'W-D1A08C', 'Unit 1, Drawer A, Bin 08C', '2022-09-06', '2022-09-06'),
+(351, '10-100', 'W-D1A08D', 'Unit 1, Drawer A, Bin 08D', '2022-09-06', '2022-09-06'),
+(352, '10-100', 'W-D1A08E', 'Unit 1, Drawer A, Bin 08E', '2022-09-06', '2022-09-06'),
+(353, '10-100', 'W-D1A08F', 'Unit 1, Drawer A, Bin 08F', '2022-09-06', '2022-09-06'),
+(354, '10-100', 'W-D1A08G', 'Unit 1, Drawer A, Bin 08G', '2022-09-06', '2022-09-06'),
+(355, '10-100', 'W-D1B01A', 'Unit 1, Drawer B, Bin 01A', '2022-09-06', '2022-09-06'),
+(356, '10-100', 'W-D1B01B', 'Unit 1, Drawer B, Bin 01B', '2022-09-06', '2022-09-06'),
+(357, '10-100', 'W-D1B01C', 'Unit 1, Drawer B, Bin 01C', '2022-09-06', '2022-09-06'),
+(358, '10-100', 'W-D1B01D', 'Unit 1, Drawer B, Bin 01D', '2022-09-06', '2022-09-06'),
+(359, '10-100', 'W-D1B01E', 'Unit 1, Drawer B, Bin 01E', '2022-09-06', '2022-09-06'),
+(360, '10-100', 'W-D1B01F', 'Unit 1, Drawer B, Bin 01F', '2022-09-06', '2022-09-06'),
+(361, '10-100', 'W-D1B01G', 'Unit 1, Drawer B, Bin 01G', '2022-09-06', '2022-09-06'),
+(362, '10-100', 'W-D1B02A', 'Unit 1, Drawer B, Bin 02A', '2022-09-06', '2022-09-06'),
+(363, '10-100', 'W-D1B02B', 'Unit 1, Drawer B, Bin 02B', '2022-09-06', '2022-09-06'),
+(364, '10-100', 'W-D1B02C', 'Unit 1, Drawer B, Bin 02C', '2022-09-06', '2022-09-06'),
+(365, '10-100', 'W-D1B02D', 'Unit 1, Drawer B, Bin 02D', '2022-09-06', '2022-09-06'),
+(366, '10-100', 'W-D1B02E', 'Unit 1, Drawer B, Bin 02E', '2022-09-06', '2022-09-06'),
+(367, '10-100', 'W-D1B02F', 'Unit 1, Drawer B, Bin 02F', '2022-09-06', '2022-09-06'),
+(368, '10-100', 'W-D1B02G', 'Unit 1, Drawer B, Bin 02G', '2022-09-06', '2022-09-06'),
+(369, '10-100', 'W-D1B03A', 'Unit 1, Drawer B, Bin 03A', '2022-09-06', '2022-09-06'),
+(370, '10-100', 'W-D1B03B', 'Unit 1, Drawer B, Bin 03B', '2022-09-06', '2022-09-06'),
+(371, '10-100', 'W-D1B03C', 'Unit 1, Drawer B, Bin 03C', '2022-09-06', '2022-09-06'),
+(372, '10-100', 'W-D1B03D', 'Unit 1, Drawer B, Bin 03D', '2022-09-06', '2022-09-06'),
+(373, '10-100', 'W-D1B03E', 'Unit 1, Drawer B, Bin 03E', '2022-09-06', '2022-09-06'),
+(374, '10-100', 'W-D1B03F', 'Unit 1, Drawer B, Bin 03F', '2022-09-06', '2022-09-06'),
+(375, '10-100', 'W-D1B03G', 'Unit 1, Drawer B, Bin 03G', '2022-09-06', '2022-09-06'),
+(376, '10-100', 'W-D1B04A', 'Unit 1, Drawer B, Bin 04A', '2022-09-06', '2022-09-06'),
+(377, '10-100', 'W-D1B04B', 'Unit 1, Drawer B, Bin 04B', '2022-09-06', '2022-09-06'),
+(378, '10-100', 'W-D1B04C', 'Unit 1, Drawer B, Bin 04C', '2022-09-06', '2022-09-06'),
+(379, '10-100', 'W-D1B04D', 'Unit 1, Drawer B, Bin 04D', '2022-09-06', '2022-09-06'),
+(380, '10-100', 'W-D1B04E', 'Unit 1, Drawer B, Bin 04E', '2022-09-06', '2022-09-06'),
+(381, '10-100', 'W-D1B04F', 'Unit 1, Drawer B, Bin 04F', '2022-09-06', '2022-09-06'),
+(382, '10-100', 'W-D1B04G', 'Unit 1, Drawer B, Bin 04G', '2022-09-06', '2022-09-06'),
+(383, '10-100', 'W-D1B05A', 'Unit 1, Drawer B, Bin 05A', '2022-09-06', '2022-09-06'),
+(384, '10-100', 'W-D1B05B', 'Unit 1, Drawer B, Bin 05B', '2022-09-06', '2022-09-06'),
+(385, '10-100', 'W-D1B05C', 'Unit 1, Drawer B, Bin 05C', '2022-09-06', '2022-09-06'),
+(386, '10-100', 'W-D1B05D', 'Unit 1, Drawer B, Bin 05D', '2022-09-06', '2022-09-06'),
+(387, '10-100', 'W-D1B05E', 'Unit 1, Drawer B, Bin 05E', '2022-09-06', '2022-09-06'),
+(388, '10-100', 'W-D1B05F', 'Unit 1, Drawer B, Bin 05F', '2022-09-06', '2022-09-06'),
+(389, '10-100', 'W-D1B05G', 'Unit 1, Drawer B, Bin 05G', '2022-09-06', '2022-09-06'),
+(390, '10-100', 'W-D1B06A', 'Unit 1, Drawer B, Bin 06A', '2022-09-06', '2022-09-06'),
+(391, '10-100', 'W-D1B06B', 'Unit 1, Drawer B, Bin 06B', '2022-09-06', '2022-09-06'),
+(392, '10-100', 'W-D1B06C', 'Unit 1, Drawer B, Bin 06C', '2022-09-06', '2022-09-06'),
+(393, '10-100', 'W-D1B06D', 'Unit 1, Drawer B, Bin 06D', '2022-09-06', '2022-09-06'),
+(394, '10-100', 'W-D1B06E', 'Unit 1, Drawer B, Bin 06E', '2022-09-06', '2022-09-06'),
+(395, '10-100', 'W-D1B06F', 'Unit 1, Drawer B, Bin 06F', '2022-09-06', '2022-09-06'),
+(396, '10-100', 'W-D1B06G', 'Unit 1, Drawer B, Bin 06G', '2022-09-06', '2022-09-06'),
+(397, '10-100', 'W-D1B07A', 'Unit 1, Drawer B, Bin 07A', '2022-09-06', '2022-09-06'),
+(398, '10-100', 'W-D1B07B', 'Unit 1, Drawer B, Bin 07B', '2022-09-06', '2022-09-06'),
+(399, '10-100', 'W-D1B07C', 'Unit 1, Drawer B, Bin 07C', '2022-09-06', '2022-09-06'),
+(400, '10-100', 'W-D1B07D', 'Unit 1, Drawer B, Bin 07D', '2022-09-06', '2022-09-06'),
+(401, '10-100', 'W-D1B07E', 'Unit 1, Drawer B, Bin 07E', '2022-09-06', '2022-09-06'),
+(402, '10-100', 'W-D1B07F', 'Unit 1, Drawer B, Bin 07F', '2022-09-06', '2022-09-06'),
+(403, '10-100', 'W-D1B07G', 'Unit 1, Drawer B, Bin 07G', '2022-09-06', '2022-09-06'),
+(404, '10-100', 'W-D1B08A', 'Unit 1, Drawer B, Bin 08A', '2022-09-06', '2022-09-06'),
+(405, '10-100', 'W-D1B08B', 'Unit 1, Drawer B, Bin 08B', '2022-09-06', '2022-09-06'),
+(406, '10-100', 'W-D1B08C', 'Unit 1, Drawer B, Bin 08C', '2022-09-06', '2022-09-06'),
+(407, '10-100', 'W-D1B08D', 'Unit 1, Drawer B, Bin 08D', '2022-09-06', '2022-09-06'),
+(408, '10-100', 'W-D1B08E', 'Unit 1, Drawer B, Bin 08E', '2022-09-06', '2022-09-06'),
+(409, '10-100', 'W-D1B08F', 'Unit 1, Drawer B, Bin 08F', '2022-09-06', '2022-09-06'),
+(410, '10-100', 'W-D1B08G', 'Unit 1, Drawer B, Bin 08G', '2022-09-06', '2022-09-06'),
+(411, '10-100', 'W-D1C01A', 'Unit 1, Drawer C, Bin 01A', '2022-09-06', '2022-09-06'),
+(412, '10-100', 'W-D1C01B', 'Unit 1, Drawer C, Bin 01B', '2022-09-06', '2022-09-06'),
+(413, '10-100', 'W-D1C01C', 'Unit 1, Drawer C, Bin 01C', '2022-09-06', '2022-09-06'),
+(414, '10-100', 'W-D1C01D', 'Unit 1, Drawer C, Bin 01D', '2022-09-06', '2022-09-06'),
+(415, '10-100', 'W-D1C01E', 'Unit 1, Drawer C, Bin 01E', '2022-09-06', '2022-09-06'),
+(416, '10-100', 'W-D1C01F', 'Unit 1, Drawer C, Bin 01F', '2022-09-06', '2022-09-06'),
+(417, '10-100', 'W-D1C01G', 'Unit 1, Drawer C, Bin 01G', '2022-09-06', '2022-09-06'),
+(418, '10-100', 'W-D1C02A', 'Unit 1, Drawer C, Bin 02A', '2022-09-06', '2022-09-06'),
+(419, '10-100', 'W-D1C02B', 'Unit 1, Drawer C, Bin 02B', '2022-09-06', '2022-09-06'),
+(420, '10-100', 'W-D1C02C', 'Unit 1, Drawer C, Bin 02C', '2022-09-06', '2022-09-06'),
+(421, '10-100', 'W-D1C02D', 'Unit 1, Drawer C, Bin 02D', '2022-09-06', '2022-09-06'),
+(422, '10-100', 'W-D1C02E', 'Unit 1, Drawer C, Bin 02E', '2022-09-06', '2022-09-06'),
+(423, '10-100', 'W-D1C02F', 'Unit 1, Drawer C, Bin 02F', '2022-09-06', '2022-09-06'),
+(424, '10-100', 'W-D1C02G', 'Unit 1, Drawer C, Bin 02G', '2022-09-06', '2022-09-06'),
+(425, '10-100', 'W-D1C03A', 'Unit 1, Drawer C, Bin 03A', '2022-09-06', '2022-09-06'),
+(426, '10-100', 'W-D1C03B', 'Unit 1, Drawer C, Bin 03B', '2022-09-06', '2022-09-06'),
+(427, '10-100', 'W-D1C03C', 'Unit 1, Drawer C, Bin 03C', '2022-09-06', '2022-09-06'),
+(428, '10-100', 'W-D1C03D', 'Unit 1, Drawer C, Bin 03D', '2022-09-06', '2022-09-06'),
+(429, '10-100', 'W-D1C03E', 'Unit 1, Drawer C, Bin 03E', '2022-09-06', '2022-09-06'),
+(430, '10-100', 'W-D1C03F', 'Unit 1, Drawer C, Bin 03F', '2022-09-06', '2022-09-06'),
+(431, '10-100', 'W-D1C03G', 'Unit 1, Drawer C, Bin 03G', '2022-09-06', '2022-09-06'),
+(432, '10-100', 'W-D1C04A', 'Unit 1, Drawer C, Bin 04A', '2022-09-06', '2022-09-06'),
+(433, '10-100', 'W-D1C04B', 'Unit 1, Drawer C, Bin 04B', '2022-09-06', '2022-09-06'),
+(434, '10-100', 'W-D1C04C', 'Unit 1, Drawer C, Bin 04C', '2022-09-06', '2022-09-06'),
+(435, '10-100', 'W-D1C04D', 'Unit 1, Drawer C, Bin 04D', '2022-09-06', '2022-09-06'),
+(436, '10-100', 'W-D1C04E', 'Unit 1, Drawer C, Bin 04E', '2022-09-06', '2022-09-06'),
+(437, '10-100', 'W-D1C04F', 'Unit 1, Drawer C, Bin 04F', '2022-09-06', '2022-09-06'),
+(438, '10-100', 'W-D1C04G', 'Unit 1, Drawer C, Bin 04G', '2022-09-06', '2022-09-06'),
+(439, '10-100', 'W-D1C05A', 'Unit 1, Drawer C, Bin 05A', '2022-09-06', '2022-09-06'),
+(440, '10-100', 'W-D1C05B', 'Unit 1, Drawer C, Bin 05B', '2022-09-06', '2022-09-06'),
+(441, '10-100', 'W-D1C05C', 'Unit 1, Drawer C, Bin 05C', '2022-09-06', '2022-09-06'),
+(442, '10-100', 'W-D1C05D', 'Unit 1, Drawer C, Bin 05D', '2022-09-06', '2022-09-06'),
+(443, '10-100', 'W-D1C05E', 'Unit 1, Drawer C, Bin 05E', '2022-09-06', '2022-09-06'),
+(444, '10-100', 'W-D1C05F', 'Unit 1, Drawer C, Bin 05F', '2022-09-06', '2022-09-06'),
+(445, '10-100', 'W-D1C05G', 'Unit 1, Drawer C, Bin 05G', '2022-09-06', '2022-09-06'),
+(446, '10-100', 'W-D1C06A', 'Unit 1, Drawer C, Bin 06A', '2022-09-06', '2022-09-06'),
+(447, '10-100', 'W-D1C06B', 'Unit 1, Drawer C, Bin 06B', '2022-09-06', '2022-09-06'),
+(448, '10-100', 'W-D1C06C', 'Unit 1, Drawer C, Bin 06C', '2022-09-06', '2022-09-06'),
+(449, '10-100', 'W-D1C06D', 'Unit 1, Drawer C, Bin 06D', '2022-09-06', '2022-09-06'),
+(450, '10-100', 'W-D1C06E', 'Unit 1, Drawer C, Bin 06E', '2022-09-06', '2022-09-06'),
+(451, '10-100', 'W-D1C06F', 'Unit 1, Drawer C, Bin 06F', '2022-09-06', '2022-09-06'),
+(452, '10-100', 'W-D1C06G', 'Unit 1, Drawer C, Bin 06G', '2022-09-06', '2022-09-06'),
+(453, '10-100', 'W-D1C07A', 'Unit 1, Drawer C, Bin 07A', '2022-09-06', '2022-09-06'),
+(454, '10-100', 'W-D1C07B', 'Unit 1, Drawer C, Bin 07B', '2022-09-06', '2022-09-06'),
+(455, '10-100', 'W-D1C07C', 'Unit 1, Drawer C, Bin 07C', '2022-09-06', '2022-09-06'),
+(456, '10-100', 'W-D1C07D', 'Unit 1, Drawer C, Bin 07D', '2022-09-06', '2022-09-06'),
+(457, '10-100', 'W-D1C07E', 'Unit 1, Drawer C, Bin 07E', '2022-09-06', '2022-09-06'),
+(458, '10-100', 'W-D1C07F', 'Unit 1, Drawer C, Bin 07F', '2022-09-06', '2022-09-06'),
+(459, '10-100', 'W-D1C07G', 'Unit 1, Drawer C, Bin 07G', '2022-09-06', '2022-09-06'),
+(460, '10-100', 'W-D1C08A', 'Unit 1, Drawer C, Bin 08A', '2022-09-06', '2022-09-06'),
+(461, '10-100', 'W-D1C08B', 'Unit 1, Drawer C, Bin 08B', '2022-09-06', '2022-09-06'),
+(462, '10-100', 'W-D1C08C', 'Unit 1, Drawer C, Bin 08C', '2022-09-06', '2022-09-06'),
+(463, '10-100', 'W-D1C08D', 'Unit 1, Drawer C, Bin 08D', '2022-09-06', '2022-09-06'),
+(464, '10-100', 'W-D1C08E', 'Unit 1, Drawer C, Bin 08E', '2022-09-06', '2022-09-06'),
+(465, '10-100', 'W-D1C08F', 'Unit 1, Drawer C, Bin 08F', '2022-09-06', '2022-09-06'),
+(466, '10-100', 'W-D1C08G', 'Unit 1, Drawer C, Bin 08G', '2022-09-06', '2022-09-06'),
+(467, '10-100', 'W-D1D01A', 'Unit 1, Drawer D, Bin 01A', '2022-09-06', '2022-09-06'),
+(468, '10-100', 'W-D1D01B', 'Unit 1, Drawer D, Bin 01B', '2022-09-06', '2022-09-06'),
+(469, '10-100', 'W-D1D01C', 'Unit 1, Drawer D, Bin 01C', '2022-09-06', '2022-09-06'),
+(470, '10-100', 'W-D1D01D', 'Unit 1, Drawer D, Bin 01D', '2022-09-06', '2022-09-06'),
+(471, '10-100', 'W-D1D01E', 'Unit 1, Drawer D, Bin 01E', '2022-09-06', '2022-09-06'),
+(472, '10-100', 'W-D1D01F', 'Unit 1, Drawer D, Bin 01F', '2022-09-06', '2022-09-06'),
+(473, '10-100', 'W-D1D01G', 'Unit 1, Drawer D, Bin 01G', '2022-09-06', '2022-09-06'),
+(474, '10-100', 'W-D1D02A', 'Unit 1, Drawer D, Bin 02A', '2022-09-06', '2022-09-06'),
+(475, '10-100', 'W-D1D02B', 'Unit 1, Drawer D, Bin 02B', '2022-09-06', '2022-09-06'),
+(476, '10-100', 'W-D1D02C', 'Unit 1, Drawer D, Bin 02C', '2022-09-06', '2022-09-06'),
+(477, '10-100', 'W-D1D02D', 'Unit 1, Drawer D, Bin 02D', '2022-09-06', '2022-09-06'),
+(478, '10-100', 'W-D1D02E', 'Unit 1, Drawer D, Bin 02E', '2022-09-06', '2022-09-06'),
+(479, '10-100', 'W-D1D02F', 'Unit 1, Drawer D, Bin 02F', '2022-09-06', '2022-09-06'),
+(480, '10-100', 'W-D1D02G', 'Unit 1, Drawer D, Bin 02G', '2022-09-06', '2022-09-06'),
+(481, '10-100', 'W-D1D03A', 'Unit 1, Drawer D, Bin 03A', '2022-09-06', '2022-09-06'),
+(482, '10-100', 'W-D1D03B', 'Unit 1, Drawer D, Bin 03B', '2022-09-06', '2022-09-06'),
+(483, '10-100', 'W-D1D03C', 'Unit 1, Drawer D, Bin 03C', '2022-09-06', '2022-09-06'),
+(484, '10-100', 'W-D1D03D', 'Unit 1, Drawer D, Bin 03D', '2022-09-06', '2022-09-06'),
+(485, '10-100', 'W-D1D03E', 'Unit 1, Drawer D, Bin 03E', '2022-09-06', '2022-09-06'),
+(486, '10-100', 'W-D1D03F', 'Unit 1, Drawer D, Bin 03F', '2022-09-06', '2022-09-06'),
+(487, '10-100', 'W-D1D03G', 'Unit 1, Drawer D, Bin 03G', '2022-09-06', '2022-09-06'),
+(488, '10-100', 'W-D1D04A', 'Unit 1, Drawer D, Bin 04A', '2022-09-06', '2022-09-06'),
+(489, '10-100', 'W-D1D04B', 'Unit 1, Drawer D, Bin 04B', '2022-09-06', '2022-09-06'),
+(490, '10-100', 'W-D1D04C', 'Unit 1, Drawer D, Bin 04C', '2022-09-06', '2022-09-06'),
+(491, '10-100', 'W-D1D04D', 'Unit 1, Drawer D, Bin 04D', '2022-09-06', '2022-09-06'),
+(492, '10-100', 'W-D1D04E', 'Unit 1, Drawer D, Bin 04E', '2022-09-06', '2022-09-06'),
+(493, '10-100', 'W-D1D04F', 'Unit 1, Drawer D, Bin 04F', '2022-09-06', '2022-09-06'),
+(494, '10-100', 'W-D1D04G', 'Unit 1, Drawer D, Bin 04G', '2022-09-06', '2022-09-06'),
+(495, '10-100', 'W-D1D05A', 'Unit 1, Drawer D, Bin 05A', '2022-09-06', '2022-09-06'),
+(496, '10-100', 'W-D1D05B', 'Unit 1, Drawer D, Bin 05B', '2022-09-06', '2022-09-06'),
+(497, '10-100', 'W-D1D05C', 'Unit 1, Drawer D, Bin 05C', '2022-09-06', '2022-09-06'),
+(498, '10-100', 'W-D1D05D', 'Unit 1, Drawer D, Bin 05D', '2022-09-06', '2022-09-06'),
+(499, '10-100', 'W-D1D05E', 'Unit 1, Drawer D, Bin 05E', '2022-09-06', '2022-09-06'),
+(500, '10-100', 'W-D1D05F', 'Unit 1, Drawer D, Bin 05F', '2022-09-06', '2022-09-06'),
+(501, '10-100', 'W-D1D05G', 'Unit 1, Drawer D, Bin 05G', '2022-09-06', '2022-09-06'),
+(502, '10-100', 'W-D1D06A', 'Unit 1, Drawer D, Bin 06A', '2022-09-06', '2022-09-06'),
+(503, '10-100', 'W-D1D06B', 'Unit 1, Drawer D, Bin 06B', '2022-09-06', '2022-09-06'),
+(504, '10-100', 'W-D1D06C', 'Unit 1, Drawer D, Bin 06C', '2022-09-06', '2022-09-06'),
+(505, '10-100', 'W-D1D06D', 'Unit 1, Drawer D, Bin 06D', '2022-09-06', '2022-09-06'),
+(506, '10-100', 'W-D1D06E', 'Unit 1, Drawer D, Bin 06E', '2022-09-06', '2022-09-06'),
+(507, '10-100', 'W-D1D06F', 'Unit 1, Drawer D, Bin 06F', '2022-09-06', '2022-09-06'),
+(508, '10-100', 'W-D1D06G', 'Unit 1, Drawer D, Bin 06G', '2022-09-06', '2022-09-06'),
+(509, '10-100', 'W-D1D07A', 'Unit 1, Drawer D, Bin 07A', '2022-09-06', '2022-09-06'),
+(510, '10-100', 'W-D1D07B', 'Unit 1, Drawer D, Bin 07B', '2022-09-06', '2022-09-06'),
+(511, '10-100', 'W-D1D07C', 'Unit 1, Drawer D, Bin 07C', '2022-09-06', '2022-09-06'),
+(512, '10-100', 'W-D1D07D', 'Unit 1, Drawer D, Bin 07D', '2022-09-06', '2022-09-06'),
+(513, '10-100', 'W-D1D07E', 'Unit 1, Drawer D, Bin 07E', '2022-09-06', '2022-09-06'),
+(514, '10-100', 'W-D1D07F', 'Unit 1, Drawer D, Bin 07F', '2022-09-06', '2022-09-06'),
+(515, '10-100', 'W-D1D07G', 'Unit 1, Drawer D, Bin 07G', '2022-09-06', '2022-09-06'),
+(516, '10-100', 'W-D1D08A', 'Unit 1, Drawer D, Bin 08A', '2022-09-06', '2022-09-06'),
+(517, '10-100', 'W-D1D08B', 'Unit 1, Drawer D, Bin 08B', '2022-09-06', '2022-09-06'),
+(518, '10-100', 'W-D1D08C', 'Unit 1, Drawer D, Bin 08C', '2022-09-06', '2022-09-06'),
+(519, '10-100', 'W-D1D08D', 'Unit 1, Drawer D, Bin 08D', '2022-09-06', '2022-09-06'),
+(520, '10-100', 'W-D1D08E', 'Unit 1, Drawer D, Bin 08E', '2022-09-06', '2022-09-06'),
+(521, '10-100', 'W-D1D08F', 'Unit 1, Drawer D, Bin 08F', '2022-09-06', '2022-09-06'),
+(522, '10-100', 'W-D1D08G', 'Unit 1, Drawer D, Bin 08G', '2022-09-06', '2022-09-06'),
+(523, '10-100', 'W-FW01', 'front wall 01', '2022-09-06', '2022-09-06'),
+(524, '10-100', 'W-FW02', 'front wall 02', '2022-09-06', '2022-09-06'),
+(525, '10-100', 'W-FW03', 'front wall 03', '2022-09-06', '2022-09-06'),
+(526, '10-100', 'W-FW04', 'front wall 04', '2022-09-06', '2022-09-06'),
+(527, '10-100', 'W-FW05', 'front wall 05', '2022-09-06', '2022-09-06'),
+(528, '10-100', 'W-FW06', 'front wall 06', '2022-09-06', '2022-09-06'),
+(529, '10-100', 'W-FW07', 'front wall 07', '2022-09-06', '2022-09-06'),
+(530, '10-100', 'W-FW08', 'front wall 08', '2022-09-06', '2022-09-06'),
+(531, '10-100', 'W-FW09', 'front wall 09', '2022-09-06', '2022-09-06'),
+(532, '10-100', 'W-FW10', 'front wall 10', '2022-09-06', '2022-09-06'),
+(533, '10-100', 'W-FW11', 'front wall 11', '2022-09-06', '2022-09-06'),
+(534, '10-100', 'W-FW12', 'front wall 12', '2022-09-06', '2022-09-06'),
+(535, '10-100', 'W-FW13', 'front wall 13', '2022-09-06', '2022-09-06'),
+(536, '10-100', 'W-FW14', 'front wall 14', '2022-09-06', '2022-09-06'),
+(537, '10-100', 'W-FW15', 'front wall 15', '2022-09-06', '2022-09-06'),
+(538, '10-100', 'W-FW16', 'front wall 16', '2022-09-06', '2022-09-06'),
+(539, '10-100', 'W-FW17', 'front wall 17', '2022-09-06', '2022-09-06'),
+(540, '10-100', 'W-FW18', 'front wall 18', '2022-09-06', '2022-09-06'),
+(541, '10-100', 'W-FW19', 'front wall 19', '2022-09-06', '2022-09-06'),
+(542, '10-100', 'W-FW20', 'front wall 20', '2022-09-06', '2022-09-06'),
+(543, '10-100', 'W-HR1A', 'hose rack 1, row A', '2022-09-06', '2022-09-06'),
+(544, '10-100', 'W-HR1B', 'hose rack 1, row B', '2022-09-06', '2022-09-06'),
+(545, '10-100', 'W-HR1C', 'hose rack 1, row C', '2022-09-06', '2022-09-06'),
+(546, '10-100', 'W-HR1D', 'hose rack 1, row D', '2022-09-06', '2022-09-06'),
+(547, '10-100', 'W-HR2A', 'hose rack 2, row A', '2022-09-06', '2022-09-06'),
+(548, '10-100', 'W-HR2B', 'hose rack 2, row B', '2022-09-06', '2022-09-06'),
+(549, '10-100', 'W-HR2C', 'hose rack 2, row C', '2022-09-06', '2022-09-06'),
+(550, '10-100', 'W-HR2D', 'hose rack 2, row D', '2022-09-06', '2022-09-06'),
+(551, '10-100', 'W-HR3A', 'hose rack 3, row A', '2022-09-06', '2022-09-06'),
+(552, '10-100', 'W-HR3B', 'hose rack 3, row B', '2022-09-06', '2022-09-06'),
+(553, '10-100', 'W-HR3C', 'hose rack 3, row C', '2022-09-06', '2022-09-06'),
+(554, '10-100', 'W-HR3D', 'hose rack 3, row D', '2022-09-06', '2022-09-06'),
+(555, '10-100', 'W-HR4A', 'hose rack 4, row A', '2022-09-06', '2022-09-06'),
+(556, '10-100', 'W-HR4B', 'hose rack 4, row B', '2022-09-06', '2022-09-06'),
+(557, '10-100', 'W-HR4C', 'hose rack 4, row C', '2022-09-06', '2022-09-06'),
+(558, '10-100', 'W-HR4D', 'hose rack 4, row D', '2022-09-06', '2022-09-06'),
+(559, '10-100', 'W-HR5A', 'hose rack 5, row A', '2022-09-06', '2022-09-06'),
+(560, '10-100', 'W-HR5B', 'hose rack 5, row B', '2022-09-06', '2022-09-06'),
+(561, '10-100', 'W-HR5C', 'hose rack 5, row C', '2022-09-06', '2022-09-06'),
+(562, '10-100', 'W-HR5D', 'hose rack 5, row D', '2022-09-06', '2022-09-06'),
+(563, '10-100', 'W-TBD', 'To Be Determined', '2022-09-06', '2022-09-06'),
+(564, '10-100', 'W1060', 'Packaging', '2022-09-06', '2022-09-06'),
+(565, '10-100', 'WHFG', '', '2022-09-06', '2022-09-06'),
+(566, '10-100', 'WHRM', 'RM', '2022-09-06', '2022-09-06'),
+(567, '10-100', 'WTS', 'Waiting to Ship', '2022-09-06', '2022-09-06'),
+(568, '10-200', '010', 'Finished Goods', '2022-09-06', '2022-09-06'),
+(569, '10-200', '020', 'Components', '2022-09-06', '2022-09-06'),
+(570, '10-200', '030', 'Pending Inspection', '2022-09-06', '2022-09-06'),
+(571, '10-200', '035', 'MFG Pending Inspection', '2022-09-06', '2022-09-06'),
+(572, '10-200', '039', 'Inspection', '2022-09-06', '2022-09-06'),
+(573, '10-200', '040', 'Refrigerated Location', '2022-09-06', '2022-09-06'),
+(574, '10-200', '050', 'Locked Location', '2022-09-06', '2022-09-06'),
+(575, '10-200', '060', 'Reject/Scrap', '2022-09-06', '2022-09-06'),
+(576, '10-200', '070', 'Return/Rework', '2022-09-06', '2022-09-06'),
+(577, '10-200', '080', 'QC Hold', '2022-09-06', '2022-09-06'),
+(578, '10-200', '090', 'Quarantine', '2022-09-06', '2022-09-06'),
+(579, '10-200', '100', 'Supplier Consignment', '2022-09-06', '2022-09-06'),
+(580, '10-200', '1000', 'Work Center 1000', '2022-09-06', '2022-09-06'),
+(581, '10-200', '1050', 'Work Center 1050', '2022-09-06', '2022-09-06'),
+(582, '10-200', '110', 'Customer Consignment', '2022-09-06', '2022-09-06'),
+(583, '10-200', '120', 'Dock', '2022-09-06', '2022-09-06'),
+(584, '10-200', '130', 'Transit', '2022-09-06', '2022-09-06'),
+(585, '10-200', '140', 'Drop Ship', '2022-09-06', '2022-09-06'),
+(586, '10-200', '150', 'Service Return', '2022-09-06', '2022-09-06'),
+(587, '10-200', '160', 'Service Spares', '2022-09-06', '2022-09-06'),
+(588, '10-200', '170', 'Service Scrap', '2022-09-06', '2022-09-06'),
+(589, '10-200', '180', 'Service Repair', '2022-09-06', '2022-09-06'),
+(590, '10-200', '190', 'Service Engineer', '2022-09-06', '2022-09-06'),
+(591, '10-200', '200', '', '2022-09-06', '2022-09-06'),
+(592, '10-200', '900', 'MRO Inventory', '2022-09-06', '2022-09-06'),
+(593, '10-200', 'L5400R', 'Reserve Loc for Inj Mold', '2022-09-06', '2022-09-06'),
+(594, '10-200', 'L5900', 'Heat Treat', '2022-09-06', '2022-09-06'),
+(595, '10-200', 'W5400A', 'Injection Molding MachA', '2022-09-06', '2022-09-06'),
+(596, '10-200', 'W5400B', 'Injection Molding MachB', '2022-09-06', '2022-09-06'),
+(597, '10-200', 'W5400C', 'Injection Molding MachC', '2022-09-06', '2022-09-06'),
+(598, '10-200', 'W5500A', 'Assembly CellA', '2022-09-06', '2022-09-06'),
+(599, '10-200', 'W5500B', 'Assembly CellB', '2022-09-06', '2022-09-06'),
+(600, '10-200', 'W5500C', 'Assembly CellC', '2022-09-06', '2022-09-06'),
+(601, '10-200', 'WTS', 'Waiting to Ship', '2022-09-06', '2022-09-06'),
+(602, '10-201', '010', 'Finished Goods', '2022-09-06', '2022-09-06'),
+(603, '10-201', '020', 'Components', '2022-09-06', '2022-09-06'),
+(604, '10-201', '021', 'Final Assembly - WIP', '2022-09-06', '2022-09-06'),
+(605, '10-201', '022', 'Sub Assembly - WIP', '2022-09-06', '2022-09-06'),
+(606, '10-201', '025', 'Raw Materials', '2022-09-06', '2022-09-06'),
+(607, '10-201', '030', 'Pending Inspection', '2022-09-06', '2022-09-06'),
+(608, '10-201', '035', 'MFG Pending Inspection', '2022-09-06', '2022-09-06'),
+(609, '10-201', '039', 'Inspection', '2022-09-06', '2022-09-06'),
+(610, '10-201', '040', 'Refrigerated Location', '2022-09-06', '2022-09-06'),
+(611, '10-201', '050', 'Locked Location', '2022-09-06', '2022-09-06'),
+(612, '10-201', '060', 'Reject/Scrap', '2022-09-06', '2022-09-06'),
+(613, '10-201', '070', 'Return/Rework', '2022-09-06', '2022-09-06'),
+(614, '10-201', '080', 'QC Hold', '2022-09-06', '2022-09-06'),
+(615, '10-201', '090', 'Quarantine', '2022-09-06', '2022-09-06'),
+(616, '10-201', '100', 'Supplier Consignment', '2022-09-06', '2022-09-06'),
+(617, '10-201', '110', 'Customer Consignment', '2022-09-06', '2022-09-06'),
+(618, '10-201', '120', 'Dock', '2022-09-06', '2022-09-06'),
+(619, '10-201', '130', 'Transit', '2022-09-06', '2022-09-06'),
+(620, '10-201', '140', 'DropShip', '2022-09-06', '2022-09-06'),
+(621, '10-201', '150', 'Service Return', '2022-09-06', '2022-09-06'),
+(622, '10-201', '160', 'Service Spares', '2022-09-06', '2022-09-06'),
+(623, '10-201', '170', 'Service Scrap', '2022-09-06', '2022-09-06'),
+(624, '10-201', '180', 'Service Repair', '2022-09-06', '2022-09-06');
+INSERT INTO `loc_mstr` (`ID`, `loc_site`, `loc_code`, `loc_desc`, `created_at`, `updated_at`) VALUES
+(625, '10-201', '190', 'Service Engineer', '2022-09-06', '2022-09-06'),
+(626, '10-201', '200', '', '2022-09-06', '2022-09-06'),
+(627, '10-201', 'WC1001', 'Lean Assembly', '2022-09-06', '2022-09-06'),
+(628, '10-201', 'WTS', 'Waiting to Ship', '2022-09-06', '2022-09-06'),
+(629, '10-202', '035', 'MFG Pending Inspection', '2022-09-06', '2022-09-06'),
+(630, '10-202', '160', '', '2022-09-06', '2022-09-06'),
+(631, '10-202', '200', 'All Available', '2022-09-06', '2022-09-06'),
+(632, '10-202', '201', 'Not Available', '2022-09-06', '2022-09-06'),
+(633, '10-202', '202', 'Non Nettable', '2022-09-06', '2022-09-06'),
+(634, '10-202', '203', 'Prod Line General Reserv', '2022-09-06', '2022-09-06'),
+(635, '10-202', '204', 'Prod Line General BackFl', '2022-09-06', '2022-09-06'),
+(636, '10-202', '205', 'WC General Backflush', '2022-09-06', '2022-09-06'),
+(637, '10-202', '206', 'WC General Reserved', '2022-09-06', '2022-09-06'),
+(638, '10-202', '207', 'Prod Line ASSY Backflush', '2022-09-06', '2022-09-06'),
+(639, '10-202', '208', 'Prod Line ASY Reserved', '2022-09-06', '2022-09-06'),
+(640, '10-202', '209', 'WC ASM OP10-30 BackFl', '2022-09-06', '2022-09-06'),
+(641, '10-202', '210', 'WC A1 Reserved', '2022-09-06', '2022-09-06'),
+(642, '10-202', 'WTS', 'Waiting to Ship', '2022-09-06', '2022-09-06'),
+(643, '10-300', '010', 'Finished Good', '2022-09-06', '2022-09-06'),
+(644, '10-300', '020', 'Components', '2022-09-06', '2022-09-06'),
+(645, '10-300', '030', 'Pending Inspection', '2022-09-06', '2022-09-06'),
+(646, '10-300', '035', 'MFG Pending Inspection', '2022-09-06', '2022-09-06'),
+(647, '10-300', '039', 'Inspection', '2022-09-06', '2022-09-06'),
+(648, '10-300', '040', 'Refrigerated Location', '2022-09-06', '2022-09-06'),
+(649, '10-300', '050', 'Locked Location', '2022-09-06', '2022-09-06'),
+(650, '10-300', '060', 'Reject/Scrap', '2022-09-06', '2022-09-06'),
+(651, '10-300', '070', 'Return/Rework', '2022-09-06', '2022-09-06'),
+(652, '10-300', '080', 'QC Hold', '2022-09-06', '2022-09-06'),
+(653, '10-300', '090', 'Quarrantine', '2022-09-06', '2022-09-06'),
+(654, '10-300', '100', 'Supplier Consignment', '2022-09-06', '2022-09-06'),
+(655, '10-300', '110', 'Customer Consignment', '2022-09-06', '2022-09-06'),
+(656, '10-300', '120', 'Dock', '2022-09-06', '2022-09-06'),
+(657, '10-300', '130', 'Transit', '2022-09-06', '2022-09-06'),
+(658, '10-300', '140', 'Drop Ship', '2022-09-06', '2022-09-06'),
+(659, '10-300', '150', 'Service Return', '2022-09-06', '2022-09-06'),
+(660, '10-300', '160', 'Service Spares', '2022-09-06', '2022-09-06'),
+(661, '10-300', '170', 'Service Scrap', '2022-09-06', '2022-09-06'),
+(662, '10-300', '180', 'Service Repair', '2022-09-06', '2022-09-06'),
+(663, '10-300', '190', 'Service Engineer', '2022-09-06', '2022-09-06'),
+(664, '10-300', '40', '', '2022-09-06', '2022-09-06'),
+(665, '10-300', '900', 'MRO Inventory', '2022-09-06', '2022-09-06'),
+(666, '10-300', 'WTS', 'Waiting to Ship', '2022-09-06', '2022-09-06'),
+(667, '10-301', '01', 'Warehouse 1', '2022-09-06', '2022-09-06'),
+(668, '10-301', '010RC001', 'Receipt Location 001', '2022-09-06', '2022-09-06'),
+(669, '10-301', '020IN001', 'Inspection Location', '2022-09-06', '2022-09-06'),
+(670, '10-301', '030RJ001', 'Scrap Location', '2022-09-06', '2022-09-06'),
+(671, '10-301', '040BX001', 'Box Location 001', '2022-09-06', '2022-09-06'),
+(672, '10-301', '040BX002', 'Box Location 002', '2022-09-06', '2022-09-06'),
+(673, '10-301', '040BX003', 'Box Location 003', '2022-09-06', '2022-09-06'),
+(674, '10-301', '040BX004', 'Box Location 004', '2022-09-06', '2022-09-06'),
+(675, '10-301', '040BX005', 'Box Location 005', '2022-09-06', '2022-09-06'),
+(676, '10-301', '040BX006', 'Box Location 006', '2022-09-06', '2022-09-06'),
+(677, '10-301', '040BX007', 'Box Location 007', '2022-09-06', '2022-09-06'),
+(678, '10-301', '040BX008', 'Box Location 008', '2022-09-06', '2022-09-06'),
+(679, '10-301', '040BX009', 'Box Location 009', '2022-09-06', '2022-09-06'),
+(680, '10-301', '040BX010', 'Box Location 010', '2022-09-06', '2022-09-06'),
+(681, '10-301', '040EA001', 'Pick face location 001', '2022-09-06', '2022-09-06'),
+(682, '10-301', '040EA002', 'Pick face location 002', '2022-09-06', '2022-09-06'),
+(683, '10-301', '040EA003', 'Pick face location 003', '2022-09-06', '2022-09-06'),
+(684, '10-301', '040EA004', 'Pick face location 004', '2022-09-06', '2022-09-06'),
+(685, '10-301', '040EA005', 'Pick face location 005', '2022-09-06', '2022-09-06'),
+(686, '10-301', '040EA006', 'Pick face location 006', '2022-09-06', '2022-09-06'),
+(687, '10-301', '040EA007', 'Pick face location 007', '2022-09-06', '2022-09-06'),
+(688, '10-301', '040EA008', 'Pick face location 008', '2022-09-06', '2022-09-06'),
+(689, '10-301', '040EA009', 'Pick face location 009', '2022-09-06', '2022-09-06'),
+(690, '10-301', '040EA010', 'Pick face location 010', '2022-09-06', '2022-09-06'),
+(691, '10-301', '040EA011', 'Pick face location 011', '2022-09-06', '2022-09-06'),
+(692, '10-301', '040EA012', 'Pick face location 012', '2022-09-06', '2022-09-06'),
+(693, '10-301', '040EA013', 'Pick face location 013', '2022-09-06', '2022-09-06'),
+(694, '10-301', '040EA014', 'Pick face location 014', '2022-09-06', '2022-09-06'),
+(695, '10-301', '040EA015', 'Pick face location 015', '2022-09-06', '2022-09-06'),
+(696, '10-301', '040EA016', 'Pick face location 016', '2022-09-06', '2022-09-06'),
+(697, '10-301', '040EA017', 'Pick face location 017', '2022-09-06', '2022-09-06'),
+(698, '10-301', '040EA018', 'Pick face location 018', '2022-09-06', '2022-09-06'),
+(699, '10-301', '040EA019', 'Pick face location 019', '2022-09-06', '2022-09-06'),
+(700, '10-301', '040EA020', 'Pick face location 020', '2022-09-06', '2022-09-06'),
+(701, '10-301', '040PL001', 'Full Pallet Location 001', '2022-09-06', '2022-09-06'),
+(702, '10-301', '040PL002', 'Full Pallet Location 002', '2022-09-06', '2022-09-06'),
+(703, '10-301', '040PL003', 'Full Pallet Location 003', '2022-09-06', '2022-09-06'),
+(704, '10-301', '040PL004', 'Full Pallet Location 004', '2022-09-06', '2022-09-06'),
+(705, '10-301', '040PL005', 'Full Pallet Location 005', '2022-09-06', '2022-09-06'),
+(706, '10-301', '040PL006', 'Full Pallet Location 006', '2022-09-06', '2022-09-06'),
+(707, '10-301', '040PL007', 'Full Pallet Location 007', '2022-09-06', '2022-09-06'),
+(708, '10-301', '040PL008', 'Full Pallet Location 008', '2022-09-06', '2022-09-06'),
+(709, '10-301', '040PL009', 'Full Pallet Location 009', '2022-09-06', '2022-09-06'),
+(710, '10-301', '040PL010', 'Full Pallet Location 010', '2022-09-06', '2022-09-06'),
+(711, '10-301', '060PA001', 'Packaging location 001', '2022-09-06', '2022-09-06'),
+(712, '10-301', '060PA002', 'Packaging location 002', '2022-09-06', '2022-09-06'),
+(713, '10-301', '060PA003', 'Packaging location 003', '2022-09-06', '2022-09-06'),
+(714, '10-301', '060PA004', 'Packaging location 004', '2022-09-06', '2022-09-06'),
+(715, '10-301', '060PA005', 'Packaging location 005', '2022-09-06', '2022-09-06'),
+(716, '10-301', '070SH001', 'Shipping Dock 001', '2022-09-06', '2022-09-06'),
+(717, '10-301', '070SH002', 'Shipping Dock 002', '2022-09-06', '2022-09-06'),
+(718, '10-301', '070SH003', 'Shipping Dock 003', '2022-09-06', '2022-09-06'),
+(719, '10-301', '1060', '', '2022-09-06', '2022-09-06'),
+(720, '10-301', '160', '', '2022-09-06', '2022-09-06'),
+(721, '10-301', 'qmi', 'User for Batch Picking', '2022-09-06', '2022-09-06'),
+(722, '10-301', 'UserA', 'UserA', '2022-09-06', '2022-09-06'),
+(723, '10-301', 'UserB', 'UserB', '2022-09-06', '2022-09-06'),
+(724, '10-301', 'Whse1', 'Forklift', '2022-09-06', '2022-09-06'),
+(725, '10-301', 'Whse2', 'Inventory on Cart', '2022-09-06', '2022-09-06'),
+(726, '10-301', 'Whse3', 'Inventory on Cart', '2022-09-06', '2022-09-06'),
+(727, '10-301', 'WTS', 'Waiting to Ship', '2022-09-06', '2022-09-06'),
+(728, '10-302', '010', 'Finished Good', '2022-09-06', '2022-09-06'),
+(729, '10-302', '020', 'Components', '2022-09-06', '2022-09-06'),
+(730, '10-302', '030', 'Pending Inspection', '2022-09-06', '2022-09-06'),
+(731, '10-302', '039', 'Inspection', '2022-09-06', '2022-09-06'),
+(732, '10-302', '040', 'Refrigerated Location', '2022-09-06', '2022-09-06'),
+(733, '10-302', '050', 'Locked Location', '2022-09-06', '2022-09-06'),
+(734, '10-302', '060', 'Reject/Scrap', '2022-09-06', '2022-09-06'),
+(735, '10-302', '070', 'Return/Rework', '2022-09-06', '2022-09-06'),
+(736, '10-302', '080', 'QC Hold', '2022-09-06', '2022-09-06'),
+(737, '10-302', '090', 'Quarantine', '2022-09-06', '2022-09-06'),
+(738, '10-302', '100', 'Supplier Consignment', '2022-09-06', '2022-09-06'),
+(739, '10-302', '110', 'Customer Consignment', '2022-09-06', '2022-09-06'),
+(740, '10-302', '120', 'Dock', '2022-09-06', '2022-09-06'),
+(741, '10-302', '130', 'Transit', '2022-09-06', '2022-09-06'),
+(742, '10-302', '140', 'Drop Ship', '2022-09-06', '2022-09-06'),
+(743, '10-302', '150', 'Service Returns', '2022-09-06', '2022-09-06'),
+(744, '10-302', '160', 'Service Spares', '2022-09-06', '2022-09-06'),
+(745, '10-302', '170', 'Service Scrap', '2022-09-06', '2022-09-06'),
+(746, '10-302', '180', 'Service Repair', '2022-09-06', '2022-09-06'),
+(747, '10-302', '190', 'Service Engineer', '2022-09-06', '2022-09-06'),
+(748, '10-302', 'WTS', 'Waiting to Ship', '2022-09-06', '2022-09-06'),
+(749, '10-303', '010', 'Finished Goods', '2022-09-06', '2022-09-06'),
+(750, '10-303', '020', 'Components', '2022-09-06', '2022-09-06'),
+(751, '10-303', '030', 'Pending Inspection', '2022-09-06', '2022-09-06'),
+(752, '10-303', '039', 'Inspection', '2022-09-06', '2022-09-06'),
+(753, '10-303', '040', 'Refrigerated Location', '2022-09-06', '2022-09-06'),
+(754, '10-303', '050', 'Locked Location', '2022-09-06', '2022-09-06'),
+(755, '10-303', '060', 'Reject/Scrap', '2022-09-06', '2022-09-06'),
+(756, '10-303', '070', 'Return/Rework', '2022-09-06', '2022-09-06'),
+(757, '10-303', '080', 'QC Hold', '2022-09-06', '2022-09-06'),
+(758, '10-303', '090', 'Quarantine', '2022-09-06', '2022-09-06'),
+(759, '10-303', '100', 'Supplier Consignment', '2022-09-06', '2022-09-06'),
+(760, '10-303', '110', 'Customer Consignment', '2022-09-06', '2022-09-06'),
+(761, '10-303', '120', 'Dock', '2022-09-06', '2022-09-06'),
+(762, '10-303', '130', 'Transit', '2022-09-06', '2022-09-06'),
+(763, '10-303', '140', 'Drop Ship', '2022-09-06', '2022-09-06'),
+(764, '10-303', '150', 'Service Return', '2022-09-06', '2022-09-06'),
+(765, '10-303', '160', 'Service Spares', '2022-09-06', '2022-09-06'),
+(766, '10-303', '170', 'Service Scrap', '2022-09-06', '2022-09-06'),
+(767, '10-303', '180', 'Service Repair', '2022-09-06', '2022-09-06'),
+(768, '10-303', '190', 'Service Engineer', '2022-09-06', '2022-09-06'),
+(769, '10-303', 'WTS', 'Waiting to Ship', '2022-09-06', '2022-09-06'),
+(770, '10-400', '010', 'Finished Good', '2022-09-06', '2022-09-06'),
+(771, '10-400', '020', 'Components', '2022-09-06', '2022-09-06'),
+(772, '10-400', '030', 'Pending Inspection', '2022-09-06', '2022-09-06'),
+(773, '10-400', '035', 'MFG Pending Inspection', '2022-09-06', '2022-09-06'),
+(774, '10-400', '039', 'Inspection', '2022-09-06', '2022-09-06'),
+(775, '10-400', '040', 'Refrigerated Location', '2022-09-06', '2022-09-06'),
+(776, '10-400', '050', 'Locked Location', '2022-09-06', '2022-09-06'),
+(777, '10-400', '060', 'Reject/Scrap', '2022-09-06', '2022-09-06'),
+(778, '10-400', '070', 'Return/Rework', '2022-09-06', '2022-09-06'),
+(779, '10-400', '080', 'QC Hold', '2022-09-06', '2022-09-06'),
+(780, '10-400', '090', 'Quarantine', '2022-09-06', '2022-09-06'),
+(781, '10-400', '100', 'Supplier Consignment', '2022-09-06', '2022-09-06'),
+(782, '10-400', '110', 'Customer Consignment', '2022-09-06', '2022-09-06'),
+(783, '10-400', '120', 'Dock', '2022-09-06', '2022-09-06'),
+(784, '10-400', '130', 'Transit', '2022-09-06', '2022-09-06'),
+(785, '10-400', '140', 'Drop Ship', '2022-09-06', '2022-09-06'),
+(786, '10-400', '150', 'Service Return', '2022-09-06', '2022-09-06'),
+(787, '10-400', '160', 'Service Spares', '2022-09-06', '2022-09-06'),
+(788, '10-400', '170', 'Service Scrap', '2022-09-06', '2022-09-06'),
+(789, '10-400', '180', 'Service Repair', '2022-09-06', '2022-09-06'),
+(790, '10-400', '190', 'Service Engineer', '2022-09-06', '2022-09-06'),
+(791, '10-400', '900', 'MRO Inventory', '2022-09-06', '2022-09-06'),
+(792, '10-400', 'L4020', 'Bottle Filling Line', '2022-09-06', '2022-09-06'),
+(793, '10-400', 'L5100', 'Olive Oil Production', '2022-09-06', '2022-09-06'),
+(794, '10-400', 'WTS', 'Waiting to Ship', '2022-09-06', '2022-09-06'),
+(795, '10-500', '010', 'Finished Goods', '2022-09-06', '2022-09-06'),
+(796, '10-500', '02', '', '2022-09-06', '2022-09-06'),
+(797, '10-500', '020', 'Components', '2022-09-06', '2022-09-06'),
+(798, '10-500', '030', 'Pending  Inspection', '2022-09-06', '2022-09-06'),
+(799, '10-500', '035', 'MFG Pending Inspection', '2022-09-06', '2022-09-06'),
+(800, '10-500', '039', 'Inspection', '2022-09-06', '2022-09-06'),
+(801, '10-500', '040', 'Refrigerated Location', '2022-09-06', '2022-09-06'),
+(802, '10-500', '050', 'Locked Location', '2022-09-06', '2022-09-06'),
+(803, '10-500', '060', 'Reject/Scrap', '2022-09-06', '2022-09-06'),
+(804, '10-500', '070', 'Return/Rework', '2022-09-06', '2022-09-06'),
+(805, '10-500', '080', 'QC Hold', '2022-09-06', '2022-09-06'),
+(806, '10-500', '090', 'Quarantine', '2022-09-06', '2022-09-06'),
+(807, '10-500', '100', 'Supplier Consignment', '2022-09-06', '2022-09-06'),
+(808, '10-500', '110', 'Customer Consignment', '2022-09-06', '2022-09-06'),
+(809, '10-500', '120', 'Dock', '2022-09-06', '2022-09-06'),
+(810, '10-500', '130', 'Transit', '2022-09-06', '2022-09-06'),
+(811, '10-500', '140', 'Drop Ship', '2022-09-06', '2022-09-06'),
+(812, '10-500', '150', 'Service Return', '2022-09-06', '2022-09-06'),
+(813, '10-500', '160', 'Service Spares', '2022-09-06', '2022-09-06'),
+(814, '10-500', '170', 'Service Scrap', '2022-09-06', '2022-09-06'),
+(815, '10-500', '180', 'Service Repair', '2022-09-06', '2022-09-06'),
+(816, '10-500', '190', 'Service Engineer', '2022-09-06', '2022-09-06'),
+(817, '10-500', '20', '', '2022-09-06', '2022-09-06'),
+(818, '10-500', '900', 'MRO Inventory', '2022-09-06', '2022-09-06'),
+(819, '10-500', 'WTS', 'Waiting to Ship', '2022-09-06', '2022-09-06'),
+(820, '10-600', '010', 'Finished Goods', '2022-09-06', '2022-09-06'),
+(821, '10-600', '020', 'Components', '2022-09-06', '2022-09-06'),
+(822, '10-600', '030', 'Inspection Location', '2022-09-06', '2022-09-06'),
+(823, '10-100', 'ATEST', 'TEST LOCATION', '2022-09-06', '2022-09-06'),
+(824, '10-100', 'W-1A110A', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(825, '10-100', 'W-1A110B', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(826, '10-100', 'W-1A110C', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(827, '10-100', 'W-1A110D', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(828, '10-100', 'W-1A110E', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(829, '10-100', 'W-1A110F', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(830, '10-100', 'W-1A210A', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(831, '10-100', 'W-1A210B', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(832, '10-100', 'W-1A210C', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(833, '10-100', 'W-1A210D', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(834, '10-100', 'W-1A210E', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(835, '10-100', 'W-1A210F', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(836, '10-100', 'W-1B210A', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(837, '10-100', 'W-1B210B', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(838, '10-100', 'W-1B210C', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(839, '10-100', 'W-1B210D', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(840, '10-100', 'W-1B210E', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(841, '10-100', 'W-1B210F', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(842, '10-100', 'ATEST', 'TEST LOCATION EDITED', '2022-09-06', '2022-09-06'),
+(843, '10-100', 'W-1A110A', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(844, '10-100', 'W-1A110B', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(845, '10-100', 'W-1A110C', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(846, '10-100', 'W-1A110D', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(847, '10-100', 'W-1A110E', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(848, '10-100', 'W-1A110F', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(849, '10-100', 'W-1A210A', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(850, '10-100', 'W-1A210B', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(851, '10-100', 'W-1A210C', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(852, '10-100', 'W-1A210D', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(853, '10-100', 'W-1A210E', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(854, '10-100', 'W-1A210F', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(855, '10-100', 'W-1B210A', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(856, '10-100', 'W-1B210B', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(857, '10-100', 'W-1B210C', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(858, '10-100', 'W-1B210D', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(859, '10-100', 'W-1B210E', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(860, '10-100', 'W-1B210F', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-06', '2022-09-06'),
+(861, '10-100', 'W-1A110A', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-13', '2022-09-13'),
+(862, '10-100', 'W-1A110B', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-13', '2022-09-13'),
+(863, '10-100', 'W-1A110C', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-13', '2022-09-13'),
+(864, '10-100', 'W-1A110D', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-13', '2022-09-13'),
+(865, '10-100', 'W-1A110E', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-13', '2022-09-13'),
+(866, '10-100', 'W-1A110F', 'SR Aisle A Sec 1 Shelf 10 Drw ', '2022-09-13', '2022-09-13'),
+(867, '10-100', 'W-1A210A', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-13', '2022-09-13'),
+(868, '10-100', 'W-1A210B', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-13', '2022-09-13'),
+(869, '10-100', 'W-1A210C', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-13', '2022-09-13'),
+(870, '10-100', 'W-1A210D', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-13', '2022-09-13'),
+(871, '10-100', 'W-1A210E', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-13', '2022-09-13'),
+(872, '10-100', 'W-1A210F', 'SR Aisle A Sec 2 Shelf 10 Drw ', '2022-09-13', '2022-09-13'),
+(873, '10-100', 'W-1B210A', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-13', '2022-09-13'),
+(874, '10-100', 'W-1B210B', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-13', '2022-09-13'),
+(875, '10-100', 'W-1B210C', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-13', '2022-09-13'),
+(876, '10-100', 'W-1B210D', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-13', '2022-09-13'),
+(877, '10-100', 'W-1B210E', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-13', '2022-09-13'),
+(878, '10-100', 'W-1B210F', 'SR Aisle B Sec 2 Shelf 10 Drw ', '2022-09-13', '2022-09-13');
 
 -- --------------------------------------------------------
 
@@ -2772,7 +3744,15 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (4, '2014_10_12_000000_create_users_table', 1),
 (5, '2014_10_12_100000_create_password_resets_table', 1),
 (6, '2019_08_19_000000_create_failed_jobs_table', 1),
-(7, '2020_11_03_185712_create_notifications_table', 2);
+(7, '2020_11_03_185712_create_notifications_table', 2),
+(8, '2022_09_05_103936_create_qxwsa_table', 3),
+(9, '2022_09_05_151556_pick_mstr', 4),
+(11, '2022_09_07_114345_insd_det', 5),
+(12, '2022_09_09_100811_add_spm_dom_to_sp_mstr', 5),
+(13, '2022_09_16_110545_add_whconfirm_to_wo_dets', 6),
+(14, '2022_09_18_095045_add_eng_conf_to_wo_dets', 7),
+(15, '2022_09_18_105031_add_editedbty_to_asset_par', 8),
+(16, '2022_09_22_115023_add_whto_wo_dets', 9);
 
 -- --------------------------------------------------------
 
@@ -2802,6 +3782,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('0dd1d511-8158-4a89-b59a-91929bceb3eb', 'App\\Notifications\\eventNotification', 'App\\User', 46, '{\"data\":\"There are updates on following RFP\",\"url\":\"rfpapproval\",\"nbr\":\"RP000067\",\"note\":\"Approval is needed, Please check\"}', '2020-12-22 04:05:21', '2020-11-11 04:47:18', '2020-12-22 04:05:21'),
 ('0de7b130-3cda-4069-a4b8-9e4e5e03614b', 'App\\Notifications\\eventNotification', 'App\\User', 62, '{\"data\":\"There are updates on following RFP\",\"url\":\"rfpapproval\",\"nbr\":\"RP000077\",\"note\":\"Approval is needed, Please check\"}', '2020-12-22 03:42:04', '2020-11-12 05:10:04', '2020-12-22 03:42:04'),
 ('0fedcd79-276d-4195-9467-22a65155ad1e', 'App\\Notifications\\eventNotification', 'App\\User', 59, '{\"data\":\"There is a RFP awaiting for approval\",\"url\":\"rfpapproval\",\"nbr\":\"RP000076\",\"note\":\"Please check\"}', NULL, '2020-11-12 03:00:01', '2020-11-12 03:00:01'),
+('110c5c4a-21b7-402d-acd5-7083cf49c5b3', 'App\\Notifications\\eventNotification', 'App\\User', 3, '{\"data\":\"WO has been canceled by admin1\",\"url\":\"womaint\",\"nbr\":\"WO-21-0062\",\"note\":\"Please check\"}', NULL, '2022-09-19 08:29:20', '2022-09-19 08:29:20'),
 ('1128316f-f7d5-48c1-b4e1-e301beaf16ab', 'App\\Notifications\\eventNotification', 'App\\User', 45, '{\"data\":\"There are updates on following RFP\",\"url\":\"rfpapproval\",\"nbr\":\"RP000064\",\"note\":\"Approval is needed, Please check\"}', '2020-12-22 03:54:30', '2020-11-11 04:39:17', '2020-12-22 03:54:30'),
 ('11d5d00d-9627-4ce0-87c6-25c77e42a43f', 'App\\Notifications\\eventNotification', 'App\\User', 62, '{\"data\":\"There are updates on following RFP\",\"url\":\"rfpapproval\",\"nbr\":\"RP000076\",\"note\":\"Approval is needed, Please check\"}', '2020-12-22 03:42:04', '2020-11-12 03:55:01', '2020-12-22 03:42:04'),
 ('1241ac6e-ecf8-4de2-808d-6c9a0c4660a9', 'App\\Notifications\\eventNotification', 'App\\User', 47, '{\"data\":\"There is a RFP awaiting for approval\",\"url\":\"rfpapproval\",\"nbr\":\"RP000097\",\"note\":\"Please check\"}', NULL, '2021-01-11 09:21:10', '2021-01-11 09:21:10'),
@@ -2816,6 +3797,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('1e7ea4d7-cbd3-455a-8809-51453e8ffff9', 'App\\Notifications\\eventNotification', 'App\\User', 46, '{\"data\":\"There is a new RFP awaiting your response\",\"url\":\"rfpapproval\",\"nbr\":\"RP000082\",\"note\":\"Please check\"}', '2020-12-22 04:05:21', '2020-11-13 05:04:22', '2020-12-22 04:05:21'),
 ('201d4de1-7222-4015-bcbe-a6aee57b5683', 'App\\Notifications\\eventNotification', 'App\\User', 5, '{\"data\":\"Supplier : Heron Surgical Supply has made an offer for following RFQ\",\"url\":\"rfq\",\"nbr\":\"RF000062\",\"note\":\"Please check\"}', NULL, '2021-01-11 09:31:21', '2021-01-11 09:31:21'),
 ('205a8d90-a8be-4aa3-bbd0-7149fa6d0d76', 'App\\Notifications\\eventNotification', 'App\\User', 62, '{\"data\":\"There are updates on following RFP\",\"url\":\"rfpapproval\",\"nbr\":\"RP000078\",\"note\":\"Approval is needed, Please check\"}', '2020-12-22 03:42:04', '2020-11-12 07:34:59', '2020-12-22 03:42:04'),
+('20fb8900-31ef-4d9b-bfdc-da2bf75a5ece', 'App\\Notifications\\eventNotification', 'App\\User', 1, '{\"data\":\"WO has been canceled by admin1\",\"url\":\"womaint\",\"nbr\":\"WO-21-0062\",\"note\":\"Please check\"}', NULL, '2022-09-19 08:29:20', '2022-09-19 08:29:20'),
 ('23ffc786-9bff-4a90-aafd-5c6ab208d9a4', 'App\\Notifications\\eventNotification', 'App\\User', 60, '{\"data\":\"Following Request for Purchasing has been rejected\",\"url\":\"inputrfp\",\"nbr\":\"RP000079\",\"note\":\"Please check\"}', '2020-12-22 03:16:07', '2020-11-12 07:54:32', '2020-12-22 03:16:07'),
 ('2540e5fa-e6f5-45a5-8e58-a86557728986', 'App\\Notifications\\eventNotification', 'App\\User', 61, '{\"data\":\"There is a RFP awaiting for approval\",\"url\":\"rfpapproval\",\"nbr\":\"RP000057\",\"note\":\"Please check\"}', NULL, '2020-11-09 08:17:24', '2020-11-09 08:17:24'),
 ('26c4c8b7-7ab4-4c02-ad57-0cf8227a8bd7', 'App\\Notifications\\eventNotification', 'App\\User', 5, '{\"data\":\"Supplier : Heron Surgical Supply has made an offer for following RFQ\",\"url\":\"rfq\",\"nbr\":\"RF000074\",\"note\":\"Please check\"}', NULL, '2021-01-11 06:15:57', '2021-01-11 06:15:57'),
@@ -2839,6 +3821,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('4632d519-efb6-49aa-8c42-7424cf78ea14', 'App\\Notifications\\eventNotification', 'App\\User', 47, '{\"data\":\"There are updates on following RFP\",\"url\":\"rfpapproval\",\"nbr\":\"RP000077\",\"note\":\"Approval is needed, Please check\"}', '2020-12-22 03:57:05', '2020-11-12 05:23:30', '2020-12-22 03:57:05'),
 ('49a2783c-8759-4926-a45c-573ca9ea8314', 'App\\Notifications\\eventNotification', 'App\\User', 63, '{\"data\":\"There is a RFP awaiting for approval\",\"url\":\"rfpapproval\",\"nbr\":\"RP000075\",\"note\":\"Please check\"}', '2020-12-22 03:10:11', '2020-12-21 04:15:20', '2020-12-22 03:10:11'),
 ('4ca6c7c5-6bca-4454-9564-a34c9ab7effd', 'App\\Notifications\\eventNotification', 'App\\User', 63, '{\"data\":\"There is a RFP awaiting for approval\",\"url\":\"rfpapproval\",\"nbr\":\"RP000098\",\"note\":\"Please check\"}', NULL, '2021-01-20 07:51:36', '2021-01-20 07:51:36'),
+('4fcc5db1-4d67-4bbb-b9b4-80e2d4aaae28', 'App\\Notifications\\eventNotification', 'App\\User', 16, '{\"data\":\"WO has been canceled by admin1\",\"url\":\"womaint\",\"nbr\":\"WO-21-0062\",\"note\":\"Please check\"}', NULL, '2022-09-19 08:29:20', '2022-09-19 08:29:20'),
 ('5150f4d4-710b-4faa-8c38-c362a5d0b25b', 'App\\Notifications\\eventNotification', 'App\\User', 59, '{\"data\":\"There is a RFP awaiting for approval\",\"url\":\"rfpapproval\",\"nbr\":\"RP000039\",\"note\":\"Please check\"}', NULL, '2020-11-09 08:08:21', '2020-11-09 08:08:21'),
 ('53a52506-b47f-4ac1-a79b-7e81b135c695', 'App\\Notifications\\eventNotification', 'App\\User', 43, '{\"data\":\"There is a new RFQ awaiting your response\",\"url\":\"rfqapprove\",\"nbr\":\"RF000062\",\"note\":\"Please check\"}', NULL, '2021-01-11 09:27:40', '2021-01-11 09:27:40'),
 ('55f57bb1-d94c-4615-b69b-b4809e86927c', 'App\\Notifications\\eventNotification', 'App\\User', 62, '{\"data\":\"There are updates on following RFP\",\"url\":\"rfpapproval\",\"nbr\":\"RP000077\",\"note\":\"Approval is needed, Please check\"}', '2020-12-22 03:42:04', '2020-11-12 05:04:51', '2020-12-22 03:42:04'),
@@ -2955,6 +3938,54 @@ CREATE TABLE `picklist_ctrl` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `pick_mstr`
+--
+
+CREATE TABLE `pick_mstr` (
+  `pick_id` int(10) UNSIGNED NOT NULL,
+  `pick_code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `pick_active` tinyint(4) NOT NULL DEFAULT 1,
+  `pick_edited_by` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `pick_mstr`
+--
+
+INSERT INTO `pick_mstr` (`pick_id`, `pick_code`, `pick_active`, `pick_edited_by`, `created_at`, `updated_at`) VALUES
+(1, 'date', 0, 'admin1', '2022-09-05 09:01:05', NULL),
+(2, 'lot', 1, 'admin1', '2022-09-05 09:10:16', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `qxwsa`
+--
+
+CREATE TABLE `qxwsa` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `wsas_domain` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `wsas_url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `wsas_path` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `qx_enable` tinyint(4) DEFAULT 1,
+  `qx_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `qx_path` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `qxwsa`
+--
+
+INSERT INTO `qxwsa` (`id`, `wsas_domain`, `wsas_url`, `wsas_path`, `qx_enable`, `qx_url`, `qx_path`, `created_at`, `updated_at`) VALUES
+(1, '10USA', 'http://qad2021ee.server:22079/wsa/wsaweb', 'urn:imi.co.id:wsaweb', 1, 'http://qad2021ee.server:22079/qxi/services/QdocWebService', NULL, '2022-09-04 22:35:02', '2022-09-04 22:45:58');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `rep_det`
 --
 
@@ -2980,7 +4011,10 @@ INSERT INTO `rep_det` (`ID`, `repdet_code`, `repdet_step`, `repdet_ins`, `repdet
 (15, 'CTF-R001', 1, 'CTF-I001', NULL, NULL, NULL, '2022-08-30', '2022-08-30', 'admin'),
 (16, 'CTF-R001', 2, 'CTF-I002', NULL, NULL, NULL, '2022-08-30', '2022-08-30', 'admin'),
 (17, 'CTF-R002', 1, 'CTF-I006', NULL, NULL, NULL, '2022-08-30', '2022-08-30', 'admin'),
-(18, 'CTF-R002', 2, 'CTF-I007', NULL, NULL, NULL, '2022-08-30', '2022-08-30', 'admin');
+(18, 'CTF-R002', 2, 'CTF-I007', NULL, NULL, NULL, '2022-08-30', '2022-08-30', 'admin'),
+(19, 'MSN-C001', 1, 'INS-C001', NULL, NULL, NULL, '2022-09-15', '2022-09-15', 'admin1'),
+(20, 'MSN-C001', 2, 'INS-C002', NULL, NULL, NULL, '2022-09-15', '2022-09-15', 'admin1'),
+(21, 'MSN-C001', 3, 'INS-C003', NULL, NULL, NULL, '2022-09-15', '2022-09-15', 'admin1');
 
 -- --------------------------------------------------------
 
@@ -3042,7 +4076,8 @@ INSERT INTO `rep_master` (`ID`, `repm_code`, `repm_desc`, `repm_ins`, `repm_part
 (1, 'Rtest', 'Repair test', NULL, NULL, NULL, '2021-10-06', '2021-10-06', 'admin'),
 (2, 'CTF-R001', 'Mechanical Part', NULL, NULL, 'Cream Tube Filling', '2022-05-13', '2022-08-30', 'admin'),
 (3, 'CTF-R002', 'Electrical Part', NULL, NULL, 'Cream Tube Filling', '2022-05-13', '2022-08-30', 'admin'),
-(4, 'CTF-R003', 'Pneumatic Part', NULL, NULL, 'Cream Tube Filling', '2022-05-13', '2022-05-13', 'admin');
+(4, 'CTF-R003', 'Pneumatic Part', NULL, NULL, 'Cream Tube Filling', '2022-05-13', '2022-05-13', 'admin'),
+(5, 'MSN-C001', 'Repair mesin silinder', NULL, NULL, NULL, '2022-09-15', '2022-09-15', 'admin1');
 
 -- --------------------------------------------------------
 
@@ -3086,27 +4121,39 @@ INSERT INTO `rep_mstr` (`ID`, `rep_code`, `rep_num`, `rep_desc`, `created_at`, `
 
 CREATE TABLE `rep_part` (
   `ID` int(11) NOT NULL,
-  `reppart_code` varchar(8) NOT NULL,
-  `reppart_step` int(2) NOT NULL,
-  `reppart_sp` varchar(8) NOT NULL,
-  `reppart_qty` int(3) NOT NULL,
+  `reppart_code` varchar(10) NOT NULL,
+  `reppart_desc` varchar(50) DEFAULT NULL,
+  `reppart_step` int(11) DEFAULT NULL,
+  `reppart_sp` varchar(8) DEFAULT NULL,
+  `reppart_qty` int(11) DEFAULT NULL,
   `created_at` date DEFAULT NULL,
-  `updated_at` date DEFAULT NULL
+  `updated_at` date DEFAULT NULL,
+  `edited_by` varchar(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `rep_part`
 --
 
-INSERT INTO `rep_part` (`ID`, `reppart_code`, `reppart_step`, `reppart_sp`, `reppart_qty`, `created_at`, `updated_at`) VALUES
-(1, '6', 12, '4', 123, '2021-03-07', '2021-03-07'),
-(2, '6', 12, '4', 123, '2021-03-07', '2021-03-07'),
-(3, '6', 12, '2', 123, '2021-03-07', '2021-03-07'),
-(4, '3', 32, '2', 2, '2021-03-07', '2021-03-11'),
-(5, '2', 12, '7', 123, '2021-03-07', '2021-03-11'),
-(6, '2', 12, '7', 123, '2021-03-07', '2021-03-11'),
-(7, '8', 21, '6', 123, '2021-03-07', '2021-03-07'),
-(10, 'repa', 1, '2', 1, '2021-03-13', '2021-03-13');
+INSERT INTO `rep_part` (`ID`, `reppart_code`, `reppart_desc`, `reppart_step`, `reppart_sp`, `reppart_qty`, `created_at`, `updated_at`, `edited_by`) VALUES
+(1, '4', NULL, NULL, NULL, NULL, '2022-09-07', '2022-09-07', 'admin1');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `rep_partgroup`
+--
+
+CREATE TABLE `rep_partgroup` (
+  `ID` int(11) NOT NULL,
+  `reppg_code` varchar(20) NOT NULL,
+  `reppg_desc` varchar(50) NOT NULL,
+  `reppg_part` varchar(20) NOT NULL,
+  `reppg_qty` decimal(11,2) DEFAULT NULL,
+  `created_at` date DEFAULT NULL,
+  `updated_at` date DEFAULT NULL,
+  `edited_by` varchar(8) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -3129,7 +4176,7 @@ CREATE TABLE `roles` (
 --
 
 INSERT INTO `roles` (`role_code`, `role_desc`, `role_access`, `menu_access`, `created_at`, `updated_at`, `edited_by`) VALUES
-('ADMIN', 'Admin', 'Engineer', 'MT02MT03MT04MT07MT05MT06MT13MT08MT09MT10MT11MT12MT14MT15MT16MT18MT17MT20MT19MT21MT22MT26WO05WO02WO03WO01WO06SR01SR02SR03SR04US01US02MT99BO01RT01RT02RT03RT04RT05', '2020-11-02 13:45:45', '2022-08-26 13:14:09', 'admin'),
+('ADMIN', 'Admin', 'Engineer', 'WO05WO02WO03WO01WO06SR01SR02SR03SR04US01US02MT99BO01RT01RT02RT03RT04RT05MT02MT03MT04MT05MT06MT07MT08MT09MT10MT11MT12MT13MT14MT16MT17MT18MT19MT20MT21MT22MT26MT27MT28MT29MT30MT99MT23MT24MT25MT15', '2020-11-02 13:45:45', '2022-08-26 13:14:09', 'admin'),
 ('SPVSR', 'Supervisor', 'Engineer', 'MT03MT04MT13MT08MT09MT15MT16MT18MT17MT19WO05WO02WO03WO01WO06SR01SR02SR03SR04', '2021-04-09 10:56:25', '2021-10-04 17:39:02', 'admin01'),
 ('TECH', 'Technician', 'Engineer', 'WO05WO02WO03WO06SR01SR03RT01RT03', '2021-04-09 10:53:39', '2021-10-22 11:01:43', 'admin'),
 ('USER', 'User', 'User', 'WO05SR01SR03SR04', '2021-04-09 11:01:59', '2021-10-04 17:40:26', 'admin01');
@@ -3160,7 +4207,7 @@ CREATE TABLE `running_mstr` (
 --
 
 INSERT INTO `running_mstr` (`id`, `sr_prefix`, `wo_prefix`, `wd_prefix`, `wt_prefix`, `bo_prefix`, `sr_nbr`, `wo_nbr`, `wd_nbr`, `wt_nbr`, `bo_nbr`, `year`) VALUES
-(1, 'SR', 'WO', 'WD', 'PM', 'BO', '0046', '0061', '0009', '4770', '0001', '21');
+(1, 'SR', 'WO', 'WD', 'PM', 'BO', '0047', '0071', '0010', '4770', '0001', '21');
 
 -- --------------------------------------------------------
 
@@ -3199,7 +4246,8 @@ CREATE TABLE `service_req_mstr` (
 INSERT INTO `service_req_mstr` (`id_sr`, `sr_number`, `wo_number`, `sr_assetcode`, `sr_wotype`, `sr_impact`, `sr_note`, `sr_status`, `sr_priority`, `sr_dept`, `uncompleted_note`, `rejectnote`, `req_by`, `req_username`, `sr_created_at`, `sr_updated_at`, `sr_access`, `sr_failurecode1`, `sr_failurecode2`, `sr_failurecode3`, `sr_accept_date`) VALUES
 (1, 'SR-21-0044', NULL, '17.03', 'CLB', 'QLTY', 'sdadas', 0, 'low', 'ENG', NULL, NULL, 'Admin IMI', 'admin', '2022-08-26 14:18:28', '2022-08-26 14:18:28', 1, NULL, NULL, NULL, NULL),
 (2, 'SR-21-0045', 'WO-21-0059', '17.02', 'COR', 'RLT', 'ytj', 3, 'low', 'ENG', NULL, NULL, 'Admin IMI', 'admin', '2022-08-26 14:30:51', '2022-08-26 14:52:56', 0, NULL, NULL, NULL, NULL),
-(3, 'SR-21-0046', 'WO-21-0060', '17.01', 'CLB', 'QLTY', 'Catatan', 3, 'low', 'ENG', NULL, NULL, 'Admin IMI', 'admin', '2022-08-30 10:32:32', '2022-08-30 11:01:02', 0, NULL, NULL, NULL, NULL);
+(3, 'SR-21-0046', 'WO-21-0060', '17.01', 'CLB', 'QLTY', 'Catatan', 3, 'low', 'ENG', NULL, NULL, 'Admin IMI', 'admin', '2022-08-30 10:32:32', '2022-08-30 11:01:02', 0, NULL, NULL, NULL, NULL),
+(4, 'SR-21-0047', 'WO-21-0062', '17.02', 'CLB', 'QLTY', 'dd', 4, 'medium', 'IT', NULL, NULL, 'Admin 1', 'admin1', '2022-09-02 11:21:01', '2022-09-22 15:41:52', 0, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -3208,7 +4256,7 @@ INSERT INTO `service_req_mstr` (`id_sr`, `sr_number`, `wo_number`, `sr_assetcode
 --
 
 CREATE TABLE `site_mstrs` (
-  `site_code` varchar(24) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `site_code` varchar(24) NOT NULL,
   `site_desc` varchar(24) NOT NULL,
   `site_flag` varchar(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -3448,28 +4496,460 @@ INSERT INTO `sp_group` (`ID`, `spg_code`, `spg_desc`, `created_at`, `updated_at`
 CREATE TABLE `sp_mstr` (
   `ID` int(11) NOT NULL,
   `spm_code` varchar(8) NOT NULL,
-  `spm_desc` varchar(30) NOT NULL,
-  `spm_type` varchar(8) NOT NULL,
-  `spm_group` varchar(8) NOT NULL,
-  `spm_price` decimal(11,2) NOT NULL,
-  `spm_safety` int(11) NOT NULL,
-  `spm_supp` varchar(8) NOT NULL,
+  `spm_desc` varchar(50) NOT NULL,
+  `spm_type` varchar(8) DEFAULT NULL,
+  `spm_group` varchar(8) DEFAULT NULL,
+  `spm_um` varchar(10) DEFAULT NULL,
+  `spm_site` varchar(10) DEFAULT NULL,
+  `spm_loc` varchar(50) DEFAULT NULL,
+  `spm_lot` varchar(20) DEFAULT NULL,
+  `spm_price` decimal(13,2) DEFAULT NULL,
+  `spm_qty` decimal(18,2) DEFAULT NULL,
+  `spm_safety` decimal(18,2) DEFAULT NULL,
+  `spm_supp` varchar(8) DEFAULT NULL,
   `created_at` date DEFAULT NULL,
-  `updated_at` date DEFAULT NULL
+  `updated_at` date DEFAULT NULL,
+  `edited_by` varchar(8) NOT NULL,
+  `spm_dom` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `sp_mstr`
 --
 
-INSERT INTO `sp_mstr` (`ID`, `spm_code`, `spm_desc`, `spm_type`, `spm_group`, `spm_price`, `spm_safety`, `spm_supp`, `created_at`, `updated_at`) VALUES
-(2, '2', '1234566678', '123456', '1', '2312.00', 321, 'S0002', '2021-03-07', '2021-03-07'),
-(3, '3', 'qwertyuiop', 'SFSGS', '3', '1234.00', 12, 'S0012', '2021-03-07', '2021-03-07'),
-(4, '4', 'zxcvbnm', 'DBDBB', '3', '23456.00', 123456, 'S0002', '2021-03-07', '2021-03-07'),
-(5, '5', 'asdfghjk', 'DBDBB', '2', '234.00', 2345, 'S1001', '2021-03-07', '2021-03-07'),
-(6, '6', 'ertyu', '123456', '2', '23456.00', 567, 'S0002', '2021-03-07', '2021-03-07'),
-(7, '7', '123456', 'DDG', '2', '2345.00', 34, 'S0002', '2021-03-07', '2021-03-07'),
-(8, '8', '12345', 'SGDBDB', '3', '345.00', 345, 'S0012', '2021-03-07', '2021-03-07');
+INSERT INTO `sp_mstr` (`ID`, `spm_code`, `spm_desc`, `spm_type`, `spm_group`, `spm_um`, `spm_site`, `spm_loc`, `spm_lot`, `spm_price`, `spm_qty`, `spm_safety`, `spm_supp`, `created_at`, `updated_at`, `edited_by`, `spm_dom`) VALUES
+(1, 'CTF-P001', 'Main Motor', NULL, NULL, 'EA', 'IMI', 'PROD', NULL, NULL, NULL, NULL, NULL, '2022-05-13', '2022-05-13', 'admin', NULL),
+(2, 'CTF-P002', 'Main Motor Gearbox', NULL, NULL, 'EA', 'IMI', 'PROD', NULL, NULL, NULL, NULL, NULL, '2022-05-13', '2022-05-13', 'admin', NULL),
+(3, 'CTF-P003', 'Cam Drive Turret', NULL, NULL, 'EA', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-05-13', '2022-05-13', 'admin', NULL),
+(4, 'CTF-P004', 'Cutting Station', NULL, NULL, 'EA', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-05-13', '2022-05-13', 'admin', NULL),
+(5, 'CTF-P005', 'Pneumatic Piston Dosing', NULL, NULL, 'EA', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-05-13', '2022-05-13', 'admin', NULL),
+(6, 'CTF-P006', 'DC Power Supply', NULL, NULL, 'pcs', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-05-13', '2022-05-13', 'admin', NULL),
+(7, 'CTF-P007', 'Compressed Air System', NULL, NULL, 'pcs', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-05-13', '2022-05-13', 'admin', NULL),
+(8, ' M-ZT107', ' M-ZT10707D0(T-END) ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(9, '01010', 'Medical Ultrasound ', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(10, '01011', 'Supplies Supplies ', 'SUPPLIES', 'MEDSUP', 'EA', '10-100', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(11, '01012', 'Sterile Probe Covers, 20 One time use', 'SUPPLIES', 'MEDSUP', 'BX', '10-100', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(12, '01013', 'Sterile Wipes, Box of 50 ', 'SUPPLIES', 'MEDSUP', 'BX', '10-100', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(13, '01020', 'Implantable Ultra Rev. A ', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(14, '01021', 'Surgical Supplies ', 'SUPPLIES', 'MEDSUP', 'EA', '10-100', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(15, '01030', 'Consumer Ultrasound ', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(16, '01040', 'Industrial Ultrasound ', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(17, '01040-00', 'Industrial Ultrasound TO P D 500 KH STANDARD', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(18, '01040-00', 'Industrial Ultrasound TO P D 10MHZ STANDARD', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(19, '01040-00', 'Industrial Ultrasound FR ONT 500 KH HIGH', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(20, '01040-00', 'Industrial Ultrasound TO P D 10MHZ HIGH', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(21, '01040-00', 'Industrial Ultrasound TOP D 500KHZ HIGH', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(22, '01040-00', 'Industrial Ultrasound TOP D 500KHZ STANDARD', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(23, '01040-00', 'Industrial Ultrasound TOP D 10MHZ STANDARD', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(24, '01040-00', 'Industrial Ultrasound TOP D 500KHZ STANDARD', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(25, '01040-00', 'Industrial Ultrasound TOP D 500KHZ STANDARD', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(26, '01040-01', 'Industrial Ultrasound TOP D 10MHZ HIGH', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(27, '01040-01', 'Industrial Ultrasound TOP D 500KHZ STANDARD', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(28, '01040-01', 'Industrial Ultrasound TOP D 500KHZ STANDARD', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(29, '01040-01', 'Industrial Ultrasound TOP D 10MHZ HIGH', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(30, '01040-01', 'Industrial Ultrasound TOP D 500KHZ STANDARD', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(31, '01040-01', 'Industrial Ultrasound TOP D 500KHZ STANDARD', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(32, '01040-01', 'Industrial Ultrasound TOP D 10MHZ STANDARD', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(33, '01040P', 'Industrial Ultrasound Planning Item', 'DEVICES', '', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(34, '01041', 'Portable 10mhz Ultrasnd ', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(35, '01042', 'Portable 500khz Ultrasnd ', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(36, '01049', 'Universal Ind Ultrasound Configured', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(37, '01050', 'Pocket Ultrasound ', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(38, '01060', 'Miniature Implant R1 High Res Imaging', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(39, '01061', 'Miniature Implant R2 High Res Imaging', 'DEVICES', 'ULTRA', 'EA', '10-100', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(40, '01070', 'Medical Cart ', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(41, '01090', 'Implantable Ultrasound ', 'DEVICES', 'ULTRA', 'EA', '10-100', '193', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(42, '02001', 'Automotive Connector ', 'AUTO', 'CONNECTR', 'EA', '10-200', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(43, '02002', 'Electrical Connector ', 'DEVICES', 'ACCESSOR', 'EA', '10-200', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(44, '02003', 'Standard Connector ', 'DEVICES', 'ACCESSOR', 'EA', '10-200', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(45, '02004', 'Laptop Connector ', 'DEVICES', 'ACCESSOR', 'EA', '10-200', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(46, '02005', 'Valve Connector ', 'AUTO', 'CONNECTR', 'EA', '10-200', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(47, '02006', 'Small Standard Connector ', 'AUTO', 'CONNECTR', 'EA', '10-200', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(48, '02010', 'Motor Asm Connector ', 'AUTO', 'CONNECTR', 'EA', '10-200', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(49, '02101', 'Valve Assembly 1 Kanban Item', 'AUTO', 'VALVE', 'EA', '10-201', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(50, '02102', 'Valve Assembly 2 Kanban Item', 'AUTO', 'VALVE', 'EA', '10-201', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(51, '02103', 'Valve Assembly 3 Kanban Item', 'AUTO', 'VALVE', 'EA', '10-201', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(52, '02104', 'Valve Assembly 4 Kanban Item', 'AUTO', 'VALVE', 'EA', '10-201', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(53, '02105', 'Valve Assembly 5 Kanban Item', 'AUTO', 'VALVE', 'EA', '10-201', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(54, '02200', 'Motor Asm 8 Way Seat Adj  24V amp 2 hp', 'AUTO', 'ASM', 'EA', '10-200', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(55, '02210', 'Motor Asm 6-Way Seat Adj 24V 3 amp 1.hp', 'AUTO', 'ASM', 'EA', '10-200', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(56, '02220', 'Motor Asm 4-Way Seat Adj 24V 3 amp 1.hp', 'AUTO', 'ASM', 'EA', '10-200', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(57, '02301', 'Compact Valve Assembly OEM HighV Customer A', 'AUTO', 'VALVE', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(58, '02302', 'Compact Valve Assembly OEM HighV Customer B', 'AUTO', 'VALVE', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(59, '02303', 'Compact Valve Assembly OEM HighV Customer C', 'AUTO', 'VALVE', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(60, '02304', 'Compact Valve Assembly Service Item - Discrete', 'AUTO', 'VALVE', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(61, '02305', 'Compact Valve Assembly DRP Demand', 'AUTO', 'VALVE', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(62, '02306', 'Compact Valve Assembly Build To Forecast', 'AUTO', 'VALVE', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(63, '02307', 'Compact Valve Assembly MTO A - Discrete', 'AUTO', 'VALVE', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(64, '02308', 'Compact Valve Assembly MTO B - Discrete', 'AUTO', 'VALVE', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(65, '02505', 'Sm Valve Connector PL-Casting', 'AUTO', 'CONNECTR', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(66, '02600', 'Large Chassis ', 'AUTO', 'ASM', 'EA', '10-200', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(67, '02610', 'Small Chassis ', 'AUTO', 'ASM', 'EA', '10-200', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(68, '02620', 'Wide Chassis ', 'AUTO', 'ASM', 'EA', '10-200', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(69, '03011', 'Pump/Refill, Medical Assortment', 'SUPPLIES', 'MEDSUP', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(70, '03012', '2-.5l Bottles, Medical Multi-Pack', 'SUPPLIES', 'MEDSUP', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(71, '03013', '4-.5l Bottles, Medical Multi-Pack', 'SUPPLIES', 'MEDSUP', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(72, '03021', 'Pump/Refill, Unscented Assortment', 'SUPPLIES', 'CONSMR', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(73, '03022', '2-.5l Bottles, Unscented Multi-Pack', 'SUPPLIES', 'CONSMR', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(74, '03023', '4-.5l Bottles, Unscented Multi-Pack', 'SUPPLIES', 'CONSMR', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(75, '03031', 'Pump/Refill, Scented Assortment', 'SUPPLIES', 'CONSMR', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(76, '03032', '2-.5l Bottles, Scented Multi-Pack', 'SUPPLIES', 'CONSMR', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(77, '03033', '4-.5l Bottles, Scented Multi-Pack', 'SUPPLIES', 'CONSMR', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(78, '03040', 'Lubricant 4l tub ', 'SUPPLIES', 'MEDSUP', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(79, '03041', '50-5 ml tube Gel Anesthetic', 'SUPPLIES', 'MEDSUP', 'BX', '10-300', '40', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(80, '03042', '25-15ml tube Gel Anesthetic', 'SUPPLIES', 'MEDSUP', 'BX', '10-300', '40', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(81, '03043', '20-25ml tube Gel Anesthetic', 'SUPPLIES', 'MEDSUP', 'BX', '10-300', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(82, '03090', '25 gallon Disinfectant Bulk', 'SUPPLIES', 'CONSMR', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(83, '03110', 'Pump, Medical Disinfectant', 'SUPPLIES', 'MEDSUP', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(84, '03111', '.5l Bottle, Medical Disinfectant', 'SUPPLIES', 'MEDSUP', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(85, '03112', '1l Refill, Medical Disinfectant', 'SUPPLIES', 'MEDSUP', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(86, '03120', 'Pump, Scented Disinfectant', 'SUPPLIES', 'CONSMR', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(87, '03120-A', 'Disinfectant Supplies ', 'SUPPLIES', 'CONSMR', 'EA', '10-301', '01', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(88, '03121', '.5l, Bottle Scented Disinfectant', 'SUPPLIES', 'CONSMR', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(89, '03122', '1l Bottle, Scented Disinfectant', 'SUPPLIES', 'CONSMR', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(90, '03130', 'Pump, Unscented Disinfectant', 'SUPPLIES', 'CONSMR', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(91, '03131', '.5l Bottle, Unscented Disinfectant', 'SUPPLIES', 'CONSMR', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(92, '03132', '1l Bottle, Unscented Disinfectant', 'SUPPLIES', 'CONSMR', 'EA', '10-300', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(93, '03210', '1000 wipes Disinfectant', 'SUPPLIES', 'CONSMR', 'EA', '10-301', '010RC001', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(94, '03240', 'Lubricant 4 liter Tub ', 'SUPPLIES', 'MEDSUP', 'EA', '10-301', '010RC001', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(95, '04001', 'Fruit Juice 750 ml Bottle', 'F&B', 'JUICE', 'EA', '10-400', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(96, '04401', 'Grade A No Pulp RTD Case of 24, 750 ml', 'F&B', 'JUICE', 'CS', '10-400', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(97, '04402', 'Grade A Pulp RTD Case of 24, 750 ml', 'F&B', 'JUICE', 'CS', '10-400', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(98, '04405', 'Grade A Concentrate 5 Liter Bottle', 'F&B', 'JUICE', 'EA', '10-400', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(99, '04411', 'Grade B No Pulp RTD Case of 24, 750 ml', 'F&B', 'JUICE', 'CS', '10-400', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(100, '04412', 'Grade B Pulp RTD Case of 24, 750 ml', 'F&B', 'JUICE', 'CS', '10-400', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(101, '04415', 'Grade B Concentrate 5 Liter Bottle', 'F&B', 'JUICE', 'EA', '10-400', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(102, '04510', 'Extra Virgin 500 ml Olive Oil', 'F&B', 'OIL', 'EA', '10-400', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(103, '04512', 'Extra Virgin 750 ml Olive Oil', 'F&B', 'OIL', 'EA', '10-400', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(104, '04900', 'Animal Feed, Dehydrated 25 Gallon Drum', 'F&B', 'FEED', 'EA', '10-400', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(105, '05001', 'Pills, Blister of 12 ', 'LIFESCI', 'PHARM', 'EA', '10-500', '050', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(106, '05002', 'Pills, 50 Tab ', 'LIFESCI', 'PHARM', 'EA', '10-500', '050', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(107, '05003', 'Pills, 100 Tab ', 'LIFESCI', 'PHARM', 'EA', '10-500', '050', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(108, '05005', 'Pills, 500 Tab ', 'LIFESCI', 'PHARM', 'EA', '10-500', '050', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(109, '05005W', 'Pills, 500 Tab Customer specific pack', 'LIFESCI', 'PHARM', 'EA', '10-500', '050', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(110, '05010', 'Hydration Essentials 50 ', 'LIFESCI', 'PHARM', 'EA', '10-500', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(111, '05020', 'Salt Pills,100 Tab ', 'LIFESCI', 'PHARM', 'EA', '10-500', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(112, '4CFT0200', 'CABLE ASM ', '', '', 'PC', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(113, '50001', 'Probe Unit - 10 Mhz ', 'DEVICES', '', 'EA', '10-100', '020', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(114, '50002', 'Probe Unit - 500 kHz ', 'DEVICES', '', 'EA', '10-100', '020', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(115, '50010', 'Acoustic Transducer A ', 'DEVICES', '', 'EA', '10-100', '020', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(116, '50011', 'Ultrasound Array ', 'DEVICES', '', 'EA', '10-100', '020', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(117, '50020', 'Industrial Housing ', 'DEVICES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(118, '50020-00', 'Industrial Housing ', 'DEVICES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(119, '50020-00', 'Industrial Housing ', 'DEVICES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(120, '50020-00', 'Industrial Housing ', 'DEVICES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(121, '50020-00', 'Industrial Housing ', 'DEVICES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(122, '50020-P', 'Housing Pricing Item ', 'DEVICES', '', 'EA', '10-100', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(123, '50090', 'Acoustic Trandsucer ', 'DEVICES', '', 'EA', '10-100', '193', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(124, '51000', 'Acoustic Oscillator ', 'DEVICES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(125, '51001', 'Oscillator Element-LG ', 'DEVICES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(126, '51002', 'Electrode-LG ', 'DEVICES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(127, '51003', 'PC Chassis ', 'DEVICES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(128, '52001', 'Valve Body Assembly1 ', 'AUTO', '', 'EA', '10-201', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(129, '52002', 'Valve Body Assembly 2 ', 'AUTO', '', 'EA', '10-201', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(130, '52003', 'Valve Body Assembly 3 ', 'AUTO', '', 'EA', '10-201', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(131, '52004', 'Valve Body Assembly 4 ', 'AUTO', '', 'EA', '10-201', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(132, '52005', 'Valve Body Assembly 5 ', 'AUTO', '', 'EA', '10-201', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(133, '52050', 'Stamped Connector ', 'AUTO', 'CONNECTR', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(134, '52101', 'Plastic Connector Frame Black', '', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(135, '52102', 'Plastic Connector Frame Ivory White', '', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(136, '52200', 'Motor Mounting Plate Asm 8 Way OEM Cust A', 'AUTO', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(137, '52201', 'Motor Mtg Plate 8 Way ', 'AUTO', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(138, '52210', 'Motor Mtg Plate Asm 6-Way OEM Cust A', 'AUTO', '', 'EA', '10-200', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(139, '52211', 'Motor Mtg Plate6-Way ', 'AUTO', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(140, '52220', 'Motor Mtg Plate Asm 4-Way OEM Cust A', 'AUTO', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(141, '52221', 'Motor Mtg Plate4-way ', 'AUTO', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(142, '52280', 'Seat Adj Switch Assy ', 'AUTO', '', 'EA', '10-200', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(143, '53001', 'Sm Valve Body Assy1 PL-Plate-G', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(144, '53002', 'Sm Valve Body Assy2 PL-Plate-G', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(145, '53003', 'Sm Valve Body Assy3 PL-Plate-G', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(146, '53004', 'Sm Valve Body Assy4 PL-Plate-G', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(147, '53005', 'Sm Valve Body Assy5 PL-Plate-G', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(148, '53006', 'Sm Valve Body Assy6 PL-Plate-G', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(149, '53007', 'Sm Valve Body Assy7 PL-Plate-G', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(150, '53008', 'Sm Valve Body Assy8 PL-Plate-G', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(151, '53101', 'Sm Machine Casting1 Press-Dept', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(152, '53102', 'Sm Machine Casting2 PL-Press Group', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(153, '53103', 'Sm Machine Casting3 PL-Press Group', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(154, '53104', 'Sm Machine Casting4 PL-Press Group', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(155, '53105', 'Sm Machine Casting5 PL-Press Group', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(156, '53106', 'Sm Machine Casting6 PL-Press Group', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(157, '53107', 'Sm Machine Casting7 PL-Press Group', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(158, '53108', 'Sm Machine Casting8 PL-Press Group', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(159, '54002', 'Manf (global phantom) Kanban - PL-Plate/03', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(160, '60001', 'Durable Plastic Housing ', 'DEVICES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(161, '60002', 'Display / Readout ', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(162, '60003', 'Keyboard ', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(163, '60004', 'Transducer - 10 Mhz ', 'DEVICES', '', 'EA', '10-100', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(164, '60005', 'Battery ', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(165, '60006', 'Monitor Cable ', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(166, '60007', 'Movable Cart ', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(167, '60008', 'Printer ', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(168, '60008U', 'Universal Printer ', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(169, '60009', 'Probe Housing Rev. A ', 'DEVICES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(170, '60010', 'Pepared Layered Mat ', 'DEVICES', '', 'G', '10-100', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(171, '60011', 'Oscillator Elements ', 'DEVICES', '', 'EA', '10-100', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(172, '60012', 'Electrodes ', 'DEVICES', '', 'EA', '10-100', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(173, '60013', 'Probe Unit Sealed Unit', 'DEVICES', '', 'EA', '10-100', '020', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(174, '60014', 'Software CD ', 'DEVICES', 'ULTRA', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(175, '60015', 'Keyboard Cover ', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(176, '60016', 'Transducer -500 kHz ', 'DEVICES', '', 'EA', '10-100', '020', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(177, '60020', 'Cooling Fan ', 'DEVICES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(178, '60021', 'Battery Backup, Alkaline ', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(179, '60022', 'Battery Backup, Lithium ', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(180, '60023', 'Battery Backup, NiCd ', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(181, '60030', 'Ultrasound Cart Assembled To Order', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(182, '60030-00', 'Ultrasound Cart Assembled To Order', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(183, '60031', 'Drawer Assembly ', 'DEVICES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(184, '60032', 'Shelf Assembly ', 'DEVICES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(185, '60041', 'Aluminum Housing Machined', 'DEVICES', '', 'EA', '10-100', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(186, '60042', 'Sensor P-Ultrasound ', 'DEVICES', '', 'EA', '10-100', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(187, '60043', 'Touch Screen P-Ultrasound', 'DEVICES', '', 'EA', '10-100', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(188, '60044', 'Battery, Lithium Ion P-Ultrasound', 'DEVICES', '', 'EA', '10-100', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(189, '60044A', 'Battery, Lithium Ion - A P-Ultrasound', 'DEVICES', '', 'EA', '10-100', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(190, '60045', 'Circuitboard Module P-Ultrasound', 'DEVICES', '', 'EA', '10-100', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(191, '60046', 'CPU P-Ultrasound ', 'DEVICES', '', 'EA', '10-100', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(192, '60050', 'Base Unit / CPU ', 'DEVICES', '', 'EA', '10-100', '020', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(193, '60051', 'Microprocessor IM Rev. A ', 'DEVICES', '', 'EA', '10-100', '020', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(194, '60051H', 'Microprocess IM HighRes ', 'DEVICES', '', 'EA', '10-100', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(195, '60051M', 'Microprocess IM MedRes ', 'DEVICES', '', 'EA', '10-100', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(196, '60052', 'High Performance CPU ', 'DEVICES', '', 'EA', '10-100', '020', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(197, '60052C', 'Consigned CPU ', 'DEVICES', '', 'EA', '10-100', '100', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(198, '60060', 'White Paint ', 'DEVICES', '', 'GA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(199, '60061', 'Black Paint ', 'DEVICES', '', 'GA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(200, '60062', 'Paint, Other ', 'DEVICES', '', 'GA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(201, '60070', 'Medical Cart 1\" Wheels ', 'DEVICES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(202, '60080', 'Power Cord - UK ', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(203, '60081', 'Power Cord - US ', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(204, '60082', 'Power Cord - Australia ', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(205, '60083', 'Power Cord - Universal ', 'DEVICES', 'ACCESSOR', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(206, '60088', 'Power Converter-Standard ', 'DEVICES', 'ULTRA', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(207, '60089', 'Power Converter - Smart ', 'DEVICES', 'ULTRA', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(208, '60090', 'Small Sheet Steel 80X 120 cm', 'DEVICES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(209, '60091', 'Large Sheet Steel 160 x 200 cm', 'DEVICES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(210, '60092', 'Microprocessor ', 'DEVICES', '', 'EA', '10-100', '200', 'S', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(211, '60093', 'Stainless Steel Sheet Supplier Schedules', 'DEVICES', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(212, '60099', 'Probe Housing ', 'DEVICES', '', 'EA', '10-100', '193', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(213, '62001', 'Machine Casting ', 'AUTO', '', 'EA', '10-201', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(214, '62002', 'Valve Stop ', 'AUTO', '', 'EA', '10-201', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(215, '62003', 'Seal Discrete PO', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(216, '62050', 'Beryllium Copper Discrete PO', 'AUTO', '', 'rl', '10-200', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(217, '62060', 'Aluminum Bronze ', 'AUTO', '', 'M', '10-200', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(218, '62200', 'Actuator ', 'AUTO', '', 'EA', '10-201', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(219, '62201', '24V Amp 2HP, 1/2 Dia ', 'AUTO', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(220, '62202', 'Pem Nut #6 .0125 ', 'AUTO', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(221, '62203', 'Stud Press Fit #6 1/4\" ', 'AUTO', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(222, '62221', '24V Amp, 1HP, ½ Dia ', 'AUTO', '', 'EA', '10-200', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(223, '62250', 'Steel CRS 18ga 4301 ', 'AUTO', '', 'LB', '10-200', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(224, '62251', 'High Density PolyEthylen Black', '', 'PLASTIC', 'KG', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(225, '62252', 'High Density PolyEthylen Ivory White', '', 'PLASTIC', 'KG', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(226, '62290', 'Tool Forming Die Motor Assembly', 'AUTO', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(227, '62291', 'Tool Forming Die  Life ', 'AUTO', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(228, '62301', 'Sm Actuator1 Discrete PO', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(229, '62302', 'Sm Actuator2 Discrete PO', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(230, '62303', 'Sm Actuator3 Discrete PO', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(231, '62304', 'Sm Actuator4 Discrete PO', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(232, '62305', 'Sm Actuator5 Discrete PO', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(233, '62306', 'Sm Actuator6 Discrete PO', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(234, '62307', 'Sm Actuator7 Discrete PO', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(235, '62308', 'Sm Actuator8 Discrete PO', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(236, '62500', '8 Way Switch ', 'AUTO', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(237, '62510', '6 Way Switch ', 'AUTO', '', 'EA', '10-200', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(238, '62520', '4 Way Switch ', 'AUTO', '', 'EA', '10-200', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(239, '63001', 'Flat Head Screw Supplier Schedules', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(240, '63002', 'Washer 1/4\" Floor Stock', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(241, '63003', 'Nut - Med Gauge Purchased Discrete', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(242, '63004', 'Washer -1/8\" Discrete PO', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(243, '63005', 'Nut - Fine Gauge Discrete PO', 'AUTO', '', 'EA', '10-202', '200', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(244, '70001', 'Disinfectant Medical Grade', 'SUPPLIES', '', 'L', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(245, '70002', 'Disinfectant, Scented ', 'SUPPLIES', '', 'L', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(246, '70003', 'Disinfectant, Unscented ', 'SUPPLIES', '', 'L', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(247, '70004', 'Lubricant ', 'SUPPLIES', '', 'L', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(248, '70005', 'Anesthetic Gel ', 'SUPPLIES', '', 'L', '10-300', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(249, '70010', '5ml tube Gel Anesthetic', 'SUPPLIES', '', 'EA', '10-300', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(250, '70011', '15ml tube Gel Anesthetic', 'SUPPLIES', '', 'EA', '10-300', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(251, '70012', '25ml tube Gel Anesthetic', 'SUPPLIES', '', 'EA', '10-300', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(252, '70040', 'Fruit Juice (unpackaged) ', 'F&B', '', 'L', '10-400', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(253, '70050', 'Pills ', 'LIFESCI', '', 'EA', '10-500', '050', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(254, '70110', 'Hydration E Tablet ', 'LIFESCI', '', 'KG', '10-500', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(255, '70120', 'Salt Pills ', 'LIFESCI', '', 'EA', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(256, '70210', 'Extra Virgin Olive Oil ', 'F&B', '', 'HL', '10-400', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(257, '70400', 'Grade A Oranges Washed and Sorted', 'F&B', '', 'LB', '10-400', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(258, '70400BP', 'Grade A Juice Process Base Process', 'F&B', '', 'L', '10-400', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(259, '70440', 'Grade A Juice No Pulp Co-Product', 'F&B', '', 'L', '10-400', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(260, '70441', 'Grade A Juice With Pulp Co-Product', 'F&B', '', 'L', '10-400', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(261, '70445', 'Grade A Concentrate ', 'F&B', '', 'L', '10-400', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(262, '70445BP', 'Grade A Concentrate Proc Base Process', 'F&B', '', 'L', '10-400', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(263, '70500', 'Grade B Oranges Washed and Sorted', 'F&B', '', 'LB', '10-400', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(264, '70500BP', 'Grade B Juice  Process Base Process', 'F&B', '', 'L', '10-400', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(265, '70540', 'Grade B Juice No Pulp Co-Product', 'F&B', '', 'L', '10-400', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(266, '70541', 'Grade B Juice With Pulp Co-Product', 'F&B', '', 'L', '10-400', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(267, '70545', 'Grade B Concentrate ', 'F&B', '', 'L', '10-400', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(268, '70545BP', 'Grade B Concentrate Base Process', 'F&B', '', 'L', '10-400', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(269, '79000', 'Rejected Oranges By-Product', 'F&B', '', 'LB', '10-400', '040', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(270, '79001', 'Peel & Seeds By-Product', 'F&B', '', 'LB', '10-400', '040', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(271, '79002', 'Filtered Pulp By-Product', 'F&B', '', 'LB', '10-400', '040', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(272, '80001', 'Quaternary Amonium Chloride', 'LIFESCI', '', 'G', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(273, '80002', 'Biguanide Compound ', 'LIFESCI', '', 'G', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(274, '80003', 'Phenolic ', 'LIFESCI', '', 'ML', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(275, '80010', 'Distilled Water Liquid', 'LIFESCI', '', 'GA', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(276, '80011', 'Purified Water Liquid', 'LIFESCI', '', 'GA', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(277, '80012', 'Unfiltered Water Liquid', 'LIFESCI', '', 'L', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(278, '80020', 'Fragrance ', 'LIFESCI', '', 'ML', '10-300', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(279, '80021', 'Green Colorant ', 'LIFESCI', '', 'GA', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(280, '80031', 'Ethanol Liquid', 'LIFESCI', '', 'L', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(281, '80032', 'Glycerin Liquid', 'LIFESCI', '', 'L', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(282, '80033', 'Jojoba Oil Liquid', 'LIFESCI', '', 'L', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(283, '80034', 'Aloe Vera Oil Liquid', 'LIFESCI', '', 'L', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(284, '80035', 'Glyceryl Monoiaurate Liquid', 'LIFESCI', '', 'L', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(285, '80036', 'Benzyl Alcohol Liquid', 'LIFESCI', '', 'L', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(286, '80037', 'EDTA Liquid', 'LIFESCI', '', 'L', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(287, '80038', 'Phenoxyethanol Liquid', 'LIFESCI', '', 'L', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(288, '80039', 'Linum usitatissimum (Flax Extract) Liquid', 'LIFESCI', '', 'L', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(289, '80040', 'Lidocaine Liquid', 'LIFESCI', '', 'L', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(290, '80041', 'Caromer 980 Powder/Thickening Agent', 'LIFESCI', '', 'G', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(291, '80042', 'Potassium Sorbate Powder', 'LIFESCI', '', 'G', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(292, '80043', 'Ceratonia Siliquis (Locust Bean Gum) Powder', 'LIFESCI', '', 'G', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(293, '80044', 'Xanthan Gum Powder', 'LIFESCI', '', 'G', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(294, '80045', 'Cyamposis Tetragonolobus (Guar Gum) Powder', 'LIFESCI', '', 'G', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(295, '80046', 'Citric Acid Powder', 'LIFESCI', '', 'G', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(296, '80050', 'Fruit ', 'F&B', '', 'LB', '10-400', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(297, '80051', 'Proprietary Spice Mix ', 'F&B', '', 'G', '10-400', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(298, '80052', 'Sterlized Water Liquid', 'F&B', '', 'L', '10-400', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(299, '80053', 'Preservative ', 'F&B', '', 'ML', '10-400', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(300, '80060', 'Simethicone ', 'LIFESCI', '', 'G', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(301, '80061', 'Compressable Sugar ', 'LIFESCI', '', 'G', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(302, '80062', 'Dextrose ', 'LIFESCI', '', 'ML', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(303, '80063', 'Flavor ', 'LIFESCI', '', 'ML', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(304, '80064', 'Magnesium Stearate ', 'LIFESCI', '', 'G', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(305, '80065', 'Maltodextrin ', 'LIFESCI', '', 'G', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(306, '80066', 'Sorbitol ', 'LIFESCI', '', 'G', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(307, '80067', 'API Active Pharm Ingredient', 'LIFESCI', '', 'KG', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(308, '80103', 'Calcium Carbonate ', 'LIFESCI', '', 'KG', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(309, '80116', 'Magnesium Sulfate ', 'LIFESCI', '', 'KG', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(310, '80124', 'Sodium Bicarbonate ', 'LIFESCI', '', 'KG', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(311, '80126', 'Sodium Carbonate ', 'LIFESCI', '', 'KG', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(312, '80220', 'Olives, Fresh ', 'F&B', '', 'T', '10-400', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(313, '80450', 'Oranges ', 'F&B', '', 'LB', '10-400', '040', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(314, '80450BP', 'Sorting Process Base Process', 'F&B', '', 'LB', '10-400', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(315, '80451', 'Calcium Additive', 'F&B', '', 'G', '10-400', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(316, '80452', 'Purified Water Liquid', 'F&B', '', 'L', '10-400', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(317, '80453', 'Vitamins Additive', 'F&B', '', 'ML', '10-400', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(318, '90010', 'Pump Dispenser .25l ', 'SUPPLIES', '', 'EA', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(319, '90011', 'Plastic Bottle .5l ', 'SUPPLIES', '', 'EA', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(320, '90012', 'Plastic Bottle 1l ', 'SUPPLIES', '', 'EA', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(321, '90013', '4 Liter Tub ', 'SUPPLIES', '', 'EA', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(322, '90014', '5 ml Tube ', 'SUPPLIES', '', 'EA', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(323, '90015', '15 ml Tube ', 'SUPPLIES', '', 'EA', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(324, '90016', '25 ml Tube ', 'SUPPLIES', '', 'EA', '10-300', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(325, '90017', 'Bottle, 50 Size ', 'SUPPLIES', '', 'EA', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(326, '90018', 'Bottle, 100 Size ', 'SUPPLIES', '', 'EA', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(327, '90019', 'Plastic Bottle, 750 ml ', 'F&B', '', 'EA', '10-400', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(328, '90020', 'Bottle, 500 Size ', 'SUPPLIES', '', 'EA', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(329, '90020W', 'Bottle, 500 Size Customer specific pack', 'SUPPLIES', '', 'EA', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(330, '90029', 'Cap ', 'SUPPLIES', '', 'EA', '10-500', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA');
+INSERT INTO `sp_mstr` (`ID`, `spm_code`, `spm_desc`, `spm_type`, `spm_group`, `spm_um`, `spm_site`, `spm_loc`, `spm_lot`, `spm_price`, `spm_qty`, `spm_safety`, `spm_supp`, `created_at`, `updated_at`, `edited_by`, `spm_dom`) VALUES
+(331, '90030', 'Blister Pack, 6 Tablet ', 'LIFESCI', '', 'EA', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(332, '90031', 'Generic Packaging ', 'SUPPLIES', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(333, '90040', 'Caps ', 'SUPPLIES', '', 'EA', '10-300', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(334, '90050', '25 Gallon Drum ', 'SUPPLIES', '', 'EA', '10-300', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(335, '90051', '50 Gallon Drum ', 'SUPPLIES', '', 'EA', '10-300', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(336, '90070', 'Assortment Box ', 'SUPPLIES', '', 'EA', '10-300', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(337, '90071', 'Multi-Pack, 2 Bottle Box ', 'SUPPLIES', '', 'EA', '10-300', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(338, '90072', 'Multi-Pack, 4 Bottle Box ', 'SUPPLIES', '', 'EA', '10-300', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(339, '90073', 'Box, 2 Blister Pack Size ', 'SUPPLIES', '', 'EA', '10-500', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(340, '90074', 'Gift Box ', 'SUPPLIES', '', 'EA', '10-400', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(341, '90075', 'Holiday Gift Box ', 'SUPPLIES', '', 'EA', '10-400', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(342, '90091', 'Standard Shipping Box ', 'SUPPLIES', '', 'EA', '10-300', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(343, '90092', 'Standard Box ', 'SUPPLIES', '', 'EA', '10-300', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(344, '90093', 'Shipping Carton ', 'SUPPLIES', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(345, '90098', 'Returnable Containers ', 'AUTO', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(346, '90099', 'Expendable Containers ', 'AUTO', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(347, '90100', 'Tote ', 'SUPPLIES', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(348, '90101', 'Lid ', 'SUPPLIES', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(349, '90102', 'Divider Box ', 'SUPPLIES', '', 'EA', '10-200', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(350, '90200', 'Decorative Carafe With Pour Spout', 'SUPPLIES', '', 'EA', '10-400', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(351, '90230', 'Bottle, Glass, 500 ml ', 'F&B', '', 'EA', '10-400', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(352, '90232', 'Bottle, Glass, 750 ml ', 'F&B', '', 'EA', '10-400', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(353, '90410', 'Cap, 500 ml ', 'F&B', '', 'EA', '10-400', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(354, '90412', 'Cap, 750 ml ', 'F&B', '', 'EA', '10-400', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(355, '90418', 'Orange Juice Labels ', 'F&B', '', 'EA', '10-400', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(356, '90419', 'Orange Juice Container 750 ml', 'F&B', '', 'EA', '10-400', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(357, '90420', 'Label Olive Oil 500 ml ', 'F&B', '', 'EA', '10-400', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(358, '90422', 'Label Olive Oil 750 ml ', 'F&B', '', 'EA', '10-400', '020', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10usa'),
+(359, '915130-0', 'INNER WIRE ', '', '', 'PC', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(360, '99010', 'Installation Supplies ', 'DEVICES', '', 'EA', '10-100', '190', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(361, '99020', 'Field Sterilization  Supplies', 'DEVICES', '', 'EA', '10-100', '190', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(362, '99030', 'Field Diagnostic  Supplies', 'DEVICES', '', 'EA', '10-100', '190', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(363, '99040', 'Wall Mount Supplies ', 'DEVICES', '', 'EA', '10-100', '190', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(364, '99090', 'Sterilization Supplies ', 'DEVICES', '', 'EA', '10-100', '193', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(365, '99091', 'Diagnostic Supplies ', 'DEVICES', '', 'EA', '10-100', '193', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(366, 'AA0T4350', 'MOLD OUTER ', '', '', 'PC', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(367, 'AA109990', 'SUB ASS\'Y FUEL CASE ', '', '', 'PC', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(368, 'AV10410F', 'SPRING ', '', '', 'PC', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(369, 'AY30057P', 'LOCK PIN ', '', '', 'PC', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(370, 'Dani1', 'Medical Ultrasound ', '', '', 'EA', '10-100', '010', 'L', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(371, 'FGA', 'Finished Goods A Type A', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(372, 'FGB', 'Finished Goods B Type B', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(373, 'FGC', 'Finished Goods C Type C', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(374, 'FGD', 'Finished Goods D ABCDEF', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(375, 'FGE', 'Finished Goods E ABCDEF', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(376, 'FGF', 'Finished Goods F F', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(377, 'FGG', 'Finished Goods G G', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(378, 'FGH', 'Finished Goods H H', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(379, 'FGI', 'Finished Goods I I', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(380, 'FGJ', 'Finished Goods J J', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(381, 'FGK', 'Finished Goods K K', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(382, 'FGL', 'Finished Goods L F', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(383, 'FGM', 'Finished Goods M M', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(384, 'FGN', 'Finished Goods N N', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(385, 'FGO', 'Finished Goods O O', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(386, 'FGP', 'Finished Goods P Type A', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(387, 'FGQ', 'Finished Goods Q Type Q', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(388, 'FGR', 'Finished Goods R Type R', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(389, 'FGS', 'Finished Goods S Type S', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(390, 'FGT', 'Finished Goods T Type T', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(391, 'FGU', 'Finished Goods U Type A', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(392, 'FGV', 'Finished Goods V Type V', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(393, 'FGW', 'Finished Goods W Type W', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(394, 'FGX', 'Finished Goods X Type X', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(395, 'FGY', 'Finished Goods Y Type Y', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(396, 'FGZ', 'Finished Goods Z Type Z', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(397, 'FL-69', 'Faisal Item Number', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(398, 'JS001', 'Toilet Paper ', 'MEMO', '', 'CS', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(399, 'JS002', 'Paper Towels ', 'MEMO', '', 'BX', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(400, 'JS003', 'Soap ', 'MEMO', '', 'BX', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(401, 'JS004', 'Air Freshener ', 'MEMO', '', 'CS', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(402, 'JS005', 'Bleach ', 'MEMO', '', 'EA', '10-100', '020', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(403, 'M-ZT1070', 'M-ZT10707D0(T-END) ', '', '', 'PC', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(404, 'RM1', 'RM 1 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(405, 'RM10', 'RM 10 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(406, 'RM11', 'RM 11 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(407, 'RM12', 'RM 12 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(408, 'RM13', 'RM 13 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(409, 'RM14', 'RM 14 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(410, 'RM15', 'RM 5 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(411, 'RM16', 'RM 16 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(412, 'RM17', 'RM 17 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(413, 'RM18', 'RM 18 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(414, 'RM19', 'RM 1 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(415, 'RM2', 'RM 2 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(416, 'RM2-1', 'RM2-1 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(417, 'RM2-2', 'RM 2 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(418, 'RM20', 'RM 20 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(419, 'RM3', 'RM 3 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(420, 'RM4', 'RM 1 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(421, 'RM5', 'RM 5 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(422, 'RM6', 'RM 6 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(423, 'RM7', 'RM 1 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(424, 'RM8', 'RM 8 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(425, 'RM9', 'RM 9 ', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(426, 'TERE99', 'Teresia Item Number', '', '', 'EA', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(427, 'TR01', 'Installation/Training ', '', '', 'EA', '10-100', '010', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(428, 'TRUCK TA', 'MOBIL ANGKUT TANAH ', '', '', 'PC', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(429, 'TSG3255', 'GREASE TSG3255', '', '', 'G', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(430, 'UT0009AZ', 'SUB ASS\'Y CAP CYLINDER ', '', '', 'PC', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA'),
+(431, 'ZDC1D', 'ZINC (FRENCE ZL2) ', '', '', 'G', '10-100', '', '', NULL, NULL, NULL, NULL, '2022-09-14', '2022-09-14', '', '10USA');
 
 -- --------------------------------------------------------
 
@@ -3629,7 +5109,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `name`, `email_user`, `role_user`, `dept_user`, `active`, `access`, `site`, `password`, `session_id`, `created_at`, `updated_at`, `edited_by`, `userdate`) VALUES
-(1, 'admin', 'Admin IMI', 'tyas@ptimi.co.id', 'ADMIN', 'ENG', 'Yes', 'Engineer', 'R0012', '$2y$10$m1Xs5LivUwdkf5imeByKv.JuGyJRyiJ6uR0OXjqESclZRxmEKaZcC', '', '2020-08-13 03:39:30', '2022-08-30 09:40:34', 'rio', NULL),
+(1, 'admin', 'Admin IMI', 'tyas@ptimi.co.id', 'ADMIN', 'ENG', 'Yes', 'Engineer', 'R0012', '$2y$10$m1Xs5LivUwdkf5imeByKv.JuGyJRyiJ6uR0OXjqESclZRxmEKaZcC', '', '2020-08-13 03:39:30', '2022-09-27 09:45:53', 'rio', NULL),
 (2, 'user01', 'User HR', 'user01@gmail', 'USER', 'BLF', 'Yes', 'User', NULL, '$2y$10$kvvr31oB77zg0dGKgKMV3e1b.UKjilsDzPf2ZygB9NjzE3Q2ddr62', NULL, '2022-05-13 11:33:51', '2022-07-19 11:00:02', 'admin', NULL),
 (3, 'spv01', 'Supervisor 1', 'spv01@gmail.com', 'SPVSR', 'ENG', 'Yes', 'Engineer', NULL, '$2y$10$y6TqBbbOcKCLMJIWX4YlsuBymuAhCV6h5WdGlruGxS8ZIiCNrLTki', '', '2022-05-13 11:34:29', '2022-05-13 16:13:00', 'admin', NULL),
 (4, 'eng01', 'Engineer 01', 'eng01@gmail.com', 'TECH', 'BLF', 'Yes', 'Engineer', NULL, '$2y$10$1rqp8imXgaPD5TG2xcDOy.a.WraksutnnxEz6xHfsnnpw7lcy.fV6', '', '2022-05-13 15:36:55', '2022-08-23 10:49:38', 'admin', NULL),
@@ -3637,7 +5117,8 @@ INSERT INTO `users` (`id`, `username`, `name`, `email_user`, `role_user`, `dept_
 (8, 'user03', 'User MPF', 'Sukatmi.Sukatmi@actavis', 'USER', 'MPF', 'Yes', 'User', '', '$2y$10$aPY6YZmlA2/XyzhkUmlWd.cMyVwAOkN6CrXzA..7y8mmoRTf9Zuuy', '', NULL, NULL, 'admin01', NULL),
 (12, 'eng02', 'Rahman', 'Sukarya.Sukarya@actavis', 'TECH', 'ENG', 'Yes', 'Engineer', '', '$2y$10$jdIovcH1JpHkFWAvUgPcc.r0vVwQbgLabo6VpGrCBlCjD5atI4BYS', '', NULL, '2022-08-15 11:12:03', 'admin', NULL),
 (13, 'eng03', 'Ranto', 'Ijan.Ipriana@actavis', 'TECH', 'ENG', 'Yes', 'Engineer', '', '$2y$10$VVsu3RW6MKvckH1vQ0F5kOKCcsCfM0bYrmmnPTMm83t8DuvwPC/8u', '', NULL, '2022-07-21 15:43:39', 'admin', NULL),
-(15, 'spv02', 'Supervisor', 'tyas@ptimi', 'SPVSR', 'IT', 'Yes', 'Engineer', NULL, '$2y$10$1QrhYTYXQVLY8TiWp1M4fuGGFLsf4rQJaa7MnthJAnanOIi2JxIwK', NULL, '2022-07-19 09:57:15', '2022-07-19 09:57:15', 'admin', NULL);
+(15, 'spv02', 'Supervisor', 'tyas@ptimi', 'SPVSR', 'IT', 'Yes', 'Engineer', NULL, '$2y$10$1QrhYTYXQVLY8TiWp1M4fuGGFLsf4rQJaa7MnthJAnanOIi2JxIwK', NULL, '2022-07-19 09:57:15', '2022-07-19 09:57:15', 'admin', NULL),
+(16, 'admin1', 'Admin 1', 'tyas@ptimi', 'ADMIN', 'IT', 'Yes', 'Engineer', NULL, '$2y$10$KEQgB6w2z88OqxfA7O2zn.oyfWp8NJPlbkwbUumfBgMmoiXxWgQq.', '', '2022-09-02 11:03:15', '2022-09-26 09:32:33', 'admin', NULL);
 
 -- --------------------------------------------------------
 
@@ -3680,17 +5161,73 @@ CREATE TABLE `wo_dets` (
   `wo_dets_fu` varchar(50) DEFAULT NULL,
   `wo_dets_fu_note` varchar(250) DEFAULT NULL,
   `wo_dets_type` varchar(50) DEFAULT NULL,
-  `wo_dets_created_at` datetime DEFAULT NULL
+  `wo_dets_created_at` datetime DEFAULT NULL,
+  `wo_dets_wh_site` varchar(255) DEFAULT NULL,
+  `wo_dets_wh_loc` varchar(255) DEFAULT NULL,
+  `wo_dets_wh_qty` decimal(8,2) DEFAULT NULL,
+  `wo_dets_wh_conf` varchar(255) DEFAULT NULL,
+  `wo_dets_wh_date` datetime DEFAULT NULL,
+  `wo_dets_wh_user` varchar(255) NOT NULL,
+  `wo_dets_eng_qty` decimal(8,2) DEFAULT NULL,
+  `wo_dets_eng_conf` varchar(255) DEFAULT NULL,
+  `wo_dets_eng_date` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `wo_dets`
 --
 
-INSERT INTO `wo_dets` (`wo_dets_id`, `wo_dets_nbr`, `wo_dets_rc`, `wo_dets_sp`, `wo_dets_sp_qty`, `wo_dets_ins`, `wo_dets_rep_hour`, `wo_dets_standard`, `wo_dets_flag`, `wo_dets_fu`, `wo_dets_fu_note`, `wo_dets_type`, `wo_dets_created_at`) VALUES
-(1, 'WO-21-0005', 'Rtest', NULL, 1, 'Itest', 1, NULL, 'y0', 'n0', NULL, NULL, '2021-10-08 13:55:58'),
-(2, 'WD-21-0004', 'Rtest', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-11-15 10:42:54'),
-(3, 'WD-21-0005', 'Rtest', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-11-15 10:43:47');
+INSERT INTO `wo_dets` (`wo_dets_id`, `wo_dets_nbr`, `wo_dets_rc`, `wo_dets_sp`, `wo_dets_sp_qty`, `wo_dets_ins`, `wo_dets_rep_hour`, `wo_dets_standard`, `wo_dets_flag`, `wo_dets_fu`, `wo_dets_fu_note`, `wo_dets_type`, `wo_dets_created_at`, `wo_dets_wh_site`, `wo_dets_wh_loc`, `wo_dets_wh_qty`, `wo_dets_wh_conf`, `wo_dets_wh_date`, `wo_dets_wh_user`, `wo_dets_eng_qty`, `wo_dets_eng_conf`, `wo_dets_eng_date`) VALUES
+(1, 'WO-21-0005', 'Rtest', NULL, 1, 'Itest', 1, NULL, 'y0', 'n0', NULL, NULL, '2021-10-08 13:55:58', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(2, 'WD-21-0004', 'Rtest', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-11-15 10:42:54', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(3, 'WD-21-0005', 'Rtest', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-11-15 10:43:47', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0061', 'CTF-R001', 'CTF-P002', 2, 'CTF-I002', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-14 14:42:48', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0061', 'CTF-R001', 'CTF-P007', 1, 'CTF-I002', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-14 14:42:48', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0061', 'CTF-R001', 'CTF-P001', 0, 'CTF-I001', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-14 14:42:48', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0061', 'CTF-R001', 'CTF-P002', 12, 'CTF-I001', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-14 14:42:48', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0061', 'CTF-R001', 'CTF-P005', 0, 'CTF-I001', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-14 14:42:48', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0061', 'CTF-R001', 'CTF-P007', 0, 'CTF-I001', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-14 14:42:48', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0061', 'CTF-R002', NULL, 0, 'CTF-I006', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-14 14:42:48', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0061', 'CTF-R002', NULL, 0, 'CTF-I007', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-14 14:42:48', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0065', 'MSN-C001', '90420', 5, 'INS-C002', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-15 15:36:51', NULL, NULL, NULL, NULL, '2022-09-19 10:55:24', '', NULL, NULL, NULL),
+(0, 'WO-21-0065', 'MSN-C001', '80033', 2, 'INS-C002', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-15 15:36:51', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0065', 'MSN-C001', '60005', 20, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-15 15:36:51', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0065', 'MSN-C001', '80042', 100, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-15 15:36:51', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0065', 'MSN-C001', '60022', 2, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-15 15:36:51', NULL, NULL, '5.00', '1', NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0065', 'MSN-C001', NULL, 0, 'INS-C001', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-15 15:36:51', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0066', 'MSN-C001', '90420', 1, 'INS-C002', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-15 16:47:42', '10-400', '020', '1.00', '0', '2022-09-19 10:55:24', '', '0.00', '0', '2022-09-20 16:22:25'),
+(0, 'WO-21-0066', 'MSN-C001', '80033', 2, 'INS-C002', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-15 16:47:42', '10-300', '020', '2.00', '0', NULL, '', '0.00', '0', '2022-09-20 16:22:25'),
+(0, 'WO-21-0066', 'MSN-C001', '60005', 20, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-15 16:47:42', '10-100', '020', '3.00', '0', NULL, '', '0.00', '1', '2022-09-20 16:39:43'),
+(0, 'WO-21-0066', 'MSN-C001', '80042', 4, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-15 16:47:42', '10-300', '020', '0.00', '1', NULL, '', '0.00', '0', '2022-09-20 16:22:25'),
+(0, 'WO-21-0066', 'MSN-C001', '60022', 5, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-15 16:47:42', '10-100', '020', '5.00', '1', NULL, '', '5.00', '1', '2022-09-20 16:39:43'),
+(0, 'WO-21-0066', 'MSN-C001', NULL, 0, 'INS-C001', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-15 16:47:42', NULL, NULL, '0.00', '1', NULL, '', '0.00', '1', '2022-09-20 16:39:43'),
+(0, 'WO-21-0067', 'MSN-C001', '90420', 5, 'INS-C002', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-19 10:55:24', '10-400', '020', '5.00', '1', '2022-09-22 13:10:08', 'admin1', '5.00', '1', '2022-09-22 15:27:29'),
+(0, 'WO-21-0067', 'MSN-C001', '80033', 4, 'INS-C002', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-19 10:55:24', '10-300', '020', '4.00', '1', '2022-09-22 13:10:08', 'admin1', '4.00', '1', '2022-09-22 15:27:29'),
+(0, 'WO-21-0067', 'MSN-C001', '60005', 20, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-19 10:55:24', '10-100', '020', '20.00', '1', '2022-09-22 13:10:08', 'admin1', '20.00', '1', '2022-09-22 15:27:29'),
+(0, 'WO-21-0067', 'MSN-C001', '80042', 2, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-19 10:55:24', '10-300', '020', '0.00', '1', '2022-09-22 13:10:08', 'admin1', '0.00', '1', '2022-09-22 15:27:29'),
+(0, 'WO-21-0067', 'MSN-C001', '60022', 1, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-19 10:55:24', '10-100', '020', '1.00', '1', '2022-09-22 13:10:08', 'admin1', '1.00', '1', '2022-09-22 15:27:29'),
+(0, 'WO-21-0067', 'MSN-C001', NULL, 0, 'INS-C001', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-19 10:55:24', NULL, NULL, '0.00', '1', '2022-09-22 13:10:08', 'admin1', '0.00', '1', '2022-09-22 15:27:29'),
+(0, 'WO-21-0068', 'CTF-R002', NULL, 0, 'CTF-I006', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-22 13:11:34', NULL, NULL, '0.00', '1', '2022-09-22 14:38:34', 'admin1', NULL, NULL, NULL),
+(0, 'WO-21-0068', 'CTF-R002', NULL, 0, 'CTF-I007', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-22 13:11:34', NULL, NULL, '0.00', '1', '2022-09-22 14:38:34', 'admin1', NULL, NULL, NULL),
+(0, 'WO-21-0068', 'CTF-R003', NULL, 0, 'CTF-I007', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-22 13:11:34', NULL, NULL, '0.00', '1', '2022-09-22 14:38:34', 'admin1', NULL, NULL, NULL),
+(0, 'WO-21-0068', 'MSN-C001', '90420', 4, 'INS-C002', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-22 13:11:34', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0068', 'MSN-C001', '80033', 1, 'INS-C002', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-22 13:11:34', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0068', 'MSN-C001', '60005', 12, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-22 13:11:34', '10-100', '192', '10.00', '1', '2022-09-22 14:38:34', 'admin1', NULL, NULL, NULL),
+(0, 'WO-21-0068', 'MSN-C001', '80042', 100, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-22 13:11:34', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0068', 'MSN-C001', '60022', 2, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-22 13:11:34', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0068', 'MSN-C001', NULL, 0, 'INS-C001', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-22 13:11:34', NULL, NULL, '0.00', '1', '2022-09-22 14:38:34', 'admin1', NULL, NULL, NULL),
+(0, 'WO-21-0069', 'MSN-C001', NULL, 0, 'INS-C001', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-26 09:33:39', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0069', 'MSN-C001', '80033', 1, 'INS-C002', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-26 09:33:39', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0069', 'MSN-C001', '90420', 4, 'INS-C002', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-26 09:33:39', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0069', 'MSN-C001', '80042', 100, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-26 09:33:39', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0069', 'MSN-C001', '60005', 12, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-26 09:33:39', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0069', 'MSN-C001', '60022', 2, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-26 09:33:39', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0070', 'MSN-C001', NULL, 0, 'INS-C001', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-26 16:25:24', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0070', 'MSN-C001', '90420', 1, 'INS-C002', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-26 16:25:24', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0070', 'MSN-C001', '80033', 23, 'INS-C002', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-26 16:25:24', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0070', 'MSN-C001', '60005', 12, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-26 16:25:24', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0070', 'MSN-C001', '60022', 2, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-26 16:25:24', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL),
+(0, 'WO-21-0070', 'MSN-C001', '80042', 100, 'INS-C003', NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-26 16:25:24', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -3719,8 +5256,8 @@ CREATE TABLE `wo_mstr` (
   `wo_repair_code3` varchar(10) DEFAULT NULL,
   `wo_repair_group` varchar(50) DEFAULT NULL,
   `wo_repair_type` varchar(255) DEFAULT NULL,
-  `wo_note` varchar(0) DEFAULT NULL,
-  `wo_approval_note` varchar(0) DEFAULT NULL,
+  `wo_note` varchar(100) DEFAULT NULL,
+  `wo_approval_note` varchar(100) DEFAULT NULL,
   `wo_status` varchar(20) NOT NULL,
   `wo_schedule` date NOT NULL,
   `wo_duedate` date NOT NULL,
@@ -3753,7 +5290,18 @@ CREATE TABLE `wo_mstr` (
 --
 
 INSERT INTO `wo_mstr` (`wo_id`, `wo_nbr`, `wo_sr_nbr`, `wo_dept`, `wo_priority`, `wo_engineer1`, `wo_engineer2`, `wo_engineer3`, `wo_engineer4`, `wo_engineer5`, `wo_asset`, `wo_failure_code1`, `wo_failure_code2`, `wo_failure_code3`, `wo_repair_hour`, `wo_repair_code1`, `wo_repair_code2`, `wo_repair_code3`, `wo_repair_group`, `wo_repair_type`, `wo_note`, `wo_approval_note`, `wo_status`, `wo_schedule`, `wo_duedate`, `wo_start_date`, `wo_start_time`, `wo_finish_date`, `wo_finish_time`, `wo_system_date`, `wo_system_time`, `wo_creator`, `wo_reviewer`, `wo_approver`, `wo_approver_appdate`, `wo_reviewer_appdate`, `wo_reject_reason`, `wo_created_at`, `wo_updated_at`, `wo_access`, `wo_access_user`, `wo_type`, `wo_new_type`, `wo_impact`, `wo_impact_desc`, `wo_action`, `wo_sparepart`) VALUES
-(2, 'WO-21-0061', NULL, 'ENG', 'low', 'admin', NULL, NULL, NULL, NULL, '01-AT-004', NULL, NULL, NULL, NULL, 'CTF-R001', 'CTF-R002', '', '', 'code', '', NULL, 'open', '2022-08-30', '2022-08-30', NULL, NULL, NULL, NULL, NULL, NULL, 'admin', NULL, NULL, NULL, NULL, NULL, '2022-08-30 11:35:56', '2022-08-30 11:35:56', 0, NULL, 'other', 'CLB', 'QLTY;', 'Quality;', NULL, NULL);
+(2, 'WO-21-0061', NULL, 'ENG', 'low', 'admin', NULL, NULL, NULL, NULL, '01-AT-004', NULL, NULL, NULL, NULL, 'CTF-R001', 'CTF-R002', '', '', 'code', '', NULL, 'Released', '2022-08-30', '2022-08-30', NULL, NULL, NULL, NULL, NULL, NULL, 'admin', NULL, NULL, NULL, NULL, NULL, '2022-08-30 11:35:56', '2022-09-14 14:42:48', 0, NULL, 'other', 'CLB', 'QLTY;', 'Quality;', NULL, NULL),
+(3, 'WO-21-0062', 'SR-21-0047', 'IT', 'medium', 'admin1', NULL, NULL, NULL, NULL, '17.02', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'RG001', 'group', '', NULL, 'delete', '2022-09-02', '2022-09-02', NULL, NULL, NULL, NULL, NULL, NULL, 'admin1', NULL, 'admin1', NULL, NULL, NULL, '2022-09-02 11:34:14', '2022-09-22 15:41:52', 0, NULL, 'other', 'CLB', 'QLTY', 'Quality', NULL, NULL),
+(4, 'WO-21-0063', NULL, 'IT', 'high', 'admin', 'admin1', NULL, NULL, NULL, 'EQ-0208-05', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'code', 'edit note', 'Selesai', 'closed', '2022-09-22', '2022-09-22', '2022-09-23', '14:19:28', '2022-09-23', '18:00:00', '2022-09-23', '14:19:48', 'admin1', 'admin1', 'admin1', '2022-09-23', '2022-09-23', NULL, '2022-09-14 15:08:17', '2022-09-23 14:19:48', 0, 'admin1', 'other', 'CLB', 'EHS;', 'EHS;', NULL, NULL),
+(5, 'WO-21-0064', NULL, 'IT', 'low', 'admin1', NULL, NULL, NULL, NULL, 'EQ-0208-05', NULL, NULL, NULL, NULL, 'CTF-R001', 'CTF-R003', '', '', 'code', '', NULL, 'started', '2022-09-14', '2022-09-14', '2022-09-21', '14:41:01', NULL, NULL, NULL, NULL, 'admin1', NULL, NULL, NULL, NULL, NULL, '2022-09-14 15:10:04', '2022-09-14 15:10:04', 0, NULL, 'other', 'BRE', 'EHS;', 'EHS;', NULL, NULL),
+(6, 'WO-21-0065', NULL, 'IT', 'low', 'admin1', NULL, NULL, NULL, NULL, 'EQ-0006-02', NULL, NULL, NULL, NULL, 'MSN-C001', '', '', '', 'code', '', NULL, 'Released', '2022-09-15', '2022-09-15', NULL, NULL, NULL, NULL, NULL, NULL, 'admin1', NULL, NULL, NULL, NULL, NULL, '2022-09-15 15:36:22', '2022-09-15 15:36:51', 0, NULL, 'other', 'BRE', 'EHS;', 'EHS;', NULL, NULL),
+(7, 'WO-21-0066', NULL, 'IT', 'low', 'admin1', NULL, NULL, NULL, NULL, 'EQ-0502-TM-001', NULL, NULL, NULL, NULL, 'MSN-C001', '', '', '', 'code', '', NULL, 'whsconfirm', '2022-09-15', '2022-09-15', NULL, NULL, NULL, NULL, NULL, NULL, 'admin1', NULL, NULL, NULL, NULL, NULL, '2022-09-15 16:47:13', '2022-09-15 16:47:42', 0, NULL, 'other', 'BRE', 'EHS;', 'EHS;', NULL, NULL),
+(8, 'WO-21-0067', NULL, 'IT', 'low', 'admin1', NULL, NULL, NULL, NULL, 'EQ-0459-06', NULL, NULL, NULL, NULL, 'MSN-C001', '', '', '', 'code', '', NULL, 'engconfirm', '2022-09-19', '2022-09-19', NULL, NULL, NULL, NULL, NULL, NULL, 'admin1', NULL, NULL, NULL, NULL, NULL, '2022-09-19 10:54:13', '2022-09-19 10:55:24', 0, NULL, 'other', 'BRE', 'EHS;', 'EHS;', NULL, NULL),
+(9, 'WO-21-0068', NULL, 'IT', 'low', 'admin1', NULL, NULL, NULL, NULL, '09.24', NULL, NULL, NULL, NULL, 'CTF-R002', 'CTF-R003', 'MSN-C001', '', 'code', '', NULL, 'Released', '2022-09-22', '2022-09-22', NULL, NULL, NULL, NULL, NULL, NULL, 'admin1', NULL, NULL, NULL, NULL, NULL, '2022-09-22 13:11:05', '2022-09-22 13:11:34', 0, NULL, 'other', 'BRE', 'EHS;', 'EHS;', NULL, NULL),
+(10, 'WO-21-0069', NULL, 'IT', 'low', 'admin1', 'eng01', NULL, NULL, NULL, '05-TH-026', NULL, NULL, NULL, NULL, 'MSN-C001', '', '', '', 'code', 'perbaikan', NULL, 'Released', '2022-09-26', '2022-09-26', NULL, NULL, NULL, NULL, NULL, NULL, 'admin1', NULL, NULL, NULL, NULL, NULL, '2022-09-26 09:33:24', '2022-09-26 09:33:39', 0, NULL, 'other', 'BRE', 'EHS;', 'EHS;', NULL, NULL),
+(11, 'WO-21-0070', NULL, 'ENG', 'low', 'admin', 'admin1', NULL, NULL, NULL, 'UT-0234-PI-011', NULL, NULL, NULL, NULL, 'MSN-C001', '', '', '', 'code', 'perbaikan', NULL, 'Released', '2022-09-26', '2022-09-26', NULL, NULL, NULL, NULL, NULL, NULL, 'admin', NULL, NULL, NULL, NULL, NULL, '2022-09-26 16:12:48', '2022-09-26 16:25:24', 0, NULL, 'other', 'BRE', 'EHS;', 'EHS;', NULL, NULL),
+(12, 'WD-21-0010', NULL, 'ENG', 'low', 'admin', 'admin1', NULL, NULL, NULL, '01-CP-008', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'closed', '2022-09-26', '2022-09-26', '2022-09-26', '16:23:35', '2022-09-26', NULL, '2022-09-26', '16:23:35', 'admin', NULL, NULL, NULL, NULL, NULL, '2022-09-26 16:23:35', '2022-09-26 16:23:35', 0, NULL, 'other', 'BRE', 'EHS;', 'EHS;', 'perbaikan', NULL),
+(13, 'WO-21-0071', NULL, 'ENG', 'low', 'admin1', NULL, NULL, NULL, NULL, 'EQ-0193', NULL, NULL, NULL, NULL, 'MSN-C001', '', '', '', 'code', 'perbaikan', NULL, 'open', '2022-09-26', '2022-09-26', NULL, NULL, NULL, NULL, NULL, NULL, 'admin', NULL, NULL, NULL, NULL, NULL, '2022-09-26 16:34:38', '2022-09-26 16:34:38', 0, NULL, 'other', 'BRE', 'EHS;', 'EHS;', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -3781,6 +5329,12 @@ INSERT INTO `xxrepgroup_mstr` (`xxrepgroup_id`, `xxrepgroup_nbr`, `xxrepgroup_de
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `acceptance_image`
+--
+ALTER TABLE `acceptance_image`
+  ADD PRIMARY KEY (`accept_img_id`);
 
 --
 -- Indexes for table `area_mstr`
@@ -3813,6 +5367,12 @@ ALTER TABLE `asset_type`
   ADD PRIMARY KEY (`ID`,`astype_code`);
 
 --
+-- Indexes for table `asset_upload`
+--
+ALTER TABLE `asset_upload`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `booking`
 --
 ALTER TABLE `booking`
@@ -3843,13 +5403,25 @@ ALTER TABLE `failed_jobs`
 -- Indexes for table `fn_mstr`
 --
 ALTER TABLE `fn_mstr`
-  ADD PRIMARY KEY (`ID`,`fn_code`);
+  ADD PRIMARY KEY (`ID`);
 
 --
 -- Indexes for table `imp_mstr`
 --
 ALTER TABLE `imp_mstr`
   ADD PRIMARY KEY (`imp_code`);
+
+--
+-- Indexes for table `insd_det`
+--
+ALTER TABLE `insd_det`
+  ADD PRIMARY KEY (`insd_id`);
+
+--
+-- Indexes for table `ins_group`
+--
+ALTER TABLE `ins_group`
+  ADD PRIMARY KEY (`insg_id`);
 
 --
 -- Indexes for table `ins_mstr`
@@ -3895,6 +5467,18 @@ ALTER TABLE `picklist_ctrl`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `pick_mstr`
+--
+ALTER TABLE `pick_mstr`
+  ADD PRIMARY KEY (`pick_id`);
+
+--
+-- Indexes for table `qxwsa`
+--
+ALTER TABLE `qxwsa`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `rep_det`
 --
 ALTER TABLE `rep_det`
@@ -3922,6 +5506,12 @@ ALTER TABLE `rep_mstr`
 -- Indexes for table `rep_part`
 --
 ALTER TABLE `rep_part`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `rep_partgroup`
+--
+ALTER TABLE `rep_partgroup`
   ADD PRIMARY KEY (`ID`);
 
 --
@@ -4051,6 +5641,12 @@ ALTER TABLE `xxrepgroup_mstr`
 --
 
 --
+-- AUTO_INCREMENT for table `acceptance_image`
+--
+ALTER TABLE `acceptance_image`
+  MODIFY `accept_img_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `area_mstr`
 --
 ALTER TABLE `area_mstr`
@@ -4066,13 +5662,19 @@ ALTER TABLE `asset_group`
 -- AUTO_INCREMENT for table `asset_par`
 --
 ALTER TABLE `asset_par`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `asset_type`
 --
 ALTER TABLE `asset_type`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `asset_upload`
+--
+ALTER TABLE `asset_upload`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `booking`
@@ -4090,7 +5692,7 @@ ALTER TABLE `dept_mstr`
 -- AUTO_INCREMENT for table `eng_mstr`
 --
 ALTER TABLE `eng_mstr`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -4102,13 +5704,25 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `fn_mstr`
 --
 ALTER TABLE `fn_mstr`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `insd_det`
+--
+ALTER TABLE `insd_det`
+  MODIFY `insd_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+
+--
+-- AUTO_INCREMENT for table `ins_group`
+--
+ALTER TABLE `ins_group`
+  MODIFY `insg_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `ins_mstr`
 --
 ALTER TABLE `ins_mstr`
-  MODIFY `ins_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `ins_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `inv_mstr`
@@ -4120,13 +5734,13 @@ ALTER TABLE `inv_mstr`
 -- AUTO_INCREMENT for table `loc_mstr`
 --
 ALTER TABLE `loc_mstr`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=879;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `picklist_ctrl`
@@ -4135,10 +5749,22 @@ ALTER TABLE `picklist_ctrl`
   MODIFY `id` int(50) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `pick_mstr`
+--
+ALTER TABLE `pick_mstr`
+  MODIFY `pick_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `qxwsa`
+--
+ALTER TABLE `qxwsa`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `rep_det`
 --
 ALTER TABLE `rep_det`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `rep_ins`
@@ -4150,7 +5776,7 @@ ALTER TABLE `rep_ins`
 -- AUTO_INCREMENT for table `rep_master`
 --
 ALTER TABLE `rep_master`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `rep_mstr`
@@ -4162,13 +5788,19 @@ ALTER TABLE `rep_mstr`
 -- AUTO_INCREMENT for table `rep_part`
 --
 ALTER TABLE `rep_part`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `rep_partgroup`
+--
+ALTER TABLE `rep_partgroup`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `service_req_mstr`
 --
 ALTER TABLE `service_req_mstr`
-  MODIFY `id_sr` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_sr` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `skill_mstr`
@@ -4210,7 +5842,7 @@ ALTER TABLE `sp_group`
 -- AUTO_INCREMENT for table `sp_mstr`
 --
 ALTER TABLE `sp_mstr`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=432;
 
 --
 -- AUTO_INCREMENT for table `sp_type`
@@ -4246,13 +5878,13 @@ ALTER TABLE `truck_mstr`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `wo_mstr`
 --
 ALTER TABLE `wo_mstr`
-  MODIFY `wo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `wo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `xxrepgroup_mstr`
