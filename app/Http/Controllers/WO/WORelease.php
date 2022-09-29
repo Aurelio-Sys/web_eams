@@ -48,7 +48,7 @@ class WORelease extends Controller
             $data->where('wo_priority', '=', $request->s_priority);
         }
 
-        $data = $data->paginate(10);
+        $data = $data->paginate(2);
 
 
         return view('workorder.worelease-browse', ['asset1' => $asset1, 'data' => $data]);
@@ -209,7 +209,7 @@ class WORelease extends Controller
         } /* if($data->wo_status == 'open') */ else {
             $combineSP = DB::table('wo_mstr')
                 ->select('wo_dets_rc as repair_code', 'wo_dets_id as repdet_step', 'wo_dets_ins as ins_code', 
-                'insd_part_desc', 'wo_dets_sp as insd_part', 'insd_det.insd_um', 'insd_qty','wo_status')
+                'insd_part_desc', 'wo_dets_sp as insd_part', 'insd_det.insd_um', 'insd_qty','wo_status','wo_dets_line')
                 ->leftJoin('wo_dets','wo_mstr.wo_nbr','wo_dets.wo_dets_nbr')
                 ->leftJoin('insd_det', function($join)
                 {
@@ -238,48 +238,55 @@ class WORelease extends Controller
 
     public function submitrelease(Request $req)
     {
-        //dd($req->all());
+        dump($req->all());
         DB::beginTransaction();
 
         try {
             foreach ($req->partneed as $a => $key) {
                 $cek = DB::table('wo_dets')
-                    ->whereWo_dets_nbr($req->hide_wonum)
-                    ->whereWo_dets_line($req->line)
+                    ->where('Wo_dets_nbr','=',$req->hide_wonum)
+                    ->where('wo_dets_line','=',$req->line[$a])
                     ->count();
 
+                dump($cek);
                 if($cek == 0) {
-                    dd("test");
-                    DB::table('wo_dets')->insert([
+                    dump($req->line[$a]);
+                    dd("tiga");
+                    /* DB::table('wo_dets')->insert([
                         'wo_dets_nbr' => $req->hide_wonum,
+                        'wo_dets_line' => $req->line[$a],
                         'wo_dets_rc' => $req->repcode[$a],
                         'wo_dets_sp' => $req->partneed[$a],
                         'wo_dets_sp_qty' => $req->qtyrequest[$a],
                         'wo_dets_ins' => $req->inscode[$a] ?? null,
-                        'wo_dets_line' => $req->line[$a],
                         'wo_dets_created_at' => Carbon::now()->toDateTimeString(),
-                    ]);
+                    ]); */
                 } else {
                     if($req->tick[$a] == 0) {
+                        dump($req->line[$a]);
+                        dump('satu');
                         DB::table('wo_dets')->update(
-                            [
-                                'wo_dets_nbr' => $req->hide_wonum,
-                                'wo_dets_line' => $req->line[$a],
-                            ],
-                            [
-                                'wo_dets_rc' => $req->repcode[$a],
-                                'wo_dets_sp' => $req->partneed[$a],
-                                'wo_dets_ins' => $req->inscode[$a] ?? null,
-                                'wo_dets_sp_qty' => $req->qtyrequest[$a],
-                                'wo_dets_created_at' => Carbon::now()->toDateTimeString(),
-                            ]
-                        ); 
-                    } else { /* jika tanda tik delete */
-                        DB::table('wo_dets')
-                        ->whereWo_dets_nbr($req->hide_wonum)
-                        ->whereWo_dets_line($req->wo_dets_line[$a])
-                        ->delete();
+                        [
+                            'wo_dets_nbr' => $req->hide_wonum,
+                            'wo_dets_line' => $req->line[$a],
+                        ],
+                        [
+                            'wo_dets_rc' => $req->repcode[$a],
+                            'wo_dets_sp' => $req->partneed[$a],
+                            'wo_dets_ins' => $req->inscode[$a] ?? null,
+                            'wo_dets_sp_qty' => $req->qtyrequest[$a],
+                            'wo_dets_created_at' => Carbon::now()->toDateTimeString(),
+                        ]
+                    ); 
+                    } else {
+                        dump($req->line[$a]);
+                        dd('dua');
+                        /*DB::table('wo_dets')
+                            ->whereWo_dets_nbr($req->hide_wonum)
+                            ->whereWo_dets_line($req->line[$a])
+                            ->delete(); */
                     }
+                    
                 }
             }
 

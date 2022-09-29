@@ -147,6 +147,7 @@
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$datas->repair_code}}
                                     <input type="hidden" name="repcode[]" value="{{$datas->repair_code}}" />
+                                    <input type="hidden" name="line[]" value="{{$datas->wo_dets_line}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$datas->ins_code}}
