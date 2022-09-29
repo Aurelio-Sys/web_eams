@@ -6,7 +6,7 @@
     <td>{{ $datas->wo_duedate }}</td>
     <td>{{ $datas->wo_priority }}</td>
     <td style="text-align: center;">
-        <a class="btn btn-info" href="{{route('WhsconfDetail', $datas->wo_id)}}"><i class="fas fa-box-open"></i> Confirm</a>
+        <a class="btn btn-info" href="{{route('WhsconfDetail', $datas->wo_id)}}"><i class="fa fa-check-circle"></i> Confirm</a>
     </td>
 </tr>
 @empty

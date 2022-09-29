@@ -48,7 +48,7 @@ class WORelease extends Controller
             $data->where('wo_priority', '=', $request->s_priority);
         }
 
-        $data = $data->paginate(10);
+        $data = $data->paginate(2);
 
 
         return view('workorder.worelease-browse', ['asset1' => $asset1, 'data' => $data]);
@@ -238,19 +238,20 @@ class WORelease extends Controller
 
     public function submitrelease(Request $req)
     {
-        // dump($req->all());
+        dump($req->all());
         DB::beginTransaction();
 
         try {
             foreach ($req->partneed as $a => $key) {
                 $cek = DB::table('wo_dets')
                     ->where('Wo_dets_nbr','=',$req->hide_wonum)
-                    ->where('Wo_dets_line','=',$req->line[$a])
+                    ->where('wo_dets_line','=',$req->line[$a])
                     ->count();
 
+                dump($cek);
                 if($cek == 0) {
-                    // dump($req->line[$a]);
-                    // dd("tiga");
+                    dump($req->line[$a]);
+                    dd("tiga");
                     /* DB::table('wo_dets')->insert([
                         'wo_dets_nbr' => $req->hide_wonum,
                         'wo_dets_line' => $req->line[$a],
@@ -262,8 +263,8 @@ class WORelease extends Controller
                     ]); */
                 } else {
                     if($req->tick[$a] == 0) {
-                        // dump($req->line[$a]);
-                        // dump('satu');
+                        dump($req->line[$a]);
+                        dump('satu');
                         DB::table('wo_dets')->update(
                         [
                             'wo_dets_nbr' => $req->hide_wonum,
@@ -278,8 +279,8 @@ class WORelease extends Controller
                         ]
                     ); 
                     } else {
-                        // dump($req->line[$a]);
-                        // dd('dua');
+                        dump($req->line[$a]);
+                        dd('dua');
                         /*DB::table('wo_dets')
                             ->whereWo_dets_nbr($req->hide_wonum)
                             ->whereWo_dets_line($req->line[$a])

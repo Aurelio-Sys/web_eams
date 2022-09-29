@@ -142,7 +142,7 @@
                                     </td>
                                 @else
                                     <td>
-                                        <input type="number" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$datas->insd_qty}}" required />
+                                        <input type="number" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$datas->insd_qty ?? 0}}" required />
                                     </td>
                                     @if($datas->wo_status == "open") <!-- jika belum pernah direlease akan muncul tombol delete -->
                                         <td style="vertical-align:middle;text-align:center;">
