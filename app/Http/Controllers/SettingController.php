@@ -5711,6 +5711,38 @@ class SettingController extends Controller
         $runningdata = DB::table('running_mstr')
                         ->first();
 
+        if(empty($runningdata)){
+            $prefixsr = 'SR';
+            $srnbr = '0000';
+            $prefixwo = 'WO';
+            $prefixwt = 'WT';
+            $prefixwd = 'WD';
+            $prefixbo = '0000';
+            $wtnbr = '0000';
+            $wonbr = '0000';
+            $wdnbr = '0000';
+            $bonbr = '0000';
+            $year = Carbon::now()->format('y');
+
+            DB::table('running_mstr')
+                ->insert([
+                        'sr_prefix' => $prefixsr,
+                        'wo_prefix' => $prefixwo,
+                        'wt_prefix' => $prefixwt,
+                        'wd_prefix' => $prefixwd,
+                        'bo_prefix' => $prefixbo,
+                        'sr_nbr' => $srnbr,
+                        'wo_nbr' => $wonbr,
+                        'wt_nbr' => $wtnbr,
+                        'wd_nbr' => $wdnbr,
+                        'bo_nbr' => $bonbr,
+                        'year' => $year,
+                ]);
+
+            $runningdata = DB::table('running_mstr')
+                ->first();
+        }
+
         return view('setting.runningmaster', ['alert' => $runningdata]);
     }
 

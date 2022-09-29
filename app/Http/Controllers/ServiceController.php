@@ -35,70 +35,76 @@ use App;
 use App\Exports\ExportSR;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ServiceController extends Controller{
+class ServiceController extends Controller
+{
 
-    private function httpHeader($req) {
-        return array('Content-type: text/xml;charset="utf-8"',
+    private function httpHeader($req)
+    {
+        return array(
+            'Content-type: text/xml;charset="utf-8"',
             'Accept: text/xml',
             'Cache-Control: no-cache',
             'Pragma: no-cache',
             'SOAPAction: ""',        // jika tidak pakai SOAPAction, isinya harus ada tanda petik 2 --> ""
-            'Content-length: ' . strlen(preg_replace("/\s+/", " ", $req)));
+            'Content-length: ' . strlen(preg_replace("/\s+/", " ", $req))
+        );
     }
 
 
-    public function servicerequest(){
+    public function servicerequest()
+    {
         $asset = DB::table('asset_mstr')
-                ->where('asset_active', '=', 'Yes')
-                ->get();
+            ->where('asset_active', '=', 'Yes')
+            ->get();
 
         $datadepart = DB::table('dept_mstr')
-                ->get();
+            ->get();
 
         $wotype = DB::table('wotyp_mstr')
-                ->get();
+            ->get();
 
         $impact = DB::table('imp_mstr')
-                ->get();
-    
-        return view('service.servicerequest_create', ['showasset'=>$asset, 'dept'=>$datadepart, 'wotype' => $wotype, 'impact' => $impact]);
+            ->get();
+
+        return view('service.servicerequest_create', ['showasset' => $asset, 'dept' => $datadepart, 'wotype' => $wotype, 'impact' => $impact]);
     }
 
-    public function failuresearch(Request $req){
+    public function failuresearch(Request $req)
+    {
         // dd($req->all());
-        if($req->ajax()){
+        if ($req->ajax()) {
             $asset2 = DB::table('asset_mstr')
-                    ->where('asset_mstr.asset_code', '=', $req->asset)
-                    ->first();
+                ->where('asset_mstr.asset_code', '=', $req->asset)
+                ->first();
 
             // dd($asset2);
 
 
             $failure = DB::table('fn_mstr')
                 // ->join('asset_mstr', 'fn_mstr.fn_assetgroup', 'asset_mstr.asset_group')
-                ->where(function($query)use($asset2){
+                ->where(function ($query) use ($asset2) {
                     $query->where('fn_mstr.fn_assetgroup', '=', $asset2->asset_group)
-                    ->orWhere('fn_mstr.fn_assetgroup', '=', null);
+                        ->orWhere('fn_mstr.fn_assetgroup', '=', null);
                 })
                 ->get();
             // dd($failure);
 
             $output = '';
-            if(count($failure) > 0){
+            if (count($failure) > 0) {
                 $output .= '<option value=""> Pilih Failure Code </option>';
-                foreach($failure as $data){
-                    $output .= '<option value="'.$data->fn_code.'">'.$data->fn_code.' - '.$data->fn_desc.'</option>';
+                foreach ($failure as $data) {
+                    $output .= '<option value="' . $data->fn_code . '">' . $data->fn_code . ' - ' . $data->fn_desc . '</option>';
                 }
-            }else{
-                    $output .= '<option value=""> Tidak Ada Failure Code </option>';
+            } else {
+                $output .= '<option value=""> Tidak Ada Failure Code </option>';
             }
 
             return response($output);
         }
-
     }
 
-    public function inputsr(Request $req){ /* blade : servicerequest_create.php */
+    public function inputsr(Request $req)
+    { /* blade : servicerequest_create.php */
         // dd($req->all());
 
         $counterimpact = count($req->impact);
@@ -106,29 +112,34 @@ class ServiceController extends Controller{
 
         $newimpact = "";
 
-        for($i = 0; $i < $counterimpact; $i++){
-            $newimpact .= $req->impact[$i].',';
+        for ($i = 0; $i < $counterimpact; $i++) {
+            $newimpact .= $req->impact[$i] . ',';
         }
 
         $newimpact = substr($newimpact, 0, strlen($newimpact) - 1);
-        
+
 
         // dd($newimpact);
 
         // dd(Config::get('mail'));
 
         $running = DB::table('running_mstr')
-                    ->first();
+            ->first();
 
-        $tempnewrunnbr = strval(intval($running->sr_nbr)+1);
+        $newyear = Carbon::now()->format('y');
 
-        $newtemprunnbr = '';
-        if(strlen($tempnewrunnbr) < 4){
-            $newtemprunnbr = str_pad($tempnewrunnbr,4,'0',STR_PAD_LEFT);
+        if ($running->year == $newyear) {
+            $tempnewrunnbr = strval(intval($running->sr_nbr) + 1);
+
+            $newtemprunnbr = '';
+            if (strlen($tempnewrunnbr) < 4) {
+                $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+            }
+        }else{
+            $newtemprunnbr = '0001';
         }
-        
 
-        $runningnbr = $running->sr_prefix.'-'.$running->year.'-'.$newtemprunnbr;
+        $runningnbr = $running->sr_prefix . '-' . $newyear . '-' . $newtemprunnbr;
 
         DB::table('service_req_mstr')
             ->insert([
@@ -153,39 +164,48 @@ class ServiceController extends Controller{
             ]);
 
 
-            // $rn += 1;
-            // $rn = str_pad($rn , 5, '0', STR_PAD_LEFT);
+        // $rn += 1;
+        // $rn = str_pad($rn , 5, '0', STR_PAD_LEFT);
 
-            
 
-            DB::table('running_mstr')
-                ->update([
-                    'sr_nbr' => $newtemprunnbr,
-                ]);
 
-            // dd('stop here');
+        DB::table('running_mstr')
+            ->update([
+                'year' => $newyear,
+                'sr_nbr' => $newtemprunnbr,
+            ]);
+
+        // dd('stop here');
 
         // $sendmail = (new Emaill())->delay(Carbon::now()->addSeconds(3));
 
         //nanti dibuka EmailScheduleJobs::dispatch('','','3','','',$runningnbr,'');
-    
+
         echo "email sent";
 
-         toast('Service Request '.$runningnbr.' Successfully Created', 'success');
-         return back();
+        toast('Service Request ' . $runningnbr . ' Successfully Created', 'success');
+        return back();
     }
 
-    public function srapproval(){ /* blade : service.servicereq-approval */
+    public function srapproval()
+    { /* blade : service.servicereq-approval */
         // dd(Session::get('role'));
 
         $kepalaengineer = DB::table('eng_mstr')
+<<<<<<< HEAD
                             ->where('approver', '=', 1)
                             ->where('eng_active', '=', 'Yes')
                             ->where('eng_code', '=', Session::get('username'))
                             ->orderBy('eng_code')
                             ->first();
+=======
+            ->where('approver', '=', 1)
+            ->where('eng_active', '=', 'Yes')
+            ->where('eng_code', '=', Session::get('username'))
+            ->first();
+>>>>>>> ac7b6b22c53401734211b8ff4329102770bcc894
 
-        if($kepalaengineer || Session::get('role') == 'ADM'){
+        if ($kepalaengineer || Session::get('role') == 'ADM') {
 
 
             $data = DB::table('service_req_mstr')
@@ -194,41 +214,41 @@ class ServiceController extends Controller{
                 ->leftJoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
                 ->leftJoin('wotyp_mstr', 'wotyp_mstr.wotyp_code', 'service_req_mstr.sr_wotype')
                 // ->join('users', 'users.name', 'service_req_mstr.req_by')                  --> B211014
-                    ->join('users', 'users.username', 'service_req_mstr.req_username')  
+                ->join('users', 'users.username', 'service_req_mstr.req_username')
                 ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
                 ->where('sr_status', '=', '1')
                 ->orderBy('sr_number', 'DESC')
                 ->paginate(10);
-                // ->get();
+            // ->get();
 
-                // dd($data);
+            // dd($data);
 
             $datarepair = DB::table('rep_master')
                 ->get();
 
             $datasset = DB::table('asset_mstr')
-                            ->get();
+                ->get();
 
             $datarepgroup = DB::table('xxrepgroup_mstr')
-                            ->selectRaw('MIN(xxrepgroup_id) as xxrepgroup_id , xxrepgroup_nbr, MIN(xxrepgroup_desc) as xxrepgroup_desc')
-                            ->groupBy('xxrepgroup_nbr')
-                            ->get();
+                ->selectRaw('MIN(xxrepgroup_id) as xxrepgroup_id , xxrepgroup_nbr, MIN(xxrepgroup_desc) as xxrepgroup_desc')
+                ->groupBy('xxrepgroup_nbr')
+                ->get();
 
             // dd($data);
 
             // $eng = DB::table('eng_mstr')
             //         ->get();
-            
-            return view('service.servicereq-approval', ['datas'=>$data, 'asset'=>$datasset, 'repaircode' => $datarepair, 'repgroup' => $datarepgroup ]);
-        }else{
+
+            return view('service.servicereq-approval', ['datas' => $data, 'asset' => $datasset, 'repaircode' => $datarepair, 'repgroup' => $datarepgroup]);
+        } else {
             // toast('anda tidak memiliki akses sebagai approver', 'error');
             return view('service.accessdenied');
         }
-        
     }
 
-    public function engajax(Request $req){
-        if($req->ajax()){
+    public function engajax(Request $req)
+    {
+        if ($req->ajax()) {
             $eng = DB::table('eng_mstr')
                 ->where('eng_active', '=', 'Yes')
                 ->orderBy('eng_code')
@@ -239,54 +259,54 @@ class ServiceController extends Controller{
             $array = json_decode(json_encode($eng), true);
 
             return response()->json($array);
-
-            
         }
     }
-    
-    public function approval(Request $req){ /* blade : service.servicereq-approval */
+
+    public function approval(Request $req)
+    { /* blade : service.servicereq-approval */
         // dd($req->all());
 
         $wotype = $req->wotype;
         $imcode = $req->impactcode1;
         $imdesc = $req->impact;
-        
-        
-        switch($req->input('action')){
-            case 'reject' :
+
+
+        switch ($req->input('action')) {
+            case 'reject':
                 //jika direject;
                 // dd('test');
                 $running = DB::table('running_mstr')
                     ->first();
 
-                $runningnbr = $running->wo_prefix.'-'.$running->year.'-'.$running->wo_nbr;
+                $newyear = Carbon::now()->format('y');
+
+                $runningnbr = $running->wo_prefix . '-' . $newyear . '-' . $running->wo_nbr;
                 // $tampungarray = [];
                 // $tampungarray = $req->enjiners;
                 // dd($tampungarray);
                 $rejectnote = $req->rejectreason;
                 $requestor = $req->hiddenreq;
                 $srnumber = $req->srnumber;
-                $asset = $req->assetcode.' -- '.$req->assetdesc;
+                $asset = $req->assetcode . ' -- ' . $req->assetdesc;
                 $a = 4; //direject 
                 $wo = $runningnbr;
                 $wotype = $req->wotype;
                 $imdesc = $req->impact;
 
                 $statusakses = DB::table('service_req_mstr')
-                                ->where('sr_number','=', $srnumber)
-                                ->first();
+                    ->where('sr_number', '=', $srnumber)
+                    ->first();
 
-                if($statusakses->sr_access == 0){
+                if ($statusakses->sr_access == 0) {
                     DB::table('service_req_mstr')
-                        ->where('sr_number','=', $srnumber)
-                        ->update(['sr_access' => 1]);   
-                }
-                else{
-                    toast('SR '.$srnumber.' is being used right now', 'error');
+                        ->where('sr_number', '=', $srnumber)
+                        ->update(['sr_access' => 1]);
+                } else {
+                    toast('SR ' . $srnumber . ' is being used right now', 'error');
                     return back();
                 }
-                if($statusakses->sr_status != '1'){
-                    toast('SR '.$srnumber.' status has changed, please recheck', 'error');
+                if ($statusakses->sr_status != '1') {
+                    toast('SR ' . $srnumber . ' status has changed, please recheck', 'error');
                     return back();
                 }
 
@@ -294,22 +314,22 @@ class ServiceController extends Controller{
                 DB::table('service_req_mstr')
                     ->where('sr_number', '=', $srnumber)
                     ->update([
-                            'sr_status' => '4',
-                            'rejectnote' => $req->rejectreason,
-                            'sr_access' => 0,
+                        'sr_status' => '4',
+                        'rejectnote' => $req->rejectreason,
+                        'sr_access' => 0,
                     ]);
 
                 //nanti dibuka EmailScheduleJobs::dispatch($wo,$asset,$a,'',$requestor,$srnumber,$rejectnote);
 
-                toast('Service Request '.$req->srnumber.'  Rejected Successfully ','success');
+                toast('Service Request ' . $req->srnumber . '  Rejected Successfully ', 'success');
                 return back();
 
-            break;
+                break;
 
-            case 'approve' : //jika diapprove
+            case 'approve': //jika diapprove
                 $statusakses = DB::table('service_req_mstr')
-                                ->where('sr_number','=', $req->srnumber)
-                                ->first();
+                    ->where('sr_number', '=', $req->srnumber)
+                    ->first();
 
                 /* ditutup sementara
                 if($statusakses->sr_access == 0){
@@ -325,27 +345,35 @@ class ServiceController extends Controller{
                     toast('SR '.$req->srnumber.' status has changed, please recheck', 'error');
                     return back();
                 } */
-                                
+
 
                 $running = DB::table('running_mstr')
                     ->first();
 
-                $tempnewrunnbr = strval(intval($running->wo_nbr)+1);
+                $newyear = Carbon::now()->format('y');
 
-                $newtemprunnbr = '';
-                if(strlen($tempnewrunnbr) < 4){
-                    $newtemprunnbr = str_pad($tempnewrunnbr,4,'0',STR_PAD_LEFT);
+                if($running->year == $newyear){
+                    $tempnewrunnbr = strval(intval($running->wo_nbr) + 1);
+
+                    $newtemprunnbr = '';
+                    if (strlen($tempnewrunnbr) < 4) {
+                        $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+                    }
+                }else{
+                    $newtemprunnbr = "0001";
                 }
-    
 
-                $asset = $req->assetcode.' -- '.$req->assetdesc;
 
-                $runningnbr = $running->wo_prefix.'-'.$running->year.'-'.$newtemprunnbr;
+
+
+                $asset = $req->assetcode . ' -- ' . $req->assetdesc;
+
+                $runningnbr = $running->wo_prefix . '-' . $newyear . '-' . $newtemprunnbr;
 
                 $tampungarray = [];
                 $tampungarray2 = [];
-           
-                if($req->rad_repgroup == "code"){
+
+                if ($req->rad_repgroup == "code") {
                     $tampungarray = $req->enjiners;
                     $tampungarray2 = $req->repaircode;
 
@@ -355,41 +383,38 @@ class ServiceController extends Controller{
 
                     $arrayarray = [];
 
-                    if($req->tmpfail1 == '-'){
+                    if ($req->tmpfail1 == '-') {
                         $fail1 = null;
-                    }
-                    else{
+                    } else {
                         $fail1 = $req->tmpfail1;
                     }
-    
-                    if($req->tmpfail2 == '-'){
+
+                    if ($req->tmpfail2 == '-') {
                         $fail2 = null;
-                    }
-                    else{
+                    } else {
                         $fail2 = $req->tmpfail2;
                     }
-    
-                    if($req->tmpfail3 == '-'){
+
+                    if ($req->tmpfail3 == '-') {
                         $fail3 = null;
-                    }
-                    else{
+                    } else {
                         $fail3 = $req->tmpfail3;
                     }
-    
-                    if($req->rad_repgroup == "group"){
+
+                    if ($req->rad_repgroup == "group") {
                         $repgroup = $req->repgroup;
-                    }else{
+                    } else {
                         $repgroup = null;
                     }
 
 
                     $ambildata = DB::table('service_req_mstr')
-                                ->where('sr_number', '=', $req->srnumber)
-                                ->first();
+                        ->where('sr_number', '=', $req->srnumber)
+                        ->first();
 
                     // dd($ambildata);
 
-                    $newimpact = str_replace(',',';',$ambildata->sr_impact);
+                    $newimpact = str_replace(',', ';', $ambildata->sr_impact);
 
                     // dd($newimpact);
 
@@ -401,29 +426,28 @@ class ServiceController extends Controller{
                     $countarray = count($array_impact);
                     // dd($countarray);
                     $desc = "";
-        
+
                     // $tampungdesc = [];
-        
-                    for($i = 0; $i < $countarray; $i++){
-        
+
+                    for ($i = 0; $i < $countarray; $i++) {
+
                         // dump($array_impact[$i]);
-        
+
                         $impactdesc = DB::table('imp_mstr')
-                                    ->where('imp_code', '=', $array_impact[$i])
-                                    ->selectRaw('imp_desc')
-                                    ->first();
-        
+                            ->where('imp_code', '=', $array_impact[$i])
+                            ->selectRaw('imp_desc')
+                            ->first();
+
                         // dump($impactdesc);
-        
-                        $desc .= $impactdesc->imp_desc.';';
-        
+
+                        $desc .= $impactdesc->imp_desc . ';';
                     }
-        
-        
+
+
                     $desc = substr($desc, 0, strlen($desc) - 1);
 
                     // dd($desc);
-                    
+
                     $arrayarray = [
                         'wo_nbr' => $runningnbr,
                         'wo_sr_nbr' => $req->srnumber,
@@ -459,23 +483,21 @@ class ServiceController extends Controller{
 
                     // $arraysekian= [];
 
-                    for($i = 0; $i < $jmlarray; $i++){
+                    for ($i = 0; $i < $jmlarray; $i++) {
                         $test1 = $req->enjiners[$i];
 
-                                    
-                        $namakolom = 'wo_engineer'.($i+1);
-                        
+
+                        $namakolom = 'wo_engineer' . ($i + 1);
+
 
                         $arrayarray[$namakolom] .= $test1;
-                                        
                     }
 
-                    for($k = 0; $k < $jmlarray2; $k++){
+                    for ($k = 0; $k < $jmlarray2; $k++) {
                         $test2 = $req->repaircode[$k];
-        
-                        $namakolom2 = 'wo_repair_code'.($k+1);
+
+                        $namakolom2 = 'wo_repair_code' . ($k + 1);
                         $arrayarray[$namakolom2] .= $test2;
-    
                     }
 
                     // dd($arrayarray);
@@ -483,40 +505,37 @@ class ServiceController extends Controller{
 
                     DB::table('wo_mstr')
                         ->insert($arrayarray);
-                }elseif($req->rad_repgroup == "group"){
-                    
+                } elseif ($req->rad_repgroup == "group") {
+
                     $tampungarray = $req->enjiners;
                     $jmlarray = count($tampungarray);
 
                     $arrayarray = [];
-                    if($req->tmpfail1 == '-'){
+                    if ($req->tmpfail1 == '-') {
                         $fail1 = null;
-                    }
-                    else{
+                    } else {
                         $fail1 = $req->tmpfail1;
                     }
-    
-                    if($req->tmpfail2 == '-'){
+
+                    if ($req->tmpfail2 == '-') {
                         $fail2 = null;
-                    }
-                    else{
+                    } else {
                         $fail2 = $req->tmpfail2;
                     }
-    
-                    if($req->tmpfail3 == '-'){
+
+                    if ($req->tmpfail3 == '-') {
                         $fail3 = null;
-                    }
-                    else{
+                    } else {
                         $fail3 = $req->tmpfail3;
                     }
 
                     $ambildata = DB::table('service_req_mstr')
-                                ->where('sr_number', '=', $req->srnumber)
-                                ->first();
+                        ->where('sr_number', '=', $req->srnumber)
+                        ->first();
 
                     // dd($ambildata);
 
-                    $newimpact = str_replace(',',';',$ambildata->sr_impact);
+                    $newimpact = str_replace(',', ';', $ambildata->sr_impact);
 
                     // dd($newimpact);
 
@@ -526,27 +545,26 @@ class ServiceController extends Controller{
 
                     // dd($array_impact);
                     $countarray = count($array_impact);
-                    
+
                     $desc = "";
-        
+
                     // $tampungdesc = [];
-        
-                    for($i = 0; $i < $countarray; $i++){
-        
+
+                    for ($i = 0; $i < $countarray; $i++) {
+
                         // dump($array_impact[$i]);
-        
+
                         $impactdesc = DB::table('imp_mstr')
-                                    ->where('imp_code', '=', $array_impact[$i])
-                                    ->selectRaw('imp_desc')
-                                    ->first();
-        
+                            ->where('imp_code', '=', $array_impact[$i])
+                            ->selectRaw('imp_desc')
+                            ->first();
+
                         // dump($impactdesc);
-        
-                        $desc .= $impactdesc->imp_desc.';';
-        
+
+                        $desc .= $impactdesc->imp_desc . ';';
                     }
-        
-        
+
+
                     $desc = substr($desc, 0, strlen($desc) - 1);
 
                     $arrayarray = [];
@@ -584,16 +602,15 @@ class ServiceController extends Controller{
                         'wo_impact_desc' => $desc
                     ];
 
-                    for($i = 0; $i < $jmlarray; $i++){
+                    for ($i = 0; $i < $jmlarray; $i++) {
                         // dd('halllooo');
                         $test1 = $req->enjiners[$i];
 
-                                    
-                        $namakolom = 'wo_engineer'.($i+1);
-                        
+
+                        $namakolom = 'wo_engineer' . ($i + 1);
+
 
                         $arrayarray[$namakolom] .= $test1;
-                        
                     }
 
                     // dd($arrayarray);
@@ -612,10 +629,11 @@ class ServiceController extends Controller{
                     ]);
 
                 //update running number
-                
+
 
                 DB::table('running_mstr')
                     ->update([
+                        'year' => $newyear,
                         'wo_nbr' => $newtemprunnbr,
                     ]);
 
@@ -626,36 +644,37 @@ class ServiceController extends Controller{
                 $rejectnote = $req->rejectreason;
                 //nanti dibuka EmailScheduleJobs::dispatch($wo,$asset,$a,$tampungarray,$requestor,$srnumber,$rejectnote);
 
-                toast('Service Request '.$req->srnumber.'  Approved to Work Order '.$runningnbr.' ','success');
+                toast('Service Request ' . $req->srnumber . '  Approved to Work Order ' . $runningnbr . ' ', 'success');
                 return back();
 
-            break;
+                break;
         }
     }
 
-    public function searchapproval(Request $req){ /* blade : service.servicereq-approval */
-        if($req->ajax()){
+    public function searchapproval(Request $req)
+    { /* blade : service.servicereq-approval */
+        if ($req->ajax()) {
             $srnumber = $req->get('srnumber');
             $asset = $req->get('asset');
             $priority = $req->get('priority');
             // $period = $req->get('period');
 
-            if($srnumber == "" && $asset == "" && $priority == ""){
+            if ($srnumber == "" && $asset == "" && $priority == "") {
                 $data = DB::table('service_req_mstr')
                     ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_assetcode')
                     ->leftJoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
                     ->leftJoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
                     ->leftJoin('wotyp_mstr', 'wotyp_mstr.wotyp_code', 'service_req_mstr.sr_wotype')
                     // ->join('users', 'users.name', 'service_req_mstr.req_by')                  --> B211014
-                    ->join('users', 'users.username', 'service_req_mstr.req_username')  
+                    ->join('users', 'users.username', 'service_req_mstr.req_username')
                     ->join('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
                     ->where('sr_status', '=', '1')
                     ->selectRaw('service_req_mstr.* , asset_mstr.asset_desc, asset_mstr.asset_code, dept_mstr.dept_desc, dept_mstr.dept_code, users.username, users.name, wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc')
                     ->orderBy('sr_number', 'DESC')
                     ->paginate(10);
 
-                return view('service.table-srapproval', ['datas'=>$data]);
-            }else{
+                return view('service.table-srapproval', ['datas' => $data]);
+            } else {
                 // $tigahari = Carbon::now()->subDays(3)->toDateTimeString();
                 // $limahari = Carbon::now()->subDays(5)->toDateTimeString();
 
@@ -665,17 +684,17 @@ class ServiceController extends Controller{
                 $kondisi = "sr_created_at > 01-01-1900";
 
 
-                
-              
+
+
 
                 if ($srnumber != '') {
-                    $kondisi .= " and sr_number like '%".$srnumber."%'";
+                    $kondisi .= " and sr_number like '%" . $srnumber . "%'";
                 }
                 if ($asset != '') {
-                    $kondisi .= " and asset_desc like '%".$asset."%'";
+                    $kondisi .= " and asset_desc like '%" . $asset . "%'";
                 }
-                if ($priority != ''){
-                    $kondisi .= " and sr_priority = '".$priority."'";
+                if ($priority != '') {
+                    $kondisi .= " and sr_priority = '" . $priority . "'";
                 }
 
                 // dd($kondisi);
@@ -686,7 +705,7 @@ class ServiceController extends Controller{
                     ->leftJoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
                     ->leftJoin('wotyp_mstr', 'wotyp_mstr.wotyp_code', 'service_req_mstr.sr_wotype')
                     // ->join('users', 'users.name', 'service_req_mstr.req_by')                  --> B211014
-                    ->join('users', 'users.username', 'service_req_mstr.req_username')  
+                    ->join('users', 'users.username', 'service_req_mstr.req_username')
                     ->join('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
                     ->where('sr_status', '=', '1')
                     ->whereRaw($kondisi)
@@ -694,12 +713,13 @@ class ServiceController extends Controller{
                     ->orderBy('sr_number', 'DESC')
                     ->paginate(10);
 
-                return view('service.table-srapproval', ['datas'=>$data]);
+                return view('service.table-srapproval', ['datas' => $data]);
             }
         }
     }
 
-    public function srbrowse(){
+    public function srbrowse()
+    {
         // $dummy = DB::table('service_req_mstr')
         //         ->paginate(10);
 
@@ -714,75 +734,77 @@ class ServiceController extends Controller{
 
         // dd($test_stored);
 
-        $data = DB::table('service_req_mstr')  
-                ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_assetcode')
-                ->leftjoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
-                ->leftjoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
-                ->leftjoin('wotyp_mstr', 'wotyp_mstr.wotyp_code', 'service_req_mstr.sr_wotype')
-                ->join('users', 'users.username', 'service_req_mstr.req_username')  //B211014
-                ->join('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
-                ->leftjoin('wo_mstr', 'wo_mstr.wo_nbr', 'service_req_mstr.wo_number')
-                ->leftjoin('eng_mstr as u1','wo_mstr.wo_engineer1','u1.eng_code')
-                ->leftjoin('eng_mstr as u2','wo_mstr.wo_engineer2','u2.eng_code')
-                ->leftjoin('eng_mstr as u3','wo_mstr.wo_engineer3','u3.eng_code')
-                ->leftjoin('eng_mstr as u4','wo_mstr.wo_engineer4','u4.eng_code')
-                ->leftjoin('eng_mstr as u5','wo_mstr.wo_engineer5','u5.eng_code')
-                ->selectRaw('service_req_mstr.* , asset_mstr.asset_desc, dept_mstr.dept_desc, users.username, wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, wo_mstr.wo_start_date,
+        $data = DB::table('service_req_mstr')
+            ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_assetcode')
+            ->leftjoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
+            ->leftjoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
+            ->leftjoin('wotyp_mstr', 'wotyp_mstr.wotyp_code', 'service_req_mstr.sr_wotype')
+            ->join('users', 'users.username', 'service_req_mstr.req_username')  //B211014
+            ->join('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
+            ->leftjoin('wo_mstr', 'wo_mstr.wo_nbr', 'service_req_mstr.wo_number')
+            ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
+            ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
+            ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
+            ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
+            ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
+            ->selectRaw('service_req_mstr.* , asset_mstr.asset_desc, dept_mstr.dept_desc, users.username, wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, wo_mstr.wo_start_date,
                     wo_mstr.wo_finish_date, wo_mstr.wo_action, wo_mstr.wo_status')
-                // ->selectRaw('wo_engineer1')
-                // ->selectRaw('u1.*')
-                // ->where('sr_status', '=', '1')
-                ->orderBy('sr_number', 'DESC')
-                //->get();
-                 ->paginate(10);
-                
+            // ->selectRaw('wo_engineer1')
+            // ->selectRaw('u1.*')
+            // ->where('sr_status', '=', '1')
+            ->orderBy('sr_number', 'DESC')
+            //->get();
+            ->paginate(10);
+
         //dd($data);
 
-    
+
 
         $datasset = DB::table('asset_mstr')
-                ->get();
+            ->get();
 
         $datauser = DB::table('users')
-                ->where('active', '=', 'Yes')
-                ->get();
+            ->where('active', '=', 'Yes')
+            ->get();
 
-        return view('service.servicereqbrowse', ['datas'=>$data, 'asset'=>$datasset, 'fromhome' => '', 'users'=>$datauser]);
+        return view('service.servicereqbrowse', ['datas' => $data, 'asset' => $datasset, 'fromhome' => '', 'users' => $datauser]);
     }
 
     //tyas, link dari Home
-    public function srbrowseopen(){
+    public function srbrowseopen()
+    {
         $data = DB::table('service_req_mstr')
-                ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_assetcode')
-                ->join('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
-                ->join('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
-                ->join('wotyp_mstr', 'wotyp_mstr.wotyp_code', 'service_req_mstr.sr_wotype')
-                ->join('users', 'users.name', 'service_req_mstr.req_by')
-                ->join('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
-                ->leftjoin('wo_mstr', 'wo_mstr.wo_nbr', 'service_req_mstr.wo_number')
-                ->leftjoin('eng_mstr as u1','wo_mstr.wo_engineer1','u1.eng_code')
-                ->leftjoin('eng_mstr as u2','wo_mstr.wo_engineer2','u2.eng_code')
-                ->leftjoin('eng_mstr as u3','wo_mstr.wo_engineer3','u3.eng_code')
-                ->leftjoin('eng_mstr as u4','wo_mstr.wo_engineer4','u4.eng_code')
-                ->leftjoin('eng_mstr as u5','wo_mstr.wo_engineer5','u5.eng_code')
-                ->selectRaw('service_req_mstr.* , asset_mstr.asset_desc, dept_mstr.dept_desc, users.username, wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, wo_mstr.wo_start_date,
+            ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_assetcode')
+            ->join('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
+            ->join('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
+            ->join('wotyp_mstr', 'wotyp_mstr.wotyp_code', 'service_req_mstr.sr_wotype')
+            ->join('users', 'users.name', 'service_req_mstr.req_by')
+            ->join('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
+            ->leftjoin('wo_mstr', 'wo_mstr.wo_nbr', 'service_req_mstr.wo_number')
+            ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
+            ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
+            ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
+            ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
+            ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
+            ->selectRaw('service_req_mstr.* , asset_mstr.asset_desc, dept_mstr.dept_desc, users.username, wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, wo_mstr.wo_start_date,
                     wo_mstr.wo_finish_date, wo_mstr.wo_action, wo_mstr.wo_status')
-                ->where('sr_status', '=', '1')
-                ->orderBy('sr_number', 'DESC')
-                ->paginate(10);
+            ->where('sr_status', '=', '1')
+            ->orderBy('sr_number', 'DESC')
+            ->paginate(10);
 
         $datasset = DB::table('asset_mstr')
-                ->get();
+            ->get();
 
         $datauser = DB::table('users')
-                ->where('active', '=', 'Yes')
-                ->get();
+            ->where('active', '=', 'Yes')
+            ->get();
 
-        return view('service.servicereqbrowse', ['datas'=>$data, 'asset'=>$datasset,'fromhome' => 'open', 'users'=>$datauser ]);
+        return view('service.servicereqbrowse', ['datas' => $data, 'asset' => $datasset, 'fromhome' => 'open', 'users' => $datauser]);
     }
 
-    public function searchsr(Request $req){
-        if($req->ajax()){
+    public function searchsr(Request $req)
+    {
+        if ($req->ajax()) {
             $srnumber = $req->get('srnumber');
             $asset = $req->get('asset');
             $priority = $req->get('priority');
@@ -792,7 +814,7 @@ class ServiceController extends Controller{
 
             // dd($requestby);
 
-            if($srnumber == "" && $asset == "" && $priority == ""  /*&& $period == "" */ && $status == "" && $requestby == ""){
+            if ($srnumber == "" && $asset == "" && $priority == ""  /*&& $period == "" */ && $status == "" && $requestby == "") {
                 // dd("test");
                 // $dummy = DB::table('service_req_mstr')
                 // ->selectRaw('wo_mstr.*,u1.eng_code as engcode1,u1.eng_desc as engdesc1,u2.eng_code as engcode2,u2.eng_desc as engdesc2,u3.eng_code as engcode3,u3.eng_desc as engdesc3')
@@ -827,7 +849,7 @@ class ServiceController extends Controller{
                 //     ->orderBy('sr_number', 'DESC')
                 //     ->paginate(10);
 
-                $data = DB::table('service_req_mstr')  
+                $data = DB::table('service_req_mstr')
                     ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_assetcode')
                     ->leftjoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
                     ->leftjoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
@@ -835,11 +857,11 @@ class ServiceController extends Controller{
                     ->join('users', 'users.username', 'service_req_mstr.req_username')
                     ->join('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
                     ->leftjoin('wo_mstr', 'wo_mstr.wo_nbr', 'service_req_mstr.wo_number')
-                    ->leftjoin('eng_mstr as u1','wo_mstr.wo_engineer1','u1.eng_code')
-                    ->leftjoin('eng_mstr as u2','wo_mstr.wo_engineer2','u2.eng_code')
-                    ->leftjoin('eng_mstr as u3','wo_mstr.wo_engineer3','u3.eng_code')
-                    ->leftjoin('eng_mstr as u4','wo_mstr.wo_engineer4','u4.eng_code')
-                    ->leftjoin('eng_mstr as u5','wo_mstr.wo_engineer5','u5.eng_code')
+                    ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
+                    ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
+                    ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
+                    ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
+                    ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
                     ->selectRaw('service_req_mstr.* , asset_mstr.asset_desc, dept_mstr.dept_desc, users.username, wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, wo_mstr.wo_start_date,
                         wo_mstr.wo_finish_date, wo_mstr.wo_action, wo_mstr.wo_status')
                     ->orderBy('sr_number', 'DESC')
@@ -847,8 +869,8 @@ class ServiceController extends Controller{
 
                 // dd($data);
 
-                return view('service.table-srbrowse', ['datas'=>$data]);
-            }else{
+                return view('service.table-srbrowse', ['datas' => $data]);
+            } else {
                 // dd("test2");
                 $tigahari = Carbon::now()->subDays(3)->toDateTimeString();
                 $limahari = Carbon::now()->subDays(5)->toDateTimeString();
@@ -869,19 +891,19 @@ class ServiceController extends Controller{
                 // }
 
                 if ($srnumber != '') {
-                    $kondisi .= " AND sr_number LIKE '%".$srnumber."%'";
+                    $kondisi .= " AND sr_number LIKE '%" . $srnumber . "%'";
                 }
                 if ($asset != '') {
-                    $kondisi .= " AND asset_desc LIKE '%".$asset."%'";
+                    $kondisi .= " AND asset_desc LIKE '%" . $asset . "%'";
                 }
-                if ($status != ''){
-                    $kondisi .= " AND sr_status = '".$status."' ";
+                if ($status != '') {
+                    $kondisi .= " AND sr_status = '" . $status . "' ";
                 }
-                if ($priority != ''){
-                    $kondisi .= " AND sr_priority = '".$priority."'";
+                if ($priority != '') {
+                    $kondisi .= " AND sr_priority = '" . $priority . "'";
                 }
-                if ($requestby != ''){
-                    $kondisi .= " AND req_username = '".$requestby."' ";
+                if ($requestby != '') {
+                    $kondisi .= " AND req_username = '" . $requestby . "' ";
                 }
 
                 // dd($kondisi);
@@ -906,7 +928,7 @@ class ServiceController extends Controller{
                 //     ->orderBy('sr_number', 'DESC')
                 //     ->paginate(10);
 
-                $data = DB::table('service_req_mstr')  
+                $data = DB::table('service_req_mstr')
                     ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_assetcode')
                     ->leftjoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
                     ->leftjoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
@@ -914,25 +936,26 @@ class ServiceController extends Controller{
                     ->join('users', 'users.username', 'service_req_mstr.req_username')
                     ->join('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
                     ->leftjoin('wo_mstr', 'wo_mstr.wo_nbr', 'service_req_mstr.wo_number')
-                    ->leftjoin('eng_mstr as u1','wo_mstr.wo_engineer1','u1.eng_code')
-                    ->leftjoin('eng_mstr as u2','wo_mstr.wo_engineer2','u2.eng_code')
-                    ->leftjoin('eng_mstr as u3','wo_mstr.wo_engineer3','u3.eng_code')
-                    ->leftjoin('eng_mstr as u4','wo_mstr.wo_engineer4','u4.eng_code')
-                    ->leftjoin('eng_mstr as u5','wo_mstr.wo_engineer5','u5.eng_code')
+                    ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
+                    ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
+                    ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
+                    ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
+                    ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
                     ->selectRaw('service_req_mstr.* , asset_mstr.asset_desc, dept_mstr.dept_desc, users.username, wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, wo_mstr.wo_start_date,
                         wo_mstr.wo_finish_date, wo_mstr.wo_action, wo_mstr.wo_status')
                     ->whereRaw($kondisi)
                     ->orderBy('sr_number', 'DESC')
                     ->paginate(10);
 
-                return view('service.table-srbrowse', ['datas'=>$data]);
+                return view('service.table-srbrowse', ['datas' => $data]);
             }
         }
     }
 
-    public function searchimpact(Request $req){
+    public function searchimpact(Request $req)
+    {
         // dd($req->all());
-        if($req->ajax()){
+        if ($req->ajax()) {
             $impact = $req->impact;
 
             // dd($impact);
@@ -946,19 +969,18 @@ class ServiceController extends Controller{
 
             // $tampungdesc = [];
 
-            for($i = 0; $i < $countarray; $i++){
+            for ($i = 0; $i < $countarray; $i++) {
 
                 // dump($array_impact[$i]);
 
                 $impactdesc = DB::table('imp_mstr')
-                            ->where('imp_code', '=', $array_impact[$i])
-                            ->selectRaw('imp_desc')
-                            ->first();
+                    ->where('imp_code', '=', $array_impact[$i])
+                    ->selectRaw('imp_desc')
+                    ->first();
 
                 // dump($impactdesc);
 
-                $desc .= $impactdesc->imp_desc.',';
-
+                $desc .= $impactdesc->imp_desc . ',';
             }
 
 
@@ -966,7 +988,7 @@ class ServiceController extends Controller{
             // dd($desc);
             // dd($desc);
 
-    
+
 
 
             // $output = $searchfail1[].$searchfail2.$searchfail3;
@@ -975,20 +997,21 @@ class ServiceController extends Controller{
         }
     }
 
-    public function useracceptance(Request $req){
+    public function useracceptance(Request $req)
+    {
         // dd(Session::get('username'));
         // dd('stop');
-        if(Session::get('role') == 'ADM'){
+        if (Session::get('role') == 'ADM') {
             // dd('aadamin');
             $datas = DB::table('service_req_mstr')
                 ->leftjoin('wo_mstr', 'wo_mstr.wo_nbr', 'service_req_mstr.wo_number')
                 ->leftjoin('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_assetcode')
                 ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
-                ->leftjoin('eng_mstr as u1','wo_mstr.wo_engineer1','u1.eng_code')
-                ->leftjoin('eng_mstr as u2','wo_mstr.wo_engineer2','u2.eng_code')
-                ->leftjoin('eng_mstr as u3','wo_mstr.wo_engineer3','u3.eng_code')
-                ->leftjoin('eng_mstr as u4','wo_mstr.wo_engineer4','u4.eng_code')
-                ->leftjoin('eng_mstr as u5','wo_mstr.wo_engineer5','u5.eng_code')
+                ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
+                ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
+                ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
+                ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
+                ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
                 ->selectRaw('service_req_mstr.* ,wo_mstr.* , asset_mstr.asset_desc, dept_mstr.dept_desc, u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55')
                 //->where('wo_status', '=', 'completed')
                 // ->where('sr_status', '=', 4) A211014
@@ -1002,21 +1025,23 @@ class ServiceController extends Controller{
 
             $datasset = DB::table('asset_mstr')
                 ->get();
-        }else{
+        } else {
             $datas = DB::table('service_req_mstr')
                 ->join('wo_mstr', 'wo_mstr.wo_nbr', 'service_req_mstr.wo_number')
                 ->leftjoin('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_assetcode')
                 ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
-                ->leftjoin('eng_mstr as u1','wo_mstr.wo_engineer1','u1.eng_code')
-                ->leftjoin('eng_mstr as u2','wo_mstr.wo_engineer2','u2.eng_code')
-                ->leftjoin('eng_mstr as u3','wo_mstr.wo_engineer3','u3.eng_code')
-                ->leftjoin('eng_mstr as u4','wo_mstr.wo_engineer4','u4.eng_code')
-                ->leftjoin('eng_mstr as u5','wo_mstr.wo_engineer5','u5.eng_code')
+                ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
+                ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
+                ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
+                ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
+                ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
                 ->selectRaw('service_req_mstr.* ,wo_mstr.* , asset_mstr.asset_desc, dept_mstr.dept_desc, u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55')
                 //->where('wo_status', '=', 'completed')
                 // ->where('sr_status', '=', 4) A211014
                 //->where('sr_status', '=', 7) A211019
-                ->where(function($query){$query->where('sr_status','=',7) ->orWhere('sr_status','=',6);})
+                ->where(function ($query) {
+                    $query->where('sr_status', '=', 7)->orWhere('sr_status', '=', 6);
+                })
                 ->where('req_username', '=', Session::get('username'))
                 ->orderBy('sr_updated_at', 'DESC')
                 ->paginate(10);
@@ -1027,37 +1052,38 @@ class ServiceController extends Controller{
                 ->get();
         }
 
-       
+
         //dd($datas);
 
         return view('service.useracceptance', ['dataua' => $datas, 'asset' => $datasset]);
     }
 
-    public function acceptance(Request $req){
+    public function acceptance(Request $req)
+    {
         // dd($req->all());
         // $data = explode( ',', $req->imgname[0] );
         // dd($data);
         // $emak = base64_decode($data[1]);
         // file_put_contents('../public/upload/test1.png', $emak);
         // dd('stop');
-        switch($req->input('action')){
+        switch ($req->input('action')) {
             case 'complete':
                 //dd('lg maintenance');
                 $srnumber = $req->hiddensr;
                 $wonumber = $req->hiddenwo;
 
                 // $albumraw = $req->imgname;
-        
+
                 // dd($albumraw);
                 $k = 0;
                 // foreach($albumraw as $olah1){
                 //     $waktu = (string)date('dmY',strtotime(Carbon::now())).(string)date('His',strtotime(Carbon::now()));
                 //     // dd($waktu);
                 //     $jadi1 = explode(',', $olah1);
-                    
+
                 //     $jadi2 = base64_decode($jadi1[2]);
 
-                    
+
                 //     $lenstr = strripos($jadi1[0],'.');
                 //     $test = substr($jadi1[0],$lenstr);
                 //     // dd($test);
@@ -1070,9 +1096,9 @@ class ServiceController extends Controller{
                 //     $alamaturl = '../public/upload/'.$test5;
                 //     // dd($alamaturl);
 
-                    
+
                 //     file_put_contents($alamaturl, $jadi2);
-                    
+
                 //     DB::table('acceptance_image')
                 //         ->insert([
                 //             'file_srnumber' => $srnumber,
@@ -1087,19 +1113,19 @@ class ServiceController extends Controller{
                 // }
 
                 DB::table('service_req_mstr')
-                        ->where('sr_number', '=', $srnumber)
-                        ->update([
-                            'sr_status' => '5',
-                            'sr_accept_date' => Carbon::now()->toDateTimeString(),  //   C211014
-                        ]);
+                    ->where('sr_number', '=', $srnumber)
+                    ->update([
+                        'sr_status' => '5',
+                        'sr_accept_date' => Carbon::now()->toDateTimeString(),  //   C211014
+                    ]);
 
                 DB::table('wo_mstr')
-                        ->where('wo_nbr', '=', $wonumber)
-                        ->update([
-                            'wo_status' => 'closed',
-                        ]);
+                    ->where('wo_nbr', '=', $wonumber)
+                    ->update([
+                        'wo_status' => 'closed',
+                    ]);
 
-                toast('Service Request '.$srnumber.' Completed ', 'success');
+                toast('Service Request ' . $srnumber . ' Completed ', 'success');
                 return back();
 
                 // if ($req->hasFile('imgname')) {
@@ -1123,23 +1149,23 @@ class ServiceController extends Controller{
                 //                     'sr_status' => '5',
                 //                 ]);
 
-                        
-                                
-                        
-                        
+
+
+
+
                 //     }else{
                 //         toast('No Photo File', 'error');
                 //         return back();
                 //     }
                 // }else{
-                    // toast('No Photo File', 'error');
-                    // return back();
+                // toast('No Photo File', 'error');
+                // return back();
                 // }
-                
 
-            break;
 
-            case 'incomplete' :
+                break;
+
+            case 'incomplete':
                 //dd('lagi maintenance 1');
                 $uncompletereason = $req->uncompletenote;
                 $srnumber = $req->hiddensr;
@@ -1147,62 +1173,63 @@ class ServiceController extends Controller{
 
                 // dd('sampi sini jalan');
                 DB::table('service_req_mstr')
-                                ->where('sr_number', '=', $srnumber)
-                                ->update([
-                                    // 'sr_status' => '5', --> A210927 status ganti reject bukan close
-                                    'sr_status' => '6'
-                                ]);
+                    ->where('sr_number', '=', $srnumber)
+                    ->update([
+                        // 'sr_status' => '5', --> A210927 status ganti reject bukan close
+                        'sr_status' => '6'
+                    ]);
 
                 DB::table('wo_mstr')
-                        ->where('wo_nbr', '=', $wonumber)
-                        ->update([
-                            // 'wo_status' => 'closed', --> A210927 status ganti reject bukan close
-                            'wo_status' => 'incomplete',
-                            'wo_reject_reason' => $uncompletereason,
-                        ]);
-                
+                    ->where('wo_nbr', '=', $wonumber)
+                    ->update([
+                        // 'wo_status' => 'closed', --> A210927 status ganti reject bukan close
+                        'wo_status' => 'incomplete',
+                        'wo_reject_reason' => $uncompletereason,
+                    ]);
+
                 // $note = [''.$wonumber.' Uncomplete'];
                 // dd($note);
-                toast('Service Request '.$srnumber.' Incomplete ', 'success');
+                toast('Service Request ' . $srnumber . ' Incomplete ', 'success');
                 return back();
                 //return redirect()->route('srcreate');
-            break;
+                break;
         }
     }
 
-    public function imageview(Request $req){
+    public function imageview(Request $req)
+    {
         //dd($req->all());
         $wonumber = $req->wonumber;
 
         $gambar = DB::table('acceptance_image')
-                    ->where('file_wonumber', '=', $wonumber)
-                    ->get();
+            ->where('file_wonumber', '=', $wonumber)
+            ->get();
 
         $output = "";
-        foreach($gambar as $gambar) {
+        foreach ($gambar as $gambar) {
             $output .= '<tr>
                     <td><a href="#" class="btn deleterow btn-danger"><i class="icon-table fa fa-trash fa-lg"></i></a>
                     &nbsp
-                    <input type="hidden" value="'.$gambar->accept_img_id.'" class="rowval"/>
-                    <td><a href="/downloadwofinish/'.$gambar->accept_img_id.'" target="_blank">'.$gambar->file_name.'</a></td>
+                    <input type="hidden" value="' . $gambar->accept_img_id . '" class="rowval"/>
+                    <td><a href="/downloadwofinish/' . $gambar->accept_img_id . '" target="_blank">' . $gambar->file_name . '</a></td>
                 </tr>';
         }
 
         //return response()->json($gambar);
         return response($output);
-        
     }
 
-    public function useracceptancesearch(Request $req){
-        if($req->ajax()){
+    public function useracceptancesearch(Request $req)
+    {
+        if ($req->ajax()) {
             $srnumber = $req->get('srnumber');
             $asset = $req->get('asset');
             $priority = $req->get('priority');
             // $period = $req->get('period');
 
-            if($srnumber == "" && $asset == "" && $priority == ""){
-                
-                if(Session::get('role') == 'ADM'){
+            if ($srnumber == "" && $asset == "" && $priority == "") {
+
+                if (Session::get('role') == 'ADM') {
                     // dd('aaaadmin');
                     $datas = DB::table('service_req_mstr')
                         ->join('wo_mstr', 'wo_mstr.wo_nbr', 'service_req_mstr.wo_number')
@@ -1214,10 +1241,10 @@ class ServiceController extends Controller{
                         ->orderBy('sr_updated_at', 'DESC')
                         // ->where('req_username', '=', Session::get('username'))
                         ->paginate(10);
-        
+
                     $datasset = DB::table('asset_mstr')
                         ->get();
-                }else{
+                } else {
                     $datas = DB::table('service_req_mstr')
                         ->join('wo_mstr', 'wo_mstr.wo_nbr', 'service_req_mstr.wo_number')
                         ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_assetcode')
@@ -1228,34 +1255,34 @@ class ServiceController extends Controller{
                         ->selectRaw('service_req_mstr.* , wo_mstr.*, asset_mstr.asset_desc, asset_mstr.asset_code, dept_mstr.*')
                         ->orderBy('sr_updated_at', 'DESC')
                         ->paginate(10);
-        
+
                     $datasset = DB::table('asset_mstr')
                         ->get();
                 }
 
                 return view('service.table-ua', ['dataua' => $datas]);
-            }else{
+            } else {
                 // $tigahari = Carbon::now()->subDays(3)->toDateTimeString();
                 // $limahari = Carbon::now()->subDays(5)->toDateTimeString();
 
 
                 // dd($tigahari,$limahari);
 
-                $kondisi = "sr_created_at > 01-01-1900";      
+                $kondisi = "sr_created_at > 01-01-1900";
 
                 if ($srnumber != '') {
-                    $kondisi .= " AND sr_number LIKE '%".$srnumber."%'";
+                    $kondisi .= " AND sr_number LIKE '%" . $srnumber . "%'";
                 }
                 if ($asset != '') {
-                    $kondisi .= " and asset_desc like '%".$asset."%'";
+                    $kondisi .= " and asset_desc like '%" . $asset . "%'";
                 }
-                if ($priority != ''){
-                    $kondisi .= " and sr_priority = '".$priority."'";
+                if ($priority != '') {
+                    $kondisi .= " and sr_priority = '" . $priority . "'";
                 }
 
                 // dd($kondisi);
 
-                if(Session::get('role') == 'ADM'){
+                if (Session::get('role') == 'ADM') {
                     $datas = DB::table('service_req_mstr')
                         ->join('wo_mstr', 'wo_mstr.wo_nbr', 'service_req_mstr.wo_number')
                         ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_assetcode')
@@ -1267,10 +1294,10 @@ class ServiceController extends Controller{
                         ->orderBy('sr_updated_at', 'DESC')
                         // ->where('req_username', '=', Session::get('username'))
                         ->paginate(10);
-        
+
                     $datasset = DB::table('asset_mstr')
                         ->get();
-                }else{
+                } else {
                     $datas = DB::table('service_req_mstr')
                         ->join('wo_mstr', 'wo_mstr.wo_nbr', 'service_req_mstr.wo_number')
                         ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_assetcode')
@@ -1282,17 +1309,18 @@ class ServiceController extends Controller{
                         ->selectRaw('service_req_mstr.* , wo_mstr.*, asset_mstr.asset_desc, asset_mstr.asset_code, dept_mstr.*')
                         ->orderBy('sr_updated_at', 'DESC')
                         ->paginate(10);
-        
+
                     $datasset = DB::table('asset_mstr')
                         ->get();
                 }
 
-                return view('service.table-ua', ['dataua'=>$datas]);
+                return view('service.table-ua', ['dataua' => $datas]);
             }
         }
     }
 
-    public function donlodsr(Request $req) { /* blade : servicereqbrowse */
+    public function donlodsr(Request $req)
+    { /* blade : servicereqbrowse */
         $srnbr    = $req->srnumber;
         $asset    = $req->asset;
         $status   = $req->status;
@@ -1300,6 +1328,6 @@ class ServiceController extends Controller{
         $period   = $req->period;
         $reqby    = $req->reqby;
 
-        return Excel::download(new ExportSR($srnbr,$status,$asset,$priority,$period,$reqby),'Service Request.xlsx');
+        return Excel::download(new ExportSR($srnbr, $status, $asset, $priority, $period, $reqby), 'Service Request.xlsx');
     }
 }
