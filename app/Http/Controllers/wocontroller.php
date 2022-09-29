@@ -1038,7 +1038,7 @@ class wocontroller extends Controller
             'wo_repair_type'   => $req->crepairtype,
             'wo_asset'         => $req->c_asset,
             'wo_priority'      => $req->c_priority,
-            'wo_status'        => 'open',
+            'wo_status'        => 'plan',
             'wo_schedule'      => $req->c_schedule,
             'wo_duedate'       => $req->c_duedate,
             'wo_note'          => $req->c_note,
@@ -1103,7 +1103,7 @@ class wocontroller extends Controller
             toast('WO ' . $req->e_nowo . ' is being used right now', 'error');
             return redirect()->route('wocreatedirectmenu');
         }
-        if ($dataaccess->wo_status != 'open') {
+        if ($dataaccess->wo_status != 'plan') {
             toast('WO ' . $req->e_nowo . ' status has changed, please recheck', 'error');
             return redirect()->route('wocreatedirectmenu');
         }
@@ -1149,7 +1149,7 @@ class wocontroller extends Controller
             toast('WO ' . $req->e_nowo . ' is being used right now', 'error');
             return redirect()->route('wocreatemenu');
         }
-        if ($dataaccess->wo_status != 'open') {
+        if ($dataaccess->wo_status != 'plan') {
             toast('WO ' . $req->e_nowo . ' status has changed, please recheck', 'error');
             return redirect()->route('wocreatedirectmenu');
         }

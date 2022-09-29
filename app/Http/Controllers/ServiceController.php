@@ -182,6 +182,7 @@ class ServiceController extends Controller{
                             ->where('approver', '=', 1)
                             ->where('eng_active', '=', 'Yes')
                             ->where('eng_code', '=', Session::get('username'))
+                            ->orderBy('eng_code')
                             ->first();
 
         if($kepalaengineer || Session::get('role') == 'ADM'){
@@ -230,6 +231,7 @@ class ServiceController extends Controller{
         if($req->ajax()){
             $eng = DB::table('eng_mstr')
                 ->where('eng_active', '=', 'Yes')
+                ->orderBy('eng_code')
                 ->get();
 
             // dd($eng);
@@ -437,7 +439,7 @@ class ServiceController extends Controller{
                         'wo_repair_code1' => null,
                         'wo_repair_code2' => null,
                         'wo_repair_code3' => null,
-                        'wo_status' => 'open',
+                        'wo_status' => 'plan', /* awalnya open, tapi karena ada WO release, status open hanya jika sudah whsconfirm */
                         'wo_repair_group' => null,
                         'wo_repair_type' => "code",
                         'wo_schedule' => $req->scheduledate,
@@ -564,7 +566,7 @@ class ServiceController extends Controller{
                         'wo_repair_code1' => null,
                         'wo_repair_code2' => null,
                         'wo_repair_code3' => null,
-                        'wo_status' => 'open',
+                        'wo_status' => 'plan', /* awalnya open, tapi karena ada WO release, status open hanya jika sudah whsconfirm */
                         'wo_repair_group' => $req->repgroup,
                         'wo_repair_type' => "group",
                         'wo_schedule' => $req->scheduledate,

@@ -24,7 +24,7 @@ class WORelease extends Controller
 
         $data = DB::table('wo_mstr')
             ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset')
-            ->whereIn('wo_status',['open','Released','whsconfirm'])
+            ->whereIn('wo_status', ['open', 'Released', 'whsconfirm', 'plan', 'started'])
             ->where(function ($query) {
                 $query->where('wo_engineer1', '=', Session()->get('username'))
                     ->orwhere('wo_engineer2', '=', Session()->get('username'))
@@ -100,12 +100,12 @@ class WORelease extends Controller
             ->whereWo_dets_nbr($data->wo_nbr)
             ->get();
 
-        if($data->wo_status == 'open') {
+        if ($data->wo_status == 'plan') {
 
             if ($data->wo_repair_code1 != "") {
 
                 $sparepart1 = DB::table('wo_mstr')
-                    ->select('wo_repair_code1 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty','wo_status')
+                    ->select('wo_repair_code1 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status')
                     ->leftJoin('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
                     ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                     ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -131,7 +131,7 @@ class WORelease extends Controller
             if ($data->wo_repair_code2 != "") {
                 // dump('repaircode2');
                 $sparepart2 = DB::table('wo_mstr')
-                    ->select('wo_repair_code2 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty','wo_status')
+                    ->select('wo_repair_code2 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status')
                     ->leftJoin('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
                     ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                     ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -157,7 +157,7 @@ class WORelease extends Controller
             if ($data->wo_repair_code3 != "") {
                 // dump('repaircode3');
                 $sparepart3 = DB::table('wo_mstr')
-                    ->select('wo_repair_code3 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty','wo_status')
+                    ->select('wo_repair_code3 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status')
                     ->leftJoin('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
                     ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                     ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -168,10 +168,10 @@ class WORelease extends Controller
                     ->orderBy('ins_code', 'asc')
                     ->get();
 
-                    $rc3 = DB::table('wo_mstr')
-                    ->select('repm_code','repm_desc')
-                    ->join('rep_master','wo_mstr.wo_repair_code3','rep_master.repm_code')
-                    ->where('wo_id','=', $id)
+                $rc3 = DB::table('wo_mstr')
+                    ->select('repm_code', 'repm_desc')
+                    ->join('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
+                    ->where('wo_id', '=', $id)
                     ->get();
 
                 // $tempSP3 = (new CreateTempTable())->createSparePartUsed($sparepart3);
@@ -185,7 +185,7 @@ class WORelease extends Controller
             if ($data->wo_repair_code1 == "" && $data->wo_repair_code2 == "" && $data->wo_repair_code3 == "") {
                 // dd('aa');
                 $combineSP = DB::table('xxrepgroup_mstr')
-                    ->select('repm_code as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty','wo_status')
+                    ->select('repm_code as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status')
                     ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
                     ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                     ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -200,93 +200,101 @@ class WORelease extends Controller
                 // dd($combineSP);
 
                 $rc = DB::table('xxrepgroup_mstr')
-                    ->select('repm_code','repm_desc')
+                    ->select('repm_code', 'repm_desc')
                     ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
                     ->get();
-
             }
-
         } /* if($data->wo_status == 'open') */ else {
             $combineSP = DB::table('wo_mstr')
-                ->select('wo_dets_rc as repair_code', 'wo_dets_id as repdet_step', 'wo_dets_ins as ins_code', 
-                'insd_part_desc', 'wo_dets_sp as insd_part', 'insd_det.insd_um', 'insd_qty','wo_status','wo_dets_line')
-                ->leftJoin('wo_dets','wo_mstr.wo_nbr','wo_dets.wo_dets_nbr')
-                ->leftJoin('insd_det', function($join)
-                {
+                ->select(
+                    'wo_dets_rc as repair_code',
+                    'wo_dets_id as repdet_step',
+                    'wo_dets_ins as ins_code',
+                    'insd_part_desc',
+                    'wo_dets_sp as insd_part',
+                    'insd_det.insd_um',
+                    'insd_qty',
+                    'wo_status',
+                    'wo_dets_line'
+                )
+                ->leftJoin('wo_dets', 'wo_mstr.wo_nbr', 'wo_dets.wo_dets_nbr')
+                ->leftJoin('insd_det', function ($join) {
                     $join->on('wo_dets.wo_dets_ins', '=', 'insd_det.insd_code');
                     $join->on('wo_dets.wo_dets_sp', '=', 'insd_det.insd_part');
                 })
                 ->where('wo_id', '=', $id)
+                ->orderBy('wo_dets_line')
                 ->orderBy('ins_code', 'asc')
                 ->orderBy('repdet_step', 'asc')
                 ->get();
 
-                
-            $rc = DB::table('wo_mstr')
-                ->select('repm_code','repm_desc')
-                ->join('wo_dets','wo_mstr.wo_nbr','wo_dets.wo_dets_nbr')
-                ->join('rep_master','wo_dets.wo_dets_rc','rep_master.repm_code')
-                ->where('wo_id','=', $id)
-                ->get();
 
+            $rc = DB::table('wo_mstr')
+                ->select('repm_code', 'repm_desc')
+                ->join('wo_dets', 'wo_mstr.wo_nbr', 'wo_dets.wo_dets_nbr')
+                ->join('rep_master', 'wo_dets.wo_dets_rc', 'rep_master.repm_code')
+                ->where('wo_id', '=', $id)
+                ->get();
         } /*  else ($data->wo_status == 'open') */
 
         // dd($combineSP);
 
-        return view('workorder.worelease-detail', compact('data', 'spdata', 'combineSP', 'rpdata', 'insdata','rc', 'wodetdata'));
+        return view('workorder.worelease-detail', compact('data', 'spdata', 'combineSP', 'rpdata', 'insdata', 'rc', 'wodetdata'));
     }
 
     public function submitrelease(Request $req)
     {
-        dump($req->all());
+        // dd($req->all());
+
         DB::beginTransaction();
 
         try {
             foreach ($req->partneed as $a => $key) {
+                if($req->line[$a] == "") {
+                    $cekline = DB::table('wo_dets')
+                    ->where('Wo_dets_nbr', '=', $req->hide_wonum)
+                    ->max('wo_dets_line');
+
+                    $dline = $cekline + 1;
+                } else {
+                    $dline = $req->line[$a];
+                }
+                
                 $cek = DB::table('wo_dets')
-                    ->where('Wo_dets_nbr','=',$req->hide_wonum)
-                    ->where('wo_dets_line','=',$req->line[$a])
+                    ->where('Wo_dets_nbr', '=', $req->hide_wonum)
+                    ->where('wo_dets_line', '=', $dline)
                     ->count();
 
-                dump($cek);
-                if($cek == 0) {
-                    dump($req->line[$a]);
-                    dd("tiga");
-                    /* DB::table('wo_dets')->insert([
+                if ($cek == 0) {
+                    DB::table('wo_dets')->insert([
                         'wo_dets_nbr' => $req->hide_wonum,
-                        'wo_dets_line' => $req->line[$a],
+                        'wo_dets_line' => $dline,
                         'wo_dets_rc' => $req->repcode[$a],
                         'wo_dets_sp' => $req->partneed[$a],
                         'wo_dets_sp_qty' => $req->qtyrequest[$a],
                         'wo_dets_ins' => $req->inscode[$a] ?? null,
                         'wo_dets_created_at' => Carbon::now()->toDateTimeString(),
-                    ]); */
+                    ]);
                 } else {
-                    if($req->tick[$a] == 0) {
-                        dump($req->line[$a]);
-                        dump('satu');
-                        DB::table('wo_dets')->update(
-                        [
-                            'wo_dets_nbr' => $req->hide_wonum,
-                            'wo_dets_line' => $req->line[$a],
-                        ],
-                        [
-                            'wo_dets_rc' => $req->repcode[$a],
-                            'wo_dets_sp' => $req->partneed[$a],
-                            'wo_dets_ins' => $req->inscode[$a] ?? null,
-                            'wo_dets_sp_qty' => $req->qtyrequest[$a],
-                            'wo_dets_created_at' => Carbon::now()->toDateTimeString(),
-                        ]
-                    ); 
+                    if ($req->tick[$a] == 0) {
+                        DB::table('wo_dets')
+                            ->where('Wo_dets_nbr', '=', $req->hide_wonum)
+                            ->where('wo_dets_line', '=', $dline)
+                            ->update(
+                                [
+                                    'wo_dets_rc' => $req->repcode[$a],
+                                    'wo_dets_sp' => $req->partneed[$a],
+                                    'wo_dets_ins' => $req->inscode[$a] ?? null,
+                                    'wo_dets_sp_qty' => $req->qtyrequest[$a],
+                                    'wo_dets_created_at' => Carbon::now()->toDateTimeString(),
+                                ]
+                            );
                     } else {
-                        dump($req->line[$a]);
-                        dd('dua');
-                        /*DB::table('wo_dets')
-                            ->whereWo_dets_nbr($req->hide_wonum)
-                            ->whereWo_dets_line($req->line[$a])
-                            ->delete(); */
+                        DB::table('wo_dets')
+                            ->where('Wo_dets_nbr', '=', $req->hide_wonum)
+                            ->where('wo_dets_line', '=', $dline)
+                            ->delete(); 
                     }
-                    
                 }
             }
 
@@ -297,13 +305,30 @@ class WORelease extends Controller
                     'wo_updated_at' => Carbon::now()->toDateTimeString(),
                 ]);
 
+            /* cek status */
+            $cekstatus = DB::table('wo_dets')
+                ->where('wo_dets_nbr', '=', $req->hide_wonum)
+                ->where(function ($query) {
+                    $query->where('wo_dets_wh_conf', '', 0)
+                          ->orWhere('wo_dets_wh_conf', '=', null);
+                })
+                ->count();
+
+            if($cekstatus == 0) {
+                DB::table('wo_mstr')
+                ->where('wo_nbr', '=', $req->hide_wonum)
+                ->update([
+                    'wo_status' => 'open',
+                    'wo_updated_at' => Carbon::now()->toDateTimeString(),
+                ]);
+            }
 
             DB::commit();
 
             toast('WO Successfuly Released !', 'success');
             return redirect()->route('browseRelease');
         } catch (Exception $e) {
-            // dd($e);
+            dd($e);
             DB::rollBack();
             toast('WO Release Failed', 'error');
             return redirect()->route('browseRelease');

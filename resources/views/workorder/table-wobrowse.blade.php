@@ -24,16 +24,17 @@
     <input type="hidden" name='wonbrr' value="{{$show->wo_nbr}}">
     <a href="javascript:void(0)" class="viewwo" data-toggle="tooltip"  title="View WO"  data-wonbr="{{$show->wo_nbr}}" data-srnbr="{{$show->wo_sr_nbr}}" data-woengineer="{{$show->wo_engineer1}}" data-woasset="{{$show->wo_asset}}" data-schedule="{{$show->wo_schedule}}" data-duedate="{{$show->wo_duedate}}"><i class="icon-table fa fa-eye fa-lg"></i></a>
 
-    @if($show->wo_status == 'open' || $show->wo_status == 'plan')
+    @if($show->wo_status == 'plan')
     &nbsp;
     <a href="javascript:void(0)" class="editwo2" data-toggle="tooltip"  title="Edit WO"  data-target="#editModal" data-wonbr="{{$show->wo_nbr}}" data-srnbr="{{$show->wo_sr_nbr}}" data-woengineer="{{$show->wo_engineer1}}" data-woasset="{{$show->wo_asset}}" data-schedule="{{$show->wo_schedule}}" data-duedate="{{$show->wo_duedate}}"><i class="icon-table fa fa-edit fa-lg"></i></a>
     
     @endif
+    <!-- ditutup karena PM langsung ada datanya
     @if($show->wo_status =='plan' && $usernow[0]->approver == 1)
     &nbsp;
     <a href="javascript:void(0)" class="approvewo" data-toggle="tooltip"  title="Approve WO"  data-target="#approveModal" data-wonbr="{{$show->wo_nbr}}"  data-woengineer="{{$show->wo_engineer1}}" data-woasset="{{$show->wo_asset}}" data-schedule="{{$show->wo_schedule}}" data-duedate="{{$show->wo_duedate}}"><i class="icon-table fa fa-thumbs-up fa-lg"></i></a>
-    
-    @endif
+  
+    @endif -->
     <!-- @if ($show->wo_status == 'closed')
     <a href="javascript:void(0)" class="reopen"  data-wonbr="{{$show->wo_nbr}}"  data-woengineer="{{$show->wo_engineer1}}" data-woasset="{{$show->wo_asset}}" data-schedule="{{$show->wo_schedule}}" data-duedate="{{$show->wo_duedate}}"><i class="icon-table fa fa-redo fa-lg"></i></a>      
     &ensp;

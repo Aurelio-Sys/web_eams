@@ -98,11 +98,13 @@
 
                             <!-- Qty Conf -->
                             <!-- @php($qwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->count()) -->
-                            @php($qwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_line','=',$dline)->count())
+                            <!-- @php($qwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_line','=',$dline)->count()) jika line yang tersimpan mulai dari 2, ini tidak bisa digunakan -->
+                            @php($qwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->count())
                             @if($qwhsconf == 0)
                                 @php($dqtyreq = $datas->insd_qty)
                                 @php($whsconf = "")
                                 @php($whsdate = "")
+                                @php($dqtyrequire = 0)
                             @else
                                 <!-- @php($cwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->first()) -->
                                 @php($cwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_line','=',$datas->wo_dets_line)->first())
@@ -110,13 +112,14 @@
                                 @php($whsconf = $cwhsconf->wo_dets_wh_conf)
                                 @php($whsdate = $cwhsconf->wo_dets_wh_date)
                                 @php($dline = $cwhsconf->wo_dets_line)
+                                @php($dqtyrequire = $cwhsconf->wo_dets_sp_qty)
                             @endif
 
                             <tr>
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$datas->repair_code}}
                                     <input type="hidden" name="repcode[]" value="{{$datas->repair_code}}" />
-                                    <input type="hidden" name="line[]" value="{{$dline}}" />
+                                    <input type="hidden" name="line[]" id="line" value="{{$dline}}" />
                                     @php($dline = $dline + 1)
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
@@ -128,7 +131,7 @@
                                     <input type="hidden" name="partneed[]" value="{{$datas->insd_part}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    {{$datas->insd_qty}}
+                                    {{number_format($datas->insd_qty ?? $dqtyrequire,2)}}
                                     <input type="hidden" name="qtyreq[]" value="{{$datas->insd_qty}}" />
                                 </td>
                                 @if($whsconf == "1") <!-- jika warehouse sudah melakukan confirm -->
@@ -142,9 +145,9 @@
                                     </td>
                                 @else
                                     <td>
-                                        <input type="number" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$datas->insd_qty ?? 0}}" required />
+                                        <input type="number" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$datas->insd_qty ?? $dqtyrequire}}" required />
                                     </td>
-                                    @if($datas->wo_status == "open") <!-- jika belum pernah direlease akan muncul tombol delete -->
+                                    @if($datas->wo_status == "plan") <!-- jika belum pernah direlease akan muncul tombol delete -->
                                         <td style="vertical-align:middle;text-align:center;">
                                             <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete">
                                             <input type="hidden" class="tick" name="tick[]" value="0" />
@@ -199,7 +202,7 @@
     $(document).ready(function() {
         $("#addrow").on("click", function() {
 
-
+            var line = document.getElementById('line').value;
 
             var rowCount = $('#createTable tr').length;
 
@@ -253,6 +256,7 @@
 
             cols += '<td>';
             cols += '<input type="number" class="form-control qtyrequest" name="qtyrequest[]" step="1" min="1" required />';
+            cols += '<input type="hidden" class="line" name="line[]" id="line" />';
             cols += '</td>';
 
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
