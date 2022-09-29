@@ -20,7 +20,9 @@
                 </div>
                 <div class="modal-body">
 
-                    <?php 
+                    <?php
+                    // dd('');
+                    
                     if($alert == null){
                         $datavaluesrprefix = "";
                         $datavaluewoprefix = "";
@@ -31,7 +33,7 @@
                         $datavaluewonbr = "";
                         $datavaluewtnbr = "";
                         $datavaluewdnbr = "";
-                        $datavaluebobnbr = "";
+                        $datavaluebonbr = "";
                         $datayear = "";
                     }else{
                         $datavaluesrprefix = $alert->sr_prefix;

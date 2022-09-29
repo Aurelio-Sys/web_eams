@@ -361,12 +361,20 @@ class wocontroller extends Controller
         //dd($req->get('c_engineer')[4]);
         $tablern = DB::table('running_mstr')
             ->first();
-        $tempnewrunnbr = strval(intval($tablern->wd_nbr) + 1);
-        $newtemprunnbr = '';
-        if (strlen($tempnewrunnbr) < 4) {
-            $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+        $newyear = Carbon::now()->format('y');
+
+        if ($tablern->year == $newyear) {
+            $tempnewrunnbr = strval(intval($tablern->wd_nbr) + 1);
+            $newtemprunnbr = '';
+
+            if (strlen($tempnewrunnbr) < 4) {
+                $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+            }
+        } else {
+            $newtemprunnbr = "0001";
         }
-        $runningnbr = $tablern->wd_prefix . '-' . $tablern->year . '-' . $newtemprunnbr;
+
+        $runningnbr = $tablern->wd_prefix . '-' . $newyear . '-' . $newtemprunnbr;
         if ($wotype == 'auto') {
             if (isset($req->repairtype)) {
                 if ($req->repairtype == 'manual') {
@@ -794,6 +802,7 @@ class wocontroller extends Controller
         DB::table('running_mstr')
             ->where('wd_nbr', '=', $tablern->wd_nbr)
             ->update([
+                'year' => $newyear,
                 'wd_nbr' => $newtemprunnbr
             ]);
 
@@ -889,12 +898,21 @@ class wocontroller extends Controller
         //dd($req->get('c_engineer')[4]);
         $tablern = DB::table('running_mstr')
             ->first();
-        $tempnewrunnbr = strval(intval($tablern->wo_nbr) + 1);
-        $newtemprunnbr = '';
-        if (strlen($tempnewrunnbr) < 4) {
-            $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+        $newyear = Carbon::now()->format('y');
+
+        if ($tablern->year == $newyear) {
+            $tempnewrunnbr = strval(intval($tablern->wo_nbr) + 1);
+            $newtemprunnbr = '';
+
+            if (strlen($tempnewrunnbr) < 4) {
+                $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+            }
+        } else {
+            $newtemprunnbr = "0001";
         }
-        $runningnbr = $tablern->wo_prefix . '-' . $tablern->year . '-' . $newtemprunnbr;
+
+
+        $runningnbr = $tablern->wo_prefix . '-' . $newyear . '-' . $newtemprunnbr;
 
         $dataarray = array(
             'wo_nbr'           => $runningnbr,
@@ -919,6 +937,7 @@ class wocontroller extends Controller
         DB::table('running_mstr')
             ->where('wo_nbr', '=', $tablern->wo_nbr)
             ->update([
+                'year' => $newyear,
                 'wo_nbr' => $newtemprunnbr
             ]);
         $assettable = DB::table('asset_mstr')
@@ -1013,12 +1032,22 @@ class wocontroller extends Controller
         //dd($req->get('c_engineer')[4]);
         $tablern = DB::table('running_mstr')
             ->first();
-        $tempnewrunnbr = strval(intval($tablern->wo_nbr) + 1);
-        $newtemprunnbr = '';
-        if (strlen($tempnewrunnbr) < 4) {
-            $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+        $newyear = Carbon::now()->format('y');
+
+        if ($tablern->year == $newyear) {
+            $tempnewrunnbr = strval(intval($tablern->wo_nbr) + 1);
+            $newtemprunnbr = '';
+
+            if (strlen($tempnewrunnbr) < 4) {
+                $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+            }
+        } else {
+            $newtemprunnbr = "0001";
         }
-        $runningnbr = $tablern->wo_prefix . '-' . $tablern->year . '-' . $newtemprunnbr;
+
+
+
+        $runningnbr = $tablern->wo_prefix . '-' . $newyear . '-' . $newtemprunnbr;
 
         $dataarray = array(
             'wo_nbr'           => $runningnbr,
@@ -1075,6 +1104,7 @@ class wocontroller extends Controller
         DB::table('running_mstr')
             ->where('wo_nbr', '=', $tablern->wo_nbr)
             ->update([
+                'year' => $newyear,
                 'wo_nbr' => $newtemprunnbr
             ]);
         $assettable = DB::table('asset_mstr')
@@ -2805,6 +2835,7 @@ class wocontroller extends Controller
                                 <lotserialQty>' . $dtqx->qtytoqx . '</lotserialQty>
                                 <site>' . $dtqx->wo_dets_wh_site . '</site>
                                 <location>' . $dtqx->wo_dets_wh_loc . '</location>
+                                <lotserial>' . $dtqx->wo_dets_wh_lot . '</lotserial>
                                 <rmks>' . $dtqx->wo_dets_nbr . '</rmks>
                             </inventoryIssue>';
                     }
