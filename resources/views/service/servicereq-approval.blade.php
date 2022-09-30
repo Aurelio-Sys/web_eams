@@ -183,14 +183,14 @@
                             <input id="assetloc" type="text" class="form-control" name="assetloc" autocomplete="off" autofocus readonly/>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <!-- <div class="form-group row">
                         <label for="assettype" class="col-md-5 col-form-label text-md-right">Process / Technology</label>
                         <div class="col-md-6">
                             <input id="assettype" type="text" class="form-control" name="assettype" autocomplete="off" autofocus readonly/>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="form-group row">
-                        <label for="wotype" class="col-md-5 col-form-label text-md-right">Work Order Type</label>
+                        <label for="wotype" class="col-md-5 col-form-label text-md-right">SR Type</label>
                         <div class="col-md-6">
                             <input id="wotype" type="text" class="form-control" name="wotype" autocomplete="off" autofocus readonly/>
                         </div>
@@ -198,7 +198,7 @@
                     <div class="form-group row">
                         <label for="impact" class="col-md-5 col-form-label text-md-right">Impact</label>
                         <div class="col-md-6">
-                        <textarea id="impact" type="text" class="form-control" name="impact" autocomplete="off" rows="5" autofocus readonly></textarea>
+                        <textarea id="impact" type="text" class="form-control" name="impact" autocomplete="off" rows="3" autofocus readonly></textarea>
                         </div>
                     </div>
                     
@@ -621,7 +621,7 @@ $(document).ready(function(){
       document.getElementById('srnumber').value = srnumber;
       document.getElementById('assetcode').value = assetcode;
       document.getElementById('assetdesc').value = assetdesc;
-      document.getElementById('assettype').value = astype;
+      {{--  document.getElementById('assettype').value = astype;  --}}
       document.getElementById('wotype').value = wotype;
       document.getElementById('impactcode1').value = impactcode1;
       document.getElementById('assetloc').value = assetloc;

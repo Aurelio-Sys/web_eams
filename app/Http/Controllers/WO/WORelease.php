@@ -48,7 +48,7 @@ class WORelease extends Controller
             $data->where('wo_priority', '=', $request->s_priority);
         }
 
-        $data = $data->paginate(2);
+        $data = $data->paginate(10);
 
 
         return view('workorder.worelease-browse', ['asset1' => $asset1, 'data' => $data]);
@@ -185,12 +185,15 @@ class WORelease extends Controller
             if ($data->wo_repair_code1 == "" && $data->wo_repair_code2 == "" && $data->wo_repair_code3 == "") {
                 // dd('aa');
                 $combineSP = DB::table('xxrepgroup_mstr')
-                    ->select('repm_code as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status')
+                    ->select('repm_code as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 
+                    'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status')
                     ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
                     ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                     ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
                     ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
+                    ->leftJoin('wo_mstr','wo_repair_group','xxrepgroup_mstr.xxrepgroup_nbr')
                     ->where('xxrepgroup_mstr.xxrepgroup_nbr', '=', $getwonbr->wo_repair_group)
+                    ->where('wo_id', '=', $id)
                     ->orderBy('repair_code', 'asc')
                     ->orderBy('repm_ins', 'asc')
                     ->orderBy('repdet_step', 'asc')

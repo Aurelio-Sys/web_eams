@@ -38,6 +38,13 @@ class WHSConfirm extends Controller
         $data = DB::table('wo_mstr')
             ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset')
             ->where('wo_status', '=', 'Released')
+            ->where(function ($query) {
+                $query->where('wo_engineer1', '=', Session()->get('username'))
+                    ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                    ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                    ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                    ->orwhere('wo_engineer5', '=', Session()->get('username'));
+            })
             ->orderby('wo_created_at', 'desc')
             ->orderBy('wo_mstr.wo_id', 'desc');
 
@@ -53,7 +60,7 @@ class WHSConfirm extends Controller
             $data->where('wo_priority', '=', $request->s_priority);
         }
 
-        $data = $data->paginate(2);
+        $data = $data->paginate(10);
 
         return view('workorder.whsconfirm-browse', ['asset1' => $asset1, 'data' => $data]);
     }
@@ -188,6 +195,9 @@ class WHSConfirm extends Controller
 
                 $qstok = DB::table('temp_stok')
                     ->orderBy('stok_date')
+                    ->orderBy('stok_site')
+                    ->orderBy('stok_lot')
+                    ->orderBy('stok_loc')
                     ->get();
 
                 Schema::dropIfExists('temp_stok');
@@ -257,9 +267,15 @@ class WHSConfirm extends Controller
                     ]);
             }
             
-            DB::commit();
+            /* cek apakah semua qty 0 atau tidak, jika semua qty 0, maka tetap bisa di confirm. mungkin tidak ada item numbernya */
+            $qx = DB::table('wo_dets')
+                ->where('wo_dets_nbr','=',$req->hide_wonum)
+                ->where('wo_dets_wh_conf','=',1)
+                ->where('wo_dets_wh_qx','=','no')
+                ->where('wo_dets_wh_qty','<>',0);
 
-            /* ini qxtend transfer single item */
+            if($qx->count() > 0) {
+                /* ini qxtend transfer single item */
 
             $qxwsa = ModelsQxwsa::first();
 
@@ -302,7 +318,7 @@ class WHSConfirm extends Controller
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                     <qcom:propertyName>scopeTransaction</qcom:propertyName>
-                    <qcom:propertyValue>true</qcom:propertyValue>
+                    <qcom:propertyValue>false</qcom:propertyValue>
                     </qcom:ttContext>
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -350,23 +366,18 @@ class WHSConfirm extends Controller
             $qdocBody = '';
             
             /* bisa foreach per item dari sini */
-            $qx = DB::table('wo_dets')
-                ->where('wo_dets_nbr','=',$req->hide_wonum)
-                ->where('wo_dets_wh_conf','=',1)
-                ->where('wo_dets_wh_qx','=','no')
-                ->get();
-
-            foreach($qx as $qx) {
+            
+            foreach($qx->get() as $dqx) {
                 $qdocBody .= '<item>
-                                <part>'.$qx->wo_dets_sp.'</part>
+                                <part>'.$dqx->wo_dets_sp.'</part>
                                 <itemDetail>
-                                    <lotserialQty>'.$qx->wo_dets_wh_qty.'</lotserialQty>
-                                    <rmks>'.$qx->wo_dets_nbr.'</rmks>
-                                    <siteFrom>'.$qx->wo_dets_wh_site.'</siteFrom>
-                                    <locFrom>'.$qx->wo_dets_wh_loc.'</locFrom>
-                                    <lotserFrom>'.$qx->wo_dets_wh_lot.'</lotserFrom>
-                                    <siteTo>10-300</siteTo>
-                                    <locTo>010</locTo>
+                                    <lotserialQty>'.$dqx->wo_dets_wh_qty.'</lotserialQty>
+                                    <rmks>'.$dqx->wo_dets_nbr.'</rmks>
+                                    <siteFrom>'.$dqx->wo_dets_wh_site.'</siteFrom>
+                                    <locFrom>'.$dqx->wo_dets_wh_loc.'</locFrom>
+                                    <lotserFrom>'.$dqx->wo_dets_wh_lot.'</lotserFrom>
+                                    <siteTo>10-301</siteTo>
+                                    <locTo>qmi</locTo>
                                 </itemDetail>
                             </item>';
             }
@@ -436,19 +447,34 @@ class WHSConfirm extends Controller
 
             if ($qdocResult == "success" or $qdocResult == "warning") {
                 /* jika response sukses atau warning */
-
-
+                
             } else {
 
                 DB::rollBack();
                 toast('Qxtend Response Error', 'error');
+                return redirect()->route('browseWhconfirm');
                 /* jika qxtend response error */
             }
+            } /* endif($qx->count()) */ 
+            else { /* else($qx->count()) */ 
+                
+            } /* endelse($qx->count()) */ 
+            
+            DB::table('wo_dets')
+                ->where('wo_dets_nbr',$req->hide_wonum)
+                ->where('wo_dets_wh_conf','=',1)
+                ->where('wo_dets_wh_qx','=','no')
+                ->update([
+                    'wo_dets_wh_qx' => 'yes',
+            ]);
+
+            DB::commit();
 
             toast('Confirm Successfuly !', 'success');
             return redirect()->route('browseWhconfirm');
+            
         } catch (Exception $e) {
-            dd($e);
+            // dd($e);
             DB::rollBack();
             toast('Confirm Failed', 'error');
             return redirect()->route('browseWhconfirm');

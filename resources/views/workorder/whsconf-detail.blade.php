@@ -175,11 +175,16 @@
                                     </select>
                                 </td>
                                 <td>
-                                    @php($qlot = $qstok->where('stok_part','=',$datas->insd_part)->where('stok_site','=',$dsite))
+                                    @php($qlot = $qstok->where('stok_part','=',$datas->insd_part)
+                                                    ->where('stok_site','=',$dsite))
                                     <select name="t_lot[]" class="form-control t_lot">
                                         <option value="">-- Select --</option>
                                     @foreach($qlot as $rslot)
-                                        <option value="{{ $rslot->stok_lot }},{{ $rslot->stok_loc }}" {{$dlot == $rslot->stok_lot ? "selected" : ""}}>{{ $rslot->stok_lot }} -- Loc : {{ $rslot->stok_loc }}</option>
+                                        @if($dlot == $rslot->stok_lot && $dloc == $rslot->stok_loc)
+                                            <option value="{{ $rslot->stok_lot }},{{ $rslot->stok_loc }}" selected>{{ $rslot->stok_lot }} -- Loc : {{ $rslot->stok_loc }}</option>
+                                        @else
+                                            <option value="{{ $rslot->stok_lot }},{{ $rslot->stok_loc }}" >{{ $rslot->stok_lot }} -- Loc : {{ $rslot->stok_loc }}</option>
+                                        @endif
                                     @endforeach
                                     </select>
                                 </td>
