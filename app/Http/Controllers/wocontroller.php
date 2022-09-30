@@ -2780,7 +2780,7 @@ class wocontroller extends Controller
                         <qcom:ttContext>
                           <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                           <qcom:propertyName>scopeTransaction</qcom:propertyName>
-                          <qcom:propertyValue>true</qcom:propertyValue>
+                          <qcom:propertyValue>false</qcom:propertyValue>
                         </qcom:ttContext>
                         <qcom:ttContext>
                           <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -3117,7 +3117,7 @@ class wocontroller extends Controller
                         <qcom:ttContext>
                           <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                           <qcom:propertyName>scopeTransaction</qcom:propertyName>
-                          <qcom:propertyValue>true</qcom:propertyValue>
+                          <qcom:propertyValue>false</qcom:propertyValue>
                         </qcom:ttContext>
                         <qcom:ttContext>
                           <qcom:propertyQualifier>QAD</qcom:propertyQualifier>

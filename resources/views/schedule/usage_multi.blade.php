@@ -41,6 +41,8 @@
 </div>
 <hr>
 
+<input type="hidden" id="tmpasset" value=""/>
+
 <div class="table-responsive col-12">
     <form method="post" action="batchwo">
       {{csrf_field()}}
@@ -137,9 +139,9 @@
 
     function fetch_data(page, sort_type, sort_by, asset) {
         $.ajax({
-        url: "/usagemt?page=" + page + "&sorttype=" + sort_type + "&sortby=" + sort_by + "&asset=" + asset,
+        url: "usagemulti?page=" + page + "&sorttype=" + sort_type + "&sortby=" + sort_by + "&asset=" + asset,
         success: function(data) {
-            console.log(data);
+            // console.log(data);
             $('tbody').html('');
             $('tbody').html(data);
         }
@@ -152,7 +154,7 @@
         var sort_type   = $('#hidden_sort_type').val();
         var page = 1;
 
-        // fetch_data(page, sort_type, column_name, asset);
+        fetch_data(page, sort_type, column_name, asset);
         $.ajax({
               type : "get",
               url : "{{URL::to("usageneedmt") }}",
@@ -175,7 +177,7 @@
         var wonumber    = $('#tmpwo').val();
         var asset       = $('#tmpasset').val();
         var status      = $('#tmpstatus').val();
-        fetch_data(page, sort_type, column_name, wonumber, asset,status);
+        fetch_data(page, sort_type, column_name,asset);
     });
 
     $(document).on('click', '#btnrefresh', function() {

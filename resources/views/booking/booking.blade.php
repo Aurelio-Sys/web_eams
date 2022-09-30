@@ -37,7 +37,7 @@
     </div>
     <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset</label>
     <div class="col-md-3 mb-2 input-group">
-        <select id="s_asset" class="form-control" name="s_asset">
+        <select id="s_asset" class="form-control selectpicker" data-live-search="true" name="s_asset">
              <option value="">--Select Data--</option>
              @foreach($dataAsset as $daa)
                 <option value="{{$daa->asset_code}}">{{$daa->asset_code}} -- {{$daa->asset_desc}}</option>
@@ -122,7 +122,7 @@
                         <label for="t_asset" class="col-md-4 col-form-label text-md-right">Asset Code
                         <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-6">
-                            <select id="t_asset" class="form-control" name="t_asset" required>
+                            <select id="t_asset" class="form-control selectpicker" data-live-search="true" name="t_asset" required>
                                 <option value="">--Select Data--</option>
                                 @foreach($dataAsset as $da)
                                   <option value="{{$da->asset_code}}">{{$da->asset_code}} -- {{$da->asset_desc}}</option>
@@ -183,7 +183,7 @@
                      <label for="te_asset" class="col-md-4 col-form-label text-md-right">Asset Code
                      <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                      <div class="col-md-6">
-                         <select id="te_asset" class="form-control" name="te_asset" required>
+                         <select id="te_asset" class="form-control selectpicker" data-live-search="true" name="te_asset" required>
                              <option value="">--Select Data--</option>
                              @foreach($dataAsset as $da)
                                <option value="{{$da->asset_code}}">{{$da->asset_code}} -- {{$da->asset_desc}}</option>
@@ -318,13 +318,20 @@
 @endsection
 
 @section('scripts')
-    <script>
+    <script type="text/javascript">
+        // $(".selectpicker").select2({
+        //     width: '100%',
+        //     theme: 'bootstrap4',
+
+        // });
+
        $(document).on('click', '#editdata', function(e){
     
             $('#editModal').modal('show');
            
            var code = $(this).data('code');
            var asset = $(this).data('asset');
+        //    console.log(asset);
            var start = $(this).data('start');
            var end = $(this).data('end');
            var allday = $(this).data('allday');
@@ -362,7 +369,7 @@
            var enddate = year+'-'+month+'-'+day+'T'+hour+':'+min;
 
            document.getElementById('te_code').value = code;
-           document.getElementById('te_asset').value = asset;
+           $('#te_asset').val(asset).trigger('change');
            document.getElementById('te_start').value = startdate;
            document.getElementById("te_end").min = startdate;
            document.getElementById('te_end').value = enddate;

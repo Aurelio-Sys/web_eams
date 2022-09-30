@@ -168,12 +168,16 @@ class UsageController extends Controller
 
 
     public function usagemulti(Request $req){
+
+        // dd('aaa');
         if($req->ajax()){
             $sort_by   = $req->get('sortby');
             $sort_type = $req->get('sorttype');
             $asset  = $req->get('asset');
 
-            if($asset == ''){
+            // dd($asset);
+
+            if($asset == null){
                 $data = DB::table('asset_mstr')
                             // ->leftJoin('asset_usage_hist','asset_mstr.asset_code','=','asset_usage_hist.asset_code')
                             ->selectRaw('*, asset_mstr.asset_code as "assetcode"')
@@ -190,7 +194,7 @@ class UsageController extends Controller
                             // ->groupBy('asset_mstr.asset_code')
                             // ->orderBy('asset_usage_hist.last_checked')
                             ->orderby($sort_by, $sort_type)
-                            ->paginate(10);
+                            ->paginate(10); 
 
             }
 

@@ -192,10 +192,12 @@ class ServiceController extends Controller
         // dd(Session::get('role'));
 
         $kepalaengineer = DB::table('eng_mstr')
-            ->where('approver', '=', 1)
-            ->where('eng_active', '=', 'Yes')
-            ->where('eng_code', '=', Session::get('username'))
-            ->first();
+                            ->where('approver', '=', 1)
+                            ->where('eng_active', '=', 'Yes')
+                            ->where('eng_code', '=', Session::get('username'))
+                            ->orderBy('eng_code')
+                            ->first();
+
 
         if ($kepalaengineer || Session::get('role') == 'ADM') {
 

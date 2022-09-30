@@ -5717,7 +5717,7 @@ class SettingController extends Controller
             $prefixwo = 'WO';
             $prefixwt = 'WT';
             $prefixwd = 'WD';
-            $prefixbo = '0000';
+            $prefixbo = 'BO';
             $wtnbr = '0000';
             $wonbr = '0000';
             $wdnbr = '0000';
