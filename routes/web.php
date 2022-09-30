@@ -464,7 +464,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/imageview', 'ServiceController@imageview');
 
 	// 27.07.2021 booking tyas
-	route::get('/booking', 'BookingController@booking');
+	route::get('/booking', 'BookingController@booking')->name('bookingBrowse');
 	route::post('/createbooking', 'BookingController@createbooking');
 	route::post('/editbooking', 'BookingController@editbooking');
 	route::post('/appbooking', 'BookingController@appbooking');

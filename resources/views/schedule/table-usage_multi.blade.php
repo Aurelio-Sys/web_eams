@@ -18,13 +18,13 @@
 </tr>
 @empty
 <tr>
-  <td colspan="6" style="color:red;" class="nodata">
+  <td colspan="10" style="color:red;" class="nodata">
     <center>No Data Available</center>
   </td>
 </tr>
 @endforelse
 <tr>
-  <td style="border: none !important;" colspan="9">
+  <td style="border: none !important;" colspan="10">
     {{ $data->links() }}
   </td>
 </tr>
