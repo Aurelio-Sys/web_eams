@@ -179,12 +179,12 @@ hr.new1{
                   Repair Code
                 </label>
               </div>
-              <div class="col-md-4" id="arcmanualdiv" style="display: none;">
+              <!-- <div class="col-md-4" id="arcmanualdiv" style="display: none;">
                 <input class="d-inline" type="radio"  name="repairtype" id="arcmanual" value="manual" style="display:none">
                 <label class="form-check-label" for="arcmanual">
                   Manual
                 </label>
-              </div>
+              </div> -->
             </div>
           </div>
 
@@ -301,6 +301,7 @@ hr.new1{
         <input id="c_repairhour" type="number" class="form-control c_repairhour" name="c_repairhour" min='1'  autofocus required>
       </div> -->
 
+      <!--
       <label for="c_finishdate" class="col-md-3 col-form-label text-md-left">Finish Date <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
       <div class="col-md-3">
         <input id="c_finishdate" type="date" class="form-control c_finishdate" name="c_finishdate" autofocus required>
@@ -352,9 +353,10 @@ hr.new1{
         </select>
       </div>
     </div>
+    -->
     <div id="manualonly" style='display:none'>
-            
-    <div class="form-group row col-md-12">
+          <!--   
+          <div class="form-group row col-md-12">
             <label for="o_action" class="col-md-3 col-form-label text-md-left">Action Taken</label>
             <div class="col-md-8">
               <textarea class="form-control" name="o_action" id="o_action" rows="4"></textarea>
@@ -365,7 +367,8 @@ hr.new1{
             <div class="col-md-8">
               <textarea class="form-control" name="o_part" id="o_part"></textarea>
             </div>
-          </div>
+          </div> 
+          -->
             <!-- <div class="form-group row col-md-12 c_lastmeasurement">
               <label for="c_repairhour" class="col-md-5 col-form-label text-md-left">Last Measurement</label>
               <div class="col-md-7">
@@ -834,20 +837,20 @@ $("#newedit").submit(function(e) {
   });
   $(document).on('change','#cpreventive',function(e){
     if(this.checked == true){
-      document.getElementById('manualonly').style.display='none';
+      // document.getElementById('manualonly').style.display='none';
       document.getElementById('argcheckdiv').style.display="";
       document.getElementById('arccheckdiv').style.display="";
-      document.getElementById('arcmanualdiv').style.display="";
+      // document.getElementById('arcmanualdiv').style.display="";
     }
   });
 
   $(document).on('change','#cwomanual',function(e){
 
     if(this.checked==true){
-      document.getElementById('manualonly').style.display='';
+      // document.getElementById('manualonly').style.display='';
       document.getElementById('argcheckdiv').style.display="";
       document.getElementById('arccheckdiv').style.display="";
-      document.getElementById('arcmanualdiv').style.display="none";
+      // document.getElementById('arcmanualdiv').style.display="none";
     }
   });
 
