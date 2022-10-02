@@ -48,7 +48,9 @@ class ScheduleCheck extends Command
     {
         $data = DB::table('asset_mstr')
                     ->where('asset_measure','=','C')
-                    ->whereRaw('DATEDIFF(MONTH, DATEADD(MONTH, asset_cal, asset_last_mtc), GETDATE()) >= - asset_tolerance') // fungsi MYSQL
+                    ->where('asset_code','=','EQ-0205-1')
+                    // ->whereRaw('DATEDIFF(MONTH, DATEADD(MONTH, asset_cal, asset_last_mtc), GETDATE()) >= - asset_tolerance') // fungsi SQL Server
+                    ->whereRaw('PERIOD_DIFF(PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal), date_format(now(),"%Y%m")) <= - asset_tolerance') // fungsi MYSQL
                     ->whereRaw("(asset_on_use is null or asset_on_use = '')")
                     ->get();
 //dd($data);
@@ -90,9 +92,9 @@ class ScheduleCheck extends Command
                 
                 $dataarray = array(
                     'wo_nbr' => $runningnbr,
-                    //'wo_status' => 'plan', -> A211025
-                    'wo_status' => 'open',
-                    'wo_engineer1' => 'azis', //A211025
+                    'wo_status' => 'plan', //-> A211025
+                    // 'wo_status' => 'open',
+                    'wo_engineer1' => 'admin', //A211025
                     'wo_engineer2' => 'sukarya', //A211025
 					'wo_priority' => 'high',
                     'wo_repair_type' => $data->asset_repair_type,
@@ -130,16 +132,16 @@ class ScheduleCheck extends Command
                 
                 $asset = $data->asset_code.' - '.$assettable->asset_desc;
 
-                EmailScheduleJobs::dispatch($runningnbr,$asset,'1','','','','');
+                // ditutup dulu email belum di setting EmailScheduleJobs::dispatch($runningnbr,$asset,'1','','','','');
 
                 // Update Table 
-                DB::table('asset_mstr')
+                /* DB::table('asset_mstr')
                         ->where('asset_measure','=','C')
                         ->whereRaw('DATEDIFF(DAY, DATEADD(DAY, asset_cal, asset_last_mtc), GETDATE()) >= 0')
                         ->update([
                             'asset_last_mtc' => Carbon::now()->toDateString()
                         ]);
-
+                */
             }
         }
 
@@ -227,7 +229,7 @@ class ScheduleCheck extends Command
                 
                 $asset = $data2->asset_code.' - '.$assettable->asset_desc;
 
-                EmailScheduleJobs::dispatch($runningnbr,$asset,'1','','','','');
+                // ditutup dulu, email belum di seting EmailScheduleJobs::dispatch($runningnbr,$asset,'1','','','','');
             }
         }
     }
