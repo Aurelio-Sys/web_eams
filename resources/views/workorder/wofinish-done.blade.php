@@ -316,13 +316,13 @@
                                             {{($spdet->insd_um != null) ? $spdet->insd_um : $spdet->spm_um }}
                                         </td>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
-                                            {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_eng_qty}}
+                                            {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_wh_qty}}
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                            <input type="number" step="1" min="0" class="form-control" style="width: 100%;" max="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}" name="qtyused[]" value="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}">
+                                            <input type="number" step="1" min="0" class="form-control" style="width: 100%;" max="{{($spdet->wo_dets_wh_qty != null) ? $spdet->wo_dets_wh_qty : '0'}}" name="qtyused[]" value="{{($spdet->wo_dets_wh_qty != null) ? $spdet->wo_dets_wh_qty : '0'}}">
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                            {{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0' }}
+                                            {{($spdet->wo_dets_wh_qty != null) ? $spdet->wo_dets_wh_qty : '0' }}
                                         </td>
                                     </tr>
 
@@ -543,13 +543,13 @@
                                             {{($spdet->insd_um != null) ? $spdet->insd_um : $spdet->spm_um }}
                                         </td>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
-                                            {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_eng_qty}}
+                                            {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_wh_qty}}
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                            <input type="number" step="1" min="0" max="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}" class="form-control" name="qtyused1[]" style="width: 100%;" value="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}">
+                                            <input type="number" step="1" min="0" max="{{($spdet->wo_dets_wh_qty != null) ? $spdet->wo_dets_wh_qty : '0'}}" class="form-control" name="qtyused1[]" style="width: 100%;" value="{{($spdet->wo_dets_wh_qty != null) ? $spdet->wo_dets_wh_qty : '0'}}">
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                            {{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0' }}
+                                            {{($spdet->wo_dets_wh_qty != null) ? $spdet->wo_dets_wh_qty : '0' }}
                                         </td>
                                     </tr>
                                     @endif
@@ -735,13 +735,13 @@
                                             {{($spdet->insd_um != null) ? $spdet->insd_um : $spdet->spm_um }}
                                         </td>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
-                                            {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_eng_qty}}
+                                            {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_wh_qty}}
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                            <input type="number" step="1" min="0" max="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}" name="qtyused2[]" class="form-control" style="width: 100%;" value="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}">
+                                            <input type="number" step="1" min="0" max="{{($spdet->wo_dets_wh_qty != null) ? $spdet->wo_dets_wh_qty : '0'}}" name="qtyused2[]" class="form-control" style="width: 100%;" value="{{($spdet->wo_dets_wh_qty != null) ? $spdet->wo_dets_wh_qty : '0'}}">
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                            {{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0' }}
+                                            {{($spdet->wo_dets_wh_qty != null) ? $spdet->wo_dets_wh_qty : '0' }}
                                         </td>
                                     </tr>
                                     @endif
@@ -927,13 +927,13 @@
                                             {{($spdet->insd_um != null) ? $spdet->insd_um : $spdet->spm_um }}
                                         </td>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
-                                            {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_eng_qty}}
+                                            {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_wh_qty}}
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                        <input type="number" step="1" min="0" max="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}" name="qtyused3[]" class="form-control" style="width: 100%;" value="{{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0'}}">
+                                        <input type="number" step="1" min="0" max="{{($spdet->wo_dets_wh_qty != null) ? $spdet->wo_dets_wh_qty : '0'}}" name="qtyused3[]" class="form-control" style="width: 100%;" value="{{($spdet->wo_dets_wh_qty != null) ? $spdet->wo_dets_wh_qty : '0'}}">
                                         </td>
                                         <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                            {{($spdet->wo_dets_eng_qty != null) ? $spdet->wo_dets_eng_qty : '0' }}
+                                            {{($spdet->wo_dets_wh_qty != null) ? $spdet->wo_dets_wh_qty : '0' }}
                                         </td>
                                     </tr>
                                     @endif

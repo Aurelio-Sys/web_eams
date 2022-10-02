@@ -303,7 +303,7 @@ class wocontroller extends Controller
 
     public function createdirectwo(Request $req)
     { /* blade : workorder.wocreatedirect */
-        //dd($req->all());
+        // dd($req->all());
         $fn1 = null;
         $fn2 = null;
         $fn3 = null;
@@ -404,15 +404,17 @@ class wocontroller extends Controller
                     $finisht = $req->c_finishtime . ':' . $req->c_finishtimeminute;
                     $rprtype = 'manual';
                 } else if ($req->repairtype == 'code') {
-                    // dd('aaa');   
+                    // dd('aaa');  
+                    
                     $c_wotype = 'code';
-                    DB::table('wo_rc_detail')
-                        ->where('wrd_wo_nbr', '=', $runningnbr)
-                        ->delete();
+                    // DB::table('wo_rc_detail')
+                    //     ->where('wrd_wo_nbr', '=', $runningnbr)
+                    //     ->delete();
 
                     if ($req->has('repaircode1')) {
                         $rc1 = $req->repaircode1[0];
 
+                        /*
                         $dborigin = DB::table('rep_master')
                             ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                             ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -494,9 +496,12 @@ class wocontroller extends Controller
                             ]);
                             DB::table('wo_dets')->insert($arrayspare1);
                         }
+
+                        */
                     }
                     if ($req->has('repaircode2')) {
                         $rc2 = $req->repaircode2[0];
+                        /*
                         $dborigin2 = DB::table('rep_master')
                             ->join('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                             ->join('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -565,11 +570,11 @@ class wocontroller extends Controller
                             ]);
                             DB::table('wo_dets')->insert($arrayspare2);
                         }
+                        */
                     }
-                    // dd($flagname);
-
                     if ($req->has('repaircode3')) {
                         $rc3 = $req->repaircode3[0];
+                        /*
                         $dborigin3 = DB::table('rep_master')
                             ->join('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                             ->join('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -649,17 +654,23 @@ class wocontroller extends Controller
                             ]);
                             DB::table('wo_dets')->insert($arrayspare3);
                         }
+                        
+                        */
                     }
 
 
                     //  dd($req->all());
-                    $finisht = $req->c_finishtime . ':' . $req->c_finishtimeminute;
+                    // $finisht = $req->c_finishtime . ':' . $req->c_finishtimeminute; 
+
+                    
                     $rprtype = 'code';
                     // dd($finisht);
 
                     // dd($arrayy);
                 } else if ($req->repairtype == 'group') {
                     $rprg = $req->repairgroup[0];
+
+                    /*
                     DB::table('wo_rc_detail')
                         ->where('wrd_wo_nbr', '=', $runningnbr)
                         ->delete();
@@ -757,9 +768,30 @@ class wocontroller extends Controller
                         // dd($flagname);
                     }
                     $finisht = $req->c_finishtime . ':' . $req->c_finishtimeminute;
+                    */
                     $rprtype = 'group';
                 }
             }
+        }else{
+            // dd('manual');
+            $rc1 = $req->has('repaircode1') ? $req->repaircode1[0] : null;
+            $rc2 = $req->has('repaircode2') ? $req->repaircode2[0] : null;
+            $rc3 = $req->has('repaircode3') ? $req->repaircode3[0] : null;
+
+            if($rc1 != null || $rc2 != null || $rc3 != null){
+                $rprtype = 'code';
+            }
+
+            $rprg = $req->has('repairgroup') ? $req->repairgroup[0] : null;
+
+            if($rprg != null){
+                $rprtype = 'group';
+            }
+            
+
+            // dd($rc1,$rc2,$rc3);
+
+
         }
         $dataarray = array(
             'wo_nbr'           => $runningnbr,
@@ -782,7 +814,7 @@ class wocontroller extends Controller
             'wo_finish_time'   => $finisht,
             'wo_asset'         => $req->c_asset,
             'wo_priority'      => $req->c_priority,
-            'wo_status'        => 'closed',
+            'wo_status'        => 'plan',
             'wo_schedule'      => $req->c_schedule,
             'wo_duedate'       => $req->c_duedate,
             'wo_note'          => $req->c_note,
@@ -792,8 +824,8 @@ class wocontroller extends Controller
             'wo_creator'       => session()->get('username'),
             'wo_system_date'   => Carbon::now('ASIA/JAKARTA')->toDateString(),
             'wo_system_time'   => Carbon::now('ASIA/JAKARTA')->toTimeString(),
-            'wo_start_date'    => Carbon::now('ASIA/JAKARTA')->toDateString(),
-            'wo_start_time'    => Carbon::now('ASIA/JAKARTA')->toTimeString(),
+            // 'wo_start_date'    => Carbon::now('ASIA/JAKARTA')->toDateString(),
+            // 'wo_start_time'    => Carbon::now('ASIA/JAKARTA')->toTimeString(),
             'wo_created_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
             'wo_updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
         );
