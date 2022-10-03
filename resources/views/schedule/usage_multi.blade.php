@@ -190,7 +190,7 @@
     });
 
     $(document).on('click', '.editmodal',function(){
-        $asset = $(this).data('asset');
+        asset = $(this).data('asset');
         onuse = $(this).data('assetonuse');
 
         if(onuse){
@@ -201,7 +201,7 @@
         	document.getElementById('multiusage').innerHTML = 'Generate WO Batch ?';
         }
 
-        document.getElementById('asset_code').value = $asset;
+        document.getElementById('asset_code').value = asset;
 
     });
 

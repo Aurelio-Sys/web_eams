@@ -183,7 +183,8 @@ class UsageController extends Controller
                             ->selectRaw('*, asset_mstr.asset_code as "assetcode"')
                             // ->groupBy('asset_mstr.asset_code')
                             // ->orderBy('asset_usage_hist.last_checked')
-                            ->orderby($sort_by, $sort_type)
+                            // ->orderby($sort_by, $sort_type)
+                            ->orderBy('asset_code')
                             ->paginate(10);
                             
             }else{
@@ -193,7 +194,8 @@ class UsageController extends Controller
                             ->selectRaw('*, asset_mstr.asset_code as "assetcode"')
                             // ->groupBy('asset_mstr.asset_code')
                             // ->orderBy('asset_usage_hist.last_checked')
-                            ->orderby($sort_by, $sort_type)
+                            // ->orderby($sort_by, $sort_type)
+                            ->orderBy('asset_code')
                             ->paginate(10); 
 
             }
@@ -208,6 +210,7 @@ class UsageController extends Controller
                         // ->groupBy('asset_mstr.asset_code')
                         // ->orderBy('asset_usage_hist.last_checked')
                         //->get();
+                        ->orderBy('asset_code')
                         ->paginate(10);
 
             $asset = DB::table('asset_mstr')

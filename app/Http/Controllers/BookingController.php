@@ -112,7 +112,7 @@ class BookingController extends Controller
             } else {
                 $allday = "Yes";
             }
-
+// dd($req->all());
             DB::table('booking')
                 ->insert([
                     'book_code'      => $req->t_code,
@@ -139,6 +139,7 @@ class BookingController extends Controller
             return redirect()->route('bookingBrowse');
         } catch (Exception $e) {
             DB::rollBack();
+            // dd($e);
             toast('Booking Asset Error.', 'error');
             return redirect()->route('bookingBrowse');
         }
