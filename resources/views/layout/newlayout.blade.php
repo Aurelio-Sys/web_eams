@@ -582,13 +582,13 @@ to get the desired effect
                       </a>
                     </li>
                   @endif
-                  @if(str_contains( Session::get('menu_access'), 'MT28'))
+                  <!-- @if(str_contains( Session::get('menu_access'), 'MT28'))
                     <li class="nav-item">
                       <a href="/fnmaster" class="nav-link">
                         <p>Failure Code</p>
                       </a>
                     </li>
-                  @endif
+                  @endif -->
                     
                   @if(str_contains( Session::get('menu_access'), 'MT08'))
                   <li class="nav-item">
@@ -705,13 +705,13 @@ to get the desired effect
                       </a>
                     </li>
                   @endif	 -->	  
-                  @if(str_contains( Session::get('menu_access'), 'MT27'))
+                  <!-- @if(str_contains( Session::get('menu_access'), 'MT27'))
                     <li class="nav-item">
                       <a href="/toolmaster" class="nav-link">
                         <p>Tools</p>
                       </a>
                     </li>
-                  @endif			  			  
+                  @endif	-->		  			  
                 <!-- @if(str_contains( Session::get('menu_access'), 'MT17'))
                     <li class="nav-item">
                       <a href="/reppart" class="nav-link">
