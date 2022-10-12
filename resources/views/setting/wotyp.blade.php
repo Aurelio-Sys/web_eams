@@ -30,6 +30,7 @@
 </a>
 <ul class="nav nav-treeview">
 <li class="nav-item">
+<form action="/wotyp" method="GET"/>
 <div class="col-12 form-group row">
     <div class="col-12 form-group row">
         <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">WO Type Code</label>
@@ -44,7 +45,7 @@
         </div>
         <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('') }}</label>
         <div class="col-md-2 mb-2 input-group">
-            <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" />
+            <button class="btn btn-block btn-primary" id="btnsearch"/>Search</button>
         </div>
         <div class="col-md-2 col-sm-12 mb-2 input-group">
             <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
@@ -53,6 +54,7 @@
         <input type="hidden" id="tmpdesc"/>
     </div>
 </div>
+</form>
 </li>
 </ul>
 </li>
@@ -195,6 +197,15 @@
 @section('scripts')
 
     <script>
+        function resetSearch() {
+            $('#s_code').val('');
+            $('#s_desc').val('');
+        }
+
+        $(document).on('click', '#btnrefresh', function() {
+            resetSearch();
+        });    
+
         $(document).on('click','.editModal',function(){ // Click to only happen on announce links
            //alert('tst');
            var code = $(this).data('code');
