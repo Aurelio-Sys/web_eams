@@ -331,7 +331,6 @@ dd($a);
             toast('WO Successfuly Released !', 'success');
             return redirect()->route('browseRelease');
         } catch (Exception $e) {
-            dd($e);
             DB::rollBack();
             toast('WO Release Failed', 'error');
             return redirect()->route('browseRelease');
