@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddBookCodeToBooking extends Migration
+class AddAssetfaToAssetMstr extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,8 @@ class AddBookCodeToBooking extends Migration
      */
     public function up()
     {
-        Schema::table('booking', function (Blueprint $table) {
-            //
-
-            $table->string('book_code')->after('bank_code');
+        Schema::table('asset_mstr', function (Blueprint $table) {
+            $table->string('asset_fa')->after('asset_supp');
         });
     }
 
@@ -27,9 +25,8 @@ class AddBookCodeToBooking extends Migration
      */
     public function down()
     {
-        Schema::table('booking', function (Blueprint $table) {
-            //
-            $table->dropColumn('book_code');
+        Schema::table('asset_mstr', function (Blueprint $table) {
+            $table->dropColumn('asset_fa');
         });
     }
 }

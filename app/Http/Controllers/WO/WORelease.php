@@ -316,7 +316,7 @@ class WORelease extends Controller
                           ->orWhere('wo_dets_wh_conf', '=', null);
                 })
                 ->count();
-
+dd($a);
             if($cekstatus == 0) {
                 DB::table('wo_mstr')
                 ->where('wo_nbr', '=', $req->hide_wonum)

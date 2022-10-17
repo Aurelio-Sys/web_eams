@@ -10,11 +10,26 @@
         <div class="col-md-12">
           <hr>
         </div>
-        <div class="row">                 
+        <!-- <div class="row">                 
           <div class="col-sm-2">    
             <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Supplier Create</button>
-          </div><!-- /.col -->  
-        </div><!-- /.row -->
+            </div>
+        </div>
+        -->
+        <div class="row">
+            <div class="col-md-2">
+                <form action="/loadsite" method="post" id="submit">
+                    {{ method_field('post') }}
+                    {{ csrf_field() }}
+                    
+                        <input type="submit" class="btn btn-block btn-primary" id="btnload" value="Load Data" />
+                        <button type="button" class="btn btn-info" id="s_btnloading" style="display:none;">
+                            <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
+                        </button>
+                    
+                </form>
+            </div>
+        </div>
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
