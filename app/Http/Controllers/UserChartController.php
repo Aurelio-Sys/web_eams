@@ -1017,4 +1017,15 @@ class UserChartController extends Controller
                         ], 200);
     }
     
+    /* Jadwal preventive asset */
+    public function prevsch(Request $req)
+    {   
+
+            $data = DB::table('dept_mstr')
+                ->orderby('dept_code')
+                ->paginate(10);
+
+            return view('report.prevsch', ['data' => $data]);
+    }
+
 }
