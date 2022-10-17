@@ -1024,8 +1024,64 @@ class UserChartController extends Controller
             $data = DB::table('dept_mstr')
                 ->orderby('dept_code')
                 ->paginate(10);
+// dd($data);        
+        Schema::create('temp_asset', function ($table) {
+            $table->increments('id');
+            $table->string('temp_code');
+            $table->string('temp_sch');
+            $table->string('temp_cal');
+            $table->temporary();
+        });
 
-            return view('report.prevsch', ['data' => $data]);
+        foreach($data as $datas) {
+            DB::table('temp_asset')->insert([
+                'temp_code' => $datas->asset_code,
+                'temp_sch' => $datas->harusnya,
+                'temp_cal' => $datas->asset_cal,
+            ]);
+        }
+               
+        $datatemp = DB::table('temp_asset')
+            ->get();
+
+        /* Menyimpan data sementara schedule WO yang selanjutnya */
+        foreach($datatemp as $dt) {
+            $tglharusnya = Carbon::create(substr($dt->temp_sch,0,4), substr($dt->temp_sch,4,2), 1, 0);
+
+            for($i = 1;$i<=10;$i++)
+            {
+                DB::table('temp_asset')->insert([
+                    'temp_code' => $dt->temp_code,
+                    'temp_sch' => $tglharusnya->addMonth($dt->temp_cal)->format('Ym'),
+                    'temp_cal' => $dt->temp_cal,
+                ]);
+            }
+
+            $tglharusnya = Carbon::create(substr($dt->temp_sch,0,4), substr($dt->temp_sch,4,2), 1, 0);
+            for($i = 1;$i<=10;$i++)
+            {
+                DB::table('temp_asset')->insert([
+                    'temp_code' => $dt->temp_code,
+                    'temp_sch' => $tglharusnya->subMonth($dt->temp_cal)->format('Ym'),
+                    'temp_cal' => $dt->temp_cal,
+                ]);
+            }
+        }
+
+        $datatemp = DB::table('temp_asset')
+            ->orderBy('temp_code')
+            ->get();
+// dd($datatemp);        
+        /* Actual data WO */
+        $datawo = DB::table('wo_mstr')
+            ->where('wo_type','=','auto')
+            ->orderBy('wo_asset')
+            ->orderBy('wo_nbr')
+            ->get();
+
+        Schema::dropIfExists('temp_asset');
+
+        return view('report.prevsch', ['data' => $data, 'datatemp' => $datatemp, 'datawo' => $datawo]);
     }
 
 }
