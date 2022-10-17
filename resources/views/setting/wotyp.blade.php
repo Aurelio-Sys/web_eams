@@ -3,7 +3,7 @@
       <div class="container-fluid">
         <div class="row">          
           <div class="col-sm-4">
-            <h1 class="m-0 text-dark">WO Type Maintenance</h1>
+            <h1 class="m-0 text-dark">Failure Type Maintenance</h1>
           </div>    
         </div><!-- /.row -->
         <div class="col-md-12">
@@ -11,7 +11,7 @@
         </div>
         <div class="row">                 
           <div class="col-sm-2">    
-            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">WO Type Create</button>
+            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Failure Type Create</button>
           </div><!-- /.col -->  
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
@@ -33,12 +33,12 @@
 <form action="/wotyp" method="GET"/>
 <div class="col-12 form-group row">
     <div class="col-12 form-group row">
-        <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">WO Type Code</label>
+        <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Failure Type Code</label>
         <div class="col-md-4 mb-2 input-group">
             <input id="s_code" type="text" class="form-control" name="s_code"
             value="" autofocus autocomplete="off"/>
         </div>
-        <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Wo type Description</label>
+        <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Failure type Description</label>
         <div class="col-md-4 mb-2 input-group">
             <input id="s_desc" type="text" class="form-control" name="s_desc"
             value="" autofocus autocomplete="off"/>
@@ -68,7 +68,7 @@
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                <th width="30%">WO Type Code</th>
+                <th width="30%">Failure Type Code</th>
                 <th width="60%">Description</th>
                 <th width="10%">Action</th>  
             </tr>
@@ -100,7 +100,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">WO Type Create</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Failure Type Create</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -137,7 +137,7 @@
     <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel">WO Type Modify</h5>
+        <h5 class="modal-title text-center" id="exampleModalLabel">Failure Type Modify</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -173,7 +173,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title text-center" id="exampleModalLabel">WO Type Delete</h5>
+            <h5 class="modal-title text-center" id="exampleModalLabel">Failure Type Delete</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>

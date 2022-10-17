@@ -66,7 +66,10 @@ class ServiceController extends Controller
         $impact = DB::table('imp_mstr')
             ->get();
 
-        return view('service.servicerequest_create', ['showasset' => $asset, 'dept' => $datadepart, 'wotype' => $wotype, 'impact' => $impact]);
+        $fcode = DB::table('fn_mstr')
+                ->get();
+
+        return view('service.servicerequest_create', ['showasset' => $asset, 'dept' => $datadepart, 'wotype' => $wotype, 'impact' => $impact, 'fc' => $fcode]);
     }
 
     public function failuresearch(Request $req)
@@ -107,6 +110,18 @@ class ServiceController extends Controller
     { /* blade : servicerequest_create.php */
         // dd($req->all());
 
+        $listfail = "";
+        
+        foreach($req->failurecode as $fails){
+            $listfail .= $fails.';';
+        }
+
+        // dd($listfail);
+
+        $listfail = substr($listfail, 0, strlen($listfail) - 1);
+
+        // dd($listfail);
+
         $counterimpact = count($req->impact);
         // dd($test);
 
@@ -145,8 +160,8 @@ class ServiceController extends Controller
             ->insert([
                 'sr_number' => $runningnbr,
                 'sr_assetcode' => $req->assetcode,
+                'sr_list_failurecode' => $listfail, //digunakan hanya untuk kondisi 1 failure code
                 /*
-                'sr_failurecode1' => $req->failurecode1,
                 'sr_failurecode2' => $req->failurecode2,
                 'sr_failurecode3' => $req->failurecode3,
                 */
@@ -975,6 +990,69 @@ class ServiceController extends Controller
                 // dump($impactdesc);
 
                 $desc .= $impactdesc->imp_desc . ',';
+            }
+
+
+            $desc = substr($desc, 0, strlen($desc) - 1);
+            // dd($desc);
+            // dd($desc);
+
+
+
+
+            // $output = $searchfail1[].$searchfail2.$searchfail3;
+
+            return response()->json($desc);
+        }
+    }
+
+    public function searchfailtype(Request $req){
+        if ($req->ajax()){
+                $failtype = $req->failtype;
+
+                $data = "";
+
+                $wotype = DB::table('wotyp_mstr')
+                    ->where('wotyp_code', '=', $failtype)
+                    ->selectRaw('wotyp_desc')
+                    ->first();
+
+
+                $data = $wotype->wotyp_desc;
+
+                
+
+            return response()->json($data);
+        }
+    }
+
+    public function  searchfailcode(Request $req){
+        if($req->ajax()){
+            $failcode = $req->failcode;
+
+            // dd($impact);
+
+            $array_failcode = explode(';', $failcode);
+
+            // dd($array_impact);
+            $countarray = count($array_failcode);
+            // dd($countarray);
+            $desc = "";
+
+            // $tampungdesc = [];
+
+            for ($i = 0; $i < $countarray; $i++) {
+
+                // dump($array_impact[$i]);
+
+                $failcodedesc = DB::table('fn_mstr')
+                    ->where('fn_code', '=', $array_failcode[$i])
+                    ->selectRaw('fn_desc')
+                    ->first();
+
+                // dump($impactdesc);
+
+                $desc .= $failcodedesc->fn_desc . ',';
             }
 
 

@@ -1412,7 +1412,7 @@ class SettingController extends Controller
             ->insert([
                 'fn_code'       => $req->t_code,
                 'fn_desc'       => $req->t_desc,             
-                'fn_impact'     => $req->t_imp,              
+                // 'fn_impact'     => $req->t_imp,              
                 'created_at'    => Carbon::now()->toDateTimeString(),
                 'updated_at'    => Carbon::now()->toDateTimeString(),
                 'edited_by'     => Session::get('username'),
@@ -1433,7 +1433,7 @@ class SettingController extends Controller
         ->where('fn_code','=',$req->te_code)
         ->update([
             'fn_desc'       => $req->te_desc,       
-            'fn_impact'     => $req->te_imp,         
+            // 'fn_impact'     => $req->te_imp,         
             'updated_at'    => Carbon::now()->toDateTimeString(),
             'edited_by'     => Session::get('username'),
         ]);

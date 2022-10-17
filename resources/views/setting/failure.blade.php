@@ -68,7 +68,7 @@
             <tr>
                 <th width="20%">Code</th>
                 <th width="40%">Description</th>
-                <th width="30%">Impact</th>
+                <!-- <th width="30%">Impact</th> -->
                 <th width="10%">Action</th>  
             </tr>
         </thead>
@@ -107,12 +107,12 @@
                             <input id="t_desc" type="text" class="form-control" name="t_desc" autocomplete="off" autofocus maxlength="50" required/>
                         </div>
                     </div>                    
-                    <div class="form-group row">
+                    <!-- <div class="form-group row">
                         <label for="t_imp" class="col-md-4 col-form-label text-md-right">Impact <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-6">
                             <input id="t_imp" type="text" class="form-control" name="t_imp" autocomplete="off" autofocus maxlength="50" required/>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             
                 <div class="modal-footer">
@@ -149,12 +149,12 @@
                             <input id="te_desc" type="text" class="form-control" name="te_desc" autocomplete="off" autofocus maxlength="50" required/>
                         </div>
                 </div>				
-                <div class="form-group row">
+                <!-- <div class="form-group row">
                     <label for="te_imp" class="col-md-4 col-form-label text-md-right">Impact <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-6">
                         <input id="te_imp" type="text" class="form-control" name="te_imp" autocomplete="off" autofocus maxlength="50" required/>
                     </div>
-                </div>
+                </div> -->
             </div>
 
             <div class="modal-footer">

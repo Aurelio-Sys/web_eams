@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\KebutuhanSPController;
 use App\Http\Controllers\WO\ConfirmEng;
 use App\Http\Controllers\WO\WORelease;
 use App\Http\Controllers\WO\WHSConfirm;
 use App\Http\Controllers\wocontroller;
+use App\KebutuhanSP;
 use Illuminate\Support\Facades\Auth;
 use Master\QxWsaMTController;
 use Illuminate\Support\Facades\Route;
@@ -443,6 +445,8 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('/approval', 'ServiceController@approval');
 	route::get('/srapproval/searchapproval', 'ServiceController@searchapproval');
 	route::get('/searchimpactdesc', 'ServiceController@searchimpact');
+	route::get('/searchfailtype','ServiceController@searchfailtype');
+	route::get('/searchfailcode','ServiceController@searchfailcode');
 
 
 	//bagian tommy sr browse
@@ -501,6 +505,9 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/whssubmit', [WHSConfirm::class,'whssubmit'])->name('WhsconfSubmit');
 	Route::get('/searchlot', [WHSConfirm::class, 'searchlot'])->name('searchlot');
 	
+
+	// List Spare part
+	Route::resource('kebutuhansp', KebutuhanSP::class);
 	
 });
 
