@@ -1021,9 +1021,11 @@ class UserChartController extends Controller
     public function prevsch(Request $req)
     {   
 
-            $data = DB::table('dept_mstr')
-                ->orderby('dept_code')
-                ->paginate(10);
+        $data = DB::table('asset_mstr')
+        ->selectRaw('asset_mstr.*, PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal) as harusnya')
+        ->where('asset_measure','=','C')
+        ->whereRaw('PERIOD_DIFF(PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal), date_format(now(),"%Y%m")) <= - asset_tolerance') // fungsi MYSQL
+        ->paginate(10);
 // dd($data);        
         Schema::create('temp_asset', function ($table) {
             $table->increments('id');
