@@ -43,7 +43,9 @@
     data-startwo="{{date('d-m-Y', strtotime($show->wo_start_date))}}" 
     data-endwo="{{date('d-m-Y', strtotime($show->wo_finish_date))}}" 
     data-action="{{$show->wo_action}}"
-    data-wostatus="{{$show->wo_status}}">
+    data-wostatus="{{$show->wo_status}}"
+    data-failtype="{{$show->sr_wotype}}"
+    data-failcode="{{$show->sr_list_failurecode}}">
     <i class="icon-table far fa-eye fa-lg"></i></a>
     </td>
 </tr>

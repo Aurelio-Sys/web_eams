@@ -219,6 +219,16 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                      <label for="failtype" class="col-md-2 col-form-label">Failure Type</label>
+                      <div class="col-md-4">
+                            <input id="failtype" type="text" class="form-control" name="failtype" readonly/>
+                      </div>
+                      <label for="failcode" class="col-md-2 col-form-label">Failure Code</label>
+                      <div class="col-md-4">
+                          <textarea id="failcode" type="text" class="form-control" name="failcode" rows="3" readonly></textarea>
+                      </div>
+                    </div>
+                    <div class="form-group row">
                         <label for="assetcode" class="col-md-2 col-form-label">Asset Code</label>
                         <div class="col-md-4">
                             <input id="assetcode" type="text" class="form-control" name="assetcode" readonly/>
@@ -318,12 +328,15 @@
                             <input id="wotype" type="text" class="form-control" name="wotype" autocomplete="off" autofocus readonly/>
                         </div>
                     </div>
+-->
+
                     <div class="form-group row">
                         <label for="impact" class="col-md-5 col-form-label text-md-right">Impact</label>
                         <div class="col-md-6">
                         <textarea id="impact" type="text" class="form-control" name="impact" autocomplete="off" rows="5" autofocus readonly></textarea>
                         </div>
                     </div>
+<!--
                     <div class="form-group row">
                         <label for="srnote" class="col-md-5 col-form-label text-md-right">Note</label>
                         <div class="col-md-6">
@@ -507,6 +520,8 @@ $(document).ready(function(){
       var endwo = $(this).data('endwo');
       var action = $(this).data('action');
       var wostatus = $(this).data('wostatus');
+      var failtype = $(this).data('failtype');
+      var failcode = $(this).data('failcode');
 
       var srdate = $(this).data('srdate');
       document.getElementById('srdate').value = srdate;
@@ -575,7 +590,7 @@ $(document).ready(function(){
             impact : impact,
           },
           success: function(data) {
-            // console.log(data);
+            console.log(data);
 
             var imp_desc = data;
 
@@ -584,6 +599,38 @@ $(document).ready(function(){
             // console.log(desc);
 
             document.getElementById('impact').value =  desc;
+            // }
+                
+          }   
+      })
+
+      $.ajax({
+          url: "/searchfailtype",
+          data : {
+            failtype : failtype,
+          },
+          success: function(data) {
+
+            document.getElementById('failtype').value =  data;
+            // }
+                
+          }   
+      })
+
+      $.ajax({
+          url: "/searchfailcode",
+          data : {
+            failcode : failcode,
+          },
+          success: function(data) {
+
+            var fcode = data;
+
+            var desc = fcode.replaceAll(",", "\n");
+
+            // console.log(desc);
+
+            document.getElementById('failcode').value =  desc;
             // }
                 
           }   

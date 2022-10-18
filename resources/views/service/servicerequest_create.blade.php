@@ -28,12 +28,23 @@
       </div>
     </div>
     <div class="form-group row">
-      <label for="wotype" class="col-md-2 col-lg-3 col-form-label my-auto">SR Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+      <label for="wotype" class="col-md-2 col-lg-3 col-form-label my-auto">Failure Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
       <div class="col-md-5 col-sm-12">
         <select class="form-control" id="wotype" name="wotype" required>
           <option></option>
           @foreach($wotype as $wotypeshow)
           <option value="{{$wotypeshow->wotyp_code}}">{{$wotypeshow->wotyp_code}} -- {{$wotypeshow->wotyp_desc}}</option>
+          @endforeach
+        </select>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="failurecode" class="col-md-2 col-lg-3 col-form-label my-auto">Failure Code <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+      <div class="col-md-5 col-sm-12">
+        <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple" required>
+          <option></option>
+          @foreach($fc as $fcshow)
+          <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}}</option>
           @endforeach
         </select>
       </div>
@@ -150,7 +161,7 @@
       width: '100%',
       // theme : 'bootstrap4',
       allowClear: true,
-      placeholder: 'Select Work Order Type',
+      placeholder: 'Select Failure Type',
 
     });
 
@@ -174,6 +185,17 @@
       closeOnSelect: false,
       allowClear: true,
       theme: 'bootstrap4',
+    });
+
+    $("#failurecode").select2({
+      width: '100%',
+      placeholder: "Select Failure Code",
+      theme: "bootstrap4",
+      allowClear: true,
+      maximumSelectionLength : 5,
+      closeOnSelect : false,
+      allowClear : true,
+      multiple : true,
     });
   });
 

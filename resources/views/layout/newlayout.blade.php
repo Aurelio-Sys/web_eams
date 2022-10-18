@@ -336,6 +336,14 @@ to get the desired effect
                       </a>
                     </li>
               @endif
+                <li class="nav-item has-treeview">
+                  <a href="{{url('/usagemulti')}}" class="nav-link">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>
+                      Spare Part Usage
+                    </p>
+                  </a>
+                </li>
               </ul>
             </li>
           @endif
@@ -551,23 +559,38 @@ to get the desired effect
                 </ul><!-- ul Control File -->
               </li> <!-- li Control File -->
 
-              
+              <li class="nav-item has-treeview">
+                <a href="javascript:void(0)" class="nav-link">
+                  <i class="nav-icon far fa-circle"></i>
+                  <p>
+                    Failure
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
                 @if(str_contains(Session::get('menu_access'), 'MT13'))
-                <li class="nav-item">
-                  <a href="{{url('/wotyp')}}" class="nav-link">
-                    <i class="nav-icon far fa-circle"></i>
-                    <p>WO Type Maintenance</p>
-                  </a>
-                </li>
-              @endif
-               @if(str_contains(Session::get('menu_access'), 'MT14'))
-                <li class="nav-item">
-                  <a href="{{url('/imp')}}" class="nav-link">
-                    <i class="nav-icon far fa-circle"></i>
-                    <p>Impact Maintenance</p>
-                  </a>
-                </li>
-              @endif
+                  <li class="nav-item">
+                    <a href="{{url('/wotyp')}}" class="nav-link">
+                      <p>Failure Type Maintenance</p>
+                    </a>
+                  </li>
+                @endif
+                @if(str_contains( Session::get('menu_access'), 'MT28'))
+                      <li class="nav-item">
+                        <a href="/fnmaster" class="nav-link">
+                          <p>Failure Code</p>
+                        </a>
+                      </li>
+                @endif
+                @if(str_contains(Session::get('menu_access'), 'MT14'))
+                  <li class="nav-item">
+                    <a href="{{url('/imp')}}" class="nav-link">
+                      <p>Impact Maintenance</p>
+                    </a>
+                  </li>
+                @endif
+                </ul>
+              </li>
               <li class="nav-item has-treeview">
                 <a href="javascript:void(0)" class="nav-link">
                   <i class="nav-icon far fa-circle"></i>
