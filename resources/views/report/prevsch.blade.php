@@ -57,32 +57,38 @@
 <!-- Bagian Searching -->
 <div class="col-md-12"><hr></div>
 
+<div class="col-md-12" style="color:black; font-size:2rem; text-align:end">
+    <a href="javascript:void(0)" id="mundur"><i class="fas fa-angle-left"></i></a>
+    &ensp;&ensp;<span  id="bulandisplay">2022</span>&ensp;&ensp;
+    <input type='hidden' name='bulan' id='bulan' value='2022'>
+    <a href="javascript:void(0)" id="maju" ><i class="fas fa-angle-right"></i></a>
+</div>
+
 <div class="table-responsive col-12">
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                <th width="30%">Asset</th>
-                <th width="60%">Description</th>
-                <th width="10%">Last Maintenance</th>  
-                <th width="10%">Measure</th>  
-                <th width="10%">January</th>  
-                <th width="10%">February</th>  
-                <th width="10%">March</th>  
-                <th width="10%">April</th>  
-                <th width="10%">May</th>  
-                <th width="10%">June</th>  
-                <th width="10%">July</th>  
-                <th width="10%">August</th>  
-                <th width="10%">September</th>  
-                <th width="10%">October</th>  
-                <th width="10%">November</th>  
-                <th width="10%">December</th>  
-                 
+                <th width="10%">Asset</th>
+                <th width="15%">Description</th>
+                <th width="10%">Last Mtc</th>  
+                <th width="5%">Mea</th>  
+                <th width="5%" style="text-align: center">Jan</th>  
+                <th width="5%" style="text-align: center">Feb</th>  
+                <th width="5%" style="text-align: center">Mar</th>  
+                <th width="5%" style="text-align: center">Apr</th>  
+                <th width="5%" style="text-align: center">May</th>  
+                <th width="5%" style="text-align: center">Jun</th>  
+                <th width="5%" style="text-align: center">Jul</th>  
+                <th width="5%" style="text-align: center">Aug</th>  
+                <th width="5%" style="text-align: center">Sep</th>  
+                <th width="5%" style="text-align: center">Oct</th>  
+                <th width="5%" style="text-align: center">Nov</th>  
+                <th width="5%" style="text-align: center">Dec</th>  
             </tr>
         </thead>
         <tbody>
             <!-- untuk isi table -->
-            <!-- @include('setting.table-departemen') -->
+            @include('report.table-prevsch')
         </tbody>
     </table>
     <input type="hidden" name="hidden_page" id="hidden_page" value="1"/>
@@ -94,7 +100,7 @@
 @endsection
 
 @section('scripts')
-
+    <script>
        function clear_icon()
        {
             $('#id_icon').html('');
@@ -181,7 +187,9 @@
             fetch_data(page, sort_type, column_name, code, desc);
         });
 
-        
+        document.getElementById('bulandisplay').innerHTML='2022';
+    
+    
     </script>
 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">
