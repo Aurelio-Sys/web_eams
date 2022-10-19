@@ -253,6 +253,7 @@ class WORelease extends Controller
 
         try {
             foreach ($req->partneed as $a => $key) {
+                /* Mencaari line terakhir */
                 if($req->line[$a] == "") {
                     $cekline = DB::table('wo_dets')
                     ->where('Wo_dets_nbr', '=', $req->hide_wonum)
@@ -268,6 +269,7 @@ class WORelease extends Controller
                     ->where('wo_dets_line', '=', $dline)
                     ->count();
 
+                /* Insert jika line baru, update jika line sudah ada */
                 if ($cek == 0) {
                     DB::table('wo_dets')->insert([
                         'wo_dets_nbr' => $req->hide_wonum,
@@ -308,7 +310,7 @@ class WORelease extends Controller
                     'wo_updated_at' => Carbon::now()->toDateTimeString(),
                 ]);
 
-            /* cek status */
+            /* cek status jika terdapat item yang belum diconfirm whs*/
             $cekstatus = DB::table('wo_dets')
                 ->where('wo_dets_nbr', '=', $req->hide_wonum)
                 ->where(function ($query) {
@@ -316,8 +318,14 @@ class WORelease extends Controller
                           ->orWhere('wo_dets_wh_conf', '=', null);
                 })
                 ->count();
-dd($a);
-            if($cekstatus == 0) {
+// dd($a);  
+            /* jika WO tidak ada spare part, status akan menjadi open */
+            $ceksp = DB::table('wo_dets')
+                ->where('wo_dets_nbr','=',$req->hide_wonum)
+                ->where('wo_dets_sp','<>',null)
+                ->count();
+
+            if($cekstatus == 0 || $ceksp == 0) {
                 DB::table('wo_mstr')
                 ->where('wo_nbr', '=', $req->hide_wonum)
                 ->update([

@@ -400,6 +400,15 @@ to get the desired effect
                       </a>
                     </li>
               @endif
+
+                <li class="nav-item has-treeview">
+                  <a href="{{url('/prevsch')}}" class="nav-link">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>
+                      Preventive Schedule
+                    </p>
+                  </a>
+                </li>
               
               @if(str_contains( Session::get('menu_access'), 'RT02'))
                 <li class="nav-item has-treeview">

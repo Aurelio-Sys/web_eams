@@ -370,6 +370,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/assetrptview', 'UserChartController@assetrptview');
 	route::get('/assetgraf', 'UserChartController@assetgraf');
 	route::get('/enggraf', 'UserChartController@enggraf');
+	route::get('/prevsch', 'UserChartController@prevsch');
 
 	//work order maintenance
 	route::get('/womaint', 'wocontroller@wobrowse')->name('womaint');
