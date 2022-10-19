@@ -33,6 +33,7 @@ use Carbon\CarbonPeriod;
 
 use App;
 use App\Exports\ExportSR;
+use Exception;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ServiceController extends Controller
@@ -108,102 +109,103 @@ class ServiceController extends Controller
 
     public function inputsr(Request $req)
     { /* blade : servicerequest_create.php */
-        // dd($req->all());
 
-        $listfail = "";
-        
-        foreach($req->failurecode as $fails){
-            $listfail .= $fails.';';
-        }
+        DB::beginTransaction();
 
-        // dd($listfail);
+        try{
 
-        $listfail = substr($listfail, 0, strlen($listfail) - 1);
+            $counterimpact = count($req->impact);
+            // dd($test);
 
-        // dd($listfail);
+            $newimpact = "";
 
-        $counterimpact = count($req->impact);
-        // dd($test);
-
-        $newimpact = "";
-
-        for ($i = 0; $i < $counterimpact; $i++) {
-            $newimpact .= $req->impact[$i] . ',';
-        }
-
-        $newimpact = substr($newimpact, 0, strlen($newimpact) - 1);
-
-
-        // dd($newimpact);
-
-        // dd(Config::get('mail'));
-
-        $running = DB::table('running_mstr')
-            ->first();
-
-        $newyear = Carbon::now()->format('y');
-
-        if ($running->year == $newyear) {
-            $tempnewrunnbr = strval(intval($running->sr_nbr) + 1);
-
-            $newtemprunnbr = '';
-            if (strlen($tempnewrunnbr) < 4) {
-                $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+            for ($i = 0; $i < $counterimpact; $i++) {
+                $newimpact .= $req->impact[$i] . ',';
             }
-        }else{
-            $newtemprunnbr = '0001';
+
+            $newimpact = substr($newimpact, 0, strlen($newimpact) - 1);
+
+
+            // dd($newimpact);
+
+            // dd(Config::get('mail'));
+
+            $running = DB::table('running_mstr')
+                ->first();
+
+            $newyear = Carbon::now()->format('y');
+
+            if ($running->year == $newyear) {
+                $tempnewrunnbr = strval(intval($running->sr_nbr) + 1);
+
+                $newtemprunnbr = '';
+                if (strlen($tempnewrunnbr) < 4) {
+                    $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+                }
+            }else{
+                $newtemprunnbr = '0001';
+            }
+
+            $runningnbr = $running->sr_prefix . '-' . $newyear . '-' . $newtemprunnbr;
+
+            DB::table('service_req_mstr')
+                ->insert([
+                    'sr_number' => $runningnbr,
+                    'sr_assetcode' => $req->assetcode,
+                    'sr_failurecode1' => isset($req->failurecode[0]) ? $req->failurecode[0] : null,
+                    'sr_failurecode2' => isset($req->failurecode[1]) ? $req->failurecode[1] : null,
+                    'sr_failurecode3' => isset($req->failurecode[2]) ? $req->failurecode[2] : null,
+                    'sr_wotype' => $req->wotype,
+                    'sr_impact' => $newimpact,
+                    'sr_note' => $req->notesr,
+                    'sr_status' => '1', //1 = OPEN
+                    'sr_priority' => $req->priority,
+                    'sr_access' => 0,
+                    'sr_dept' => Session::get('department'),
+                    'req_by' => Session::get('name'),
+                    'req_username' => Session::get('username'),
+                    'sr_created_at' => Carbon::now()->toDateTimeString(),
+                    'sr_updated_at' => Carbon::now()->toDateTimeString(),
+                ]);
+
+
+            // $rn += 1;
+            // $rn = str_pad($rn , 5, '0', STR_PAD_LEFT);
+
+
+
+            DB::table('running_mstr')
+                ->update([
+                    'year' => $newyear,
+                    'sr_nbr' => $newtemprunnbr,
+                ]);
+
+            // dd('stop here');
+
+            // $sendmail = (new Emaill())->delay(Carbon::now()->addSeconds(3));
+
+            //nanti dibuka EmailScheduleJobs::dispatch('','','3','','',$runningnbr,'');
+
+            echo "email sent";
+
+
+            DB::commit();
+            toast('Service Request ' . $runningnbr . ' Successfully Created', 'success');
+            return back();
+
+
+        } catch (Exception $e){
+            // dd($e);
+            DB::rollBack();
+            toast('Service Request Failed Created', 'error');
+            return back();
         }
 
-        $runningnbr = $running->sr_prefix . '-' . $newyear . '-' . $newtemprunnbr;
-
-        DB::table('service_req_mstr')
-            ->insert([
-                'sr_number' => $runningnbr,
-                'sr_assetcode' => $req->assetcode,
-                'sr_list_failurecode' => $listfail, //digunakan hanya untuk kondisi 1 failure code
-                /*
-                'sr_failurecode2' => $req->failurecode2,
-                'sr_failurecode3' => $req->failurecode3,
-                */
-                'sr_wotype' => $req->wotype,
-                'sr_impact' => $newimpact,
-                'sr_note' => $req->notesr,
-                'sr_status' => '1', //1 = OPEN
-                'sr_priority' => $req->priority,
-                'sr_access' => 0,
-                'sr_dept' => Session::get('department'),
-                'req_by' => Session::get('name'),
-                'req_username' => Session::get('username'),
-                'sr_created_at' => Carbon::now()->toDateTimeString(),
-                'sr_updated_at' => Carbon::now()->toDateTimeString(),
-            ]);
-
-
-        // $rn += 1;
-        // $rn = str_pad($rn , 5, '0', STR_PAD_LEFT);
-
-
-
-        DB::table('running_mstr')
-            ->update([
-                'year' => $newyear,
-                'sr_nbr' => $newtemprunnbr,
-            ]);
-
-        // dd('stop here');
-
-        // $sendmail = (new Emaill())->delay(Carbon::now()->addSeconds(3));
-
-        //nanti dibuka EmailScheduleJobs::dispatch('','','3','','',$runningnbr,'');
-
-        echo "email sent";
-
-        toast('Service Request ' . $runningnbr . ' Successfully Created', 'success');
-        return back();
     }
 
     public function srapproval()
     { /* blade : service.servicereq-approval */
+        // dd('aaaa');
         // dd(Session::get('role'));
 
         $kepalaengineer = DB::table('eng_mstr')
@@ -225,6 +227,11 @@ class ServiceController extends Controller
                 // ->join('users', 'users.name', 'service_req_mstr.req_by')                  --> B211014
                 ->join('users', 'users.username', 'service_req_mstr.req_username')
                 ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
+                ->leftJoin('fn_mstr as k1', 'service_req_mstr.sr_failurecode1', 'k1.fn_code')
+                ->leftJoin('fn_mstr as k2', 'service_req_mstr.sr_failurecode2', 'k2.fn_code')
+                ->leftJoin('fn_mstr as k3', 'service_req_mstr.sr_failurecode3', 'k3.fn_code')
+                ->selectRaw('service_req_mstr.*,asset_mstr.*,asset_type.*,loc_mstr.*,wotyp_mstr.*,users.*,dept_mstr.*,
+                            k1.fn_desc as k11, k2.fn_desc as k22, k3.fn_desc as k33')
                 ->where('sr_status', '=', '1')
                 ->orderBy('sr_number', 'DESC')
                 ->paginate(10);
@@ -756,8 +763,12 @@ class ServiceController extends Controller
             ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
             ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
             ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
+            ->leftJoin('fn_mstr as k1', 'service_req_mstr.sr_failurecode1', 'k1.fn_code')
+            ->leftJoin('fn_mstr as k2', 'service_req_mstr.sr_failurecode2', 'k2.fn_code')
+            ->leftJoin('fn_mstr as k3', 'service_req_mstr.sr_failurecode3', 'k3.fn_code')
             ->selectRaw('service_req_mstr.* , asset_mstr.asset_desc, dept_mstr.dept_desc, users.username, wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, wo_mstr.wo_start_date,
-                    wo_mstr.wo_finish_date, wo_mstr.wo_action, wo_mstr.wo_status')
+                    wo_mstr.wo_finish_date, wo_mstr.wo_action, wo_mstr.wo_status,
+                    k1.fn_desc as k11, k2.fn_desc as k22, k3.fn_desc as k33')
             // ->selectRaw('wo_engineer1')
             // ->selectRaw('u1.*')
             // ->where('sr_status', '=', '1')
@@ -795,8 +806,12 @@ class ServiceController extends Controller
             ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
             ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
             ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
+            ->leftJoin('fn_mstr as k1', 'service_req_mstr.sr_failurecode1', 'k1.fn_code')
+            ->leftJoin('fn_mstr as k2', 'service_req_mstr.sr_failurecode2', 'k2.fn_code')
+            ->leftJoin('fn_mstr as k3', 'service_req_mstr.sr_failurecode3', 'k3.fn_code')
             ->selectRaw('service_req_mstr.* , asset_mstr.asset_desc, dept_mstr.dept_desc, users.username, wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, wo_mstr.wo_start_date,
-                    wo_mstr.wo_finish_date, wo_mstr.wo_action, wo_mstr.wo_status')
+                    wo_mstr.wo_finish_date, wo_mstr.wo_action, wo_mstr.wo_status,
+                    k1.fn_desc as k11, k2.fn_desc as k22, k3.fn_desc as k33')
             ->where('sr_status', '=', '1')
             ->orderBy('sr_number', 'DESC')
             ->paginate(10);
@@ -871,8 +886,12 @@ class ServiceController extends Controller
                     ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
                     ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
                     ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
+                    ->leftJoin('fn_mstr as k1', 'service_req_mstr.sr_failurecode1', 'k1.fn_code')
+                    ->leftJoin('fn_mstr as k2', 'service_req_mstr.sr_failurecode2', 'k2.fn_code')
+                    ->leftJoin('fn_mstr as k3', 'service_req_mstr.sr_failurecode3', 'k3.fn_code')
                     ->selectRaw('service_req_mstr.* , asset_mstr.asset_desc, dept_mstr.dept_desc, users.username, wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, wo_mstr.wo_start_date,
-                        wo_mstr.wo_finish_date, wo_mstr.wo_action, wo_mstr.wo_status')
+                        wo_mstr.wo_finish_date, wo_mstr.wo_action, wo_mstr.wo_status,
+                        k1.fn_desc as k11, k2.fn_desc as k22, k3.fn_desc as k33')
                     ->orderBy('sr_number', 'DESC')
                     ->paginate(10);
 
@@ -950,8 +969,12 @@ class ServiceController extends Controller
                     ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
                     ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
                     ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
+                    ->leftJoin('fn_mstr as k1', 'service_req_mstr.sr_failurecode1', 'k1.fn_code')
+                    ->leftJoin('fn_mstr as k2', 'service_req_mstr.sr_failurecode2', 'k2.fn_code')
+                    ->leftJoin('fn_mstr as k3', 'service_req_mstr.sr_failurecode3', 'k3.fn_code')
                     ->selectRaw('service_req_mstr.* , asset_mstr.asset_desc, dept_mstr.dept_desc, users.username, wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, wo_mstr.wo_start_date,
-                        wo_mstr.wo_finish_date, wo_mstr.wo_action, wo_mstr.wo_status')
+                        wo_mstr.wo_finish_date, wo_mstr.wo_action, wo_mstr.wo_status,
+                        k1.fn_desc as k11, k2.fn_desc as k22, k3.fn_desc as k33')
                     ->whereRaw($kondisi)
                     ->orderBy('sr_number', 'DESC')
                     ->paginate(10);
@@ -1107,7 +1130,8 @@ class ServiceController extends Controller
                 ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
                 ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
                 ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
-                ->selectRaw('service_req_mstr.* ,wo_mstr.* , asset_mstr.asset_desc, dept_mstr.dept_desc, u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55')
+                ->selectRaw('service_req_mstr.* ,wo_mstr.* , asset_mstr.asset_desc, dept_mstr.dept_desc, 
+                    u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55')
                 //->where('wo_status', '=', 'completed')
                 // ->where('sr_status', '=', 4) A211014
                 //->where('sr_status', '=', 7) A211019

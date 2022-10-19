@@ -190,10 +190,16 @@
                         </div>
                     </div> -->
                     <div class="form-group row">
-                        <label for="wotype" class="col-md-5 col-form-label text-md-right">SR Type</label>
+                        <label for="wotype" class="col-md-5 col-form-label text-md-right">Failure Type</label>
                         <div class="col-md-6">
                             <input id="wotype" type="text" class="form-control" name="wotype" autocomplete="off" autofocus readonly/>
                         </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="fclist" class="col-md-5 col-form-label text-md-right">Failure Code</label>
+                      <div class="col-md-6">
+                          <textarea id="fclist" type="text" class="form-control" name="fclist" rows="3" readonly></textarea>
+                      </div>
                     </div>
                     <div class="form-group row">
                         <label for="impact" class="col-md-5 col-form-label text-md-right">Impact</label>
@@ -594,7 +600,18 @@ $(document).ready(function(){
       var assetloc = $(this).data('assetloc');
       var astype = $(this).data('astypedesc');
       var impactcode1 = $(this).data('impactcode');
+      
+      var fail1 = $(this).data('failcode1');
+      var fail2 = $(this).data('failcode2');
+      var fail3 = $(this).data('failcode3');
 
+      var failcode1 = $(this).data('fc1');
+      var failcode2 = $(this).data('fc2');
+      var failcode3 = $(this).data('fc3');
+      
+
+
+      var fail_list = fail1 + '\n' + fail2 + '\n' + fail3;
       
       // alert(assetdesc);
       $.ajax({
@@ -617,6 +634,8 @@ $(document).ready(function(){
                 
           }   
       })
+
+      
       // alert(impactcode1);
       document.getElementById('srnumber').value = srnumber;
       document.getElementById('assetcode').value = assetcode;
@@ -635,6 +654,11 @@ $(document).ready(function(){
       document.getElementById('dept').value = dept;
       document.getElementById('hiddendeptcode').value = deptcode;
       document.getElementById('reqbyname').value = reqbyname;
+      document.getElementById('fclist').value = fail_list;
+
+      document.getElementById('tmpfail1').value = failcode1;
+      document.getElementById('tmpfail2').value = failcode2;
+      document.getElementById('tmpfail3').value = failcode3;
 
     });
 

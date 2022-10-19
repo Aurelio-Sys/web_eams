@@ -45,7 +45,7 @@
     data-action="{{$show->wo_action}}"
     data-wostatus="{{$show->wo_status}}"
     data-failtype="{{$show->sr_wotype}}"
-    data-failcode="{{$show->sr_list_failurecode}}">
+    data-faildesc1="{{$show->k11}}" data-faildesc2="{{$show->k22}}" data-faildesc3="{{$show->k33}}">
     <i class="icon-table far fa-eye fa-lg"></i></a>
     </td>
 </tr>

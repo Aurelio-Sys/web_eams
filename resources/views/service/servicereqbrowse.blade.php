@@ -521,7 +521,6 @@ $(document).ready(function(){
       var action = $(this).data('action');
       var wostatus = $(this).data('wostatus');
       var failtype = $(this).data('failtype');
-      var failcode = $(this).data('failcode');
 
       var srdate = $(this).data('srdate');
       document.getElementById('srdate').value = srdate;
@@ -534,6 +533,12 @@ $(document).ready(function(){
       var eng5 = $(this).data('eng5');
 
       var englist = eng1 + '\n' + eng2 + '\n' + eng3 + '\n' + eng4 + '\n' + eng5;
+
+      var fail1 = $(this).data('faildesc1');
+      var fail2 = $(this).data('faildesc2');
+      var fail3 = $(this).data('faildesc3');
+
+      var faildesclist = fail1 + '\n' + fail2 + '\n' + fail3;
 
       console.log(englist);
 
@@ -548,6 +553,7 @@ $(document).ready(function(){
       else { document.getElementById('endwo').value = ''; }
       document.getElementById('action').value = action;
       document.getElementById('wostatus').value = wostatus;
+      document.getElementById('failcode').value = faildesclist;
 
       // if(eng1 != ''){
       //   document.getElementById('engineer1').value = eng1;
@@ -601,7 +607,12 @@ $(document).ready(function(){
             document.getElementById('impact').value =  desc;
             // }
                 
-          }   
+          },
+          statusCode: {
+            500: function(){
+              document.getElementById('impact').value =  "failed load";
+            }
+          }      
       })
 
       $.ajax({
@@ -614,27 +625,14 @@ $(document).ready(function(){
             document.getElementById('failtype').value =  data;
             // }
                 
-          }   
-      })
-
-      $.ajax({
-          url: "/searchfailcode",
-          data : {
-            failcode : failcode,
           },
-          success: function(data) {
-
-            var fcode = data;
-
-            var desc = fcode.replaceAll(",", "\n");
-
-            // console.log(desc);
-
-            document.getElementById('failcode').value =  desc;
-            // }
-                
+          statusCode: {
+            500: function(){
+              document.getElementById('failtype').value =  "failed load";
+            }
           }   
       })
+
 
       document.getElementById('srnumber').value = srnumber;
       document.getElementById('assetcode').value = assetcode;
