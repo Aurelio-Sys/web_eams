@@ -337,7 +337,7 @@ to get the desired effect
                     </li>
               @endif
                 <li class="nav-item has-treeview">
-                  <a href="{{url('/usagemulti')}}" class="nav-link">
+                  <a href="{{url('/kebutuhansp')}}" class="nav-link">
                     <i class="nav-icon far fa-circle"></i>
                     <p>
                       Spare Part Usage

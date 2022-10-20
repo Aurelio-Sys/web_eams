@@ -1,12 +1,13 @@
 <?php
 
-use App\Http\Controllers\KebutuhanSPController;
+use App\Http\Controllers\SP\KebutuhanSPController;
 use App\Http\Controllers\WO\ConfirmEng;
 use App\Http\Controllers\WO\WORelease;
 use App\Http\Controllers\WO\WHSConfirm;
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Master\QxWsaMTController;
 use Illuminate\Support\Facades\Route;
 
@@ -508,7 +509,7 @@ Route::group(['middleware' => ['auth']], function() {
 	
 
 	// List Spare part
-	Route::resource('kebutuhansp', KebutuhanSP::class);
+	Route::get('/kebutuhansp', [KebutuhanSPController::class, 'index'])->name('browseKsp');
 	
 });
 
