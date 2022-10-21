@@ -32,7 +32,7 @@
                             <div class="col-md-4 col-sm-12 mb-2 input-group">
                                 <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
                                     <option value="">--Select Asset--</option>
-                                    @foreach($asset1 as $assetsearch)
+                                    @foreach($asset as $assetsearch)
                                     <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_desc}}</option>
                                     @endforeach
                                 </select>
@@ -67,14 +67,15 @@
     <table class="table table-bordered mt-0" id="dataTable" width="100%" cellspacing="0" style="width:100%;padding: .2rem !important;">
         <thead>
             <tr style="text-align: center;">
-                <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="10%">WO Number<span id="name_icon"></span></th>
-                <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="10%">Status<span id="name_icon"></span></th>
-                <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="10%">Schedule Date<span id="username_icon"></span></th>
-                <th class="sorting" data-sorting_type="asc" data-column_name="wo_schedule" width="10%">Due Date<span id="name_icon"></span></th>
-                <th class="sorting" data-sorting_type="asc" data-column_name="wo_schedule" width="10%">Priority<span id="name_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="8%">WO Number<span id="name_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="8%">Status<span id="name_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="8%">Schedule Date<span id="username_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_schedule" width="8%">Due Date<span id="name_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_schedule" width="8%">Priority<span id="name_icon"></span></th>
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="20%">Asset<span id="username_icon"></span></th>
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="20%">Sparepart<span id="username_icon"></span></th>
-                <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="10%">Qty Req<span id="username_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="8%">Qty Req<span id="username_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="8%">Qty Conf Whs<span id="username_icon"></span></th>
             </tr>
         </thead>
         <tbody>

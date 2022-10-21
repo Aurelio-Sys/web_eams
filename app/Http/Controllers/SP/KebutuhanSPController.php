@@ -16,10 +16,15 @@ class KebutuhanSPController extends Controller
      */
     public function index(Request $request)
     {
+        $asset = DB::table('asset_mstr')
+            ->orderBy('asset_code')
+            ->get();
+
         $datawo = DB::table('wo_mstr')
             ->leftJoin('wo_dets','wo_dets_nbr','=','wo_nbr')
             ->join('asset_mstr','asset_code','=','wo_asset')
             ->leftjoin('sp_mstr','wo_dets_sp','=','spm_code')
+            ->where('wo_dets_sp','<>','')
             ->orderBy('wo_schedule');
 
         /*
@@ -39,7 +44,7 @@ class KebutuhanSPController extends Controller
 
 // dd($datawo);
 
-        return view('schedule.kebutuhansp-browse', ['datawo' => $datawo]);
+        return view('schedule.kebutuhansp-browse', ['datawo' => $datawo, 'asset' => $asset]);
     }
 
     /**
