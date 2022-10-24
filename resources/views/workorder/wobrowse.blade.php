@@ -281,13 +281,35 @@ div #munculgambar .gambar:hover{
             </div>
           </div>
           <!--         <div id="womanualchoose" style="display:none"> -->
-          <div class="form-group row col-md-12 c_wottypediv" id="c_wottypediv" style="display: none;">
+          <!-- <div class="form-group row col-md-12 c_wottypediv" id="c_wottype" style="display: none;">
             <label for="c_wottype" class="col-md-5 col-form-label text-md-left">Work Order Type</label>
             <div class="col-md-7">
               <select id="c_wottype" class="form-control c_wottype" name="c_wottype" autofocus required>
                 <option value="" selected>Select Work Order Type</option>
                 @foreach($wottype as $c_wottype)
                 <option value="{{$c_wottype->wotyp_code}}">{{$c_wottype->wotyp_desc}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div> -->
+          <div class="form-group row col-md-12 ftypediv" id="ftypediv" style="display: none;">
+            <label for="c_failuretype" class="col-md-5 col-form-label text-md-left">Failure Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+            <div class="col-md-7 col-sm-12">
+              <select class="form-control" id="c_failuretype" name="c_failuretype" required>
+                <option></option>
+                @foreach($wottype as $wotypeshow)
+                <option value="{{$wotypeshow->wotyp_code}}">{{$wotypeshow->wotyp_code}} -- {{$wotypeshow->wotyp_desc}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="form-group row col-md-12 fcodediv" id="fcodediv" style="display: none;">
+            <label for="failurecode" class="col-md-5 col-form-label text-md-left">Failure Code <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+            <div class="col-md-7 col-sm-12">
+              <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple" required>
+                <option></option>
+                @foreach($failure as $fcshow)
+                <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}}</option>
                 @endforeach
               </select>
             </div>
@@ -303,10 +325,6 @@ div #munculgambar .gambar:hover{
               </select>
             </div>
           </div>
-          <div id="failurediv">
-
-          </div>
-
           <input type="hidden" id="crepairtypeedit" name="crepairtypeedit" value=''>
           <div class="form-group row col-md-12 c_engineerdiv">
             <label for="c_engineernum" class="col-md-5 col-form-label text-md-left">Total Engineer</label>
@@ -522,11 +540,22 @@ div #munculgambar .gambar:hover{
             </div>
           </div>
           <div class="form-group row justify-content-center e_wottypediv" id="e_wottypediv">
-            <label for="e_wottype" class="col-md-5 col-form-label text-md-left">Work Order Type</label>
+            <label for="e_wottype" class="col-md-5 col-form-label text-md-left">Failure Type</label>
             <div class="col-md-7">
               <select name="e_wottype" class="form-control" id="e_wottype" required>
                 @foreach($wottype as $e_wottypeval)
                 <option value="{{trim($e_wottypeval->wotyp_code)}}">{{$e_wottypeval->wotyp_code}} - {{$e_wottypeval->wotyp_desc}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
+            <label for="m_failurecode" class="col-md-5 col-form-label text-md-left">Failure Code <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+            <div class="col-md-7 col-sm-12">
+              <select class="form-control" id="m_failurecode" name="m_failurecode[]" multiple="multiple" required>
+                <option></option>
+                @foreach($failure as $fcshow)
+                <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}}</option>
                 @endforeach
               </select>
             </div>
@@ -866,7 +895,7 @@ div #munculgambar .gambar:hover{
           <div class="col-md-4">
             <input type="text" readonly id="v_assetdesc" type="text" class="form-control v_assetdesc" name="v_assetdesc" autofocus>
           </div>
-          <label for="v_wottype" class="col-md-2 col-form-label text-md-left">WO Type</label>
+          <label for="v_wottype" class="col-md-2 col-form-label text-md-left">Failure Type</label>
           <div class="col-md-4">
             <input id="v_wottype" type="text" class="form-control" name="v_wottype" value="{{ old('v_wottype') }}" autofocus readonly>
           </div>
@@ -876,19 +905,19 @@ div #munculgambar .gambar:hover{
           <div class="col-md-4">
             <textarea id="v_note" readonly class="form-control" name="v_note" value="{{ old('v_note') }}" autofocus></textarea>
           </div>
-          <label for="v_impact" class="col-md-2 col-form-label text-md-left">Impact</label>
-            <div class="col-md-4">
-              <textarea id="v_impact" class="form-control" name="v_impact" value="{{ old('v_impact') }}" autofocus readonly></textarea>
-            </div>
+          <label for="v_fclist" class="col-md-2 col-form-label text-md-left">Failure Code</label>
+          <div class="col-md-4">
+            <textarea id="v_fclist" class="form-control" name="v_fclist" value="{{ old('v_fclist') }}" autofocus readonly></textarea>
+          </div>
         </div>
         <div class="form-group row">
           <label for="v_engineerl" class="col-md-2 col-form-label text-md-left">Engineer List</label>
           <div class="col-md-4">
             <textarea id="v_engineerl" class="form-control v_engineerl" name="v_engineerl" autofocus readonly></textarea>
           </div>
-          <label for="v_mtcby" class="col-md-2 col-form-label text-md-left">Maintenance By</label>
+          <label for="v_impact" class="col-md-2 col-form-label text-md-left">Impact</label>
           <div class="col-md-4">
-            <input id="v_mtcby" type="text" class="form-control" name="v_mtcby" readonly>
+            <textarea id="v_impact" class="form-control" name="v_impact" value="{{ old('v_impact') }}" autofocus readonly></textarea>
           </div>
         </div>
 
@@ -929,13 +958,19 @@ div #munculgambar .gambar:hover{
             <div class="col-md-4">
               <input id="v_schedule" readonly type="date" class="form-control" name="v_schedule" value="{{ old('v_schedule') }}" autofocus>
             </div>
-          
-          
-            <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
+            <label for="v_mtcby" class="col-md-2 col-form-label text-md-left">Maintenance By</label>
             <div class="col-md-4">
-              <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
+              <input id="v_mtcby" type="text" class="form-control" name="v_mtcby" readonly>
             </div>
-          
+        </div>
+        <div class="form-group row">
+          <label class="col-md-2 col-form-label"></label>
+          <div class="col-md-4">
+          </div>
+          <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
+          <div class="col-md-4">
+            <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
+          </div>
         </div>
         <div class="form-group row">
 
@@ -1936,6 +1971,24 @@ div #munculgambar .gambar:hover{
           }
         }
 
+        // console.log(newarrimp);
+
+        
+
+        var newarrfc = [];
+
+        if(fc1 != null){
+          newarrfc.push(fc1);
+        }
+
+        if(fc2 != null){
+          newarrfc.push(fc2);
+        }
+
+        if(fc3 != null){
+          newarrfc.push(fc3);
+        }
+
 
         document.getElementById('statusedit').value = wostatus;
 
@@ -2003,6 +2056,12 @@ div #munculgambar .gambar:hover{
         document.getElementById('e_wottype').value = ewottype;
         //$('#e_wottype').val(ewottype);
         // $('#e_wottype').trigger('change');
+
+        document.getElementById('m_failurecode').selectedIndex = newarrfc;
+        $('#m_failurecode').val(newarrfc);
+        $('#m_failurecode').trigger('change');
+
+
         document.getElementById('e_asset').value = asset + ' -- ' + assdesc;
         document.getElementById('e_assethid').value = asset;
         document.getElementById('e_note').value = note;
@@ -2101,6 +2160,14 @@ div #munculgambar .gambar:hover{
           closeOnSelect: false,
           allowClear: true,
           newarrimp,
+        });
+
+        $('#m_failurecode').select2({
+          placeholder: "Select Failure Code",
+          width : '100%',
+          closeOnSelect: false,
+          allowClear: true,
+          maximumSelectionLength : 3,
         });
 
         $('#erepairgroup').select2({
@@ -2216,6 +2283,20 @@ div #munculgambar .gambar:hover{
         var vwottype = result[0].wo_new_type + ' -- ' + result[0].wotyp_desc;
         var mtcby = result[0].asset_daya;
 
+        var fclist = "";
+
+        if (fn1 != null) {
+          fclist = fc1 + '--' + fn1;
+        }
+
+        if (fn1 != null && fn2 != null){
+          fclist = fc1 + '--' + fn1 + '\n' + fc2 + '--' + fn2;
+        }
+
+        if(fn1 != null && fn2 != null && fn3 != null){
+          fclist = fc1 + '--' + fn1 + '\n' + fc2 + '--' + fn2 + '\n' + fc3 + '--' + fn3;
+        }
+
         // console.log(rd1);
         var strimp = '';
         if (vimpact != null && vimpactdesc != null) {
@@ -2324,6 +2405,7 @@ div #munculgambar .gambar:hover{
         document.getElementById('v_creator').value = creator;
         document.getElementById('v_unconfirm').value = reason;
         document.getElementById('v_mtcby').value = mtcby;
+        document.getElementById('v_fclist').value = fclist;
 
         /*if(repairtype == 'code'){
           var textareaview = document.getElementById('v_repaircode');
@@ -2587,23 +2669,55 @@ div #munculgambar .gambar:hover{
     // document.getElementById('womanualchoose').style.display = '';
     var assetval = document.getElementById('c_asset').value;
     if (assetval == '') {
-      document.getElementById('c_wottypediv').style.display = 'none';
+      // document.getElementById('c_wottypediv').style.display = 'none';
       document.getElementById('c_impactdiv').style.display = 'none';
+      document.getElementById('ftypediv').style.display = 'none';
+      document.getElementById('fcodediv').style.display = 'none';
     } else {
-      document.getElementById('c_wottypediv').style.display = '';
+      // document.getElementById('c_wottypediv').style.display = '';
       document.getElementById('c_impactdiv').style.display = '';
+      document.getElementById('ftypediv').style.display = '';
+      document.getElementById('fcodediv').style.display = '';
     }
     $('#c_wottype').select2({
       placeholder: "Select Value",
       width: '100%',
       theme: 'bootstrap4',
     });
+
+    $('#c_failuretype').select2({
+      placeholder: "Select Failure Type",
+      width: '100%',
+      closeOnSelect: false,
+      allowClear: true,
+      theme: 'bootstrap4',
+    });
+
     $('#c_impact').select2({
       placeholder: "Select Value",
       width: '100%',
       closeOnSelect: false,
       allowClear: true,
       theme: 'bootstrap4',
+    });
+
+    $("#wotype").select2({
+      width: '100%',
+      // theme : 'bootstrap4',
+      allowClear: true,
+      placeholder: 'Select Failure Type',
+
+    });
+
+    $("#failurecode").select2({
+      width: '100%',
+      placeholder: "Select Failure Code",
+      theme: "bootstrap4",
+      allowClear: true,
+      maximumSelectionLength : 3,
+      closeOnSelect : false,
+      allowClear : true,
+      multiple : true,
     });
 
   });
