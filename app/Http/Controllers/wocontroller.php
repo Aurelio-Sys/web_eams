@@ -993,9 +993,6 @@ class wocontroller extends Controller
         $eng3 = '';
         $eng4 = '';
         $eng5 = '';
-        $fn1 = null;
-        $fn2 = null;
-        $fn3 = null;
         $rc1 = '';
         $rc2 = '';
         $rc3 = '';
@@ -1093,7 +1090,10 @@ class wocontroller extends Controller
             'wo_repair_code2'  => $rc2,
             'wo_repair_code3'  => $rc3,
             'wo_repair_group'  => $rg1,
-            'wo_new_type'      => $req->c_wottype,
+            'wo_failure_code1'  => isset($req->failurecode[0]) ? $req->failurecode[0] : null,
+            'wo_failure_code2'  => isset($req->failurecode[1]) ? $req->failurecode[1] : null,
+            'wo_failure_code3'  => isset($req->failurecode[2]) ? $req->failurecode[2] : null,
+            'wo_new_type'      => $req->c_failuretype,
             'wo_impact'        => $cimpactlist,
             'wo_impact_desc'   => $cimpactdesclist,
             'wo_repair_type'   => $req->crepairtype,
@@ -1325,6 +1325,9 @@ class wocontroller extends Controller
                 'wo_repair_group' => $repairgroup,
                 'wo_repair_type'  => $repairtype,
                 'wo_new_type'     => $req->e_wottype,
+                'wo_failure_code1'=> isset($req->m_failurecode[0]) ? $req->m_failurecode[0] : null,
+                'wo_failure_code2'=> isset($req->m_failurecode[1]) ? $req->m_failurecode[1] : null,
+                'wo_failure_code3'=> isset($req->m_failurecode[2]) ? $req->m_failurecode[2] : null,
                 'wo_impact'       => $eimpactlist,
                 'wo_impact_desc'  => $eimpactdesclist,
                 'wo_note'         => $note,
@@ -1895,6 +1898,8 @@ class wocontroller extends Controller
             ->leftjoin('xxrepgroup_mstr', 'xxrepgroup_mstr.xxrepgroup_nbr', 'wo_mstr.wo_repair_group')
             ->where('wo_mstr.wo_nbr', '=', $nowo)
             ->get();
+
+        // dd($data);
 
         return $data;
     }

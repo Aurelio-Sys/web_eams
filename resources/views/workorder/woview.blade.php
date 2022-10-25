@@ -203,7 +203,7 @@
           <div class="col-md-4">
             <input type="text" readonly id="v_assetdesc" type="text" class="form-control v_assetdesc" name="v_assetdesc" autofocus>
           </div>
-          <label for="v_wottype" class="col-md-2 col-form-label text-md-left">WO Type</label>
+          <label for="v_wottype" class="col-md-2 col-form-label text-md-left">Failure Type</label>
           <div class="col-md-4">
             <input id="v_wottype" type="text" class="form-control" name="v_wottype" value="{{ old('v_wottype') }}" autofocus readonly>
           </div>
@@ -214,9 +214,9 @@
           <div class="col-md-4">
             <textarea id="v_note" readonly class="form-control" name="v_note" value="{{ old('v_note') }}" autofocus></textarea>
           </div>
-          <label for="v_impact" class="col-md-2 col-form-label text-md-left">Impact</label>
+          <label for="v_fclist" class="col-md-2 col-form-label text-md-left">Failure Code</label>
           <div class="col-md-4">
-            <textarea id="v_impact" class="form-control" name="v_impact" value="{{ old('v_impact') }}" autofocus readonly></textarea>
+            <textarea id="v_fclist" class="form-control" name="v_fclist" value="{{ old('v_fclist') }}" autofocus readonly></textarea>
           </div>
         </div>
         <div class="form-group row justify-content-center">
@@ -224,9 +224,10 @@
           <div class="col-md-4">
             <textarea id="v_engineerl" class="form-control v_engineerl" name="v_engineerl" autofocus readonly></textarea>
           </div>
-          <label for="v_mtcby" class="col-md-2 col-form-label text-md-left">Maintenance By</label>
+          
+          <label for="v_impact" class="col-md-2 col-form-label text-md-left">Impact</label>
           <div class="col-md-4">
-            <input id="v_mtcby" type="text" class="form-control" name="v_mtcby" readonly>
+            <textarea id="v_impact" class="form-control" name="v_impact" value="{{ old('v_impact') }}" autofocus readonly></textarea>
           </div>
         </div>
         <!--<div class="form-group row justify-content-center" id="divviewcode" style="display: none;">
@@ -259,6 +260,15 @@
           <label for="v_schedule" class="col-md-2 col-form-label text-md-left">Schedule Date</label>
           <div class="col-md-4">
             <input id="v_schedule" readonly type="date" class="form-control" name="v_schedule" value="{{ old('v_schedule') }}" autofocus>
+          </div>
+          <label for="v_mtcby" class="col-md-2 col-form-label text-md-left">Maintenance By</label>
+          <div class="col-md-4">
+            <input id="v_mtcby" type="text" class="form-control" name="v_mtcby" readonly>
+          </div>
+        </div>
+        <div class="form-group row justify-content-center">
+          <label for="v_schedule" class="col-md-2 col-form-label text-md-left"></label>
+          <div class="col-md-4">
           </div>
           <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
           <div class="col-md-4">
@@ -390,6 +400,22 @@
         var vimpactdesc = result[0].wo_impact_desc;
         var vwottype = result[0].wo_new_type + ' -- ' + result[0].wotyp_desc;
         var mtcby = result[0].asset_daya;
+
+        var fclist = "";
+
+        if (fn1 != null) {
+          fclist = fc1 + '--' + fn1;
+        }
+
+        if (fn1 != null && fn2 != null){
+          fclist = fc1 + '--' + fn1 + '\n' + fc2 + '--' + fn2;
+        }
+
+        if(fn1 != null && fn2 != null && fn3 != null){
+          fclist = fc1 + '--' + fn1 + '\n' + fc2 + '--' + fn2 + '\n' + fc3 + '--' + fn3;
+        }
+
+        
         // console.log(rd1);
         // alert(vimpact);
         var strimp = '';
@@ -494,6 +520,7 @@
         document.getElementById('v_creator').value = creator;
         document.getElementById('v_unconfirm').value = reason;
         document.getElementById('v_mtcby').value = mtcby;
+        document.getElementById('v_fclist').value = fclist;
 
         /*
         if(repairtype == 'code'){
