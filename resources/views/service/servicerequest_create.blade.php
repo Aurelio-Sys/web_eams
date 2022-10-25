@@ -14,7 +14,7 @@
 
 <div class="panel-body">
   <hr>
-  <form method="post" id="srform" action="/inputsr" style="background-color: white; padding: 2%;">
+  <form method="post" id="srform" action="/inputsr" style="background-color: white; padding: 2%;" enctype="multipart/form-data">
     {{csrf_field()}}
     <div class="form-group row">
       <label for="assetcode" class="col-md-2 col-lg-3 col-form-label my-auto">Asset Code <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
@@ -94,6 +94,18 @@
         </select>
       </div>
     </div>
+    <div class="form-group row">
+      <label for="file" class="col-sm-12 col-lg-3 col-form-label">{{ __('Upload') }}</label>
+      <div class="col-sm-12 col-md-5 input-file-container">
+        <input type="file" class="form-control" id="filename" name="filename[]" multiple>
+      </div>
+    </div>
+    <!-- <div class="form-group row">
+      <label for="file" class="col-md-4 col-form-label text-md-right">{{ __('Upload New') }}</label>
+      <div class="col-md-6 input-file-container">
+        <input type="file" class="form-control" name="filename[]" multiple>
+      </div>
+    </div> -->
     <!-- <div class="form-group row">
           <label class="col-sm-12 col-lg-6 col-form-label">Department</label>
           <div class="col-sm-12 col-md-3">
@@ -122,11 +134,11 @@
 
 @section('scripts')
 <script>
-  $(document).on('submit','#srform',function(e){
-      document.getElementById('btnloading').style.display = 'block';
-      document.getElementById('btnsubmit').style.display = 'none';
-      triggerdelete = 'yes';
-    });
+  $(document).on('submit', '#srform', function(e) {
+    document.getElementById('btnloading').style.display = 'block';
+    document.getElementById('btnsubmit').style.display = 'none';
+    triggerdelete = 'yes';
+  });
 
   $(document).ready(function() {
 
@@ -134,6 +146,11 @@
     //   document.getElementById('otherfailure').disabled = !this.checked;
     //   document.getElementById('otherfailure').required = this.checked;
     // };
+
+    // $("#filename").on('click', function () {
+    //   var filename = 
+    //   console.log(filename);
+    // })
 
     $("#assetcode").select2({
       width: '100%',
@@ -192,10 +209,10 @@
       placeholder: "Select Failure Code",
       theme: "bootstrap4",
       allowClear: true,
-      maximumSelectionLength : 3,
-      closeOnSelect : false,
-      allowClear : true,
-      multiple : true,
+      maximumSelectionLength: 3,
+      closeOnSelect: false,
+      allowClear: true,
+      multiple: true,
     });
   });
 

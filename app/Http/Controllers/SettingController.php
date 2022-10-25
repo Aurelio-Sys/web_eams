@@ -2003,6 +2003,8 @@ class SettingController extends Controller
             ]);
         }
 
+        // dd($req->file('filename'));
+
         if (!is_null($req->file('filename'))) {
             foreach($req->file('filename') as $upload){
                 $dataTime = date('Ymd_His');

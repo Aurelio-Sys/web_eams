@@ -30,11 +30,14 @@ use Svg\Tag\Rect;
 use App\Jobs\Emaill;
 use App\Jobs\EmailScheduleJobs;
 use Carbon\CarbonPeriod;
+use File;
+use Response;
 
 use App;
 use App\Exports\ExportSR;
 use Exception;
 use Maatwebsite\Excel\Facades\Excel;
+use ZipArchive;
 
 class ServiceController extends Controller
 {
@@ -68,7 +71,7 @@ class ServiceController extends Controller
             ->get();
 
         $fcode = DB::table('fn_mstr')
-                ->get();
+            ->get();
 
         return view('service.servicerequest_create', ['showasset' => $asset, 'dept' => $datadepart, 'wotype' => $wotype, 'impact' => $impact, 'fc' => $fcode]);
     }
@@ -112,10 +115,9 @@ class ServiceController extends Controller
 
         DB::beginTransaction();
 
-        try{
+        try {
 
             $counterimpact = count($req->impact);
-            // dd($test);
 
             $newimpact = "";
 
@@ -132,7 +134,7 @@ class ServiceController extends Controller
 
             $running = DB::table('running_mstr')
                 ->first();
-
+            // dd($running);
             $newyear = Carbon::now()->format('y');
 
             if ($running->year == $newyear) {
@@ -142,12 +144,42 @@ class ServiceController extends Controller
                 if (strlen($tempnewrunnbr) < 4) {
                     $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
                 }
-            }else{
+            } else {
                 $newtemprunnbr = '0001';
             }
 
             $runningnbr = $running->sr_prefix . '-' . $newyear . '-' . $newtemprunnbr;
 
+            $cekData = DB::table('service_req_mstr')
+                ->where('sr_number', '=', $runningnbr)
+                ->get();
+
+            // dd($cekData);
+            if ($cekData->count() == 0) {
+
+                if ($req->hasFile('filename')) {
+
+                    foreach ($req->file('filename') as $upload) {
+                        $dataTime = date('Ymd_His');
+                        $filename = $dataTime . '-' . $upload->getClientOriginalName();
+                        // dump($filename);
+                        // Simpan File Upload pada Public
+                        $savepath = public_path('uploadasset/');
+                        $upload->move($savepath, $filename);
+                        // dd($filename);
+                        // Simpan ke DB Upload
+                        DB::table('service_req_upload')
+                            ->insert([
+                                'filepath' => $savepath . $filename,
+                                'sr_number' => $runningnbr,
+                                'created_at' => Carbon::now()->toDateTimeString(),
+                                'updated_at' => Carbon::now()->toDateTimeString(),
+                            ]);
+                    }
+                    // dump(1);
+                }
+            }
+            // dd('stop');
             DB::table('service_req_mstr')
                 ->insert([
                     'sr_number' => $runningnbr,
@@ -192,15 +224,12 @@ class ServiceController extends Controller
             DB::commit();
             toast('Service Request ' . $runningnbr . ' Successfully Created', 'success');
             return back();
-
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             // dd($e);
             DB::rollBack();
             toast('Service Request Failed Created', 'error');
             return back();
         }
-
     }
 
     public function srapproval()
@@ -209,11 +238,11 @@ class ServiceController extends Controller
         // dd(Session::get('role'));
 
         $kepalaengineer = DB::table('eng_mstr')
-                            ->where('approver', '=', 1)
-                            ->where('eng_active', '=', 'Yes')
-                            ->where('eng_code', '=', Session::get('username'))
-                            ->orderBy('eng_code')
-                            ->first();
+            ->where('approver', '=', 1)
+            ->where('eng_active', '=', 'Yes')
+            ->where('eng_code', '=', Session::get('username'))
+            ->orderBy('eng_code')
+            ->first();
 
 
         if ($kepalaengineer || Session::get('role') == 'ADM') {
@@ -368,14 +397,14 @@ class ServiceController extends Controller
 
                 $newyear = Carbon::now()->format('y');
 
-                if($running->year == $newyear){
+                if ($running->year == $newyear) {
                     $tempnewrunnbr = strval(intval($running->wo_nbr) + 1);
 
                     $newtemprunnbr = '';
                     if (strlen($tempnewrunnbr) < 4) {
                         $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
                     }
-                }else{
+                } else {
                     $newtemprunnbr = "0001";
                 }
 
@@ -776,7 +805,7 @@ class ServiceController extends Controller
             //->get();
             ->paginate(10);
 
-        //dd($data);
+        // dd($data);
 
 
 
@@ -788,6 +817,96 @@ class ServiceController extends Controller
             ->get();
 
         return view('service.servicereqbrowse', ['datas' => $data, 'asset' => $datasset, 'fromhome' => '', 'users' => $datauser]);
+    }
+
+    public function downloadfile($id)
+    {
+        // dd($id);
+        $asset = DB::table('service_req_upload')
+            ->where('id', '=', $id)
+            ->first();
+
+        if ($asset) {
+
+            $lastindex = strrpos($asset->filepath, "/");
+            $filename = substr($asset->filepath, $lastindex + 1);
+
+            return Response::download($asset->filepath, $filename);
+        } else {
+            toast('There is no file', 'error');
+            return back();
+        }
+    }
+
+    public function downloadfilezip(Request $req, $sr)
+    {
+        $zip = new ZipArchive;
+
+        $srnumber = DB::table('service_req_mstr')
+            ->where('sr_number', '=', $sr)
+            ->first();
+
+        $listdownload = DB::table('service_req_upload')
+            ->where('sr_number', '=', $srnumber->sr_number)
+            ->get();
+        // dd($listdownload);
+
+        /* A211103 */
+        // $listfinish = DB::table('acceptance_image')
+        //     ->whereFile_wonumber($sr)
+        //     ->get();
+
+        $fileName = $sr . '.zip';
+
+        if (count($listdownload) > 0) {
+            if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE) {
+                foreach ($listdownload as $listdown) {
+                    $files = File::get($listdown->filepath);
+                    $relativeNameInZipFile = basename($listdown->filepath);
+                    $zip->addFile($listdown->filepath, $relativeNameInZipFile);
+                }
+
+                /* A211103 */
+                // foreach ($listfinish as $listfinish) {
+                //     $files = File::get($listfinish->file_url);
+                //     $relativeNameInZipFile = basename($listfinish->file_url);
+                //     $zip->addFile($listfinish->file_url, $relativeNameInZipFile);
+                // }
+
+                $zip->close();
+            }
+
+            return response()->download(public_path($fileName));
+        } else {
+            toast('Tidak ada dokumen untuk pada SR ' . $sr . '!', 'error');
+            return back();
+        }
+    }
+
+    public function listupload($id)
+    {
+        // dd($id);
+
+        $data = DB::table('service_req_upload')
+            ->where('sr_number', $id)
+            ->get();
+
+        $output = '';
+        foreach ($data as $data) {
+
+            $lastindex = strrpos($data->filepath, "/");
+            $filename = substr($data->filepath, $lastindex + 1);
+
+
+            $output .=  '<tr>
+                            <td> 
+                            <a href="/downloadfile/' . $data->id . '" target="_blank">' . $filename . '</a> 
+                            </td>
+                            <input type="hidden" value="' . $data->id . '" class="rowval"/>
+                        </tr>';
+        }
+
+        return response($output);
     }
 
     //tyas, link dari Home
@@ -815,6 +934,8 @@ class ServiceController extends Controller
             ->where('sr_status', '=', '1')
             ->orderBy('sr_number', 'DESC')
             ->paginate(10);
+
+            dd($data);
 
         $datasset = DB::table('asset_mstr')
             ->get();
@@ -1029,28 +1150,30 @@ class ServiceController extends Controller
         }
     }
 
-    public function searchfailtype(Request $req){
-        if ($req->ajax()){
-                $failtype = $req->failtype;
+    public function searchfailtype(Request $req)
+    {
+        if ($req->ajax()) {
+            $failtype = $req->failtype;
 
-                $data = "";
+            $data = "";
 
-                $wotype = DB::table('wotyp_mstr')
-                    ->where('wotyp_code', '=', $failtype)
-                    ->selectRaw('wotyp_desc')
-                    ->first();
+            $wotype = DB::table('wotyp_mstr')
+                ->where('wotyp_code', '=', $failtype)
+                ->selectRaw('wotyp_desc')
+                ->first();
 
 
-                $data = $wotype->wotyp_desc;
+            $data = $wotype->wotyp_desc;
 
-                
+
 
             return response()->json($data);
         }
     }
 
-    public function  searchfailcode(Request $req){
-        if($req->ajax()){
+    public function  searchfailcode(Request $req)
+    {
+        if ($req->ajax()) {
             $failcode = $req->failcode;
 
             // dd($impact);
