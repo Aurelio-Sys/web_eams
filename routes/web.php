@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\SP\KebutuhanSPController;
+use App\Http\Controllers\WO\AllWOGenerate;
 use App\Http\Controllers\WO\ConfirmEng;
 use App\Http\Controllers\WO\WORelease;
 use App\Http\Controllers\WO\WHSConfirm;
@@ -135,6 +136,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('/deletesupp', 'SettingController@deletesupp');
 	route::get('/suppsearch', 'SettingController@suppsearch');
 	route::get('/suppmaster/pagination', 'SettingController@supppagination');
+	route::post('/loadsupp', 'SettingController@loadsupp');
 
 	//asset master
 	route::get('/assetmaster', 'SettingController@assetmaster');
@@ -507,6 +509,9 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/whssubmit', [WHSConfirm::class,'whssubmit'])->name('WhsconfSubmit');
 	Route::get('/searchlot', [WHSConfirm::class, 'searchlot'])->name('searchlot');
 	
+	//Generate WO PM
+	Route::get('/viewwogenerator', [AllWOGenerate::class, 'viewWoGenerator'])->name('viewWOGen');
+	Route::post('/wogenerator', [AllWOGenerate::class, 'getAll'])->name('indexWoGenerate');
 
 	// List Spare part
 	Route::get('/kebutuhansp', [KebutuhanSPController::class, 'index'])->name('browseKsp');

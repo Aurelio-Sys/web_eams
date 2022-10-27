@@ -9,6 +9,7 @@ use App\Models\LocMstr;
 use App\Models\SPGroupMstr;
 use App\Models\SPMstr;
 use App\Models\SPTypeMstr;
+use App\Models\SuppMstr;
 use App\Services\WSAServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -1511,6 +1512,37 @@ class SettingController extends Controller
             toast('You do not have menu access, please contact admin.', 'error');
             return back();
         }
+    }
+
+    public function loadsupp(){
+        $domain = ModelsQxwsa::first();
+
+        $suppdata = (new WSAServices())->wsasupp($domain->wsas_domain);
+
+        if ($suppdata === false) {
+            toast('WSA Failed', 'error')->persistent('Dismiss');
+            return redirect()->back();
+        } else {
+
+            if ($suppdata[1] == "false") {
+                toast('Data Supplier tidak ditemukan', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+                
+                foreach ($suppdata[0] as $datas) {
+                    $supp = SuppMstr::firstOrNew(['supp_code'=>$datas->t_suppcode,
+                                                    'supp_desc'=> $datas->t_suppname]);
+                        $supp->supp_code = $datas->t_suppcode;
+                        $supp->supp_desc = $datas->t_suppname;
+                        $supp->created_at = Carbon::now()->toDateTimeString();
+                        $supp->updated_at = Carbon::now()->toDateTimeString();
+                        $supp->save();
+                }
+            }
+        }
+
+        toast('Supplier Loaded.', 'success');
+        return back();
     }
 
     //cek supplier sebelum input

@@ -18,7 +18,7 @@
         -->
         <div class="row">
             <div class="col-md-2">
-                <form action="/loadsite" method="post" id="submit">
+                <form action="/loadsupp" method="post" id="submit">
                     {{ method_field('post') }}
                     {{ csrf_field() }}
                     
