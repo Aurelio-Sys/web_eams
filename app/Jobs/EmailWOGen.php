@@ -37,15 +37,17 @@ class EmailWOGen /*implements ShouldQueue */
         //
         $pesan = $this->pesan;
 
+        $file_path = storage_path('app/temp_excel_wogenerate.xlsx');
+
         Mail::send(
             'email.emailwogenerate',
             [
                 'pesan' => $pesan,
             ],
-            function ($message) /*use ($alamatemail) */ {
+            function ($message) /*use ($alamatemail) */ use($file_path) {
                 $message->subject('WO Generator Create');
                 $message->to('tommy@ptimi.co.id');
-                $message->attach('/storage/app/temp_excel_wogenerate.xlsx');
+                $message->attach($file_path);
             }
         );
     }

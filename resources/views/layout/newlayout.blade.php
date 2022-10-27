@@ -344,6 +344,14 @@ to get the desired effect
                     </p>
                   </a>
                 </li>
+                <li class="nav-item has-treeview">
+                  <a href="{{route('viewWOGen')}}" class="nav-link">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>
+                      WO PM Generator
+                    </p>
+                  </a>
+                </li>
               </ul>
             </li>
           @endif

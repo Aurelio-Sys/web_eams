@@ -10,7 +10,7 @@
 @endsection
 @section('content')
 <div class="container">
-    <form class="form-group" method="post" action="{{route('indexWoGenerate')}}">
+    <form class="form-group" id="generate_submit" method="post" action="{{route('indexWoGenerate')}}">
     {{ method_field('post') }}
     {{ csrf_field() }}
     <div class="form-group row">
@@ -27,7 +27,10 @@
             <input type="text" class="form-control datepicker" name="todate" id="todate" autocomplete="off" />
         </div>
         <div class="col-md-2">
-            <input type="submit" class="btn btn-info" value="Generate WO PM" />
+            <input type="submit" class="btn btn-info" id="btngenerate" value="Generate WO PM" />
+            <button type="button" class="btn btn-info" id="s_btnloading" style="display:none;width: 100%;">
+                <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
+            </button>
         </div>
     </div>
     </form>
@@ -42,5 +45,12 @@
         startDate: date,
         minDate: 0,
     });
+
+    $('#generate_submit').submit(function(event) {
+        // alert('aaa');
+        document.getElementById('btngenerate').style.display = 'none';
+        document.getElementById('s_btnloading').style.display = '';
+    });
+
 </script>
 @endsection
