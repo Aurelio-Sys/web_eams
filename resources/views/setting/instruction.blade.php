@@ -125,14 +125,14 @@
                             </select>
                         </div>
                     </div> -->
-                    <div class="form-group row">
+                    <!-- <div class="form-group row">
                         <label for="t_tool" class="col-md-4 col-form-label text-md-right">Tools Code</label>
                         <div class="col-md-6">
                             <select id="t_tool" name="t_tool[]" class="form-control" multiple="multiple">
                                 <option value="">--Select Tools--</option>
                             </select>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="form-group row ">
                         <label for="t_hour" class="col-md-4 col-form-label text-md-right">Standard Hour</label>
                         <div class="col-md-6">
@@ -208,7 +208,7 @@
                             </select>
                         </div>
                     </div> -->
-                    <div class="form-group row">
+                    <!-- <div class="form-group row">
                         <label for="te_tool" class="col-md-4 col-form-label text-md-right">Tools Code</label>
                         <div class="col-md-6">
                             <select id="te_tool" name="te_tool[]" class="form-control" multiple="multiple">
@@ -217,7 +217,7 @@
                             <input type="hidden" name="hd_tool" id="hd_tool">
                             <input type="hidden" name="hd_part" id="hd_part">
                         </div>
-                    </div>
+                    </div> -->
                     <div class="form-group row ">
                         <label for="te_hour" class="col-md-4 col-form-label text-md-right">Standard Hour</label>
                         <div class="col-md-6">

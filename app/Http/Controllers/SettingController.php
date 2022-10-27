@@ -3676,20 +3676,20 @@ class SettingController extends Controller
     //untuk create Instruction Detail
     public function createins(Request $req)
     {
-        $tool = "";
-        if(!is_null($req->t_tool)) {
-            $flg = 0;
-            foreach ($req->t_tool as $ds) {
-                if($flg == 0){
-                    $tool = $tool . $req->t_tool[$flg];
-                }
-                else{
-                    $tool = $tool . ',' .$req->t_tool[$flg];
-                }
+        // $tool = "";
+        // if(!is_null($req->t_tool)) {
+        //     $flg = 0;
+        //     foreach ($req->t_tool as $ds) {
+        //         if($flg == 0){
+        //             $tool = $tool . $req->t_tool[$flg];
+        //         }
+        //         else{
+        //             $tool = $tool . ',' .$req->t_tool[$flg];
+        //         }
 
-                $flg += 1;
-            }
-        }
+        //         $flg += 1;
+        //     }
+        // }
 
         $part = "";
         if(!is_null($req->t_part)) {
@@ -3719,7 +3719,7 @@ class SettingController extends Controller
                 'ins_desc'       => $req->t_desc,   
                 'ins_ref'        => $req->t_ref,
                 'ins_part'       => $part,
-                'ins_tool'       => $tool,
+                // 'ins_tool'       => $tool,
                 'ins_hour'       => $req->t_hour,
                 'ins_check'      => $req->t_check,
                 'ins_check_desc' => $req->t_check_desc,
@@ -3740,20 +3740,20 @@ class SettingController extends Controller
     //untuk edit Instruction Detail
     public function editins(Request $req)
     {
-        $tool = "";
-        if(!is_null($req->te_tool)) {
-            $flg = 0;
-            foreach ($req->te_tool as $ds) {
-                if($flg == 0){
-                    $tool = $tool . $req->te_tool[$flg];
-                }
-                else{
-                    $tool = $tool . ',' . $req->te_tool[$flg];
-                }
-                // $tool = $tool . $req->te_tool[$flg] . "," ;
-                $flg += 1;
-            }
-        }
+        // $tool = "";
+        // if(!is_null($req->te_tool)) {
+        //     $flg = 0;
+        //     foreach ($req->te_tool as $ds) {
+        //         if($flg == 0){
+        //             $tool = $tool . $req->te_tool[$flg];
+        //         }
+        //         else{
+        //             $tool = $tool . ',' . $req->te_tool[$flg];
+        //         }
+        //         // $tool = $tool . $req->te_tool[$flg] . "," ;
+        //         $flg += 1;
+        //     }
+        // }
 //dd($req->te_part);
         $part = "";
         if(!is_null($req->te_part)) {
@@ -3775,7 +3775,7 @@ class SettingController extends Controller
         ->update([
             'ins_desc'       => $req->te_desc,
             'ins_ref'        => $req->te_ref,
-            'ins_tool'       => $tool,
+            // 'ins_tool'       => $tool,
             'ins_part'       => $part,
             'ins_hour'       => $req->te_hour,
             'ins_check'      => $req->te_check,
