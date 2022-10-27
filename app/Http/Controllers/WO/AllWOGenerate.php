@@ -4,6 +4,7 @@ namespace App\Http\Controllers\WO;
 
 use App\Exports\GenerateWOExport;
 use App\Http\Controllers\Controller;
+use App\Jobs\EmailWOGen;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -121,11 +122,11 @@ class AllWOGenerate extends Controller
                             $tempnewrunnbr = strval(intval($running->wt_nbr) + 1);
 
                             $newtemprunnbr = '';
-                            if (strlen($tempnewrunnbr) < 4) {
-                                $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+                            if (strlen($tempnewrunnbr) < 6) {
+                                $newtemprunnbr = str_pad($tempnewrunnbr, 6, '0', STR_PAD_LEFT);
                             }
                         } else {
-                            $newtemprunnbr = "0001";
+                            $newtemprunnbr = "000001";
                         }
 
                         $runningnbr = $running->wt_prefix . '-' . $newyear . '-' . $newtemprunnbr;
@@ -184,6 +185,12 @@ class AllWOGenerate extends Controller
                 // Excel::store(new GenerateWOExport($datatemp) , 'temp_excel_wogenerate_'.$todaydate.'.xlsx');
 
                 Excel::store(new GenerateWOExport($datatemp) , 'temp_excel_wogenerate.xlsx');
+
+                $pesan = "Berikut adalah list WO yang terbentuk";
+
+                EmailWOGen::dispatch(
+                    $pesan,
+                );
             }
 
             DB::commit();

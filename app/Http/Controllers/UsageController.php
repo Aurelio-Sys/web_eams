@@ -227,14 +227,27 @@ class UsageController extends Controller
             $tablern = DB::table('running_mstr')
                     ->first();
 
-        $tempnewrunnbr = strval(intval($tablern->wt_nbr)+1);
-        $newtemprunnbr = '';
+        // $tempnewrunnbr = strval(intval($tablern->wt_nbr)+1);
+        // $newtemprunnbr = '';
 
-        if(strlen($tempnewrunnbr) <= 4){
-        $newtemprunnbr = str_pad($tempnewrunnbr,4,'0',STR_PAD_LEFT);
+        // if(strlen($tempnewrunnbr) <= 6){
+        // $newtemprunnbr = str_pad($tempnewrunnbr,6,'0',STR_PAD_LEFT);
+        // }
+
+        $newyear = Carbon::now()->format('y');
+
+        if ($tablern->year == $newyear) {
+            $tempnewrunnbr = strval(intval($tablern->wt_nbr) + 1);
+
+            $newtemprunnbr = '';
+            if (strlen($tempnewrunnbr) < 6) {
+                $newtemprunnbr = str_pad($tempnewrunnbr, 6, '0', STR_PAD_LEFT);
+            }
+        } else {
+            $newtemprunnbr = '000001';
         }
 
-        $runningnbr = $tablern->wt_prefix.'-'.$tablern->year.'-'.$newtemprunnbr;
+        $runningnbr = $tablern->wt_prefix.'-'.$newyear.'-'.$newtemprunnbr;
         
         // dd($runningnbr);
         $dataarray = array(
@@ -254,7 +267,8 @@ class UsageController extends Controller
 
         DB::table('running_mstr')
             ->update([
-                'wt_nbr' => $newtemprunnbr
+                'wt_nbr' => $newtemprunnbr,
+                'year' => $newyear
             ]);
 
         DB::table('asset_mstr')
@@ -406,14 +420,27 @@ class UsageController extends Controller
                         $tablern = DB::table('running_mstr')
                                         ->first();
 
-                        $tempnewrunnbr = strval(intval($tablern->wt_nbr)+1);
-                        $newtemprunnbr = '';
+                        // $tempnewrunnbr = strval(intval($tablern->wt_nbr)+1);
+                        // $newtemprunnbr = '';
 
-                        if(strlen($tempnewrunnbr) <= 4){
-                        $newtemprunnbr = str_pad($tempnewrunnbr,4,'0',STR_PAD_LEFT);
+                        // if(strlen($tempnewrunnbr) <= 4){
+                        // $newtemprunnbr = str_pad($tempnewrunnbr,4,'0',STR_PAD_LEFT);
+                        // }
+
+                        $newyear = Carbon::now()->format('y');
+
+                        if ($tablern->year == $newyear) {
+                            $tempnewrunnbr = strval(intval($tablern->wt_nbr) + 1);
+
+                            $newtemprunnbr = '';
+                            if (strlen($tempnewrunnbr) < 6) {
+                                $newtemprunnbr = str_pad($tempnewrunnbr, 6, '0', STR_PAD_LEFT);
+                            }
+                        } else {
+                            $newtemprunnbr = '000001';
                         }
 
-                        $runningnbr = $tablern->wt_prefix.'-'.$tablern->year.'-'.$newtemprunnbr;
+                        $runningnbr = $tablern->wt_prefix.'-'.$newyear.'-'.$newtemprunnbr;
                         
                         $dataarray = array(
                             'wo_nbr' => $runningnbr,
@@ -437,7 +464,8 @@ class UsageController extends Controller
 
                         DB::table('running_mstr')
                         ->update([
-                            'wt_nbr' => $newtemprunnbr
+                            'wt_nbr' => $newtemprunnbr,
+                            'year' => $newyear
                         ]);
 
 

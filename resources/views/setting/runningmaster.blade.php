@@ -61,7 +61,7 @@
                     <div class="form-group row">
                         <label for="srnumber" class="col-md-3 col-form-label text-md-right">{{ __('Last Service Request Number') }}</label>
                         <div class="col-md-7">
-                            <input id="srnumber" type="text" class="form-control" autocomplete="off" name="srnumber" value="<?php echo $datavaluesrnbr; ?>"  maxlength="4">
+                            <input id="srnumber" type="text" class="form-control" autocomplete="off" name="srnumber" value="<?php echo $datavaluesrnbr; ?>"  maxlength="6">
                             <span id="errorcur" style="color:red"></span>
                         </div>
                     </div>
@@ -77,7 +77,7 @@
                     <div class="form-group row">
                         <label for="wonbr" class="col-md-3 col-form-label text-md-right">{{ __('Last Work Order Number') }}</label>
                         <div class="col-md-7">
-                            <input id="wonbr" type="text" class="form-control" autocomplete="off" name="wonbr" value="<?php echo $datavaluewonbr; ?>"  maxlength="4">
+                            <input id="wonbr" type="text" class="form-control" autocomplete="off" name="wonbr" value="<?php echo $datavaluewonbr; ?>"  maxlength="6">
                             <span id="errorwo" style="color:red"></span>
                         </div>
                     </div>
@@ -93,7 +93,7 @@
                     <div class="form-group row">
                         <label for="wtnumber" class="col-md-3 col-form-label text-md-right">{{ __('Last Work Order Automatic Number') }}</label>
                         <div class="col-md-7">
-                            <input id="wtnumber" type="text" class="form-control" autocomplete="off" name="wtnumber" value="<?php echo $datavaluewtnbr; ?>"  maxlength="4">
+                            <input id="wtnumber" type="text" class="form-control" autocomplete="off" name="wtnumber" value="<?php echo $datavaluewtnbr; ?>"  maxlength="6">
                             <span id="errorwt" style="color:red"></span>
                         </div>
                     </div>
@@ -109,7 +109,7 @@
                     <div class="form-group row">
                         <label for="wdnumber" class="col-md-3 col-form-label text-md-right">{{ __('Last Work Order Direct Number') }}</label>
                         <div class="col-md-7">
-                            <input id="wdnumber" type="text" class="form-control" autocomplete="off" name="wdnumber" value="<?php echo $datavaluewdnbr; ?>"  maxlength="4">
+                            <input id="wdnumber" type="text" class="form-control" autocomplete="off" name="wdnumber" value="<?php echo $datavaluewdnbr; ?>"  maxlength="6">
                             <span id="errorwd" style="color:red"></span>
                         </div>
                     </div>
@@ -126,7 +126,7 @@
                     <div class="form-group row">
                         <label for="bonumber" class="col-md-3 col-form-label text-md-right">{{ __('Last Asset Booking Number') }}</label>
                         <div class="col-md-7">
-                            <input id="bonumber" type="text" class="form-control" autocomplete="off" name="bonumber" value="<?php echo $datavaluebonbr; ?>"  maxlength="4">
+                            <input id="bonumber" type="text" class="form-control" autocomplete="off" name="bonumber" value="<?php echo $datavaluebonbr; ?>"  maxlength="6">
                             <span id="errorwd" style="color:red"></span>
                         </div>
                     </div>
@@ -162,16 +162,16 @@
 
        var isnum = /^\d+$/.test(isi);
        
-       if(nbr > 4){
-         document.getElementById("errorcur").innerHTML = 'Current Number Must Be 4 Digits';
+       if(nbr > 6){
+         document.getElementById("errorcur").innerHTML = 'Current Number Must Be 6 Digits';
          document.getElementById("srnumber").focus();
          return false;
-       }else if(nbr < 4){
-         document.getElementById("errorcur").innerHTML = 'Current Number Must Be 4 Digits';
+       }else if(nbr < 6){
+         document.getElementById("errorcur").innerHTML = 'Current Number Must Be 6 Digits';
          document.getElementById("srnumber").focus();
 
        }else if(!isnum){
-         document.getElementById("errorcur").innerHTML = 'Current Number Must Be 4 Digits';
+         document.getElementById("errorcur").innerHTML = 'Current Number Must Be 6 Digits';
          document.getElementById("srnumber").focus();
          return false;
        }else{
@@ -187,16 +187,16 @@
 
        var isnum = /^\d+$/.test(isi);
 
-       if(nbr > 4){
-         document.getElementById('errorwo').innerHTML = 'Current Number Must Be 4 Digits';
+       if(nbr > 6){
+         document.getElementById('errorwo').innerHTML = 'Current Number Must Be 6 Digits';
          document.getElementById('wonbr').focus();
          return false;
-       }else if(nbr < 4){
-         document.getElementById('errorwo').innerHTML = 'Current Number Must Be 4 Digits';
+       }else if(nbr < 6){
+         document.getElementById('errorwo').innerHTML = 'Current Number Must Be 6 Digits';
          document.getElementById('wonbr').focus();
          return false;
        }else if(!isnum){
-         document.getElementById('errorwo').innerHTML = 'Current Number Must Be 4 Digits';
+         document.getElementById('errorwo').innerHTML = 'Current Number Must Be 6 Digits';
          document.getElementById('wonbr').focus();
          return false;
        }else{
@@ -212,16 +212,16 @@
 
       var isnum = /^\d+$/.test(isi);
 
-      if(nbr > 4){
-        document.getElementById('errorwt').innerHTML = 'Current Number Must Be 4 Digits';
+      if(nbr > 6){
+        document.getElementById('errorwt').innerHTML = 'Current Number Must Be 6 Digits';
         document.getElementById('wtnumber').focus();
         return false;
-      }else if(nbr < 4){
-        document.getElementById('errorwt').innerHTML = 'Current Number Must Be 4 Digits';
+      }else if(nbr < 6){
+        document.getElementById('errorwt').innerHTML = 'Current Number Must Be 6 Digits';
         document.getElementById('wtnumber').focus();
         return false;
       }else if(!isnum){
-        document.getElementById('errorwt').innerHTML = 'Current Number Must Be 4 Digits';
+        document.getElementById('errorwt').innerHTML = 'Current Number Must Be 6 Digits';
         document.getElementById('wtnumber').focus();
         return false;
       }else{
@@ -237,16 +237,16 @@
 
       var isnum = /^\d+$/.test(isi);
 
-      if(nbr > 4){
-        document.getElementById('errorwd').innerHTML = 'Current Number Must Be 4 Digits';
+      if(nbr > 6){
+        document.getElementById('errorwd').innerHTML = 'Current Number Must Be 6 Digits';
         document.getElementById('wdnumber').focus();
         return false;
-      }else if(nbr < 4){
-        document.getElementById('errorwd').innerHTML = 'Current Number Must Be 4 Digits';
+      }else if(nbr < 6){
+        document.getElementById('errorwd').innerHTML = 'Current Number Must Be 6 Digits';
         document.getElementById('wdnumber').focus();
         return false;
       }else if(!isnum){
-        document.getElementById('errorwd').innerHTML = 'Current Number Must Be 4 Digits';
+        document.getElementById('errorwd').innerHTML = 'Current Number Must Be 6 Digits';
         document.getElementById('wdnumber').focus();
         return false;
       }else{

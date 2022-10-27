@@ -37,10 +37,12 @@ class BookingController extends Controller
             ->select("bo_prefix", "bo_nbr", "year")
             ->first();
 
+        $newyear = Carbon::now()->format('y');
+
         if (is_null($codeBook)) {
-            $noBook = "BO210001";
+            $noBook = "BO'.$newyear.'000001";
         } else {
-            $noBook = $qBook->bo_prefix . $qBook->year . str_pad($qBook->bo_nbr + 1, 4, '0', STR_PAD_LEFT);
+            $noBook = $qBook->bo_prefix . $qBook->year . str_pad($qBook->bo_nbr + 1, 6, '0', STR_PAD_LEFT);
         }
 
         // dd($noBook);
@@ -127,9 +129,12 @@ class BookingController extends Controller
                     'book_edited_by'     => Session::get('username'),
                 ]);
 
+            $newyear = Carbon::now()->format('y');
+
             DB::table('running_mstr')
                 ->update([
-                    'bo_nbr' => substr($req->t_code, 4, 4),
+                    'bo_nbr' => substr($req->t_code, 6, 6),
+                    'year' => $newyear
                 ]);
 
             // EmailBook::dispatch();

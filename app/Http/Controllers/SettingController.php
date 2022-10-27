@@ -5747,15 +5747,15 @@ class SettingController extends Controller
 
         if(empty($runningdata)){
             $prefixsr = 'SR';
-            $srnbr = '0000';
+            $srnbr = '000000';
             $prefixwo = 'WO';
             $prefixwt = 'WT';
             $prefixwd = 'WD';
             $prefixbo = 'BO';
-            $wtnbr = '0000';
-            $wonbr = '0000';
-            $wdnbr = '0000';
-            $bonbr = '0000';
+            $wtnbr = '000000';
+            $wonbr = '000000';
+            $wdnbr = '000000';
+            $bonbr = '000000';
             $year = Carbon::now()->format('y');
 
             DB::table('running_mstr')

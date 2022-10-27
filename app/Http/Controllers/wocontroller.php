@@ -367,11 +367,11 @@ class wocontroller extends Controller
             $tempnewrunnbr = strval(intval($tablern->wd_nbr) + 1);
             $newtemprunnbr = '';
 
-            if (strlen($tempnewrunnbr) < 4) {
-                $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+            if (strlen($tempnewrunnbr) < 6) {
+                $newtemprunnbr = str_pad($tempnewrunnbr, 6, '0', STR_PAD_LEFT);
             }
         } else {
-            $newtemprunnbr = "0001";
+            $newtemprunnbr = "000001";
         }
 
         $runningnbr = $tablern->wd_prefix . '-' . $newyear . '-' . $newtemprunnbr;
@@ -936,11 +936,11 @@ class wocontroller extends Controller
             $tempnewrunnbr = strval(intval($tablern->wo_nbr) + 1);
             $newtemprunnbr = '';
 
-            if (strlen($tempnewrunnbr) < 4) {
-                $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+            if (strlen($tempnewrunnbr) < 6) {
+                $newtemprunnbr = str_pad($tempnewrunnbr, 6, '0', STR_PAD_LEFT);
             }
         } else {
-            $newtemprunnbr = "0001";
+            $newtemprunnbr = "000001";
         }
 
 
@@ -1067,8 +1067,8 @@ class wocontroller extends Controller
             $tempnewrunnbr = strval(intval($tablern->wo_nbr) + 1);
             $newtemprunnbr = '';
 
-            if (strlen($tempnewrunnbr) < 4) {
-                $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+            if (strlen($tempnewrunnbr) < 6) {
+                $newtemprunnbr = str_pad($tempnewrunnbr, 6, '0', STR_PAD_LEFT);
             }
         } else {
             $newtemprunnbr = "0001";

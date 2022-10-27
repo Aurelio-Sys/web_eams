@@ -141,11 +141,11 @@ class ServiceController extends Controller
                 $tempnewrunnbr = strval(intval($running->sr_nbr) + 1);
 
                 $newtemprunnbr = '';
-                if (strlen($tempnewrunnbr) < 4) {
-                    $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+                if (strlen($tempnewrunnbr) < 6) {
+                    $newtemprunnbr = str_pad($tempnewrunnbr, 6, '0', STR_PAD_LEFT);
                 }
             } else {
-                $newtemprunnbr = '0001';
+                $newtemprunnbr = '000001';
             }
 
             $runningnbr = $running->sr_prefix . '-' . $newyear . '-' . $newtemprunnbr;
@@ -401,11 +401,11 @@ class ServiceController extends Controller
                     $tempnewrunnbr = strval(intval($running->wo_nbr) + 1);
 
                     $newtemprunnbr = '';
-                    if (strlen($tempnewrunnbr) < 4) {
-                        $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
+                    if (strlen($tempnewrunnbr) < 6) {
+                        $newtemprunnbr = str_pad($tempnewrunnbr, 6, '0', STR_PAD_LEFT);
                     }
                 } else {
-                    $newtemprunnbr = "0001";
+                    $newtemprunnbr = "000001";
                 }
 
 
