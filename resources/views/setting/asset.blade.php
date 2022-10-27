@@ -685,8 +685,9 @@
            var tolerance    = $(this).data('tolerance');
            var assetimg    = '/uploadassetimage/' +$(this).data('assetimg');
 
-
+           
            var uploadname = upload.substring(upload.lastIndexOf('/') + 1,upload.length);
+            //   console.log(uploadname);
 
            document.getElementById('te_code').value         = code;
            document.getElementById('te_desc').value         = desc;

@@ -4531,6 +4531,8 @@ class wocontroller extends Controller
             ->where('wo_nbr', '=', $wo)
             ->first();
 
+            // dd($wo);
+
         $listdownload = DB::table('asset_upload')
             ->where('asset_code', '=', $assetnow->wo_asset)
             ->get();
