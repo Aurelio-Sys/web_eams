@@ -71,11 +71,12 @@
                     <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <td style="text-align: center; width: 12% !important; font-weight: bold;">Repair Code</td>
+                                <td style="text-align: center; width: 8% !important; font-weight: bold;">Repair Code</td>
                                 <td style="text-align: center; width: 12% !important; font-weight: bold;">Instruction Code</td>
                                 <td style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</td>
-                                <td style="text-align: center; width: 15% !important; font-weight: bold;">Qty Required</td>
+                                <td style="text-align: center; width: 8% !important; font-weight: bold;">Qty Required</td>
                                 <td style="text-align: center; width: 15% !important; font-weight: bold;">Qty to Request</td>
+                                <td style="text-align: center; width: 11% !important; font-weight: bold;">Note</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Delete</td>
                             </tr>
                         </thead>
@@ -105,6 +106,7 @@
                                 @php($whsconf = "")
                                 @php($whsdate = "")
                                 @php($dqtyrequire = 0)
+                                @php($note_release = "")
                             @else
                                 <!-- @php($cwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->first()) -->
                                 @php($cwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_line','=',$datas->wo_dets_line)->first())
@@ -113,6 +115,7 @@
                                 @php($whsdate = $cwhsconf->wo_dets_wh_date)
                                 @php($dline = $cwhsconf->wo_dets_line)
                                 @php($dqtyrequire = $cwhsconf->wo_dets_sp_qty)
+                                @php($note_release = $cwhsconf->wo_dets_worelease_note)
                             @endif
 
                             <tr>
@@ -139,15 +142,22 @@
                                         {{ number_format($dqtyreq,2) }}
                                         <input type="hidden" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$dqtyreq}}" />
                                     </td>
+                                    <td style="vertical-align: middle; text-align: center;">
+                                        <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99" >{{ $note_release }}</textarea>
+                                    </td>
                                     <td style="vertical-align:middle;text-align:center;">
                                         {{date('Y-m-d', strtotime($whsdate))}}
                                         <input type="hidden" class="tick" name="tick[]" value="0" />
                                     </td>
                                 @else
-                                    <td>
+                                    <td style="vertical-align:middle;text-align:center;">
                                         <input type="number" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$datas->insd_qty ?? $dqtyrequire}}" required />
                                     </td>
+                                    <td style="vertical-align: middle; text-align: center;">
+                                            <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99" >{{ $note_release }}</textarea>
+                                    </td>
                                     @if($datas->wo_status == "plan") <!-- jika belum pernah direlease akan muncul tombol delete -->
+                                        
                                         <td style="vertical-align:middle;text-align:center;">
                                             <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete">
                                             <input type="hidden" class="tick" name="tick[]" value="0" />
@@ -168,7 +178,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="6">
+                                <td colspan="7">
                                     <input type="button" class="btn btn-lg btn-block btn-focus" id="addrow" value="Add New Spare Part" style="background-color:#1234A5; color:white; font-size:16px" />
                                 </td>
                             </tr>

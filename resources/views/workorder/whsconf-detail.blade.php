@@ -67,20 +67,21 @@
 
         <div class="modal-body">
             <div class="form-group row">
-                <div class="col-md-12">
-                    <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0">
+                <div class="table-responsive col-lg-12 col-md-12 tag-container" style="overflow-x: auto; display: block;white-space: nowrap;">
+                    <table id="createTable" class="table table-bordered order-list" width="120%" cellspacing="0">
                         <thead>
                             <tr>
                                 <td style="text-align: center; width: 7% !important; font-weight: bold;">Repair Code</td>
                                 <td style="text-align: center; width: 7% !important; font-weight: bold;">Instruction Code</td>
                                 <td style="text-align: center; width: 20% !important; font-weight: bold;">Spare Part</td>
-                                <td style="text-align: center; width: 7% !important; font-weight: bold;">Qty Required</td>
-                                <td style="text-align: center; width: 7% !important; font-weight: bold;">Qty Request</td>
+                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Qty Required</td>
+                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Qty Request</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Site</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Lot</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Location</td>
                                 <td style="text-align: center; width: 5% !important; font-weight: bold;">Stock</td>
                                 <td style="text-align: center; width: 7% !important; font-weight: bold;">Qty Confirm</td>
+                                <td style="text-align: center; width: 11% !important; font-weight: bold;">Release Note</td>
                                 <td style="text-align: center; width: 8% !important; font-weight: bold;">Confirm</td>
                             </tr>
                         </thead>
@@ -102,11 +103,13 @@
                                     @php($dqtyreq = 0)
                                     @php($whsconf = "")
                                     @php($whsdate = "")
+                                    @php($note_release = "")
                                 @else
                                     @php($sqtyreq = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->first())
                                     @php($dqtyreq = $sqtyreq->wo_dets_sp_qty)
                                     @php($whsconf = $sqtyreq->wo_dets_wh_conf)
                                     @php($whsdate = $sqtyreq->wo_dets_wh_date)
+                                    @php($note_release = $sqtyreq->wo_dets_worelease_note)
                                 @endif
 
                                 <!-- default lokasi -->
@@ -166,7 +169,7 @@
                                     <input type="hidden" name="qtyrequest[]" value="{{ $dqtyreq }}" class="dqtyreq" />
                                 </td>
                                 
-                                <td>
+                                <td style="vertical-align: middle; text-align: center;">
                                     <select name="t_site[]" class="form-control t_site">
                                         <option value="">-- Select --</option>
                                     @foreach($sitedata as $rssite)
@@ -174,7 +177,7 @@
                                     @endforeach
                                     </select>
                                 </td>
-                                <td>
+                                <td style="vertical-align: middle; text-align: center;">
                                     @php($qlot = $qstok->where('stok_part','=',$datas->insd_part)
                                                     ->where('stok_site','=',$dsite))
                                     <select name="t_lot[]" class="form-control t_lot">
@@ -189,7 +192,7 @@
                                     </select>
                                 </td>
 
-                                <td>
+                                <td style="vertical-align: middle; text-align: center;">
                                     <input type="input" name="t_loc[]" class="form-control t_loc" value="{{$dloc}}" readonly>
                                     <!-- perubahan stok berdasarkan lot
                                         <select name="t_loc[]" class="form-control t_loc">
@@ -210,6 +213,9 @@
                                         {{ number_format($dconf,2) }}
                                         <input type="hidden" class="form-control qtyconf" name="qtyconf[]" value="{{$dconf}}" />
                                     </td>
+                                    <td style="vertical-align: middle; text-align: center;">
+                                        <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99" >{{ $note_release }}</textarea>
+                                    </td>
                                     <td style="vertical-align:middle;text-align:center;">    
                                         {{date('Y-m-d', strtotime($whsdate))}}
                                         <input type="hidden" class="tick" name="tick[]" value="1" />
@@ -219,6 +225,9 @@
                                         <td>
                                             <input type="number" class="form-control qtyconf" step="1" min="0" name="qtyconf[]" value="{{$dconf}}" required />
                                         </td>
+                                        <td style="vertical-align: middle; text-align: center;">
+                                            <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99" >{{ $note_release }}</textarea>
+                                        </td>
                                         <td style="vertical-align:middle;text-align:center;">    
                                             <input type="checkbox" class="qaddel" name="qaddel[]" value="" checked>
                                             <input type="hidden" class="tick" name="tick[]" value="1" />
@@ -226,6 +235,9 @@
                                     @else
                                         <td>
                                             <input type="number" class="form-control qtyconf" step="1" min="0" name="qtyconf[]" value="{{$dconf}}" required />
+                                        </td>
+                                        <td style="vertical-align: middle; text-align: center;">
+                                            <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99" >{{ $note_release }}</textarea>
                                         </td>
                                         <td style="vertical-align:middle;text-align:center;">
                                             <input type="checkbox" class="qaddel" name="qaddel[]" value="">

@@ -278,6 +278,7 @@ class WORelease extends Controller
                         'wo_dets_sp' => $req->partneed[$a],
                         'wo_dets_sp_qty' => $req->qtyrequest[$a],
                         'wo_dets_ins' => $req->inscode[$a] ?? null,
+                        'wo_dets_worelease_note' => $req->note_release[$a],
                         'wo_dets_created_at' => Carbon::now()->toDateTimeString(),
                     ]);
                 } else {
@@ -291,6 +292,7 @@ class WORelease extends Controller
                                     'wo_dets_sp' => $req->partneed[$a],
                                     'wo_dets_ins' => $req->inscode[$a] ?? null,
                                     'wo_dets_sp_qty' => $req->qtyrequest[$a],
+                                    'wo_dets_worelease_note' => $req->note_release[$a],
                                     'wo_dets_created_at' => Carbon::now()->toDateTimeString(),
                                 ]
                             );
