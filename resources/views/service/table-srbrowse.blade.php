@@ -48,8 +48,11 @@
     data-faildesc1="{{$show->k11}}" data-faildesc2="{{$show->k22}}" data-faildesc3="{{$show->k33}}">
     <i class="icon-table far fa-eye fa-lg"></i></a>
    
-    <a id="srdownload" target="_blank" href="{{url('srdownloadfile/'.$show->sr_number)}}" data-toggle="tooltip"  title="Download SR document" ><i class="icon-table fas fa-download fa-lg"></i></a>  
-    
+    {{--  Jika tidak ada file upload, icon tidak muncul  --}}
+    @php($cfile = $ceksrfile->where('sr_number','=',$show->sr_number)->count())
+    @if($cfile > 0)
+      <a id="srdownload" target="_blank" href="{{url('srdownloadfile/'.$show->sr_number)}}" data-toggle="tooltip"  title="Download SR document" ><i class="icon-table fas fa-download fa-lg"></i></a>  
+    @endif
     </td>
 </tr>
 @empty
