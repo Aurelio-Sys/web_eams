@@ -163,11 +163,11 @@
     <table class="table table-bordered mini-table mt-4" id="dataTable" width="100%" cellspacing="0">
       <thead>
         <tr style="text-align: center;">
-          <th>Work Order Number</th>
-          <th>Asset</th>
-          <th>WO type</th>
-          <th>Status</th>
-          <th>Action</th>
+          <th style="width: 10%;">Work Order Number</th>
+          <th style="width: 35%;">Asset</th>
+          <th style="width: 15%;">WO type</th>
+          <th style="width: 10%;">Status</th>
+          <th style="width: 25%;">Action</th>
         </tr>
       </thead>
       <tbody>

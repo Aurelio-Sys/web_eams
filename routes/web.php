@@ -410,6 +410,8 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/woreport/pagination', 'wocontroller@wopagingreport');
 	route::get('/downloadwofinish/{id}', 'wocontroller@downloadwofinish'); // untuk donload file dari wo finish
 	route::get('/delfilewofinish/{id}', 'wocontroller@delfilewofinish'); // untuk delete file wo finish dari approval spv`
+	route::get('/woreport/reissued/{wo}',[wocontroller::class, 'reissued_wo'])->name('reissuedWO');
+	route::post('/reissuedwofinish', [wocontroller::class, 'reissuedwofinish']);
 
 
 	//13-08-2021
