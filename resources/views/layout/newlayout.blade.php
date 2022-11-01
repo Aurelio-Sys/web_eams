@@ -417,6 +417,15 @@ to get the desired effect
                     </p>
                   </a>
                 </li>
+
+                <li class="nav-item has-treeview">
+                  <a href="{{url('/needsp')}}" class="nav-link">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>
+                      Sparepart Needs
+                    </p>
+                  </a>
+                </li>
               
               @if(str_contains( Session::get('menu_access'), 'RT02'))
                 <li class="nav-item has-treeview">

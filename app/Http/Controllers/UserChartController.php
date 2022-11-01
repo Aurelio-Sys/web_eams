@@ -1021,10 +1021,27 @@ class UserChartController extends Controller
     public function prevsch(Request $req)
     {   
 
+        $tgl = '';
+        if (is_null($req->bulan)) {
+            $tgl = Carbon::now('ASIA/JAKARTA')->toDateTimeString();
+        } elseif ($req->stat == 'mundur') {
+            $tgl = Carbon::createFromDate($req->bulan)->addYear(-1)->toDateTimeString();
+        } elseif ($req->stat == 'maju') {
+            $tgl = Carbon::createFromDate($req->bulan)->addYear(1)->toDateTimeString();
+        } else {
+            toast('Back to Home!!', 'error');
+            return back();
+        }
+
+        $bulan = Carbon::createFromDate($tgl)->isoFormat('YYYY');
+
         $data = DB::table('asset_mstr')
         ->selectRaw('asset_mstr.*, PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal) as harusnya')
         ->where('asset_measure','=','C')
+        ->where('asset_active','=','Yes')
+        // ->where('asset_code','=','01-AT-002')
         ->whereRaw('PERIOD_DIFF(PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal), date_format(now(),"%Y%m")) <= - asset_tolerance') // fungsi MYSQL
+        ->orderBy('asset_code')
         ->paginate(10);
 // dd($data);        
         Schema::create('temp_asset', function ($table) {
@@ -1080,10 +1097,32 @@ class UserChartController extends Controller
             ->orderBy('wo_asset')
             ->orderBy('wo_nbr')
             ->get();
-
+// dd($datawo);
         Schema::dropIfExists('temp_asset');
 
-        return view('report.prevsch', ['data' => $data, 'datatemp' => $datatemp, 'datawo' => $datawo]);
+        return view('report.prevsch', ['data' => $data, 'datatemp' => $datatemp, 'datawo' => $datawo, 'bulan' => $bulan]);
+    }
+
+    /* Kebutuhan sparepart */
+    public function needsp(Request $req)
+    {   
+        $data = DB::table('wo_dets')
+            ->join('wo_mstr','wo_nbr','=','wo_dets_nbr')
+            ->join('sp_mstr','spm_code','=','wo_dets_sp')
+            ->whereNotNull('wo_dets_sp')
+            ->whereNotIn('wo_status',['closed'])
+            ->orderBy('wo_dets_nbr')
+            ->paginate(10);
+
+        $datawo = DB::table('wo_mstr')
+            ->whereNotExists(function($query)
+            {
+                $query->select('wo_dets_nbr')
+                    ->from('wo_dets');
+            })
+            ->get();
+// dd($datawo)
+;        return view('report.needsp', ['data' => $data]);
     }
 
 }

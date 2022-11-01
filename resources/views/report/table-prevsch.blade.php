@@ -10,10 +10,10 @@
             <!-- mencari bulan jadwal Preventive -->
             @foreach($datatemp->where('temp_code','=',$show->asset_code) as $pa)
                 @php($bulantampil = '')
-                @php($bulan = substr($pa->temp_sch,4,1) == '0' ? substr($pa->temp_sch,5,1) : substr($pa->temp_sch,4,2) )
+                @php($bln = substr($pa->temp_sch,4,1) == '0' ? substr($pa->temp_sch,5,1) : substr($pa->temp_sch,4,2) )
                 @php($tahun = substr($pa->temp_sch,0,4))
-                @php($bulantampil = $bulan == $count ? 'PM' : '')
-                @if ($tahun == '2022')
+                @php($bulantampil = $bln == $count ? 'PM' : '')
+                @if ($tahun == $bulan)
                     <span class="badge badge-primary">{{ $bulantampil }}</span>
                 @endif
             @endforeach
@@ -21,7 +21,7 @@
             @php($wotampil = '')
             @foreach($datawo->where('wo_asset','=',$show->asset_code) as $do)
                 @php($wotampil = $do->wo_nbr)
-                @if (date('Y',strtotime($do->wo_schedule)) == '2022' && date('n',strtotime($do->wo_schedule)) == $count)
+                @if (date('Y',strtotime($do->wo_schedule)) == $bulan && date('n',strtotime($do->wo_schedule)) == $count)
                 <span class="badge badge-danger">{{ $wotampil }}</span>
                 @endif
             @endforeach
@@ -36,7 +36,7 @@
 </tr>
 @endforelse
 <tr>
-  <td colspan="16" style="border: none !important;">
-    {{ $data->links() }}
-  </td>
+    <td style="border: none !important;" colspan="16">
+        {{ $data->appends($_GET)->links() }}
+    </td>
 </tr>

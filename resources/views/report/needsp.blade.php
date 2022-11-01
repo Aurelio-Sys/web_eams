@@ -3,7 +3,7 @@
       <div class="container-fluid">
         <div class="row">          
           <div class="col-sm-4">
-            <h1 class="m-0 text-dark">Preventive Schedule</h1>
+            <h1 class="m-0 text-dark">Sparepart Needs</h1>
           </div>    
         </div><!-- /.row -->
         <div class="col-md-12">
@@ -57,38 +57,23 @@
 <!-- Bagian Searching -->
 <div class="col-md-12"><hr></div>
 
-<div class="col-md-12" style="color:black; font-size:2rem; text-align:end">
-    <a href="/prevsch?bulan={{$bulan}}&stat=mundur" id="mundur"><i class="fas fa-angle-left"></i></a>
-    &ensp;&ensp;<span>{{$bulan}}</span>&ensp;&ensp;
-    <input type='hidden' name='bulan' id='bulan' value='{{ $bulan }}'>
-    <a href="/prevsch?bulan={{$bulan}}&stat=maju" id="maju" ><i class="fas fa-angle-right"></i></a>
-</div>
-
 <div class="table-responsive col-12">
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                <th width="10%">Asset</th>
-                <th width="15%">Description</th>
-                <th width="10%">Last Mtc</th>  
-                <th width="5%">Mea</th>  
-                <th width="5%" style="text-align: center">Jan</th>  
-                <th width="5%" style="text-align: center">Feb</th>  
-                <th width="5%" style="text-align: center">Mar</th>  
-                <th width="5%" style="text-align: center">Apr</th>  
-                <th width="5%" style="text-align: center">May</th>  
-                <th width="5%" style="text-align: center">Jun</th>  
-                <th width="5%" style="text-align: center">Jul</th>  
-                <th width="5%" style="text-align: center">Aug</th>  
-                <th width="5%" style="text-align: center">Sep</th>  
-                <th width="5%" style="text-align: center">Oct</th>  
-                <th width="5%" style="text-align: center">Nov</th>  
-                <th width="5%" style="text-align: center">Dec</th>  
+                <th width="10%">No WO</th>
+                <th width="10%">Sechedule Date</th>
+                <th width="10%">Status</th>
+                <th width="15%">Sparepart</th>
+                <th width="25%">Desc</th>  
+                <th width="10%">Qty Req</th>  
+                <th width="10%">Qty Whs</th>  
+                <th width="10%">Qty Needed</th>  
             </tr>
         </thead>
         <tbody>
             <!-- untuk isi table -->
-            @include('report.table-prevsch')
+            @include('report.table-needsp')
         </tbody>
     </table>
     <input type="hidden" name="hidden_page" id="hidden_page" value="1"/>
