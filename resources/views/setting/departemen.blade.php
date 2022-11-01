@@ -98,7 +98,7 @@
                         <label for="t_code" class="col-md-4 col-form-label text-md-right">Code 
                             <span id="alert1" style="color: red; font-weight: 200;">*</span> </label>
                         <div class="col-md-6">
-                            <input id="t_code" type="text" class="form-control" name="t_code" autocomplete="off" autofocus maxlength="10" required />
+                            <input id="t_code" type="text" class="form-control" name="t_code" autocomplete="off" autofocus maxlength="3" required />
                         </div>
                     </div>
                     <div class="form-group row">
@@ -106,6 +106,14 @@
                             <span id="alert1" style="color: red; font-weight: 200;">*</span> </label>
                         <div class="col-md-6">
                             <input id="t_desc" type="text" class="form-control" name="t_desc" autocomplete="off" autofocus maxlength="50" required/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="t_runningnbr" class="col-md-4 col-form-label text-md-right">Running Number 
+                            <span id="alert1" style="color: red; font-weight: 200;">*</span> </label>
+                        <div class="col-md-6">
+                            <input id="t_runningnbr" type="text" class="form-control" name="t_runningnbr" autocomplete="off" autofocus maxlength="4" value="0001" required/>
+                            <span id="errorcur" style="color:red"></span>
                         </div>
                     </div>
                 </div>
@@ -190,6 +198,31 @@
            document.getElementById('te_code').value = code;
            document.getElementById('te_desc').value = desc;
        });
+
+        $(document).on('blur','#t_runningnbr',function(){ // Click to only happen on announce links
+       
+            //alert('tst');
+            var isi = document.getElementById("t_runningnbr").value;
+            var nbr = isi.length;
+
+            var isnum = /^\d+$/.test(isi);
+            
+            if(nbr > 4){
+                document.getElementById("errorcur").innerHTML = 'Current Number Must Be 4 Digits';
+                document.getElementById("t_runningnbr").focus();
+                return false;
+            }else if(nbr < 4){
+                document.getElementById("errorcur").innerHTML = 'Current Number Must Be 4 Digits';
+                document.getElementById("t_runningnbr").focus();
+
+            }else if(!isnum){
+                document.getElementById("errorcur").innerHTML = 'Current Number Must Be 4 Digits';
+                document.getElementById("t_runningnbr").focus();
+                return false;
+            }else{
+                document.getElementById("errorcur").innerHTML = ''; 
+            }
+        });
 
        $(document).on('click', '.deletedata', function(e){
             $('#deleteModal').modal('show');
