@@ -55,7 +55,7 @@ class ServiceController extends Controller
     }
 
 
-    public function servicerequest()
+    public function servicerequest() /* route : servicerequest  blade : servicerequest_create */
     {
         $asset = DB::table('asset_mstr')
             ->where('asset_active', '=', 'Yes')
@@ -110,8 +110,8 @@ class ServiceController extends Controller
         }
     }
 
-    public function inputsr(Request $req)
-    { /* blade : servicerequest_create.php */
+    public function inputsr(Request $req) /* blade : servicerequest_create.php */
+    { 
 
         DB::beginTransaction();
 
@@ -225,7 +225,7 @@ class ServiceController extends Controller
             toast('Service Request ' . $runningnbr . ' Successfully Created', 'success');
             return back();
         } catch (Exception $e) {
-            // dd($e);
+            dd($e);
             DB::rollBack();
             toast('Service Request Failed Created', 'error');
             return back();
@@ -802,7 +802,7 @@ class ServiceController extends Controller
             // ->selectRaw('u1.*')
             // ->where('sr_status', '=', '1')
             ->orderBy('sr_number', 'DESC')
-            //->get();
+            // ->get();
             ->paginate(10);
 
         // dd($data);
@@ -816,7 +816,11 @@ class ServiceController extends Controller
             ->where('active', '=', 'Yes')
             ->get();
 
-        return view('service.servicereqbrowse', ['datas' => $data, 'asset' => $datasset, 'fromhome' => '', 'users' => $datauser]);
+        $ceksrfile = DB::table(('service_req_upload'))
+            ->get();
+
+        return view('service.servicereqbrowse', ['datas' => $data, 'asset' => $datasset, 'fromhome' => '', 
+        'users' => $datauser, 'ceksrfile' => $ceksrfile ]);
     }
 
     public function downloadfile($id)
@@ -957,6 +961,9 @@ class ServiceController extends Controller
             $status = $req->get('status');
             $requestby = $req->get('requestby');
 
+            $ceksrfile = DB::table(('service_req_upload'))
+            ->get();
+
             // dd($requestby);
 
             if ($srnumber == "" && $asset == "" && $priority == ""  /*&& $period == "" */ && $status == "" && $requestby == "") {
@@ -1018,7 +1025,7 @@ class ServiceController extends Controller
 
                 // dd($data);
 
-                return view('service.table-srbrowse', ['datas' => $data]);
+                return view('service.table-srbrowse', ['datas' => $data, 'ceksrfile' => $ceksrfile]);
             } else {
                 // dd("test2");
                 $tigahari = Carbon::now()->subDays(3)->toDateTimeString();
@@ -1100,7 +1107,7 @@ class ServiceController extends Controller
                     ->orderBy('sr_number', 'DESC')
                     ->paginate(10);
 
-                return view('service.table-srbrowse', ['datas' => $data]);
+                return view('service.table-srbrowse', ['datas' => $data, 'ceksrfile' => $ceksrfile]);
             }
         }
     }
