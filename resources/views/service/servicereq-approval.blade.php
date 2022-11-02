@@ -342,7 +342,21 @@
                             <span id="alert3"  style="color: red; font-weight: 200;"></span>
                         </div>
                     </div>
-                </div>
+                    <div class="form-group row">
+                      <label for="file" class="col-md-5 col-form-label text-md-right">Current File</label>
+                      <div class="col-md-6">
+                        <table class="table table-bordered">
+                          <thead>
+                            <tr>
+                              <th>File Name</th>
+                            </tr>
+                          </thead>
+                          <tbody id="listupload">
+
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
                 <input type="hidden" id="tmpfail1" name="tmpfail1" value="">
                 <input type="hidden" id="impactcode1" name="impactcode1" value="">
                 <input type="hidden" id="tmpfail2" name="tmpfail2" value="">
@@ -517,6 +531,7 @@ $(document).ready(function(){
 
     });
 
+
     function fetch_data(page, srnumber, asset, priority) {
       $.ajax({
         url: "/srapproval/searchapproval?page=" + page + "&srnumber=" + srnumber + "&asset=" + asset + "&priority=" + priority,
@@ -612,6 +627,14 @@ $(document).ready(function(){
 
 
       var fail_list = fail1 + '\n' + fail2 + '\n' + fail3;
+
+      $.ajax({
+                url:"/listupload/" + srnumber,
+                success: function(data) {
+                
+                    $('#listupload').html('').append(data); 
+                }
+            })
       
       // alert(assetdesc);
       $.ajax({

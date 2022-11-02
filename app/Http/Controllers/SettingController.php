@@ -5559,6 +5559,8 @@ class SettingController extends Controller
     public function deptmaster(Request $req)
     {   
         if (strpos(Session::get('menu_access'), 'MT21') !== false) {
+
+            // dd(session()->all());
             $data = DB::table('dept_mstr')
                 ->orderby('dept_code')
                 ->paginate(10);
@@ -5597,7 +5599,8 @@ class SettingController extends Controller
             DB::table('dept_mstr')
             ->insert([
                 'dept_code'   => $req->t_code,
-                'dept_desc'   => $req->t_desc,                
+                'dept_desc'   => $req->t_desc,
+                'dept_running_nbr' => $req->t_runningnbr,                
                 'created_at'    => Carbon::now()->toDateTimeString(),
                 'updated_at'    => Carbon::now()->toDateTimeString(),
                 'edited_by'     => Session::get('username'),
@@ -5624,6 +5627,7 @@ class SettingController extends Controller
             ->where('dept_code','=',$req->te_code)
             ->update([
                 'dept_desc'   => $req->te_desc,
+                'dept_running_nbr' => $req->te_runningnbr,
                 'updated_at'    => Carbon::now()->toDateTimeString(),
                 'edited_by'     => Session::get('username'),
             ]);
