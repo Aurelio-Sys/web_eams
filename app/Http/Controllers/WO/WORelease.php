@@ -207,7 +207,7 @@ class WORelease extends Controller
                     ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
                     ->get();
             }
-        } /* if($data->wo_status == 'open') */ else {
+        } /* if($data->wo_status == 'plan') */ else {
             $combineSP = DB::table('wo_mstr')
                 ->select(
                     'wo_dets_rc as repair_code',

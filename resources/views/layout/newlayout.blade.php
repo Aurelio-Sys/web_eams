@@ -380,63 +380,84 @@ to get the desired effect
               <ul class="nav nav-treeview">
               
                 <li class="nav-item has-treeview">
-                  <a href="{{url('/allrpt')}}" class="nav-link">
+                  <a href="javascript:void(0)" class="nav-link">
                     <i class="nav-icon far fa-circle"></i>
                     <p>
-                      All Asset Schedule
+                      Schedule
+                      <i class="right fas fa-angle-left"></i>
                     </p>
                   </a>
-                </li>
-                @if(str_contains( Session::get('menu_access'), 'RT03'))
-                  <li class="nav-item has-treeview">
-                        <a href="{{url('/assetsch')}}" class="nav-link">
-                          <i class="nav-icon far fa-circle"></i>
-                          <p>
-                            Asset Schedule
-                          </p>
-                        </a>
-                      </li>
-                @endif
-                
-              @if(str_contains( Session::get('menu_access'), 'RT01'))
-                <li class="nav-item has-treeview">
-                      <a href="{{url('/engsch')}}" class="nav-link">
-                        <i class="nav-icon far fa-circle"></i>
+                  <ul class="nav nav-treeview">
+                    <li class="nav-item has-treeview">
+                      <a href="{{url('/allrpt')}}" class="nav-link">
+                        
                         <p>
-                          Engineer Schedule
+                          All Asset Schedule
                         </p>
                       </a>
                     </li>
-              @endif
-
-                <li class="nav-item has-treeview">
-                  <a href="{{url('/prevsch')}}" class="nav-link">
-                    <i class="nav-icon far fa-circle"></i>
-                    <p>
-                      Preventive Schedule
-                    </p>
-                  </a>
-                </li>
-
-                <li class="nav-item has-treeview">
-                  <a href="{{url('/needsp')}}" class="nav-link">
-                    <i class="nav-icon far fa-circle"></i>
-                    <p>
-                      Sparepart Needs
-                    </p>
-                  </a>
-                </li>
-              
-              @if(str_contains( Session::get('menu_access'), 'RT02'))
-                <li class="nav-item has-treeview">
-                      <a href="{{url('/bookcal')}}" class="nav-link">
-                        <i class="nav-icon far fa-circle"></i>
+                    @if(str_contains( Session::get('menu_access'), 'RT03'))
+                      <li class="nav-item has-treeview">
+                            <a href="{{url('/assetsch')}}" class="nav-link">
+                              
+                              <p>
+                                Asset Schedule
+                              </p>
+                            </a>
+                          </li>
+                    @endif
+                    
+                  @if(str_contains( Session::get('menu_access'), 'RT01'))
+                    <li class="nav-item has-treeview">
+                          <a href="{{url('/engsch')}}" class="nav-link">
+                            
+                            <p>
+                              Engineer Schedule
+                            </p>
+                          </a>
+                        </li>
+                  @endif
+    
+                    <li class="nav-item has-treeview">
+                      <a href="{{url('/prevsch')}}" class="nav-link">
+                        
                         <p>
-                          Asset Booking Schedule
+                          Preventive Schedule
                         </p>
                       </a>
                     </li>
-              @endif
+    
+                    <li class="nav-item has-treeview">
+                      <a href="{{url('/needsp')}}" class="nav-link">
+                        
+                        <p>
+                          Sparepart Needs
+                        </p>
+                      </a>
+                    </li>
+                  
+                  @if(str_contains( Session::get('menu_access'), 'RT02'))
+                    <li class="nav-item has-treeview">
+                          <a href="{{url('/bookcal')}}" class="nav-link">
+                            
+                            <p>
+                              Asset Booking Schedule
+                            </p>
+                          </a>
+                        </li>
+                  @endif
+                  </ul><!-- ul Schedule -->
+                </li> <!-- li Schedule -->
+
+                <li class="nav-item has-treeview">
+                  <a href="{{url('/rptdetwo')}}" class="nav-link">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>
+                      Detail WO Report
+                    </p>
+                  </a>
+                </li>
+
               @if(str_contains( Session::get('menu_access'), 'RT05'))
                 <li class="nav-item has-treeview">
                       <a href="{{url('/assetrpt')}}" class="nav-link">

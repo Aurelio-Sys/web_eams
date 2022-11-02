@@ -1,13 +1,13 @@
 @forelse($data as $show)
 <tr>
-    <td>{{$show->wo_dets_nbr}}</td>
-    <td>{{$show->wo_schedule}}</td>
-    <td>{{$show->wo_status}}</td>
-    <td>{{$show->wo_dets_sp}}</td>
-    <td>{{$show->spm_desc}}</td>
-    <td style="text-align: right">{{number_format($show->wo_dets_sp_qty,2)}}</td>
-    <td style="text-align: right">{{number_format($show->wo_dets_wh_qty,2)}}</td>
-    <td style="text-align: right">{{number_format($show->wo_dets_sp_qty - $show->wo_dets_wh_qty,2)}}</td>
+    <td>{{$show->temp_wo}}</td>
+    <td>{{$show->temp_sch_date}}</td>
+    <td>{{$show->temp_status}}</td>
+    <td>{{$show->temp_sp}}</td>
+    <td>{{$show->temp_sp_desc}}</td>
+    <td style="text-align: right">{{number_format($show->temp_qty_req,2)}}</td>
+    <td style="text-align: right">{{number_format($show->temp_qty_whs,2)}}</td>
+    <td style="text-align: right">{{number_format($show->temp_qty_need,2)}}</td>
 </tr>
 @empty
 <tr>
