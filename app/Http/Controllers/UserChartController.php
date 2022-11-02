@@ -1114,13 +1114,115 @@ class UserChartController extends Controller
             ->orderBy('wo_dets_nbr')
             ->paginate(10);
 
-        $datawo = DB::table('wo_mstr')
-            ->whereNotExists(function($query)
-            {
-                $query->select('wo_dets_nbr')
-                    ->from('wo_dets');
-            })
-            ->get();
+        $datawo = DB::table('wo_mstr')->whereNotIn('wo_nbr', function($q){
+                $q->select('wo_dets_nbr')->from('wo_dets');
+            })->get();
+
+        for($datawo as $do) {
+            if ($data->wo_repair_code1 != "") {
+
+                $sparepart1 = DB::table('wo_mstr')
+                    ->select('wo_repair_code1 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status')
+                    ->leftJoin('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
+                    ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                    ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+                    ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
+                    ->where('wo_id', '=', $id)
+                    ->orderBy('repm_ins', 'asc')
+                    ->orderBy('repdet_step', 'asc')
+                    ->orderBy('ins_code', 'asc')
+                    ->get();
+
+                $rc1 = DB::table('wo_mstr')
+                    ->select('repm_code', 'repm_desc')
+                    ->join('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
+                    ->where('wo_id', '=', $id)
+                    ->get();
+
+                // $tempSP1 = (new CreateTempTable())->createSparePartUsed($sparepart1);
+
+                $combineSP = $sparepart1;
+                $rc = $rc1;
+            }
+
+            if ($data->wo_repair_code2 != "") {
+                // dump('repaircode2');
+                $sparepart2 = DB::table('wo_mstr')
+                    ->select('wo_repair_code2 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status')
+                    ->leftJoin('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
+                    ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                    ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+                    ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
+                    ->where('wo_id', '=', $id)
+                    ->orderBy('repm_ins', 'asc')
+                    ->orderBy('repdet_step', 'asc')
+                    ->orderBy('ins_code', 'asc')
+                    ->get();
+
+                $rc2 = DB::table('wo_mstr')
+                    ->select('repm_code', 'repm_desc')
+                    ->join('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
+                    ->where('wo_id', '=', $id)
+                    ->get();
+
+                // $tempSP2 = (new CreateTempTable())->createSparePartUsed($sparepart2);
+
+                $combineSP = $sparepart1->merge($sparepart2);
+                $rc = $rc1->merge($rc2);
+            }
+
+            if ($data->wo_repair_code3 != "") {
+                // dump('repaircode3');
+                $sparepart3 = DB::table('wo_mstr')
+                    ->select('wo_repair_code3 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status')
+                    ->leftJoin('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
+                    ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                    ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+                    ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
+                    ->where('wo_id', '=', $id)
+                    ->orderBy('repm_ins', 'asc')
+                    ->orderBy('repdet_step', 'asc')
+                    ->orderBy('ins_code', 'asc')
+                    ->get();
+
+                $rc3 = DB::table('wo_mstr')
+                    ->select('repm_code', 'repm_desc')
+                    ->join('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
+                    ->where('wo_id', '=', $id)
+                    ->get();
+
+                // $tempSP3 = (new CreateTempTable())->createSparePartUsed($sparepart3);
+
+                $combineSP = $sparepart1->merge($sparepart2)->merge($sparepart3);
+                $rc = $rc1->merge($rc2)->merge($rc3);
+            }
+
+            // dd($rc);
+
+            if ($data->wo_repair_code1 == "" && $data->wo_repair_code2 == "" && $data->wo_repair_code3 == "") {
+                // dd('aa');
+                $combineSP = DB::table('xxrepgroup_mstr')
+                    ->select('repm_code as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 
+                    'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status')
+                    ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
+                    ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                    ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+                    ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
+                    ->leftJoin('wo_mstr','wo_repair_group','xxrepgroup_mstr.xxrepgroup_nbr')
+                    ->where('xxrepgroup_mstr.xxrepgroup_nbr', '=', $getwonbr->wo_repair_group)
+                    ->where('wo_id', '=', $id)
+                    ->orderBy('repair_code', 'asc')
+                    ->orderBy('repm_ins', 'asc')
+                    ->orderBy('repdet_step', 'asc')
+                    ->orderBy('ins_code', 'asc')
+                    ->get();
+
+                // dd($combineSP);
+
+                $rc = DB::table('xxrepgroup_mstr')
+                    ->select('repm_code', 'repm_desc')
+                    ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
+                    ->get();
 // dd($datawo)
 ;        return view('report.needsp', ['data' => $data]);
     }
