@@ -134,21 +134,32 @@ class ServiceController extends Controller
 
             $running = DB::table('running_mstr')
                 ->first();
+
+            $runnumber = DB::table('dept_mstr')
+                            ->where('dept_code','=', session::get('department'))
+                            ->first();
             // dd($running);
             $newyear = Carbon::now()->format('y');
 
+
+            if($runnumber->dept_running_nbr == null){
+                DB::rollBack();
+                toast('Please set running number for department code '.session::get('department').' first.', 'error');
+                return back();
+            }
+
             if ($running->year == $newyear) {
-                $tempnewrunnbr = strval(intval($running->sr_nbr) + 1);
+                $tempnewrunnbr = strval(intval($runnumber->dept_running_nbr) + 1);
 
                 $newtemprunnbr = '';
                 if (strlen($tempnewrunnbr) < 6) {
-                    $newtemprunnbr = str_pad($tempnewrunnbr, 6, '0', STR_PAD_LEFT);
+                    $newtemprunnbr = str_pad($tempnewrunnbr, 4, '0', STR_PAD_LEFT);
                 }
             } else {
-                $newtemprunnbr = '000001';
+                $newtemprunnbr = '0001';
             }
 
-            $runningnbr = $running->sr_prefix . '-' . $newyear . '-' . $newtemprunnbr;
+            $runningnbr = $running->sr_prefix . '-' . session::get('department') . '-' . $newyear . '-' . $newtemprunnbr;
 
             $cekData = DB::table('service_req_mstr')
                 ->where('sr_number', '=', $runningnbr)
@@ -209,7 +220,12 @@ class ServiceController extends Controller
             DB::table('running_mstr')
                 ->update([
                     'year' => $newyear,
-                    'sr_nbr' => $newtemprunnbr,
+                ]);
+
+            DB::table('dept_mstr')
+                ->where('dept_code','=',session::get('department'))
+                ->update([
+                    'dept_running_nbr' => $newtemprunnbr,
                 ]);
 
             // dd('stop here');
