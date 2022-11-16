@@ -84,7 +84,7 @@ class EmailScheduleJobs implements ShouldQueue
                     'header1' => 'WO Number'],
                     function ($message) use ($wo,$list2)
                     {
-                        $message->subject('Actavis - New work order');
+                        $message->subject('eAMS - New work order');
                         // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
                         $message->to(array_filter($list2));
                     });
@@ -122,7 +122,7 @@ class EmailScheduleJobs implements ShouldQueue
                     'header1' => 'SR Number'],
                     function ($message) use ($emailrequestor)
                     {
-                        $message->subject('Actavis - Service Request Assigned to Work Order');
+                        $message->subject('eAMS - Service Request Assigned to Work Order');
                         // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
                         $message->to($emailrequestor->email_user);
                     });
@@ -153,6 +153,7 @@ class EmailScheduleJobs implements ShouldQueue
                         ->first();
     
     
+            
             $emailto = DB::table('eng_mstr')
                         ->where('approver', '=', 1)
                         ->where('eng_active', '=', 'Yes')
@@ -163,10 +164,8 @@ class EmailScheduleJobs implements ShouldQueue
                         ->join('users','eng_mstr.eng_code','=','users.username')
                         ->where('approver', '=', 1)
                         ->where('eng_active', '=', 'Yes')
-                        // ->selectRaw('eng_code')
+                        ->where('eng_code','=',$toemail->sr_approver,)
                         ->get();
-    
-            //dd($emailto);
     
             $emails = '';
     
@@ -174,13 +173,10 @@ class EmailScheduleJobs implements ShouldQueue
                 $emails .= $email->eng_email.',';
             }
     
-            // dd($emails);
             $emails = substr($emails, 0, strlen($emails) - 1);
     
             $array_email = explode(',', $emails);
-    
-             // dd($array_email);
-
+// dd($emailto);
             if($emailto->count())
             //kirim email ke kepala engineer
             Mail::send('emailwo',
@@ -191,14 +187,12 @@ class EmailScheduleJobs implements ShouldQueue
             //  'srnote' => $toemail->sr_note,
             //  'requestby' => $toemail->req_by,
              function ($message) use ($array_email){
-                $message->subject('Actavis - New Service Request');
-                // $message->from('andrew@ptimi.co.id');
+                $message->subject('eAMS - New Service Request');
+                // $message->from('tyas@ptimi.co.id');
                 $message->to($array_email);
              });
              
-             
             foreach($approverto as $approver){
-                // dd($email2->eng_code);
                 $user = App\User::where('id','=', $approver->id)->first(); 
                 $details = [
                             'body' => 'New Service Request',
@@ -207,7 +201,6 @@ class EmailScheduleJobs implements ShouldQueue
                             'note' => 'Please check'
         
                 ]; // isi data yang dioper
-            
             
                 $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel                
 
@@ -233,7 +226,7 @@ class EmailScheduleJobs implements ShouldQueue
                     'header1' => 'Reason Reject : '.$rejectnote.' '],
                     function ($message) use ($emailrequestor)
                     {
-                        $message->subject('Actavis - Service Request Rejected');
+                        $message->subject('eAMS - Service Request Rejected');
                         // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
                         $message->to($emailrequestor->email_user);
                     });
@@ -278,7 +271,7 @@ class EmailScheduleJobs implements ShouldQueue
 					'header1' => 'Work Order'],
 					function ($message) use ($wo,$listto)
 					{
-						$message->subject('Actavis - New Work Order');
+						$message->subject('eAMS - New Work Order');
 						// $message->from('andrew@ptimi.co.id'); // Email Admin Fix
 						$message->to(array_filter($listto));
 					});
@@ -328,7 +321,7 @@ class EmailScheduleJobs implements ShouldQueue
 					'header1' => 'Work Order'],
 					function ($message) use ($wo,$listto)
 					{
-						$message->subject('Actavis - New Work Order Direct');
+						$message->subject('eAMS - New Work Order Direct');
 						// $message->from('andrew@ptimi.co.id'); // Email Admin Fix
 						$message->to(array_filter($listto));
 					});
@@ -365,7 +358,7 @@ class EmailScheduleJobs implements ShouldQueue
                     'header1' => 'Work Order'],
                     function ($message) use ($emailuser)
                     {
-                        $message->subject('Actavis - Service Request Rejected');
+                        $message->subject('eAMS - Service Request Rejected');
                         // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
                         $message->to($emailuser->email_user);
                     });

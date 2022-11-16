@@ -1,12 +1,17 @@
 @forelse($datas as $show)
 <tr>
     <td>{{$show->sr_number}}</td>
+
     @if($show->wo_number == "")
     <td>-</td>
     @else
     <td>{{$show->wo_number}}</td>
     @endif
+
+    <td>{{$show->sr_assetcode}}</td>
     <td>{{$show->asset_desc}}</td>
+    <td>{{$show->loc_desc}}</td>
+
     @if($show->sr_status == 1)
     <td>Open</td>
     @elseif($show->sr_status == 2)
@@ -24,8 +29,8 @@
     @elseif($show->sr_status == 8)
     <td>Reprocess</td>
     @endif
-    <td>{{$show->dept_desc}}</td>
     <td>{{$show->sr_priority}}</td>
+    <td>{{$show->dept_desc}}</td>
     <td>{{$show->req_by}}</td>
     <td>{{date('d-m-Y', strtotime($show->sr_created_at))}}</td>
 
@@ -42,7 +47,7 @@
     data-srdate="{{date('d-m-Y', strtotime($show->sr_created_at))}}" data-wonumber="{{$show->wo_number}}" 
     data-startwo="{{date('d-m-Y', strtotime($show->wo_start_date))}}" 
     data-endwo="{{date('d-m-Y', strtotime($show->wo_finish_date))}}" 
-    data-action="{{$show->wo_action}}"
+    data-action="{{$show->wo_action}}" data-approver="{{$show->sr_approver}}"
     data-wostatus="{{$show->wo_status}}"
     data-failtype="{{$show->sr_wotype}}"
     data-faildesc1="{{$show->k11}}" data-faildesc2="{{$show->k22}}" data-faildesc3="{{$show->k33}}">
@@ -57,13 +62,13 @@
 </tr>
 @empty
 <tr>
-    <td colspan="12" style="color:red">
+    <td colspan="11" style="color:red">
         <center>No Data Available</center>
     </td>
 </tr>
 @endforelse
 <tr>
-  <td style="border: none !important;" colspan="5">
+  <td colspan="11" style="border: none !important;" colspan="5">
     {{ $datas->links() }}
   </td>
 </tr>

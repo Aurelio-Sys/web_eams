@@ -10,6 +10,12 @@
     <div class="col-md-12">
         <hr>
     </div>
+    <div class="row">                 
+        <div class="col-sm-2">    
+            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Location Create</button>
+        </div>
+    </div>
+    <br>
     <div class="row">
         <div class="col-md-2">
             <form action="/loadloc" method="post" id="submit">

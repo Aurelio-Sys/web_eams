@@ -73,7 +73,14 @@ class ServiceController extends Controller
         $fcode = DB::table('fn_mstr')
             ->get();
 
-        return view('service.servicerequest_create', ['showasset' => $asset, 'dept' => $datadepart, 'wotype' => $wotype, 'impact' => $impact, 'fc' => $fcode]);
+        $dataapp = DB::table('eng_mstr')
+            ->where('eng_active','=','Yes')
+            ->where('approver','=',1)
+            ->orderBy('eng_code')
+            ->get();
+
+        return view('service.servicerequest_create', ['showasset' => $asset, 'dept' => $datadepart, 
+        'wotype' => $wotype, 'impact' => $impact, 'fc' => $fcode, 'dataapp' => $dataapp ]);
     }
 
     public function failuresearch(Request $req)
@@ -127,20 +134,14 @@ class ServiceController extends Controller
 
             $newimpact = substr($newimpact, 0, strlen($newimpact) - 1);
 
-
-            // dd($newimpact);
-
-            // dd(Config::get('mail'));
-
             $running = DB::table('running_mstr')
                 ->first();
 
             $runnumber = DB::table('dept_mstr')
                             ->where('dept_code','=', session::get('department'))
                             ->first();
-            // dd($running);
+            
             $newyear = Carbon::now()->format('y');
-
 
             if($runnumber->dept_running_nbr == null){
                 DB::rollBack();
@@ -165,7 +166,7 @@ class ServiceController extends Controller
                 ->where('sr_number', '=', $runningnbr)
                 ->get();
 
-            // dd($cekData);
+            
             if ($cekData->count() == 0) {
 
                 if ($req->hasFile('filename')) {
@@ -173,11 +174,11 @@ class ServiceController extends Controller
                     foreach ($req->file('filename') as $upload) {
                         $dataTime = date('Ymd_His');
                         $filename = $dataTime . '-' . $upload->getClientOriginalName();
-                        // dump($filename);
+                        
                         // Simpan File Upload pada Public
                         $savepath = public_path('uploadasset/');
                         $upload->move($savepath, $filename);
-                        // dd($filename);
+                        
                         // Simpan ke DB Upload
                         DB::table('service_req_upload')
                             ->insert([
@@ -187,10 +188,9 @@ class ServiceController extends Controller
                                 'updated_at' => Carbon::now()->toDateTimeString(),
                             ]);
                     }
-                    // dump(1);
                 }
             }
-            // dd('stop');
+            
             DB::table('service_req_mstr')
                 ->insert([
                     'sr_number' => $runningnbr,
@@ -204,18 +204,13 @@ class ServiceController extends Controller
                     'sr_status' => '1', //1 = OPEN
                     'sr_priority' => $req->priority,
                     'sr_access' => 0,
+                    'sr_approver' => $req->t_app,
                     'sr_dept' => Session::get('department'),
                     'req_by' => Session::get('name'),
                     'req_username' => Session::get('username'),
                     'sr_created_at' => Carbon::now()->toDateTimeString(),
                     'sr_updated_at' => Carbon::now()->toDateTimeString(),
                 ]);
-
-
-            // $rn += 1;
-            // $rn = str_pad($rn , 5, '0', STR_PAD_LEFT);
-
-
 
             DB::table('running_mstr')
                 ->update([
@@ -228,14 +223,7 @@ class ServiceController extends Controller
                     'dept_running_nbr' => $newtemprunnbr,
                 ]);
 
-            // dd('stop here');
-
-            // $sendmail = (new Emaill())->delay(Carbon::now()->addSeconds(3));
-
-            //nanti dibuka EmailScheduleJobs::dispatch('','','3','','',$runningnbr,'');
-
-            echo "email sent";
-
+            // nanti dibuka, masih error EmailScheduleJobs::dispatch('','','3','','',$runningnbr,'');
 
             DB::commit();
             toast('Service Request ' . $runningnbr . ' Successfully Created', 'success');
@@ -248,10 +236,8 @@ class ServiceController extends Controller
         }
     }
 
-    public function srapproval()
-    { /* blade : service.servicereq-approval */
-        // dd('aaaa');
-        // dd(Session::get('role'));
+    public function srapproval() /* blade : service.servicereq-approval */
+    { 
 
         $kepalaengineer = DB::table('eng_mstr')
             ->where('approver', '=', 1)
@@ -779,22 +765,8 @@ class ServiceController extends Controller
         }
     }
 
-    public function srbrowse()
+    public function srbrowse() /* route : srbrowse   blade : service.servicereqbrowse */
     {
-        // $dummy = DB::table('service_req_mstr')
-        //         ->paginate(10);
-
-        // dd($dummy);
-        // $id = 7;
-        // $req_by = 'admin baru';
-
-        // $test_stored = DB::select(DB::raw("exec USP_Testimi :Param1, :Param2"),[
-        //                     ':Param1' => $id,
-        //                     ':Param2' => $req_by,
-        //                 ]);
-
-        // dd($test_stored);
-
         $data = DB::table('service_req_mstr')
             ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_assetcode')
             ->leftjoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
@@ -811,19 +783,15 @@ class ServiceController extends Controller
             ->leftJoin('fn_mstr as k1', 'service_req_mstr.sr_failurecode1', 'k1.fn_code')
             ->leftJoin('fn_mstr as k2', 'service_req_mstr.sr_failurecode2', 'k2.fn_code')
             ->leftJoin('fn_mstr as k3', 'service_req_mstr.sr_failurecode3', 'k3.fn_code')
-            ->selectRaw('service_req_mstr.* , asset_mstr.asset_desc, dept_mstr.dept_desc, users.username, wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, wo_mstr.wo_start_date,
-                    wo_mstr.wo_finish_date, wo_mstr.wo_action, wo_mstr.wo_status,
-                    k1.fn_desc as k11, k2.fn_desc as k22, k3.fn_desc as k33')
-            // ->selectRaw('wo_engineer1')
-            // ->selectRaw('u1.*')
-            // ->where('sr_status', '=', '1')
+            ->selectRaw('service_req_mstr.* ,
+                asset_mstr.asset_code, asset_mstr.asset_desc, dept_mstr.dept_desc, users.username,
+                wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc,
+                u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55,
+                wo_mstr.wo_start_date, wo_mstr.wo_finish_date, wo_mstr.wo_action, wo_mstr.wo_status,
+                k1.fn_desc as k11, k2.fn_desc as k22, k3.fn_desc as k33')
             ->orderBy('sr_number', 'DESC')
             // ->get();
             ->paginate(10);
-
-        // dd($data);
-
-
 
         $datasset = DB::table('asset_mstr')
             ->get();
