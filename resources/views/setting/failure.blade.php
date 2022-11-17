@@ -33,16 +33,21 @@
 <div class="col-12 form-group row">
     <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Failure Code</label>
     <div class="col-md-4 mb-2 input-group">
-        <select id="s_code" class="form-control" name="s_code">
+        {{--  <select id="s_code" class="form-control" name="s_code">
             <option value=""></option>
             @foreach($datasearch as $sdata)
                 <option value="{{$sdata->fn_code}}">{{$sdata->fn_code}} - {{$sdata->fn_desc}}</option>
             @endforeach
-        </select>
+        </select>  --}}
+        <input id="s_code" type="text" class="form-control" name="s_code" value="" autofocus autocomplete="off"/>
     </div>
     <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Failure Code Description</label>
     <div class="col-md-4 mb-2 input-group">
         <input id="s_desc" type="text" class="form-control" name="s_desc" value="" autofocus autocomplete="off"/>
+    </div>
+    <label for="s_imp" class="col-md-2 col-sm-2 col-form-label text-md-right">Note</label>
+    <div class="col-md-4 mb-2 input-group">
+        <input id="s_imp" type="text" class="form-control" name="s_imp" value="" autofocus autocomplete="off"/>
     </div>
     <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
     <div class="col-md-2 col-sm-4 mb-2 input-group">
@@ -53,6 +58,7 @@
     </div>
     <input type="hidden" id="tmpcode"/>
     <input type="hidden" id="tmpdesc"/>
+    <input type="hidden" id="tmpimp"/>
 </div>
 </li>
 </ul>
@@ -68,7 +74,7 @@
             <tr>
                 <th width="20%">Code</th>
                 <th width="40%">Description</th>
-                <!-- <th width="30%">Impact</th> -->
+                <th width="30%">Note</th>
                 <th width="10%">Action</th>  
             </tr>
         </thead>
@@ -107,12 +113,12 @@
                             <input id="t_desc" type="text" class="form-control" name="t_desc" autocomplete="off" autofocus maxlength="50" required/>
                         </div>
                     </div>                    
-                    <!-- <div class="form-group row">
-                        <label for="t_imp" class="col-md-4 col-form-label text-md-right">Impact <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                    <div class="form-group row">
+                        <label for="t_imp" class="col-md-4 col-form-label text-md-right">Note</label>
                         <div class="col-md-6">
                             <input id="t_imp" type="text" class="form-control" name="t_imp" autocomplete="off" autofocus maxlength="50" required/>
                         </div>
-                    </div> -->
+                    </div>
                 </div>
             
                 <div class="modal-footer">
@@ -149,12 +155,12 @@
                             <input id="te_desc" type="text" class="form-control" name="te_desc" autocomplete="off" autofocus maxlength="50" required/>
                         </div>
                 </div>				
-                <!-- <div class="form-group row">
-                    <label for="te_imp" class="col-md-4 col-form-label text-md-right">Impact <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                <div class="form-group row">
+                    <label for="te_imp" class="col-md-4 col-form-label text-md-right">Note</label>
                     <div class="col-md-6">
                         <input id="te_imp" type="text" class="form-control" name="te_imp" autocomplete="off" autofocus maxlength="50" required/>
                     </div>
-                </div> -->
+                </div>
             </div>
 
             <div class="modal-footer">
@@ -230,9 +236,10 @@
             $('#post_title_icon').html('');
        }
 
-       function fetch_data(page, sort_type, sort_by, code, desc){
+       function fetch_data(page, sort_type, sort_by, code, desc, imp){
             $.ajax({
-                url:"fnmaster/pagination?page="+page+"&sorttype="+sort_type+"&sortby="+sort_by+"&code="+code+"&desc="+desc,
+                url:"fnmaster/pagination?page="+page+"&sorttype="+sort_type+"&sortby="+sort_by+
+                "&code="+code+"&desc="+desc+"&imp="+imp,
                 success:function(data){
                     console.log(data);
 
@@ -246,14 +253,16 @@
 
             var code = $('#s_code').val();
             var desc = $('#s_desc').val();
+            var imp = $('#s_imp').val();
             var column_name = $('#hidden_column_name').val();
 			var sort_type = $('#hidden_sort_type').val();
             var page = 1;
             
             document.getElementById('tmpcode').value = code;
             document.getElementById('tmpdesc').value = desc;
+            document.getElementById('tmpimp').value = imp;
 
-            fetch_data(page, sort_type, column_name, code, desc);
+            fetch_data(page, sort_type, column_name, code, desc, imp);
         });
 
        $(document).on('click', '.sorting', function(){
@@ -279,7 +288,8 @@
             var page = $('#hidden_page').val();
             var code = $('#s_code').val();
             var desc = $('#s_desc').val();
-			fetch_data(page, reverse_order, column_name, code, desc);
+            var imp = $('#s_imp').val();
+			fetch_data(page, reverse_order, column_name, code, desc, imp);
      	});
        
        
@@ -291,13 +301,15 @@
             var sort_type = $('#hidden_sort_type').val();
             var code = $('#s_code').val();
             var desc = $('#s_desc').val();
-            fetch_data(page, sort_type, column_name, code, desc);
+            var imp = $('#s_imp').val();
+            fetch_data(page, sort_type, column_name, code, desc, imp);
        });
 
        $(document).on('click', '#btnrefresh', function() {
 
             var code  = ''; 
             var desc = '';
+            var imp = '';
 
             var column_name = $('#hidden_column_name').val();
             var sort_type = $('#hidden_sort_type').val();
@@ -307,8 +319,9 @@
             document.getElementById('s_desc').value  = '';
             document.getElementById('tmpcode').value  = code;
             document.getElementById('tmpdesc').value  = desc;
+            document.getElementById('tmpimp').value  = imp;
 
-            fetch_data(page, sort_type, column_name, code, desc);
+            fetch_data(page, sort_type, column_name, code, desc, imp);
         });
 
         $(document).on('change','#t_code',function(){

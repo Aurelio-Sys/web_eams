@@ -49,7 +49,7 @@ class WORelease extends Controller
         }
 
         $data = $data->paginate(10);
-
+        // $data = $data->get();
 
         return view('workorder.worelease-browse', ['asset1' => $asset1, 'data' => $data]);
     }

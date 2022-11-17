@@ -1258,7 +1258,7 @@ class UserChartController extends Controller
                     ->get();
             }
         }
-// dump($combineSP);
+dd($combineSP);
         foreach($combineSP as $dc){
             DB::table('temp_wo')->insert([
                 'temp_wo' => $dc->wo_nbr,

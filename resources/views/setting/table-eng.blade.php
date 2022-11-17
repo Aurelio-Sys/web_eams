@@ -49,7 +49,8 @@
     <td>{{$show->active}}</td>
     <td>{{$app}}</td>
     <td>
-        @if($show->username != 'admin')
+        <!-- User ADMIN digunakan oleh IMI, tidak boleh di edit -->    
+        @if($show->username != 'ADMIN')
             <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal"
             data-code="{{$show->username}}" data-desc="{{$show->name}}" data-active="{{$show->active}}" data-email="{{$show->email_user}}" data-role="{{$show->role_user}}" data-dept="{{$show->dept_user}}"
             data-birth="{{$bd}}"  data-join="{{$jd}}" data-rate="{{$ht}}" data-skill="{{$skill}}" data-photo="{{$foto}}" data-app="{{$app}}" data-acc="{{$show->access}}">
