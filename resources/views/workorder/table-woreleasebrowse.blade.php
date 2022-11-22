@@ -12,7 +12,7 @@
 </tr>
 @empty
 <tr>
-    <td colspan="6" style="color: red;" >No Data Available</td>
+    <td colspan="12" style="color: red;text-align: center;" >No Data Available</td>
 </tr>
 @endforelse
 <tr>
