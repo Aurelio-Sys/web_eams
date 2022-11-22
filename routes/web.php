@@ -467,6 +467,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/downloadfile/{id}', 'ServiceController@downloadfile');
 	route::get('/listupload/{id}', 'ServiceController@listupload')->name('listupload');
 	route::get('/srdownloadfile/{sr}','ServiceController@downloadfilezip');
+	route::get('/srprint/{sr}','ServiceController@srprint');
 
 	// Setting
 	route::get('/runningmstr', 'SettingController@runningmstr');

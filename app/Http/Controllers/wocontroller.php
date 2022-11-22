@@ -3887,9 +3887,9 @@ class wocontroller extends Controller
             ->leftjoin('users', 'wo_mstr.wo_creator', 'users.username')
             ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
             ->first();
-        $wodet = DB::table('wo_detail')
-            ->join('sp_mstr', 'wo_detail.detail_spare_part', 'sp_mstr.spm_code')
-            ->where('detail_wo_nbr', '=', $wo)
+        $wodet = DB::table('wo_dets')
+            ->join('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')
+            ->where('wo_dets_nbr', '=', $wo)
             ->get();
         // dd($wodet);
         $data = DB::table('wo_mstr')
