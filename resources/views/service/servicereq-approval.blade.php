@@ -117,11 +117,14 @@
   <table class="table table-bordered mt-4 no-footer mini-table" id="dataTable" width="100%" cellspacing="0">
     <thead>
       <tr style="text-align: center;">
-        <th class="sorting" data-sorting_type="asc" data-column_name="so_nbr" width="15%">SR Number<span id="name_icon"></span></th>
-        <th class="sorting" data-sorting_type="asc" data-column_name="so_cust" width="25%">Asset<span id="username_icon"></span></th>
-        <th class="sorting" data-sorting_type="asc" data-column_name="so_cust" width="25%">Requested by<span id="username_icon"></span></th>
-        <th width="10%">Priority</th>
-        <th width="10%">Action</th>
+        <th width="10%">SR Number</th>
+        <th width="7%">SR Date</th>
+        <th width="25%">Asset</th>
+        <th width="10%">Location</th>
+        <th width="10%">Requested by</th>
+        <th width="15%">Note</th>
+        <th width="7%">Priority</th>
+        <th width="7%">Action</th>
       </tr>
     </thead>
     <tbody>
@@ -149,9 +152,14 @@
                     <div class="form-group row">
                         <label for="srnumber" class="col-md-5 col-form-label text-md-right">Service Request Number</label>
                         <div class="col-md-6">
-                            <input id="srnumber" type="text" class="form-control" name="srnumber"
-                            autocomplete="off" autofocus readonly/>
+                            <input id="srnumber" type="text" class="form-control" name="srnumber" readonly/>
                         </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="srdate" class="col-md-5 col-form-label text-md-right">Service Request Date</label>
+                      <div class="col-md-6">
+                          <input id="srdate" type="text" class="form-control" name="srdate" readonly/>
+                      </div>
                     </div>
                     <div class="form-group row">
                         <label for="reqbyname" class="col-md-5 col-form-label text-md-right">Requested by</label>
@@ -190,34 +198,33 @@
                         </div>
                     </div> -->
                     <div class="form-group row">
+                      <label for="srnote" class="col-md-5 col-form-label text-md-right">Note</label>
+                      <div class="col-md-6">
+                          <textarea id="srnote" type="text" class="form-control" name="srnote" maxlength="250" autocomplete="off" autofocus readonly></textarea>
+                      </div>
+                    </div>
+                    <div class="form-group row">
                         <label for="wotype" class="col-md-5 col-form-label text-md-right">Failure Type</label>
                         <div class="col-md-6">
-                            <input id="wotype" type="text" class="form-control" name="wotype" autocomplete="off" autofocus readonly/>
+                            <input id="wotype" type="text" class="form-control" name="wotype" autocomplete="off"/>
                         </div>
                     </div>
                     <div class="form-group row">
                       <label for="fclist" class="col-md-5 col-form-label text-md-right">Failure Code</label>
                       <div class="col-md-6">
-                          <textarea id="fclist" type="text" class="form-control" name="fclist" rows="3" readonly></textarea>
+                          <textarea id="fclist" type="text" class="form-control" name="fclist" rows="3"></textarea>
                       </div>
                     </div>
                     <div class="form-group row">
                         <label for="impact" class="col-md-5 col-form-label text-md-right">Impact</label>
                         <div class="col-md-6">
-                        <textarea id="impact" type="text" class="form-control" name="impact" autocomplete="off" rows="3" autofocus readonly></textarea>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group row">
-                        <label for="srnote" class="col-md-5 col-form-label text-md-right">Note</label>
-                        <div class="col-md-6">
-                            <textarea id="srnote" type="text" class="form-control" name="srnote" maxlength="250" autocomplete="off" autofocus readonly></textarea>
+                        <textarea id="impact" type="text" class="form-control" name="impact" autocomplete="off" rows="3"></textarea>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="priority" class="col-md-5 col-form-label text-md-right">Priority</label>
                         <div class="col-md-6">
-                            <input id="priority" type="text" name="priority" class="form-control" readonly>
+                            <input id="priority" type="text" name="priority" class="form-control">
                         </div>
                     </div>
 
@@ -601,6 +608,7 @@ $(document).ready(function(){
       $('#viewModal').modal('show');
 
       var srnumber = $(this).data('srnumber');
+      var srdate = $(this).data('srdate');
       var assetcode = $(this).data('assetcode');
       var assetdesc = $(this).data('assetdesc');
       var srnote = $(this).data('srnote');
@@ -661,6 +669,7 @@ $(document).ready(function(){
       
       // alert(impactcode1);
       document.getElementById('srnumber').value = srnumber;
+      document.getElementById('srdate').value = srdate;
       document.getElementById('assetcode').value = assetcode;
       document.getElementById('assetdesc').value = assetdesc;
       {{--  document.getElementById('assettype').value = astype;  --}}

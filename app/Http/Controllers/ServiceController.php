@@ -123,8 +123,13 @@ class ServiceController extends Controller
         DB::beginTransaction();
 
         try {
-
-            $counterimpact = count($req->impact);
+// dd($req->all());
+            if (isset($req->impact)) {
+                $counterimpact = count($req->impact);
+            } else {
+                $counterimpact = 0;
+            }
+            
 
             $newimpact = "";
 
@@ -205,6 +210,7 @@ class ServiceController extends Controller
                     'sr_priority' => $req->priority,
                     'sr_access' => 0,
                     'sr_approver' => $req->t_app,
+                    'sr_date' => $req->t_date,
                     'sr_dept' => Session::get('department'),
                     'req_by' => Session::get('name'),
                     'req_username' => Session::get('username'),
@@ -264,6 +270,7 @@ class ServiceController extends Controller
                 ->selectRaw('service_req_mstr.*,asset_mstr.*,asset_type.*,loc_mstr.*,wotyp_mstr.*,users.*,dept_mstr.*,
                             k1.fn_desc as k11, k2.fn_desc as k22, k3.fn_desc as k33')
                 ->where('sr_status', '=', '1')
+                ->orderBy('sr_date','DESC')
                 ->orderBy('sr_number', 'DESC')
                 ->paginate(10);
             // ->get();
@@ -789,6 +796,7 @@ class ServiceController extends Controller
                 u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55,
                 wo_mstr.wo_start_date, wo_mstr.wo_finish_date, wo_mstr.wo_action, wo_mstr.wo_status,
                 k1.fn_desc as k11, k2.fn_desc as k22, k3.fn_desc as k33')
+            ->orderBy('sr_date','DESC')
             ->orderBy('sr_number', 'DESC')
             // ->get();
             ->paginate(10);

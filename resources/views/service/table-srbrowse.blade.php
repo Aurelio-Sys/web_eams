@@ -32,8 +32,8 @@
     <td>{{$show->sr_priority}}</td>
     <td>{{$show->dept_desc}}</td>
     <td>{{$show->req_by}}</td>
-    <td>{{date('d-m-Y', strtotime($show->sr_created_at))}}</td>
 
+    <td>{{date('d-m-Y', strtotime($show->sr_date))}}</td>
 
     
     <td style="text-align: center;">
@@ -44,7 +44,7 @@
     data-eng3="{{$show->u33}}" data-eng4="{{$show->u44}}" data-eng5="{{$show->u55}}"
     data-reqbyname="{{$show->req_by}}" data-dept="{{$show->dept_desc}}" data-assetloc="{{$show->loc_desc}}" 
     data-astypedesc="{{$show->astype_desc}}" data-wotypedesc="{{$show->wotyp_desc}}" data-impactcode="{{$show->sr_impact}}"
-    data-srdate="{{date('d-m-Y', strtotime($show->sr_created_at))}}" data-wonumber="{{$show->wo_number}}" 
+    data-srdate="{{date('d-m-Y', strtotime($show->sr_date))}}" data-wonumber="{{$show->wo_number}}" 
     data-startwo="{{date('d-m-Y', strtotime($show->wo_start_date))}}" 
     data-endwo="{{date('d-m-Y', strtotime($show->wo_finish_date))}}" 
     data-action="{{$show->wo_action}}" data-approver="{{$show->sr_approver}}"

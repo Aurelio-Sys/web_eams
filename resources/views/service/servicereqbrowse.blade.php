@@ -649,7 +649,7 @@
           },
           statusCode: {
             500: function() {
-              document.getElementById('impact').value = "failed load";
+              document.getElementById('impact').value = "";
             }
           }
         })
@@ -675,7 +675,7 @@
           },
           statusCode: {
             500: function() {
-              document.getElementById('failtype').value = "failed load";
+              document.getElementById('failtype').value = "";
             }
           }
         })
