@@ -49,7 +49,7 @@ class WORelease extends Controller
         }
 
         $data = $data->paginate(10);
-
+        // $data = $data->get();
 
         return view('workorder.worelease-browse', ['asset1' => $asset1, 'data' => $data]);
     }
@@ -207,7 +207,7 @@ class WORelease extends Controller
                     ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
                     ->get();
             }
-        } /* if($data->wo_status == 'open') */ else {
+        } /* if($data->wo_status == 'plan') */ else {
             $combineSP = DB::table('wo_mstr')
                 ->select(
                     'wo_dets_rc as repair_code',

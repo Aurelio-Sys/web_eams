@@ -57,12 +57,16 @@ class ExportSR implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
         }
 
         $data = DB::table("service_req_mstr")
-                ->selectRaw("sr_number,wo_number,sr_assetcode,asset_desc")
+                ->selectRaw("sr_number,wo_number,sr_assetcode,asset_desc,asset_loc")
                 ->selectRaw("CASE WHEN sr_status = 1 THEN 'Open' WHEN sr_status = 2 THEN 'Assigned' WHEN sr_status = 3 THEN 'Started'
                     WHEN sr_status = 4 THEN 'Finish' WHEN sr_status = 5 THEN 'Closed' END AS sr_status")
-                ->selectRaw("dept_desc,req_by,sr_priority,CAST(sr_created_at AS DATE) AS sr_created_at")
+                ->selectRaw("req_by,sr_priority,dept_desc,CAST(sr_created_at AS DATE) AS sr_created_at,
+                    sr_approver,wotyp_desc,concat(sr_failurecode1, sr_failurecode2, sr_failurecode3) as fc,
+                    imp_desc,sr_note,rejectnote")
                 ->leftjoin("asset_mstr","service_req_mstr.sr_assetcode","=","asset_mstr.asset_code")
                 ->leftjoin("dept_mstr","dept_mstr.dept_code","=","service_req_mstr.sr_dept")
+                ->leftJoin('wotyp_mstr','wotyp_code','=','sr_wotype')
+                ->leftJoin('imp_mstr','imp_code','=','sr_impact')
                 ->whereRaw($kondisi)
                 ->orderBy("sr_number", 'DESC');
 
@@ -91,7 +95,8 @@ class ExportSR implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
 
     public function headings(): array
     {
-        return ['Service Request Number','Wo Number','Asset Code','Asset Desc','Status','Department','Requested By','Priority','Requested Date'];
+        return ['Service Request Number','Wo Number','Asset Code','Asset Desc','Location','Status','Priority','Department',
+        'Requested By','Requested Date','Approver','Failure Type','Failure','Impact','Note','Reject Note'];
     }
 
     

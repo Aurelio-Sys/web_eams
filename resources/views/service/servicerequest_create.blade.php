@@ -22,7 +22,7 @@
         <select id="assetcode" name="assetcode" class="form-control" required>
           <option value="">-- Select Asset Code --</option>
           @foreach($showasset as $show)
-          <option value="{{$show->asset_code}}">{{$show->asset_code.' => '.$show->asset_desc." - ".$show->asset_loc}}</option>
+          <option value="{{$show->asset_code}}">{{$show->asset_code.' -- '.$show->asset_desc." - ".$show->asset_loc}}</option>
           @endforeach
         </select>
       </div>
@@ -44,7 +44,7 @@
         <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple" required>
           <option></option>
           @foreach($fc as $fcshow)
-          <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}}</option>
+          <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}} -- {{$fcshow->fn_impact}}</option>
           @endforeach
         </select>
       </div>
@@ -118,6 +118,17 @@
           </div>
         </div> -->
     <div class="form-group row">
+      <label for="t_app" class="col-md-2 col-lg-3 col-form-label my-auto">Appover <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+      <div class="col-md-5 col-sm-12">
+        <select id="t_app" name="t_app" class="form-control" required>
+          <option value="">-- Select Approver --</option>
+          @foreach($dataapp as $da)
+          <option value="{{$da->eng_code}}">{{$da->eng_code.' -- '.$da->eng_desc}}</option>
+          @endforeach
+        </select>
+      </div>
+    </div>
+    <div class="form-group row">
       <div class="col-sm-12 col-lg-3"></div>
       <div class="col-sm-12 col-md-5">
         <button type="submit" id="btnsubmit" class="btn btn-success" style="color: white !important;">Save</button>&nbsp;
@@ -170,6 +181,11 @@
     });
 
     $("#assetcode").select2({
+      width: '100%',
+      theme: 'bootstrap4',
+
+    });
+    $("#t_app").select2({
       width: '100%',
       theme: 'bootstrap4',
 

@@ -4,11 +4,11 @@
     <td>{{$show->dept_desc}}</td>
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal" 
-        data-code="{{$show->dept_code}}" data-desc="{{$show->dept_desc}}">
+        data-code="{{$show->dept_code}}" data-desc="{{$show->dept_desc}}" data-runningnbr="{{$show->dept_running_nbr}}">
             <i class="icon-table fa fa-edit fa-lg"></i></a>
         &ensp;
         <a href="javascript:void(0)" class="deletedata" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal" 
-        data-code="{{$show->dept_code}}" data-desc="{{$show->dept_desc}}">
+        data-code="{{$show->dept_code}}" data-desc="{{$show->dept_desc}}" data-runningnbr="{{$show->dept_running_nbr}}">
             <i class="icon-table fa fa-trash fa-lg"></i></a>
     </td>
 </tr>

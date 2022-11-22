@@ -529,7 +529,8 @@
         $('#te_tool').html('');
 
         var tool = $('#hd_tool').val();
-        if (tool == '') {
+         
+        if (tool == '' || tool == undefined) {
             var a = '';
         } else {
             var a = tool.split(",");
@@ -564,13 +565,14 @@
     }
 
     function viewpart() {
+        
         $('#t_part').html('')
         $('#te_part').html('')
 
         var part = $('#hd_part').val();
         var edit = 0;
-
-        if (part == '') {
+        
+        if (part == '' || part == undefined) {
             var a = '';
         } else {
             var a = part.split(",");

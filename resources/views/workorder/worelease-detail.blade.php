@@ -269,6 +269,10 @@
             cols += '<input type="hidden" class="line" name="line[]" id="line" />';
             cols += '</td>';
 
+            cols += '<td style="vertical-align: middle; text-align: center;">'
+            cols += '<textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99" ></textarea>';
+            cols += '</td>';
+
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
             cols += '<input type="hidden" class="op" name="op[]" value="A"/>';
             cols += '</tr>'

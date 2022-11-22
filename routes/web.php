@@ -1,5 +1,6 @@
 <?php
 
+use Report\RptDetWOController;
 use App\Http\Controllers\SP\KebutuhanSPController;
 use App\Http\Controllers\WO\AllWOGenerate;
 use App\Http\Controllers\WO\ConfirmEng;
@@ -522,7 +523,9 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// List Spare part
 	Route::get('/kebutuhansp', [KebutuhanSPController::class, 'index'])->name('browseKsp');
-	
+
+	// Detail WO Report
+	Route::resource('rptdetwo',RptDetWOController::class);
 });
 
 Auth::routes();

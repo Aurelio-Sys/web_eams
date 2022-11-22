@@ -1413,7 +1413,7 @@ class SettingController extends Controller
             ->insert([
                 'fn_code'       => $req->t_code,
                 'fn_desc'       => $req->t_desc,             
-                // 'fn_impact'     => $req->t_imp,              
+                'fn_impact'     => $req->t_imp,              
                 'created_at'    => Carbon::now()->toDateTimeString(),
                 'updated_at'    => Carbon::now()->toDateTimeString(),
                 'edited_by'     => Session::get('username'),
@@ -1434,7 +1434,7 @@ class SettingController extends Controller
         ->where('fn_code','=',$req->te_code)
         ->update([
             'fn_desc'       => $req->te_desc,       
-            // 'fn_impact'     => $req->te_imp,         
+            'fn_impact'     => $req->te_imp,         
             'updated_at'    => Carbon::now()->toDateTimeString(),
             'edited_by'     => Session::get('username'),
         ]);
@@ -1463,28 +1463,28 @@ class SettingController extends Controller
             $sort_group = $req->get('sorttype');
             $code = $req->get('code');
             $desc = $req->get('desc');
+            $imp = $req->get('imp');
 
             $dataasgroup = DB::table('asset_group')
                 ->orderby('asgroup_code')
                 ->get();
       
-            if ($code == '' && $desc == '') {
+            if ($code == '' && $desc == '' && $imp == '') {
                 $data = DB::table('fn_mstr')
                     ->orderBy($sort_by, $sort_group)
                     ->paginate(10);
 
                 return view('setting.table-failure', ['data' => $data, 'dataasgroup' => $dataasgroup]);
             } else {
-                $kondisi = '';
+                $kondisi = 'id > 0';
                 if ($code != '') {
-                    $kondisi = "fn_code like '%" . $code . "%'";
+                    $kondisi = "and fn_code like '%" . $code . "%'";
                 }
                 if ($desc != '') {
-                    if ($kondisi != '') {
-                        $kondisi .= " and fn_desc like '%" . $desc . "%'";
-                    } else {
-                        $kondisi = "fn_desc like '%" . $desc . "%'";
-                    }
+                    $kondisi .= " and fn_desc like '%" . $desc . "%'";
+                }
+                if ($imp != '') {
+                    $kondisi .= " and fn_impact like '%" . $imp . "%'";
                 }
                 //dd($kondisi);
                 $data = DB::table('fn_mstr')
@@ -5559,6 +5559,8 @@ class SettingController extends Controller
     public function deptmaster(Request $req)
     {   
         if (strpos(Session::get('menu_access'), 'MT21') !== false) {
+
+            // dd(session()->all());
             $data = DB::table('dept_mstr')
                 ->orderby('dept_code')
                 ->paginate(10);
@@ -5597,7 +5599,8 @@ class SettingController extends Controller
             DB::table('dept_mstr')
             ->insert([
                 'dept_code'   => $req->t_code,
-                'dept_desc'   => $req->t_desc,                
+                'dept_desc'   => $req->t_desc,
+                'dept_running_nbr' => $req->t_runningnbr,                
                 'created_at'    => Carbon::now()->toDateTimeString(),
                 'updated_at'    => Carbon::now()->toDateTimeString(),
                 'edited_by'     => Session::get('username'),
@@ -5624,6 +5627,7 @@ class SettingController extends Controller
             ->where('dept_code','=',$req->te_code)
             ->update([
                 'dept_desc'   => $req->te_desc,
+                'dept_running_nbr' => $req->te_runningnbr,
                 'updated_at'    => Carbon::now()->toDateTimeString(),
                 'edited_by'     => Session::get('username'),
             ]);

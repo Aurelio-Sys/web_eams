@@ -152,6 +152,14 @@
                         <input id="te_desc" type="text" class="form-control" name="te_desc" autocomplete="off" autofocus maxlength="50" required/>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <label for="te_runningnbr" class="col-md-4 col-form-label text-md-right">Running Number 
+                        <span id="alert1" style="color: red; font-weight: 200;">*</span> </label>
+                    <div class="col-md-6">
+                        <input id="te_runningnbr" type="text" class="form-control" name="te_runningnbr" autocomplete="off" autofocus maxlength="4" required/>
+                        <span id="te_errorcur" style="color:red"></span>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
@@ -194,9 +202,11 @@
            $('#editModal').modal('show');
            var code = $(this).data('code');
            var desc = $(this).data('desc');
+           var runningnbr = $(this).data('runningnbr');
 
            document.getElementById('te_code').value = code;
            document.getElementById('te_desc').value = desc;
+           document.getElementById('te_runningnbr').value = runningnbr;
        });
 
         $(document).on('blur','#t_runningnbr',function(){ // Click to only happen on announce links
@@ -210,17 +220,50 @@
             if(nbr > 4){
                 document.getElementById("errorcur").innerHTML = 'Current Number Must Be 4 Digits';
                 document.getElementById("t_runningnbr").focus();
+                document.getElementById("btncreate").disabled = true;
                 return false;
             }else if(nbr < 4){
                 document.getElementById("errorcur").innerHTML = 'Current Number Must Be 4 Digits';
                 document.getElementById("t_runningnbr").focus();
+                document.getElementById("btncreate").disabled = true;
 
             }else if(!isnum){
                 document.getElementById("errorcur").innerHTML = 'Current Number Must Be 4 Digits';
                 document.getElementById("t_runningnbr").focus();
+                document.getElementById("btncreate").disabled = true;
                 return false;
             }else{
-                document.getElementById("errorcur").innerHTML = ''; 
+                document.getElementById("errorcur").innerHTML = '';
+                document.getElementById("btncreate").disabled = false;
+            }
+        });
+
+        $(document).on('blur','#te_runningnbr',function(){ // Click to only happen on announce links
+       
+            //alert('tst');
+            var isi = document.getElementById("te_runningnbr").value;
+            var nbr = isi.length;
+
+            var isnum = /^\d+$/.test(isi);
+            
+            if(nbr > 4){
+                document.getElementById("te_errorcur").innerHTML = 'Current Number Must Be 4 Digits';
+                document.getElementById("te_runningnbr").focus();
+                document.getElementById("btnedit").disabled = true;
+                return false;
+            }else if(nbr < 4){
+                document.getElementById("te_errorcur").innerHTML = 'Current Number Must Be 4 Digits';
+                document.getElementById("te_runningnbr").focus();
+                document.getElementById("btnedit").disabled = true;
+
+            }else if(!isnum){
+                document.getElementById("te_errorcur").innerHTML = 'Current Number Must Be 4 Digits';
+                document.getElementById("te_runningnbr").focus();
+                document.getElementById("btnedit").disabled = true;
+                return false;
+            }else{
+                document.getElementById("te_errorcur").innerHTML = '';
+                document.getElementById("btnedit").disabled = false; 
             }
         });
 

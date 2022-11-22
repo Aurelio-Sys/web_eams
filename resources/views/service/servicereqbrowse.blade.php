@@ -77,14 +77,15 @@
             <div class="col-md-3 col-sm-4 mb-2 input-group">
               <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off">
             </div>
-            <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Asset') }}</label>
+            <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Desc Asset') }}</label>
             <div class="col-md-3 col-sm-4 mb-2 input-group">
-              <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
+              <!-- <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
                 <option value="">--Select Asset--</option>
                 @foreach($asset as $show)
-                <option value="{{$show->asset_desc}}">{{$show->asset_desc}}</option>
+                <option value="{{$show->asset_desc}}">{{$show->asset_code}} -- {{$show->asset_desc}}</option>
                 @endforeach
-              </select>
+              </select> -->
+              <input id="s_asset" type="text" class="form-control" name="s_asset" value="" autofocus autocomplete="off">
             </div>
           </div>
           <div class="col-12 form-group row">
@@ -166,16 +167,18 @@
   <table class="table table-bordered mt-4 no-footer mini-table" id="dataTable" width="100%" cellspacing="0">
     <thead>
       <tr style="text-align: center;">
-        <th class="sorting" data-sorting_type="asc" data-column_name="so_nbr" width="10%">SR Number<span id="name_icon"></span></th>
-        <th class="sorting" data-sorting_type="asc" data-column_name="so_cust" width="10%">WO Number<span id="username_icon"></span></th>
-        <th class="sorting" data-sorting_type="asc" data-column_name="so_cust" width="30%">Asset<span id="username_icon"></span></th>
-        <th class="sorting" data-sorting_type="asc" data-column_name="so_cust" width="7%">Status<span id="username_icon"></span></th>
-        <th width="13%">Department</th>
+        <th width="10%">SR Number</th>
+        <th width="10%">WO Number</th>
+        <th width="10%">Aset</th>
+        <th width="15%">Desc</th>
+        <th width="10%">Location</th>
+        <th width="7%">Status</th>
         <th width="7%">Priority</th>
-        <th width="9%">Requested by</th>
-        <th width="9%">Requested Date</th>
+        <th width="10%">Department</th>
+        <th width="7%">Req by</th>
+        <th width="7%">Req Date</th>
         <!-- <th width = "5%">Aging</th> -->
-        <th width="5%">Action</th>
+        <th width="7%">Action</th>
       </tr>
     </thead>
     <tbody>
@@ -226,6 +229,16 @@
           <label for="failcode" class="col-md-2 col-form-label">Failure Code</label>
           <div class="col-md-4">
             <textarea id="failcode" type="text" class="form-control" name="failcode" rows="3" readonly></textarea>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="approver" class="col-md-2 col-form-label">Approver</label>
+          <div class="col-md-4">
+            <input id="approver" type="text" class="form-control" name="approver" readonly />
+          </div>
+          <label for="assetloc" class="col-md-2 col-form-label">Asset Location</label>
+          <div class="col-md-4">
+            <input id="assetloc" type="text" class="form-control" name="assetloc" readonly />
           </div>
         </div>
         <div class="form-group row">
@@ -397,11 +410,10 @@
   @section('scripts')
   <script type="text/javascript">
     $(document).ready(function() {
-      $("#s_asset").select2({
+      /* $("#s_asset").select2({
         width: '100%',
-        // placeholder : "Select Asset",
         theme: 'bootstrap4',
-      });
+      }); */
 
       $("#s_user").select2({
         width: '100%',
@@ -540,6 +552,7 @@
         var action = $(this).data('action');
         var wostatus = $(this).data('wostatus');
         var failtype = $(this).data('failtype');
+        var approver = $(this).data('approver');
 
         var srdate = $(this).data('srdate');
         document.getElementById('srdate').value = srdate;
@@ -579,6 +592,7 @@
         document.getElementById('action').value = action;
         document.getElementById('wostatus').value = wostatus;
         document.getElementById('failcode').value = faildesclist;
+        document.getElementById('approver').value = approver;
 
         // if(eng1 != ''){
         //   document.getElementById('engineer1').value = eng1;
@@ -674,6 +688,7 @@
         document.getElementById('assetloc').value = assetloc;
         document.getElementById('assettype').value = astype;
         document.getElementById('wotype').value = wotype;
+        
 
 
         document.getElementById('hiddenreq').value = reqby;
