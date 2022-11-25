@@ -141,7 +141,7 @@ class ServiceController extends Controller
             $runnumber = DB::table('dept_mstr')
                             ->where('dept_code','=', session::get('department'))
                             ->first();
-            
+                            // dd(session::get('department'));            
             $newyear = Carbon::now()->format('y');
 
             if($runnumber->dept_running_nbr == null){
@@ -150,6 +150,7 @@ class ServiceController extends Controller
                 return back();
             }
 
+            
             if ($running->year == $newyear) {
                 $tempnewrunnbr = strval(intval($runnumber->dept_running_nbr) + 1);
 
@@ -162,7 +163,6 @@ class ServiceController extends Controller
             }
 
             $runningnbr = $running->sr_prefix . '-' . session::get('department') . '-' . $newyear . '-' . $newtemprunnbr;
-
             $cekData = DB::table('service_req_mstr')
                 ->where('sr_number', '=', $runningnbr)
                 ->get();
@@ -1556,7 +1556,7 @@ class ServiceController extends Controller
         $srmstr = DB::table('service_req_mstr')
             ->where('sr_number', '=', $sr)
             ->selectRaw('fn1.fn_desc as fn1, fn2.fn_desc as fn2, fn3.fn_desc as fn3, dept_desc, eng_desc, sr_number,
-            sr_created_at, asset_desc, wotyp_desc, sr_note, req_by')
+            sr_created_at, asset_desc, wotyp_desc, sr_note, req_by, wo_nbr, wo_duedate, wo_schedule')
             ->leftjoin('eng_mstr', 'service_req_mstr.req_username', 'eng_mstr.eng_code')
             ->leftJoin('dept_mstr', 'service_req_mstr.sr_dept', 'dept_mstr.dept_code')
             ->leftJoin('asset_mstr', 'service_req_mstr.sr_assetcode', 'asset_mstr.asset_code')
@@ -1564,6 +1564,7 @@ class ServiceController extends Controller
             ->leftJoin('fn_mstr as fn2', 'service_req_mstr.sr_failurecode2', 'fn2.fn_code')
             ->leftJoin('fn_mstr as fn3', 'service_req_mstr.sr_failurecode3', 'fn3.fn_code')
             ->leftJoin('wotyp_mstr', 'service_req_mstr.sr_wotype', 'wotyp_mstr.wotyp_code')
+            ->leftJoin('wo_mstr', 'service_req_mstr.sr_number', 'wo_mstr.wo_sr_nbr')
             ->first();
         // dd($srmstr);
         // $wodet = DB::table('wo_dets')
