@@ -1,43 +1,48 @@
+
+
 <!--------------- INI UNTUK PRINT TEMPLATE --------------->
-  <table style="width:700px; height:100px; margin-top:-0.7cm;"class="borderless">
-  
-    
+<table style="width:730px; margin-top:-0.7cm; margin-left:0px" class="borderless">
+
+
   <tr>
-    <td style="width: 80.724px; height:100px; text-align:left;vertical-align:middle;border:1px solid" rowspan="2"> 
-    <img height="75px" width="150px" >
+    <td style="text-align:center;vertical-align:middle;border:1px solid;border-left:2px solid;border-top:2px solid" colspan="1" rowspan="2">
+      <img src="{{public_path('assets/Actavis-logo.png')}}" height="40px">
     </td>
-    <td style="width: 350px; height:100px; text-align:center;vertical-align:middle;border:1px solid;font-size:24px" rowspan="2">
-    <p><b>SERVICE REQUEST REQUISITION</b></p>
+    <td style="text-align:center;border:1px solid;border-left:0px;border-top:2px solid; margin-bottom:-10px" colspan="2">
+      <p style="margin-top: 5px; margin-bottom:5px"><b>FORMULIR</b><br>
+        <b><em>Form</em></b>
+      </p>
     </td>
-    
-    <td style="width: 120.724px;  text-align:center;vertical-align:middle;border:1px solid">
-    <p><b>PT Widatra Bhakti</b></p>
-    </td>
-  </tr>  
-  <tr>
-    <td style="width: 120.724px;  text-align:center;vertical-align:middle;border:1px solid">
-    <p><b>Page {{$pagenow}} of 2</b></p>
+    <td style="text-align:center;vertical-align:middle;border:1px solid;border-left:0px;border-top:2px solid;border-right:2px solid" colspan="1">
+      <p style="margin-top: 5px; margin-bottom:5px"><b>Halaman {{$pagenow}} dari 1 </b></p>
     </td>
   </tr>
-</table>
-
-
-<table style="width:700px; height:30px; margin-top:0.5cm; margin-bottom:-0.4cm" class="borderless">
-  
-    
   <tr>
-    <td style="width: 170.724px; height:30px; text-align:left;vertical-align:top;border:1px solid" > 
-    <p>Legacy Number:</p>
-    <p></p>
+    <td style="text-align:center;border:1px solid;border-top:0px solid;border-left:0px;" colspan="2">
+      <p style="margin-top: 5px; margin-bottom:5px"><b>DEPARTEMEN ENGINEERING</b><br>
+        <b><em>Engineering Department</em></b>
+      </p>
     </td>
-    <td style="width: 150px; height:30px; text-align:left;vertical-align:top;border:1px solid;" >
-    <p>Revision Number:</p>
-    <p></p>
+    <td style="width:170px;border-bottom:1px solid; border-top:0px; border-right:2px solid;" colspan="1">
+      <p style="margin-top: 5px; margin-bottom:5px">040GD5-001.04<br>
+        Tgl. Berlaku : {{date('d-m-Y',strtotime($printdate))}}
+      </p>
     </td>
-    
-    <td style="width: 300.724px; height:60px;  text-align:left;vertical-align:top;border:1px solid">
-    <p>Ref. to SOP:</p>
+  </tr>
+  <tr>
+    <td bgcolor="#bbbbbb" style="border: 2px solid; text-align:center; border-top:0; padding:0" colspan="5">
+      <p style="margin-top: 2px; margin-bottom:2px">
+        <b>
+          Permintaan Tindakan Perbaikan <br>
+          <em>Work Order</em>
+        </b>
+      </p>
     </td>
-  </tr>  
-  
+  </tr>
+  <tr>
+    <td style="text-align:right; border:0; font-size: 11px; padding:0;" colspan="5">
+      <p style="margin-top: 2px; margin-bottom:2px">Ref. 040BD4-001</p>
+    </td>
+  </tr>
+
 </table>

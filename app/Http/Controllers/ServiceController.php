@@ -1563,8 +1563,15 @@ class ServiceController extends Controller
             ->first();
         $srmstr = DB::table('service_req_mstr')
             ->where('sr_number', '=', $sr)
-            ->leftjoin('users', 'service_req_mstr.req_username', 'users.username')
+            ->selectRaw('fn1.fn_desc as fn1, fn2.fn_desc as fn2, fn3.fn_desc as fn3, dept_desc, eng_desc, sr_number,
+            sr_created_at, asset_desc, wotyp_desc, sr_note, req_by')
+            ->leftjoin('eng_mstr', 'service_req_mstr.req_username', 'eng_mstr.eng_code')
             ->leftJoin('dept_mstr', 'service_req_mstr.sr_dept', 'dept_mstr.dept_code')
+            ->leftJoin('asset_mstr', 'service_req_mstr.sr_assetcode', 'asset_mstr.asset_code')
+            ->leftJoin('fn_mstr as fn1', 'service_req_mstr.sr_failurecode1', 'fn1.fn_code')
+            ->leftJoin('fn_mstr as fn2', 'service_req_mstr.sr_failurecode2', 'fn2.fn_code')
+            ->leftJoin('fn_mstr as fn3', 'service_req_mstr.sr_failurecode3', 'fn3.fn_code')
+            ->leftJoin('wotyp_mstr', 'service_req_mstr.sr_wotype', 'wotyp_mstr.wotyp_code')
             ->first();
         // dd($srmstr);
         // $wodet = DB::table('wo_dets')
