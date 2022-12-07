@@ -4146,37 +4146,37 @@ class wocontroller extends Controller
                 //                 ->get();
 
                 // dd($repair);
-                foreach ($repair[$i] as $grouptool) {
-                    $newarr = explode(",", $grouptool->ins_tool);
-                    for ($j = 0; $j < count($newarr); $j++) {
-                        $arr = DB::table('tool_mstr')
-                            ->where('tool_code', '=', $newarr[$j])
-                            ->first();
-                        if (isset($arr->tool_desc)) {
-                            $newarr[$j] = $arr->tool_desc;
-                        } else {
-                            $newarr[$j] = '';
-                        }
-                    }
-                    $exparr = implode(",", $newarr);
-                    $grouptool->ins_tool = $exparr;
-                }
+                // foreach ($repair[$i] as $grouptool) {
+                //     $newarr = explode(",", $grouptool->ins_tool);
+                //     for ($j = 0; $j < count($newarr); $j++) {
+                //         $arr = DB::table('tool_mstr')
+                //             ->where('tool_code', '=', $newarr[$j])
+                //             ->first();
+                //         if (isset($arr->tool_desc)) {
+                //             $newarr[$j] = $arr->tool_desc;
+                //         } else {
+                //             $newarr[$j] = '';
+                //         }
+                //     }
+                //     $exparr = implode(",", $newarr);
+                //     $grouptool->ins_tool = $exparr;
+                // }
 
-                $check[$i] = DB::table('wo_mstr')
-                    ->selectRaw('wrd_flag')
-                    ->leftjoin('wo_rc_detail as a', 'wo_mstr.wo_nbr', 'a.wrd_wo_nbr')
-                    ->where('wo_mstr.wo_nbr', '=', $wo)
-                    ->where('a.wrd_repair_code', '=', $arrayrepaircode[$i])
-                    ->first();
-                if (isset($check[$i]) == true) {
-                    $checkstr[$i] = $check[$i]->wrd_flag;
-                } else {
-                    $checkstr[$i] = 0;
-                }
-                // if(count($repair[$i])!= )
+                // $check[$i] = DB::table('wo_mstr')
+                //     ->selectRaw('wrd_flag')
+                //     ->leftjoin('wo_rc_detail as a', 'wo_mstr.wo_nbr', 'a.wrd_wo_nbr')
+                //     ->where('wo_mstr.wo_nbr', '=', $wo)
+                //     ->where('a.wrd_repair_code', '=', $arrayrepaircode[$i])
+                //     ->first();
+                // if (isset($check[$i]) == true) {
+                //     $checkstr[$i] = $check[$i]->wrd_flag;
+                // } else {
+                //     $checkstr[$i] = 0;
+                // }
+                // // if(count($repair[$i])!= )
 
-                // dd(count($repair[1]));
-                $countdb[$i] = count($repair[$i]);
+                // // dd(count($repair[1]));
+                // $countdb[$i] = count($repair[$i]);
             }
         }
         // dd($data[0]->wo_nbr);

@@ -177,8 +177,23 @@
     <tr>
       <td rowspan="2" style="height: 15px; border-bottom: 1px solid">
         <div style="margin-top:5px; margin-left: 10px;">
+          @if($srmstr->wo_nbr != null)
           <input type="checkbox" id="checkboxreject" style="vertical-align: middle;" checked><label for="checkboxreject" style="vertical-align:middle"> Disetujui</label>
-          <p style="margin-top: 0;">Estimasi Pengerjaan :</p>
+          @else
+          <input type="checkbox" id="checkboxreject" style="vertical-align: middle;"><label for="checkboxreject" style="vertical-align:middle"> Disetujui</label>
+          @endif
+          <?php
+          $datefr = strtotime($srmstr->wo_schedule);
+          $dateto = strtotime($srmstr->wo_duedate);
+          // $count = round(($dateto - $datefr)/3600); -- hour
+          $count = round(($dateto - $datefr) / 86400);
+          ?>
+          <p style="margin-top: 0;">
+            Estimasi Pengerjaan :
+            @if($srmstr->wo_nbr != null)
+            {{$count + 1}} hari
+            @endif
+          </p>
         </div>
       </td>
       <td rowspan="2" style="height: 15px; border-bottom: 1px solid">
