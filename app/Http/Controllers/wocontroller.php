@@ -4261,7 +4261,10 @@ class wocontroller extends Controller
             ->first();
 
         // $pdf = PDF::loadview('workorder.pdfprint-template',['womstr' => $womstr,'wodet' => $wodet, 'data' => $data,'printdate' =>$printdate,'repair'=>$repair,'sparepart'=>$array])->setPaper('A4','portrait');
-        $pdf = PDF::loadview('workorder.pdfprint-template', ['sparepart' => $sparepartarray, 'womstr' => $womstr, 'repairlist' => $repairlist, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb, 'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printdate' => $printdate, 'engineerlist' => $engineerlist, 'users' => $users, 'datasr' => $datasr])->setPaper('A4', 'portrait');
+        $pdf = PDF::loadview('workorder.pdfprint-template', ['sparepart' => $sparepartarray, 'womstr' => $womstr, 
+        'repairlist' => $repairlist, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb, 
+        'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printdate' => $printdate, 'engineerlist' => $engineerlist, 
+        'users' => $users, 'datasr' => $datasr])->setPaper('A4', 'portrait');
         //return view('picklistbrowse.shipperprint-template',['printdata1' => $printdata1, 'printdata2' => $printdata2, 'runningnbr' => $runningnbr,'user' => $user,'last' =>$countprint]);
         return $pdf->stream($wo . '.pdf');
     }

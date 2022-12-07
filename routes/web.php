@@ -1,6 +1,9 @@
 <?php
 
-use Report\RptDetWOController;
+use App\Http\Controllers\Master\AssetSiteController;
+use App\Http\Controllers\Master\AssetLocController;
+use App\Http\Controllers\Report\RptDetWOController;
+use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\SP\KebutuhanSPController;
 use App\Http\Controllers\WO\AllWOGenerate;
 use App\Http\Controllers\WO\ConfirmEng;
@@ -525,7 +528,20 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/kebutuhansp', [KebutuhanSPController::class, 'index'])->name('browseKsp');
 
 	// Detail WO Report
-	Route::resource('rptdetwo',RptDetWOController::class);
+	Route::get('/rptdetwo', [RptDetWOController::class, 'index'])->name('browseDetailWO');
+	Route::get('/exceldetwo', [RptDetWOController::class, 'index'])->name('excelDetailWO');
+	
+	Route::get('/rptcost', [RptCostController::class, 'index']);
+
+	// Asset Site
+	Route::get('/assetsite', [AssetSiteController::class, 'index']);
+	Route::post('/createaassetsite', [AssetSiteController::class, 'store']);
+	Route::post('/editassetsite', [AssetSiteController::class, 'edit']);
+
+	// Asset Locaation
+	Route::get('/assetloc', [AssetLocController::class, 'index']);
+	Route::post('/createaassetloc', [AssetLocController::class, 'store']);
+	Route::post('/editassetloc', [AssetLocController::class, 'edit']);
 });
 
 Auth::routes();

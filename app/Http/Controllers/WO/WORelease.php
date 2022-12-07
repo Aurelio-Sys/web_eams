@@ -48,7 +48,7 @@ class WORelease extends Controller
             $data->where('wo_priority', '=', $request->s_priority);
         }
 
-        $data = $data->paginate(10);
+        $data = $data->paginate(1);
         // $data = $data->get();
 
         return view('workorder.worelease-browse', ['asset1' => $asset1, 'data' => $data]);

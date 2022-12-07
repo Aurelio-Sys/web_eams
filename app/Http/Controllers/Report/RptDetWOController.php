@@ -2,10 +2,17 @@
 
 namespace App\Http\Controllers\Report;
 
+use App\Exports\DetailWOExport;
 use App\Http\Controllers\Controller;
+use App\Services\CreateTempTable;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ViewExport2;
 
 class RptDetWOController extends Controller
 {
@@ -14,8 +21,9 @@ class RptDetWOController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        // dd($request->all());
         $usernow = DB::table('users')
             ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
             ->where('username', '=', session()->get('username'))
@@ -61,11 +69,11 @@ class RptDetWOController extends Controller
             $table->string('temp_sr')->nullable();
             $table->string('temp_asset');
             $table->string('temp_asset_desc');
-            $table->string('temp_creator');
+            $table->string('temp_creator')->nullable(); /* Untuk PM Creator nya kosong */
             $table->date('temp_create_date');
             $table->date('temp_sch_date');
-            $table->string('temp_fail_type');
-            $table->string('temp_fail_code');
+            $table->string('temp_fail_type')->nullable();
+            $table->string('temp_fail_code')->nullable();
             $table->string('temp_status');
             $table->string('temp_sp')->nullable();
             $table->string('temp_sp_desc')->nullable();
@@ -211,7 +219,7 @@ class RptDetWOController extends Controller
                     ->get();
             }
         }
-        dump('3');
+        
         foreach($combineSP as $dc){
             DB::table('temp_wo')->insert([
                 'temp_wo' => $dc->wo_nbr,
@@ -232,14 +240,25 @@ class RptDetWOController extends Controller
         }
 
         $datatemp = DB::table('temp_wo')
-            ->orderBy('temp_wo','desc')
-            ->paginate(10); 
-// dd($datatemp);
+            ->orderBy('temp_wo','desc');
+        // dd($datatemp->get());
+            
+        $datatemp = $datatemp->paginate(5); 
+        
+
         Schema::dropIfExists('temp_wo');
 
-        return view('report.rptdetwo', ['impact' => $impact, 'wottype' => $wottype, 'custrnow' => $custrnow, 
+        if ($request->dexcel == "excel") {
+            return Excel::download(new DetailWOExport($impact), 'DetailWO.xlsx');
+            // dd("excel");
+        } else {
+            return view('report.rptdetwo', ['impact' => $impact, 'wottype' => $wottype, 'custrnow' => $custrnow, 
             'data' => $datatemp, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 
             'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '']);
+        }
+        
+
+        
     }
 
     /**

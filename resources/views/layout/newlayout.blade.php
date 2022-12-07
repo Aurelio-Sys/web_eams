@@ -457,6 +457,14 @@ to get the desired effect
                     </p>
                   </a>
                 </li>
+                <li class="nav-item has-treeview">
+                  <a href="{{url('/rptcost')}}" class="nav-link">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>
+                      Cost Report
+                    </p>
+                  </a>
+                </li>
 
               @if(str_contains( Session::get('menu_access'), 'RT05'))
                 <li class="nav-item has-treeview">
@@ -540,31 +548,6 @@ to get the desired effect
                   @endif -->
                 </ul> <!-- ul users -->
               </li> <!-- li users -->
-
-              @if(str_contains( Session::get('menu_access'), 'MT03'))
-                <li class="nav-item">
-                  <a href="/sitemaster" class="nav-link">
-                    <i class="nav-icon far fa-circle"></i>
-                    <p>Site</p>
-                  </a>
-                </li>
-              @endif
-              @if(str_contains( Session::get('menu_access'), 'MT04'))
-                <li class="nav-item">
-                  <a href="/areamaster" class="nav-link">
-                    <i class="nav-icon far fa-circle"></i>
-                    <p>Location</p>
-                  </a>
-                </li>
-              @endif            
-              @if(str_contains( Session::get('menu_access'), 'MT07'))
-                <li class="nav-item">
-                  <a href="/suppmaster" class="nav-link">
-                    <i class="nav-icon far fa-circle"></i>
-                    <p>Supplier</p>
-                  </a>
-                </li>
-              @endif
 
               <li class="nav-item has-treeview">
                 <a href="javascript:void(0)" class="nav-link">
@@ -652,10 +635,31 @@ to get the desired effect
                       </a>
                     </li>
                   @endif
+                  @if(str_contains( Session::get('menu_access'), 'MT07'))
+                    <li class="nav-item">
+                      <a href="/suppmaster" class="nav-link">
+                        <p>Supplier</p>
+                      </a>
+                    </li>
+                  @endif
+                  @if(str_contains( Session::get('menu_access'), 'MT05'))
+                    <li class="nav-item">
+                      <a href="/assettypemaster" class="nav-link">
+                        <p>Asset Type</p>
+                      </a>
+                    </li>
+                  @endif
+                  @if(str_contains( Session::get('menu_access'), 'MT06'))
+                    <li class="nav-item">
+                      <a href="/assetsite" class="nav-link">
+                        <p>Asset Site</p>
+                      </a>
+                    </li>
+                  @endif
                   @if(str_contains( Session::get('menu_access'), 'MT08'))
                   <li class="nav-item">
-                    <a href="/assetmaster" class="nav-link">
-                      <p>Asset Maintenance</p>
+                    <a href="/assetloc" class="nav-link">
+                      <p>Asset Location</p>
                     </a>
                   </li>
                   @endif
@@ -691,6 +695,20 @@ to get the desired effect
                       </a>
                     </li>
                   @endif
+                  @if(str_contains( Session::get('menu_access'), 'MT03'))
+                    <li class="nav-item">
+                      <a href="/sitemaster" class="nav-link">
+                        <p>Spare Part Site</p>
+                      </a>
+                    </li>
+                  @endif
+                  @if(str_contains( Session::get('menu_access'), 'MT04'))
+                    <li class="nav-item">
+                      <a href="/areamaster" class="nav-link">
+                        <p>Spare Part Location</p>
+                      </a>
+                    </li>
+                  @endif            
                   @if(str_contains( Session::get('menu_access'), 'MT12'))
                     <li class="nav-item">
                       <a href="/spmmaster" class="nav-link">

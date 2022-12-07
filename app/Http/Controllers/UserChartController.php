@@ -1084,13 +1084,13 @@ class UserChartController extends Controller
                     'temp_sch' => $tglharusnya->subMonth($dt->temp_cal)->format('Ym'),
                     'temp_cal' => $dt->temp_cal,
                 ]);
-            }
+            } 
         }
 
         $datatemp = DB::table('temp_asset')
             ->orderBy('temp_code')
             ->get();
-// dd($datatemp);        
+        
         /* Actual data WO */
         $datawo = DB::table('wo_mstr')
             ->where('wo_type','=','auto')
@@ -1140,14 +1140,14 @@ class UserChartController extends Controller
                 'temp_qty_need' => $da->wo_dets_sp_qty - $da->wo_dets_wh_qty,
             ]);
         }
-
+// dd($data);
         /* Mencari data sparepart yang belum ada wo detail nya */
         $datawo = DB::table('wo_mstr')->whereNotIn('wo_nbr', function($q){
                 $q->select('wo_dets_nbr')->from('wo_dets');
             })
             // ->where('wo_nbr','=','WO-22-0098')
             ->get();
-// dd($datawo);
+
         foreach($datawo as $do) {
             if ($do->wo_repair_code1 != "") {
 
@@ -1169,8 +1169,7 @@ class UserChartController extends Controller
                     ->join('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
                     ->where('wo_id', '=', $do->wo_id)
                     ->get();
-// dd($sparepart1);
-                // $tempSP1 = (new CreateTempTable())->createSparePartUsed($sparepart1);
+
 
                 $combineSP = $sparepart1;
                 $rc = $rc1;
@@ -1258,8 +1257,8 @@ class UserChartController extends Controller
                     ->get();
             }
         }
-dd($combineSP);
-        foreach($combineSP as $dc){
+// dd($combineSP);
+        /* foreach($combineSP as $dc){
             DB::table('temp_wo')->insert([
                 'temp_wo' => $dc->wo_nbr,
                 'temp_sch_date' => $dc->wo_schedule,
@@ -1270,7 +1269,7 @@ dd($combineSP);
                 'temp_qty_whs' => 0,
                 'temp_qty_need' => $dc->insd_qty,
             ]);
-        }
+        } */
 
         $datatemp = DB::table('temp_wo')
             ->whereNotIn('temp_status',['closed','delete'])
