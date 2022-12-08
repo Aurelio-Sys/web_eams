@@ -387,15 +387,30 @@ div #munculgambar .gambar:hover{
           <div class="form-group row justify-content-center" id="cdevrepairtype">
             <label for="crepaircode" class="col-md-5 col-form-label text-md-left">Repair Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-7" style="vertical-align:middle;">
-              <input class=" d-inline" type="radio" name="crepairtype" id="cargcheck" value="group">
-              <label class="form-check-label" for="cargcheck">
-                Repair Group
-              </label>
-
-              <input class="d-inline ml-5" type="radio" name="crepairtype" id="carccheck" value="code">
-              <label class="form-check-label" for="carccheck">
-                Repair Code
-              </label>
+              <div class="row">
+                <div class="col-md-12">
+                  <input class=" d-inline" type="radio" name="crepairtype" id="cargcheck" value="group" required>
+                  <label class="form-check-label" for="cargcheck">
+                    Repair Group
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <input class="d-inline" type="radio" name="crepairtype" id="carccheck" value="code">
+                  <label class="form-check-label" for="carccheck">
+                    Repair Code
+                  </label>
+                </div>
+              </div>
+              <!-- <div class="row">
+                <div class="col-md-12">
+                  <input class="d-inline" type="radio" name="crepairtype" id="carnone" value="none">
+                  <label class="form-check-label" for="carnone">
+                    None
+                  </label>
+                </div>
+              </div> -->
             </div>
           </div>
           <div class="form-group row justify-content-center" id="crepaircodediv" style="display: none;">
@@ -1321,6 +1336,14 @@ div #munculgambar .gambar:hover{
     document.getElementById('crepairtypeedit').value = 'group';
   });
 
+  $(document).on('change', '#carnone', function(e) {
+    document.getElementById('crepairgroupdiv').style.display = 'none';
+    document.getElementById('crepaircodediv').style.display = 'none';
+    $("#crepairgroup").val(null).trigger('change');
+    $("#crepaircode").val(null).trigger('change');
+    document.getElementById('crepairtypeedit').value = 'none';
+  });
+
   $(document).on('submit', '#approvee', function(event) {
 
     event.preventDefault();
@@ -1399,13 +1422,6 @@ div #munculgambar .gambar:hover{
     allowClear: true,
     // theme : 'bootstrap4'
   });
-  $('#repairgroup').select2({
-
-    placeholder: '--Select Repair Group--',
-    width: '100%',
-    closeOnSelect: true,
-
-  })
   $('#erepairgroup').select2({
     placeholder: '--Select Repair Group--',
     width: '100%',
@@ -1420,9 +1436,10 @@ div #munculgambar .gambar:hover{
     // theme : 'bootstrap4'
   });
   $('#crepairgroup').select2({
-    placeholder: '--Select Repair Group--',
+    placeholder: 'Select Repair Group',
     width: '100%',
-    closeOnSelect: true,
+    closeOnSelect: false,
+    allowClear: true,
   })
   $("#crepaircode").select2({
     width: '100%',
@@ -1430,7 +1447,6 @@ div #munculgambar .gambar:hover{
     maximumSelectionLength: 3,
     closeOnSelect: false,
     allowClear: true,
-    // theme : 'bootstrap4'
   });
 
   $('#s_asset').select2({
@@ -1958,7 +1974,9 @@ div #munculgambar .gambar:hover{
         var eimpact = result[0].wo_impact;
         var eimpactdesc = result[0].wo_impact_desc;
         var ewottype = result[0].wo_new_type;
-        // console.log(rd1);
+        // console.log(rc1);
+        // console.log(rc2);
+        // console.log(rc3);
 
         var newarrimp = [];
         if (eimpact != null && eimpactdesc != null) {
@@ -2068,6 +2086,7 @@ div #munculgambar .gambar:hover{
         document.getElementById('counterfail').value = counterfail;
         document.getElementById('e_priority').value = prio;
         // document.getElementById('e_department').value = wodept;
+        // console.log(arrrc);
         if (rprstatus == 'code') {
           document.getElementById('eargcheck').checked = false;
           document.getElementById('earccheck').checked = true;
@@ -2114,8 +2133,8 @@ div #munculgambar .gambar:hover{
 
         if (wostatus == 'plan') {
           document.getElementById('erepairgroupdiv').style.display = 'none';
-          document.getElementById('erepaircodediv').style.display = 'none';
-          document.getElementById('edevrepairtype').style.display = 'none';
+          document.getElementById('erepaircodediv').style.display = '';
+          document.getElementById('edevrepairtype').style.display = '';
           document.getElementById('erepaircode').value = null;
           document.getElementById('erepairgroup').value = null;
           if (counterfail == 0) {

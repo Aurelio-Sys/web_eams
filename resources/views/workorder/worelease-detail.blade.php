@@ -83,18 +83,18 @@
                         <tbody id='detailapp'>
                             @php($dline = 1)
                             @forelse ( $combineSP as $datas )
-                            
+
                             <!-- Desc Item -->
                             @if($datas->insd_part_desc == "")
-                                @php($qsp = $spdata->where('spm_code','=',$datas->insd_part)->count())
-                                @if($qsp == 0)
-                                    @php($descpart = "")
-                                @else
-                                @php($rssp = $spdata->where('spm_code','=',$datas->insd_part)->first())
-                                    @php($descpart = $rssp->spm_desc)
-                                @endif
+                            @php($qsp = $spdata->where('spm_code','=',$datas->insd_part)->count())
+                            @if($qsp == 0)
+                            @php($descpart = "")
                             @else
-                                @php($descpart = $datas->insd_part_desc)
+                            @php($rssp = $spdata->where('spm_code','=',$datas->insd_part)->first())
+                            @php($descpart = $rssp->spm_desc)
+                            @endif
+                            @else
+                            @php($descpart = $datas->insd_part_desc)
                             @endif
 
                             <!-- Qty Conf -->
@@ -102,22 +102,23 @@
                             <!-- @php($qwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_line','=',$dline)->count()) jika line yang tersimpan mulai dari 2, ini tidak bisa digunakan -->
                             @php($qwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->count())
                             @if($qwhsconf == 0)
-                                @php($dqtyreq = $datas->insd_qty)
-                                @php($whsconf = "")
-                                @php($whsdate = "")
-                                @php($dqtyrequire = 0)
-                                @php($note_release = "")
+                            @php($dqtyreq = $datas->insd_qty)
+                            @php($whsconf = "")
+                            @php($whsdate = "")
+                            @php($dqtyrequire = 0)
+                            @php($note_release = "")
                             @else
-                                <!-- @php($cwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->first()) -->
-                                @php($cwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_line','=',$datas->wo_dets_line)->first())
-                                @php($dqtyreq = $cwhsconf->wo_dets_wh_qty)
-                                @php($whsconf = $cwhsconf->wo_dets_wh_conf)
-                                @php($whsdate = $cwhsconf->wo_dets_wh_date)
-                                @php($dline = $cwhsconf->wo_dets_line)
-                                @php($dqtyrequire = $cwhsconf->wo_dets_sp_qty)
-                                @php($note_release = $cwhsconf->wo_dets_worelease_note)
+                            <!-- @php($cwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->first()) -->
+                            @php($cwhsconf = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_line','=',$datas->wo_dets_line)->first())
+                            @php($dqtyreq = $cwhsconf->wo_dets_wh_qty)
+                            @php($whsconf = $cwhsconf->wo_dets_wh_conf)
+                            @php($whsdate = $cwhsconf->wo_dets_wh_date)
+                            @php($dline = $cwhsconf->wo_dets_line)
+                            @php($dqtyrequire = $cwhsconf->wo_dets_sp_qty)
+                            @php($note_release = $cwhsconf->wo_dets_worelease_note)
                             @endif
 
+                            @if ($datas->repair_code != null)
                             <tr>
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$datas->repair_code}}
@@ -137,44 +138,91 @@
                                     {{number_format($datas->insd_qty ?? $dqtyrequire,2)}}
                                     <input type="hidden" name="qtyreq[]" value="{{$datas->insd_qty}}" />
                                 </td>
-                                @if($whsconf == "1") <!-- jika warehouse sudah melakukan confirm -->
-                                    <td style="vertical-align:middle;text-align:right;">
-                                        {{ number_format($dqtyreq,2) }}
-                                        <input type="hidden" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$dqtyreq}}" />
-                                    </td>
-                                    <td style="vertical-align: middle; text-align: center;">
-                                        <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99" >{{ $note_release }}</textarea>
-                                    </td>
-                                    <td style="vertical-align:middle;text-align:center;">
-                                        {{date('Y-m-d', strtotime($whsdate))}}
-                                        <input type="hidden" class="tick" name="tick[]" value="0" />
-                                    </td>
+                                @if($whsconf == "1")
+                                <!-- jika warehouse sudah melakukan confirm -->
+                                <td style="vertical-align:middle;text-align:right;">
+                                    {{ number_format($dqtyreq,2) }}
+                                    <input type="hidden" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$dqtyreq}}" />
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99">{{ $note_release }}</textarea>
+                                </td>
+                                <td style="vertical-align:middle;text-align:center;">
+                                    {{date('Y-m-d', strtotime($whsdate))}}
+                                    <input type="hidden" class="tick" name="tick[]" value="0" />
+                                </td>
                                 @else
-                                    <td style="vertical-align:middle;text-align:center;">
-                                        <input type="number" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$datas->insd_qty ?? $dqtyrequire}}" required />
-                                    </td>
-                                    <td style="vertical-align: middle; text-align: center;">
-                                            <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99" >{{ $note_release }}</textarea>
-                                    </td>
-                                    @if($datas->wo_status == "plan") <!-- jika belum pernah direlease akan muncul tombol delete -->
-                                        
-                                        <td style="vertical-align:middle;text-align:center;">
-                                            <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete">
-                                            <input type="hidden" class="tick" name="tick[]" value="0" />
-                                        </td>
-                                    @else <!-- jika sudah pernah dilakukan release namun warehouse belum confirm -->
-                                        <td  style="vertical-align:middle;text-align:center;">    
-                                            <input type="checkbox" class="qaddel" name="qaddel[]" value="">
-                                            <input type="hidden" class="tick" name="tick[]" value="0" />
-                                        </td>
-                                    @endif
+                                <td style="vertical-align:middle;text-align:center;">
+                                    <input type="number" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$datas->insd_qty ?? $dqtyrequire}}" required />
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99">{{ $note_release }}</textarea>
+                                </td>
+                                @if($datas->wo_status == "plan")
+                                <!-- jika belum pernah direlease akan muncul tombol delete -->
+
+                                <td style="vertical-align:middle;text-align:center;">
+                                    <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete">
+                                    <input type="hidden" class="tick" name="tick[]" value="0" />
+                                </td>
+                                @else
+                                <!-- jika sudah pernah dilakukan release namun warehouse belum confirm -->
+                                <td style="vertical-align:middle;text-align:center;">
+                                    <input type="checkbox" class="qaddel" name="qaddel[]" value="">
+                                    <input type="hidden" class="tick" name="tick[]" value="0" />
+                                </td>
+                                @endif
                                 @endif
                             </tr>
+                            @endif
+                            
                             @empty
-                    
+                            <tr>
+                                <td>
+                                    <select name="repcode[]" style="display: inline-block !important;" class="form-control selectpicker repcode" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px" required autofocus>
+                                        <option value=""> -- Select Data -- </option>
+                                        @foreach($rc as $rd)
+                                        <option value="{{$rd->repm_code}}"> {{$rd->repm_code}} -- {{$rd->repm_desc}} </option>
+                                        @endforeach
+                                    </select>
+                                </td>
+
+                                <td>
+                                    <select name="inscode[]" style="display: inline-block !important;" class="form-control selectpicker insclass" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px" required autofocus>
+                                        <option value=""> -- Select Data -- </option>
+                                        @foreach($insdata as $insdats)
+                                        <option data-repcode2="{{$insdats->repm_code}}" value="{{$insdats->repdet_ins}}"> {{$insdats->repdet_ins}} -- {{$insdats->ins_desc}} </option>
+                                        @endforeach
+                                    </select>
+                                </td>
+
+                                <td>
+                                    <select name="partneed[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="200px" required autofocus>
+                                        <option value=""> -- Select Data -- </option>
+                                        @foreach($spdata as $da)
+                                        <option value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>
+                                        @endforeach
+                                    </select>
+                                </td>
+
+                                <td>
+                                    <input type="number" class="form-control qtyreq" name="qtyreq[]" step="1" min="1" required />
+                                </td>
+
+                                <td>
+                                    <input type="number" class="form-control qtyrequest" name="qtyrequest[]" step="1" min="1" required />
+                                    <input type="hidden" class="line" name="line[]" id="line" />
+                                </td>
+
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99"></textarea>
+                                </td>
+
+                                <td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>
+                                <input type="hidden" class="op" name="op[]" value="A" />
+                            </tr>
+                            
                             @endforelse
-
-
                         </tbody>
                         <tfoot>
                             <tr>
@@ -212,7 +260,7 @@
     $(document).ready(function() {
         $("#addrow").on("click", function() {
 
-            var line = document.getElementById('line').value;
+            // var line = document.getElementById('line').value;
 
             var rowCount = $('#createTable tr').length;
 
@@ -275,7 +323,7 @@
 
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
             cols += '<input type="hidden" class="op" name="op[]" value="A"/>';
-            cols += '</tr>'
+            cols += '</tr>';
             counter++;
 
             newRow.append(cols);
@@ -319,40 +367,38 @@
         });
 
         $(document).on('change', 'select.repcode', function() {
-            
+
             // console. log(jQuery(). jquery);
             var rc = $(this).val();
-            var a =  $(this).closest("tr").find('div').find('.insclass option');
+            var a = $(this).closest("tr").find('div').find('.insclass option');
             // console.log(a);
-            
-            a.each(function(e){
-                
+
+            a.each(function(e) {
+
                 console.log($(this).val());
-                if($(this).data('repcode2') == rc){
-                    
+                if ($(this).data('repcode2') == rc) {
+
                     $(this).show();
-                    $(this).prop('disabled',false);
-                }else{
+                    $(this).prop('disabled', false);
+                } else {
                     $(this).hide();
-                    $(this).prop('disabled',true);
+                    $(this).prop('disabled', true);
                 }
-                
+
             })
             $(this).closest("tr").find('.insclass').selectpicker('refresh');
 
         });
 
-        $(document).on('change','.qaddel',function(e){
+        $(document).on('change', '.qaddel', function(e) {
             var checkbox = $(this), // Selected or current checkbox
-            value = checkbox.val(); // Value of checkbox
-    
-            if (checkbox.is(':checked'))
-            {
+                value = checkbox.val(); // Value of checkbox
+
+            if (checkbox.is(':checked')) {
                 $(this).closest("tr").find('.tick').val(1);
-            } else
-            {
+            } else {
                 $(this).closest("tr").find('.tick').val(0);
-            }        
+            }
         });
     });
 </script>

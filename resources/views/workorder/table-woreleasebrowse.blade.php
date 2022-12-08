@@ -7,7 +7,7 @@
     <td>{{ $datas->wo_duedate }}</td>
     <td>{{ $datas->wo_priority }}</td>
     <td style="text-align: center;">
-        <a class="btn btn-info" href="{{route('ReleaseDetail', $datas->wo_id)}}"><i class="fas fa-box-open"></i> Release</a>
+        <a class="btn btn-info" href="{{route('ReleaseDetail', [$datas->wo_id, $datas->wo_nbr])}}"><i class="fas fa-box-open"></i> Release</a>
     </td>
 </tr>
 @empty

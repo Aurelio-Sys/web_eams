@@ -44,7 +44,7 @@ class AllWOGenerate extends Controller
             ->whereRaw('DATE_ADD(DATE_ADD(asset_last_mtc, INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY) >= date_format(now(),"%Y-%m-%d")')
             ->havingRaw('persiapan_mtc between from_date and to_date')
             ->orderBy('next_duedate_mtc', 'asc')
-            ->limit(10) //sementara ambil hanya 10 data
+            // ->limit(10) //sementara ambil hanya 10 data
             ->get();
 
         // dd($data);
@@ -131,28 +131,28 @@ class AllWOGenerate extends Controller
 
                         $runningnbr = $running->wt_prefix . '-' . $newyear . '-' . $newtemprunnbr;
 
-                        // $dataarray = array(
-                        //     'wo_nbr' => $runningnbr,
-                        //     'wo_status' => 'plan', //-> A211025
-                        //     // 'wo_status' => 'open',
-                        //     'wo_engineer1' => 'admin', //A211025
-                        //     'wo_engineer2' => 'sukarya', //A211025
-                        //     'wo_priority' => 'high',
-                        //     'wo_repair_type' => $showdata->asset_repair_type,
-                        //     'wo_repair_group' => $repgroup,
-                        //     'wo_repair_code1' => $repcode1,
-                        //     'wo_repair_code2' => $repcode2,
-                        //     'wo_repair_code3' => $repcode3,
-                        //     'wo_asset' => $showdata->asset_code,
-                        //     'wo_dept' => 'ENG', // Hardcode
-                        //     'wo_type'  => 'auto', // Hardcode
-                        //     'wo_schedule' => $showdata->next_duedate_mtc,
-                        //     'wo_duedate' => date("Y-m-t", strtotime($showdata->next_duedate_mtc)),
-                        //     'wo_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        //     'wo_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        // );
+                        $dataarray = array(
+                            'wo_nbr' => $runningnbr,
+                            'wo_status' => 'plan', //-> A211025
+                            // 'wo_status' => 'open',
+                            'wo_engineer1' => 'admin', //A211025
+                            'wo_engineer2' => 'sukarya', //A211025
+                            'wo_priority' => 'high',
+                            'wo_repair_type' => $showdata->asset_repair_type,
+                            'wo_repair_group' => $repgroup,
+                            'wo_repair_code1' => $repcode1,
+                            'wo_repair_code2' => $repcode2,
+                            'wo_repair_code3' => $repcode3,
+                            'wo_asset' => $showdata->asset_code,
+                            'wo_dept' => 'ENG', // Hardcode
+                            'wo_type'  => 'auto', // Hardcode
+                            'wo_schedule' => $showdata->next_duedate_mtc,
+                            'wo_duedate' => date("Y-m-t", strtotime($showdata->next_duedate_mtc)),
+                            'wo_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            'wo_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        );
 
-                        // DB::table('wo_mstr')->insert($dataarray);
+                        DB::table('wo_mstr')->insert($dataarray);
 
                         DB::table('temp_womstr')->insert([
                             'wo_code' => $runningnbr,
@@ -199,7 +199,7 @@ class AllWOGenerate extends Controller
         } catch (Exception $err) {
             DB::rollBack();
 
-            dd($err);
+            // dd($err);
             toast('Work Order Generated Error, please re-generate again.', 'success');
             return back();
         }
