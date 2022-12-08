@@ -26,7 +26,7 @@
 
   
   @if($show->wo_status =='finish' && $show->wo_type != 'auto')
-  <a class="aprint" target="_blank"><button type="button" class="btn btn-warning bt-action" style="width: 25%;"><b>Print<b></button></a>
+  <a class="aprint" target="_blank"><button type="button" class="btn btn-warning bt-action"><i class="fas fa-print"></i></button></a>
   <a class="reissued" href="{{route('reissuedWO', $show->wo_nbr)}}"><button type="button" class="btn btn-danger" style="width: 25%;"><i class="fas fa-file-contract"></i></button></a>
   @elseif($show->wo_status =='finish' && $show->wo_type == 'auto')
     <a style="width: 80%;"><button type="button" class="btn btn-warning bt-action" style="width: 80%;">...</button></a>
