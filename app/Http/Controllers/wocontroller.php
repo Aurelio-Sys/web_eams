@@ -5130,5 +5130,12 @@ class wocontroller extends Controller
 
         return response($output);
     }
+
+    public function woqcapproval (){
+        $databrowse = DB::table('wo_mstr')
+                        ->get();
+
+        return view('workorder.woqcappr', compact('databrowse'));
+    }
 }
 //tanggal betulin 24 may 2021 - 1553

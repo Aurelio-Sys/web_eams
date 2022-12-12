@@ -9,6 +9,7 @@ use App\Http\Controllers\WO\AllWOGenerate;
 use App\Http\Controllers\WO\ConfirmEng;
 use App\Http\Controllers\WO\WORelease;
 use App\Http\Controllers\WO\WHSConfirm;
+use WO\WoQcController;
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
 use Illuminate\Support\Facades\Auth;
@@ -542,6 +543,8 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/assetloc', [AssetLocController::class, 'index']);
 	Route::post('/createaassetloc', [AssetLocController::class, 'store']);
 	Route::post('/editassetloc', [AssetLocController::class, 'edit']);
+
+	Route::resource('woqcappr', WoQcController::class);
 });
 
 Auth::routes();
