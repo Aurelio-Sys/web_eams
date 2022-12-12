@@ -4859,7 +4859,7 @@ class wocontroller extends Controller
         }
 
         if ($srnbr == null) {
-            // dd('1');
+            dd($req->formtype);
             if ($req->switch2 == 'approve') {
                 //dd('aa');
                 // $exprc = explode(',',$req->repaircodeapp);
