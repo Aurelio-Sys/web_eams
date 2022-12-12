@@ -1,11 +1,11 @@
 @forelse($data as $show)
-@php($dsite = $datasite->where('site_code','=',$show->asset_site)->first())
-@php($dloc = $dataloc->where('loc_code','=',$show->asset_loc)->where('loc_site','=',$show->asset_site)->count())
+@php($dsite = $datasite->where('assite_code','=',$show->asset_site)->first())
+@php($dloc = $dataloc->where('asloc_code','=',$show->asset_loc)->where('asloc_site','=',$show->asset_site)->count())
 @if($dloc == 0)
     @php($descloc = "")
 @else
-    @php($ddloc = $dataloc->where('loc_code','=',$show->asset_loc)->where('loc_site','=',$show->asset_site)->first())
-    @php($descloc = $ddloc->loc_desc)
+    @php($ddloc = $dataloc->where('asloc_code','=',$show->asset_loc)->where('asloc_site','=',$show->asset_site)->first())
+    @php($descloc = $ddloc->asloc_desc)
 @endif
 <tr>
     <td>{{$show->asset_code}}</td>
@@ -26,7 +26,7 @@
         data-repair_type="{{$show->asset_repair_type}}" data-repair="{{$show->asset_repair}}" data-upload="{{$show->asset_upload}}"
         data-lastusage="{{$show->asset_last_usage}}" data-lastusagemtc="{{$show->asset_last_usage_mtc}}" 
         data-lastmtc="{{$show->asset_last_mtc}}" data-onuse="{{$show->asset_on_use}}" data-tolerance="{{$show->asset_tolerance}}"
-        data-assetimg="{{$show->asset_image}}">
+        data-assetimg="{{$show->asset_image}}" data-qad="{{$show->asset_qad}}" >
         <i class="icon-table fa fa-edit fa-lg"></i></a>
         &ensp;
         <a href="javascript:void(0)" class="deletedata" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal"  

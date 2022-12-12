@@ -124,13 +124,13 @@ class AssetSiteController extends Controller
     public function destroy(Request $request)
     {
         // cek dari tabel location
-        /* $cekData = DB::table('loc_mstr')
-                ->where('loc_site','=',$request->d_sitecode)
+        $cekData = DB::table('asset_loc')
+                ->where('asloc_site','=',$request->d_sitecode)
                 ->get();
 
         if ($cekData->count() == 0) {
-            DB::table('site_mstrs')
-            ->where('site_code', '=', $request->d_sitecode)
+            DB::table('asset_site')
+            ->where('assite_code', '=', $request->d_sitecode)
             ->delete();
 
             toast('Site Successfully Deleted', 'success');
@@ -138,6 +138,6 @@ class AssetSiteController extends Controller
         } else {
             toast('Site Can Not Deleted!!', 'error');
             return back();
-        } */
+        }
     }
 }

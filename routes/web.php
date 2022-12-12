@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Master\AssetSiteController;
 use App\Http\Controllers\Master\AssetLocController;
+use App\Http\Controllers\Master\AssetMoveController;
 use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\SP\KebutuhanSPController;
@@ -538,13 +539,20 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/assetsite', [AssetSiteController::class, 'index']);
 	Route::post('/createaassetsite', [AssetSiteController::class, 'store']);
 	Route::post('/editassetsite', [AssetSiteController::class, 'edit']);
+	Route::post('/deleteassetsite', [AssetSiteController::class, 'destroy']);
 
 	// Asset Locaation
 	Route::get('/assetloc', [AssetLocController::class, 'index']);
 	Route::post('/createaassetloc', [AssetLocController::class, 'store']);
-	Route::post('/editassetloc', [AssetLocController::class, 'edit']);
+	Route::post('/editassetloc', [AssetLocController::class, 'update']);
+	Route::post('/deleteassetloc', [AssetLocController::class, 'destroy']);
 
-	Route::resource('woqcappr', WoQcController::class);
+	// Asset Movement
+	Route::get('/assetmove', [AssetMoveController::class, 'index']);
+	Route::post('/createaassetmove', [AssetMoveController::class, 'store']);
+	Route::post('/editassetmove', [AssetMoveController::class, 'update']);
+	Route::post('/deleteassetmove', [AssetMoveController::class, 'destroy']);
+	route::get('/cekassetloc', [AssetMoveController::class, 'cekassetloc']);
 });
 
 Auth::routes();

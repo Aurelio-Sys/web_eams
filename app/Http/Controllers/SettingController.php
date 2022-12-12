@@ -1685,13 +1685,13 @@ class SettingController extends Controller
                 ->orderby('asset_code')
                 ->paginate(10);
 
-            $datasite = DB::table('site_mstrs')
-                ->orderby('site_code')
+            $datasite = DB::table('asset_site')
+                ->orderby('assite_code')
                 ->get();
 
-            $dataloc = DB::table('loc_mstr')
-                ->orderby('loc_site')
-                ->orderby('loc_code')
+            $dataloc = DB::table('asset_loc')
+                ->orderby('asloc_site')
+                ->orderby('asloc_code')
                 ->get();
 
             $dataastype = DB::table('asset_type')
@@ -1722,7 +1722,9 @@ class SettingController extends Controller
                 ->orderby('asset_code')
                 ->get();
 
-            return view('setting.asset', ['data' => $data, 'datasite' => $datasite, 'dataloc' => $dataloc, 'dataastype' => $dataastype, 'dataasgroup' => $dataasgroup, 'datasupp' => $datasupp, 'datafn' => $datafn, 'repaircode' => $repaircode, 'repairgroup' => $repairgroup, 'datasearch' => $datasearch]);
+            return view('setting.asset', ['data' => $data, 'datasite' => $datasite, 'dataloc' => $dataloc, 
+            'dataastype' => $dataastype, 'dataasgroup' => $dataasgroup, 'datasupp' => $datasupp, 'datafn' => $datafn, 
+            'repaircode' => $repaircode, 'repairgroup' => $repairgroup, 'datasearch' => $datasearch]);
         } else {
             toast('You do not have menu access, please contact admin.', 'error');
             return back();
@@ -1847,6 +1849,7 @@ class SettingController extends Controller
                 'asset_image_path'  => $imagepath,  
                 'asset_last_usage'  => 0,
                 'asset_last_usage_mtc' => 0,
+                'asset_qad'         => $req->t_qad,
                 'asset_last_mtc'    => Carbon::now()->toDateTimeString(),      
                 'created_at'        => Carbon::now()->toDateTimeString(),
                 'updated_at'        => Carbon::now()->toDateTimeString(),
@@ -2079,7 +2082,8 @@ class SettingController extends Controller
             'asset_note'        => $req->te_note,        
             'asset_active'      => $req->te_active,  
             'asset_repair'      => $repair,  
-            'asset_repair_type' => $req->repairtype,   
+            'asset_repair_type' => $req->repairtype, 
+            'asset_qad'         => $req->te_qad,  
             'updated_at'        => Carbon::now()->toDateTimeString(),
             'edited_by'         => Session::get('username'),
         ]);
@@ -2174,9 +2178,15 @@ class SettingController extends Controller
                 $data = DB::table('asset_mstr')
                         ->leftjoin('asset_type','asset_mstr.asset_type','asset_type.astype_code')
                         ->leftjoin('asset_group','asset_mstr.asset_group','asset_group.asgroup_code')
-                        ->select('asset_mstr.asset_code','asset_mstr.asset_desc','astype_desc','asgroup_desc','asset_mstr.asset_site','asset_mstr.asset_loc','asset_mstr.asset_um','asset_mstr.asset_sn','asset_mstr.asset_type','asset_mstr.asset_group','asset_mstr.asset_failure','asset_mstr.asset_measure','asset_mstr.asset_supp','asset_mstr.asset_meter','asset_mstr.asset_cal','asset_mstr.asset_note','asset_mstr.asset_active','asset_mstr.asset_repair_type','asset_mstr.asset_repair','asset_mstr.asset_prc_date','asset_mstr.asset_daya','asset_mstr.asset_prc_price','asset_mstr.asset_start_mea',
-                            'asset_mstr.asset_upload','asset_tolerance','asset_last_usage','asset_last_usage_mtc','asset_last_mtc','asset_on_use',
-                            'asset_image')
+                        ->select('asset_mstr.asset_code','asset_mstr.asset_desc','astype_desc','asgroup_desc',
+                            'asset_mstr.asset_site','asset_mstr.asset_loc','asset_mstr.asset_um','asset_mstr.asset_sn',
+                            'asset_mstr.asset_type','asset_mstr.asset_group','asset_mstr.asset_failure',
+                            'asset_mstr.asset_measure','asset_mstr.asset_supp','asset_mstr.asset_meter','asset_mstr.asset_cal',
+                            'asset_mstr.asset_note','asset_mstr.asset_active','asset_mstr.asset_repair_type',
+                            'asset_mstr.asset_repair','asset_mstr.asset_prc_date','asset_mstr.asset_daya',
+                            'asset_mstr.asset_prc_price','asset_mstr.asset_start_mea',
+                            'asset_mstr.asset_upload','asset_tolerance','asset_last_usage','asset_last_usage_mtc',
+                            'asset_last_mtc','asset_on_use','asset_image','asset_qad')
                         ->orderby('asset_code')
                         ->paginate(10);
 
@@ -2218,9 +2228,15 @@ class SettingController extends Controller
                 $data = DB::table('asset_mstr')
                         ->leftjoin('asset_type','asset_mstr.asset_type','asset_type.astype_code')
                         ->leftjoin('asset_group','asset_mstr.asset_group','asset_group.asgroup_code')
-                        ->select('asset_mstr.asset_code','asset_mstr.asset_desc','astype_desc','asgroup_desc','asset_mstr.asset_site','asset_mstr.asset_loc','asset_mstr.asset_um','asset_mstr.asset_sn','asset_mstr.asset_type','asset_mstr.asset_group','asset_mstr.asset_failure','asset_mstr.asset_measure','asset_mstr.asset_supp','asset_mstr.asset_meter','asset_mstr.asset_cal','asset_mstr.asset_note','asset_mstr.asset_active','asset_mstr.asset_repair_type','asset_mstr.asset_repair','asset_mstr.asset_prc_date','asset_mstr.asset_daya','asset_mstr.asset_prc_price','asset_mstr.asset_start_mea',
-                            'asset_mstr.asset_upload','asset_tolerance','asset_last_usage','asset_last_usage_mtc','asset_last_mtc','asset_on_use',
-                            'asset_image')
+                        ->select('asset_mstr.asset_code','asset_mstr.asset_desc','astype_desc','asgroup_desc',
+                            'asset_mstr.asset_site','asset_mstr.asset_loc','asset_mstr.asset_um','asset_mstr.asset_sn',
+                            'asset_mstr.asset_type','asset_mstr.asset_group','asset_mstr.asset_failure',
+                            'asset_mstr.asset_measure','asset_mstr.asset_supp','asset_mstr.asset_meter','asset_mstr.asset_cal',
+                            'asset_mstr.asset_note','asset_mstr.asset_active','asset_mstr.asset_repair_type',
+                            'asset_mstr.asset_repair','asset_mstr.asset_prc_date','asset_mstr.asset_daya',
+                            'asset_mstr.asset_prc_price','asset_mstr.asset_start_mea',
+                            'asset_mstr.asset_upload','asset_tolerance','asset_last_usage','asset_last_usage_mtc',
+                            'asset_last_mtc','asset_on_use','asset_image','asset_qad')
                         ->whereRaw($kondisi)
                         ->orderBy($sort_by, $sort_group)
                         ->paginate(10);
@@ -2236,14 +2252,14 @@ class SettingController extends Controller
         if ($req->ajax()) {
             $t_site = $req->get('t_site');
       
-            $data = DB::table('loc_mstr')
-                    ->where('loc_site','=',$t_site)
+            $data = DB::table('asset_loc')
+                    ->where('asloc_site','=',$t_site)
                     ->get();
 
             $output = '<option value="" >Select</option>';
             foreach($data as $data){
 
-                $output .= '<option value="'.$data->loc_code.'" >'.$data->loc_code.' -- '.$data->loc_desc.'</option>';
+                $output .= '<option value="'.$data->asloc_code.'" >'.$data->asloc_code.' -- '.$data->asloc_desc.'</option>';
                            
             }
 
@@ -2258,16 +2274,16 @@ class SettingController extends Controller
             $site = $req->get('site');
             $loc = $req->get('loc');
       
-            $data = DB::table('loc_mstr')
-                    ->where('loc_site','=',$site)
+            $data = DB::table('asset_loc')
+                    ->where('asloc_site','=',$site)
                     ->get();
 
             $output = '<option value="" >Select</option>';
             foreach($data as $data){
-                if ($data->loc_code == $loc) {
-                    $output .= '<option value="'.$data->loc_code.'" selected>'.$data->loc_code.' -- '.$data->loc_desc.'</option>';
+                if ($data->asloc_code == $loc) {
+                    $output .= '<option value="'.$data->asloc_code.'" selected>'.$data->asloc_code.' -- '.$data->asloc_desc.'</option>';
                 } else {
-                    $output .= '<option value="'.$data->loc_code.'" >'.$data->loc_code.' -- '.$data->loc_desc.'</option>';
+                    $output .= '<option value="'.$data->asloc_code.'" >'.$data->asloc_code.' -- '.$data->asloc_desc.'</option>';
                 }         
             }
             return response($output);

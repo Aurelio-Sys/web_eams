@@ -53,7 +53,28 @@ class AssetLocController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $cekData = DB::table('asset_loc')
+                ->where('asloc_site','=',$request->t_site)
+                ->where('asloc_code','=',$request->t_locationid)
+                ->get();
+
+        if ($cekData->count() == 0) {
+            DB::table('asset_loc')
+            ->insert([
+                'asloc_site'      => $request->t_site,
+                'asloc_code'      => $request->t_locationid,
+                'asloc_desc'      => $request->t_locationdesc,                
+                'created_at'    => Carbon::now()->toDateTimeString(),
+                'updated_at'    => Carbon::now()->toDateTimeString(),
+                'edited_by'     => Session::get('username'),
+            ]);
+
+            toast('Location Successfully.', 'success');
+            return back();
+        } else {
+            toast('Location is Already Registerd!!', 'error');
+            return back();
+        }
     }
 
     /**
@@ -75,7 +96,7 @@ class AssetLocController extends Controller
      */
     public function edit($id)
     {
-        //
+        
     }
 
     /**
@@ -85,9 +106,29 @@ class AssetLocController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $cekData = DB::table('asset_loc')
+                ->where('asloc_site','=',$request->te_site)
+                ->where('asloc_desc','=',$request->te_locationdesc)
+                ->get();
+
+        if ($cekData->count() == 0) {
+            DB::table('asset_loc')
+            ->where('asloc_site','=',$request->te_site)
+            ->where('asloc_code','=',$request->te_locationid)
+            ->update([
+                'asloc_desc'      => $request->te_locationdesc,
+                'updated_at'    => Carbon::now()->toDateTimeString(),
+                'edited_by'     => Session::get('username'),
+            ]);
+
+            toast('Asset Location Updated.', 'success');
+            return back();
+        } else {
+            toast('Asset Location Description is Already Registerd!!', 'error');
+            return back();
+        }
     }
 
     /**
@@ -96,8 +137,25 @@ class AssetLocController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        //cek data di asset
+        $cekData = DB::table('asset_mstr')
+                ->where('asset_loc', '=', $request->d_locationid)
+                ->where('asset_site', '=', $request->d_site)
+                ->get();
+
+        if ($cekData->count() == 0) {
+            DB::table('Asset_loc')
+            ->where('asloc_code', '=', $request->d_locationid)
+            ->where('asloc_site', '=', $request->d_site)
+            ->delete();
+
+            toast('Deleted Location Successfully.', 'success');
+            return back();
+        } else {
+            toast('Location Can Not Deleted!!', 'error');
+            return back();
+        }
     }
 }

@@ -612,33 +612,43 @@ to get the desired effect
                         <p>Asset Site</p>
                       </a>
                     </li>
-                    @endif
-                    @if(str_contains( Session::get('menu_access'), 'MT08'))
-                    <li class="nav-item">
-                      <a href="/assetloc" class="nav-link ">
-                        <p>Asset Location</p>
-                      </a>
-                    </li>
-                    @endif
-                    @if(str_contains( Session::get('menu_access'), 'MT09'))
-                    <li class="nav-item">
-                      <a href="/asparmaster" class="nav-link ">
-                        <p>Asset Hierarchy</p>
-                      </a>
-                    </li>
-                    @endif
-                  </ul><!-- ul asset -->
-                </li> <!-- li asset -->
-                <li class="nav-item has-treeview">
-                  <a href="javascript:void(0)" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
-                    <p>
-                      Spare Part
-                      <i class="right fas fa-angle-left"></i>
-                    </p>
-                  </a>
-                  <ul class="nav nav-treeview">
-                    @if(str_contains( Session::get('menu_access'), 'MT10'))
+                  @endif
+                  @if(str_contains( Session::get('menu_access'), 'MT08'))
+                  <li class="nav-item">
+                    <a href="/assetloc" class="nav-link">
+                      <p>Asset Location</p>
+                    </a>
+                  </li>
+                  @endif
+                  <li class="nav-item">
+                    <a href="/assetmaster" class="nav-link">
+                      <p>Asset Maintenance</p>
+                    </a>
+                  </li>
+                  @if(str_contains( Session::get('menu_access'), 'MT09'))
+                  <li class="nav-item">
+                    <a href="/asparmaster" class="nav-link">
+                      <p>Asset Hierarchy</p>
+                    </a>
+                  </li>
+                  @endif
+                  <li class="nav-item">
+                    <a href="/assetmove" class="nav-link">
+                      <p>Asset Movement</p>
+                    </a>
+                  </li>
+                </ul><!-- ul asset -->
+              </li> <!-- li asset -->
+              <li class="nav-item has-treeview">
+                <a href="javascript:void(0)" class="nav-link">
+                  <i class="nav-icon far fa-circle"></i>
+                  <p>
+                    Spare Part
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  @if(str_contains( Session::get('menu_access'), 'MT10'))
                     <li class="nav-item">
                       <a href="/sptmaster" class="nav-link ">
                         <p>Spare Part Type</p>

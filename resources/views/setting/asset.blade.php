@@ -53,7 +53,7 @@
         <select id="s_loc" class="form-control" name="s_loc" required>
             <option value="">--Select Data--</option>
             @foreach($dataloc as $dl)
-                <option value="{{$dl->loc_site}}.{{$dl->loc_code}}">{{$dl->loc_site}} : {{$dl->loc_code}} -- {{$dl->loc_desc}}</option>
+                <option value="{{$dl->asloc_site}}.{{$dl->asloc_code}}">{{$dl->asloc_site}} : {{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
             @endforeach
         </select>
     </div>
@@ -177,7 +177,7 @@
                             <select id="t_site" class="form-control" name="t_site" required>
                                 <option value="">--Select Data--</option>
                                 @foreach($datasite as $s)
-                                    <option value="{{$s->site_code}}">{{$s->site_code}} -- {{$s->site_desc}}</option>
+                                    <option value="{{$s->assite_code}}">{{$s->assite_code}} -- {{$s->assite_desc}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -200,6 +200,12 @@
                         <label for="t_daya" class="col-md-4 col-form-label text-md-right">Maintenance By</label>
                         <div class="col-md-6">
                             <input id="t_daya" type="text" class="form-control" name="t_daya" autocomplete="off" autofocus maxlength="50" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="t_qad" class="col-md-4 col-form-label text-md-right">Asset QAD</label>
+                        <div class="col-md-6">
+                            <input id="t_qad" type="text" class="form-control" name="t_qad" autocomplete="off" autofocus maxlength="50" />
                         </div>
                     </div>
                     <div class="form-group row">
@@ -397,7 +403,7 @@
                         <select id="te_site" class="form-control" name="te_site" required>
                             <option value="">--Select Data--</option>
                             @foreach($datasite as $a)
-                                <option value="{{$a->site_code}}">{{$a->site_code}} -- {{$a->site_desc}}</option>
+                                <option value="{{$a->assite_code}}">{{$a->assite_code}} -- {{$a->assite_desc}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -419,7 +425,13 @@
                 <div class="form-group row">
                     <label for="te_daya" class="col-md-4 col-form-label text-md-right">Maintenance By</label>
                     <div class="col-md-6">
-                        <input id="te_daya" type="text" class="form-control" name="te_daya" autocomplete="off" autofocus maxlength="25" />
+                        <input id="te_daya" type="text" class="form-control" name="te_daya" autocomplete="off" autofocus maxlength="50" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="te_qad" class="col-md-4 col-form-label text-md-right">Asset QAD</label>
+                    <div class="col-md-6">
+                        <input id="te_qad" type="text" class="form-control" name="te_qad" autocomplete="off" autofocus maxlength="50" />
                     </div>
                 </div>
                 <div class="form-group row">
@@ -684,6 +696,7 @@
            var onuse        = $(this).data('onuse');
            var tolerance    = $(this).data('tolerance');
            var assetimg    = '/uploadassetimage/' +$(this).data('assetimg');
+           var qad          = $(this).data('qad');
 
            
            var uploadname = upload.substring(upload.lastIndexOf('/') + 1,upload.length);
@@ -713,6 +726,7 @@
            document.getElementById('te_onuse').value       = onuse;
            document.getElementById('te_tolerance').value       = tolerance;
            document.getElementById('foto1').src       = assetimg;
+           document.getElementById('te_qad').value          = qad;
 
            
             if (repair_type == "group") {
@@ -745,7 +759,7 @@
                 url:"/locasset2?site=" + site + "&&loc=" + loc ,
                 success:function(data){
                     console.log(data);
-                    $('#te_loc').html('').append(data);
+                    $('#te_loc').html('').append(data); 
                 }
             }) 
 
