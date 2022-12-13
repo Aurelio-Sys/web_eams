@@ -22,7 +22,7 @@
         <select id="assetcode" name="assetcode" class="form-control" required>
           <option value="">-- Select Asset Code --</option>
           @foreach($showasset as $show)
-          <option value="{{$show->asset_code}}">{{$show->asset_code.' -- '.$show->asset_desc." -- ".$show->asset_loc}}</option>
+          <option value="{{$show->asset_code}}">{{$show->asset_code.' -- '.$show->asset_desc." -- ".$show->asloc_desc}}</option>
           @endforeach
         </select>
       </div>

@@ -592,13 +592,6 @@ to get the desired effect
                       </a>
                     </li>
                     @endif
-                    @if(str_contains( Session::get('menu_access'), 'MT05'))
-                    <li class="nav-item">
-                      <a href="/assettypemaster" class="nav-link ">
-                        <p>Asset Type</p>
-                      </a>
-                    </li>
-                    @endif
                     @if(str_contains( Session::get('menu_access'), 'MT06'))
                     <li class="nav-item">
                       <a href="/assetsite" class="nav-link ">
@@ -665,7 +658,7 @@ to get the desired effect
                     @if(str_contains( Session::get('menu_access'), 'MT04'))
                     <li class="nav-item">
                       <a href="/areamaster" class="nav-link ">
-                        <p>Part Location</p>
+                        <p>Spare Part Location</p>
                       </a>
                     </li>
                     @endif

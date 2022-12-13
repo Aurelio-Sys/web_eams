@@ -59,7 +59,9 @@ class ServiceController extends Controller
     public function servicerequest() /* route : servicerequest  blade : servicerequest_create */
     {
         $asset = DB::table('asset_mstr')
+            ->leftJoin('asset_loc','asloc_code','=','asset_loc')
             ->where('asset_active', '=', 'Yes')
+            ->orderBy('asset_code')
             ->get();
 
         $datadepart = DB::table('dept_mstr')
@@ -79,7 +81,7 @@ class ServiceController extends Controller
             ->where('approver','=',1)
             ->orderBy('eng_code')
             ->get();
-
+        // dd($asset);
         return view('service.servicerequest_create', ['showasset' => $asset, 'dept' => $datadepart, 
         'wotype' => $wotype, 'impact' => $impact, 'fc' => $fcode, 'dataapp' => $dataapp ]);
     }

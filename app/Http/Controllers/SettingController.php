@@ -2139,12 +2139,12 @@ class SettingController extends Controller
             $site = substr($req->get('loc'),0,$posisi);
             $loc = substr($req->get('loc'),$posisi+1);
 
-            $datasite = DB::table('site_mstrs')
-                ->orderby('site_code')
+            $datasite = DB::table('asset_site')
+                ->orderby('assite_code')
                 ->get();
 
-            $dataloc = DB::table('loc_mstr')
-                ->orderby('loc_code')
+            $dataloc = DB::table('asset_loc')
+                ->orderby('asloc_code')
                 ->get();
 
             $dataastype = DB::table('asset_type')
