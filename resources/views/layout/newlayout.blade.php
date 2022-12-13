@@ -288,13 +288,6 @@ to get the desired effect
                 </li>
                 @endif
 
-                <!-- <li class="nav-item">
-                  <a href="{{route('woqcappr.index')}}" class="nav-link navbar-cust">
-                    <i class="nav-icon far fa-circle"></i>
-                      <p>WO Quality Check Approval</p>
-                  </a>
-                </li> -->
-
 
               </ul>
             </li>
