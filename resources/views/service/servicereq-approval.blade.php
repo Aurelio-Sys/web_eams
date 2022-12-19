@@ -333,13 +333,15 @@
                     <div class="form-group row">
                         <label for="scheduledate" class="col-md-5 col-form-label text-md-right">Schedule Date <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-6">
-                            <input id="scheduledate" type="date" class="form-control" name="scheduledate" placeholder="yy-mm-dd"  autocomplete="off" min="{{Carbon\Carbon::now()->format("Y-m-d")}}" autofocus required value="{{ old('scheduledate') }}">
+                            {{--  <input id="scheduledate" type="date" class="form-control" name="scheduledate" placeholder="yy-mm-dd"  autocomplete="off" min="{{Carbon\Carbon::now()->format("Y-m-d")}}" autofocus required value="{{ old('scheduledate') }}">  --}}
+                            <input id="scheduledate" type="date" class="form-control" name="scheduledate" placeholder="yy-mm-dd"  autocomplete="off" autofocus required value="{{ old('scheduledate') }}">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="duedate" class="col-md-5 col-form-label text-md-right">Due Date <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-6">
-                            <input id="duedate" type="date" class="form-control" name="duedate" placeholder="yy-mm-dd"  autocomplete="off" min="{{Carbon\Carbon::now()->format("Y-m-d")}}" autofocus required value="{{ old('duedate') }}">
+                            {{--  <input id="duedate" type="date" class="form-control" name="duedate" placeholder="yy-mm-dd"  autocomplete="off" min="{{Carbon\Carbon::now()->format("Y-m-d")}}" autofocus required value="{{ old('duedate') }}">  --}}
+                            <input id="duedate" type="date" class="form-control" name="duedate" placeholder="yy-mm-dd"  autocomplete="off" autofocus required value="{{ old('duedate') }}">
                         </div>
                     </div>
                     <div class="form-group row">

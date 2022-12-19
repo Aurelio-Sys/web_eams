@@ -315,7 +315,7 @@ to get the desired effect
                 <li class="nav-item has-treeview">
                   <a href="{{url('/usagemulti')}}" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <a>Asset Multi Batch</a>
+                      <p>Asset Multi Batch</p>
                   </a>
                 </li>
                 @endif

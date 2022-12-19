@@ -68,7 +68,7 @@ class RptDetWOController extends Controller
             $table->string('temp_wo');
             $table->string('temp_sr')->nullable();
             $table->string('temp_asset');
-            $table->string('temp_asset_desc');
+            $table->string('temp_asset_desc')->nullable();
             $table->string('temp_creator')->nullable(); /* Untuk PM Creator nya kosong */
             $table->date('temp_create_date');
             $table->date('temp_sch_date');
