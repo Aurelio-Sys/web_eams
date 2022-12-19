@@ -24,7 +24,7 @@ class KebutuhanSPController extends Controller
             ->leftJoin('wo_dets','wo_dets_nbr','=','wo_nbr')
             ->join('asset_mstr','asset_code','=','wo_asset')
             ->leftjoin('sp_mstr','wo_dets_sp','=','spm_code')
-            ->where('wo_dets_sp','<>','')
+            // ->where('wo_dets_sp','<>','')
             ->orderBy('wo_schedule');
 
         /*
