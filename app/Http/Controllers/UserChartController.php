@@ -1036,11 +1036,13 @@ class UserChartController extends Controller
         $bulan = Carbon::createFromDate($tgl)->isoFormat('YYYY');
 
         $data = DB::table('asset_mstr')
-        ->selectRaw('asset_mstr.*, PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal) as harusnya')
+        // rumus untuk sch by bulan ->selectRaw('asset_mstr.*, PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal) as harusnya')
+        ->selectRaw('asset_mstr.*, date_format(DATE_ADD(DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY),"%Y%m") as harusnya')
         ->where('asset_measure','=','C')
         ->where('asset_active','=','Yes')
         // ->where('asset_code','=','01-AT-002')
-        ->whereRaw('PERIOD_DIFF(PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal), date_format(now(),"%Y%m")) <= - asset_tolerance') // fungsi MYSQL
+        // rumus untuk sch by bulan ->whereRaw('PERIOD_DIFF(PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal), date_format(now(),"%Y%m")) <= - asset_tolerance') // fungsi MYSQL
+        ->whereRaw('DATE_ADD(DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY) < curdate()')
         ->orderBy('asset_code')
         ->paginate(10);
 // dd($data);        
@@ -1097,7 +1099,7 @@ class UserChartController extends Controller
             ->orderBy('wo_asset')
             ->orderBy('wo_nbr')
             ->get();
-// dd($datawo);
+// dd($data);
         Schema::dropIfExists('temp_asset');
 
         return view('report.prevsch', ['data' => $data, 'datatemp' => $datatemp, 'datawo' => $datawo, 'bulan' => $bulan]);
