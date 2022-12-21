@@ -222,16 +222,6 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="failtype" class="col-md-2 col-form-label">Failure Type</label>
-          <div class="col-md-4">
-            <input id="failtype" type="text" class="form-control" name="failtype" readonly />
-          </div>
-          <label for="failcode" class="col-md-2 col-form-label">Failure Code</label>
-          <div class="col-md-4">
-            <textarea id="failcode" type="text" class="form-control" name="failcode" rows="3" readonly></textarea>
-          </div>
-        </div>
-        <div class="form-group row">
           <label for="approver" class="col-md-2 col-form-label">Approver</label>
           <div class="col-md-4">
             <input id="approver" type="text" class="form-control" name="approver" readonly />
@@ -249,6 +239,16 @@
           <label for="assetdesc" class="col-md-2 col-form-label">Asset Desc</label>
           <div class="col-md-4">
             <input id="assetdesc" type="text" class="form-control" name="assetdesc" readonly />
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="failtype" class="col-md-2 col-form-label">Failure Type</label>
+          <div class="col-md-4">
+            <input id="failtype" type="text" class="form-control" name="failtype" readonly />
+          </div>
+          <label for="failcode" class="col-md-2 col-form-label">Failure Code</label>
+          <div class="col-md-4">
+            <textarea id="failcode" type="text" class="form-control" name="failcode" rows="3" readonly></textarea>
           </div>
         </div>
         <div class="form-group row">

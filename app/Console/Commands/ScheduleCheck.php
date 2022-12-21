@@ -49,11 +49,16 @@ class ScheduleCheck extends Command
         $data = DB::table('asset_mstr')
                     ->where('asset_measure','=','C')
                     // ->where('asset_code','=','EQ-0205-1')
-                    // ->whereRaw('DATEDIFF(MONTH, DATEADD(MONTH, asset_cal, asset_last_mtc), GETDATE()) >= - asset_tolerance') // fungsi SQL Server
-                    ->whereRaw('PERIOD_DIFF(PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal), date_format(now(),"%Y%m")) <= - asset_tolerance') // fungsi MYSQL
+                    // querry sch bulan ->whereRaw('DATEDIFF(MONTH, DATEADD(MONTH, asset_cal, asset_last_mtc), GETDATE()) >= - asset_tolerance') // fungsi SQL Server
+                    // query sch bulan ->whereRaw('PERIOD_DIFF(PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal), date_format(now(),"%Y%m")) <= - asset_tolerance') // fungsi MYSQL
+                    ->whereRaw('DATE_ADD(DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY) < curdate()')
                     ->whereRaw("(asset_on_use is null or asset_on_use = '')")
                     ->get();
-//dd($data);
+
+                    /*  query di sql SSELECT asset_code, asset_cal, asset_last_mtc, asset_tolerance,
+                    DATE_ADD(DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY) as 'seharusnya' FROM `asset_mstr` WHERE asset_active = 'yes' and asset_measure = 'C'
+                    and DATE_ADD(DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY) < curdate(); */
+// dd($data);
         if($data->count() > 0){
             foreach($data as $data){
                 // cek repair

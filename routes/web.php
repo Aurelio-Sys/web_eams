@@ -10,6 +10,7 @@ use App\Http\Controllers\WO\AllWOGenerate;
 use App\Http\Controllers\WO\ConfirmEng;
 use App\Http\Controllers\WO\WORelease;
 use App\Http\Controllers\WO\WHSConfirm;
+use App\Http\Controllers\WO\PMdetsController;
 use App\Http\Controllers\WO\WoQcController;
 
 use App\Http\Controllers\wocontroller;
@@ -554,6 +555,14 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/editassetmove', [AssetMoveController::class, 'update']);
 	Route::post('/deleteassetmove', [AssetMoveController::class, 'destroy']);
 	route::get('/cekassetloc', [AssetMoveController::class, 'cekassetloc']);
+
+	// PM Detail per Asset
+	Route::get('/pmdets', [PMdetsController::class, 'index'])->name('pmdets');
+	Route::get('/newpmdets', [PMdetsController::class, 'create'])->name('newpmdets');
+	Route::post('/createapmdets', [PMdetsController::class, 'store']);
+	Route::post('/editpmdets', [PMdetsController::class, 'update']);
+	Route::post('/deletepmdets', [PMdetsController::class, 'destroy']);
+
 
 	//work order approval qc
 	Route::get('woqc', [WoQcController::class,'index'])->name('woQCIndex');

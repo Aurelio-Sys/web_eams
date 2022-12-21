@@ -22,7 +22,7 @@
         <select id="assetcode" name="assetcode" class="form-control" required>
           <option value="">-- Select Asset Code --</option>
           @foreach($showasset as $show)
-          <option value="{{$show->asset_code}}">{{$show->asset_code.' -- '.$show->asset_desc." -- ".$show->asset_loc}}</option>
+          <option value="{{$show->asset_code}}">{{$show->asset_code.' -- '.$show->asset_desc." -- ".$show->asloc_desc}}</option>
           @endforeach
         </select>
       </div>
@@ -130,7 +130,7 @@
         <select id="t_app" name="t_app" class="form-control" required>
           <option value="">-- Select Approver --</option>
           @foreach($dataapp as $da)
-          <option value="{{$da->eng_code}}" {{$da->eng_code === "ADM_MTC" ? "selected" : ""}}>{{$da->eng_code.' -- '.$da->eng_desc}}</option>
+          <option value="{{$da->eng_code}}">{{$da->eng_code.' -- '.$da->eng_desc}}</option>
           @endforeach
         </select>
       </div>

@@ -34,11 +34,14 @@ class AllWOGenerate extends Controller
 
         // $todate = number_format($req->day / 30, 1);
 
+        // perhitungan : tanggal seharusnya - tolerance
+
         $data = DB::table('asset_mstr')
             ->selectRaw('asset_mstr.* , DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY) as next_duedate_mtc, 
                     DATE_ADD(DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY) as persiapan_mtc,
                     DATE_ADD(DATE_FORMAT(NOW(),"%Y-%m-%d"), INTERVAL ' . $this_diff_time . ' DAY) as to_date,
-                    DATE_FORMAT(NOW(),"%Y-%m-%d") as from_date') //interval date untuk to_date akan diganti dengan inputan hari dari depan
+                    DATE_FORMAT(NOW(),"%Y-%m-%d") as from_date') 
+                    //interval date untuk to_date akan diganti dengan inputan hari dari depan
             ->where('asset_measure', '=', 'C')
             // ->whereRaw('PERIOD_DIFF(PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal), date_format(now(),"%Y%m")) <= - asset_tolerance')
             ->whereRaw('DATE_ADD(DATE_ADD(asset_last_mtc, INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY) >= date_format(now(),"%Y-%m-%d")')
@@ -188,9 +191,9 @@ class AllWOGenerate extends Controller
 
                 $pesan = "Berikut adalah list WO yang terbentuk";
 
-                EmailWOGen::dispatch(
-                    $pesan,
-                );
+                // ini dimatiin dulu EmailWOGen::dispatch(
+                //     $pesan,
+                // );
             }
 
             DB::commit();
@@ -199,7 +202,7 @@ class AllWOGenerate extends Controller
         } catch (Exception $err) {
             DB::rollBack();
 
-            // dd($err);
+            dd($err);
             toast('Work Order Generated Error, please re-generate again.', 'success');
             return back();
         }
