@@ -10,7 +10,8 @@ use App\Http\Controllers\WO\AllWOGenerate;
 use App\Http\Controllers\WO\ConfirmEng;
 use App\Http\Controllers\WO\WORelease;
 use App\Http\Controllers\WO\WHSConfirm;
-use WO\WoQcController;
+use App\Http\Controllers\WO\WoQcController;
+
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
 use Illuminate\Support\Facades\Auth;
@@ -553,6 +554,11 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/editassetmove', [AssetMoveController::class, 'update']);
 	Route::post('/deleteassetmove', [AssetMoveController::class, 'destroy']);
 	route::get('/cekassetloc', [AssetMoveController::class, 'cekassetloc']);
+
+	//work order approval qc
+	Route::get('woqc', [WoQcController::class,'index'])->name('woQCIndex');
+	Route::post('woqc/update',[WoQcController::class,'update'])->name('woQCUpdate');
+	Route::get('woqc/{id}/{nbr}', [WoQcController::class, 'show'])->name('woQCDetail');
 });
 
 Auth::routes();

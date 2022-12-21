@@ -320,7 +320,7 @@ class WORelease extends Controller
                           ->orWhere('wo_dets_wh_conf', '=', null);
                 })
                 ->count();
-// dd($a);  
+        // dd($a);  
             /* jika WO tidak ada spare part, status akan menjadi open */
             $ceksp = DB::table('wo_dets')
                 ->where('wo_dets_nbr','=',$req->hide_wonum)

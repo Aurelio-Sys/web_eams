@@ -2,12 +2,10 @@
 <tr>
     <td>{{ $datas->wo_nbr }}</td>
     <td style="text-align: left;">{{ $datas->asset_code }} -- {{ $datas->asset_desc }}</td>
-    <td>{{ $datas->wo_status }}</td>
-    <td>{{ $datas->wo_schedule }}</td>
-    <td>{{ $datas->wo_duedate }}</td>
-    <td>{{ $datas->wo_priority }}</td>
+    <td style="text-align: center;">{{ $datas->wo_status }}</td>
+    <td style="text-align: center;">{{ $datas->wo_priority }}</td>
     <td style="text-align: center;">
-        <a class="btn btn-info" href="{{route('ReleaseDetail', [$datas->wo_id, $datas->wo_nbr])}}"><i class="fas fa-box-open"></i> Release</a>
+        <a class="btn btn-info" href="{{route('woQCDetail', [$datas->wo_id, $datas->wo_nbr])}}"><i class="fa fa-thumbs-up"></i> Approval</a>
     </td>
 </tr>
 @empty

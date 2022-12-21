@@ -92,11 +92,11 @@
       <div class="modal-body" id="multiusage">
       	<form method="post" action="/updateusagemulti">
       		{{csrf_field()}}
-      		<input type="hidden" name="asset_code" id="asset_code">
+      		
       		
       		Create WO Preventive ?  
       </div>
-
+      <input type="hidden" name="asset_code" id="asset_code">
       <div class="modal-footer">
         <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
         <button type="submit" class="btn btn-success bt-action" id="btnconf">Save</button>

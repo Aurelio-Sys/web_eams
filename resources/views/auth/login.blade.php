@@ -15,7 +15,7 @@
         <form method="POST" action="{{ route('login') }}" name='loginform' class="form" autocomplete="off">
           @csrf
           <div class="input-group img-container">
-                <img src="{{ asset('images/imgheadxx.png') }}" width="200" height="200">
+                <img src="{{ asset('images/DK.png') }}" width="200" height="200">
               </div>
               
 

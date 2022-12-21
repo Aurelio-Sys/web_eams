@@ -2368,7 +2368,7 @@ div #munculgambar .gambar:hover{
           en5val = '';
 
         } else {
-          arreng += en5val + 'n';
+          arreng += en5val + '\n';
           counter = 5;
         }
 

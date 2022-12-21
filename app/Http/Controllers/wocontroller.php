@@ -285,7 +285,7 @@ class wocontroller extends Controller
             $asset = DB::table('asset_mstr')
                 ->orderBy('asset_code')
                 ->get();
-            dd($asset);
+            
             $failure = DB::table('fn_mstr')
                 ->get();
             $repaircode = DB::table('rep_master')
@@ -3614,13 +3614,12 @@ class wocontroller extends Controller
             //     /* QXTEND issue - unplanned */
             // }
 
+
             $arrayy = [
                 'wo_updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                 'wo_status'        => 'finish',
-                'wo_repair_code1'  => null,
-                'wo_repair_code2'  => null,
-                'wo_repair_code3'  => null,
                 'wo_finish_date'   => $req->c_finishdate,
+                'wo_finish_time'   => $req->c_finishtime,
                 'wo_approval_note' => $req->c_note,
                 'wo_system_date'   => Carbon::now('ASIA/JAKARTA')->toDateString(),
                 'wo_system_time'   => Carbon::now('ASIA/JAKARTA')->toTimeString(),
@@ -3743,203 +3742,205 @@ class wocontroller extends Controller
 
         try{
 
-            // $qxwsa = Qxwsa::first();
+            /*
+            $qxwsa = Qxwsa::first();
 
-            // // Var Qxtend
-            // $qxUrl          = $qxwsa->qx_url; // Edit Here
+            // Var Qxtend
+            $qxUrl          = $qxwsa->qx_url; // Edit Here
 
-            // $qxRcv          = $qxwsa->qx_rcv;
+            $qxRcv          = $qxwsa->qx_rcv;
 
-            // $timeout        = 0;
+            $timeout        = 0;
 
-            // $domain         = $qxwsa->wsas_domain;
+            $domain         = $qxwsa->wsas_domain;
 
-            // // XML Qextend ** Edit Here
+            // XML Qextend ** Edit Here
 
-            // $qdocHead = '  
-            // <soapenv:Envelope xmlns="urn:schemas-qad-com:xml-services"
-            // xmlns:qcom="urn:schemas-qad-com:xml-services:common"
-            // xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing">
-            // <soapenv:Header>
-            //     <wsa:Action/>
-            //     <wsa:To>urn:services-qad-com:' . $qxRcv . '</wsa:To>
-            //     <wsa:MessageID>urn:services-qad-com::' . $qxRcv . '</wsa:MessageID>
-            //     <wsa:ReferenceParameters>
-            //     <qcom:suppressResponseDetail>true</qcom:suppressResponseDetail>
-            //     </wsa:ReferenceParameters>
-            //     <wsa:ReplyTo>
-            //     <wsa:Address>urn:services-qad-com:</wsa:Address>
-            //     </wsa:ReplyTo>
-            // </soapenv:Header>
-            // <soapenv:Body>
-            //     <issueInventory>
-            //     <qcom:dsSessionContext>
-            //         <qcom:ttContext>
-            //         <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //         <qcom:propertyName>domain</qcom:propertyName>
-            //         <qcom:propertyValue>' . $domain . '</qcom:propertyValue>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //         <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //         <qcom:propertyName>scopeTransaction</qcom:propertyName>
-            //         <qcom:propertyValue>false</qcom:propertyValue>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //         <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //         <qcom:propertyName>version</qcom:propertyName>
-            //         <qcom:propertyValue>eB_2</qcom:propertyValue>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //         <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //         <qcom:propertyName>mnemonicsRaw</qcom:propertyName>
-            //         <qcom:propertyValue>false</qcom:propertyValue>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //         <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //         <qcom:propertyName>username</qcom:propertyName>
-            //         <qcom:propertyValue>mfg</qcom:propertyValue>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //         <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //         <qcom:propertyName>password</qcom:propertyName>
-            //         <qcom:propertyValue></qcom:propertyValue>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //         <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //         <qcom:propertyName>action</qcom:propertyName>
-            //         <qcom:propertyValue/>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //         <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //         <qcom:propertyName>entity</qcom:propertyName>
-            //         <qcom:propertyValue/>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //         <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //         <qcom:propertyName>email</qcom:propertyName>
-            //         <qcom:propertyValue/>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //         <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //         <qcom:propertyName>emailLevel</qcom:propertyName>
-            //         <qcom:propertyValue/>
-            //         </qcom:ttContext>
-            //     </qcom:dsSessionContext>
-            //     <dsInventoryIssue>';
+            $qdocHead = '  
+            <soapenv:Envelope xmlns="urn:schemas-qad-com:xml-services"
+            xmlns:qcom="urn:schemas-qad-com:xml-services:common"
+            xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing">
+            <soapenv:Header>
+                <wsa:Action/>
+                <wsa:To>urn:services-qad-com:' . $qxRcv . '</wsa:To>
+                <wsa:MessageID>urn:services-qad-com::' . $qxRcv . '</wsa:MessageID>
+                <wsa:ReferenceParameters>
+                <qcom:suppressResponseDetail>true</qcom:suppressResponseDetail>
+                </wsa:ReferenceParameters>
+                <wsa:ReplyTo>
+                <wsa:Address>urn:services-qad-com:</wsa:Address>
+                </wsa:ReplyTo>
+            </soapenv:Header>
+            <soapenv:Body>
+                <issueInventory>
+                <qcom:dsSessionContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>domain</qcom:propertyName>
+                    <qcom:propertyValue>' . $domain . '</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>scopeTransaction</qcom:propertyName>
+                    <qcom:propertyValue>false</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>version</qcom:propertyName>
+                    <qcom:propertyValue>eB_2</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>mnemonicsRaw</qcom:propertyName>
+                    <qcom:propertyValue>false</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>username</qcom:propertyName>
+                    <qcom:propertyValue>mfg</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>password</qcom:propertyName>
+                    <qcom:propertyValue></qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>action</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>entity</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>email</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>emailLevel</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                </qcom:dsSessionContext>
+                <dsInventoryIssue>';
 
-            // $qdocBody = '';
-            // foreach ($req->spcode_hidden as $spcode => $value ) {
+            $qdocBody = '';
+            foreach ($req->spcode_hidden as $spcode => $value ) {
 
-            //     if ($req->spcode_hidden[$spcode] != "" || $req->spcode_hidden[$spcode] != null){
-            //         // dump($req->spcode_hidden[$spcode]);
-            //         $qdocBody .= ' <inventoryIssue>
-            //             <ptPart>' . $req->spcode_hidden[$spcode] . '</ptPart>
-            //             <lotserialQty>' . $req->qtyreissued[$spcode]. '</lotserialQty>
-            //             <site>' . $req->site_hidden[$spcode] . '</site>
-            //             <location>' . $req->loc_hidden[$spcode] . '</location>
-            //             <lotserial>' . $req->lotserial[$spcode] . '</lotserial>
-            //             <rmks>' . $req->wonbr_hidden[$spcode] . '</rmks>
-            //         </inventoryIssue>';
-            //     }
+                if ($req->spcode_hidden[$spcode] != "" || $req->spcode_hidden[$spcode] != null){
+                    // dump($req->spcode_hidden[$spcode]);
+                    $qdocBody .= ' <inventoryIssue>
+                        <ptPart>' . $req->spcode_hidden[$spcode] . '</ptPart>
+                        <lotserialQty>' . $req->qtyreissued[$spcode]. '</lotserialQty>
+                        <site>' . $req->site_hidden[$spcode] . '</site>
+                        <location>' . $req->loc_hidden[$spcode] . '</location>
+                        <lotserial>' . $req->lotserial[$spcode] . '</lotserial>
+                        <rmks>' . $req->wonbr_hidden[$spcode] . '</rmks>
+                    </inventoryIssue>';
+                }
 
-            // }
-            // $qdocfooter =   '</dsInventoryIssue>
-            //             </issueInventory>
-            //         </soapenv:Body>
-            //     </soapenv:Envelope>';
+            }
+            $qdocfooter =   '</dsInventoryIssue>
+                        </issueInventory>
+                    </soapenv:Body>
+                </soapenv:Envelope>';
 
-            // $qdocRequest = $qdocHead . $qdocBody . $qdocfooter;
+            $qdocRequest = $qdocHead . $qdocBody . $qdocfooter;
 
-            // // dd($qdocRequest);
+            // dd($qdocRequest);
 
-            // $curlOptions = array(
-            //     CURLOPT_URL => $qxUrl,
-            //     CURLOPT_CONNECTTIMEOUT => $timeout,        // in seconds, 0 = unlimited / wait indefinitely.
-            //     CURLOPT_TIMEOUT => $timeout + 120, // The maximum number of seconds to allow cURL functions to execute. must be greater than CURLOPT_CONNECTTIMEOUT
-            //     CURLOPT_HTTPHEADER => $this->httpHeader($qdocRequest),
-            //     CURLOPT_POSTFIELDS => preg_replace("/\s+/", " ", $qdocRequest),
-            //     CURLOPT_POST => true,
-            //     CURLOPT_RETURNTRANSFER => true,
-            //     CURLOPT_SSL_VERIFYPEER => false,
-            //     CURLOPT_SSL_VERIFYHOST => false
-            // );
+            $curlOptions = array(
+                CURLOPT_URL => $qxUrl,
+                CURLOPT_CONNECTTIMEOUT => $timeout,        // in seconds, 0 = unlimited / wait indefinitely.
+                CURLOPT_TIMEOUT => $timeout + 120, // The maximum number of seconds to allow cURL functions to execute. must be greater than CURLOPT_CONNECTTIMEOUT
+                CURLOPT_HTTPHEADER => $this->httpHeader($qdocRequest),
+                CURLOPT_POSTFIELDS => preg_replace("/\s+/", " ", $qdocRequest),
+                CURLOPT_POST => true,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => false
+            );
 
-            // $getInfo = '';
-            // $httpCode = 0;
-            // $curlErrno = 0;
-            // $curlError = '';
-
-
-            // $qdocResponse = '';
-
-            // $curl = curl_init();
-            // if ($curl) {
-            //     curl_setopt_array($curl, $curlOptions);
-            //     $qdocResponse = curl_exec($curl);           // sending qdocRequest here, the result is qdocResponse.
-            //     //
-            //     $curlErrno = curl_errno($curl);
-            //     $curlError = curl_error($curl);
-            //     $first = true;
-            //     foreach (curl_getinfo($curl) as $key => $value) {
-            //         if (gettype($value) != 'array') {
-            //             if (!$first) $getInfo .= ", ";
-            //             $getInfo = $getInfo . $key . '=>' . $value;
-            //             $first = false;
-            //             if ($key == 'http_code') $httpCode = $value;
-            //         }
-            //     }
-            //     curl_close($curl);
-            // }
-
-            // if (is_bool($qdocResponse)) {
-
-            //     DB::rollBack();
-            //     toast('Something Wrong with Qxtend', 'error');
-            //     return redirect()->route('woreport');
-            // }
-            // $xmlResp = simplexml_load_string($qdocResponse);
-            // $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
-            // $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
+            $getInfo = '';
+            $httpCode = 0;
+            $curlErrno = 0;
+            $curlError = '';
 
 
+            $qdocResponse = '';
 
-            // if ($qdocResult == "success" or $qdocResult == "warning") {
+            $curl = curl_init();
+            if ($curl) {
+                curl_setopt_array($curl, $curlOptions);
+                $qdocResponse = curl_exec($curl);           // sending qdocRequest here, the result is qdocResponse.
+                //
+                $curlErrno = curl_errno($curl);
+                $curlError = curl_error($curl);
+                $first = true;
+                foreach (curl_getinfo($curl) as $key => $value) {
+                    if (gettype($value) != 'array') {
+                        if (!$first) $getInfo .= ", ";
+                        $getInfo = $getInfo . $key . '=>' . $value;
+                        $first = false;
+                        if ($key == 'http_code') $httpCode = $value;
+                    }
+                }
+                curl_close($curl);
+            }
 
-            //     foreach ($req->spcode_hidden as $jmlspcode => $value ) {
+            if (is_bool($qdocResponse)) {
 
-            //         $cekwodets = DB::table('wo_dets')
-            //                 ->where('wo_dets_nbr', $req->wonbr_hidden[$jmlspcode])
-            //                 ->where('wo_dets_rc', $req->rc_hidden[$jmlspcode])
-            //                 ->where('wo_dets_ins', $req->inscode_hidden[$jmlspcode])
-            //                 ->where('wo_dets_sp', $req->spcode_hidden[$jmlspcode])
-            //                 ->first();
+                DB::rollBack();
+                toast('Something Wrong with Qxtend', 'error');
+                return redirect()->route('woreport');
+            }
+            $xmlResp = simplexml_load_string($qdocResponse);
+            $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
+            $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
 
-            //         $new_qty_used = 0;
 
-            //         $new_qty_used = $cekwodets->wo_dets_qty_used + $req->qtyreissued[$jmlspcode];
 
-            //         DB::table('wo_dets')
-            //             ->where('wo_dets_nbr', $req->wonbr_hidden[$jmlspcode])
-            //             ->where('wo_dets_rc', $req->rc_hidden[$jmlspcode])
-            //             ->where('wo_dets_ins', $req->inscode_hidden[$jmlspcode])
-            //             ->where('wo_dets_sp', $req->spcode_hidden[$jmlspcode])
-            //             ->update([
-            //                 'wo_dets_qty_used' => $new_qty_used
-            //             ]);
+            if ($qdocResult == "success" or $qdocResult == "warning") {
+
+                foreach ($req->spcode_hidden as $jmlspcode => $value ) {
+
+                    $cekwodets = DB::table('wo_dets')
+                            ->where('wo_dets_nbr', $req->wonbr_hidden[$jmlspcode])
+                            ->where('wo_dets_rc', $req->rc_hidden[$jmlspcode])
+                            ->where('wo_dets_ins', $req->inscode_hidden[$jmlspcode])
+                            ->where('wo_dets_sp', $req->spcode_hidden[$jmlspcode])
+                            ->first();
+
+                    $new_qty_used = 0;
+
+                    $new_qty_used = $cekwodets->wo_dets_qty_used + $req->qtyreissued[$jmlspcode];
+
+                    DB::table('wo_dets')
+                        ->where('wo_dets_nbr', $req->wonbr_hidden[$jmlspcode])
+                        ->where('wo_dets_rc', $req->rc_hidden[$jmlspcode])
+                        ->where('wo_dets_ins', $req->inscode_hidden[$jmlspcode])
+                        ->where('wo_dets_sp', $req->spcode_hidden[$jmlspcode])
+                        ->update([
+                            'wo_dets_qty_used' => $new_qty_used
+                        ]);
     
-            //     }
+                }
 
-            //     DB::commit();
-            //     toast('Qty Issued updated for WO : '.$req->c_wonbr.' ', 'success');
-            //     return redirect()->route('woreport');
+                DB::commit();
+                toast('Qty Issued updated for WO : '.$req->c_wonbr.' ', 'success');
+                return redirect()->route('woreport');
 
-            // } else {
+            } else {
 
-            //     DB::rollBack();
-            //     toast('Qxtend Response Error', 'error');
-            //     return redirect()->route('woreport');
+                DB::rollBack();
+                toast('Qxtend Response Error', 'error');
+                return redirect()->route('woreport');
 
-            // }
+            }
+            */
 
             foreach ($req->spcode_hidden as $jmlspcode => $value ) {
 
@@ -4823,7 +4824,7 @@ class wocontroller extends Controller
 
     public function statusreportingwo(Request $req)
     {
-        //dd($req->all());
+        // dd($req->all());
         $wonumber = $req->aprwonbr2;
         $srnbr = $req->aprsrnbr2;
         $wonote = $req->ac_reportnote;
@@ -4858,129 +4859,35 @@ class wocontroller extends Controller
             }
         }
 
-        if ($srnbr == null) {
-            dd($req->formtype);
-            if ($req->switch2 == 'approve') {
-                //dd('aa');
-                // $exprc = explode(',',$req->repaircodeapp);
 
-                if ($req->formtype == 1) {
-                    DB::table('wo_mstr')
-                        ->where('wo_nbr', '=', $wonumber)
-                        ->update([
-                            'wo_status' => 'closed',
-                            'wo_approval_note' => $wonote, //B211019
-                            'wo_reviewer' => Session::get('username'),
-                            'wo_approver' => Session::get('username'),
-                            'wo_approver_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString(),
-                            'wo_reviewer_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString()
-                        ]);
-                    $wonow = DB::table('wo_mstr')
-                        ->where('wo_nbr', '=', $wonumber)
-                        ->first();
-                    DB::table('asset_mstr')
-                        ->where('asset_code', '=', $wonow->wo_asset)
-                        ->update(['asset_on_use' => NULL]);
-                    toast('Work Order ' . $wonumber . ' Approved by reviewer ', 'success');
-                    return redirect()->route('womaint');
-                } else if ($req->formtype == 2) {
-                    DB::table('wo_mstr')
-                        ->where('wo_nbr', '=', $wonumber)
-                        ->update([
-                            'wo_status' => 'closed',
-                            'wo_approval_note' => $wonote, //B211019
-                            'wo_reviewer' => Session::get('username'),
-                            'wo_approver' => Session::get('username'),
-                            'wo_approver_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString(),
-                            'wo_reviewer_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString()
-                        ]);
-                    $wonow = DB::table('wo_mstr')
-                        ->where('wo_nbr', '=', $wonumber)
-                        ->first();
-                    DB::table('asset_mstr')
-                        ->where('asset_code', '=', $wonow->wo_asset)
-                        ->update(['asset_on_use' => NULL]);
-                    toast('Work Order ' . $wonumber . ' Approved by reviewer ', 'success');
-                    return redirect()->route('womaint');
-                }
-            } /* if($req->switch2 =='approve') */ else {
-
+        if ($req->switch2 == 'approve') { //di approve
+            // $exprc = explode(',',$req->repaircodeapp);
+            if ($req->formtype == 1) {
                 DB::table('wo_mstr')
-                    ->where('wo_nbr', $wonumber)
-                    // ->update(['wo_status'=>'closed','wo_reject_reason'=>$req->uncompletenote]); --> A210927
+                    ->where('wo_nbr', '=', $wonumber)
                     ->update([
-                        'wo_status' => 'reprocess',
-                        'wo_reject_reason' => $req->uncompletenote,
+                        'wo_status' => 'QC Approval',
                         'wo_approval_note' => $wonote, //B211019
                         'wo_reviewer' => Session::get('username'),
-                        'wo_approver' => Session::get('username'),
-                        'wo_approver_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString(),
                         'wo_reviewer_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString()
                     ]);
 
-                $wonow = DB::table('wo_mstr')
-                    ->where('wo_nbr', '=', $wonumber)
-                    ->first();
-
-                /* DB::table('asset_mstr')
-                    ->where('asset_code','=',$wonow->wo_asset)
-                    ->update(['asset_on_use' => NULL]); A211019 */
-
-                toast('Work Order ' . $wonumber . ' incomplete ', 'success');
+                toast('Work Order ' . $wonumber . ' Approved by reviewer ', 'success');
                 return redirect()->route('womaint');
-            } /* else if($req->switch2 =='approve')*/
-        } else { /* if($srnbr == null) */
+            } else if ($req->formtype == 2) {
 
-            if ($req->switch2 == 'approve') {
-                // $exprc = explode(',',$req->repaircodeapp);
-                if ($req->formtype == 1) {
-                    DB::table('wo_mstr')
-                        ->where('wo_nbr', '=', $wonumber)
-                        ->update([
-                            'wo_status' => 'completed',
-                            'wo_approval_note' => $wonote, //B211019
-                            'wo_reviewer' => Session::get('username'),
-                            'wo_reviewer_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString()
-                        ]);
+                // dd('lg maintenance');
 
-                    // A210927
-                    if ($srnbr !== null) {
-                        DB::table('service_req_mstr')
-                            ->where('sr_number', '=', $srnbr)
-                            ->update([
-                                'sr_status' => '7',
-                            ]);
-                    }
+                // $albumraw = $req->imgname;
+                DB::table('wo_mstr')
+                    ->where('wo_nbr', '=', $wonumber)
+                    ->update([
+                        'wo_status' => 'QC Approval',
+                        'wo_approval_note' => $wonote, //B211019
+                        'wo_approver' => Session::get('username'),
+                        'wo_approver_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString()
 
-                    toast('Work Order ' . $wonumber . ' Approved by reviewer ', 'success');
-                    return redirect()->route('womaint');
-                } else if ($req->formtype == 2) {
-
-                    // dd('lg maintenance');
-
-                    // $albumraw = $req->imgname;
-                    DB::table('wo_mstr')
-                        ->where('wo_nbr', '=', $wonumber)
-                        ->update([
-                            'wo_status' => 'closed',
-                            'wo_approval_note' => $wonote, //B211019
-                            'wo_approver' => Session::get('username'),
-                            'wo_approver_appdate' => Carbon::now('ASIA/JAKARTA')->toDateString()
-
-                        ]);
-
-                    // A210927
-                    if ($srnbr !== null) {
-                        DB::table('service_req_mstr')
-                            ->where('sr_number', '=', $srnbr)
-                            ->update([
-                                'sr_status' => '7',
-                            ]);
-                    }
-
-                    toast('Work Order ' . $wonumber . ' Completed ', 'success');
-                    return redirect()->route('womaint');
-                }
+                    ]);
 
                 // A210927
                 if ($srnbr !== null) {
@@ -4990,32 +4897,44 @@ class wocontroller extends Controller
                             'sr_status' => '7',
                         ]);
                 }
-            } else {
 
-                DB::table('wo_mstr')
-                    ->where('wo_nbr', $wonumber)
-                    // ->update(['wo_status'=>'closed','wo_reject_reason'=>$req->uncompletenote]); --> A210927
-                    ->update([
-                        'wo_status' => 'reprocess',
-                        'wo_reject_reason' => $req->uncompletenote,
-                        'wo_approval_note' => $wonote, //B211019
-                    ]);
-                toast('Work Order ' . $wonumber . ' reprocess ', 'success');
-
-                // A210927  --> A211019 --> A211101
-                if ($srnbr !== null) {
-                    DB::table('service_req_mstr')
-                        ->where('sr_number', '=', $srnbr)
-                        ->update([
-                            'sr_status' => '8',
-                        ]);
-                }
-
+                toast('Work Order ' . $wonumber . ' Completed ', 'success');
                 return redirect()->route('womaint');
             }
 
+            // A210927
+            if ($srnbr !== null) {
+                DB::table('service_req_mstr')
+                    ->where('sr_number', '=', $srnbr)
+                    ->update([
+                        'sr_status' => '7',
+                    ]);
+            }
+        } else {
+
+            DB::table('wo_mstr')
+                ->where('wo_nbr', $wonumber)
+                // ->update(['wo_status'=>'closed','wo_reject_reason'=>$req->uncompletenote]); --> A210927
+                ->update([
+                    'wo_status' => 'reprocess',
+                    'wo_reject_reason' => $req->uncompletenote,
+                    'wo_approval_note' => $wonote, //B211019
+                ]);
+            toast('Work Order ' . $wonumber . ' reprocess ', 'success');
+
+            // A210927  --> A211019 --> A211101
+            if ($srnbr !== null) {
+                DB::table('service_req_mstr')
+                    ->where('sr_number', '=', $srnbr)
+                    ->update([
+                        'sr_status' => '8',
+                    ]);
+            }
+
+            return redirect()->route('womaint');
+        }
+
             //EmailScheduleJobs::dispatch($wonumber,'','6','','',$srnbr,''); // A211021
-        } /* else if($srnbr == null)   */
     }
 
     public function downloadfile(Request $req, $wo)
@@ -5131,11 +5050,6 @@ class wocontroller extends Controller
         return response($output);
     }
 
-    public function woqcapproval (){
-        $databrowse = DB::table('wo_mstr')
-                        ->get();
 
-        return view('workorder.woqcappr', compact('databrowse'));
-    }
 }
 //tanggal betulin 24 may 2021 - 1553

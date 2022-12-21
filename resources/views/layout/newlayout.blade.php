@@ -288,6 +288,13 @@ to get the desired effect
                 </li>
                 @endif
 
+                <li class="nav-item">
+                  <a href="{{route('woQCIndex')}}" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>WO Qc Approval</p>
+                  </a>
+                </li>
+
 
               </ul>
             </li>
@@ -315,7 +322,7 @@ to get the desired effect
                 <li class="nav-item has-treeview">
                   <a href="{{url('/usagemulti')}}" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <a>Asset Multi Batch</a>
+                      <p>Asset Multi Batch</p>
                   </a>
                 </li>
                 @endif

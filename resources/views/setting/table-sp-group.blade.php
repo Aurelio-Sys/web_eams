@@ -1,7 +1,17 @@
 @forelse($data as $show)
 <tr>
-    <td>{{$show->spg_code}}</td>
-    <td>{{$show->spg_desc}}</td>
+    @if ($show->spg_code == "")
+        <td>-</td>
+    @else
+        <td>{{$show->spg_code}}</td>
+    @endif
+
+    @if ($show->spg_desc == "")
+        <td>-</td>
+    @else
+        <td>{{$show->spg_desc}}</td>
+    @endif
+    
     <!--
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal" 
