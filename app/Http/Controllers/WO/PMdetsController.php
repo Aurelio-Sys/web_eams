@@ -55,7 +55,7 @@ class PMdetsController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
 
         DB::beginTransaction();
 
@@ -66,18 +66,24 @@ class PMdetsController extends Controller
                     'aspm_item' => $request->t_pmdet[$a],
                     'aspm_mea' => $request->t_mea[$a],
                     'aspm_value' => $request->t_value[$a],
+                    'aspm_tolerance' => $request->t_tol[$a],
+                    'aspm_start_date' => $request->t_start[$a],
+                    'aspm_repcode' => $request->t_repcode[$a],
+                    'created_at' => Carbon::now()->toDateTimeString(),
+                    'updated_at' => Carbon::now()->toDateTimeString(),
+                    'edited_by' => $request->session()->get('username'),
                 ]);
             }
 
             DB::commit();
 
-            toast('WO Successfuly Released !', 'success');
+            toast('PM Detail Created !', 'success');
             return redirect()->route('pmdets');
         } catch (Exception $e) {
             dd($e);
             DB::rollBack();
-            toast('WO Release Failed', 'error');
-            return redirect()->route('browseRelease');
+            toast('PM Detail Created', 'error');
+            return redirect()->route('pmdets');
         }
     }
 

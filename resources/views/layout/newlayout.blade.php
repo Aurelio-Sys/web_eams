@@ -611,11 +611,11 @@ to get the desired effect
                       <p>Asset Maintenance</p>
                     </a>
                   </li>
-                  <li class="nav-item">
+                  {{--  <li class="nav-item">
                     <a href="/pmdets" class="nav-link">
                       <p>Asset PM Details</p>
                     </a>
-                  </li>
+                  </li>  --}}
                   @if(str_contains( Session::get('menu_access'), 'MT09'))
                   <li class="nav-item">
                     <a href="/asparmaster" class="nav-link">

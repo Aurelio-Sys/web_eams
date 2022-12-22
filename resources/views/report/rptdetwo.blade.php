@@ -42,7 +42,7 @@
           <li class="nav-item">
             <div class="col-12 form-group row">
               <!--FORM Search Disini-->
-              <label for="s_nomorwo" class="col-md-2 col-form-label text-md-left">{{ __('Work Order Number') }}</label>
+              <label for="s_nomorwo" class="col-md-2 col-form-label text-md-right">{{ __('Work Order Number') }}</label>
               <div class="col-md-4 col-sm-12 mb-2 input-group">
                 <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="" autofocus autocomplete="off">
               </div>
@@ -64,11 +64,11 @@
                   <option value="high">High</option>
                 </select>
               </div>
-              <label for="" class="col-md-2 col-form-label text-md-right">{{ __('') }}</label>
+              <label for="" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
               <div class="col-md-2 col-sm-12 mb-2 input-group">
                 <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
               </div>
-              <div class="col-md-2 col-sm-12 mb-2 input-group">
+              <div class="col-md-1 col-sm-12 mb-1 input-group">
                 <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
               </div>
               <div class="col-md-2 col-sm-12 mb-2 input-group">

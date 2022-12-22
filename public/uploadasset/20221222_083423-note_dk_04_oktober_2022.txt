@@ -1,0 +1,17 @@
+approval bertingkat, ada yg memonitor supervisor engineer
+
+supervisor hanya melihat pekerjaan engineer yang ada dibawahnya dia. di engineer report
+
+menu/fungsi untuk mengalihkan pekerjaan misalkan dari mekanikal diahlikan ke eltrikal tanpa harus menutup SR yang dibuat oleh user. hanya bisa dilakukan oleh supervisornya.
+
+spare part tidak pakai lot di DK
+
+pencatatan prepare time sebelum wo start 
+
+bisa start meskipun sparepart belum lengkap
+
+asset harus sama antara eams dengan qad (?)
+
+calendar measurement satuannya bisa hari,minggu, dan bulan\
+
+item yg ada di wh spare part qad dimunculkan

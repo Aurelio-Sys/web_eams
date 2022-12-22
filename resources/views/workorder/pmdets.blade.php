@@ -86,7 +86,7 @@
         </thead>
         <tbody>
             <!-- untuk isi table -->
-            @include('setting.table-asset-par')
+            {{--  @include('workorder.table-pmdets')  --}}
         </tbody>
     </table>
     <input type="hidden" name="hidden_page" id="hidden_page" value="1"/>

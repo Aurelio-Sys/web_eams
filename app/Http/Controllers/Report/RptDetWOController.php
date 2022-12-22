@@ -85,10 +85,10 @@ class RptDetWOController extends Controller
         /* Mencari data sparepart dari wo detail */
         $datadets = DB::table('wo_dets')
             ->join('wo_mstr','wo_nbr','=','wo_dets_nbr')
-            ->whereNotNull('wo_dets_sp')
+            // ->whereNotNull('wo_dets_sp')
             ->orderBy('wo_dets_nbr')
             ->get();
-
+// dd($datadets);
         foreach($datadets as $da){
             DB::table('temp_wo')->insert([
                 'temp_wo' => $da->wo_nbr,

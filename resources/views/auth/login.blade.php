@@ -17,7 +17,9 @@
           <div class="input-group img-container">
                 <img src="{{ asset('images/imgheadxx.png') }}" width="200" height="200">
               </div>
-              
+            <div>
+                <label><h1>-- SIMULATION --</h1></label>
+            </div>
 
             <div class="input-field">
                 <input type="text" id='username' name='username'  required>

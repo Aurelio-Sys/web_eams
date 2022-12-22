@@ -9,12 +9,12 @@
     </thead>
     <tbody>
         <tr>
-            @foreach(explode(",",$data) as $dt)
+            {{--  @foreach(explode(",",$data) as $dt)
                 
-            @endforeach
+            @endforeach  --}}
         </tr>
         <tr>
-            <td>{{ count($data) }}</td>
+            {{--  <td>{{ count($data) }}</td>  --}}
         </tr>
     </tbody>
 </table>
