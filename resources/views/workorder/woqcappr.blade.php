@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-9">
-            <h1 class="m-0 text-dark">Work Order Quality Check Approval</h1>
+            <h1 class="m-0 text-dark">Work Order QC Approval</h1>
         </div><!-- /.col -->
     </div><!-- /.row -->
 </div><!-- /.container-fluid -->
@@ -60,17 +60,15 @@
 </form>
 
 
-<div class="table-responsive row mt-0 pt-0">
-    <table class="table table-bordered col-md-12 mt-0" id="dataTable" width="100%" cellspacing="0">
+<div class="table-responsive">
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr style="text-align: center;">
-                <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="10%">WO Number<span id="name_icon"></span></th>
-                <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="40%">Asset<span id="username_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="15%">WO Number<span id="name_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="35%">Asset<span id="username_icon"></span></th>
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="10%">Status<span id="username_icon"></span></th>
-                <th class="sorting" data-sorting_type="asc" data-column_name="wo_schedule" width="10%">Schedule Date<span id="name_icon"></span></th>
-                <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="10%">Due Date<span id="username_icon"></span></th>
-                <th width="10%">Priority</th>
-                <th width="10%">Action</th>
+                <th width="7%">Priority</th>
+                <th width="15%">Action</th>
             </tr>
         </thead>
         <tbody>

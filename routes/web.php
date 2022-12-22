@@ -11,7 +11,8 @@ use App\Http\Controllers\WO\ConfirmEng;
 use App\Http\Controllers\WO\WORelease;
 use App\Http\Controllers\WO\WHSConfirm;
 use App\Http\Controllers\WO\PMdetsController;
-use WO\WoQcController;
+use App\Http\Controllers\WO\WoQcController;
+
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
 use Illuminate\Support\Facades\Auth;
@@ -562,6 +563,11 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/editpmdets', [PMdetsController::class, 'update']);
 	Route::post('/deletepmdets', [PMdetsController::class, 'destroy']);
 
+
+	//work order approval qc
+	Route::get('woqc', [WoQcController::class,'index'])->name('woQCIndex');
+	Route::post('woqc/update',[WoQcController::class,'update'])->name('woQCUpdate');
+	Route::get('woqc/{id}/{nbr}', [WoQcController::class, 'show'])->name('woQCDetail');
 });
 
 Auth::routes();

@@ -25,7 +25,7 @@
     @elseif($show->sr_status == 6)
     <td>Incomplete</td>
     @elseif($show->sr_status == 7)
-    <td>Completed</td>
+    <td>Waiting QC</td>
     @elseif($show->sr_status == 8)
     <td>Reprocess</td>
     @endif
