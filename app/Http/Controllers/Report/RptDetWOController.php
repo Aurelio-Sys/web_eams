@@ -74,6 +74,8 @@ class RptDetWOController extends Controller
             $table->date('temp_sch_date');
             $table->string('temp_fail_type')->nullable();
             $table->string('temp_fail_code')->nullable();
+            $table->string('temp_note')->nullable();
+            $table->string('temp_repair')->nullable();
             $table->string('temp_status');
             $table->string('temp_sp')->nullable();
             $table->string('temp_sp_desc')->nullable();
@@ -85,6 +87,7 @@ class RptDetWOController extends Controller
         /* Mencari data sparepart dari wo detail */
         $datadets = DB::table('wo_dets')
             ->join('wo_mstr','wo_nbr','=','wo_dets_nbr')
+            ->leftjoin('rep_master','repm_code','wo_dets_rc')
             // ->whereNotNull('wo_dets_sp')
             ->orderBy('wo_dets_nbr')
             ->get();
@@ -100,6 +103,8 @@ class RptDetWOController extends Controller
                 'temp_sch_date' => $da->wo_schedule,
                 'temp_fail_type' => $da->wo_new_type,
                 'temp_fail_code' => $da->wo_failure_code1.";".$da->wo_failure_code2.";".$da->wo_failure_code3,
+                'temp_note' => $da->wo_note,
+                'temp_repair' => $da->wo_dets_rc.' : '.$da->repm_desc,
                 'temp_status' => $da->wo_status,
                 'temp_sp' => $da->wo_dets_sp,
                 'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->wo_dets_sp)->value('spm_desc'),
@@ -121,7 +126,7 @@ class RptDetWOController extends Controller
                     ->select('wo_nbr','wo_repair_code1 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
                     'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule',
                     'wo_sr_nbr', 'wo_creator', 'wo_created_at', 'wo_new_type', 'wo_failure_code1',
-                    'wo_failure_code2', 'wo_failure_code3', 'wo_asset')
+                    'wo_failure_code2', 'wo_failure_code3', 'wo_asset', 'wo_note', 'repm_desc')
                     ->leftJoin('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
                     ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                     ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -147,7 +152,7 @@ class RptDetWOController extends Controller
                     ->select('wo_nbr','wo_repair_code2 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
                     'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule',
                     'wo_sr_nbr', 'wo_creator', 'wo_created_at', 'wo_new_type', 'wo_failure_code1',
-                    'wo_failure_code2', 'wo_failure_code3', 'wo_asset')
+                    'wo_failure_code2', 'wo_failure_code3', 'wo_asset', 'wo_note', 'repm_desc')
                     ->leftJoin('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
                     ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                     ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -173,7 +178,7 @@ class RptDetWOController extends Controller
                     ->select('wo_nbr','wo_repair_code3 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
                     'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule',
                     'wo_sr_nbr', 'wo_creator', 'wo_created_at', 'wo_new_type', 'wo_failure_code1',
-                    'wo_failure_code2', 'wo_failure_code3', 'wo_asset')
+                    'wo_failure_code2', 'wo_failure_code3', 'wo_asset', 'wo_note', 'repm_desc')
                     ->leftJoin('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
                     ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                     ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -199,7 +204,7 @@ class RptDetWOController extends Controller
                     ->select('wo_nbr','repm_code as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 
                     'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule',
                     'wo_sr_nbr', 'wo_creator', 'wo_created_at', 'wo_new_type', 'wo_failure_code1',
-                    'wo_failure_code2', 'wo_failure_code3', 'wo_asset')
+                    'wo_failure_code2', 'wo_failure_code3', 'wo_asset', 'wo_note', 'repm_desc')
                     ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
                     ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                     ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -231,6 +236,8 @@ class RptDetWOController extends Controller
                 'temp_sch_date' => $dc->wo_schedule,
                 'temp_fail_type' => $dc->wo_new_type,
                 'temp_fail_code' => $dc->wo_failure_code1.";".$dc->wo_failure_code2.";".$dc->wo_failure_code3,
+                'temp_note' => $dc->wo_note,
+                'temp_repair' => $dc->repair_code." : ".$dc->repm_desc,
                 'temp_status' => $dc->wo_status,
                 'temp_sp' => $dc->insd_part,
                 'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$dc->insd_part)->value('spm_desc'),
@@ -247,10 +254,10 @@ class RptDetWOController extends Controller
         
 
         Schema::dropIfExists('temp_wo');
-
+        // dd($impact);
         if ($request->dexcel == "excel") {
             return Excel::download(new DetailWOExport($impact), 'DetailWO.xlsx');
-            // dd("excel");
+            
         } else {
             return view('report.rptdetwo', ['impact' => $impact, 'wottype' => $wottype, 'custrnow' => $custrnow, 
             'data' => $datatemp, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 

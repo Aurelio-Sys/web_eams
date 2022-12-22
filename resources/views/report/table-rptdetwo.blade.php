@@ -10,8 +10,8 @@
   <td>{{$show->temp_creator}}</td>
   <td>{{ date('d-m-Y',strtotime($show->temp_create_date)) }}</td>
   <td>{{ date('d-m-Y',strtotime($show->temp_sch_date)) }}</td>
-  <td>{{ $show->temp_fail_type }}</td>
-  <td>{{ $show->temp_fail_code }} </td>
+  <td>{{ $show->temp_note }}</td>
+  <td>{{ $show->temp_repair }}</td>
   <td>{{ $show->temp_status }}</td>
   <td>{{ $show->temp_sp }} </td>
   <td>{{ $show->temp_sp_desc }}</td>

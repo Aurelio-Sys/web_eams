@@ -110,7 +110,7 @@ class ViewExport2 implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
         ->whereRaw($kondisi)
         ->distinct()
         ->orderby('wo_created_at2','desc')
-        ->orderby('wo_time','desc');;
+        ->orderby('wo_time','desc');
         
     }
     public function headings(): array

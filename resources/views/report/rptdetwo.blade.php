@@ -89,25 +89,25 @@
 <input type="hidden" id="tmpengineer" value="" />
 <input type="hidden" id="tmpcreator" value="" />
 
-<div class="table-responsive col-12 mt-0 pt-0 align-top">
+<div class="table-responsive col-12 mt-0 pt-0 align-top" style="overflow-x: auto; display: block;white-space: nowrap;">
   <table class="table table-bordered mt-0" id="dataTable" width="100%" cellspacing="0" style="width:100%;padding: .2rem !important;">
     <thead>
       <tr style="text-align: center;">
-        <th width="7%">WO Number</th>
-        <th width="7%">SR Number</th>
-        <th width="7%">Asset</th>
-        <th width="13%">Desc</th>
-        <th width="5%">Req By</th>
-        <th width="6%">Req Date</th>
-        <th width="6%">Sch Date</th>
-        <th width="5%">Fail Type</th>
-        <th width="7%">Failure</th>
-        <th width="5%">Status</th>
-        <th width="7%">Sparepart</th>
-        <th width="13%">Desc</th>
-        <th width="5%">Qty Req</th>
-        <th width="5%">Qty Used</th>
-        <th width="6%">Action</th>
+        <th>WO Number</th>
+        <th>SR Number</th>
+        <th>Asset</th>
+        <th>Desc</th>
+        <th>Req By</th>
+        <th>Req Date</th>
+        <th>Sch Date</th>
+        <th>Note</th>
+        <th>Repair</th>
+        <th>Status</th>
+        <th>Sparepart</th>
+        <th>Desc</th>
+        <th>Qty Req</th>
+        <th>Qty Used</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
