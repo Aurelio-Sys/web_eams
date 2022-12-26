@@ -391,7 +391,12 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
-
+                <li class="nav-item">
+                  <a href="{{url('remsp')}}" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>Remaining Sparepart</p>
+                  </a>
+                </li>
                 <li class="nav-item has-treeview">
                   <a href="javascript:void(0)" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
@@ -633,6 +638,11 @@ to get the desired effect
                   <li class="nav-item">
                     <a href="/assetmove" class="nav-link">
                       <p>Asset Movement</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/pmeng" class="nav-link">
+                      <p>Engineer For PM</p>
                     </a>
                   </li>
                 </ul><!-- ul asset -->
