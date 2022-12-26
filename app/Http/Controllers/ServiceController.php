@@ -61,6 +61,7 @@ class ServiceController extends Controller
         $asset = DB::table('asset_mstr')
             ->leftJoin('asset_loc','asloc_code','=','asset_loc')
             ->where('asset_active', '=', 'Yes')
+            ->where('asset_loc','=',session::get('department'))
             ->orderBy('asset_code')
             ->get();
 
