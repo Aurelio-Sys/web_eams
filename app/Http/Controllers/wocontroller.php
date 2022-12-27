@@ -41,7 +41,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use ZipArchive;
 use Response;
 use App\Models\Qxwsa as ModelsQxwsa;
-
+use App\Services\CreateTempTable;
 
 class wocontroller extends Controller
 {
@@ -101,7 +101,7 @@ class wocontroller extends Controller
                 ->get();
             $ceksrfile = DB::table('service_req_upload')
                 ->get();
-            
+
             return view('workorder.woview', ['impact' => $impact, 'wottype' => $wottype, 'custrnow' => $custrnow, 'data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '', 'ceksrfile' => $ceksrfile]);
         } else {
             toast('Anda tidak memiliki akses menu, Silahkan kontak admin', 'error');
@@ -293,7 +293,7 @@ class wocontroller extends Controller
             $asset = DB::table('asset_mstr')
                 ->orderBy('asset_code')
                 ->get();
-            
+
             $failure = DB::table('fn_mstr')
                 ->get();
             $repaircode = DB::table('rep_master')
@@ -413,7 +413,7 @@ class wocontroller extends Controller
                     $rprtype = 'manual';
                 } else if ($req->repairtype == 'code') {
                     // dd('aaa');  
-                    
+
                     $c_wotype = 'code';
                     // DB::table('wo_rc_detail')
                     //     ->where('wrd_wo_nbr', '=', $runningnbr)
@@ -670,7 +670,7 @@ class wocontroller extends Controller
                     //  dd($req->all());
                     // $finisht = $req->c_finishtime . ':' . $req->c_finishtimeminute; 
 
-                    
+
                     $rprtype = 'code';
                     // dd($finisht);
 
@@ -780,22 +780,22 @@ class wocontroller extends Controller
                     $rprtype = 'group';
                 }
             }
-        }else{
+        } else {
             // dd('manual');
             $rc1 = $req->has('repaircode1') ? $req->repaircode1[0] : null;
             $rc2 = $req->has('repaircode2') ? $req->repaircode2[0] : null;
             $rc3 = $req->has('repaircode3') ? $req->repaircode3[0] : null;
 
-            if($rc1 != null || $rc2 != null || $rc3 != null){
+            if ($rc1 != null || $rc2 != null || $rc3 != null) {
                 $rprtype = 'code';
             }
 
             $rprg = $req->has('repairgroup') ? $req->repairgroup[0] : null;
 
-            if($rprg != null){
+            if ($rprg != null) {
                 $rprtype = 'group';
             }
-            
+
 
             // dd($rc1,$rc2,$rc3);
 
@@ -1333,9 +1333,9 @@ class wocontroller extends Controller
                 'wo_repair_group' => $repairgroup,
                 'wo_repair_type'  => $repairtype,
                 'wo_new_type'     => $req->e_wottype,
-                'wo_failure_code1'=> isset($req->m_failurecode[0]) ? $req->m_failurecode[0] : null,
-                'wo_failure_code2'=> isset($req->m_failurecode[1]) ? $req->m_failurecode[1] : null,
-                'wo_failure_code3'=> isset($req->m_failurecode[2]) ? $req->m_failurecode[2] : null,
+                'wo_failure_code1' => isset($req->m_failurecode[0]) ? $req->m_failurecode[0] : null,
+                'wo_failure_code2' => isset($req->m_failurecode[1]) ? $req->m_failurecode[1] : null,
+                'wo_failure_code3' => isset($req->m_failurecode[2]) ? $req->m_failurecode[2] : null,
                 'wo_impact'       => $eimpactlist,
                 'wo_impact_desc'  => $eimpactdesclist,
                 'wo_note'         => $note,
@@ -1401,7 +1401,7 @@ class wocontroller extends Controller
                     ->get();
 
                 // dd($data);
-                return view('workorder.table-wobrowse', ['data' => $data, 'usernow' => $usernow, 'ceksrfile'=> $ceksrfile]);
+                return view('workorder.table-wobrowse', ['data' => $data, 'usernow' => $usernow, 'ceksrfile' => $ceksrfile]);
             } else {
                 $kondisi = "wo_mstr.wo_id > 0";
 
@@ -1444,7 +1444,7 @@ class wocontroller extends Controller
                     ->get();
                 // dd($data);
                 // dd($_SERVER['REQUEST_URI']);                
-                return view('workorder.table-wobrowse', ['data' => $data, 'usernow' => $usernow, 'ceksrfile'=>$ceksrfile]);
+                return view('workorder.table-wobrowse', ['data' => $data, 'usernow' => $usernow, 'ceksrfile' => $ceksrfile]);
             }
         }
     }
@@ -1481,7 +1481,7 @@ class wocontroller extends Controller
                     ->paginate(10);
 
                 $ceksrfile = DB::table('service_req_upload')
-                            ->get();
+                    ->get();
 
 
                 return view('workorder.table-woview', ['data' => $data, 'usernow' => $usernow, 'ceksrfile' => $ceksrfile]);
@@ -1544,9 +1544,9 @@ class wocontroller extends Controller
                 // dd($data );
                 // dd($sort_by,$sort_type);
                 // dd($_SERVER['REQUEST_URI']);
-                
+
                 $ceksrfile = DB::table('service_req_upload')
-                            ->get();
+                    ->get();
                 return view('workorder.table-woview', ['data' => $data, 'usernow' => $usernow, 'ceksrfile' => $ceksrfile]);
             }
         }
@@ -1970,11 +1970,11 @@ class wocontroller extends Controller
             ->get();
 
         $data_alldets = DB::table('wo_dets')
-                    ->select('wo_dets_nbr', 'wo_dets_rc', 'repm_desc')
-                    ->join('rep_master', 'wo_dets.wo_dets_rc','rep_master.repm_code')
-                    ->where('wo_dets.wo_dets_nbr','=', $nowo)
-                    ->distinct('wo_dets_rc')
-                    ->get();
+            ->select('wo_dets_nbr', 'wo_dets_rc', 'repm_desc')
+            ->join('rep_master', 'wo_dets.wo_dets_rc', 'rep_master.repm_code')
+            ->where('wo_dets.wo_dets_nbr', '=', $nowo)
+            ->distinct('wo_dets_rc')
+            ->get();
 
         $data2 = "";
         if ($currwo->wo_repair_type == "group") {
@@ -2015,8 +2015,6 @@ class wocontroller extends Controller
             ->where('wo_dets_nbr', '=', $nowo)
             ->get();
 
-        // dd($detailsp);
-
         // dd($data);
         // return $data;
 
@@ -2053,7 +2051,7 @@ class wocontroller extends Controller
         $instruction = DB::table('ins_mstr')
             ->get();
 
-        return view('workorder.wofinish-done', compact('data', 'data_alldets' ,'data2', 'engineer', 'asset', 'repaircode', 'sparepart', 'repairgroup', 'instruction', 'datadetail', 'detailsp'));
+        return view('workorder.wofinish-done', compact('data', 'data_alldets', 'data2', 'engineer', 'asset', 'repaircode', 'sparepart', 'repairgroup', 'instruction', 'datadetail', 'detailsp'));
     }
 
     public function approvewo(Request $req)
@@ -2595,7 +2593,7 @@ class wocontroller extends Controller
             //                 $test5 = $test44.$waktu.$test;
             //                 $alamaturl = '../public/upload/'.$test5;
             //                 file_put_contents($alamaturl, $jadi2);
-    
+
             //                 DB::table('acceptance_image')
             //                     ->insert([
             //                         'file_srnumber' => $req->c_srnbr,
@@ -3041,19 +3039,19 @@ class wocontroller extends Controller
             //                 $test44 = str_replace(' ','',$test4);
             //                 $test5 = $test44.$waktu.$test;
             //                 // dd($test5);
-    
+
             //                 // dd($test2);
-    
+
             //                 // dd(substr($jadi1[0],$lenstr));
             //                 // dd(strlen($jadi1[0]));
-    
+
             //                 // $test = preg_replace('/.(?=.*,)/','',$jadi1[0]);
             //                 //  $test2 = explode('.',$test);
             //                 // $test2 = 
             //                 // dd($test);
             //                 $alamaturl = '../public/upload/'.$test5;
             //                 file_put_contents($alamaturl, $jadi2);
-    
+
             //                 DB::table('acceptance_image')
             //                     ->insert([
             //                         'file_srnumber' => $req->c_srnbr,
@@ -3062,9 +3060,9 @@ class wocontroller extends Controller
             //                         'file_url' => $alamaturl, 
             //                         'uploaded_at' => Carbon::now()->toDateTimeString(),
             //                     ]);
-    
+
             //                 // $k++;
-    
+
             //             }
             //         } A211025 */
 
@@ -3079,7 +3077,7 @@ class wocontroller extends Controller
 
             //     // dd($arrayy);
             // } else if ($req->repairtype == 'group') {
-                
+
 
             //     foreach ($req->do[0] as $key => $value) {
             //         $arraydo[$key] = $value;
@@ -3368,19 +3366,19 @@ class wocontroller extends Controller
             //                 $test44 = str_replace(' ','',$test4);
             //                 $test5 = $test44.$waktu.$test;
             //                 // dd($test5);
-    
+
             //                 // dd($test2);
-    
+
             //                 // dd(substr($jadi1[0],$lenstr));
             //                 // dd(strlen($jadi1[0]));
-    
+
             //                 // $test = preg_replace('/.(?=.*,)/','',$jadi1[0]);
             //                 //  $test2 = explode('.',$test);
             //                 // $test2 = 
             //                 // dd($test);
             //                 $alamaturl = '../public/upload/'.$test5;
             //                 file_put_contents($alamaturl, $jadi2);
-    
+
             //                 DB::table('acceptance_image')
             //                     ->insert([
             //                         'file_srnumber' => $req->c_srnbr,
@@ -3389,9 +3387,9 @@ class wocontroller extends Controller
             //                         'file_url' => $alamaturl, 
             //                         'uploaded_at' => Carbon::now()->toDateTimeString(),
             //                     ]);
-    
+
             //                 // $k++;
-    
+
             //             }
             //         } */
 
@@ -3419,10 +3417,24 @@ class wocontroller extends Controller
 
             $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
 
-            dd($costdata);
+            if ($costdata === false) {
+                alert()->error('Error', 'WSA Failed');
+                return redirect()->route('woreport');
+            } else {
+                if ($costdata[1] == "false") {
+                    alert()->error('Error', 'Item Cost tidak ditemukan');
+                    return redirect()->route('woreport');
+                } else {
+                    $tempCost = (new CreateTempTable())->createTempCost($costdata[0]);
+
+                    $tempCost = collect($tempCost[0]);
+                }
+            }
 
             foreach ($req->rc_hidden2 as $k_sp => $value) {
+
                 foreach ($req->rc_hidden1 as $k_ins => $value) {
+
                     if ($req->rc_hidden2[$k_sp] == $req->rc_hidden1[$k_ins] && $req->inscode_hidden2[$k_sp] == $req->inscode_hidden1[$k_ins]) {
 
                         $testarray[] = [
@@ -3430,6 +3442,7 @@ class wocontroller extends Controller
                             'rc' => $req->rc_hidden2[$k_sp],
                             'ic' => $req->inscode_hidden2[$k_sp],
                             'sp' => $req->spcode_hidden2[$k_sp],
+                            'site' => $req->spsite_hidden2[$k_sp],
                             'do' => $arraydo[$k_ins],
                             'result' => $arrayresult[$k_ins],
                             'note' => $req->note[$k_ins],
@@ -3438,6 +3451,19 @@ class wocontroller extends Controller
                     }
                 }
             }
+
+            foreach ($tempCost as $coscos) {
+                foreach ($testarray as $a) {
+                    if ($coscos->cost_site == $a['site'] && $coscos->cost_part == $a['sp']) {
+                        $collection = collect($testarray)->map(function ($item, $key) use ($tempCost) {
+                            $item['cost'] =($tempCost[$key]->cost_cost);
+                            return $item;
+                        });
+                    }
+                }
+            }
+
+            $testarray = $collection->toArray();
 
             foreach ($testarray as $k_all => $value) {
 
@@ -3451,6 +3477,7 @@ class wocontroller extends Controller
                         'wo_dets_do_flag' => $testarray[$k_all]['do'],
                         'wo_dets_fu_note' => $testarray[$k_all]['note'],
                         'wo_dets_qty_used' => $testarray[$k_all]['qtyused'],
+                        'wo_dets_sp_price' => $testarray[$k_all]['cost'],
                     ]);
             }
 
@@ -3727,6 +3754,7 @@ class wocontroller extends Controller
             toast('data reported successfuly', 'success');
             return redirect()->route('woreport');
         } catch (Exception $e) {
+            dd($e);
             DB::rollBack();
             toast('Save Error', 'error');
             return redirect()->route('woreport');
@@ -3734,26 +3762,28 @@ class wocontroller extends Controller
     }
     // }
 
-    public function reissued_wo($wo){
+    public function reissued_wo($wo)
+    {
         // dd($wo);
 
         $dataget = DB::table('wo_mstr')
-                    ->join('wo_dets', 'wo_dets.wo_dets_nbr','wo_mstr.wo_nbr')
-                    ->join('asset_mstr', 'asset_mstr.asset_code','wo_mstr.wo_asset')
-                    ->leftJoin('ins_mstr', 'wo_dets.wo_dets_ins', 'ins_mstr.ins_code')
-                    ->leftjoin('insd_det', function ($join) {
-                        $join->on('wo_dets.wo_dets_ins', '=', 'insd_det.insd_code');
-                        $join->on('wo_dets.wo_dets_sp', '=', 'insd_det.insd_part');
-                    })
-                    ->leftJoin('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')
-                    ->where('wo_nbr','=', $wo)
-                    ->orderBy('wo_dets_rc', 'asc')
-                    ->get();
+            ->join('wo_dets', 'wo_dets.wo_dets_nbr', 'wo_mstr.wo_nbr')
+            ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset')
+            ->leftJoin('ins_mstr', 'wo_dets.wo_dets_ins', 'ins_mstr.ins_code')
+            ->leftjoin('insd_det', function ($join) {
+                $join->on('wo_dets.wo_dets_ins', '=', 'insd_det.insd_code');
+                $join->on('wo_dets.wo_dets_sp', '=', 'insd_det.insd_part');
+            })
+            ->leftJoin('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')
+            ->where('wo_nbr', '=', $wo)
+            ->orderBy('wo_dets_rc', 'asc')
+            ->get();
 
-        return view('workorder.wo-reissued',compact('dataget'));
+        return view('workorder.wo-reissued', compact('dataget'));
     }
 
-    public function reissuedwofinish(Request $req){        
+    public function reissuedwofinish(Request $req)
+    {
 
         // dd('abcd');
         $filterqtyissued = array_filter($req->qtyreissued);
@@ -3766,7 +3796,7 @@ class wocontroller extends Controller
 
         DB::beginTransaction();
 
-        try{
+        try {
 
             /*
             $qxwsa = Qxwsa::first();
@@ -3968,14 +3998,14 @@ class wocontroller extends Controller
             }
             */
 
-            foreach ($req->spcode_hidden as $jmlspcode => $value ) {
+            foreach ($req->spcode_hidden as $jmlspcode => $value) {
 
                 $cekwodets = DB::table('wo_dets')
-                        ->where('wo_dets_nbr', $req->wonbr_hidden[$jmlspcode])
-                        ->where('wo_dets_rc', $req->rc_hidden[$jmlspcode])
-                        ->where('wo_dets_ins', $req->inscode_hidden[$jmlspcode])
-                        ->where('wo_dets_sp', $req->spcode_hidden[$jmlspcode])
-                        ->first();
+                    ->where('wo_dets_nbr', $req->wonbr_hidden[$jmlspcode])
+                    ->where('wo_dets_rc', $req->rc_hidden[$jmlspcode])
+                    ->where('wo_dets_ins', $req->inscode_hidden[$jmlspcode])
+                    ->where('wo_dets_sp', $req->spcode_hidden[$jmlspcode])
+                    ->first();
 
                 $new_qty_used = 0;
 
@@ -3989,23 +4019,17 @@ class wocontroller extends Controller
                     ->update([
                         'wo_dets_qty_used' => $new_qty_used
                     ]);
-
             }
 
             DB::commit();
-            toast('Qty Issued updated for WO : '.$req->c_wonbr.' ', 'success');
+            toast('Qty Issued updated for WO : ' . $req->c_wonbr . ' ', 'success');
             return redirect()->route('woreport');
-
-            
-
         } catch (Exception $err) {
 
             DB::rollBack();
             toast('Save Error', 'error');
             return redirect()->route('woreport');
-
         }
-        
     }
 
     // public function reopenwo(Request $req){
@@ -4506,10 +4530,12 @@ class wocontroller extends Controller
             ->first();
 
         // $pdf = PDF::loadview('workorder.pdfprint-template',['womstr' => $womstr,'wodet' => $wodet, 'data' => $data,'printdate' =>$printdate,'repair'=>$repair,'sparepart'=>$array])->setPaper('A4','portrait');
-        $pdf = PDF::loadview('workorder.pdfprint-template', ['sparepart' => $sparepartarray, 'womstr' => $womstr, 
-        'repairlist' => $repairlist, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb, 
-        'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printdate' => $printdate, 'engineerlist' => $engineerlist, 
-        'users' => $users, 'datasr' => $datasr])->setPaper('A4', 'portrait');
+        $pdf = PDF::loadview('workorder.pdfprint-template', [
+            'sparepart' => $sparepartarray, 'womstr' => $womstr,
+            'repairlist' => $repairlist, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb,
+            'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printdate' => $printdate, 'engineerlist' => $engineerlist,
+            'users' => $users, 'datasr' => $datasr
+        ])->setPaper('A4', 'portrait');
         //return view('picklistbrowse.shipperprint-template',['printdata1' => $printdata1, 'printdata2' => $printdata2, 'runningnbr' => $runningnbr,'user' => $user,'last' =>$countprint]);
         return $pdf->stream($wo . '.pdf');
     }
@@ -4960,7 +4986,7 @@ class wocontroller extends Controller
             return redirect()->route('womaint');
         }
 
-            //EmailScheduleJobs::dispatch($wonumber,'','6','','',$srnbr,''); // A211021
+        //EmailScheduleJobs::dispatch($wonumber,'','6','','',$srnbr,''); // A211021
     }
 
     public function downloadfile(Request $req, $wo)
@@ -4971,7 +4997,7 @@ class wocontroller extends Controller
             ->where('wo_nbr', '=', $wo)
             ->first();
 
-            // dd($wo);
+        // dd($wo);
 
         $listdownload = DB::table('asset_upload')
             ->where('asset_code', '=', $assetnow->wo_asset)
@@ -5075,7 +5101,5 @@ class wocontroller extends Controller
 
         return response($output);
     }
-
-
 }
 //tanggal betulin 24 may 2021 - 1553

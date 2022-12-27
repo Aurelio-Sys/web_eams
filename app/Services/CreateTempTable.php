@@ -9,10 +9,11 @@ class CreateTempTable
 {
     //
 
-    public function createSparePartUsed($data){
+    public function createSparePartUsed($data)
+    {
         // dd($data);
         // Schema::dropIfExists('temp_group');
-        if(!Schema::hasTable('temp_sp')){
+        if (!Schema::hasTable('temp_sp')) {
             Schema::create('temp_sp', function ($table) {
                 $table->increments('id');
                 $table->string('sp_code');
@@ -20,9 +21,9 @@ class CreateTempTable
                 $table->temporary();
             });
         }
-        
 
-        foreach($data as $datas){
+
+        foreach ($data as $datas) {
             DB::table('temp_sp')->insert([
                 'sp_code' => $datas->insd_part,
                 'sp_qty_req' => $datas->insd_req,
@@ -41,7 +42,28 @@ class CreateTempTable
         // return [$table_so,$groupso];
     }
 
-    public function createTempCost($data){
-        Sche
+    public function createTempCost($data)
+    {
+        Schema::create('temp_cost', function ($table) {
+            $table->string('cost_dom')->nullable();
+            $table->string('cost_site')->nullable();
+            $table->string('cost_part')->nullable();
+            $table->float('cost_cost', 15, 2);
+        });
+
+        foreach ($data as $datas) {
+            DB::table('temp_cost')->insert([
+                'cost_dom' => $datas->t_domain,
+                'cost_site' => $datas->t_site,
+                'cost_part' => $datas->t_part,
+                'cost_cost' => $datas->t_cost,
+            ]);
+        }
+
+        $table_cost = DB::table('temp_cost')->get();
+
+        Schema::dropIfExists('temp_cost');
+
+        return [$table_cost];
     }
 }
