@@ -859,29 +859,39 @@ class ServiceController extends Controller
 
         $fileName = $sr . '.zip';
 
-        if (count($listdownload) > 0) {
-            if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE) {
-                foreach ($listdownload as $listdown) {
-                    $files = File::get($listdown->filepath);
-                    $relativeNameInZipFile = basename($listdown->filepath);
-                    $zip->addFile($listdown->filepath, $relativeNameInZipFile);
+        try {
+
+            if (count($listdownload) > 0) {
+                if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE) {
+                    foreach ($listdownload as $listdown) {
+                        $files = File::get($listdown->filepath);
+                        $relativeNameInZipFile = basename($listdown->filepath);
+                        $zip->addFile($listdown->filepath, $relativeNameInZipFile);
+                    }
+    
+                    /* A211103 */
+                    // foreach ($listfinish as $listfinish) {
+                    //     $files = File::get($listfinish->file_url);
+                    //     $relativeNameInZipFile = basename($listfinish->file_url);
+                    //     $zip->addFile($listfinish->file_url, $relativeNameInZipFile);
+                    // }
+    
+                    $zip->close();
                 }
-
-                /* A211103 */
-                // foreach ($listfinish as $listfinish) {
-                //     $files = File::get($listfinish->file_url);
-                //     $relativeNameInZipFile = basename($listfinish->file_url);
-                //     $zip->addFile($listfinish->file_url, $relativeNameInZipFile);
-                // }
-
-                $zip->close();
+    
+                return response()->download(public_path($fileName));
+            } else {
+                toast('Tidak ada dokumen untuk pada SR ' . $sr . '!', 'error');
+                return back();
             }
 
-            return response()->download(public_path($fileName));
-        } else {
+        } catch ( $e) {
+            dd($e);
             toast('Tidak ada dokumen untuk pada SR ' . $sr . '!', 'error');
             return back();
         }
+
+        
     }
 
     public function listupload($id)
