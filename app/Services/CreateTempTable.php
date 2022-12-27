@@ -40,4 +40,8 @@ class CreateTempTable
 
         // return [$table_so,$groupso];
     }
+
+    public function createTempCost($data){
+        Sche
+    }
 }
