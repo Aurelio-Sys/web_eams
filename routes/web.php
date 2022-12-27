@@ -3,8 +3,10 @@
 use App\Http\Controllers\Master\AssetSiteController;
 use App\Http\Controllers\Master\AssetLocController;
 use App\Http\Controllers\Master\AssetMoveController;
+use App\Http\Controllers\Master\PmEngController;
 use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
+use App\Http\Controllers\Report\RemainSpController;
 use App\Http\Controllers\SP\KebutuhanSPController;
 use App\Http\Controllers\WO\AllWOGenerate;
 use App\Http\Controllers\WO\ConfirmEng;
@@ -568,6 +570,15 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('woqc', [WoQcController::class,'index'])->name('woQCIndex');
 	Route::post('woqc/update',[WoQcController::class,'update'])->name('woQCUpdate');
 	Route::get('woqc/{id}/{nbr}', [WoQcController::class, 'show'])->name('woQCDetail');
+
+	// Report Remaining Sparepart
+	Route::get('remsp', [RemainSpController::class, 'index']);
+
+	// Menentukan Engineer untuk PM
+	Route::get('pmeng', [PmEngController::class, 'index'])->name('pmeng');
+	Route::post('createapmeng', [PmEngController::class, 'store']);
+	Route::post('editpmeng', [PmEngController::class, 'update']);
+	Route::post('deletepmeng', [PmEngController::class, 'destroy']);
 });
 
 Auth::routes();

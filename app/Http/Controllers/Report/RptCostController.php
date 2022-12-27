@@ -29,12 +29,15 @@ class RptCostController extends Controller
         $bulan = Carbon::createFromDate($tgl)->isoFormat('YYYY');
 
         $data = DB::table('asset_mstr')
-        // ->whereIn('asset_code',['BP03','BP04'])
+        ->whereIn('asset_code',['BGN00284R','BGN00292R'])
         ->orderBy('asset_code')
         ->paginate(10);
+        // ->get();
+
+        // dd($data);
 
         // load cost
-        $domain = ModelsQxwsa::first();
+        /*$domain = ModelsQxwsa::first();
 
         $qwsa = (new WSAServices())->wsacost($domain->wsas_domain);
 
@@ -47,7 +50,7 @@ class RptCostController extends Controller
                 toast('Item cost tidak ditemukan', 'error')->persistent('Dismiss');
                 return redirect()->back();
             } else {
-
+        */
                 Schema::create('temp_cost', function ($table) {
                     $table->increments('id');
                     $table->string('tc_part');
@@ -55,12 +58,12 @@ class RptCostController extends Controller
                     $table->temporary();
                 });
 
-                foreach ($qwsa[0] as $datas) {
+                /* foreach ($qwsa[0] as $datas) {
                     DB::table('temp_cost')->insert([
                         'tc_part' => $datas->t_part,
                         'tc_cost' => $datas->t_cost,
                     ]);
-                }
+                } */
 
                 $qdata = DB::table('temp_cost')
                     ->where('tc_cost','<>',0)
@@ -68,8 +71,8 @@ class RptCostController extends Controller
                     ->get();
 
                 Schema::dropIfExists('temp_cost');
-            }
-        }
+            //}
+        //}
 
         // Menghitung harga per wo
         Schema::create('temp_wodets', function ($table) {
@@ -163,17 +166,43 @@ class RptCostController extends Controller
         //     ->groupByRaw('year(wo_created_at)')
         //     ->get();
 
-        foreach($dcost as $datas) {
+        /* foreach($dcost as $datas) {
             DB::table('temp_asset')->insert([
                 'temp_code' => $datas->tw_code,
                 'temp_bln' => $datas->tw_bln,
                 'temp_thn' => $datas->tw_thn,
                 'temp_cost' => $datas->jml ,
             ]);
+        } */
+
+        $dataharga = DB::table('wo_mstr')
+            ->selectRaw('wo_asset,month(wo_created_at) as "bln",year(wo_created_at) as "thn",
+                sum(wo_dets_sp_price * wo_dets_sp_qty) as jml')
+            ->leftJoin('wo_dets','wo_dets_nbr','=','wo_nbr')
+            ->groupBy('wo_asset')
+            ->groupBy('bln')
+            ->groupBy('thn')
+            ->get();
+
+        foreach($dataharga as $dataharga) {
+            DB::table('temp_asset')->insert([
+                'temp_code' => $dataharga->wo_asset,
+                'temp_bln' => $dataharga->bln,
+                'temp_thn' => $dataharga->thn,
+                'temp_cost' => isset($dataharga->jml) ? $dataharga->jml : 0 ,
+            ]);
         }
                
         $datatemp = DB::table('temp_asset')
+            // ->where('temp_cost','>',0)
             ->get();
+
+        // dd($datatemp);
+
+        // ini buat test, nanti dihapus saja. hanya untuk menampikan asset yang ada nilainya
+        // $data = DB::table('asset_mstr')
+        //     ->join('temp_asset','temp_code','=','asset_code')
+        //     ->paginate(10);
 
         Schema::dropIfExists('temp_wodets');
         Schema::dropIfExists('temp_wo');
