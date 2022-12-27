@@ -212,6 +212,7 @@ class ServiceController extends Controller
                     'sr_access' => 0,
                     'sr_approver' => $req->t_app,
                     'sr_date' => $req->t_date,
+                    'sr_time' => $req->t_time,
                     'sr_dept' => Session::get('department'),
                     'req_by' => Session::get('name'),
                     'req_username' => Session::get('username'),

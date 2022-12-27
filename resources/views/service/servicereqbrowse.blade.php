@@ -177,6 +177,7 @@
         <th width="10%">Department</th>
         <th width="7%">Req by</th>
         <th width="7%">Req Date</th>
+        <th width="7%">Req Time</th>
         <!-- <th width = "5%">Aging</th> -->
         <th width="7%">Action</th>
       </tr>
@@ -212,9 +213,19 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="reqbyname" class="col-md-2 col-form-label">Requested by</label>
+        <label for="reqbyname" class="col-md-2 col-form-label">Requested by</label>
           <div class="col-md-4">
             <input id="reqbyname" name="reqbyname" type="text" class="form-control" readonly />
+          </div>
+          <label for="srtime" class="col-md-2 col-form-label">SR Time</label>
+          <div class="col-md-4">
+            <input id="srtime" type="text" class="form-control" name="srtime" autocomplete="off" readonly />
+          </div>
+        </div>
+        <div class="form-group row">
+        <label for="failtype" class="col-md-2 col-form-label">Failure Type</label>
+          <div class="col-md-4">
+            <input id="failtype" type="text" class="form-control" name="failtype" readonly />
           </div>
           <label for="dept" class="col-md-2 col-form-label">Department</label>
           <div class="col-md-4">
@@ -222,9 +233,9 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="failtype" class="col-md-2 col-form-label">Failure Type</label>
+        <label for="approver" class="col-md-2 col-form-label">Approver</label>
           <div class="col-md-4">
-            <input id="failtype" type="text" class="form-control" name="failtype" readonly />
+            <input id="approver" type="text" class="form-control" name="approver" readonly />
           </div>
           <label for="failcode" class="col-md-2 col-form-label">Failure Code</label>
           <div class="col-md-4">
@@ -232,9 +243,9 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="approver" class="col-md-2 col-form-label">Approver</label>
+        <label for="assetcode" class="col-md-2 col-form-label">Asset Code</label>
           <div class="col-md-4">
-            <input id="approver" type="text" class="form-control" name="approver" readonly />
+            <input id="assetcode" type="text" class="form-control" name="assetcode" readonly />
           </div>
           <label for="assetloc" class="col-md-2 col-form-label">Asset Location</label>
           <div class="col-md-4">
@@ -242,9 +253,9 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="assetcode" class="col-md-2 col-form-label">Asset Code</label>
+        <label for="srnote" class="col-md-2 col-form-label">Note</label>
           <div class="col-md-4">
-            <input id="assetcode" type="text" class="form-control" name="assetcode" readonly />
+            <textarea id="srnote" type="text" class="form-control" name="srnote" readonly></textarea>
           </div>
           <label for="assetdesc" class="col-md-2 col-form-label">Asset Desc</label>
           <div class="col-md-4">
@@ -252,9 +263,9 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="srnote" class="col-md-2 col-form-label">Note</label>
+        <label for="wonumber" class="col-md-2 col-form-label">WO Number</label>
           <div class="col-md-4">
-            <textarea id="srnote" type="text" class="form-control" name="srnote" readonly></textarea>
+            <input id="wonumber" type="text" class="form-control" name="wonumber" readonly />
           </div>
           <label for="rejectnote" class="col-md-2 col-form-label">Reject Note</label>
           <div class="col-md-4">
@@ -262,9 +273,9 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="wonumber" class="col-md-2 col-form-label">WO Number</label>
+        <label for="startwo" class="col-md-2 col-form-label">Start Date</label>
           <div class="col-md-4">
-            <input id="wonumber" type="text" class="form-control" name="wonumber" readonly />
+            <input id="startwo" readonly type="text" class="form-control" name="startwo">
           </div>
           <label for="wostatus" class="col-md-2 col-form-label">Status</label>
           <div class="col-md-4">
@@ -272,9 +283,9 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="startwo" class="col-md-2 col-form-label">Start Date</label>
+        <label for="englist" class="col-md-2 col-form-label">Engineer List</label>
           <div class="col-md-4">
-            <input id="startwo" readonly type="text" class="form-control" name="startwo">
+            <textarea id="englist" type="text" class="form-control" name="englist" rows="3" readonly></textarea>
           </div>
           <label for="endwo" class="col-md-2 col-form-label">End Date</label>
           <div class="col-md-4">
@@ -282,17 +293,7 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="englist" class="col-md-2 col-form-label">Engineer List</label>
-          <div class="col-md-4">
-            <textarea id="englist" type="text" class="form-control" name="englist" rows="3" readonly></textarea>
-          </div>
-          <label for="action" class="col-md-2 col-form-label">Action</label>
-          <div class="col-md-4">
-            <textarea id="action" type="text" class="form-control" name="action" rows="3" readonly></textarea>
-          </div>
-        </div>
-        <div class="form-group row">
-          <label for="file" class="col-md-2 col-form-label">Current File</label>
+        <label for="file" class="col-md-2 col-form-label">Current File</label>
           <div class="col-md-4">
             <table class="table table-bordered">
               <thead>
@@ -305,6 +306,25 @@
               </tbody>
             </table>
           </div>
+          <label for="action" class="col-md-2 col-form-label">Action</label>
+          <div class="col-md-4">
+            <textarea id="action" type="text" class="form-control" name="action" rows="3" readonly></textarea>
+          </div>
+        </div>
+        <div class="form-group row">
+          <!-- <label for="file" class="col-md-2 col-form-label">Current File</label>
+          <div class="col-md-4">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>File Name</th>
+                </tr>
+              </thead>
+              <tbody id="listupload">
+
+              </tbody>
+            </table>
+          </div> -->
           <label for="impact" class="col-md-2 col-form-label">Impact</label>
           <div class="col-md-4">
             <textarea id="impact" type="text" class="form-control" name="impact" autocomplete="off" rows="5" autofocus readonly></textarea>
@@ -556,6 +576,8 @@
 
         var srdate = $(this).data('srdate');
         document.getElementById('srdate').value = srdate;
+        var srtime = $(this).data('srtime');
+        document.getElementById('srtime').value = srtime;
 
 
         var eng1 = $(this).data('eng1');
