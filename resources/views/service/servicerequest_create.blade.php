@@ -28,9 +28,15 @@
       </div>
     </div>
     <div class="form-group row">
-      <label for="t_date" class="col-md-2 col-lg-3 col-form-label my-auto">Date<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+      <label for="t_date" class="col-md-2 col-lg-3 col-form-label my-auto">Request Date<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
       <div class="col-md-2 col-sm-12">
         <input type="date" class="form-control" id="t_date" name="t_date" value="<?php echo date("Y-m-d"); ?>">
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="t_time" class="col-md-2 col-lg-3 col-form-label my-auto">Request Time<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+      <div class="col-md-2 col-sm-12">
+        <input type="time" class="form-control" id="t_time" name="t_time" value="<?php echo date("H:i"); ?>">
       </div>
     </div>
     <div class="form-group row">
