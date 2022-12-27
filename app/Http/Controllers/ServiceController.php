@@ -126,7 +126,6 @@ class ServiceController extends Controller
         DB::beginTransaction();
 
         try {
-// dd($req->all());
             if (isset($req->impact)) {
                 $counterimpact = count($req->impact);
             } else {

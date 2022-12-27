@@ -97,7 +97,10 @@ class wocontroller extends Controller
                 ->get();
             $wottype = DB::table('wotyp_mstr')
                 ->get();
-            return view('workorder.woview', ['impact' => $impact, 'wottype' => $wottype, 'custrnow' => $custrnow, 'data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '']);
+            $ceksrfile = DB::table('service_req_upload')
+                ->get();
+            
+            return view('workorder.woview', ['impact' => $impact, 'wottype' => $wottype, 'custrnow' => $custrnow, 'data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '', 'ceksrfile' => $ceksrfile]);
         } else {
             toast('Anda tidak memiliki akses menu, Silahkan kontak admin', 'error');
             return back();
@@ -252,7 +255,10 @@ class wocontroller extends Controller
                 ->get();
             $wottype = DB::table('wotyp_mstr')
                 ->get();
-            return view('workorder.wobrowse', ['impact' => $impact, 'wottype' => $wottype, 'repairgroup' => $repairgroup, 'data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '', 'repaircode' => $repaircode]);
+
+            $ceksrfile = DB::table(('service_req_upload'))
+                ->get();
+            return view('workorder.wobrowse', ['impact' => $impact, 'wottype' => $wottype, 'repairgroup' => $repairgroup, 'data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '', 'repaircode' => $repaircode, 'ceksrfile' => $ceksrfile]);
         } else {
             toast('Anda tidak memiliki akses menu, Silahkan kontak admin', 'error');
             return back();
@@ -1389,8 +1395,11 @@ class wocontroller extends Controller
                     ->orderBy('wo_mstr.wo_id', 'desc')
                     ->paginate(10);
 
+                $ceksrfile = DB::table(('service_req_upload'))
+                    ->get();
+
                 // dd($data);
-                return view('workorder.table-wobrowse', ['data' => $data, 'usernow' => $usernow]);
+                return view('workorder.table-wobrowse', ['data' => $data, 'usernow' => $usernow, 'ceksrfile'=> $ceksrfile]);
             } else {
                 $kondisi = "wo_mstr.wo_id > 0";
 
@@ -1428,9 +1437,12 @@ class wocontroller extends Controller
                     ->orderBy($sort_by, $sort_type)
                     ->orderBy('wo_mstr.wo_id', 'desc')
                     ->paginate(10);
+
+                $ceksrfile = DB::table(('service_req_upload'))
+                    ->get();
                 // dd($data);
                 // dd($_SERVER['REQUEST_URI']);                
-                return view('workorder.table-wobrowse', ['data' => $data, 'usernow' => $usernow]);
+                return view('workorder.table-wobrowse', ['data' => $data, 'usernow' => $usernow, 'ceksrfile'=>$ceksrfile]);
             }
         }
     }
@@ -1466,8 +1478,11 @@ class wocontroller extends Controller
                     ->distinct('wo_nbr')
                     ->paginate(10);
 
+                $ceksrfile = DB::table('service_req_upload')
+                            ->get();
 
-                return view('workorder.table-woview', ['data' => $data, 'usernow' => $usernow]);
+
+                return view('workorder.table-woview', ['data' => $data, 'usernow' => $usernow, 'ceksrfile' => $ceksrfile]);
             } else {
                 // dd($creator);
                 $kondisi = "wo_mstr.wo_id > 0";
@@ -1526,8 +1541,11 @@ class wocontroller extends Controller
                 // ;
                 // dd($data );
                 // dd($sort_by,$sort_type);
-                // dd($_SERVER['REQUEST_URI']);                
-                return view('workorder.table-woview', ['data' => $data, 'usernow' => $usernow]);
+                // dd($_SERVER['REQUEST_URI']);
+                
+                $ceksrfile = DB::table('service_req_upload')
+                            ->get();
+                return view('workorder.table-woview', ['data' => $data, 'usernow' => $usernow, 'ceksrfile' => $ceksrfile]);
             }
         }
     }
@@ -2264,8 +2282,8 @@ class wocontroller extends Controller
                 ->where('wo_nbr', '=', $nomorwo)
                 ->update([
                     'wo_status' => 'started',
-                    'wo_start_date' => Carbon::now('ASIA/JAKARTA')->toDateString(),
-                    'wo_start_time' => Carbon::now('ASIA/JAKARTA')->toTimeString(),
+                    'wo_start_date' => $req->v_startdate,
+                    'wo_start_time' => $req->v_starttime,
                     'wo_access'     => 0
                 ]);
             if ($req->v_nosr != null || $req->v_nosr != '') {

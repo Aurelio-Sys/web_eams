@@ -97,7 +97,7 @@
     <div class="form-group row">
         <label class="col-form-label col-md-3 text-md-right">{{ __('Qc Note') }}</label>
         <div class="col-md-5">
-            <textarea id="qcnote" class="form-control" name="qcnote" rows="3"></textarea>
+            <textarea id="qcnote" class="form-control" name="qcnote" rows="3" maxlength="100"></textarea>
         </div>
     </div>
     

@@ -86,15 +86,15 @@
 
                             <!-- Desc Item -->
                             @if($datas->insd_part_desc == "")
-                            @php($qsp = $spdata->where('spm_code','=',$datas->insd_part)->count())
-                            @if($qsp == 0)
-                            @php($descpart = "")
+                                @php($qsp = $spdata->where('spm_code','=',$datas->insd_part)->count())
+                                @if($qsp == 0)
+                                    @php($descpart = "")
+                                @else
+                                    @php($rssp = $spdata->where('spm_code','=',$datas->insd_part)->first())
+                                    @php($descpart = $rssp->spm_desc)
+                                @endif
                             @else
-                            @php($rssp = $spdata->where('spm_code','=',$datas->insd_part)->first())
-                            @php($descpart = $rssp->spm_desc)
-                            @endif
-                            @else
-                            @php($descpart = $datas->insd_part_desc)
+                                @php($descpart = $datas->insd_part_desc)
                             @endif
 
                             <!-- Qty Conf -->
@@ -309,7 +309,7 @@
             cols += '</td>';
 
             cols += '<td>';
-            cols += '<input type="number" class="form-control qtyreq" name="qtyreq[]" step="1" min="1" required />';
+            
             cols += '</td>';
 
             cols += '<td>';

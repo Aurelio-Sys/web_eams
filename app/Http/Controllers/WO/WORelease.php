@@ -231,6 +231,8 @@ class WORelease extends Controller
                 ->orderBy('repdet_step', 'asc')
                 ->get();
 
+            // dd($combineSP);
+
 
             $rc = DB::table('wo_mstr')
                 ->select('repm_code', 'repm_desc')

@@ -20,17 +20,14 @@
   <input type="hidden" name='wotypee' value="{{$show->wo_type}}"> 
   @if($show->wo_status == 'started')
     <!-- <button type="button" class="btn btn-success btn-action jobview" style="width: 80%;">View</button> -->
-    <a class="btn btn-success btn-action" href="{{route('editWO', $show->wo_nbr)}}"><i class="fas fa-check-square"></i></a>
+    <a class="btn btn-success btn-action" href="{{route('editWO', $show->wo_nbr)}}" title="Finish WO"><i class="fas fa-check-square"></i></a>
   
   @endif
 
   
-  @if($show->wo_status =='finish' && $show->wo_type != 'auto')
-  <a class="aprint" target="_blank"><button type="button" class="btn btn-warning bt-action"><i class="fas fa-print"></i></button></a>
-  <a class="reissued" href="{{route('reissuedWO', $show->wo_nbr)}}"><button type="button" class="btn btn-danger" style="width: 25%;"><i class="fas fa-file-contract"></i></button></a>
-  @elseif($show->wo_status =='finish' && $show->wo_type == 'auto')
-    <a style="width: 80%;"><button type="button" class="btn btn-warning bt-action" style="width: 80%;">...</button></a>
-    <!-- <button type="button" class="btn btn-secondary bt-action" style="width: 80%;" disabled="true"><b>Print<b></button>   -->
+  @if($show->wo_status =='finish')
+  <a class="aprint" target="_blank" title="print WO"><button type="button" class="btn btn-warning bt-action"><i class="fas fa-print"></i></button></a>
+  <a class="reissued" href="{{route('reissuedWO', $show->wo_nbr)}}" title="Reissued WO"><button type="button" class="btn btn-danger" style="width: 25%;"><i class="fas fa-file-contract"></i></button></a>
   @endif
 
 

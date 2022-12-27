@@ -64,10 +64,17 @@
       <a id="aprint2" target="_blank" href="{{url('openprint2/'.$show->wo_nbr)}}" data-toggle="tooltip"  title="Print WO" >2<i class="icon-table fas fa-print fa-lg"></i></a>  
     @endif 
     --}}
-    &nbsp;
-    @if($show->wo_status == 'finish' || $show->wo_status == 'closed')  
+    @if($show->wo_status == 'finish' || $show->wo_status == 'closed')
+      &nbsp;  
       <a id="adownload" target="_blank" href="{{url('wodownloadfile/'.$show->wo_nbr)}}" data-toggle="tooltip"  title="Download asset document" ><i class="icon-table fas fa-download fa-lg"></i></a>  
-    @endif    
+    @endif
+    
+    {{--  Jika tidak ada file upload, icon tidak muncul  --}}
+    @php($cfile = $ceksrfile->where('sr_number','=',$show->wo_sr_nbr)->count())
+    @if($cfile > 0)
+    &nbsp;
+      <a id="srdownload" target="_blank" href="{{url('srdownloadfile/'.$show->wo_sr_nbr)}}" data-toggle="tooltip"  title="Download SR document" ><i class="icon-table fas fa-file-export fa-lg"></i></a>  
+    @endif
   </td>
 </tr>
 @empty

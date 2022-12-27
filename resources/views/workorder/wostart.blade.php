@@ -232,12 +232,24 @@
                 <input id="v_priority" type="text" class="form-control" name="v_priority" value="{{ old('v_priority') }}"  autofocus readonly>
               </div>
             </div>
-            <div class="form-group row justify-content-center">
+            <div id="divstartdate" class="form-group row justify-content-center">
+              <label for="v_startdate" class="col-md-5 col-form-label text-md-left">Start Date</label>
+              <div class="col-md-7">
+                <input id="v_startdate" type="date" class="form-control" name="v_startdate" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"  autofocus>
+              </div>
+            </div>
+            <div id="divstarttime" class="form-group row justify-content-center">
+              <label for="v_starttime" class="col-md-5 col-form-label text-md-left">Start Time</label>
+              <div class="col-md-7">
+                <input id="v_starttime" type="time" class="form-control" name="v_starttime" value="{{ \Carbon\Carbon::now()->format('H:i') }}"  autofocus>
+              </div>
+            </div>
+            <!-- <div class="form-group row justify-content-center">
               <label for="v_mtcby" class="col-md-5 col-form-label text-md-left">Maintenance By</label>
               <div class="col-md-7">
                 <input id="v_mtcby" type="text" class="form-control" name="v_mtcby" readonly>
               </div>
-            </div>
+            </div> -->
             <div class="modal-footer" style="font-size:small;padding-right: 0;padding-left: 0">
               <div class="container">
                 <div id="divcancel" style="display: none;"> <!-- A211027 -->
@@ -261,11 +273,11 @@
                   <div class="col-md-3">
                     <button type="submit" class="btn btn-success bt-action ml-2" id="e_btnchgstatus">Start</button>
                     <button type="submit" style="display:none;"class="btn btn-danger bt-dark ml-2" id="e_btnchgstatus2" disabled>Cancel</button>
-                    <button type="button" class="btn btn-block btn-info" id="e_btnloading" style="display:none"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Loading</button>
+                    <button type="button" class="btn btn-info" id="e_btnloading" style="display:none"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Loading</button>
                   </div>
-                  <div class="col-md-3 p-0">
-                    <!-- <a id="aprint" target="_blank" style="float:right"><button type="button" class="btn btn-warning bt-action"><b>Print</b></button></a> -->
-                  </div>
+                  <!-- <div class="col-md-3 p-0">
+                    <a id="aprint" target="_blank" style="float:right"><button type="button" class="btn btn-warning bt-action"><b>Print</b></button></a>
+                  </div> -->
                 </div>
               </div>
             </div>
@@ -415,11 +427,15 @@
         document.getElementById('statuswo').value = wostatus;
         if(wostatus == 'open'){
           document.getElementById('e_btnchgstatus').style.display = '';
+          document.getElementById('divstartdate').style.display = '';
+          document.getElementById('divstarttime').style.display = '';
           document.getElementById('e_btnchgstatus2').style.display = 'none';
           document.getElementById('checkboxaban').style.display = 'none';
           document.getElementById('labelcheck').style.display = 'none';
         }
         else{
+          document.getElementById('divstartdate').style.display = 'none';
+          document.getElementById('divstarttime').style.display = 'none';
           document.getElementById('e_btnchgstatus').style.display = 'none';
           document.getElementById('e_btnchgstatus2').style.display = '';
           document.getElementById('checkboxaban').style.display = '';
@@ -480,7 +496,7 @@
         document.getElementById('v_asset').value      = asscode+' - '+asset;
         document.getElementById('v_priority').value   = prio;
         document.getElementById('v_dept').value       = wodept;
-        document.getElementById('v_mtcby').value       = mtcby;
+        // document.getElementById('v_mtcby').value       = mtcby;
         
         if($('#loadingtable').hasClass('show')){
 

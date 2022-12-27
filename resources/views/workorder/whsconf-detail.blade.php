@@ -67,8 +67,8 @@
 
         <div class="modal-body">
             <div class="form-group row">
-                <div class="table-responsive col-lg-12 col-md-12 tag-container" style="overflow-x: auto; display: block;white-space: nowrap;">
-                    <table id="createTable" class="table table-bordered order-list" width="120%" cellspacing="0">
+                <div class="table-responsive col-lg-12 col-md-12 tag-container" style="overflow-x: auto; display:inline-block; white-space: nowrap; padding:0; text-align:center; position:relative">
+                    <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0" >
                         <thead>
                             <tr>
                                 <td style="text-align: center; width: 7% !important; font-weight: bold;">Repair Code</td>
@@ -81,7 +81,7 @@
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Location</td>
                                 <td style="text-align: center; width: 5% !important; font-weight: bold;">Stock</td>
                                 <td style="text-align: center; width: 7% !important; font-weight: bold;">Qty Confirm</td>
-                                <td style="text-align: center; width: 11% !important; font-weight: bold;">Release Note</td>
+                                <td style="text-align: center; width: 19% !important; font-weight: bold;">Release Note</td>
                                 <td style="text-align: center; width: 8% !important; font-weight: bold;">Confirm</td>
                             </tr>
                         </thead>
@@ -95,6 +95,18 @@
                                 @else
                                     @php($cqty = $datas->insd_qty)
                                     @php($ccek = 1)
+                                @endif
+
+                                @if($datas->insd_part_desc == "")
+                                    @php($qsp = $spdata->where('spm_code','=',$datas->insd_part)->count())
+                                    @if($qsp == 0)
+                                        @php($descpart = "")
+                                    @else
+                                        @php($rssp = $spdata->where('spm_code','=',$datas->insd_part)->first())
+                                        @php($descpart = $rssp->spm_desc)
+                                    @endif
+                                @else
+                                    @php($descpart = $datas->insd_part_desc)
                                 @endif
 
                                 <!-- qty request -->
@@ -157,11 +169,11 @@
                                     <input type="hidden" name="inscode[]" value="{{$datas->ins_code}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
-                                    {{$datas->insd_part}} -- {{$datas->insd_part_desc}}
+                                    {{$datas->insd_part}} -- {{$descpart}}
                                     <input type="hidden" class="partneed" name="partneed[]" value="{{$datas->insd_part}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    {{ number_format($cqty,2) }}
+                                    {{ number_format($cqty ?? $dqtyreq,2) }}
                                     <input type="hidden" name="qtyreq[]" value="{{$cqty}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
@@ -214,7 +226,7 @@
                                         <input type="hidden" class="form-control qtyconf" name="qtyconf[]" value="{{$dconf}}" />
                                     </td>
                                     <td style="vertical-align: middle; text-align: center;">
-                                        <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99" >{{ $note_release }}</textarea>
+                                        <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99" readonly >{{ $note_release }}</textarea>
                                     </td>
                                     <td style="vertical-align:middle;text-align:center;">    
                                         {{date('Y-m-d', strtotime($whsdate))}}
@@ -237,7 +249,7 @@
                                             <input type="number" class="form-control qtyconf" step="1" min="0" name="qtyconf[]" value="{{$dconf}}" required />
                                         </td>
                                         <td style="vertical-align: middle; text-align: center;">
-                                            <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99" >{{ $note_release }}</textarea>
+                                            <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99" readonly >{{ $note_release }}</textarea>
                                         </td>
                                         <td style="vertical-align:middle;text-align:center;">
                                             <input type="checkbox" class="qaddel" name="qaddel[]" value="">
