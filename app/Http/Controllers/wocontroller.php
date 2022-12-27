@@ -35,10 +35,12 @@ use App\Jobs\EmailScheduleJobs;
 use App;
 use App\Exports\ViewExport2;
 use App\Models\Qxwsa;
+use App\Services\WSAServices;
 use Exception;
 use Maatwebsite\Excel\Facades\Excel;
 use ZipArchive;
 use Response;
+use App\Models\Qxwsa as ModelsQxwsa;
 
 
 class wocontroller extends Controller
@@ -3412,6 +3414,12 @@ class wocontroller extends Controller
             }
 
             // dd($arraydo,$arrayresult);
+
+            $domain = ModelsQxwsa::first();
+
+            $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
+
+            dd($costdata);
 
             foreach ($req->rc_hidden2 as $k_sp => $value) {
                 foreach ($req->rc_hidden1 as $k_ins => $value) {

@@ -37,6 +37,7 @@ use PDF;
 use App;
 use App\Exports\ExportSR;
 use Exception;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Maatwebsite\Excel\Facades\Excel;
 use ZipArchive;
 
@@ -885,10 +886,9 @@ class ServiceController extends Controller
                 return back();
             }
 
-        } catch ( $e) {
-            dd($e);
-            toast('Tidak ada dokumen untuk pada SR ' . $sr . '!', 'error');
-            return back();
+        } catch ( FileNotFoundException $e) {
+            // dd($e);
+            abort('404');
         }
 
         
