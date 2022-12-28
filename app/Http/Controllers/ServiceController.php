@@ -885,7 +885,7 @@ class ServiceController extends Controller
                 return back();
             }
 
-        } catch ( $e) {
+        } catch ( Exception $e) {
             dd($e);
             toast('Tidak ada dokumen untuk pada SR ' . $sr . '!', 'error');
             return back();

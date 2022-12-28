@@ -8,7 +8,7 @@
     <td style="text-align:center;vertical-align:middle;border:1px solid;border-left:2px solid;border-top:2px solid" colspan="1" rowspan="2">
       <img src="{{public_path('assets/Actavis-logo.png')}}" height="40px">
     </td>
-    <td style="text-align:center;border:1px solid;border-left:0px;border-top:2px solid; margin-bottom:-10px" colspan="2">
+    <td style="text-align:center;border:1px solid;border-left:0px;border-top:2px solid; margin-bottom:-10px" colspan="3">
       <p style="margin-top: 5px; margin-bottom:5px"><b>FORMULIR</b><br>
         <b><em>Form</em></b>
       </p>
@@ -18,7 +18,7 @@
     </td>
   </tr>
   <tr>
-    <td style="text-align:center;border:1px solid;border-top:0px solid;border-left:0px;" colspan="2">
+    <td style="text-align:center;border:1px solid;border-top:0px solid;border-left:0px;" colspan="3">
       <p style="margin-top: 5px; margin-bottom:5px"><b>DEPARTEMEN ENGINEERING</b><br>
         <b><em>Engineering Department</em></b>
       </p>
