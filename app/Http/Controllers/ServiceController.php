@@ -37,6 +37,7 @@ use PDF;
 use App;
 use App\Exports\ExportSR;
 use Exception;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Maatwebsite\Excel\Facades\Excel;
 use ZipArchive;
 
@@ -61,10 +62,10 @@ class ServiceController extends Controller
         $asset = DB::table('asset_mstr')
             ->leftJoin('asset_loc','asloc_code','=','asset_loc')
             ->where('asset_active', '=', 'Yes')
-            ->where('asset_loc','=',session::get('department'))
+            // ->where('asset_loc','=',session::get('department'))
             ->orderBy('asset_code')
             ->get();
-
+        // dd(session::get('department'));
         $datadepart = DB::table('dept_mstr')
             ->get();
 
@@ -214,6 +215,7 @@ class ServiceController extends Controller
                     'sr_access' => 0,
                     'sr_approver' => $req->t_app,
                     'sr_date' => $req->t_date,
+                    'sr_time' => $req->t_time,
                     'sr_dept' => Session::get('department'),
                     'req_by' => Session::get('name'),
                     'req_username' => Session::get('username'),
@@ -867,6 +869,7 @@ class ServiceController extends Controller
                         $files = File::get($listdown->filepath);
                         $relativeNameInZipFile = basename($listdown->filepath);
                         $zip->addFile($listdown->filepath, $relativeNameInZipFile);
+                        // dd($listdown->filepath);
                     }
     
                     /* A211103 */
@@ -877,18 +880,20 @@ class ServiceController extends Controller
                     // }
     
                     $zip->close();
+
+                    
                 }
     
                 return response()->download(public_path($fileName));
+                
             } else {
                 toast('Tidak ada dokumen untuk pada SR ' . $sr . '!', 'error');
                 return back();
             }
 
-        } catch ( Exception $e) {
-            dd($e);
-            toast('Tidak ada dokumen untuk pada SR ' . $sr . '!', 'error');
-            return back();
+        } catch ( FileNotFoundException $e) {
+            // dd($e);
+            abort('404');
         }
 
         
