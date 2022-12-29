@@ -25,25 +25,21 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         ];
     }
 
-    // function __construct($srnbr,$status,$asset,$priority,$period,$reqby) {
-    function __construct() {
-        // $this->srnbr    = $srnbr;
-        // $this->status   = $status;
-        // $this->asset    = $asset;
-        // $this->priority = $priority;
-        // $this->period   = $period;
-        // $this->reqby    = $reqby;
+    function __construct($wonbr,$sasset,$per1,$per2) {
+        $this->wonbr    = $wonbr;
+        $this->sasset    = $sasset;
+        $this->per1   = $per1;
+        $this->per2 = $per2;
     }
 
     public function query()
     {
+        // dd($this->wonbr);
         
-        // $xsrnbr    = $this->srnbr;
-        // $status    = $this->status;
-        // $asset     = $this->asset;
-        // $priority  = $this->priority;
-        // $period    = $this->period;
-        // $reqby     = $this->reqby;
+        $wonbr    = $this->wonbr;
+        $sasset     = $this->sasset;
+        $per1    = $this->per1;
+        $per2  = $this->per2;
 
         Schema::create('temp_wo', function ($table) {
             $table->increments('id');
@@ -348,7 +344,18 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
                 'temp_cfail1','temp_nfail1','temp_cfail2','temp_nfail2','temp_cfail3','temp_nfail3','temp_finish_note',
                 'temp_sp','temp_sp_desc','temp_sp_price','temp_qty_req','temp_qty_whs','temp_qty_used')
             ->orderBy('temp_wo','desc');
-            // ->get();
+
+        if($this->wonbr) {
+            $datatemp = $data->where('temp_wo','=',$this->wonbr);
+        }
+
+        if($this->sasset) {
+            $data = $data->where('temp_asset','=',$this->sasset);
+        }
+
+        if($this->per1) {
+            $data = $data->whereBetween ('temp_create_date',[$this->per1,$this->per2]);
+        }
 
         // dd($data);
 

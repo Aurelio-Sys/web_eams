@@ -39,7 +39,7 @@
         </div>
         <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('') }}</label>
         <div class="col-md-2 mb-2 input-group">
-            <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" />
+            <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
         </div>
         <div class="col-md-2 col-sm-12 mb-2 input-group">
             <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>

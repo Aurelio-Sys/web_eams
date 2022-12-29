@@ -257,14 +257,17 @@ class RptDetWOController extends Controller
         if($request->s_asset) {
             $datatemp = $datatemp->where('temp_asset','=',$request->s_asset);
         }
+
+        if($request->s_per1) {
+            $datatemp = $datatemp->whereBetween ('temp_create_date',[$request->s_per1,$request->s_per2]);
+        }
             
         $datatemp = $datatemp->paginate(10); 
-        
 
         Schema::dropIfExists('temp_wo');
         // dd($impact);
         if ($request->dexcel == "excel") {
-            return Excel::download(new DetailWOExport($impact), 'DetailWO.xlsx');
+            return Excel::download(new DetailWOExport($request->swo,$request->sasset,$request->per1,$request->per2), 'DetailWO.xlsx');
             
         } else {
             return view('report.rptdetwo', ['impact' => $impact, 'wottype' => $wottype, 'custrnow' => $custrnow, 

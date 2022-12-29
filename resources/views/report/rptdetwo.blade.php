@@ -65,7 +65,7 @@
               </div>
               <label for="" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
               <div class="col-md-2 col-sm-12 mb-2 input-group">
-                <button type="submit" class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
+                <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
               </div>
               <div class="col-md-1 col-sm-12 mb-1 input-group">
                 <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
@@ -543,73 +543,27 @@
     $('#post_title_icon').html('');
   }
 
-  function fetch_data(page, sort_type, sort_by, wonumber, woasset, wostatus, wopriority, woengineer, wocreator) {
-    // alert(wocreator);
-    $.ajax({
-      url: "/wobrowse/pagination?page=" + page + "&sorttype=" + sort_type + "&sortby=" + sort_by + "&wonumber=" + wonumber + "&woasset=" + woasset + "&wostatus=" + wostatus + "&wopriority=" + wopriority + "&woengineer=" + woengineer + "&wocreator=" + wocreator,
-      success: function(data) {
-        // alert(data);
-        // alert(url);
-        console.log(data);
-        $('tbody').html('');
-        $('tbody').html(data);
-      }
-    })
+  function resetSearch() {
+    $('#s_nomorwo').val('');
+    $('#s_asset').val('');
+    $('#s_per1').val('');
+    $('#s_per2').val('');
   }
 
-  {{--  $(document).on('click', '#btnsearch', function() {
-    var wonumber = $('#s_nomorwo').val();
-    var woasset = $('#s_asset').val();
-    var wostatus = $('#s_status').val();
-    var wopriority = $('#s_priority').val();
-    var woengineer = $('#s_engineer').val();
-    var wocreator = $('#s_creator').val();
-    var column_name = $('#hidden_column_name').val();
-    var sort_type = $('#hidden_sort_type').val();
-    var page = 1;
-    // alert(wocreator);
-    document.getElementById('tmpwo').value = wonumber;
-    document.getElementById('tmpasset').value = woasset;
-    document.getElementById('tmpstatus').value = wostatus;
-    document.getElementById('tmppriority').value = wopriority;
-    document.getElementById('tmpengineer').value = woengineer;
-    document.getElementById('tmpcreator').value = wocreator;
-    // alert(document.getElementById('tmpcreator').value);
-    fetch_data(page, sort_type, column_name, wonumber, woasset, wostatus, wopriority, woengineer, wocreator);
-  });  --}}
-
   $(document).on('click', '#btnrefresh', function() {
-    var wonumber = '';
-    var asset = '';
-    var status = '';
-    var engineer = '';
-    var priority = '';
-    var creator = '';
-    var column_name = $('#hidden_column_name').val();
-    var sort_type = $('#hidden_sort_type').val();
-    var page = 1;
+    document.getElementById('s_per1').required = false;
+    document.getElementById('s_per2').required = false;
 
-    document.getElementById('s_nomorwo').value = '';
-    document.getElementById('s_asset').value = '';
-    document.getElementById('s_status').value = '';
-    document.getElementById('s_engineer').value = '';
-    document.getElementById('s_priority').value = '';
-    document.getElementById('tmpwo').value = '';
-    document.getElementById('tmpasset').value = '';
-    document.getElementById('tmpstatus').value = '';
-    document.getElementById('tmppriority').value = '';
-    document.getElementById('tmpengineer').value = '';
-    document.getElementById('tmpcreator').value = '';
-    $('#s_asset').select2({
-      width: '100%',
-      theme: 'bootstrap4',
-      asset
-    })
-    fetch_data(page, sort_type, column_name, wonumber, asset, status, priority, engineer, creator);
+    resetSearch();
   });
 
   $(document).on('click', '#btnexcel', function() {
-    window.open("/exceldetwo?dexcel=excel", '_blank');
+    var swo = $('#s_nomorwo').val();
+    var sasset = $('#s_asset').val();
+    var per1 = $('#s_per1').val();
+    var per2 = $('#s_per2').val();
+     
+    window.open("/exceldetwo?dexcel=excel&swo=" + swo + "&sasset=" + sasset + "&per1=" + per1 + "&per2=" + per2, '_blank');
   });
 
   $(document).on('click', '.imageview', function() {
@@ -647,5 +601,20 @@
       }
     })
   });
+
+  $(document).on('change', '#s_per1', function() {
+    var per = $('#s_per1').val();
+
+    document.getElementById('s_per2').required = true;
+    document.getElementById('s_per2').min = per1;
+  });
+
+  $(document).on('change', '#s_per2', function() {
+    var per = $('#s_per2').val();
+
+    document.getElementById('s_per1').required = true;
+    document.getElementById('s_per1').max = per;
+  });
+
 </script>
 @endsection
