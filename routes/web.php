@@ -532,6 +532,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// List Spare part
 	Route::get('/kebutuhansp', [KebutuhanSPController::class, 'index'])->name('browseKsp');
+	Route::post('/kebutuhansp/generateso', [KebutuhanSPController::class, 'generateso'])->name('generateSO');
 
 	// Detail WO Report
 	Route::get('/rptdetwo', [RptDetWOController::class, 'index'])->name('browseDetailWO');

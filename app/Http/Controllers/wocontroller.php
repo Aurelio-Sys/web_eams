@@ -42,6 +42,7 @@ use ZipArchive;
 use Response;
 use App\Models\Qxwsa as ModelsQxwsa;
 use App\Services\CreateTempTable;
+use Illuminate\Database\Eloquent\Collection;
 
 class wocontroller extends Controller
 {
@@ -3452,6 +3453,19 @@ class wocontroller extends Controller
                 }
             }
 
+            // foreach ($tempCost as $coscos) {
+            //     foreach ($testarray as $a) {
+            //         if ($coscos->cost_site == $a['site'] && $coscos->cost_part == $a['sp']) {
+            //             $collection = collect($testarray)->map(function ($item, $key) use ($tempCost) {
+            //                 $item['cost'] =($tempCost[$key]->cost_cost);
+            //                 return $item;
+            //             });
+            //         }
+            //     }
+            // }
+
+            // $testarray = $collection->toArray();
+
             foreach ($tempCost as $coscos) {
                 foreach ($testarray as $a) {
                     if ($coscos->cost_site == $a['site'] && $coscos->cost_part == $a['sp']) {
@@ -3459,10 +3473,17 @@ class wocontroller extends Controller
                             $item['cost'] =($tempCost[$key]->cost_cost);
                             return $item;
                         });
+                    }else{
+                        $collection = collect($testarray)->map(function ($item, $key) use ($tempCost) {
+                            $item['cost'] = 0;
+                            return $item;
+                        });
                     }
                 }
             }
 
+            // dd(gettype($collection));
+        
             $testarray = $collection->toArray();
 
             foreach ($testarray as $k_all => $value) {
@@ -3477,7 +3498,7 @@ class wocontroller extends Controller
                         'wo_dets_do_flag' => $testarray[$k_all]['do'],
                         'wo_dets_fu_note' => $testarray[$k_all]['note'],
                         'wo_dets_qty_used' => $testarray[$k_all]['qtyused'],
-                        'wo_dets_sp_price' => $testarray[$k_all]['cost'],
+                        'wo_dets_sp_price' => $testarray[$k_all]['cost'] ? $testarray[$k_all]['cost']:0,
                     ]);
             }
 
