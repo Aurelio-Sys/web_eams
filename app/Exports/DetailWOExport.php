@@ -92,6 +92,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
             $table->string('temp_nrep3')->nullable();
             $table->string('temp_sp')->nullable();
             $table->string('temp_sp_desc')->nullable();
+            $table->decimal('temp_sp_price',10,2)->nullable();
             $table->decimal('temp_qty_req',10,2)->nullable();
             $table->decimal('temp_qty_whs',10,2)->nullable();
             $table->decimal('temp_qty_used',10,2)->nullable();
@@ -125,6 +126,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
                 'temp_status' => $da->wo_status,
                 'temp_sp' => $da->wo_dets_sp,
                 'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->wo_dets_sp)->value('spm_desc'),
+                'temp_sp_price' => $da->wo_dets_sp_price,
                 'temp_qty_req' => $da->wo_dets_sp_qty,
                 'temp_qty_whs' => $da->wo_dets_wh_conf,
                 'temp_qty_used' => $da->wo_dets_qty_used,
@@ -260,8 +262,6 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
                 'temp_sp' => $dc->insd_part,
                 'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$dc->insd_part)->value('spm_desc'),
                 'temp_qty_req' => $dc->insd_qty,
-                'temp_qty_whs' => 0,
-                'temp_qty_used' => 0,
             ]);
         }
 
@@ -346,7 +346,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
                 'temp_ceng1','temp_ceng2','temp_ceng3','temp_ceng4','temp_ceng5',
                 'temp_sch_date','temp_start_date','temp_start_time','temp_finish_date','temp_finish_time','temp_due_date',
                 'temp_cfail1','temp_nfail1','temp_cfail2','temp_nfail2','temp_cfail3','temp_nfail3','temp_finish_note',
-                'temp_sp','temp_sp_desc','temp_qty_req','temp_qty_whs')
+                'temp_sp','temp_sp_desc','temp_sp_price','temp_qty_req','temp_qty_whs','temp_qty_used')
             ->orderBy('temp_wo','desc');
             // ->get();
 
@@ -363,7 +363,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         'Engineer 1','Engineer 2','Engineer 3','Engineer 4','Engineer 5',
         'Schedule Date', 'Start Date', 'Start Time','Finish Date', 'Finish Time','Due Date', 
         'Failure Code 1', 'Failure Desc 1', 'Failure Code 2', 'Failure Desc 2', 'Failure Code 3', 'Failure Desc 3', 'Finish Note',
-        'Sparepart','Sparepart Desc','Qty Required','Qty Confirm Whs','Qty Used'];
+        'Sparepart','Sparepart Desc','Price','Qty Required','Qty Confirm Whs','Qty Used'];
     }
 
     

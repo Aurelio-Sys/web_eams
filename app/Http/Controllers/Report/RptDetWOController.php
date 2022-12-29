@@ -230,7 +230,7 @@ class RptDetWOController extends Controller
                 'temp_wo' => $dc->wo_nbr,
                 'temp_sr' => $dc->wo_sr_nbr,
                 'temp_asset' => $dc->wo_asset,
-                'temp_asset_desc' => DB::table('asset_mstr')->where('asset_code','=',$da->wo_asset)->value('asset_desc'),
+                'temp_asset_desc' => DB::table('asset_mstr')->where('asset_code','=',$dc->wo_asset)->value('asset_desc'),
                 'temp_creator' => $dc->wo_creator,
                 'temp_create_date' => $dc->wo_created_at,
                 'temp_sch_date' => $dc->wo_schedule,
@@ -249,8 +249,16 @@ class RptDetWOController extends Controller
         $datatemp = DB::table('temp_wo')
             ->orderBy('temp_wo','desc');
         // dd($datatemp->get());
+
+        if($request->s_nomorwo) {
+            $datatemp = $datatemp->where('temp_wo','=',$request->s_nomorwo);
+        }
+
+        if($request->s_asset) {
+            $datatemp = $datatemp->where('temp_asset','=',$request->s_asset);
+        }
             
-        $datatemp = $datatemp->paginate(5); 
+        $datatemp = $datatemp->paginate(10); 
         
 
         Schema::dropIfExists('temp_wo');

@@ -27,15 +27,14 @@
 <li class="nav-item">
 <div class="col-12 form-group row">
     <div class="col-12 form-group row">
-        <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Department Code</label>
+        <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset</label>
         <div class="col-md-4 mb-2 input-group">
-            <input id="s_code" type="text" class="form-control" name="s_code"
-            value="" autofocus autocomplete="off"/>
-        </div>
-        <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Department Description</label>
-        <div class="col-md-4 mb-2 input-group">
-            <input id="s_desc" type="text" class="form-control" name="s_desc"
-            value="" autofocus autocomplete="off"/>
+            <select id="s_code" name="s_code" class="form-control">
+                <option value=""></option>
+                @foreach($dataasset as $da)
+                <option value="{{$da->asset_code}}">{{$da->asset_code}} -- {{$da->asset_desc}}</option>
+                @endforeach
+            </select>
         </div>
         <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('') }}</label>
         <div class="col-md-2 mb-2 input-group">
@@ -164,6 +163,10 @@
             $('#s_priority').val(priority).trigger('change');  --}}
         });
     
+        $("#s_code").select2({
+            width : '100%',
+            theme : 'bootstrap4',
+        });
     
     </script>
 

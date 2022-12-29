@@ -1102,7 +1102,14 @@ class UserChartController extends Controller
 // dd($data);
         Schema::dropIfExists('temp_asset');
 
-        return view('report.prevsch', ['data' => $data, 'datatemp' => $datatemp, 'datawo' => $datawo, 'bulan' => $bulan]);
+        $dataasset = DB::table('asset_mstr')
+            ->orderBy('asset_code')
+            ->where('asset_measure','=','C')
+            ->where('asset_active','=','Yes')
+            ->get();
+
+        return view('report.prevsch', ['data' => $data, 'datatemp' => $datatemp, 'datawo' => $datawo, 'bulan' => $bulan,
+            'dataasset' => $dataasset]);
     }
 
     /* Kebutuhan sparepart */
@@ -1284,7 +1291,11 @@ class UserChartController extends Controller
 
         Schema::dropIfExists('temp_wo');
 
-        return view('report.needsp', ['data' => $datatemp]);
+        $dataasset = DB::table('asset_mstr')
+            ->orderBy('asset_code')
+            ->get();
+
+        return view('report.needsp', ['data' => $datatemp, 'dataasset' => $dataasset]);
     }
 
 }

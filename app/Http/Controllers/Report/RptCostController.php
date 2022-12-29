@@ -29,9 +29,14 @@ class RptCostController extends Controller
         $bulan = Carbon::createFromDate($tgl)->isoFormat('YYYY');
 
         $data = DB::table('asset_mstr')
-        ->whereIn('asset_code',['BGN00284R','BGN00292R'])
-        ->orderBy('asset_code')
-        ->paginate(10);
+        // ->whereIn('asset_code',['BGN00284R','BGN00292R'])
+        ->orderBy('asset_code');
+
+        if ($req->s_code) {
+            $data->where('asset_code', '=', $req->s_code);
+        }
+
+        $data = $data->paginate(10);
         // ->get();
 
         // dd($data);
@@ -194,20 +199,17 @@ class RptCostController extends Controller
         }
                
         $datatemp = DB::table('temp_asset')
-            // ->where('temp_cost','>',0)
             ->get();
 
-        // dd($datatemp);
 
-        // ini buat test, nanti dihapus saja. hanya untuk menampikan asset yang ada nilainya
-        // $data = DB::table('asset_mstr')
-        //     ->join('temp_asset','temp_code','=','asset_code')
-        //     ->paginate(10);
+        $dataasset = Db::table('asset_mstr')
+            ->orderBy('asset_code')
+            ->get();
 
         Schema::dropIfExists('temp_wodets');
         Schema::dropIfExists('temp_wo');
         Schema::dropIfExists('temp_asset');
 
-        return view('report.rptcost', ['data' => $data, 'datatemp' => $datatemp, 'bulan' => $bulan]);
+        return view('report.rptcost', ['data' => $data, 'datatemp' => $datatemp, 'bulan' => $bulan, 'dataasset' => $dataasset]);
     }  
 }

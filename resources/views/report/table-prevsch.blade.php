@@ -1,4 +1,4 @@
-@forelse($data as $show)
+@forelse($dataasset as $show)
 <tr>
     <td>{{$show->asset_code}}</td>
     <td>{{$show->asset_desc}}</td>

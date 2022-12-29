@@ -51,22 +51,21 @@
                 <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
                   <option value="">--Select Asset--</option>
                   @foreach($asset1 as $assetsearch)
-                    <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_desc}}</option>
+                    <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
                   @endforeach
                 </select>
               </div>
-              <label for="s_priority" class="col-md-2 col-form-label text-md-right">{{ __('Priority') }}</label>
+              <label for="s_per1" class="col-md-2 col-form-label text-md-right">{{ __('Periode 1') }}</label>
               <div class="col-md-4 col-sm-12 mb-2 input-group">
-                <select id="s_priority" type="text" class="form-control" name="s_priority">
-                  <option value="">--Select Priority--</option>
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
+                <input type="date" name="s_per1" id="s_per1" class="form-control">
+              </div>
+              <label for="s_per2" class="col-md-2 col-form-label text-md-right">{{ __('Periode 2') }}</label>
+              <div class="col-md-4 col-sm-12 mb-2 input-group">
+                <input type="date" name="s_per2" id="s_per2" class="form-control">
               </div>
               <label for="" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
               <div class="col-md-2 col-sm-12 mb-2 input-group">
-                <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
+                <button type="submit" class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
               </div>
               <div class="col-md-1 col-sm-12 mb-1 input-group">
                 <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
@@ -558,7 +557,7 @@
     })
   }
 
-  $(document).on('click', '#btnsearch', function() {
+  {{--  $(document).on('click', '#btnsearch', function() {
     var wonumber = $('#s_nomorwo').val();
     var woasset = $('#s_asset').val();
     var wostatus = $('#s_status').val();
@@ -577,7 +576,7 @@
     document.getElementById('tmpcreator').value = wocreator;
     // alert(document.getElementById('tmpcreator').value);
     fetch_data(page, sort_type, column_name, wonumber, woasset, wostatus, wopriority, woengineer, wocreator);
-  });
+  });  --}}
 
   $(document).on('click', '#btnrefresh', function() {
     var wonumber = '';
