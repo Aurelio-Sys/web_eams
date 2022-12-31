@@ -1021,6 +1021,7 @@ class UserChartController extends Controller
     public function prevsch(Request $req)
     {   
 
+        // dd($req->all());
         $tgl = '';
         if (is_null($req->bulan)) {
             $tgl = Carbon::now('ASIA/JAKARTA')->toDateTimeString();

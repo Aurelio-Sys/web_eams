@@ -94,7 +94,7 @@ class WSAServices
         return [$dataloop, $qdocResult];
     }
 
-    public function wsagetloc($dom)
+    public function wsagetloc($dom,$site)
     {
         $wsa = ModelsQxwsa::first();
 
@@ -115,6 +115,7 @@ class WSAServices
         <Body>
             <eams_loc_mstr xmlns="' . $wsa->wsas_path . '">
                 <inpdomain>' . $domain . '</inpdomain>
+                <inpsite>' . $site . '</inpsite>
             </eams_loc_mstr>
         </Body>
         </Envelope>';

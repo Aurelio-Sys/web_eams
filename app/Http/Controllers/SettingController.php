@@ -297,10 +297,19 @@ class SettingController extends Controller
 
     public function editrole(Request $req)
     {
-        // $access = $req->e_RoleMaint . $req->e_Site . $req->e_Loc . $req->e_Supp . $req->e_Astype . $req->e_Asgroup . $req->e_Fn . $req->e_Asset . $req->e_Aspar . $req->e_Spt . $req->e_Spg . $req->e_Spm . $req->e_Tool . $req->e_Rep . $req->e_Ins . /*$req->e_cbRepdet .*/  $req->e_Repins . $req->e_Reppart . $req->e_Eng . $req->e_Inv . $req->e_dept . $req->e_Skill . $req->e_cbWoBrowse . $req->e_cbWoStart . $req->e_cbWoReport . $req->e_cbWoCreate . $req->e_cbWoMaint . $req->e_cbWoCreatedirect . $req->e_cbSRcreate . $req->e_cbSRapprove . $req->e_cbSRbrowse . $req->e_cbUA . $req->e_cbUSMT . $req->e_User . $req->e_cbRunning;
-
-        $access = $req->e_RoleMaint . $req->e_Site . $req->e_Loc . $req->e_Supp . $req->e_Astype . $req->e_Asgroup . $req->e_Fn . $req->e_Asset . $req->e_Aspar . $req->e_Spt . $req->e_Spg . $req->e_Spm . $req->e_Tool . $req->e_Rep . $req->e_Ins . /*$req->e_cbRepdet .*/  $req->e_Repins . $req->e_Reppart . $req->e_Eng . $req->e_Inv . $req->e_dept . $req->e_Skill . $req->e_cbWoBrowse . $req->e_cbWoStart . $req->e_cbWoReport . $req->e_cbWoMaint . $req->e_cbWoCreatedirect . $req->e_cbSRcreate . $req->e_cbSRapprove . $req->e_cbSRbrowse . $req->e_cbUA . $req->e_cbUSMT . $req->e_cbUSmultiMT . $req->e_User . $req->e_cbRunning . $req->e_cbBoas . $req->e_cbEngSchedule . $req->e_cbBookSchedule . $req->e_cbAssetSchedule . $req->e_cbEngReport . $req->e_cbAssetReport;
+        // $access = $req->e_RoleMaint . $req->e_Site . $req->e_Loc . $req->e_Supp . $req->e_Astype . $req->e_Asgroup . $req->e_Fn . $req->e_Asset . $req->e_Aspar . $req->e_Spt . $req->e_Spg . $req->e_Spm . $req->e_Tool . $req->e_Rep . $req->e_Ins . /*$req->e_cbRepdet .*/  $req->e_Repins . $req->e_Reppart . $req->e_Eng . $req->e_Inv . $req->e_dept . $req->e_Skill . $req->e_cbWoBrowse . $req->e_cbWoStart . $req->e_cbWoReport . $req->e_cbWoMaint . $req->e_cbWoCreatedirect . $req->e_cbSRcreate . $req->e_cbSRapprove . $req->e_cbSRbrowse . $req->e_cbUA . $req->e_cbUSMT . $req->e_cbUSmultiMT . $req->e_User . $req->e_cbRunning . $req->e_cbBoas . $req->e_cbEngSchedule . $req->e_cbBookSchedule . $req->e_cbAssetSchedule . $req->e_cbEngReport . $req->e_cbAssetReport;
         
+        $access = $req->e_dept . $req->e_Skill . $req->e_Eng . $req->e_RoleMaint . $req->e_cbRunning . $req->e_SetWsa . $req->e_SetFntype . $req->e_Fn . $req->e_SetImp . 
+            $req->e_Astype . $req->e_Asgroup . $req->e_Supp . $req->e_SetAssetsite . $req->e_SetAssetloc . $req->e_Asset . $req->e_Aspar . $req->e_SetMove . $req->e_SetEngpm . 
+            $req->e_Spt . $req->e_Spg . $req->e_SetSpsite . $req->e_SetSploc . $req->e_Spm . $req->e_Rep . $req->e_SetRepgroup . $req->e_SetIns . 
+            $req->e_cbWoCreatedirect . $req->e_cbWoMaint . $req->e_cbWoBrowse . $req->e_cbWoRelease . $req->e_cbWoWhsConf . $req->e_cbWoStart . $req->e_cbWoReport . $req->e_cbWoQc . 
+            $req->e_cbSRcreate . $req->e_cbSRapprove . $req->e_cbSRbrowse . 
+            $req->e_cbUSMT . $req->e_cbUSmultiMT . $req->e_cbUSGen . 
+            $req->e_cbBoas . 
+            $req->e_cbRptDet . $req->e_cbRptCost . $req->e_cbAssetReport . $req->e_cbEngReport . $req->e_cbRptRemsp . 
+            $req->e_cbAssetSchedule . $req->e_cbRptSchyear . $req->e_cbEngSchedule . $req->e_cbRptSpneed . $req->e_cbBookSchedule;
+        
+
         DB::table("roles")
             ->where('role_code', '=', $req->e_rolecode)
             ->update([
@@ -500,26 +509,36 @@ class SettingController extends Controller
     //untuk edit site
     public function editsite(Request $req)
     {
-        $cekData = DB::table('site_mstrs')
+        //Fungsi edit site hanya untuk mengganti flag yang berarti site tersebut aktif atau tidak
+        
+        // dd($req->all());
+        /* $cekData = DB::table('site_mstrs')
             ->where('site_code','<>',$req->te_sitecode)
             ->Where('site_desc','=',$req->te_sitedesc)
             ->get();
 
-        if ($cekData->count() == 0) {
+        if ($cekData->count() == 0) { */
+            if($req->te_cek) {
+                $flag = "yes";
+            } else {
+                $flag = null;
+            }
+
             DB::table('site_mstrs')
             ->where('site_code', '=', $req->te_sitecode)
             ->update([
-                'site_desc'     => $req->te_sitedesc,
+                // 'site_desc'     => $req->te_sitedesc,
+                'site_flag'     => $flag,
                 'updated_at'    => Carbon::now()->toDateTimeString(),
                 'edited_by'     => Session::get('username'),
             ]);
 
             toast('Site Updated.', 'success');
             return back();
-        } else {
+        /* } else {
             toast('Site Description is Already Registerd!!', 'error');
             return back();
-        }
+        } */
     }
 
     //untuk delete site
@@ -1015,9 +1034,14 @@ class SettingController extends Controller
 
     //untuk load location dari QAD dengan WSA
     public function loadloc(){
+        /* datasite harusnya nanti dibetulin lagi, karena bisa saja tidak hanya 1 site yang aktif */
+        $datasite = DB::table('site_mstrs')
+            ->where('site_flag','=','yes')
+            ->first();
+
         $domain = ModelsQxwsa::first();
 
-        $locdata = (new WSAServices())->wsagetloc($domain->wsas_domain);
+        $locdata = (new WSAServices())->wsagetloc($domain->wsas_domain, $datasite->site_code);
 
         if ($locdata === false) {
             toast('WSA Failed', 'error')->persistent('Dismiss');
@@ -1039,6 +1063,7 @@ class SettingController extends Controller
                     $rsloc->loc_desc = $datas->t_loc_desc;
                     $rsloc->created_at = Carbon::now()->toDateTimeString();
                     $rsloc->updated_at = Carbon::now()->toDateTimeString();
+                    $rsloc->edited_by = Session::get('username');
                     $rsloc->save();
                 }
             }
@@ -1455,10 +1480,9 @@ class SettingController extends Controller
     }
 
     //untuk paginate failure
-    public function fnpagination(Request $req)
-    {
-
+    public function fnpagination(Request $req) {
         if ($req->ajax()) {
+            // dd($req->all());
             $sort_by = $req->get('sortby');
             $sort_group = $req->get('sorttype');
             $code = $req->get('code');
@@ -1477,8 +1501,9 @@ class SettingController extends Controller
                 return view('setting.table-failure', ['data' => $data, 'dataasgroup' => $dataasgroup]);
             } else {
                 $kondisi = 'id > 0';
+
                 if ($code != '') {
-                    $kondisi = "and fn_code like '%" . $code . "%'";
+                    $kondisi .= " and fn_code like '%" . $code . "%'";
                 }
                 if ($desc != '') {
                     $kondisi .= " and fn_desc like '%" . $desc . "%'";
@@ -1486,11 +1511,14 @@ class SettingController extends Controller
                 if ($imp != '') {
                     $kondisi .= " and fn_impact like '%" . $imp . "%'";
                 }
-                //dd($kondisi);
+                // dd($kondisi);
                 $data = DB::table('fn_mstr')
                     ->whereRaw($kondisi)
                     ->orderBy($sort_by, $sort_group)
                     ->paginate(10);
+                    // ->get();
+
+                // dd($data);
 
                 return view('setting.table-failure', ['data' => $data, 'dataasgroup' => $dataasgroup]);
             }
@@ -2004,6 +2032,7 @@ class SettingController extends Controller
             $meter  = 0;
             $cal    = 0;
         }
+
 // dd($req->all());
         $repair = "";
         if ($req->repairtype == "group") {
@@ -2060,6 +2089,19 @@ class SettingController extends Controller
             }
         }
 
+        /* Jika baru mendaftarkan measurement, last usage = tanggal edit */
+        $cekasset = DB::table('asset_mstr')
+            ->where('asset_code','=',$req->te_code)
+            ->value('asset_measure');
+
+        if (!$cekasset && $req->te_mea) {
+            $tglpm = Carbon::now()->toDateTimeString();
+        } else {
+            $tglpm = DB::table('asset_mstr')
+            ->where('asset_code','=',$req->te_code)
+            ->value('asset_last_mtc');
+        }
+
         DB::table('asset_mstr')
         ->where('asset_code','=',$req->te_code)
         ->update([
@@ -2084,9 +2126,10 @@ class SettingController extends Controller
             'asset_repair'      => $repair,  
             'asset_repair_type' => $req->repairtype, 
             'asset_qad'         => $req->te_qad,  
+            'asset_last_mtc'    => $tglpm,
             'updated_at'        => Carbon::now()->toDateTimeString(),
             'edited_by'         => Session::get('username'),
-        ]);
+        ]); 
 
         toast('Asset Updated.', 'success');
         return back();
@@ -2263,6 +2306,59 @@ class SettingController extends Controller
                            
             }
 
+            return response($output);
+        }
+    }
+
+    //untuk search location spatepart
+    public function searchlocsp(Request $req)
+    {
+        if ($req->ajax()) {
+            $t_site = $req->get('t_site');
+      
+            $data = DB::table('loc_mstr')
+                    ->where('loc_site','=',$t_site)
+                    ->whereNotNull('loc_code')
+                    ->where('loc_code','<>','')
+                    ->orderBy('loc_code')
+                    ->get();
+
+            $output = '<option value="" >Select</option>';
+            foreach($data as $data){
+
+                $output .= '<option value="'.$data->loc_code.'" >'.$data->loc_code.' -- '.$data->loc_desc.'</option>';
+                           
+            }
+
+            return response($output);
+        }
+    }
+
+    //untuk search location by asset
+    public function searchlocsp2(Request $req)
+    {
+        if ($req->ajax()) {
+            // dd($req->all());
+            $site = $req->get('site');
+            $loc = $req->get('loc');
+      
+            $data = DB::table('loc_mstr')
+                    ->where('loc_site','=',$site)
+                    ->whereNotNull('loc_code')
+                    ->where('loc_code','<>','')
+                    ->orderBy('loc_code')
+                    ->get();
+
+            // dd($data);
+
+            $output = '<option value="" >Select</option>';
+            foreach($data as $data){
+                if ($data->loc_code == $loc) {
+                    $output .= '<option value="'.$data->loc_code.'" selected>'.$data->loc_code.' -- '.$data->loc_desc.'</option>';
+                } else {
+                    $output .= '<option value="'.$data->loc_code.'" >'.$data->loc_code.' -- '.$data->loc_desc.'</option>';
+                }         
+            }
             return response($output);
         }
     }
@@ -5128,7 +5224,22 @@ class SettingController extends Controller
                 ->orderby('username')
                 ->paginate(10);
 
-            return view('setting.eng', ['data' => $data, 'datarole' => $datarole, 'dataeng' => $dataeng, 'dataskill' => $dataskill, 'datauser' => $datauser]);
+            $datasite = DB::table('site_mstrs')
+                ->where('site_flag','=','yes')
+                ->orderBy('site_code')
+                ->get();
+
+            $dataloc = DB::table('loc_mstr')
+                ->join('site_mstrs','site_code','=','loc_site')
+                ->where('site_flag','=','yes')
+                ->whereNotNull('loc_code')
+                ->where('loc_code','<>','')
+                ->orderBy('loc_site')
+                ->orderBy('loc_code')
+                ->get();
+
+            return view('setting.eng', ['data' => $data, 'datarole' => $datarole, 'dataeng' => $dataeng, 
+                'dataskill' => $dataskill, 'datauser' => $datauser, 'dataloc' => $dataloc, 'datasite' => $datasite]);
         } else {
             toast('You do not have menu access, please contact admin.', 'error');
             return back();
@@ -5173,10 +5284,11 @@ class SettingController extends Controller
                         ->count();
         
         //pembatas hanya bisa bikin 10 user
-        if($jumlahusernow >= 14){  // ID user actavis 25, ID user imi 4
-            toast('Max. Create 14 User Only', 'error');
-            return back();
-        }
+        // Untuk DK tidak dibatasi usernya
+        // if($jumlahusernow >= 14){  // ID user actavis 25, ID user imi 4
+        //     toast('Max. Create 14 User Only', 'error');
+        //     return back();
+        // }
 
         $skill = "";
         if(!is_null($req->enjiners)) {
@@ -5263,6 +5375,8 @@ class SettingController extends Controller
                     'eng_role'          => $req->t_role,
                     'eng_photo'         => $filename,
                     'eng_role'          => $req->t_role,
+                    'eng_site'          => $req->t_site,
+                    'eng_loc'           => $req->t_loc,
                     'created_at'        => Carbon::now()->toDateTimeString(),
                     'updated_at'        => Carbon::now()->toDateTimeString(),
                     'edited_by'         => Session::get('username'),
@@ -5354,6 +5468,7 @@ class SettingController extends Controller
     //untuk edit Engineer Master
     public function editeng(Request $req)
     {
+        // dd($req->all());
         $skill = "";
         if(!is_null($req->te_enjiners)) {
             $flg = 0;
@@ -5394,6 +5509,8 @@ class SettingController extends Controller
                         'eng_email'         => $req->te_email,
                         'eng_role'          => $req->te_role,
                         'eng_photo'         => $filename,
+                        'eng_site'          => $req->te_site,
+                        'eng_loc'           => $req->te_loc,
                         'updated_at'        => Carbon::now()->toDateTimeString(),
                         'edited_by'         => Session::get('username'),
                     ]);
@@ -5421,6 +5538,8 @@ class SettingController extends Controller
                     'eng_skill'         => $skill,
                     'eng_email'         => $req->te_email,
                     'eng_role'          => $req->te_role,
+                    'eng_site'          => $req->te_site,
+                    'eng_loc'           => $req->te_loc,
                     'updated_at'        => Carbon::now()->toDateTimeString(),
                     'edited_by'         => Session::get('username'),
                 ]);

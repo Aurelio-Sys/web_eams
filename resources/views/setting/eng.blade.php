@@ -241,6 +241,28 @@
                             <input id="t_photo" name="t_photo" type="file" class="form-control-file" id="exampleFormControlFile1"  value="{{ old('t_photo') }}">
                         </div>
                     </div>
+                    <div class="form-group row divqad" id="divqad" style="display: none;">
+                        <label for="t_qad" class="col-md-4 col-form-label text-md-right" style="color:blue">For QAD Location :</label>
+                    </div>
+                    <div class="form-group row divsite" id="divsite" style="display: none;">
+                        <label for="t_site" class="col-md-4 col-form-label text-md-right" >Site <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                        <div class="col-md-6">
+                           <select id="t_site" class="form-control" name="t_site" required value="{{ old('t_site') }}">
+                            <option selected>--Select--</option>
+                            @foreach($datasite as $di)
+                                <option value="{{$di->site_code}}">{{$di->site_code}} -- {{$di->site_desc}}</option>
+                            @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row divloc" id="divloc" style="display: none;">
+                        <label for="t_loc" class="col-md-4 col-form-label text-md-right" >Location <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                        <div class="col-md-6">
+                            <select id="t_loc" class="form-control" name="t_loc" required value="{{ old('t_loc') }}">
+                                
+                            </select>
+                        </div>
+                    </div>
             
                 <div class="modal-footer">
                     <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
@@ -390,6 +412,29 @@
                         <img src="\upload\1.jpg" class="rounded" width="150px" id="foto1">
                     </div>
                 </div>
+
+                <div class="form-group row diveqad" id="diveqad" style="display: none;">
+                    <label for="t_qad" class="col-md-4 col-form-label text-md-right" style="color:blue">For QAD Location :</label>
+                </div>
+                <div class="form-group row divesite" id="divesite" style="display: none;">
+                    <label for="te_site" class="col-md-4 col-form-label text-md-right" >Site <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                    <div class="col-md-6">
+                       <select id="te_site" class="form-control" name="te_site" required value="{{ old('te_site') }}">
+                        <option selected>--Select--</option>
+                        @foreach($datasite as $di)
+                            <option value="{{$di->site_code}}">{{$di->site_code}} -- {{$di->site_desc}}</option>
+                        @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row diveloc" id="diveloc" style="display: none;">
+                    <label for="te_loc" class="col-md-4 col-form-label text-md-right" >Location <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                    <div class="col-md-6">
+                        <select id="te_loc" class="form-control" name="te_loc" required value="{{ old('te_loc') }}">
+                            
+                        </select>
+                    </div>
+                </div>
                 
                 
             </div>
@@ -449,6 +494,8 @@
            var app      = $(this).data('app');
            var dept     = $(this).data('dept');
            var acc      = $(this).data('acc');
+           var site      = $(this).data('site');
+           var loc      = $(this).data('loc');
 
            if (app == 'No') {
                 app = 0;
@@ -469,6 +516,7 @@
            document.getElementById('te_dept').value     = dept;
            document.getElementById('te_skill').value    = skill;
            document.getElementById('te_acc').value      = acc;
+           document.getElementById('te_site').value      = site;
 
            ambilenjiner();
 
@@ -480,6 +528,14 @@
                 }
             }) 
 
+            $.ajax({
+                url:"/searchlocsp2?site=" + site  + "&&loc=" + loc ,
+                success:function(data){
+                    console.log(data);
+                    $('#te_loc').html('').append(data);
+                }
+            }) 
+
             if(acc == 'Engineer'){
                 document.getElementById('diveapp').style.display='';
                 document.getElementById('divebrt').style.display='';
@@ -488,6 +544,9 @@
                 document.getElementById('diveskill').style.display='';
                 document.getElementById('divefoto').style.display='';
                 document.getElementById('divefoto1').style.display='';
+                document.getElementById('diveqad').style.display='';
+                document.getElementById('divesite').style.display='';
+                document.getElementById('diveloc').style.display='';
             }
             else{ 
                 document.getElementById('diveapp').style.display='none';
@@ -497,6 +556,9 @@
                 document.getElementById('diveskill').style.display='none';
                 document.getElementById('divefoto').style.display='none';
                 document.getElementById('divefoto1').style.display='none';
+                document.getElementById('diveqad').style.display='none';
+                document.getElementById('divesite').style.display='none';
+                document.getElementById('diveloc').style.display='none';
             }
            
        });
@@ -735,6 +797,9 @@
             var acc = document.getElementById('t_acc').value;
 
             if(acc == 'Engineer'){
+                document.getElementById('divloc').style.display='';
+                document.getElementById('divsite').style.display='';
+                document.getElementById('divqad').style.display='';
                 document.getElementById('divapp').style.display='';
                 document.getElementById('divbrt').style.display='';
                 document.getElementById('divjoin').style.display='';
@@ -743,6 +808,9 @@
                 document.getElementById('divfoto').style.display='';
             }
             else{ 
+                document.getElementById('divloc').style.display='none';
+                document.getElementById('divsite').style.display='none';
+                document.getElementById('divqad').style.display='none';
                 document.getElementById('divapp').style.display='none';
                 document.getElementById('divbrt').style.display='none';
                 document.getElementById('divjoin').style.display='none';
@@ -773,6 +841,18 @@
                 document.getElementById('divefoto').style.display='none';
                 document.getElementById('divefoto1').style.display='none';
             }
+        });
+
+        $(document).on('change', '#t_site', function() {
+            var site = $('#t_site').val();
+  
+              $.ajax({
+                  url:"/searchlocsp?t_site="+site,
+                  success:function(data){
+                      console.log(data);
+                      $('#t_loc').html('').append(data);
+                  }
+              }) 
         });
         
     </script>

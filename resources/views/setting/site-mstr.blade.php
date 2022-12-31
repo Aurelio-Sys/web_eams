@@ -78,9 +78,10 @@
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                <th width="30%">Code<span id="location_id_icon"></span></th>
-                <th width="60%">Description</th>
-                <!--<th width="10%">Action</th>-->
+                <th width="20%">Code<span id="location_id_icon"></span></th>
+                <th width="50%">Description</th>
+                <th width="20%">Active for eAMS</th>
+                <th width="10%">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -145,13 +146,19 @@
                     <div class="form-group row">
                         <label for="te_sitecode" class="col-md-4 col-form-label text-md-right">Code</label>
                         <div class="col-md-6">
-                            <input id="te_sitecode" type="text" class="form-control" name="te_sitecode" autocomplete="off" autofocus readonly />
+                            <input id="te_sitecode" type="text" class="form-control" name="te_sitecode" autofocus readonly />
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="te_sitedesc" class="col-md-4 col-form-label text-md-right">Description <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                        <label for="te_sitedesc" class="col-md-4 col-form-label text-md-right">Description</label>
                         <div class="col-md-6">
-                            <input id="te_sitedesc" type="text" class="form-control" name="te_sitedesc" autocomplete="off" autofocus maxlength="50" required />
+                            <input id="te_sitedesc" type="text" class="form-control" name="te_sitedesc" readonly />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="te_cek" class="col-md-4 col-form-label text-md-right">Active for eAMS</label>
+                        <div class="form-check">
+                            <input class="form-control" type="checkbox" value="cek" id="te_cek" name="te_cek" >
                         </div>
                     </div>
                 </div>
@@ -203,9 +210,17 @@
 
         var sitecode = $(this).data('sitecode');
         var desc = $(this).data('desc');
+        var flag = $(this).data('flag');
 
         document.getElementById('te_sitecode').value = sitecode;
         document.getElementById('te_sitedesc').value = desc;
+
+        if (flag == "yes") {
+            document.getElementById('te_cek').checked = true; 
+        } else {
+            document.getElementById('te_cek').checked = false; 
+        }
+        
     });
 
     $(document).on('click', '.deletedata', function(e) {

@@ -10,12 +10,12 @@
     <div class="col-md-12">
         <hr>
     </div>
-    <div class="row">                 
+    {{--  <div class="row">                 
         <div class="col-sm-2">    
             <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Location Create</button>
         </div>
     </div>
-    <br>
+    <br>  --}}
     <div class="row">
         <div class="col-md-2">
             <form action="/loadloc" method="post" id="submit">
@@ -257,6 +257,7 @@
         $('#id_icon').html('');
         $('#post_title_icon').html('');
     }
+    
 
     function fetch_data(page, sort_type, sort_by, code, desc, scode, sdesc) {
         $.ajax({

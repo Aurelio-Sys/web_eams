@@ -337,6 +337,8 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/engskill', 'SettingController@engskill');
 	route::get('/engrole', 'SettingController@engrole');
 	route::get('/engrole2', 'SettingController@engrole2');
+	route::get('/searchlocsp', 'SettingController@searchlocsp');
+	route::get('/searchlocsp2', 'SettingController@searchlocsp2');
 	
 	//departemen master
 	route::get('/deptmaster', 'SettingController@deptmaster');
@@ -538,7 +540,8 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/rptdetwo', [RptDetWOController::class, 'index'])->name('browseDetailWO');
 	Route::get('/exceldetwo', [RptDetWOController::class, 'index'])->name('excelDetailWO');
 	
-	Route::get('/rptcost', [RptCostController::class, 'index'])->name('rptcost')->name('rptcost');
+	Route::get('/rptcost', [RptCostController::class, 'index'])->name('rptcost');
+	Route::get('/yearcost', [RptCostController::class, 'yearcost'])->name('yearcost');
 
 	// Asset Site
 	Route::get('/assetsite', [AssetSiteController::class, 'index']);

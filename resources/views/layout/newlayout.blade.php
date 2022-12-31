@@ -291,7 +291,7 @@ to get the desired effect
                 <li class="nav-item">
                   <a href="{{route('woQCIndex')}}" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>WO Qc Approval</p>
+                      <p>WO QC Approval</p>
                   </a>
                 </li>
 
@@ -326,12 +326,12 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
-                <li class="nav-item has-treeview">
+                {{--  <li class="nav-item has-treeview">
                   <a href="{{url('/kebutuhansp')}}" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Spare Part Usage</p>
                   </a>
-                </li>
+                </li>  --}}
                 <li class="nav-item has-treeview">
                   <a href="{{route('viewWOGen')}}" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
@@ -406,11 +406,11 @@ to get the desired effect
                     </p>
                   </a>
                   <ul class="nav nav-treeview">
-                    <li class="nav-item">
+                    {{--  <li class="nav-item">
                       <a href="{{url('/allrpt')}}" class="nav-link ">
                           <p>All Asset Schedule</p>
                       </a>
-                    </li>
+                    </li>  --}}
                     @if(str_contains( Session::get('menu_access'), 'RT03'))
                     <li class="nav-item">
                       <a href="{{url('/assetsch')}}" class="nav-link ">
@@ -418,6 +418,11 @@ to get the desired effect
                       </a>
                     </li>
                     @endif
+                    <li class="nav-item">
+                      <a href="{{url('/prevsch')}}" class="nav-link ">
+                          <p>Asset Schedule (Year)</p>
+                      </a>
+                    </li>
 
                     @if(str_contains( Session::get('menu_access'), 'RT01'))
                     <li class="nav-item">
@@ -427,11 +432,7 @@ to get the desired effect
                     </li>
                     @endif
 
-                    <li class="nav-item">
-                      <a href="{{url('/prevsch')}}" class="nav-link ">
-                          <p>Preventive Schedule</p>
-                      </a>
-                    </li>
+                    
 
                     <li class="nav-item">
                       <a href="{{url('/needsp')}}" class="nav-link ">
@@ -527,13 +528,14 @@ to get the desired effect
                       </a>
                     </li>
                     @endif
-                    @if(str_contains(Session::get('menu_access'), 'MT30'))
+                    {{--  Belum Digunakan
+                      @if(str_contains(Session::get('menu_access'), 'MT30'))
                     <li class="nav-item">
                       <a href="{{url('/picklogic')}}" class="nav-link ">
                         <p>Picking Logic</p>
                       </a>
                     </li>
-                    @endif
+                    @endif  --}}
                     <li class="nav-item">
                       <a href="{{url('qxwsa')}}" class="nav-link ">
                         <p>WSA Qxtend Maintenance</p>
@@ -785,14 +787,15 @@ to get the desired effect
                   </ul><!-- ul repair -->
                 </li> <!-- li repair -->
 
-                @if(str_contains( Session::get('menu_access'), 'MT19'))
+                {{--  Belum perlu digunakan
+                  @if(str_contains( Session::get('menu_access'), 'MT19'))
                 <li class="nav-item">
                   <a href="/inv" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Inventory Data</p>
                   </a>
                 </li>
-                @endif
+                @endif  --}}
               </ul> <!-- ul setting -->
             </li> <!-- li setting -->
 

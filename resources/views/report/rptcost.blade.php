@@ -33,7 +33,7 @@
             <select id="s_code" name="s_code" class="form-control">
                 <option value=""></option>
                 @foreach($dataasset as $da)
-                <option value="{{$da->asset_code}}">{{$da->asset_code}} -- {{$da->asset_desc}}</option>
+                <option value="{{$da->asset_code}}" {{$sasset === $da->asset_code ? "selected" : ""}}>{{$da->asset_code}} -- {{$da->asset_desc}}</option>
                 @endforeach
             </select>
         </div>
@@ -59,10 +59,10 @@
 <div class="col-md-12"><hr></div>
 
 <div class="col-md-12" style="color:black; font-size:2rem; text-align:end">
-    <a href="/prevsch?bulan={{$bulan}}&stat=mundur" id="mundur"><i class="fas fa-angle-left"></i></a>
+    <a href="/yearcost?bulan={{$bulan}}&stat=mundur&asset={{$sasset}}" id="mundur"><i class="fas fa-angle-left"></i></a>
     &ensp;&ensp;<span>{{$bulan}}</span>&ensp;&ensp;
     <input type='hidden' name='bulan' id='bulan' value='{{ $bulan }}'>
-    <a href="/prevsch?bulan={{$bulan}}&stat=maju" id="maju" ><i class="fas fa-angle-right"></i></a>
+    <a href="/yearcost?bulan={{$bulan}}&stat=maju&asset={{$sasset}}" id="maju" ><i class="fas fa-angle-right"></i></a>
 </div>
 
 <div class="table-responsive col-12">
@@ -165,6 +165,10 @@
         });  --}}
 
         {{--  document.getElementById('bulandisplay').innerHTML='{{ $bulan }}';  --}}
+
+        $(document).on('click', '#btnrefresh', function() {
+            document.getElementById('s_code').value  = '';
+        }); 
 
         $("#s_code").select2({
             width : '100%',

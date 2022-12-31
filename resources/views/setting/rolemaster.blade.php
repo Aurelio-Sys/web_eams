@@ -657,7 +657,8 @@
                 </label>
               </div>
             </div>
-            <div class="form-group row">
+            {{--  Dua Kelinci status akhir di QC Approval
+              <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('User Acceptance') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbUA">
@@ -665,12 +666,30 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
 
             <h4>
             <center><strong>Work Order Menu</strong></center>
             </h4>
             <hr>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO Create Without Approval') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbWoCreatedirect">
+                  <input type="checkbox" class="custom-control-input" id="e_cbWoCreatedirect" name="e_cbWoCreatedirect" value="WO06" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbWoMaint">
+                  <input type="checkbox" class="custom-control-input" id="e_cbWoMaint" name="e_cbWoMaint" value="WO01" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div> 
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Browse') }}</label>
               <div class="col-6">
@@ -690,14 +709,23 @@
               </div>
             </div> -->
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Create Direct') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Release') }}</label>
               <div class="col-6">
-                <label class="switch" for="e_cbWoCreatedirect">
-                  <input type="checkbox" class="custom-control-input" id="e_cbWoCreatedirect" name="e_cbWoCreatedirect" value="WO06" />
+                <label class="switch" for="e_cbWoRelease">
+                  <input type="checkbox" class="custom-control-input" id="e_cbWoRelease" name="e_cbWoRelease" value="WO09" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Confirm') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbWoWhsConf">
+                  <input type="checkbox" class="custom-control-input" id="e_cbWoWhsConf" name="e_cbWoWhsConf" value="WO07" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div> 
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Start') }}</label>
               <div class="col-6">
@@ -708,7 +736,7 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Report') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Finish') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbWoReport">
                   <input type="checkbox" class="custom-control-input" id="e_cbWoReport" name="e_cbWoReport" value="WO03" />
@@ -717,10 +745,10 @@
               </div>
             </div> 
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Maintenance') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO QC Approval') }}</label>
               <div class="col-6">
-                <label class="switch" for="e_cbWoMaint">
-                  <input type="checkbox" class="custom-control-input" id="e_cbWoMaint" name="e_cbWoMaint" value="WO01" />
+                <label class="switch" for="e_cbWoQc">
+                  <input type="checkbox" class="custom-control-input" id="e_cbWoQc" name="e_cbWoQc" value="WO08" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -731,7 +759,7 @@
             </h4>
             <hr>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Usage Maintenance') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset PM Calculate') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbUSMT">
                   <input type="checkbox" class="custom-control-input" id="e_cbUSMT" name="e_cbUSMT" value="US01" />
@@ -748,6 +776,16 @@
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO PM Generator') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbUSGen">
+                  <input type="checkbox" class="custom-control-input" id="e_cbUSGen" name="e_cbUSGen" value="US03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+
 			
             <!-- Booking -->
             <h4>
@@ -773,34 +811,34 @@
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('All Asset Schedule') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbSRcreate">
-                  <input type="checkbox" class="custom-control-input" id="cbSRcreate" name="cbSRcreate" value="SR01" />
+                  <input type="checkbox" class="custom-control-input" id="cbSRcreate" name="cbSRcreate" value="RT11" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div> -->
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Engineer Schedule') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Detail WO Report') }}</label>
               <div class="col-6">
-                <label class="switch" for="e_cbEngSchedule">
-                  <input type="checkbox" class="custom-control-input" id="e_cbEngSchedule" name="e_cbEngSchedule" value="RT01" />
+                <label class="switch" for="e_cbRptDet">
+                  <input type="checkbox" class="custom-control-input" id="e_cbRptDet" name="e_cbRptDet" value="RT08" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Booking Schedule') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Cost Report') }}</label>
               <div class="col-6">
-                <label class="switch" for="e_cbBookSchedule">
-                  <input type="checkbox" class="custom-control-input" id="e_cbBookSchedule" name="e_cbBookSchedule" value="RT02" />
+                <label class="switch" for="e_cbRptCost">
+                  <input type="checkbox" class="custom-control-input" id="e_cbRptCost" name="e_cbRptCost" value="RT09" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Schedule') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Report') }}</label>
               <div class="col-6">
-                <label class="switch" for="e_cbAssetSchedule">
-                  <input type="checkbox" class="custom-control-input" id="e_cbAssetSchedule" name="e_cbAssetSchedule" value="RT03" />
+                <label class="switch" for="e_cbAssetReport">
+                  <input type="checkbox" class="custom-control-input" id="e_cbAssetReport" name="e_cbAssetReport" value="RT05" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -815,29 +853,67 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Report') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Remaining Sparepart') }}</label>
               <div class="col-6">
-                <label class="switch" for="e_cbAssetReport">
-                  <input type="checkbox" class="custom-control-input" id="e_cbAssetReport" name="e_cbAssetReport" value="RT05" />
+                <label class="switch" for="e_cbRptRemsp">
+                  <input type="checkbox" class="custom-control-input" id="e_cbRptRemsp" name="e_cbRptRemsp" value="RT10" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Schedule') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbAssetSchedule">
+                  <input type="checkbox" class="custom-control-input" id="e_cbAssetSchedule" name="e_cbAssetSchedule" value="RT03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Schedule (Year)') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbRptSchyear">
+                  <input type="checkbox" class="custom-control-input" id="e_cbRptSchyear" name="e_cbRptSchyear" value="RT07" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Engineer Schedule') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbEngSchedule">
+                  <input type="checkbox" class="custom-control-input" id="e_cbEngSchedule" name="e_cbEngSchedule" value="RT01" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Sparepart Needs') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbRptSpneed">
+                  <input type="checkbox" class="custom-control-input" id="e_cbRptSpneed" name="e_cbRptSpneed" value="RT06" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Booking Schedule') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbBookSchedule">
+                  <input type="checkbox" class="custom-control-input" id="e_cbBookSchedule" name="e_cbBookSchedule" value="RT02" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            
+            
 
             <!-- Setting -->
             <h4>
               <center><strong>Settings</strong></center>
             </h4>
             <hr>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Role Maintenance ') }}</label>
-              <div class="col-6">
-                <label class="switch" for="e_RoleMaint">
-                  <input type="checkbox" class="custom-control-input" id="e_RoleMaint" name="e_RoleMaint" value="MT02" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Department Maintenance') }}</label>
               <div class="col-6">
@@ -860,34 +936,16 @@
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('User Maintenance') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_Eng">
-                  <input type="checkbox" class="custom-control-input" id="e_Eng" name="e_Eng" value="MT20" />
+                  <input type="checkbox" class="custom-control-input" id="e_Eng" name="e_Eng" value="MT01" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Site Maintenance ') }}</label>
+              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Role Maintenance ') }}</label>
               <div class="col-6">
-                <label class="switch" for="e_Site">
-                  <input type="checkbox" class="custom-control-input" id="e_Site" name="e_Site" value="MT03" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Location Maintenance ') }}</label>
-              <div class="col-6">
-                <label class="switch" for="e_Loc">
-                  <input type="checkbox" class="custom-control-input" id="e_Loc" name="e_Loc" value="MT04" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Supplier Maintenance ') }}</label>
-              <div class="col-6">
-                <label class="switch" for="e_Supp">
-                  <input type="checkbox" class="custom-control-input" id="e_Supp" name="e_Supp" value="MT07" />
+                <label class="switch" for="e_RoleMaint">
+                  <input type="checkbox" class="custom-control-input" id="e_RoleMaint" name="e_RoleMaint" value="MT02" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -901,6 +959,43 @@
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('WSA Qxtend Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_SetWsa">
+                  <input type="checkbox" class="custom-control-input" id="e_SetWsa" name="e_SetWsa" value="MT20" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Failure Type Maintenance ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_SetFntype">
+                  <input type="checkbox" class="custom-control-input" id="e_SetFntype" name="e_SetFntype" value="MT32" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Failure Code Maintenance ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_Fn">
+                  <input type="checkbox" class="custom-control-input" id="e_Fn" name="e_Fn" value="MT33" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Impact Maintenance ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_SetImp">
+                  <input type="checkbox" class="custom-control-input" id="e_SetImp" name="e_SetImp" value="MT34" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Type Maintenance  ') }}</label>
               <div class="col-6">
@@ -920,10 +1015,28 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Failure Code Maintenance ') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Supplier Maintenance ') }}</label>
               <div class="col-6">
-                <label class="switch" for="e_Fn">
-                  <input type="checkbox" class="custom-control-input" id="e_Fn" name="e_Fn" value="MT13" />
+                <label class="switch" for="e_Supp">
+                  <input type="checkbox" class="custom-control-input" id="e_Supp" name="e_Supp" value="MT07" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Asset Site Maintenance ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_SetAssetsite">
+                  <input type="checkbox" class="custom-control-input" id="e_SetAssetsite" name="e_SetAssetsite" value="MT26" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Location Maintenance ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_SetAssetloc">
+                  <input type="checkbox" class="custom-control-input" id="e_SetAssetloc" name="e_SetAssetloc" value="MT28" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -947,7 +1060,25 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Type Maintenance') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Movement ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_SetMove">
+                  <input type="checkbox" class="custom-control-input" id="e_SetMove" name="e_SetMove" value="MT30" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Engineer For PM') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_SetEngpm">
+                  <input type="checkbox" class="custom-control-input" id="e_SetEngpm" name="e_SetEngpm" value="MT31" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Type ') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_Spt">
                   <input type="checkbox" class="custom-control-input" id="e_Spt" name="e_Spt" value="MT10" />
@@ -956,7 +1087,7 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Group Maintenance') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Group ') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_Spg">
                   <input type="checkbox" class="custom-control-input" id="e_Spg" name="e_Spg" value="MT11" />
@@ -965,7 +1096,25 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Code Maintenance ') }}</label>
+              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Spare Part Site ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_SetSpsite">
+                  <input type="checkbox" class="custom-control-input" id="e_SetSpsite" name="e_SetSpsite" value="MT27" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Location ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_SetSploc">
+                  <input type="checkbox" class="custom-control-input" id="e_SetSploc" name="e_SetSploc" value="MT29" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Code ') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_Spm">
                   <input type="checkbox" class="custom-control-input" id="e_Spm" name="e_Spm" value="MT12" />
@@ -973,7 +1122,7 @@
                 </label>
               </div>
             </div>
-            <div class="form-group row">
+            {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Tools Maintenance ') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_Tool">
@@ -981,17 +1130,35 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Repair Code Maintenance ') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Repair Code ') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_Rep">
-                  <input type="checkbox" class="custom-control-input" id="e_Rep" name="e_Rep" value="MT15" />
+                  <input type="checkbox" class="custom-control-input" id="e_Rep" name="e_Rep" value="MT34" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Repair Group ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_SetRepgroup">
+                  <input type="checkbox" class="custom-control-input" id="e_SetRepgroup" name="e_SetRepgroup" value="MT15" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Instruction Code ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_SetIns">
+                  <input type="checkbox" class="custom-control-input" id="e_SetIns" name="e_SetIns" value="MT35" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Instruction Details Maintenance') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_Ins">
@@ -1018,7 +1185,7 @@
                 </label>
               </div>
             </div>
-            <!-- <div class="form-group row">
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Repair Details Maintenance') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbRepdet">
@@ -1026,8 +1193,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div> -->
-            
+            </div>
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Inventory Data Maintenance') }}</label>
               <div class="col-6">
@@ -1036,7 +1202,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
 
               <div class="modal-footer">
                 <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
@@ -1142,11 +1308,7 @@
         var listmenu = data;
         
         // Setting
-        if (listmenu.search("MT02") >= 0) {
-          document.getElementById('e_RoleMaint').checked = true;
-        } else {
-          document.getElementById('e_RoleMaint').checked = false;
-        }
+        
         if (listmenu.search("MT21") >= 0) {
           document.getElementById('e_dept').checked = true;
         } else {
@@ -1157,7 +1319,7 @@
         } else {
           document.getElementById('e_Skill').checked = false;
         }
-        if (listmenu.search("MT20") >= 0) {
+        if (listmenu.search("MT01") >= 0) {
           document.getElementById('e_Eng').checked = true;
         } else {
           document.getElementById('e_Eng').checked = false;
@@ -1167,20 +1329,35 @@
         // } else {
         //   document.getElementById('e_User').checked = false;
         // }
-        if (listmenu.search("MT03") >= 0) {
-          document.getElementById('e_Site').checked = true;
+        if (listmenu.search("MT02") >= 0) {
+          document.getElementById('e_RoleMaint').checked = true;
         } else {
-          document.getElementById('e_Site').checked = false;
+          document.getElementById('e_RoleMaint').checked = false;
         }
-        if (listmenu.search("MT04") >= 0) {
-          document.getElementById('e_Loc').checked = true;
+        if (listmenu.search("MT99") >= 0) {
+          document.getElementById('e_cbRunning').checked = true;
         } else {
-          document.getElementById('e_Loc').checked = false;
+          document.getElementById('e_cbRunning').checked = false;
         }
-        if (listmenu.search("MT07") >= 0) {
-          document.getElementById('e_Supp').checked = true;
+        if (listmenu.search("MT20") >= 0) {
+          document.getElementById('e_SetWsa').checked = true;
         } else {
-          document.getElementById('e_Supp').checked = false;
+          document.getElementById('e_SetWsa').checked = false;
+        }
+        if (listmenu.search("MT32") >= 0) {
+          document.getElementById('e_SetFntype').checked = true;
+        } else {
+          document.getElementById('e_SetFntype').checked = false;
+        }
+        if (listmenu.search("MT33") >= 0) {
+          document.getElementById('e_Fn').checked = true;
+        } else {
+          document.getElementById('e_Fn').checked = false;
+        }
+        if (listmenu.search("MT34") >= 0) {
+          document.getElementById('e_SetImp').checked = true;
+        } else {
+          document.getElementById('e_SetImp').checked = false;
         }
         if (listmenu.search("MT05") >= 0) {
           document.getElementById('e_Astype').checked = true;
@@ -1192,10 +1369,20 @@
         } else {
           document.getElementById('e_Asgroup').checked = false;
         }
-        if (listmenu.search("MT13") >= 0) {
-          document.getElementById('e_Fn').checked = true;
+        if (listmenu.search("MT07") >= 0) {
+          document.getElementById('e_Supp').checked = true;
         } else {
-          document.getElementById('e_Fn').checked = false;
+          document.getElementById('e_Supp').checked = false;
+        }
+        if (listmenu.search("MT26") >= 0) {
+          document.getElementById('e_SetAssetsite').checked = true;
+        } else {
+          document.getElementById('e_SetAssetsite').checked = false;
+        }
+        if (listmenu.search("MT28") >= 0) {
+          document.getElementById('e_SetAssetloc').checked = true;
+        } else {
+          document.getElementById('e_SetAssetloc').checked = false;
         }
         if (listmenu.search("MT08") >= 0) {
           document.getElementById('e_Asset').checked = true;
@@ -1207,6 +1394,16 @@
         } else {
           document.getElementById('e_Aspar').checked = false;
         }
+        if (listmenu.search("MT30") >= 0) {
+          document.getElementById('e_SetMove').checked = true;
+        } else {
+          document.getElementById('e_SetMove').checked = false;
+        }
+        if (listmenu.search("MT31") >= 0) {
+          document.getElementById('e_SetEngpm').checked = true;
+        } else {
+          document.getElementById('e_SetEngpm').checked = false;
+        }
         if (listmenu.search("MT10") >= 0) {
           document.getElementById('e_Spt').checked = true;
         } else {
@@ -1217,12 +1414,22 @@
         } else {
           document.getElementById('e_Spg').checked = false;
         }
+        if (listmenu.search("MT27") >= 0) {
+          document.getElementById('e_SetSpsite').checked = true;
+        } else {
+          document.getElementById('e_SetSpsite').checked = false;
+        }
+        if (listmenu.search("MT29") >= 0) {
+          document.getElementById('e_SetSploc').checked = true;
+        } else {
+          document.getElementById('e_SetSploc').checked = false;
+        }
         if (listmenu.search("MT12") >= 0) {
           document.getElementById('e_Spm').checked = true;
         } else {
           document.getElementById('e_Spm').checked = false;
         }
-        if (listmenu.search("MT14") >= 0) {
+        {{--  if (listmenu.search("MT14") >= 0) {
           document.getElementById('e_Tool').checked = true;
         } else {
           document.getElementById('e_Tool').checked = false;
@@ -1231,6 +1438,32 @@
           document.getElementById('e_Rep').checked = true;
         } else {
           document.getElementById('e_Rep').checked = false;
+        }  --}}
+        if (listmenu.search("MT34") >= 0) {
+          document.getElementById('e_Rep').checked = true;
+        } else {
+          document.getElementById('e_Rep').checked = false;
+        }
+        if (listmenu.search("MT15") >= 0) {
+          document.getElementById('e_SetRepgroup').checked = true;
+        } else {
+          document.getElementById('e_SetRepgroup').checked = false;
+        }
+        if (listmenu.search("MT35") >= 0) {
+          document.getElementById('e_SetIns').checked = true;
+        } else {
+          document.getElementById('e_SetIns').checked = false;
+        }
+        
+        {{--  if (listmenu.search("MT03") >= 0) {
+          document.getElementById('e_Site').checked = true;
+        } else {
+          document.getElementById('e_Site').checked = false;
+        }
+        if (listmenu.search("MT04") >= 0) {
+          document.getElementById('e_Loc').checked = true;
+        } else {
+          document.getElementById('e_Loc').checked = false;
         }
         if (listmenu.search("MT16") >= 0) {
           document.getElementById('e_Ins').checked = true;
@@ -1247,59 +1480,66 @@
         } else {
           document.getElementById('e_Reppart').checked = false;
         }
-        // if (listmenu.search("MT23") >= 0) {
-        //   document.getElementById('e_cbRepdet').checked = true;
-        // } else {
-        //   document.getElementById('e_cbRepdet').checked = false;
-        // }
-       
+        if (listmenu.search("MT23") >= 0) {
+          document.getElementById('e_cbRepdet').checked = true;
+        } else {
+          document.getElementById('e_cbRepdet').checked = false;
+        }
         if (listmenu.search("MT19") >= 0) {
           document.getElementById('e_Inv').checked = true;
         } else {
           document.getElementById('e_Inv').checked = false;
-        }
-        if (listmenu.search("MT99") >= 0) {
-          document.getElementById('e_cbRunning').checked = true;
-        } else {
-          document.getElementById('e_cbRunning').checked = false;
-        }
+        }  --}}
+        
 
         // Work Order
-        if (listmenu.search("WO05") >= 0) {
-          document.getElementById('e_cbWoBrowse').checked = true;
-        } else {
-          document.getElementById('e_cbWoBrowse').checked = false;
-        }
-
-        if (listmenu.search("WO02") >= 0) {
-          document.getElementById('e_cbWoStart').checked = true;
-        } else {
-          document.getElementById('e_cbWoStart').checked = false;
-        }
-
-        if (listmenu.search("WO03") >= 0) {
-          document.getElementById('e_cbWoReport').checked = true;
-        } else {
-          document.getElementById('e_cbWoReport').checked = false;
-        }
-
-        // if (listmenu.search("WO04") >= 0) {
-        //   document.getElementById('e_cbWoCreate').checked = true;
-        // } else {
-        //   document.getElementById('e_cbWoCreate').checked = false;
-        // }
-
         if (listmenu.search("WO06") >= 0) {
           document.getElementById('e_cbWoCreatedirect').checked = true;
         } else {
           document.getElementById('e_cbWoCreatedirect').checked = false;
         }
-
         if (listmenu.search("WO01") >= 0) {
           document.getElementById('e_cbWoMaint').checked = true;
         } else {
           document.getElementById('e_cbWoMaint').checked = false;
         }
+        if (listmenu.search("WO05") >= 0) {
+          document.getElementById('e_cbWoBrowse').checked = true;
+        } else {
+          document.getElementById('e_cbWoBrowse').checked = false;
+        }
+        {{--  if (listmenu.search("WO04") >= 0) {
+           document.getElementById('e_cbWoCreate').checked = true;
+        } else {
+           document.getElementById('e_cbWoCreate').checked = false;
+        }  --}}
+        if (listmenu.search("WO09") >= 0) {
+          document.getElementById('e_cbWoRelease').checked = true;
+        } else {
+          document.getElementById('e_cbWoRelease').checked = false;
+        }
+        if (listmenu.search("WO07") >= 0) {
+          document.getElementById('e_cbWoWhsConf').checked = true;
+        } else {
+          document.getElementById('e_cbWoWhsConf').checked = false;
+        }
+        if (listmenu.search("WO02") >= 0) {
+          document.getElementById('e_cbWoStart').checked = true;
+        } else {
+          document.getElementById('e_cbWoStart').checked = false;
+        }
+        if (listmenu.search("WO03") >= 0) {
+          document.getElementById('e_cbWoReport').checked = true;
+        } else {
+          document.getElementById('e_cbWoReport').checked = false;
+        }
+        if (listmenu.search("WO08") >= 0) {
+          document.getElementById('e_cbWoQc').checked = true;
+        } else {
+          document.getElementById('e_cbWoQc').checked = false;
+        }
+
+        
 
         //Service Request
         if (listmenu.search("SR01") >= 0) {
@@ -1320,11 +1560,12 @@
           document.getElementById('e_cbSRbrowse').checked = false;
         }
 
-        if (listmenu.search("SR04") >= 0) {
+        {{--  if (listmenu.search("SR04") >= 0) {
           document.getElementById('e_cbUA').checked = true;
         } else {
           document.getElementById('e_cbUA').checked = false;
-        }
+        }  --}}
+
 
         // Usage
         if (listmenu.search("US01") >= 0) {
@@ -1337,6 +1578,11 @@
         } else {
           document.getElementById('e_cbUSmultiMT').checked = false;
         }
+        if (listmenu.search("US03") >= 0) {
+          document.getElementById('e_cbUSGen').checked = true;
+        } else {
+          document.getElementById('e_cbUSGen').checked = false;
+        }
 
         // Booking
         if (listmenu.search("BO01") >= 0) {
@@ -1346,35 +1592,57 @@
         }
 
         //Report
+        if (listmenu.search("RT08") >= 0) {
+          document.getElementById('e_cbRptDet').checked = true;
+        } else {
+          document.getElementById('e_cbRptDet').checked = false;
+        }
+        if (listmenu.search("RT09") >= 0) {
+          document.getElementById('e_cbRptCost').checked = true;
+        } else {
+          document.getElementById('e_cbRptCost').checked = false;
+        }
+        if (listmenu.search("RT05") >= 0) {
+          document.getElementById('e_cbAssetReport').checked = true;
+        } else {
+          document.getElementById('e_cbAssetReport').checked = false;
+        }
+        if (listmenu.search("RT04") >= 0) {
+          document.getElementById('e_cbEngReport').checked = true;
+        } else {
+          document.getElementById('e_cbEngReport').checked = false;
+        }
+        if (listmenu.search("RT10") >= 0) {
+          document.getElementById('e_cbRptRemsp').checked = true;
+        } else {
+          document.getElementById('e_cbRptRemsp').checked = false;
+        }
+        if (listmenu.search("RT03") >= 0) {
+          document.getElementById('e_cbAssetSchedule').checked = true;
+        } else {
+          document.getElementById('e_cbAssetSchedule').checked = false;
+        }
+        if (listmenu.search("RT07") >= 0) {
+          document.getElementById('e_cbRptSchyear').checked = true;
+        } else {
+          document.getElementById('e_cbRptSchyear').checked = false;
+        }
         if (listmenu.search("RT01") >= 0) {
           document.getElementById('e_cbEngSchedule').checked = true;
         } else {
           document.getElementById('e_cbEngSchedule').checked = false;
         }
-
+        if (listmenu.search("RT06") >= 0) {
+          document.getElementById('e_cbRptSpneed').checked = true;
+        } else {
+          document.getElementById('e_cbRptSpneed').checked = false;
+        }
         if (listmenu.search("RT02") >= 0) {
           document.getElementById('e_cbBookSchedule').checked = true;
         } else {
           document.getElementById('e_cbBookSchedule').checked = false;
         }
 
-        if (listmenu.search("RT03") >= 0) {
-          document.getElementById('e_cbAssetSchedule').checked = true;
-        } else {
-          document.getElementById('e_cbAssetSchedule').checked = false;
-        }
-
-        if (listmenu.search("RT04") >= 0) {
-          document.getElementById('e_cbEngReport').checked = true;
-        } else {
-          document.getElementById('e_cbEngReport').checked = false;
-        }
-
-        if (listmenu.search("RT05") >= 0) {
-          document.getElementById('e_cbAssetReport').checked = true;
-        } else {
-          document.getElementById('e_cbAssetReport').checked = false;
-        }
 
       }
     });

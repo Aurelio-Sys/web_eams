@@ -33,16 +33,23 @@
 <div class="col-12 form-group row">
     <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Failure Code</label>
     <div class="col-md-4 mb-2 input-group">
-        {{--  <select id="s_code" class="form-control" name="s_code">
+        {{--  Jika menggunakan select, tidak bisa mencari kode dengan depan "CF" (misalnya)
+            <select id="s_code" class="form-control" name="s_code">
             <option value=""></option>
             @foreach($datasearch as $sdata)
-                <option value="{{$sdata->fn_code}}">{{$sdata->fn_code}} - {{$sdata->fn_desc}}</option>
+                <option value="{{$sdata->fn_code}}">{{$sdata->fn_code}}</option>
             @endforeach
         </select>  --}}
         <input id="s_code" type="text" class="form-control" name="s_code" value="" autofocus autocomplete="off"/>
     </div>
     <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Failure Code Description</label>
     <div class="col-md-4 mb-2 input-group">
+        {{--  <select id="s_desc" class="form-control" name="s_desc">
+            <option value=""></option>
+            @foreach($datasearch as $dd)
+                <option value="{{$dd->fn_desc}}">{{$dd->fn_desc}}</option>
+            @endforeach
+        </select>  --}}
         <input id="s_desc" type="text" class="form-control" name="s_desc" value="" autofocus autocomplete="off"/>
     </div>
     <label for="s_imp" class="col-md-2 col-sm-2 col-form-label text-md-right">Note</label>
@@ -116,7 +123,7 @@
                     <div class="form-group row">
                         <label for="t_imp" class="col-md-4 col-form-label text-md-right">Note</label>
                         <div class="col-md-6">
-                            <input id="t_imp" type="text" class="form-control" name="t_imp" autocomplete="off" autofocus maxlength="50" required/>
+                            <input id="t_imp" type="text" class="form-control" name="t_imp" autocomplete="off" autofocus maxlength="50"/>
                         </div>
                     </div>
                 </div>
@@ -158,7 +165,7 @@
                 <div class="form-group row">
                     <label for="te_imp" class="col-md-4 col-form-label text-md-right">Note</label>
                     <div class="col-md-6">
-                        <input id="te_imp" type="text" class="form-control" name="te_imp" autocomplete="off" autofocus maxlength="50" required/>
+                        <input id="te_imp" type="text" class="form-control" name="te_imp" autocomplete="off" autofocus maxlength="50"/>
                     </div>
                 </div>
             </div>
@@ -343,6 +350,11 @@
         });
 
         $("#s_code").select2({
+            width : '100%',
+            theme : 'bootstrap4',
+            
+        });
+        $("#s_desc").select2({
             width : '100%',
             theme : 'bootstrap4',
             

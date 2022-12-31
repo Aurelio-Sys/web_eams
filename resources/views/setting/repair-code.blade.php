@@ -388,7 +388,7 @@
         var newRow = $("<tr>");
         var cols = "";
 
-        cols += '<td data-label="Line"><input type="text" name="line[]" class="form-control" autocomplete="off"></td>';
+        cols += '<td data-label="Line"><input type="text" name="line[]" class="form-control" autocomplete="off" required></td>';
         cols += '<td data-label="Instruction Code">';
         cols += '<select id="barang" class="form-control barang selectpicker" name="barang[]" data-container="body" data-live-search="true" required autofocus>';
         cols += '<option value = ""> -- Select Data -- </option>'
@@ -420,7 +420,7 @@
         var newRow = $("<tr>");
         var cols = "";
 
-        cols += '<td data-label="Line"><input type="text" name="line[]" class="form-control" autocomplete="off"></td>'
+        cols += '<td data-label="Line"><input type="text" name="line[]" class="form-control" autocomplete="off" required></td>'
         cols += '<td data-label="Instruction Code">';
         cols += '<select id="barang" class="form-control barang selectpicker" name="barang[]" data-live-search="true" required autofocus>';
         cols += '<option value = ""> -- Select Data -- </option>'
