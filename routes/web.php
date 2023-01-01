@@ -7,6 +7,7 @@ use App\Http\Controllers\Master\PmEngController;
 use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\Report\RemainSpController;
+use App\Http\Controllers\Report\RptAssetYearController;
 use App\Http\Controllers\SP\KebutuhanSPController;
 use App\Http\Controllers\WO\AllWOGenerate;
 use App\Http\Controllers\WO\ConfirmEng;
@@ -583,6 +584,9 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('createapmeng', [PmEngController::class, 'store']);
 	Route::post('editpmeng', [PmEngController::class, 'update']);
 	Route::post('deletepmeng', [PmEngController::class, 'destroy']);
+
+	// Report Schedule Asset Year
+	Route::get('assetyear', [RptAssetYearController::class, 'index']);
 });
 
 Auth::routes();

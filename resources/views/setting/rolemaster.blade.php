@@ -188,7 +188,8 @@
                 </label>
               </div>
             </div>
-            <div class="form-group row">
+            {{--  Dua Kelinci status akhir di QC Approval
+              <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('User Acceptance') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbUA">
@@ -196,54 +197,17 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
-            
-            <!-- Work Order -->
+            </div>  --}}
+
             <h4>
             <center><strong>Work Order Menu</strong></center>
             </h4>
             <hr>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Browse') }}</label>
-              <div class="col-6">
-                <label class="switch" for="cbWoBrowse">
-                  <input type="checkbox" class="custom-control-input" id="cbWoBrowse" name="cbWoBrowse" value="WO05" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-           <!--  <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Create') }}</label>
-              <div class="col-6">
-                <label class="switch" for="cbWoCreate">
-                  <input type="checkbox" class="custom-control-input" id="cbWoCreate" name="cbWoCreate" value="WO04" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div> -->
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Create Direct') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO Create Without Approval') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbWoCreatedirect">
                   <input type="checkbox" class="custom-control-input" id="cbWoCreatedirect" name="cbWoCreatedirect" value="WO06" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Start') }}</label>
-              <div class="col-6">
-                <label class="switch" for="cbWoStart">
-                  <input type="checkbox" class="custom-control-input" id="cbWoStart" name="cbWoStart" value="WO02" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Report') }}</label>
-              <div class="col-6">
-                <label class="switch" for="cbWoReport">
-                  <input type="checkbox" class="custom-control-input" id="cbWoReport" name="cbWoReport" value="WO03" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -256,16 +220,77 @@
                   <div class="slider round"></div>
                 </label>
               </div>
+            </div> 
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Browse') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbWoBrowse">
+                  <input type="checkbox" class="custom-control-input" id="cbWoBrowse" name="cbWoBrowse" value="WO05" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
             </div>
-
+            <!-- <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Create') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbWoCreate">
+                  <input type="checkbox" class="custom-control-input" id="cbWoCreate" name="cbWoCreate" value="WO04" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div> -->
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Release') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbWoRelease">
+                  <input type="checkbox" class="custom-control-input" id="cbWoRelease" name="cbWoRelease" value="WO09" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Warehouse Confirm') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbWoWhsConf">
+                  <input type="checkbox" class="custom-control-input" id="cbWoWhsConf" name="cbWoWhsConf" value="WO07" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div> 
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Start') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbWoStart">
+                  <input type="checkbox" class="custom-control-input" id="cbWoStart" name="cbWoStart" value="WO02" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Finish') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbWoReport">
+                  <input type="checkbox" class="custom-control-input" id="cbWoReport" name="cbWoReport" value="WO03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div> 
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO QC Approval') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbWoQc">
+                  <input type="checkbox" class="custom-control-input" id="cbWoQc" name="cbWoQc" value="WO08" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div> 
 			      
-            <!-- Usage -->
             <h4>
               <center><strong>Asset Usage</strong></center>
             </h4>
             <hr>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Usage Maintenance') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset PM Calculate') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbUSMT">
                   <input type="checkbox" class="custom-control-input" id="cbUSMT" name="cbUSMT" value="US01" />
@@ -282,7 +307,17 @@
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO PM Generator') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbUSGen">
+                  <input type="checkbox" class="custom-control-input" id="cbUSGen" name="cbUSGen" value="US03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
 
+			
             <!-- Booking -->
             <h4>
               <center><strong>Booking Asset</strong></center>
@@ -307,34 +342,34 @@
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('All Asset Schedule') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbSRcreate">
-                  <input type="checkbox" class="custom-control-input" id="cbSRcreate" name="cbSRcreate" value="SR01" />
+                  <input type="checkbox" class="custom-control-input" id="cbSRcreate" name="cbSRcreate" value="RT11" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div> -->
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Engineer Schedule') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Detail WO Report') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbEngSchedule">
-                  <input type="checkbox" class="custom-control-input" id="cbEngSchedule" name="cbEngSchedule" value="RT01" />
+                <label class="switch" for="cbRptDet">
+                  <input type="checkbox" class="custom-control-input" id="cbRptDet" name="cbRptDet" value="RT08" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Booking Schedule') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Cost Report') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbBookSchedule">
-                  <input type="checkbox" class="custom-control-input" id="cbBookSchedule" name="cbBookSchedule" value="RT02" />
+                <label class="switch" for="cbRptCost">
+                  <input type="checkbox" class="custom-control-input" id="cbRptCost" name="cbRptCost" value="RT09" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Schedule') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Report') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbAssetSchedule">
-                  <input type="checkbox" class="custom-control-input" id="cbAssetSchedule" name="cbAssetSchedule" value="RT03" />
+                <label class="switch" for="cbAssetReport">
+                  <input type="checkbox" class="custom-control-input" id="cbAssetReport" name="cbAssetReport" value="RT05" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -349,14 +384,61 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Report') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Remaining Sparepart') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbAssetReport">
-                  <input type="checkbox" class="custom-control-input" id="cbAssetReport" name="cbAssetReport" value="RT05" />
+                <label class="switch" for="cbRptRemsp">
+                  <input type="checkbox" class="custom-control-input" id="cbRptRemsp" name="cbRptRemsp" value="RT10" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Schedule') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbAssetSchedule">
+                  <input type="checkbox" class="custom-control-input" id="cbAssetSchedule" name="cbAssetSchedule" value="RT03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Schedule (Year)') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbRptSchyear">
+                  <input type="checkbox" class="custom-control-input" id="cbRptSchyear" name="cbRptSchyear" value="RT07" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Engineer Schedule') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbEngSchedule">
+                  <input type="checkbox" class="custom-control-input" id="cbEngSchedule" name="cbEngSchedule" value="RT01" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Sparepart Needs') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbRptSpneed">
+                  <input type="checkbox" class="custom-control-input" id="cbRptSpneed" name="cbRptSpneed" value="RT06" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Booking Schedule') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbBookSchedule">
+                  <input type="checkbox" class="custom-control-input" id="cbBookSchedule" name="cbBookSchedule" value="RT02" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            
+            
 
             <!-- Setting -->
             <h4>
@@ -364,28 +446,19 @@
             </h4>
             <hr>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Role Maintenance ') }}</label>
-              <div class="col-6">
-                <label class="switch" for="cbRoleMaint">
-                  <input type="checkbox" class="custom-control-input" id="cbRoleMaint" name="cbRoleMaint" value="MT02" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Department Maintenance') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbDept">
-                  <input type="checkbox" class="custom-control-input" id="cbDept" name="cbDept" value="MT21" />
+                <label class="switch" for="dept">
+                  <input type="checkbox" class="custom-control-input" id="dept" name="dept" value="MT21" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Engineer Skills Maintenance') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Engineer Skills Maintenance') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbSkill">
-                  <input type="checkbox" class="custom-control-input" id="cbSkill" name="cbSkill" value="MT22" />
+                <label class="switch" for="Skill">
+                  <input type="checkbox" class="custom-control-input" id="Skill" name="Skill" value="MT22" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -393,44 +466,17 @@
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('User Maintenance') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbEng">
-                  <input type="checkbox" class="custom-control-input" id="cbEng" name="cbEng" value="MT20" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <!-- <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('User') }}</label>
-              <div class="col-6">
-                <label class="switch" for="cbUser">
-                  <input type="checkbox" class="custom-control-input" id="cbUser" name="cbUser" value="MT01" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div> -->
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Site Maintenance ') }}</label>
-              <div class="col-6">
-                <label class="switch" for="cbSite">
-                  <input type="checkbox" class="custom-control-input" id="cbSite" name="cbSite" value="MT03" />
+                <label class="switch" for="Eng">
+                  <input type="checkbox" class="custom-control-input" id="Eng" name="Eng" value="MT01" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Location Maintenance ') }}</label>
+              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Role Maintenance ') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbLoc">
-                  <input type="checkbox" class="custom-control-input" id="cbLoc" name="cbLoc" value="MT04" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Supplier Maintenance ') }}</label>
-              <div class="col-6">
-                <label class="switch" for="cbSupp">
-                  <input type="checkbox" class="custom-control-input" id="cbSupp" name="cbSupp" value="MT07" />
+                <label class="switch" for="RoleMaint">
+                  <input type="checkbox" class="custom-control-input" id="RoleMaint" name="RoleMaint" value="MT02" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -445,19 +491,19 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Type Maintenance ') }}</label>
+              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('WSA Qxtend Maintenance') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbAstype">
-                  <input type="checkbox" class="custom-control-input" id="cbAstype" name="cbAstype" value="MT05" />
+                <label class="switch" for="SetWsa">
+                  <input type="checkbox" class="custom-control-input" id="SetWsa" name="SetWsa" value="MT20" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Group Maintenance ') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Failure Type Maintenance ') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbAsgroup">
-                  <input type="checkbox" class="custom-control-input" id="cbAsgroup" name="cbAsgroup" value="MT06" />
+                <label class="switch" for="SetFntype">
+                  <input type="checkbox" class="custom-control-input" id="SetFntype" name="SetFntype" value="MT32" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -465,8 +511,63 @@
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Failure Code Maintenance ') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbFn">
-                  <input type="checkbox" class="custom-control-input" id="cbFn" name="cbFn" value="MT13" />
+                <label class="switch" for="Fn">
+                  <input type="checkbox" class="custom-control-input" id="Fn" name="Fn" value="MT33" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Impact Maintenance ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="SetImp">
+                  <input type="checkbox" class="custom-control-input" id="SetImp" name="SetImp" value="MT34" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Type Maintenance  ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="Astype">
+                  <input type="checkbox" class="custom-control-input" id="Astype" name="Astype" value="MT05" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Group Maintenance ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="Asgroup">
+                  <input type="checkbox" class="custom-control-input" id="Asgroup" name="Asgroup" value="MT06" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Supplier Maintenance ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="Supp">
+                  <input type="checkbox" class="custom-control-input" id="Supp" name="Supp" value="MT07" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Asset Site Maintenance ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="SetAssetsite">
+                  <input type="checkbox" class="custom-control-input" id="SetAssetsite" name="SetAssetsite" value="MT26" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Location Maintenance ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="SetAssetloc">
+                  <input type="checkbox" class="custom-control-input" id="SetAssetloc" name="SetAssetloc" value="MT28" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -474,71 +575,125 @@
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Maintenance ') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbAsset">
-                  <input type="checkbox" class="custom-control-input" id="cbAsset" name="cbAsset" value="MT08" />
+                <label class="switch" for="Asset">
+                  <input type="checkbox" class="custom-control-input" id="Asset" name="Asset" value="MT08" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Hierarchy Maintenance ') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Hierarchy Maintenance') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbAspar">
-                  <input type="checkbox" class="custom-control-input" id="cbAspar" name="cbAspar" value="MT09" />
+                <label class="switch" for="Aspar">
+                  <input type="checkbox" class="custom-control-input" id="Aspar" name="Aspar" value="MT09" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Type Maintenance') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Movement ') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbSpt">
-                  <input type="checkbox" class="custom-control-input" id="cbSpt" name="cbSpt" value="MT10" />
+                <label class="switch" for="SetMove">
+                  <input type="checkbox" class="custom-control-input" id="SetMove" name="SetMove" value="MT30" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Group Maintenance') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Engineer For PM') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbSpg">
-                  <input type="checkbox" class="custom-control-input" id="cbSpg" name="cbSpg" value="MT11" />
+                <label class="switch" for="SetEngpm">
+                  <input type="checkbox" class="custom-control-input" id="SetEngpm" name="SetEngpm" value="MT31" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Code Maintenance ') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Type ') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbSpm">
-                  <input type="checkbox" class="custom-control-input" id="cbSpm" name="cbSpm" value="MT12" />
+                <label class="switch" for="Spt">
+                  <input type="checkbox" class="custom-control-input" id="Spt" name="Spt" value="MT10" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Group ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="Spg">
+                  <input type="checkbox" class="custom-control-input" id="Spg" name="Spg" value="MT11" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Spare Part Site ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="SetSpsite">
+                  <input type="checkbox" class="custom-control-input" id="SetSpsite" name="SetSpsite" value="MT27" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Location ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="SetSploc">
+                  <input type="checkbox" class="custom-control-input" id="SetSploc" name="SetSploc" value="MT29" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Code ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="Spm">
+                  <input type="checkbox" class="custom-control-input" id="Spm" name="Spm" value="MT12" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Tools Maintenance ') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbTool">
-                  <input type="checkbox" class="custom-control-input" id="cbTool" name="cbTool" value="MT14" />
+                <label class="switch" for="Tool">
+                  <input type="checkbox" class="custom-control-input" id="Tool" name="Tool" value="MT14" />
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Repair Code Maintenance ') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Repair Code ') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbRep">
-                  <input type="checkbox" class="custom-control-input" id="cbRep" name="cbRep" value="MT15" />
+                <label class="switch" for="Rep">
+                  <input type="checkbox" class="custom-control-input" id="Rep" name="Rep" value="MT34" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Repair Group ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="SetRepgroup">
+                  <input type="checkbox" class="custom-control-input" id="SetRepgroup" name="SetRepgroup" value="MT15" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Instruction Code ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="SetIns">
+                  <input type="checkbox" class="custom-control-input" id="SetIns" name="SetIns" value="MT35" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Instruction Details Maintenance') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbIns">
-                  <input type="checkbox" class="custom-control-input" id="cbIns" name="cbIns" value="MT16" />
+                <label class="switch" for="Ins">
+                  <input type="checkbox" class="custom-control-input" id="Ins" name="Ins" value="MT16" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -546,8 +701,8 @@
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Repair Instruction Maintenance') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbRepins">
-                  <input type="checkbox" class="custom-control-input" id="cbRepins" name="cbRepins" value="MT18" />
+                <label class="switch" for="Repins">
+                  <input type="checkbox" class="custom-control-input" id="Repins" name="Repins" value="MT18" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -555,21 +710,30 @@
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Repair Part Maintenance') }}</label>
               <div class="col-6">
-                <label class="switch" for="cbReppart">
-                  <input type="checkbox" class="custom-control-input" id="cbReppart" name="cbReppart" value="MT17" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>            
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Inventory Data Maintenance') }}</label>
-              <div class="col-6">
-                <label class="switch" for="cbInv">
-                  <input type="checkbox" class="custom-control-input" id="cbInv" name="cbInv" value="MT19" />
+                <label class="switch" for="Reppart">
+                  <input type="checkbox" class="custom-control-input" id="Reppart" name="Reppart" value="MT17" />
                   <div class="slider round"></div>
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Repair Details Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbRepdet">
+                  <input type="checkbox" class="custom-control-input" id="cbRepdet" name="cbRepdet" value="MT23" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Inventory Data Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="Inv">
+                  <input type="checkbox" class="custom-control-input" id="Inv" name="Inv" value="MT19" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>  --}}
             
             <div class="modal-footer">
               <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
@@ -718,7 +882,7 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Confirm') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Warehouse Confirm') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbWoWhsConf">
                   <input type="checkbox" class="custom-control-input" id="e_cbWoWhsConf" name="e_cbWoWhsConf" value="WO07" />

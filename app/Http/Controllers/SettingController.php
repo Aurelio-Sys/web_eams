@@ -242,6 +242,16 @@ class SettingController extends Controller
 
         $access = $req->cbRoleMaint . $req->cbSite . $req->cbLoc . $req->cbSupp . $req->cbAstype . $req->cbAsgroup . $req->cbFn . $req->cbAsset . $req->cbAspar . $req->cbSpt . $req->cbSpg . $req->cbSpm . $req->cbTool . $req->cbRep . $req->cbIns . /*$req->cbRepdet .*/  $req->cbRepins . $req->cbReppart . $req->cbEng . $req->cbInv . $req->cbDept . $req->cbSkill . $req->cbWoBrowse . $req->cbWoCreatedirect . $req->cbWoStart . $req->cbWoReport . $req->cbWoMaint . $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbUA . $req->cbUSMT . $req->cbUSmultiMT . $req->cbUser . $req->cbRunning . $req->cbBoas . $req->cbEngSchedule . $req->cbBookSchedule . $req->cbAssetSchedule . $req->cbEngReport . $req->cbAssetReport;
 
+        $access = $req->dept . $req->Skill . $req->Eng . $req->RoleMaint . $req->cbRunning . $req->SetWsa . $req->SetFntype . $req->Fn . $req->SetImp . 
+            $req->Astype . $req->Asgroup . $req->Supp . $req->SetAssetsite . $req->SetAssetloc . $req->Asset . $req->Aspar . $req->SetMove . $req->SetEngpm . 
+            $req->Spt . $req->Spg . $req->SetSpsite . $req->SetSploc . $req->Spm . $req->Rep . $req->SetRepgroup . $req->SetIns . 
+            $req->cbWoCreatedirect . $req->cbWoMaint . $req->cbWoBrowse . $req->cbWoRelease . $req->cbWoWhsConf . $req->cbWoStart . $req->cbWoReport . $req->cbWoQc . 
+            $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . 
+            $req->cbUSMT . $req->cbUSmultiMT . $req->cbUSGen . 
+            $req->cbBoas . 
+            $req->cbRptDet . $req->cbRptCost . $req->cbAssetReport . $req->cbEngReport . $req->cbRptRemsp . 
+            $req->cbAssetSchedule . $req->cbRptSchyear . $req->cbEngSchedule . $req->cbRptSpneed . $req->cbBookSchedule;
+        
 
         $this->validate($req, [
             'role_code' => 'unique:roles|max:24',
@@ -297,8 +307,6 @@ class SettingController extends Controller
 
     public function editrole(Request $req)
     {
-        // $access = $req->e_RoleMaint . $req->e_Site . $req->e_Loc . $req->e_Supp . $req->e_Astype . $req->e_Asgroup . $req->e_Fn . $req->e_Asset . $req->e_Aspar . $req->e_Spt . $req->e_Spg . $req->e_Spm . $req->e_Tool . $req->e_Rep . $req->e_Ins . /*$req->e_cbRepdet .*/  $req->e_Repins . $req->e_Reppart . $req->e_Eng . $req->e_Inv . $req->e_dept . $req->e_Skill . $req->e_cbWoBrowse . $req->e_cbWoStart . $req->e_cbWoReport . $req->e_cbWoMaint . $req->e_cbWoCreatedirect . $req->e_cbSRcreate . $req->e_cbSRapprove . $req->e_cbSRbrowse . $req->e_cbUA . $req->e_cbUSMT . $req->e_cbUSmultiMT . $req->e_User . $req->e_cbRunning . $req->e_cbBoas . $req->e_cbEngSchedule . $req->e_cbBookSchedule . $req->e_cbAssetSchedule . $req->e_cbEngReport . $req->e_cbAssetReport;
-        
         $access = $req->e_dept . $req->e_Skill . $req->e_Eng . $req->e_RoleMaint . $req->e_cbRunning . $req->e_SetWsa . $req->e_SetFntype . $req->e_Fn . $req->e_SetImp . 
             $req->e_Astype . $req->e_Asgroup . $req->e_Supp . $req->e_SetAssetsite . $req->e_SetAssetloc . $req->e_Asset . $req->e_Aspar . $req->e_SetMove . $req->e_SetEngpm . 
             $req->e_Spt . $req->e_Spg . $req->e_SetSpsite . $req->e_SetSploc . $req->e_Spm . $req->e_Rep . $req->e_SetRepgroup . $req->e_SetIns . 
@@ -455,7 +463,7 @@ class SettingController extends Controller
     //untuk menampilkan menu site master
     public function sitemaster(Request $req)
     {      
-        if (strpos(Session::get('menu_access'), 'MT03') !== false) {
+        if (strpos(Session::get('menu_access'), 'MT27') !== false) {
             $data = DB::table('site_mstrs')
                 ->paginate(10);
 
@@ -859,7 +867,7 @@ class SettingController extends Controller
     //untuk menampilkan menu area master
     public function areamaster(Request $req)
     {   
-        if (strpos(Session::get('menu_access'), 'MT04') !== false) {
+        if (strpos(Session::get('menu_access'), 'MT29') !== false) {
             $dataSite = DB::table('site_mstrs')
                 ->get();
 
@@ -1392,7 +1400,7 @@ class SettingController extends Controller
     //untuk menampilkan menu failure
     public function fnmaster(Request $req)
     {   
-        if (strpos(Session::get('menu_access'), 'MT13') !== false) {
+        if (strpos(Session::get('menu_access'), 'MT33') !== false) {
             $data = DB::table('fn_mstr')
                 ->orderby('fn_code')
                 ->paginate(10);
@@ -3718,7 +3726,7 @@ class SettingController extends Controller
     //untuk menampilkan menu Instruction Detail
     public function insmaster(Request $req)
     {   
-        if (strpos(Session::get('menu_access'), 'MT16') !== false) {
+        if (strpos(Session::get('menu_access'), 'MT35') !== false) {
             $data = DB::table('ins_mstr')
                 ->orderby('ins_code')
                 ->paginate(10);
@@ -5203,7 +5211,7 @@ class SettingController extends Controller
     //untuk menampilkan menu Engineer Master
     public function engmaster(Request $req)
     {   
-        if (strpos(Session::get('menu_access'), 'MT14') !== false) {
+        if (strpos(Session::get('menu_access'), 'MT01') !== false) {
             $data = DB::table('eng_mstr')
                 ->orderby('eng_code')
                 ->get();
