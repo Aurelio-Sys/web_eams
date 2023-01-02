@@ -9,6 +9,7 @@ use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\Report\RemainSpController;
 use App\Http\Controllers\Report\RptAssetYearController;
 use App\Http\Controllers\SP\KebutuhanSPController;
+use App\Http\Controllers\UserChartController;
 use App\Http\Controllers\WO\AllWOGenerate;
 use App\Http\Controllers\WO\ConfirmEng;
 use App\Http\Controllers\WO\WORelease;
@@ -535,7 +536,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// List Spare part
 	Route::get('/kebutuhansp', [KebutuhanSPController::class, 'index'])->name('browseKsp');
-	Route::post('/kebutuhansp/generateso', [KebutuhanSPController::class, 'generateso'])->name('generateSO');
+	Route::post('/needsp/generateso', [UserChartController::class, 'generateso'])->name('generateSO');
 
 	// Detail WO Report
 	Route::get('/rptdetwo', [RptDetWOController::class, 'index'])->name('browseDetailWO');

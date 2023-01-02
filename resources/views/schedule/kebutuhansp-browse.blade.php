@@ -10,15 +10,6 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-md-12 mb-2">
-        <form action="{{route('generateSO')}}" method="post">
-            {{ method_field('post') }}
-            {{ csrf_field() }}
-            <button type="submit" class="btn btn-primary">Generate SO</button>
-        </form>
-    </div>
-</div>
-<div class="row">
     <div class="col-lg-12 col-md-12 m-0 p-0">
         <form action="/worelease" method="GET">
             <div class="container-fluid mb-2">
@@ -76,8 +67,8 @@
 </div>
 <div class="row">
     <div class="col-lg-12 col-md-12 m-0 p-0">
-        <div class="table-responsive col-12 mt-0 pt-0 align-top">
-            <table class="table table-bordered mt-0" id="dataTable" width="100%" cellspacing="0" style="width:100%;padding: .2rem !important;">
+        <div class="table-responsive col-12 mt-0 pt-0 align-top" style="overflow-x: auto; display: block;white-space: nowrap;">
+            <table class="table table-bordered mt-0" id="dataTable" cellspacing="0">
                 <thead>
                     <tr style="text-align: center;">
                         <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="8%">WO Number<span id="name_icon"></span></th>

@@ -12,46 +12,64 @@
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-
-<!--FORM Search Disini -->
-<div class="container-fluid mb-2">
-<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-<li class="nav-item has-treeview bg-black">
-<a href="#" class="nav-link mb-0 p-0"> 
-<p>
-  <label class="col-md-2 col-form-label text-md-left" style="color:white;">{{ __('Click here to search') }}</label>
-  <i class="right fas fa-angle-left"></i>
-</p>
-</a>
-<ul class="nav nav-treeview">
-<li class="nav-item">
-<div class="col-12 form-group row">
-    <div class="col-12 form-group row">
-        <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Department Code</label>
-        <div class="col-md-4 mb-2 input-group">
-            <input id="s_code" type="text" class="form-control" name="s_code"
-            value="" autofocus autocomplete="off"/>
-        </div>
-        <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Department Description</label>
-        <div class="col-md-4 mb-2 input-group">
-            <input id="s_desc" type="text" class="form-control" name="s_desc"
-            value="" autofocus autocomplete="off"/>
-        </div>
-        <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('') }}</label>
-        <div class="col-md-2 mb-2 input-group">
-            <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" />
-        </div>
-        <div class="col-md-2 col-sm-12 mb-2 input-group">
-            <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
-        </div>
-        <input type="hidden" id="tmpcode"/>
-        <input type="hidden" id="tmpdesc"/>
+<form action="{{route('generateSO')}}" method="post">
+    {{ method_field('post') }}
+    {{ csrf_field() }}
+    <div class="row mb-4">
+    <label for="site_genso" class="col-form-label col-md-2 text-md-left">Site</label>
+    <div class="col-md-4">
+        <select class="form-control" id="site_genso" name="site_genso" required>
+                <option></option>
+            @foreach ( $datasite as $site )
+                <option value="{{$site->site_code}}">{{$site->site_code}} -- {{$site->site_desc}}</option>
+            @endforeach
+        </select>
     </div>
-</div>
-</li>
-</ul>
-</li>
-</ul>
+    <button type="submit" class="btn btn-primary">Generate SO</button>
+    </div>
+</form>
+<!--FORM Search Disini -->
+
+<div class="row">
+    <div class="container-fluid mb-2">
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+    <li class="nav-item has-treeview bg-black">
+    <a href="#" class="nav-link mb-0 p-0"> 
+    <p>
+    <label class="col-md-2 col-form-label text-md-left" style="color:white;">{{ __('Click here to search') }}</label>
+    <i class="right fas fa-angle-left"></i>
+    </p>
+    </a>
+    <ul class="nav nav-treeview">
+    <li class="nav-item">
+    <div class="col-12 form-group row">
+        <div class="col-12 form-group row">
+            <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Department Code</label>
+            <div class="col-md-4 mb-2 input-group">
+                <input id="s_code" type="text" class="form-control" name="s_code"
+                value="" autofocus autocomplete="off"/>
+            </div>
+            <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Department Description</label>
+            <div class="col-md-4 mb-2 input-group">
+                <input id="s_desc" type="text" class="form-control" name="s_desc"
+                value="" autofocus autocomplete="off"/>
+            </div>
+            <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('') }}</label>
+            <div class="col-md-2 mb-2 input-group">
+                <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" />
+            </div>
+            <div class="col-md-2 col-sm-12 mb-2 input-group">
+                <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
+            </div>
+            <input type="hidden" id="tmpcode"/>
+            <input type="hidden" id="tmpdesc"/>
+        </div>
+    </div>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </div>
 </div>
 
 <!-- Bagian Searching -->
@@ -91,6 +109,12 @@
             $('#id_icon').html('');
             $('#post_title_icon').html('');
        }
+
+       $('#site_genso').select2({
+            width:'100%',
+            placeholder: 'Select Site',
+            allowClear: true,
+       });
 
        function fetch_data(page, sort_type, sort_by, code, desc){
             $.ajax({
