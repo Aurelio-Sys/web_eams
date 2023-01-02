@@ -854,6 +854,18 @@
                   }
               }) 
         });
+
+        $(document).on('change', '#te_site', function() {
+            var site = $('#te_site').val();
+            
+              $.ajax({
+                  url:"/searchlocsp?t_site="+site,
+                  success:function(data){
+                      console.log(data);
+                      $('#te_loc').html('').append(data);
+                  }
+              }) 
+        });
         
     </script>
 

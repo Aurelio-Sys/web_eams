@@ -389,7 +389,7 @@ class WHSConfirm extends Controller
                                     <part>'.$dqx->wo_dets_sp.'</part>
                                     <itemDetail>
                                         <lotserialQty>'.$dqx->wo_dets_wh_qty.'</lotserialQty>
-                                        <rmks>'.$dqx->wo_dets_nbr.'</rmks>
+                                        <nbr>'.$dqx->wo_dets_nbr.'</nbr>
                                         <siteFrom>'.$dqx->wo_dets_wh_site.'</siteFrom>
                                         <locFrom>'.$dqx->wo_dets_wh_loc.'</locFrom>
                                         <lotserFrom>'.$dqx->wo_dets_wh_lot.'</lotserFrom>
@@ -398,6 +398,7 @@ class WHSConfirm extends Controller
                                     </itemDetail>
                                 </item>';
                 }
+                // <rmks>'.$dqx->wo_dets_nbr.'</rmks>
                 /* endforeach disini */
                 // dd($qdocBody);
                 $qdocfooter =   '</dsItem>

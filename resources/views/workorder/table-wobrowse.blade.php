@@ -73,7 +73,7 @@
     @php($cfile = $ceksrfile->where('sr_number','=',$show->wo_sr_nbr)->count())
     @if($cfile > 0)
     &nbsp;
-      <a id="srdownload" target="_blank" href="{{url('srdownloadfile/'.$show->wo_sr_nbr)}}" data-toggle="tooltip"  title="Download SR document" ><i class="icon-table fas fa-file-export fa-lg"></i></a>  
+      <a id="srdownload" target="_blank" href="{{url('srdownloadfile/'.$show->wo_sr_nbr)}}" data-toggle="tooltip"  title="Download document" ><i class="icon-table fas fa-file-export fa-lg"></i></a>  
     @endif
   </td>
 </tr>

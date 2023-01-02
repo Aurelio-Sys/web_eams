@@ -14,7 +14,10 @@
                 @php($tahun = substr($pa->temp_sch,0,4))
                 @php($bulantampil = $bln == $count ? 'PM' : '')
                 @if ($tahun == $bulan)
-                    <span class="badge badge-primary">{{ $bulantampil }}</span>
+                <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal"
+                data-code="{{$bulantampil}}">
+                <span class="badge badge-primary">{{ $bulantampil }}</span></a>
+                    
                 @endif
             @endforeach
             <!-- menampilkan aktual WO -->

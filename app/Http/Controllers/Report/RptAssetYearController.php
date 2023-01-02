@@ -105,7 +105,8 @@ class RptAssetYearController extends Controller
             ->orderBy('asset_code')
             // ->where('asset_measure','=','C')
             ->where('asset_active','=','Yes')
-            ->get();
+            ->paginate(10);
+            // ->get();
 
         return view('report.assetyear', ['data' => $data, 'datatemp' => $datatemp, 'datawo' => $datawo, 'bulan' => $bulan,
             'dataasset' => $dataasset]);
