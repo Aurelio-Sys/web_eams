@@ -99,6 +99,11 @@ class WHSConfirm extends Controller
             ->whereWo_dets_nbr($data->wo_nbr)
             ->get();
 
+        /* Mencari daata lokasi eng */
+        $dataloceng = DB::table('eng_mstr')
+            ->join('wo_dets','wo_dets_rlsuser','=','eng_code')
+            ->first();
+
         /* Semua data release sudah masuk di wo_dets 
         if ($data->wo_repair_code1 != "") {
             $sparepart1 = DB::table('wo_mstr')
@@ -220,7 +225,8 @@ class WHSConfirm extends Controller
             'locdata',
             'sitedata',
             'qstok',
-            'wodetdata'
+            'wodetdata',
+            'dataloceng'
         ));
     }
 
@@ -257,6 +263,8 @@ class WHSConfirm extends Controller
                         'wo_dets_wh_lot' => $vlot[0],
                         'wo_dets_wh_qty' => $req->qtyconf[$a],
                         'wo_dets_wh_conf' => $req->tick[$a],
+                        'wo_dets_wh_tosite' => $req->rlssite[$a],
+                        'wo_dets_wh_toloc' => $req->rlsloc[$a],
                         'wo_dets_wh_date' => Carbon::now()->toDateTimeString(),
                         'wo_dets_wh_user' => $req->session()->get('username'),
                     ]);
@@ -265,7 +273,7 @@ class WHSConfirm extends Controller
                 }
                 
             }    
-
+            
             if ($cekstatus == "") {
                 DB::table('wo_mstr')
                     ->where('wo_nbr',$req->hide_wonum)
@@ -280,6 +288,8 @@ class WHSConfirm extends Controller
                 ->where('wo_dets_wh_conf','=',1)
                 ->where('wo_dets_wh_qx','=','no')
                 ->where('wo_dets_wh_qty','<>',0);
+
+            // dd($qx);
 
             if($qx->count() > 0) {
                 /* ini qxtend transfer single item */
@@ -383,8 +393,8 @@ class WHSConfirm extends Controller
                                         <siteFrom>'.$dqx->wo_dets_wh_site.'</siteFrom>
                                         <locFrom>'.$dqx->wo_dets_wh_loc.'</locFrom>
                                         <lotserFrom>'.$dqx->wo_dets_wh_lot.'</lotserFrom>
-                                        <siteTo>10-301</siteTo>
-                                        <locTo>qmi</locTo>
+                                        <siteTo>'.$dqx->wo_dets_wh_tosite.'</siteTo>
+                                        <locTo>'.$dqx->wo_dets_wh_toloc.'</locTo>
                                     </itemDetail>
                                 </item>';
                 }
