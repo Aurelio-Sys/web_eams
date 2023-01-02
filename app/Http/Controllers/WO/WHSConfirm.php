@@ -85,10 +85,13 @@ class WHSConfirm extends Controller
             ->get();
 
         $locdata = DB::table('loc_mstr')
+            ->join('site_mstrs','site_code','=','loc_site')
+            ->where('site_flag','=','yes')
             ->orderBy('loc_code')
             ->get();
 
         $sitedata = DB::table('site_mstrs')
+            ->where('site_flag','=','yes')
             ->orderBy('site_code')
             ->get();
 
@@ -154,10 +157,14 @@ class WHSConfirm extends Controller
             ->orderBy('repdet_step', 'asc')
             ->get();
 
+        $siteactive = DB::table('site_mstrs')
+            ->where('site_flag','=','yes')
+            ->value('site_code');
+
         // load stock
         $domain = ModelsQxwsa::first();
 
-        $stokdata = (new WSAServices())->wsastok($domain->wsas_domain);
+        $stokdata = (new WSAServices())->wsastok($domain->wsas_domain,$siteactive);
 
         if ($stokdata === false) {
             toast('WSA Failed', 'error')->persistent('Dismiss');
