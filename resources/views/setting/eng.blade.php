@@ -419,7 +419,7 @@
                 <div class="form-group row divesite" id="divesite" style="display: none;">
                     <label for="te_site" class="col-md-4 col-form-label text-md-right" >Site <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-6">
-                       <select id="te_site" class="form-control" name="te_site" required value="{{ old('te_site') }}">
+                       <select id="te_site" class="form-control" name="te_site">
                         <option selected>--Select--</option>
                         @foreach($datasite as $di)
                             <option value="{{$di->site_code}}">{{$di->site_code}} -- {{$di->site_desc}}</option>
@@ -430,7 +430,7 @@
                 <div class="form-group row diveloc" id="diveloc" style="display: none;">
                     <label for="te_loc" class="col-md-4 col-form-label text-md-right" >Location <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-6">
-                        <select id="te_loc" class="form-control" name="te_loc" required value="{{ old('te_loc') }}">
+                        <select id="te_loc" class="form-control" name="te_loc">
                             
                         </select>
                     </div>
@@ -516,7 +516,7 @@
            document.getElementById('te_dept').value     = dept;
            document.getElementById('te_skill').value    = skill;
            document.getElementById('te_acc').value      = acc;
-           document.getElementById('te_site').value      = site;
+           
 
            ambilenjiner();
 
@@ -528,15 +528,18 @@
                 }
             }) 
 
-            $.ajax({
-                url:"/searchlocsp2?site=" + site  + "&&loc=" + loc ,
-                success:function(data){
-                    console.log(data);
-                    $('#te_loc').html('').append(data);
-                }
-            }) 
-
+            
             if(acc == 'Engineer'){
+                document.getElementById('te_site').value     = site;
+
+                $.ajax({
+                    url:"/searchlocsp2?site=" + site  + "&&loc=" + loc ,
+                    success:function(data){
+                        console.log(data);
+                        $('#te_loc').html('').append(data);
+                    }
+                }) 
+
                 document.getElementById('diveapp').style.display='';
                 document.getElementById('divebrt').style.display='';
                 document.getElementById('divejoin').style.display='';
@@ -831,6 +834,9 @@
                 document.getElementById('diveskill').style.display='';
                 document.getElementById('divefoto').style.display='';
                 document.getElementById('divefoto1').style.display='';
+                document.getElementById('diveqad').style.display='';
+                document.getElementById('divesite').style.display='';
+                document.getElementById('diveloc').style.display='';
             }
             else{ 
                 document.getElementById('diveapp').style.display='none';
@@ -840,6 +846,9 @@
                 document.getElementById('diveskill').style.display='none';
                 document.getElementById('divefoto').style.display='none';
                 document.getElementById('divefoto1').style.display='none';
+                document.getElementById('diveqad').style.display='none';
+                document.getElementById('divesite').style.display='none';
+                document.getElementById('diveloc').style.display='nones';
             }
         });
 
