@@ -8,12 +8,29 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Schema;
+use App\Services\WSAServices;
 
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 
+use App\Models\Qxwsa as ModelsQxwsa;
+use Exception;
+
 class UserChartController extends Controller
 {
+
+    private function httpHeader($req)
+    {
+      return array(
+        'Content-type: text/xml;charset="utf-8"',
+        'Accept: text/xml',
+        'Cache-Control: no-cache',
+        'Pragma: no-cache',
+        'SOAPAction: ""',        // jika tidak pakai SOAPAction, isinya harus ada tanda petik 2 --> ""
+        'Content-length: ' . strlen(preg_replace("/\s+/", " ", $req))
+      );
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -318,7 +335,7 @@ class UserChartController extends Controller
 
     public function engsch(Request $req)
     {
-    //dd($req->all());
+        //dd($req->all());
         if (is_null($req->bulan)) {
             $tgl = Carbon::now('ASIA/JAKARTA')->toDateTimeString();
         } elseif ($req->stat == 'mundur') {
@@ -444,7 +461,7 @@ class UserChartController extends Controller
     
     public function allrpt(Request $req)
     {
-    //dd($req->all());
+        //dd($req->all());
         if (is_null($req->bulan)) {
             $tgl = Carbon::now('ASIA/JAKARTA')->toDateTimeString();
         } elseif ($req->stat == 'mundur') {
@@ -507,7 +524,7 @@ class UserChartController extends Controller
             ->orderBy('tgl')
             ->orderBy('wo_nbr')
             ->get();
-//dd($datawo);
+        //dd($datawo);
         $fotoeng = $dataeng->where('eng_code','=',"")->first();
 
 
@@ -552,7 +569,7 @@ class UserChartController extends Controller
         $datawo = DB::table('wo_mstr')
                 ->whereMonth('wo_schedule','=',date("m",strtotime($tgl)))
                 ->get();
-//dd($tgl);
+        //dd($tgl);
 
         return view('report.engsch',compact('skrg','hari','kosong','bulan','datawo'));
     }
@@ -593,7 +610,7 @@ class UserChartController extends Controller
 
     public function bookcal(Request $req)
     {
-//dd($req->all());
+        //dd($req->all());
         if (is_null($req->bulan)) {
             $tgl = Carbon::now('ASIA/JAKARTA')->toDateTimeString();
         } elseif ($req->stat == 'mundur') {
@@ -665,7 +682,7 @@ class UserChartController extends Controller
         
         $arraynewdate = [];
         $i = 1;
-// dd($dataBook);
+        // dd($dataBook);
         foreach($dataBook as $db) {
 
             $dbstart    = $db->book_start;
@@ -799,7 +816,7 @@ class UserChartController extends Controller
                 ->whereActive('Yes')
                 ->orderBy('eng_desc')
                 ->get();
-//dd($dataeng);
+        //dd($dataeng);
         $datawo = DB::table('wo_mstr')
                 ->join('asset_mstr','asset_code','=','wo_asset')
                 ->whereNotIn('wo_status', ['closed','finish','delete'])
@@ -1150,7 +1167,7 @@ class UserChartController extends Controller
                 'temp_qty_need' => $da->wo_dets_sp_qty - $da->wo_dets_wh_qty,
             ]);
         }
-// dd($data);
+        // dd($data);
         /* Mencari data sparepart yang belum ada wo detail nya */
         $datawo = DB::table('wo_mstr')->whereNotIn('wo_nbr', function($q){
                 $q->select('wo_dets_nbr')->from('wo_dets');
@@ -1267,8 +1284,8 @@ class UserChartController extends Controller
                     ->get();
             }
         }
-// dd($combineSP);
-        /* foreach($combineSP as $dc){
+        // dd($combineSP);
+        foreach($combineSP as $dc){
             DB::table('temp_wo')->insert([
                 'temp_wo' => $dc->wo_nbr,
                 'temp_sch_date' => $dc->wo_schedule,
@@ -1279,7 +1296,7 @@ class UserChartController extends Controller
                 'temp_qty_whs' => 0,
                 'temp_qty_need' => $dc->insd_qty,
             ]);
-        } */
+        }
 
         $datatemp = DB::table('temp_wo')
             ->whereNotIn('temp_status',['closed','delete'])
@@ -1288,7 +1305,7 @@ class UserChartController extends Controller
             ->orderBy('temp_wo')
             ->paginate(10);
             // ->get();
-// dd($datatemp);   
+        // dd($datatemp);   
 
         Schema::dropIfExists('temp_wo');
 
@@ -1296,7 +1313,744 @@ class UserChartController extends Controller
             ->orderBy('asset_code')
             ->get();
 
-        return view('report.needsp', ['data' => $datatemp, 'dataasset' => $dataasset]);
+
+        $datasite = DB::table('site_mstrs')
+                        ->where('site_flag','=','yes')
+                        ->get();
+
+        return view('report.needsp', ['data' => $datatemp, 'dataasset' => $dataasset, 'datasite' => $datasite]);
+    }
+    
+    public function generateso(Request $req)
+    {
+
+        DB::beginTransaction();
+
+        try {
+
+            $domain = ModelsQxwsa::first();
+
+            $checkso_eams = (new WSAServices())->wsasearchso($domain->wsas_domain);
+
+            if ($checkso_eams === false) {
+                toast('WSA Error', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+
+                if ($checkso_eams[1] == "false") {
+                    toast('WSA Failed', 'error')->persistent('Dismiss');
+                    return redirect()->back();
+                } else {
+
+                    /* mengambil data WO untuk dijadikan SO */
+                    /* Temp table untuk menampun data spare part dari Wo detail, Wo yang belum ada detailnya, Wo yang belum terbentuk */
+                    Schema::create('temp_wo_so', function ($table) {
+                        $table->increments('id');
+                        $table->string('temp_wo');
+                        $table->date('temp_sch_date');
+                        $table->string('temp_status');
+                        $table->string('temp_sp');
+                        $table->string('temp_sp_desc');
+                        $table->decimal('temp_qty_req',10,2)->nullable();
+                        $table->decimal('temp_qty_whs',10,2)->nullable();
+                        $table->decimal('temp_qty_need',10,2)->nullable();
+                        $table->temporary();
+                    });
+
+                    /* Mencari data sparepart dari wo detail */
+                    $data = DB::table('wo_dets')
+                        ->join('wo_mstr','wo_nbr','=','wo_dets_nbr')
+                        ->whereNotNull('wo_dets_sp')
+                        ->whereNotIn('wo_status',['closed','delete'])
+                        ->orderBy('wo_dets_nbr')
+                        ->get();
+
+                    foreach($data as $da){
+                        DB::table('temp_wo_so')->insert([
+                            'temp_wo' => $da->wo_nbr,
+                            'temp_sch_date' => $da->wo_schedule,
+                            'temp_status' => $da->wo_status,
+                            'temp_sp' => $da->wo_dets_sp,
+                            'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->wo_dets_sp)->value('spm_desc'),
+                            'temp_qty_req' => $da->wo_dets_sp_qty,
+                            'temp_qty_whs' => $da->wo_dets_wh_qty,
+                            'temp_qty_need' => $da->wo_dets_sp_qty - $da->wo_dets_wh_qty,
+                        ]);
+                    }
+                    // dd($data);
+                    /* Mencari data sparepart yang belum ada wo detail nya */
+                    $datawo = DB::table('wo_mstr')->whereNotIn('wo_nbr', function($q){
+                            $q->select('wo_dets_nbr')->from('wo_dets');
+                        })
+                        // ->where('wo_nbr','=','WO-22-0098')
+                        ->get();
+
+                    foreach($datawo as $do) {
+                        if ($do->wo_repair_code1 != "") {
+
+                            $sparepart1 = DB::table('wo_mstr')
+                                ->select('wo_nbr','wo_repair_code1 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
+                                'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
+                                ->leftJoin('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
+                                ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                                ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+                                ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
+                                ->where('wo_id', '=', $do->wo_id)
+                                ->orderBy('repm_ins', 'asc')
+                                ->orderBy('repdet_step', 'asc')
+                                ->orderBy('ins_code', 'asc')
+                                ->get();
+
+                            $rc1 = DB::table('wo_mstr')
+                                ->select('repm_code', 'repm_desc')
+                                ->join('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
+                                ->where('wo_id', '=', $do->wo_id)
+                                ->get();
+
+
+                            $combineSP = $sparepart1;
+                            $rc = $rc1;
+                        }
+
+                        if ($do->wo_repair_code2 != "") {
+                            // dump('repaircode2');
+                            $sparepart2 = DB::table('wo_mstr')
+                                ->select('wo_nbr','wo_repair_code2 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
+                                'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
+                                ->leftJoin('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
+                                ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                                ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+                                ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
+                                ->where('wo_id', '=', $do->wo_id)
+                                ->orderBy('repm_ins', 'asc')
+                                ->orderBy('repdet_step', 'asc')
+                                ->orderBy('ins_code', 'asc')
+                                ->get();
+
+                            $rc2 = DB::table('wo_mstr')
+                                ->select('repm_code', 'repm_desc')
+                                ->join('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
+                                ->where('wo_id', '=', $do->wo_id)
+                                ->get();
+
+                            // $tempSP2 = (new CreateTempTable())->createSparePartUsed($sparepart2);
+
+                            $combineSP = $sparepart1->merge($sparepart2);
+                            $rc = $rc1->merge($rc2);
+                        }
+
+                        if ($do->wo_repair_code3 != "") {
+                            // dump('repaircode3');
+                            $sparepart3 = DB::table('wo_mstr')
+                                ->select('wo_nbr','wo_repair_code3 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
+                                'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
+                                ->leftJoin('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
+                                ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                                ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+                                ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
+                                ->where('wo_id', '=', $do->wo_id)
+                                ->orderBy('repm_ins', 'asc')
+                                ->orderBy('repdet_step', 'asc')
+                                ->orderBy('ins_code', 'asc')
+                                ->get();
+
+                            $rc3 = DB::table('wo_mstr')
+                                ->select('repm_code', 'repm_desc')
+                                ->join('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
+                                ->where('wo_id', '=', $do->wo_id)
+                                ->get();
+
+                            // $tempSP3 = (new CreateTempTable())->createSparePartUsed($sparepart3);
+
+                            $combineSP = $sparepart1->merge($sparepart2)->merge($sparepart3);
+                            $rc = $rc1->merge($rc2)->merge($rc3);
+                        }
+
+                        // dd($rc);
+
+                        if ($do->wo_repair_code1 == "" && $do->wo_repair_code2 == "" && $do->wo_repair_code3 == "") {
+                            // dd('aa');
+                            $combineSP = DB::table('xxrepgroup_mstr')
+                                ->select('wo_nbr','repm_code as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 
+                                'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
+                                ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
+                                ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                                ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+                                ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
+                                ->leftJoin('wo_mstr','wo_repair_group','xxrepgroup_mstr.xxrepgroup_nbr')
+                                ->where('xxrepgroup_mstr.xxrepgroup_nbr', '=', $do->wo_repair_group)
+                                ->where('wo_id', '=', $do->wo_id)
+                                ->orderBy('repair_code', 'asc')
+                                ->orderBy('repm_ins', 'asc')
+                                ->orderBy('repdet_step', 'asc')
+                                ->orderBy('ins_code', 'asc')
+                                ->get();
+
+                            // dd($combineSP);
+
+                            $rc = DB::table('xxrepgroup_mstr')
+                                ->select('repm_code', 'repm_desc')
+                                ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
+                                ->get();
+                        }
+                    }
+                    // dd($combineSP);
+                    foreach($combineSP as $dc){
+                        DB::table('temp_wo_so')->insert([
+                            'temp_wo' => $dc->wo_nbr,
+                            'temp_sch_date' => $dc->wo_schedule,
+                            'temp_status' => $dc->wo_status,
+                            'temp_sp' => $dc->insd_part,
+                            'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$dc->insd_part)->value('spm_desc'),
+                            'temp_qty_req' => $dc->insd_qty,
+                            'temp_qty_whs' => 0,
+                            'temp_qty_need' => $dc->insd_qty,
+                        ]);
+                    }
+
+                    $datatemp = DB::table('temp_wo_so')
+                        ->whereNotIn('temp_status',['closed','delete'])
+                        ->orderBy('temp_sch_date')
+                        ->orderBy('temp_wo')
+                        ->get();
+
+                    $lastschedule = DB::table('temp_wo_so')
+                                    ->orderBy('temp_sch_date','desc')
+                                    ->first();
+
+                    Schema::dropIfExists('temp_wo_so');
+
+
+                    foreach ($checkso_eams[0] as $datas) {
+                        if ($datas->t_msg == "false") {
+                            $qxwsa = ModelsQxwsa::first();
+
+                            // Var Qxtend
+                            $qxUrl          = $qxwsa->qx_url; // Edit Here
+
+                            $qxRcv          = $qxwsa->qx_rcv;
+
+                            $timeout        = 0;
+
+                            $domain         = $qxwsa->wsas_domain;
+
+                            $qdocHead = '<soapenv:Envelope xmlns="urn:schemas-qad-com:xml-services"
+                                    xmlns:qcom="urn:schemas-qad-com:xml-services:common"
+                                    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing">
+                                    <soapenv:Header>
+                                        <wsa:Action/>
+                                        <wsa:To>urn:services-qad-com:' . $qxRcv . '</wsa:To>
+                                        <wsa:MessageID>urn:services-qad-com::' . $qxRcv . '</wsa:MessageID>
+                                        <wsa:ReferenceParameters>
+                                        <qcom:suppressResponseDetail>true</qcom:suppressResponseDetail>
+                                        </wsa:ReferenceParameters>
+                                        <wsa:ReplyTo>
+                                        <wsa:Address>urn:services-qad-com:</wsa:Address>
+                                        </wsa:ReplyTo>
+                                    </soapenv:Header>
+                                    <soapenv:Body>
+                                        <maintainSalesOrder>
+                                        <qcom:dsSessionContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>domain</qcom:propertyName>
+                                            <qcom:propertyValue>' . $domain . '</qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>scopeTransaction</qcom:propertyName>
+                                            <qcom:propertyValue>false</qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>version</qcom:propertyName>
+                                            <qcom:propertyValue>ERP3_3</qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>mnemonicsRaw</qcom:propertyName>
+                                            <qcom:propertyValue>false</qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>username</qcom:propertyName>
+                                            <qcom:propertyValue>mfg</qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>password</qcom:propertyName>
+                                            <qcom:propertyValue></qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>action</qcom:propertyName>
+                                            <qcom:propertyValue/>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>entity</qcom:propertyName>
+                                            <qcom:propertyValue/>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>email</qcom:propertyName>
+                                            <qcom:propertyValue/>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>emailLevel</qcom:propertyName>
+                                            <qcom:propertyValue/>
+                                            </qcom:ttContext>
+                                        </qcom:dsSessionContext>
+                                        <dsSalesOrder>';
+
+                            $qdocBody = '';
+
+                            $qdocBody .= '<salesOrder>
+                                                <operation>A</operation>
+                                                <soNbr>EAMS</soNbr>
+                                                <soCust>'.$req->site_genso.'</soCust>
+                                                <soDueDate>'.$lastschedule->temp_sch_date.'</soDueDate>';
+
+                            $line_nbr = 1;
+
+                            foreach($datatemp as $datas) {
+                                if($datas->temp_qty_need > 0){
+                                    $qdocBody .= '<salesOrderDetail>
+                                                    <operation>A</operation>
+                                                    <line>'.$line_nbr.'</line>
+                                                    <sodPart>'.$datas->temp_sp.'</sodPart>
+                                                    <sodSite>'.$req->site_genso.'</sodSite>
+                                                    <sodQtyOrd>'.$datas->temp_qty_need.'</sodQtyOrd>
+                                                    <sodSite>'.$req->site_genso.'</sodSite>
+                                                    <sodDueDate>'.$datas->temp_sch_date.'</sodDueDate>
+                                                </salesOrderDetail>';
+                                    $line_nbr++;
+                                
+                                }
+                            }
+
+                            $qdocfooter =   '</salesOrder>
+                                        </dsSalesOrder>
+                                    </maintainSalesOrder>
+                                </soapenv:Body>
+                            </soapenv:Envelope>';
+
+                            $qdocRequest = $qdocHead . $qdocBody . $qdocfooter;
+
+                            // dd($qdocRequest);
+
+                            $curlOptions = array(
+                                CURLOPT_URL => $qxUrl,
+                                CURLOPT_CONNECTTIMEOUT => $timeout,        // in seconds, 0 = unlimited / wait indefinitely.
+                                CURLOPT_TIMEOUT => $timeout + 120, // The maximum number of seconds to allow cURL functions to execute. must be greater than CURLOPT_CONNECTTIMEOUT
+                                CURLOPT_HTTPHEADER => $this->httpHeader($qdocRequest),
+                                CURLOPT_POSTFIELDS => preg_replace("/\s+/", " ", $qdocRequest),
+                                CURLOPT_POST => true,
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_SSL_VERIFYPEER => false,
+                                CURLOPT_SSL_VERIFYHOST => false
+                            );
+
+                            $getInfo = '';
+                            $httpCode = 0;
+                            $curlErrno = 0;
+                            $curlError = '';
+
+
+                            $qdocResponse = '';
+
+                            $curl = curl_init();
+                            if ($curl) {
+                                curl_setopt_array($curl, $curlOptions);
+                                $qdocResponse = curl_exec($curl);           // sending qdocRequest here, the result is qdocResponse.
+                                //
+                                $curlErrno = curl_errno($curl);
+                                $curlError = curl_error($curl);
+                                $first = true;
+                                foreach (curl_getinfo($curl) as $key => $value) {
+                                    if (gettype($value) != 'array') {
+                                        if (!$first) $getInfo .= ", ";
+                                        $getInfo = $getInfo . $key . '=>' . $value;
+                                        $first = false;
+                                        if ($key == 'http_code') $httpCode = $value;
+                                    }
+                                }
+                                curl_close($curl);
+                            }
+
+                            // dd($qdocResponse);
+
+                            if (is_bool($qdocResponse)) {
+
+                                DB::rollBack();
+                                toast('Something Wrong with Qxtend', 'error');
+                                return redirect()->back();
+                            }
+                            $xmlResp = simplexml_load_string($qdocResponse);
+                            $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
+                            $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
+
+
+
+                            if ($qdocResult == "success" or $qdocResult == "warning") {
+                                DB::commit();
+                                toast('Created SO EAMS Successfully', 'success');
+                                return redirect()->back();
+                            } else {
+                                DB::rollBack();
+                                toast('Delete SO EAMS Error', 'error');
+                                return redirect()->back();
+                            }
+                        } else {
+
+                            $qxwsa = ModelsQxwsa::first();
+
+                            // Var Qxtend
+                            $qxUrl          = $qxwsa->qx_url; // Edit Here
+
+                            $qxRcv          = $qxwsa->qx_rcv;
+
+                            $timeout        = 0;
+
+                            $domain         = $qxwsa->wsas_domain;
+
+                            // XML Qextend ** Edit Here
+
+                            // dd($qxRcv);
+
+                            $qdocHead = '<soapenv:Envelope xmlns="urn:schemas-qad-com:xml-services"
+                                    xmlns:qcom="urn:schemas-qad-com:xml-services:common"
+                                    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing">
+                                    <soapenv:Header>
+                                        <wsa:Action/>
+                                        <wsa:To>urn:services-qad-com:' . $qxRcv . '</wsa:To>
+                                        <wsa:MessageID>urn:services-qad-com::' . $qxRcv . '</wsa:MessageID>
+                                        <wsa:ReferenceParameters>
+                                        <qcom:suppressResponseDetail>true</qcom:suppressResponseDetail>
+                                        </wsa:ReferenceParameters>
+                                        <wsa:ReplyTo>
+                                        <wsa:Address>urn:services-qad-com:</wsa:Address>
+                                        </wsa:ReplyTo>
+                                    </soapenv:Header>
+                                    <soapenv:Body>
+                                        <maintainSalesOrder>
+                                        <qcom:dsSessionContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>domain</qcom:propertyName>
+                                            <qcom:propertyValue>' . $domain . '</qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>scopeTransaction</qcom:propertyName>
+                                            <qcom:propertyValue>false</qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>version</qcom:propertyName>
+                                            <qcom:propertyValue>ERP3_3</qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>mnemonicsRaw</qcom:propertyName>
+                                            <qcom:propertyValue>false</qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>username</qcom:propertyName>
+                                            <qcom:propertyValue>mfg</qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>password</qcom:propertyName>
+                                            <qcom:propertyValue></qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>action</qcom:propertyName>
+                                            <qcom:propertyValue/>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>entity</qcom:propertyName>
+                                            <qcom:propertyValue/>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>email</qcom:propertyName>
+                                            <qcom:propertyValue/>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>emailLevel</qcom:propertyName>
+                                            <qcom:propertyValue/>
+                                            </qcom:ttContext>
+                                        </qcom:dsSessionContext>
+                                        <dsSalesOrder>';
+
+                            $qdocBody = '';
+
+                            $qdocBody .= '<salesOrder>
+                                            <operation>R</operation>
+                                            <soNbr>EAMS</soNbr>
+                                        </salesOrder>';
+
+                            $qdocfooter =   '</dsSalesOrder>
+                                            </maintainSalesOrder>
+                                        </soapenv:Body>
+                                    </soapenv:Envelope>';
+
+                            $qdocRequest = $qdocHead . $qdocBody . $qdocfooter;
+
+                            // dd($qdocRequest);
+
+                            $curlOptions = array(
+                                CURLOPT_URL => $qxUrl,
+                                CURLOPT_CONNECTTIMEOUT => $timeout,        // in seconds, 0 = unlimited / wait indefinitely.
+                                CURLOPT_TIMEOUT => $timeout + 120, // The maximum number of seconds to allow cURL functions to execute. must be greater than CURLOPT_CONNECTTIMEOUT
+                                CURLOPT_HTTPHEADER => $this->httpHeader($qdocRequest),
+                                CURLOPT_POSTFIELDS => preg_replace("/\s+/", " ", $qdocRequest),
+                                CURLOPT_POST => true,
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_SSL_VERIFYPEER => false,
+                                CURLOPT_SSL_VERIFYHOST => false
+                            );
+
+                            $getInfo = '';
+                            $httpCode = 0;
+                            $curlErrno = 0;
+                            $curlError = '';
+
+
+                            $qdocResponse = '';
+
+                            $curl = curl_init();
+                            if ($curl) {
+                                curl_setopt_array($curl, $curlOptions);
+                                $qdocResponse = curl_exec($curl);           // sending qdocRequest here, the result is qdocResponse.
+                                //
+                                $curlErrno = curl_errno($curl);
+                                $curlError = curl_error($curl);
+                                $first = true;
+                                foreach (curl_getinfo($curl) as $key => $value) {
+                                    if (gettype($value) != 'array') {
+                                        if (!$first) $getInfo .= ", ";
+                                        $getInfo = $getInfo . $key . '=>' . $value;
+                                        $first = false;
+                                        if ($key == 'http_code') $httpCode = $value;
+                                    }
+                                }
+                                curl_close($curl);
+                            }
+
+                            // dd($qdocResponse);
+
+                            if (is_bool($qdocResponse)) {
+
+                                DB::rollBack();
+                                toast('Something Wrong with Qxtend', 'error');
+                                return redirect()->back();
+                            }
+                            $xmlResp = simplexml_load_string($qdocResponse);
+                            $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
+                            $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
+
+
+
+                            if ($qdocResult == "success" or $qdocResult == "warning") {
+                                // DB::commit();
+                                // toast('Delete SO EAMS Successfully', 'success');
+                                // return redirect()->back();
+                            } else {
+                                DB::rollBack();
+                                toast('Delete SO EAMS Error', 'error');
+                                return redirect()->back();
+                            }
+
+                            /* BUAT SO EAMS BARU SETELAH YANG LAMA DIHAPUS */
+
+                            $qdocHead = '<soapenv:Envelope xmlns="urn:schemas-qad-com:xml-services"
+                                    xmlns:qcom="urn:schemas-qad-com:xml-services:common"
+                                    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing">
+                                    <soapenv:Header>
+                                        <wsa:Action/>
+                                        <wsa:To>urn:services-qad-com:' . $qxRcv . '</wsa:To>
+                                        <wsa:MessageID>urn:services-qad-com::' . $qxRcv . '</wsa:MessageID>
+                                        <wsa:ReferenceParameters>
+                                        <qcom:suppressResponseDetail>true</qcom:suppressResponseDetail>
+                                        </wsa:ReferenceParameters>
+                                        <wsa:ReplyTo>
+                                        <wsa:Address>urn:services-qad-com:</wsa:Address>
+                                        </wsa:ReplyTo>
+                                    </soapenv:Header>
+                                    <soapenv:Body>
+                                        <maintainSalesOrder>
+                                        <qcom:dsSessionContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>domain</qcom:propertyName>
+                                            <qcom:propertyValue>' . $domain . '</qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>scopeTransaction</qcom:propertyName>
+                                            <qcom:propertyValue>false</qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>version</qcom:propertyName>
+                                            <qcom:propertyValue>ERP3_3</qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>mnemonicsRaw</qcom:propertyName>
+                                            <qcom:propertyValue>false</qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>username</qcom:propertyName>
+                                            <qcom:propertyValue>mfg</qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>password</qcom:propertyName>
+                                            <qcom:propertyValue></qcom:propertyValue>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>action</qcom:propertyName>
+                                            <qcom:propertyValue/>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>entity</qcom:propertyName>
+                                            <qcom:propertyValue/>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>email</qcom:propertyName>
+                                            <qcom:propertyValue/>
+                                            </qcom:ttContext>
+                                            <qcom:ttContext>
+                                            <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                                            <qcom:propertyName>emailLevel</qcom:propertyName>
+                                            <qcom:propertyValue/>
+                                            </qcom:ttContext>
+                                        </qcom:dsSessionContext>
+                                        <dsSalesOrder>';
+
+                            $qdocBody = '';
+
+                            $qdocBody .= '<salesOrder>
+                                                <operation>A</operation>
+                                                <soNbr>EAMS</soNbr>
+                                                <soCust>'.$req->site_genso.'</soCust>
+                                                <soDueDate>'.$lastschedule->temp_sch_date.'</soDueDate>';
+
+                            $line_nbr = 1;
+
+                            foreach($datatemp as $datas) {
+                                if($datas->temp_qty_need > 0){
+                                    $qdocBody .= '<salesOrderDetail>
+                                                    <operation>A</operation>
+                                                    <line>'.$line_nbr.'</line>
+                                                    <sodPart>'.$datas->temp_sp.'</sodPart>
+                                                    <sodSite>'.$req->site_genso.'</sodSite>
+                                                    <sodQtyOrd>'.$datas->temp_qty_need.'</sodQtyOrd>
+                                                    <sodSite>'.$req->site_genso.'</sodSite>
+                                                    <sodDueDate>'.$datas->temp_sch_date.'</sodDueDate>
+                                                </salesOrderDetail>';
+                                    $line_nbr++;
+                                }
+                            }
+
+                            $qdocfooter =   '</salesOrder>
+                                        </dsSalesOrder>
+                                    </maintainSalesOrder>
+                                </soapenv:Body>
+                            </soapenv:Envelope>';
+
+                            $qdocRequest = $qdocHead . $qdocBody . $qdocfooter;
+
+                            // dd($qdocRequest);
+
+                            $curlOptions = array(
+                                CURLOPT_URL => $qxUrl,
+                                CURLOPT_CONNECTTIMEOUT => $timeout,        // in seconds, 0 = unlimited / wait indefinitely.
+                                CURLOPT_TIMEOUT => $timeout + 120, // The maximum number of seconds to allow cURL functions to execute. must be greater than CURLOPT_CONNECTTIMEOUT
+                                CURLOPT_HTTPHEADER => $this->httpHeader($qdocRequest),
+                                CURLOPT_POSTFIELDS => preg_replace("/\s+/", " ", $qdocRequest),
+                                CURLOPT_POST => true,
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_SSL_VERIFYPEER => false,
+                                CURLOPT_SSL_VERIFYHOST => false
+                            );
+
+                            $getInfo = '';
+                            $httpCode = 0;
+                            $curlErrno = 0;
+                            $curlError = '';
+
+
+                            $qdocResponse = '';
+
+                            $curl = curl_init();
+                            if ($curl) {
+                                curl_setopt_array($curl, $curlOptions);
+                                $qdocResponse = curl_exec($curl);           // sending qdocRequest here, the result is qdocResponse.
+                                //
+                                $curlErrno = curl_errno($curl);
+                                $curlError = curl_error($curl);
+                                $first = true;
+                                foreach (curl_getinfo($curl) as $key => $value) {
+                                    if (gettype($value) != 'array') {
+                                        if (!$first) $getInfo .= ", ";
+                                        $getInfo = $getInfo . $key . '=>' . $value;
+                                        $first = false;
+                                        if ($key == 'http_code') $httpCode = $value;
+                                    }
+                                }
+                                curl_close($curl);
+                            }
+
+                            // dd($qdocResponse);
+
+                            if (is_bool($qdocResponse)) {
+
+                                DB::rollBack();
+                                toast('Something Wrong with Qxtend', 'error');
+                                return redirect()->back();
+                            }
+                            $xmlResp = simplexml_load_string($qdocResponse);
+                            $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
+                            $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
+
+
+
+                            if ($qdocResult == "success" or $qdocResult == "warning") {
+                                // DB::commit();
+                                // toast('Delete SO EAMS Successfully', 'success');
+                                // return redirect()->back();
+                            } else {
+                                DB::rollBack();
+                                toast('Delete SO EAMS Error', 'error');
+                                return redirect()->back();
+                            }
+
+                            DB::commit();
+                            toast('SO EAMS Successfully Created', 'Success');
+                            return redirect()->back();
+                        }
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            dd($e);
+            DB::rollBack();
+            toast('Transaction Error', 'error');
+            return redirect()->back();
+        }
     }
 
 }
