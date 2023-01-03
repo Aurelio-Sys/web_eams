@@ -3422,7 +3422,7 @@ class wocontroller extends Controller
 
             $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
 
-            if ($cost// data === false) {
+            if ($costdata) {
                 alert()->error('Error', 'WSA Failed');
                 return redirect()->route('woreport');
             } else {

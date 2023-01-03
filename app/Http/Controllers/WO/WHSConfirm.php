@@ -505,7 +505,7 @@ class WHSConfirm extends Controller
 
             $domain = ModelsQxwsa::first();
 
-            $stokdata = (new WSAServices())->wsastok($domain->wsas_domain);
+            $stokdata = (new WSAServices())->wsastok($domain->wsas_domain,$req->t_site);
 
             if ($stokdata === false) {
                 toast('WSA Failed', 'error')->persistent('Dismiss');
