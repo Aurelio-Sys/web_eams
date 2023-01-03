@@ -3422,7 +3422,7 @@ class wocontroller extends Controller
 
             $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
 
-            if ($costdata === false) {
+            if ($cost// data === false) {
                 alert()->error('Error', 'WSA Failed');
                 return redirect()->route('woreport');
             } else {
@@ -4187,8 +4187,8 @@ class wocontroller extends Controller
             ->get();
         // dd($wodet);
         $data = DB::table('wo_mstr')
-            ->selectRaw('wo_nbr,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status,
-                wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,wo_engineer2 as woen2, 
+            ->selectRaw('wo_nbr,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status, wo_created_at, wo_schedule, wo_duedate
+                wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,wo_engineer2 as woen2, wo_note,
                 wo_engineer3 as woen3,wo_engineer4 as woen4,wo_engineer5 as woen5,u1.eng_desc as u11,
                 u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, 
                 loc_code,loc_desc,astype_code,astype_desc,wo_new_type,wotyp_desc,wo_impact,wo_impact_desc,
@@ -4552,14 +4552,32 @@ class wocontroller extends Controller
         $users = DB::table('users')->get();
         $datasr = DB::table('service_req_mstr')
             ->whereWo_number($wo)
+            ->selectRaw('fn1.fn_desc as fn1, fn2.fn_desc as fn2, fn3.fn_desc as fn3, dept_desc, eng_desc, sr_number, sr_wotype, sr_dept,
+            sr_created_at, sr_assetcode, asset_desc, req_by, sr_approver, sr_impact, imp_desc, sr_date, sr_time, asset_desc, wotyp_desc, 
+            sr_note, imp_code, dept_user, req_by, wo_nbr, wo_duedate, wo_schedule')
+            ->leftjoin('eng_mstr', 'service_req_mstr.req_username', 'eng_mstr.eng_code')
+            ->leftJoin('dept_mstr', 'service_req_mstr.sr_dept', 'dept_mstr.dept_code')
+            ->leftJoin('asset_mstr', 'service_req_mstr.sr_assetcode', 'asset_mstr.asset_code')
+            ->leftJoin('fn_mstr as fn1', 'service_req_mstr.sr_failurecode1', 'fn1.fn_code')
+            ->leftJoin('fn_mstr as fn2', 'service_req_mstr.sr_failurecode2', 'fn2.fn_code')
+            ->leftJoin('fn_mstr as fn3', 'service_req_mstr.sr_failurecode3', 'fn3.fn_code')
+            ->leftJoin('wotyp_mstr', 'service_req_mstr.sr_wotype', 'wotyp_mstr.wotyp_code')
+            ->leftJoin('wo_mstr', 'service_req_mstr.sr_number', 'wo_mstr.wo_sr_nbr')
+            ->leftJoin('imp_mstr', 'service_req_mstr.sr_impact', 'imp_mstr.imp_code')
+            ->leftJoin('users', 'service_req_mstr.sr_approver', 'users.username')
             ->first();
+
+        $impact = DB::table(('imp_mstr'))
+            ->get();
+        $dept = DB::table(('dept_mstr'))
+            ->get();
 
         // $pdf = PDF::loadview('workorder.pdfprint-template',['womstr' => $womstr,'wodet' => $wodet, 'data' => $data,'printdate' =>$printdate,'repair'=>$repair,'sparepart'=>$array])->setPaper('A4','portrait');
         $pdf = PDF::loadview('workorder.pdfprint-template', [
             'sparepart' => $sparepartarray, 'womstr' => $womstr,
             'repairlist' => $repairlist, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb,
             'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printdate' => $printdate, 'engineerlist' => $engineerlist,
-            'users' => $users, 'datasr' => $datasr
+            'users' => $users, 'datasr' => $datasr, 'impact' => $impact, 'dept' => $dept, 
         ])->setPaper('A4', 'portrait');
         //return view('picklistbrowse.shipperprint-template',['printdata1' => $printdata1, 'printdata2' => $printdata2, 'runningnbr' => $runningnbr,'user' => $user,'last' =>$countprint]);
         return $pdf->stream($wo . '.pdf');
@@ -4675,18 +4693,18 @@ class wocontroller extends Controller
                     $grouptool->ins_tool = $exparr;
                 }
                 // dd($repair,$arrayrepaircode[$i]);
-                $check[$i] = DB::table('wo_mstr')
-                    ->selectRaw('wrd_flag')
-                    ->leftjoin('wo_rc_detail as a', 'wo_mstr.wo_nbr', 'a.wrd_wo_nbr')
-                    ->where('wo_mstr.wo_nbr', '=', $wo)
-                    ->where('a.wrd_repair_code', '=', $arrayrepaircode[$i])
-                    ->first();
-                if (isset($check[$i]) == true) {
-                    $checkstr[$i] = $check[$i]->wrd_flag;
-                } else {
-                    $checkstr[$i] = 0;
-                }
-                $countdb[$i] = count($repair[$i]);
+                // $check[$i] = DB::table('wo_mstr')
+                //     ->selectRaw('wrd_flag')
+                //     ->leftjoin('wo_rc_detail as a', 'wo_mstr.wo_nbr', 'a.wrd_wo_nbr')
+                //     ->where('wo_mstr.wo_nbr', '=', $wo)
+                //     ->where('a.wrd_repair_code', '=', $arrayrepaircode[$i])
+                //     ->first();
+                // if (isset($check[$i]) == true) {
+                //     $checkstr[$i] = $check[$i]->wrd_flag;
+                // } else {
+                //     $checkstr[$i] = 0;
+                // }
+                // $countdb[$i] = count($repair[$i]);
             }
         } else if ($statusrepair->wo_repair_type == 'code') {
             // dd($statusrepair);
@@ -4752,17 +4770,17 @@ class wocontroller extends Controller
                     $grouptool->ins_tool = $exparr;
                 }
 
-                $check[$i] = DB::table('wo_mstr')
-                    ->selectRaw('wrd_flag')
-                    ->leftjoin('wo_rc_detail as a', 'wo_mstr.wo_nbr', 'a.wrd_wo_nbr')
-                    ->where('wo_mstr.wo_nbr', '=', $wo)
-                    ->where('a.wrd_repair_code', '=', $arrayrepaircode[$i])
-                    ->first();
-                if (isset($check[$i]) == true) {
-                    $checkstr[$i] = $check[$i]->wrd_flag;
-                } else {
-                    $checkstr[$i] = 0;
-                }
+                // $check[$i] = DB::table('wo_mstr')
+                //     ->selectRaw('wrd_flag')
+                //     ->leftjoin('wo_rc_detail as a', 'wo_mstr.wo_nbr', 'a.wrd_wo_nbr')
+                //     ->where('wo_mstr.wo_nbr', '=', $wo)
+                //     ->where('a.wrd_repair_code', '=', $arrayrepaircode[$i])
+                //     ->first();
+                // if (isset($check[$i]) == true) {
+                //     $checkstr[$i] = $check[$i]->wrd_flag;
+                // } else {
+                //     $checkstr[$i] = 0;
+                // }
                 // if(count($repair[$i])!= )
 
                 // dd(count($repair[1]));
@@ -4775,14 +4793,39 @@ class wocontroller extends Controller
         //     }
 
         // }
+
+        $datasr = DB::table('service_req_mstr')
+            ->whereWo_number($wo)
+            ->selectRaw('fn1.fn_desc as fn1, fn2.fn_desc as fn2, fn3.fn_desc as fn3, dept_desc, eng_desc, sr_number, sr_wotype, sr_dept,
+            sr_created_at, sr_assetcode, asset_desc, req_by, sr_approver, sr_impact, imp_desc, sr_date, sr_time, asset_desc, wotyp_desc, 
+            sr_note, imp_code, dept_user, req_by, wo_nbr, wo_duedate, wo_schedule')
+            ->leftjoin('eng_mstr', 'service_req_mstr.req_username', 'eng_mstr.eng_code')
+            ->leftJoin('dept_mstr', 'service_req_mstr.sr_dept', 'dept_mstr.dept_code')
+            ->leftJoin('asset_mstr', 'service_req_mstr.sr_assetcode', 'asset_mstr.asset_code')
+            ->leftJoin('fn_mstr as fn1', 'service_req_mstr.sr_failurecode1', 'fn1.fn_code')
+            ->leftJoin('fn_mstr as fn2', 'service_req_mstr.sr_failurecode2', 'fn2.fn_code')
+            ->leftJoin('fn_mstr as fn3', 'service_req_mstr.sr_failurecode3', 'fn3.fn_code')
+            ->leftJoin('wotyp_mstr', 'service_req_mstr.sr_wotype', 'wotyp_mstr.wotyp_code')
+            ->leftJoin('wo_mstr', 'service_req_mstr.sr_number', 'wo_mstr.wo_sr_nbr')
+            ->leftJoin('imp_mstr', 'service_req_mstr.sr_impact', 'imp_mstr.imp_code')
+            ->leftJoin('users', 'service_req_mstr.sr_approver', 'users.username')
+            ->first();
+
+        $impact = DB::table(('imp_mstr'))
+            ->get();
+        $dept = DB::table(('dept_mstr'))
+            ->get();
+
         $printdate = Carbon::now('ASIA/JAKARTA')->toDateTimeString();
         $printname = session::get('username');
         // dd($repair);
 
         if ($statusrepair->wo_repair_type == 'manual') {
-            $pdf = PDF::loadview('workorder.pdfprint2-template', ['wotype' => $wotype, 'data' => $data, 'datamanual' => $datamanual, 'counter' => 0, 'countdb' => $countdb, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
+            // $pdf = PDF::loadview('workorder.pdfprint2-template', ['wotype' => $wotype, 'data' => $data, 'datamanual' => $datamanual, 'counter' => 0, 'countdb' => $countdb, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
+            $pdf = PDF::loadview('workorder.pdfprint-template', ['datasr' => $datasr, 'impact' => $impact, 'dept' => $dept, 'wotype' => $wotype, 'data' => $data, 'datamanual' => $datamanual, 'counter' => 0, 'countdb' => $countdb, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
         } else {
-            $pdf = PDF::loadview('workorder.pdfprint2-template', ['wotype' => $wotype, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb, 'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printname' => $printname, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
+            // $pdf = PDF::loadview('workorder.pdfprint2-template', ['wotype' => $wotype, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb, 'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printname' => $printname, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
+            $pdf = PDF::loadview('workorder.pdfprint-template', ['datasr' => $datasr, 'impact' => $impact, 'dept' => $dept, 'wotype' => $wotype, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb, 'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printname' => $printname, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
         }
 
 
