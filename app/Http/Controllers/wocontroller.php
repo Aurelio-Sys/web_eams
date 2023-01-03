@@ -234,9 +234,9 @@ class wocontroller extends Controller
                 ->orderby('wo_created_at', 'desc')
                 ->orderBy('wo_mstr.wo_nbr', 'desc');
 
-            if (Session::get('role') <> 'ADMIN') {
-                $data = $data->where('wo_dept','=',session::get('department'));
-            }
+            // if (Session::get('role') <> 'ADMIN') {
+            //     $data = $data->where('wo_dept','=',session::get('department'));
+            // }
                 
             $data = $data->paginate(10);
             
