@@ -3683,7 +3683,20 @@ class wocontroller extends Controller
                 } else {
 
                     DB::rollBack();
-                    toast('Qxtend Response Error', 'error');
+
+                    $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
+					$qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
+					$output = '';
+					foreach($qdocMsgDesc as $datas){
+						if(str_contains($datas, 'ERROR:')){
+							$output .= $datas. ' - ';
+						}
+					}
+					$output = substr($output, 0, -3);
+					
+					alert()->error('Error','Qxtend Error berikut, '.$output.'')->persistent('Dismiss');
+
+                    // toast('Qxtend Response Error', 'error');
                     return redirect()->route('woreport');
                 }
 
@@ -3975,7 +3988,7 @@ class wocontroller extends Controller
             if (is_bool($qdocResponse)) {
 
                 DB::rollBack();
-                toast('Something Wrong with Qxtend', 'error');
+                toast('Something Wrong with Qxtend Connection', 'error');
                 return redirect()->route('woreport');
             }
             $xmlResp = simplexml_load_string($qdocResponse);
@@ -4017,7 +4030,19 @@ class wocontroller extends Controller
             } else {
 
                 DB::rollBack();
-                toast('Qxtend Response Error', 'error');
+
+                $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
+                $qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
+                $output = '';
+                foreach($qdocMsgDesc as $datas){
+                    if(str_contains($datas, 'ERROR:')){
+                        $output .= $datas. ' - ';
+                    }
+                }
+                $output = substr($output, 0, -3);
+                
+                alert()->error('Error','Qxtend Error berikut, '.$output.'')->persistent('Dismiss');
+                // toast('Qxtend Response Error', 'error');
                 return redirect()->route('woreport');
 
             }
