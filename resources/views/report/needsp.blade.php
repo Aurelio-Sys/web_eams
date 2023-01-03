@@ -12,20 +12,25 @@
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-<form action="{{route('generateSO')}}" method="post">
+<form action="{{route('generateSO')}}" method="post" id="genso">
     {{ method_field('post') }}
     {{ csrf_field() }}
     <div class="row mb-4">
-    <label for="site_genso" class="col-form-label col-md-2 text-md-left">Site</label>
-    <div class="col-md-4">
-        <select class="form-control" id="site_genso" name="site_genso" required>
-                <option></option>
-            @foreach ( $datasite as $site )
-                <option value="{{$site->site_code}}">{{$site->site_code}} -- {{$site->site_desc}}</option>
-            @endforeach
-        </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Generate SO</button>
+        <label for="site_genso" class="col-form-label col-md-1 text-md-left">Site</label>
+        <div class="col-md-3">
+            <select class="form-control" id="site_genso" name="site_genso" required>
+                    <option></option>
+                @foreach ( $datasite as $site )
+                    <option value="{{$site->site_code}}">{{$site->site_code}} -- {{$site->site_desc}}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" id="btngenso" class="btn btn-primary">Generate SO</button>
+            <button type="button" class="btn btn-info" id="btnloading" style="display:none;">
+                <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+            </button>
+        </div>
     </div>
 </form>
 <!--FORM Search Disini -->
@@ -104,11 +109,21 @@
 
 @section('scripts')
     <script>
+        $(document).ready(function() {
+            $('#genso').submit(function(event) {
+                // alert('aa');
+                document.getElementById('btngenso').style.display = 'none';
+                document.getElementById('btnloading').style.display = '';
+            });
+        });
+
        function clear_icon()
        {
             $('#id_icon').html('');
             $('#post_title_icon').html('');
        }
+
+       
 
        $('#site_genso').select2({
             width:'100%',
