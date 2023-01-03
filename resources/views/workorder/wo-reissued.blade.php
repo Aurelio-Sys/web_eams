@@ -180,8 +180,8 @@
                                         <td style="margin-top:0;min-height:50px;border:2px solid">
                                             {{$spdet->wo_dets_rc}}
                                             <input type="hidden" name="rc_hidden[]" value="{{$spdet->wo_dets_rc}}" />
-                                            <input type="hidden" name="site_hidden[]" value="{{$spdet->	wo_dets_wh_tosite}}"/>
-                                            <input type="hidden" name="loc_hidden[]" value="{{$spdet->	wo_dets_wh_toloc}}"/>
+                                            <input type="hidden" name="site_hidden[]" value="{{$spdet->wo_dets_wh_tosite}}"/>
+                                            <input type="hidden" name="loc_hidden[]" value="{{$spdet->wo_dets_wh_toloc}}"/>
                                             <input type="hidden" name="lotserial[]" value="{{$spdet->wo_dets_wh_lot}}"/>
                                         </td>
                                         <td style="margin-top:0;min-height:50px;border:2px solid">

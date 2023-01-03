@@ -335,7 +335,7 @@ class WHSConfirm extends Controller
                         <qcom:ttContext>
                         <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                         <qcom:propertyName>scopeTransaction</qcom:propertyName>
-                        <qcom:propertyValue>false</qcom:propertyValue>
+                        <qcom:propertyValue>true</qcom:propertyValue>
                         </qcom:ttContext>
                         <qcom:ttContext>
                         <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -355,7 +355,7 @@ class WHSConfirm extends Controller
                         <qcom:ttContext>
                         <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                         <qcom:propertyName>password</qcom:propertyName>
-                        <qcom:propertyValue></qcom:propertyValue>
+                        <qcom:propertyValue>DuaKelinc1P4t1</qcom:propertyValue>
                         </qcom:ttContext>
                         <qcom:ttContext>
                         <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -448,8 +448,6 @@ class WHSConfirm extends Controller
                     }
                     curl_close($curl);
                 }
-
-                // dd($qdocResponse);
 
                 if (is_bool($qdocResponse)) {
 
