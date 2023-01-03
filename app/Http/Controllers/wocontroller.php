@@ -2899,8 +2899,8 @@ class wocontroller extends Controller
             //     //         $qdocBody .= ' <inventoryIssue>
             //     //                 <ptPart>' . $dtqx->wo_dets_sp . '</ptPart>
             //     //                 <lotserialQty>' . $dtqx->qtytoqx . '</lotserialQty>
-            //     //                 <site>' . $dtqx->wo_dets_wh_site . '</site>
-            //     //                 <location>' . $dtqx->wo_dets_wh_loc . '</location>
+            //     //                 <site>' . $dtqx->wo_dets_wh_tosite . '</site>
+            //     //                 <location>' . $dtqx->wo_dets_wh_toloc . '</location>
             //     //                 <lotserial>' . $dtqx->wo_dets_wh_lot . '</lotserial>
             //     //                 <rmks>' . $dtqx->wo_dets_nbr . '</rmks>
             //     //             </inventoryIssue>';
@@ -3235,8 +3235,8 @@ class wocontroller extends Controller
             //     //         $qdocBody .= ' <inventoryIssue>
             //     //                 <ptPart>' . $dtqx->wo_dets_sp . '</ptPart>
             //     //                 <lotserialQty>' . $dtqx->qtytoqx . '</lotserialQty>
-            //     //                 <site>' . $dtqx->wo_dets_wh_site . '</site>
-            //     //                 <location>' . $dtqx->wo_dets_wh_loc . '</location>
+            //     //                 <site>' . $dtqx->wo_dets_wh_tosite . '</site>
+            //     //                 <location>' . $dtqx->wo_dets_wh_toloc . '</location>
             //     //                 <rmks>' . $dtqx->wo_dets_nbr . '</rmks>
             //     //             </inventoryIssue>';
             //     //     }
@@ -3614,8 +3614,8 @@ class wocontroller extends Controller
             //         $qdocBody .= ' <inventoryIssue>
             //                 <ptPart>' . $dtqx->wo_dets_sp . '</ptPart>
             //                 <lotserialQty>' . $dtqx->qtytoqx . '</lotserialQty>
-            //                 <site>' . $dtqx->wo_dets_wh_site . '</site>
-            //                 <location>' . $dtqx->wo_dets_wh_loc . '</location>
+            //                 <site>' . $dtqx->wo_dets_wh_tosite . '</site>
+            //                 <location>' . $dtqx->wo_dets_wh_toloc . '</location>
             //                 <rmks>' . $dtqx->wo_dets_nbr . '</rmks>
             //             </inventoryIssue>';
             //     }
