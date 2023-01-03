@@ -2322,6 +2322,7 @@ class SettingController extends Controller
     public function searchlocsp(Request $req)
     {
         if ($req->ajax()) {
+            // dd($req->all());
             $t_site = $req->get('t_site');
       
             $data = DB::table('loc_mstr')
@@ -3244,7 +3245,11 @@ class SettingController extends Controller
     public function loadsparepart(Request $req){
         $domain = ModelsQxwsa::first();
 
-        $spdata = (new WSAServices())->wsagetsp($domain->wsas_domain);
+        $datasite = DB::table('site_mstrs')
+            ->where('site_flag','=','yes')
+            ->first();
+
+        $spdata = (new WSAServices())->wsagetsp($domain->wsas_domain,$datasite->site_code);
 
         if ($spdata === false) {
             toast('WSA Failed', 'error')->persistent('Dismiss');

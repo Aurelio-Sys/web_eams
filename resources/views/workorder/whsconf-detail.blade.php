@@ -78,7 +78,8 @@
                                 <td style="text-align: center; width: 5% !important; font-weight: bold;">Qty Request</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Site</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Lot</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Location</td>
+                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Loc From</td>
+                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Loc To</td>
                                 <td style="text-align: center; width: 5% !important; font-weight: bold;">Stock</td>
                                 <td style="text-align: center; width: 7% !important; font-weight: bold;">Qty Confirm</td>
                                 <td style="text-align: center; width: 19% !important; font-weight: bold;">Release Note</td>
@@ -214,6 +215,11 @@
                                         <option value="{{ $rsloc->loc_code }}" {{$dloc == $rsloc->loc_code ? "selected" : ""}}>{{ $rsloc->loc_code }} -- {{ $rsloc->loc_desc }}</option>
                                     @endforeach
                                     </select> -->
+                                </td>
+                                <td style="vertical-align:middle;text-align:right;">
+                                    {{$dataloceng->eng_site}} -- {{$dataloceng->eng_loc}}
+                                    <input type="hidden" name="rlssite[]" value="{{$dataloceng->eng_site}}" />
+                                    <input type="hidden" name="rlsloc[]" value="{{$dataloceng->eng_loc}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     <p class="qtystok" >{{ number_format($dstok,2) }}</p>

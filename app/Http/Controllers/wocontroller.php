@@ -228,14 +228,18 @@ class wocontroller extends Controller
                 // ->select('approver')
                 ->where('username', '=', session()->get('username'))
                 ->get();
-            // dd($usernow);
+            
             $data = DB::table('wo_mstr')
                 ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
                 ->orderby('wo_created_at', 'desc')
-                ->orderBy('wo_mstr.wo_nbr', 'desc')
-                ->paginate(10);
-            // dd($data);
-            //   dd($data);
+                ->orderBy('wo_mstr.wo_nbr', 'desc');
+
+            if (Session::get('role') <> 'ADMIN') {
+                $data = $data->where('wo_dept','=',session::get('department'));
+            }
+                
+            $data = $data->paginate(10);
+            
             $depart = DB::table('dept_mstr')
                 ->get();
             $engineer = DB::table('eng_mstr')

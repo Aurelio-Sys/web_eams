@@ -171,7 +171,7 @@ class WSAServices
         return [$dataloop, $qdocResult];
     }
 
-    public function wsagetsp($dom)
+    public function wsagetsp($dom,$site)
     {
         $wsa = ModelsQxwsa::first();
 
@@ -192,6 +192,7 @@ class WSAServices
                 <Body>
                     <eams_item_mstr xmlns="' . $wsa->wsas_path . '">
                         <inpdomain>' . $domain . '</inpdomain>
+                        <inpsite>' . $site . '</inpsite>
                     </eams_item_mstr>
                 </Body>
             </Envelope>';
@@ -399,7 +400,7 @@ class WSAServices
         return [$dataloop, $qdocResult];
     }
 
-    public function wsastok($dom)
+    public function wsastok($dom,$site)
     {
         $wsa = ModelsQxwsa::first();
 
@@ -420,6 +421,7 @@ class WSAServices
             <Body>
                 <eams_stok xmlns="' . $wsa->wsas_path . '">
                     <inpdomain>' . $domain . '</inpdomain>
+                    <inpsite>' . $site . '</inpsite>
                 </eams_stok>
             </Body>
         </Envelope>';
