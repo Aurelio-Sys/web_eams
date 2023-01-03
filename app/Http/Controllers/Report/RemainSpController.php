@@ -26,7 +26,11 @@ class RemainSpController extends Controller
             // ->get();
             ->paginate(10);
 
-        return view('report.remainsp', ['data' => $dataremsp]);
+        $datasp = DB::table('sp_mstr')
+            ->orderBy('spm_code')
+            ->get();
+
+        return view('report.remainsp', ['data' => $dataremsp, 'datasp' => $datasp]);
     }
 
     /**

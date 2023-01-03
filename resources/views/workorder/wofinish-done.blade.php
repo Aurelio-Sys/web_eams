@@ -271,6 +271,7 @@
                                     <td style="margin-top:0;min-height:50px;border:2px solid">
                                         {{$spdet->wo_dets_ins}}
                                         <input type="hidden" name="inscode_hidden2[]" value="{{$spdet->wo_dets_ins}}" />
+                                        <input type="hidden" name="spsite_hidden2[]" value="{{$spdet->spm_site}}" />
                                     </td>
                                     <td style="margin-top:0;min-height:50px;border:2px solid">
                                         {{$spdet->wo_dets_sp}}

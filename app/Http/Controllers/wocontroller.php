@@ -41,7 +41,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use ZipArchive;
 use Response;
 use App\Models\Qxwsa as ModelsQxwsa;
-
+use App\Services\CreateTempTable;
+use Illuminate\Database\Eloquent\Collection;
 
 class wocontroller extends Controller
 {
@@ -227,14 +228,18 @@ class wocontroller extends Controller
                 // ->select('approver')
                 ->where('username', '=', session()->get('username'))
                 ->get();
-            // dd($usernow);
+            
             $data = DB::table('wo_mstr')
                 ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
                 ->orderby('wo_created_at', 'desc')
-                ->orderBy('wo_mstr.wo_nbr', 'desc')
-                ->paginate(10);
-            // dd($data);
-            //   dd($data);
+                ->orderBy('wo_mstr.wo_nbr', 'desc');
+
+            // if (Session::get('role') <> 'ADMIN') {
+            //     $data = $data->where('wo_dept','=',session::get('department'));
+            // }
+                
+            $data = $data->paginate(10);
+            
             $depart = DB::table('dept_mstr')
                 ->get();
             $engineer = DB::table('eng_mstr')
@@ -2015,8 +2020,6 @@ class wocontroller extends Controller
             ->where('wo_dets_nbr', '=', $nowo)
             ->get();
 
-        // dd($detailsp);
-
         // dd($data);
         // return $data;
 
@@ -2896,8 +2899,8 @@ class wocontroller extends Controller
             //     //         $qdocBody .= ' <inventoryIssue>
             //     //                 <ptPart>' . $dtqx->wo_dets_sp . '</ptPart>
             //     //                 <lotserialQty>' . $dtqx->qtytoqx . '</lotserialQty>
-            //     //                 <site>' . $dtqx->wo_dets_wh_site . '</site>
-            //     //                 <location>' . $dtqx->wo_dets_wh_loc . '</location>
+            //     //                 <site>' . $dtqx->wo_dets_wh_tosite . '</site>
+            //     //                 <location>' . $dtqx->wo_dets_wh_toloc . '</location>
             //     //                 <lotserial>' . $dtqx->wo_dets_wh_lot . '</lotserial>
             //     //                 <rmks>' . $dtqx->wo_dets_nbr . '</rmks>
             //     //             </inventoryIssue>';
@@ -3232,8 +3235,8 @@ class wocontroller extends Controller
             //     //         $qdocBody .= ' <inventoryIssue>
             //     //                 <ptPart>' . $dtqx->wo_dets_sp . '</ptPart>
             //     //                 <lotserialQty>' . $dtqx->qtytoqx . '</lotserialQty>
-            //     //                 <site>' . $dtqx->wo_dets_wh_site . '</site>
-            //     //                 <location>' . $dtqx->wo_dets_wh_loc . '</location>
+            //     //                 <site>' . $dtqx->wo_dets_wh_tosite . '</site>
+            //     //                 <location>' . $dtqx->wo_dets_wh_toloc . '</location>
             //     //                 <rmks>' . $dtqx->wo_dets_nbr . '</rmks>
             //     //             </inventoryIssue>';
             //     //     }
@@ -3419,10 +3422,24 @@ class wocontroller extends Controller
 
             $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
 
-            // dd($costdata);
+            if ($cost// data === false) {
+                alert()->error('Error', 'WSA Failed');
+                return redirect()->route('woreport');
+            } else {
+                if ($costdata[1] == "false") {
+                    alert()->error('Error', 'Item Cost tidak ditemukan');
+                    return redirect()->route('woreport');
+                } else {
+                    $tempCost = (new CreateTempTable())->createTempCost($costdata[0]);
+
+                    $tempCost = collect($tempCost[0]);
+                }
+            }
 
             foreach ($req->rc_hidden2 as $k_sp => $value) {
+
                 foreach ($req->rc_hidden1 as $k_ins => $value) {
+
                     if ($req->rc_hidden2[$k_sp] == $req->rc_hidden1[$k_ins] && $req->inscode_hidden2[$k_sp] == $req->inscode_hidden1[$k_ins]) {
 
                         $testarray[] = [
@@ -3430,6 +3447,7 @@ class wocontroller extends Controller
                             'rc' => $req->rc_hidden2[$k_sp],
                             'ic' => $req->inscode_hidden2[$k_sp],
                             'sp' => $req->spcode_hidden2[$k_sp],
+                            'site' => $req->spsite_hidden2[$k_sp],
                             'do' => $arraydo[$k_ins],
                             'result' => $arrayresult[$k_ins],
                             'note' => $req->note[$k_ins],
@@ -3438,6 +3456,39 @@ class wocontroller extends Controller
                     }
                 }
             }
+
+            // foreach ($tempCost as $coscos) {
+            //     foreach ($testarray as $a) {
+            //         if ($coscos->cost_site == $a['site'] && $coscos->cost_part == $a['sp']) {
+            //             $collection = collect($testarray)->map(function ($item, $key) use ($tempCost) {
+            //                 $item['cost'] =($tempCost[$key]->cost_cost);
+            //                 return $item;
+            //             });
+            //         }
+            //     }
+            // }
+
+            // $testarray = $collection->toArray();
+
+            foreach ($tempCost as $coscos) {
+                foreach ($testarray as $a) {
+                    if ($coscos->cost_site == $a['site'] && $coscos->cost_part == $a['sp']) {
+                        $collection = collect($testarray)->map(function ($item, $key) use ($tempCost) {
+                            $item['cost'] =($tempCost[$key]->cost_cost);
+                            return $item;
+                        });
+                    }else{
+                        $collection = collect($testarray)->map(function ($item, $key) use ($tempCost) {
+                            $item['cost'] = 0;
+                            return $item;
+                        });
+                    }
+                }
+            }
+
+            // dd(gettype($collection));
+        
+            $testarray = $collection->toArray();
 
             foreach ($testarray as $k_all => $value) {
 
@@ -3451,6 +3502,7 @@ class wocontroller extends Controller
                         'wo_dets_do_flag' => $testarray[$k_all]['do'],
                         'wo_dets_fu_note' => $testarray[$k_all]['note'],
                         'wo_dets_qty_used' => $testarray[$k_all]['qtyused'],
+                        'wo_dets_sp_price' => $testarray[$k_all]['cost'] ? $testarray[$k_all]['cost']:0,
                     ]);
             }
 
@@ -3562,8 +3614,8 @@ class wocontroller extends Controller
             //         $qdocBody .= ' <inventoryIssue>
             //                 <ptPart>' . $dtqx->wo_dets_sp . '</ptPart>
             //                 <lotserialQty>' . $dtqx->qtytoqx . '</lotserialQty>
-            //                 <site>' . $dtqx->wo_dets_wh_site . '</site>
-            //                 <location>' . $dtqx->wo_dets_wh_loc . '</location>
+            //                 <site>' . $dtqx->wo_dets_wh_tosite . '</site>
+            //                 <location>' . $dtqx->wo_dets_wh_toloc . '</location>
             //                 <rmks>' . $dtqx->wo_dets_nbr . '</rmks>
             //             </inventoryIssue>';
             //     }
@@ -3727,6 +3779,7 @@ class wocontroller extends Controller
             toast('data reported successfuly', 'success');
             return redirect()->route('woreport');
         } catch (Exception $e) {
+            dd($e);
             DB::rollBack();
             toast('Save Error', 'error');
             return redirect()->route('woreport');

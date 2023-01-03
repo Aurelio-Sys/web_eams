@@ -7,7 +7,9 @@ use App\Http\Controllers\Master\PmEngController;
 use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\Report\RemainSpController;
+use App\Http\Controllers\Report\RptAssetYearController;
 use App\Http\Controllers\SP\KebutuhanSPController;
+use App\Http\Controllers\UserChartController;
 use App\Http\Controllers\WO\AllWOGenerate;
 use App\Http\Controllers\WO\ConfirmEng;
 use App\Http\Controllers\WO\WORelease;
@@ -337,6 +339,8 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/engskill', 'SettingController@engskill');
 	route::get('/engrole', 'SettingController@engrole');
 	route::get('/engrole2', 'SettingController@engrole2');
+	route::get('/searchlocsp', 'SettingController@searchlocsp');
+	route::get('/searchlocsp2', 'SettingController@searchlocsp2');
 	
 	//departemen master
 	route::get('/deptmaster', 'SettingController@deptmaster');
@@ -532,12 +536,14 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// List Spare part
 	Route::get('/kebutuhansp', [KebutuhanSPController::class, 'index'])->name('browseKsp');
+	Route::post('/needsp/generateso', [UserChartController::class, 'generateso'])->name('generateSO');
 
 	// Detail WO Report
 	Route::get('/rptdetwo', [RptDetWOController::class, 'index'])->name('browseDetailWO');
 	Route::get('/exceldetwo', [RptDetWOController::class, 'index'])->name('excelDetailWO');
 	
-	Route::get('/rptcost', [RptCostController::class, 'index']);
+	Route::get('/rptcost', [RptCostController::class, 'index'])->name('rptcost');
+	Route::get('/yearcost', [RptCostController::class, 'yearcost'])->name('yearcost');
 
 	// Asset Site
 	Route::get('/assetsite', [AssetSiteController::class, 'index']);
@@ -579,6 +585,9 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('createapmeng', [PmEngController::class, 'store']);
 	Route::post('editpmeng', [PmEngController::class, 'update']);
 	Route::post('deletepmeng', [PmEngController::class, 'destroy']);
+
+	// Report Schedule Asset Year
+	Route::get('assetyear', [RptAssetYearController::class, 'index']);
 });
 
 Auth::routes();

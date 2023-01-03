@@ -51,18 +51,17 @@
                 <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
                   <option value="">--Select Asset--</option>
                   @foreach($asset1 as $assetsearch)
-                    <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_desc}}</option>
+                    <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
                   @endforeach
                 </select>
               </div>
-              <label for="s_priority" class="col-md-2 col-form-label text-md-right">{{ __('Priority') }}</label>
+              <label for="s_per1" class="col-md-2 col-form-label text-md-right">{{ __('Periode 1') }}</label>
               <div class="col-md-4 col-sm-12 mb-2 input-group">
-                <select id="s_priority" type="text" class="form-control" name="s_priority">
-                  <option value="">--Select Priority--</option>
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
+                <input type="date" name="s_per1" id="s_per1" class="form-control">
+              </div>
+              <label for="s_per2" class="col-md-2 col-form-label text-md-right">{{ __('Periode 2') }}</label>
+              <div class="col-md-4 col-sm-12 mb-2 input-group">
+                <input type="date" name="s_per2" id="s_per2" class="form-control">
               </div>
               <label for="" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
               <div class="col-md-2 col-sm-12 mb-2 input-group">
@@ -544,73 +543,27 @@
     $('#post_title_icon').html('');
   }
 
-  function fetch_data(page, sort_type, sort_by, wonumber, woasset, wostatus, wopriority, woengineer, wocreator) {
-    // alert(wocreator);
-    $.ajax({
-      url: "/wobrowse/pagination?page=" + page + "&sorttype=" + sort_type + "&sortby=" + sort_by + "&wonumber=" + wonumber + "&woasset=" + woasset + "&wostatus=" + wostatus + "&wopriority=" + wopriority + "&woengineer=" + woengineer + "&wocreator=" + wocreator,
-      success: function(data) {
-        // alert(data);
-        // alert(url);
-        console.log(data);
-        $('tbody').html('');
-        $('tbody').html(data);
-      }
-    })
+  function resetSearch() {
+    $('#s_nomorwo').val('');
+    $('#s_asset').val('');
+    $('#s_per1').val('');
+    $('#s_per2').val('');
   }
 
-  $(document).on('click', '#btnsearch', function() {
-    var wonumber = $('#s_nomorwo').val();
-    var woasset = $('#s_asset').val();
-    var wostatus = $('#s_status').val();
-    var wopriority = $('#s_priority').val();
-    var woengineer = $('#s_engineer').val();
-    var wocreator = $('#s_creator').val();
-    var column_name = $('#hidden_column_name').val();
-    var sort_type = $('#hidden_sort_type').val();
-    var page = 1;
-    // alert(wocreator);
-    document.getElementById('tmpwo').value = wonumber;
-    document.getElementById('tmpasset').value = woasset;
-    document.getElementById('tmpstatus').value = wostatus;
-    document.getElementById('tmppriority').value = wopriority;
-    document.getElementById('tmpengineer').value = woengineer;
-    document.getElementById('tmpcreator').value = wocreator;
-    // alert(document.getElementById('tmpcreator').value);
-    fetch_data(page, sort_type, column_name, wonumber, woasset, wostatus, wopriority, woengineer, wocreator);
-  });
-
   $(document).on('click', '#btnrefresh', function() {
-    var wonumber = '';
-    var asset = '';
-    var status = '';
-    var engineer = '';
-    var priority = '';
-    var creator = '';
-    var column_name = $('#hidden_column_name').val();
-    var sort_type = $('#hidden_sort_type').val();
-    var page = 1;
+    document.getElementById('s_per1').required = false;
+    document.getElementById('s_per2').required = false;
 
-    document.getElementById('s_nomorwo').value = '';
-    document.getElementById('s_asset').value = '';
-    document.getElementById('s_status').value = '';
-    document.getElementById('s_engineer').value = '';
-    document.getElementById('s_priority').value = '';
-    document.getElementById('tmpwo').value = '';
-    document.getElementById('tmpasset').value = '';
-    document.getElementById('tmpstatus').value = '';
-    document.getElementById('tmppriority').value = '';
-    document.getElementById('tmpengineer').value = '';
-    document.getElementById('tmpcreator').value = '';
-    $('#s_asset').select2({
-      width: '100%',
-      theme: 'bootstrap4',
-      asset
-    })
-    fetch_data(page, sort_type, column_name, wonumber, asset, status, priority, engineer, creator);
+    resetSearch();
   });
 
   $(document).on('click', '#btnexcel', function() {
-    window.open("/exceldetwo?dexcel=excel", '_blank');
+    var swo = $('#s_nomorwo').val();
+    var sasset = $('#s_asset').val();
+    var per1 = $('#s_per1').val();
+    var per2 = $('#s_per2').val();
+     
+    window.open("/exceldetwo?dexcel=excel&swo=" + swo + "&sasset=" + sasset + "&per1=" + per1 + "&per2=" + per2, '_blank');
   });
 
   $(document).on('click', '.imageview', function() {
@@ -648,5 +601,20 @@
       }
     })
   });
+
+  $(document).on('change', '#s_per1', function() {
+    var per = $('#s_per1').val();
+
+    document.getElementById('s_per2').required = true;
+    document.getElementById('s_per2').min = per1;
+  });
+
+  $(document).on('change', '#s_per2', function() {
+    var per = $('#s_per2').val();
+
+    document.getElementById('s_per1').required = true;
+    document.getElementById('s_per1').max = per;
+  });
+
 </script>
 @endsection

@@ -17,6 +17,8 @@
     @php($ht = "")
     @php($skill = "")
     @php($foto = "")
+    @php($site = "")
+    @php($loc = "")
 @else
     @php($b = $data->where('eng_code','=',$show->username)->first())
     @php($app = $b->approver)
@@ -25,6 +27,8 @@
     @php($ht = $b->eng_rate_hour)
     @php($skill = $b->eng_skill)
     @php($foto = $b->eng_photo)
+    @php($site = $b->eng_site)
+    @php($loc = $b->eng_loc)
 @endif
 @if($app == 1)
     @php($app = 'Yes')
@@ -52,8 +56,10 @@
         <!-- User ADMIN digunakan oleh IMI, tidak boleh di edit -->    
         @if($show->username != 'ADMIN')
             <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal"
-            data-code="{{$show->username}}" data-desc="{{$show->name}}" data-active="{{$show->active}}" data-email="{{$show->email_user}}" data-role="{{$show->role_user}}" data-dept="{{$show->dept_user}}"
-            data-birth="{{$bd}}"  data-join="{{$jd}}" data-rate="{{$ht}}" data-skill="{{$skill}}" data-photo="{{$foto}}" data-app="{{$app}}" data-acc="{{$show->access}}">
+            data-code="{{$show->username}}" data-desc="{{$show->name}}" data-active="{{$show->active}}" 
+            data-email="{{$show->email_user}}" data-role="{{$show->role_user}}" data-dept="{{$show->dept_user}}"
+            data-birth="{{$bd}}"  data-join="{{$jd}}" data-rate="{{$ht}}" data-skill="{{$skill}}" data-photo="{{$foto}}" 
+            data-app="{{$app}}" data-acc="{{$show->access}}" data-site="{{$site}}" data-loc="{{$loc}}">
             <i class="icon-table fa fa-edit fa-lg"></i></a>
             &ensp;
             <a href="javascript:void(0)" class="deletedata" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal" 

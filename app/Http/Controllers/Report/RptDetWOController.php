@@ -230,7 +230,7 @@ class RptDetWOController extends Controller
                 'temp_wo' => $dc->wo_nbr,
                 'temp_sr' => $dc->wo_sr_nbr,
                 'temp_asset' => $dc->wo_asset,
-                'temp_asset_desc' => DB::table('asset_mstr')->where('asset_code','=',$da->wo_asset)->value('asset_desc'),
+                'temp_asset_desc' => DB::table('asset_mstr')->where('asset_code','=',$dc->wo_asset)->value('asset_desc'),
                 'temp_creator' => $dc->wo_creator,
                 'temp_create_date' => $dc->wo_created_at,
                 'temp_sch_date' => $dc->wo_schedule,
@@ -249,14 +249,25 @@ class RptDetWOController extends Controller
         $datatemp = DB::table('temp_wo')
             ->orderBy('temp_wo','desc');
         // dd($datatemp->get());
+
+        if($request->s_nomorwo) {
+            $datatemp = $datatemp->where('temp_wo','=',$request->s_nomorwo);
+        }
+
+        if($request->s_asset) {
+            $datatemp = $datatemp->where('temp_asset','=',$request->s_asset);
+        }
+
+        if($request->s_per1) {
+            $datatemp = $datatemp->whereBetween ('temp_create_date',[$request->s_per1,$request->s_per2]);
+        }
             
-        $datatemp = $datatemp->paginate(5); 
-        
+        $datatemp = $datatemp->paginate(10); 
 
         Schema::dropIfExists('temp_wo');
         // dd($impact);
         if ($request->dexcel == "excel") {
-            return Excel::download(new DetailWOExport($impact), 'DetailWO.xlsx');
+            return Excel::download(new DetailWOExport($request->swo,$request->sasset,$request->per1,$request->per2), 'DetailWO.xlsx');
             
         } else {
             return view('report.rptdetwo', ['impact' => $impact, 'wottype' => $wottype, 'custrnow' => $custrnow, 

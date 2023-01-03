@@ -248,7 +248,7 @@
                         </div>
                     </div>
                     <div class="form-group row divcal" id="divcal" style="display: none;">
-                        <label for="t_cal" class="col-md-4 col-form-label text-md-right">Calendar</label>
+                        <label for="t_cal" class="col-md-4 col-form-label text-md-right">Calendar (Day)</label>
                         <div class="col-md-6">
                             <input id="t_cal" type="number" class="form-control" name="t_cal" autocomplete="off" autofocus placeholder="0" />
                         </div>
@@ -474,7 +474,7 @@
                     </div>
                 </div>
                 <div class="form-group row divecal" id="divecal" style="display: none;">
-                    <label for="te_cal" class="col-md-4 col-form-label text-md-right">Calendar (month)</label>
+                    <label for="te_cal" class="col-md-4 col-form-label text-md-right">Calendar (day)</label>
                     <div class="col-md-6">
                         <input id="te_cal" type="number" class="form-control" name="te_cal" autocomplete="off" placeholder="0"/>
                     </div>

@@ -62,7 +62,7 @@ class ServiceController extends Controller
         $asset = DB::table('asset_mstr')
             ->leftJoin('asset_loc','asloc_code','=','asset_loc')
             ->where('asset_active', '=', 'Yes')
-            // ->where('asset_loc','=',session::get('department'))
+            ->where('asset_loc','=',session::get('department'))
             ->orderBy('asset_code')
             ->get();
         // dd(session::get('department'));
@@ -259,7 +259,7 @@ class ServiceController extends Controller
             ->first();
 
 
-        if ($kepalaengineer || Session::get('role') == 'ADM') {
+        if ($kepalaengineer || Session::get('role') == 'ADMIN') {
 
 
             $data = DB::table('service_req_mstr')
@@ -277,13 +277,17 @@ class ServiceController extends Controller
                             k1.fn_desc as k11, k2.fn_desc as k22, k3.fn_desc as k33')
                 ->where('sr_status', '=', '1')
                 ->orderBy('sr_date','DESC')
-                ->orderBy('sr_number', 'DESC')
-                ->paginate(10);
-            // ->get();
+                ->orderBy('sr_number', 'DESC');
+            
+            /* Jika bukan admin, maka yang muncul adalah approver sesuai login */
+            if (Session::get('role') <> 'ADMIN') {
+                $data = $data->where('sr_approver','=',Session::get('username'));
+            }
 
-            // dd($data);
+            $data = $data->paginate(10);
 
             $datarepair = DB::table('rep_master')
+                ->orderBy('repm_code')
                 ->get();
 
             $datasset = DB::table('asset_mstr')
@@ -293,11 +297,6 @@ class ServiceController extends Controller
                 ->selectRaw('MIN(xxrepgroup_id) as xxrepgroup_id , xxrepgroup_nbr, MIN(xxrepgroup_desc) as xxrepgroup_desc')
                 ->groupBy('xxrepgroup_nbr')
                 ->get();
-
-            // dd($data);
-
-            // $eng = DB::table('eng_mstr')
-            //         ->get();
 
             return view('service.servicereq-approval', ['datas' => $data, 'asset' => $datasset, 'repaircode' => $datarepair, 'repgroup' => $datarepgroup]);
         } else {
@@ -802,6 +801,7 @@ class ServiceController extends Controller
                 u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55,
                 wo_mstr.wo_start_date, wo_mstr.wo_finish_date, wo_mstr.wo_action, wo_mstr.wo_status,
                 k1.fn_desc as k11, k2.fn_desc as k22, k3.fn_desc as k33')
+            ->where('sr_dept','=',session::get('department'))
             ->orderBy('sr_date','DESC')
             ->orderBy('sr_number', 'DESC')
             // ->get();

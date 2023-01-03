@@ -48,7 +48,7 @@ class ScheduleCheck extends Command
     {
         $data = DB::table('asset_mstr')
                     ->where('asset_measure','=','C')
-                    // ->where('asset_code','=','EQ-0205-1')
+                    // ->where('asset_code','=','BGN00276')
                     // querry sch bulan ->whereRaw('DATEDIFF(MONTH, DATEADD(MONTH, asset_cal, asset_last_mtc), GETDATE()) >= - asset_tolerance') // fungsi SQL Server
                     // query sch bulan ->whereRaw('PERIOD_DIFF(PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal), date_format(now(),"%Y%m")) <= - asset_tolerance') // fungsi MYSQL
                     ->whereRaw('DATE_ADD(DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY) < curdate()')
@@ -108,12 +108,49 @@ class ScheduleCheck extends Command
 
                 $runningnbr = $tablern->wt_prefix.'-'.$newyear.'-'.$newtemprunnbr;
                 
+                /* Mencari engineer yang bertugas */
+                $dataengpm = DB::table('pm_eng')
+                    ->orderBy('pm_type')
+                    ->orderBy('pm_group')
+                    ->orderBy('pm_asset');
+
+                $engasset = $dataengpm->where('pm_asset','=',$data->asset_code)->value('pm_engcode');
+                $engtype = $dataengpm->where('pm_type','=',$data->asset_type)->value('pm_engcode');
+                $enggroup = $dataengpm->where('pm_group','=',$data->asset_group)->value('pm_engcode');
+                $enggrty = $dataengpm->where('pm_group','=',$data->asset_group)->where('pm_type','=',$data->asset_type)->value('pm_engcode');
+
+                if ($engasset) {
+                    $engpm = $engasset;
+                    // $engpm = "asset";
+                } elseif ($enggrty) {
+                    $engpm = $enggrty;
+                    // $engpm = "duo";
+                } elseif ($enggroup) {
+                    $engpm = $enggroup;
+                    // $engpm = "group";
+                } elseif ($engtype) {
+                    $engpm = $engtype;
+                    // $engpm = "type";
+                } else {
+                    $engpm = "";
+                }
+
+                // dd($engpm);
+
+                $arrayeng = [];
+                foreach(explode(';', $engpm) as $info) {
+                    $arrayeng[] = $info;
+                }
+
                 $dataarray = array(
                     'wo_nbr' => $runningnbr,
                     'wo_status' => 'plan', //-> A211025
                     // 'wo_status' => 'open',
-                    'wo_engineer1' => 'admin', //A211025
-                    'wo_engineer2' => 'sukarya', //A211025
+                    'wo_engineer1' => isset($arrayeng[1]) ? $arrayeng[1] : "", //A211025
+                    'wo_engineer2' => isset($arrayeng[2]) ? $arrayeng[2] : "", //A211025
+                    'wo_engineer3' => isset($arrayeng[3]) ? $arrayeng[3] : "", //A211025
+                    'wo_engineer4' => isset($arrayeng[4]) ? $arrayeng[4] : "", //A211025
+                    'wo_engineer5' => isset($arrayeng[5]) ? $arrayeng[5] : "", //A211025
 					'wo_priority' => 'high',
                     'wo_repair_type' => $data->asset_repair_type,
                     'wo_repair_group' => $repgroup,

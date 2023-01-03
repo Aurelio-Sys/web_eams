@@ -14,6 +14,7 @@
 @section('content')
 
 <!--FORM Search Disini -->
+<form action="/rptcost" method="GET">
 <div class="container-fluid mb-2">
 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 <li class="nav-item has-treeview bg-black">
@@ -27,19 +28,18 @@
 <li class="nav-item">
 <div class="col-12 form-group row">
     <div class="col-12 form-group row">
-        <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Department Code</label>
+        <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset</label>
         <div class="col-md-4 mb-2 input-group">
-            <input id="s_code" type="text" class="form-control" name="s_code"
-            value="" autofocus autocomplete="off"/>
-        </div>
-        <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Department Description</label>
-        <div class="col-md-4 mb-2 input-group">
-            <input id="s_desc" type="text" class="form-control" name="s_desc"
-            value="" autofocus autocomplete="off"/>
+            <select id="s_code" name="s_code" class="form-control">
+                <option value=""></option>
+                @foreach($dataasset as $da)
+                <option value="{{$da->asset_code}}" {{$sasset === $da->asset_code ? "selected" : ""}}>{{$da->asset_code}} -- {{$da->asset_desc}}</option>
+                @endforeach
+            </select>
         </div>
         <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('') }}</label>
         <div class="col-md-2 mb-2 input-group">
-            <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" />
+            <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
         </div>
         <div class="col-md-2 col-sm-12 mb-2 input-group">
             <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
@@ -53,15 +53,16 @@
 </li>
 </ul>
 </div>
+</form>
 
 <!-- Bagian Searching -->
 <div class="col-md-12"><hr></div>
 
 <div class="col-md-12" style="color:black; font-size:2rem; text-align:end">
-    <a href="/prevsch?bulan={{$bulan}}&stat=mundur" id="mundur"><i class="fas fa-angle-left"></i></a>
+    <a href="/yearcost?bulan={{$bulan}}&stat=mundur&asset={{$sasset}}" id="mundur"><i class="fas fa-angle-left"></i></a>
     &ensp;&ensp;<span>{{$bulan}}</span>&ensp;&ensp;
     <input type='hidden' name='bulan' id='bulan' value='{{ $bulan }}'>
-    <a href="/prevsch?bulan={{$bulan}}&stat=maju" id="maju" ><i class="fas fa-angle-right"></i></a>
+    <a href="/yearcost?bulan={{$bulan}}&stat=maju&asset={{$sasset}}" id="maju" ><i class="fas fa-angle-right"></i></a>
 </div>
 
 <div class="table-responsive col-12">
@@ -106,7 +107,22 @@
             $('#post_title_icon').html('');
        }
 
-       function fetch_data(page, sort_type, sort_by, code, desc){
+      
+
+        $(document).ready(function() {
+            var cur_url = window.location.href;
+    
+            let paramString = cur_url.split('?')[1];
+            let queryString = new URLSearchParams(paramString);
+    
+            {{--  let asset = queryString.get('s_asset');
+            let priority = queryString.get('s_priority');
+    
+            $('#s_asset').val(asset).trigger('change');
+            $('#s_priority').val(priority).trigger('change');  --}}
+        });
+
+        {{--  function fetch_data(page, sort_type, sort_by, code, desc){
             $.ajax({
                 url:"prevsch/pagination?page="+page+"&sorttype="+sort_type+"&sortby="+sort_by+"&code="+code+"&desc="+desc,
                 success:function(data){
@@ -146,21 +162,17 @@
             document.getElementById('tmpdesc').value  = desc;
 
             fetch_data(page, sort_type, column_name, code, desc);
-        });
+        });  --}}
 
         {{--  document.getElementById('bulandisplay').innerHTML='{{ $bulan }}';  --}}
 
-        $(document).ready(function() {
-            var cur_url = window.location.href;
-    
-            let paramString = cur_url.split('?')[1];
-            let queryString = new URLSearchParams(paramString);
-    
-            {{--  let asset = queryString.get('s_asset');
-            let priority = queryString.get('s_priority');
-    
-            $('#s_asset').val(asset).trigger('change');
-            $('#s_priority').val(priority).trigger('change');  --}}
+        $(document).on('click', '#btnrefresh', function() {
+            document.getElementById('s_code').value  = '';
+        }); 
+
+        $("#s_code").select2({
+            width : '100%',
+            theme : 'bootstrap4',
         });
     
     
