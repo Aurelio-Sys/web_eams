@@ -2899,8 +2899,8 @@ class wocontroller extends Controller
             //     //         $qdocBody .= ' <inventoryIssue>
             //     //                 <ptPart>' . $dtqx->wo_dets_sp . '</ptPart>
             //     //                 <lotserialQty>' . $dtqx->qtytoqx . '</lotserialQty>
-            //     //                 <site>' . $dtqx->wo_dets_wh_site . '</site>
-            //     //                 <location>' . $dtqx->wo_dets_wh_loc . '</location>
+            //     //                 <site>' . $dtqx->wo_dets_wh_tosite . '</site>
+            //     //                 <location>' . $dtqx->wo_dets_wh_toloc . '</location>
             //     //                 <lotserial>' . $dtqx->wo_dets_wh_lot . '</lotserial>
             //     //                 <rmks>' . $dtqx->wo_dets_nbr . '</rmks>
             //     //             </inventoryIssue>';
@@ -3235,8 +3235,8 @@ class wocontroller extends Controller
             //     //         $qdocBody .= ' <inventoryIssue>
             //     //                 <ptPart>' . $dtqx->wo_dets_sp . '</ptPart>
             //     //                 <lotserialQty>' . $dtqx->qtytoqx . '</lotserialQty>
-            //     //                 <site>' . $dtqx->wo_dets_wh_site . '</site>
-            //     //                 <location>' . $dtqx->wo_dets_wh_loc . '</location>
+            //     //                 <site>' . $dtqx->wo_dets_wh_tosite . '</site>
+            //     //                 <location>' . $dtqx->wo_dets_wh_toloc . '</location>
             //     //                 <rmks>' . $dtqx->wo_dets_nbr . '</rmks>
             //     //             </inventoryIssue>';
             //     //     }
@@ -3422,7 +3422,7 @@ class wocontroller extends Controller
 
             $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
 
-            if ($costdata === false) {
+            if ($costdata) {
                 alert()->error('Error', 'WSA Failed');
                 return redirect()->route('woreport');
             } else {
@@ -3510,7 +3510,7 @@ class wocontroller extends Controller
 
             /* get data buat qxtend issue unplanned */
             $dataqxtend = DB::table('wo_dets')
-                ->select('wo_dets_nbr', 'wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc', DB::raw('SUM(wo_dets_qty_used) as qtytoqx'))
+                ->select('wo_dets_nbr', 'wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc', DB::raw('SUM(wo_dets_qty_used) as qtytoqx', 'wo_dets_wh_tosite','wo_dets_wh_toloc'))
                 ->where('wo_dets_nbr', '=', $req->c_wonbr)
                 ->where('wo_dets_qty_used', '!=', 0)
                 ->groupBy('wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc')
@@ -3519,178 +3519,191 @@ class wocontroller extends Controller
             // dd($dataqxtend);
 
             //qxtend dimatikan dulu
-            // if (count($dataqxtend) != 0) {
-            //     /* start Qxtend */
+            if (count($dataqxtend) != 0) {
+                /* start Qxtend */
 
-            //     $qxwsa = Qxwsa::first();
+                $qxwsa = Qxwsa::first();
 
-            //     // Var Qxtend
-            //     $qxUrl          = $qxwsa->qx_url; // Edit Here
+                // Var Qxtend
+                $qxUrl          = $qxwsa->qx_url; // Edit Here
 
-            //     $qxRcv          = $qxwsa->qx_rcv;
+                $qxRcv          = $qxwsa->qx_rcv;
 
-            //     $timeout        = 0;
+                $timeout        = 0;
 
-            //     $domain         = $qxwsa->wsas_domain;
+                $domain         = $qxwsa->wsas_domain;
 
-            //     // XML Qextend ** Edit Here
+                // XML Qextend ** Edit Here
 
-            //     $qdocHead = '  
-            //     <soapenv:Envelope xmlns="urn:schemas-qad-com:xml-services"
-            //     xmlns:qcom="urn:schemas-qad-com:xml-services:common"
-            //     xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing">
-            //   <soapenv:Header>
-            //     <wsa:Action/>
-            //     <wsa:To>urn:services-qad-com:' . $qxRcv . '</wsa:To>
-            //     <wsa:MessageID>urn:services-qad-com::' . $qxRcv . '</wsa:MessageID>
-            //     <wsa:ReferenceParameters>
-            //       <qcom:suppressResponseDetail>true</qcom:suppressResponseDetail>
-            //     </wsa:ReferenceParameters>
-            //     <wsa:ReplyTo>
-            //       <wsa:Address>urn:services-qad-com:</wsa:Address>
-            //     </wsa:ReplyTo>
-            //   </soapenv:Header>
-            //   <soapenv:Body>
-            //     <issueInventory>
-            //       <qcom:dsSessionContext>
-            //         <qcom:ttContext>
-            //           <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //           <qcom:propertyName>domain</qcom:propertyName>
-            //           <qcom:propertyValue>' . $domain . '</qcom:propertyValue>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //           <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //           <qcom:propertyName>scopeTransaction</qcom:propertyName>
-            //           <qcom:propertyValue>false</qcom:propertyValue>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //           <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //           <qcom:propertyName>version</qcom:propertyName>
-            //           <qcom:propertyValue>eB_2</qcom:propertyValue>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //           <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //           <qcom:propertyName>mnemonicsRaw</qcom:propertyName>
-            //           <qcom:propertyValue>false</qcom:propertyValue>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //           <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //           <qcom:propertyName>username</qcom:propertyName>
-            //           <qcom:propertyValue>mfg</qcom:propertyValue>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //           <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //           <qcom:propertyName>password</qcom:propertyName>
-            //           <qcom:propertyValue></qcom:propertyValue>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //           <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //           <qcom:propertyName>action</qcom:propertyName>
-            //           <qcom:propertyValue/>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //           <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //           <qcom:propertyName>entity</qcom:propertyName>
-            //           <qcom:propertyValue/>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //           <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //           <qcom:propertyName>email</qcom:propertyName>
-            //           <qcom:propertyValue/>
-            //         </qcom:ttContext>
-            //         <qcom:ttContext>
-            //           <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-            //           <qcom:propertyName>emailLevel</qcom:propertyName>
-            //           <qcom:propertyValue/>
-            //         </qcom:ttContext>
-            //       </qcom:dsSessionContext>
-            //       <dsInventoryIssue>';
+                $qdocHead = '  
+                <soapenv:Envelope xmlns="urn:schemas-qad-com:xml-services"
+                xmlns:qcom="urn:schemas-qad-com:xml-services:common"
+                xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing">
+              <soapenv:Header>
+                <wsa:Action/>
+                <wsa:To>urn:services-qad-com:' . $qxRcv . '</wsa:To>
+                <wsa:MessageID>urn:services-qad-com::' . $qxRcv . '</wsa:MessageID>
+                <wsa:ReferenceParameters>
+                  <qcom:suppressResponseDetail>true</qcom:suppressResponseDetail>
+                </wsa:ReferenceParameters>
+                <wsa:ReplyTo>
+                  <wsa:Address>urn:services-qad-com:</wsa:Address>
+                </wsa:ReplyTo>
+              </soapenv:Header>
+              <soapenv:Body>
+                <issueInventory>
+                  <qcom:dsSessionContext>
+                    <qcom:ttContext>
+                      <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                      <qcom:propertyName>domain</qcom:propertyName>
+                      <qcom:propertyValue>' . $domain . '</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                      <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                      <qcom:propertyName>scopeTransaction</qcom:propertyName>
+                      <qcom:propertyValue>true</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                      <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                      <qcom:propertyName>version</qcom:propertyName>
+                      <qcom:propertyValue>eB_2</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                      <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                      <qcom:propertyName>mnemonicsRaw</qcom:propertyName>
+                      <qcom:propertyValue>false</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                      <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                      <qcom:propertyName>username</qcom:propertyName>
+                      <qcom:propertyValue>mfg</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                      <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                      <qcom:propertyName>password</qcom:propertyName>
+                      <qcom:propertyValue>DuaKelinc1P4t1</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                      <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                      <qcom:propertyName>action</qcom:propertyName>
+                      <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                      <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                      <qcom:propertyName>entity</qcom:propertyName>
+                      <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                      <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                      <qcom:propertyName>email</qcom:propertyName>
+                      <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                      <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                      <qcom:propertyName>emailLevel</qcom:propertyName>
+                      <qcom:propertyValue/>
+                    </qcom:ttContext>
+                  </qcom:dsSessionContext>
+                  <dsInventoryIssue>';
 
-            //     $qdocBody = '';
-            //     foreach ($dataqxtend as $dtqx) {
+                $qdocBody = '';
+                foreach ($dataqxtend as $dtqx) {
 
-            //         // dump($dtqx);
+                    // dump($dtqx);
 
-            //         $qdocBody .= ' <inventoryIssue>
-            //                 <ptPart>' . $dtqx->wo_dets_sp . '</ptPart>
-            //                 <lotserialQty>' . $dtqx->qtytoqx . '</lotserialQty>
-            //                 <site>' . $dtqx->wo_dets_wh_site . '</site>
-            //                 <location>' . $dtqx->wo_dets_wh_loc . '</location>
-            //                 <rmks>' . $dtqx->wo_dets_nbr . '</rmks>
-            //             </inventoryIssue>';
-            //     }
-            //     $qdocfooter =   '</dsInventoryIssue>
-            //                 </issueInventory>
-            //             </soapenv:Body>
-            //         </soapenv:Envelope>';
+                    $qdocBody .= ' <inventoryIssue>
+                            <ptPart>' . $dtqx->wo_dets_sp . '</ptPart>
+                            <lotserialQty>' . $dtqx->qtytoqx . '</lotserialQty>
+                            <site>' . $dtqx->wo_dets_wh_tosite . '</site>
+                            <location>' . $dtqx->wo_dets_wh_toloc . '</location>
+                            <rmks>' . $dtqx->wo_dets_nbr . '</rmks>
+                        </inventoryIssue>';
+                }
+                $qdocfooter =   '</dsInventoryIssue>
+                            </issueInventory>
+                        </soapenv:Body>
+                    </soapenv:Envelope>';
 
-            //     $qdocRequest = $qdocHead . $qdocBody . $qdocfooter;
+                $qdocRequest = $qdocHead . $qdocBody . $qdocfooter;
 
-            //     // dd($qdocRequest);
+                // dd($qdocRequest);
 
-            //     $curlOptions = array(
-            //         CURLOPT_URL => $qxUrl,
-            //         CURLOPT_CONNECTTIMEOUT => $timeout,        // in seconds, 0 = unlimited / wait indefinitely.
-            //         CURLOPT_TIMEOUT => $timeout + 120, // The maximum number of seconds to allow cURL functions to execute. must be greater than CURLOPT_CONNECTTIMEOUT
-            //         CURLOPT_HTTPHEADER => $this->httpHeader($qdocRequest),
-            //         CURLOPT_POSTFIELDS => preg_replace("/\s+/", " ", $qdocRequest),
-            //         CURLOPT_POST => true,
-            //         CURLOPT_RETURNTRANSFER => true,
-            //         CURLOPT_SSL_VERIFYPEER => false,
-            //         CURLOPT_SSL_VERIFYHOST => false
-            //     );
+                $curlOptions = array(
+                    CURLOPT_URL => $qxUrl,
+                    CURLOPT_CONNECTTIMEOUT => $timeout,        // in seconds, 0 = unlimited / wait indefinitely.
+                    CURLOPT_TIMEOUT => $timeout + 120, // The maximum number of seconds to allow cURL functions to execute. must be greater than CURLOPT_CONNECTTIMEOUT
+                    CURLOPT_HTTPHEADER => $this->httpHeader($qdocRequest),
+                    CURLOPT_POSTFIELDS => preg_replace("/\s+/", " ", $qdocRequest),
+                    CURLOPT_POST => true,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_SSL_VERIFYPEER => false,
+                    CURLOPT_SSL_VERIFYHOST => false
+                );
 
-            //     $getInfo = '';
-            //     $httpCode = 0;
-            //     $curlErrno = 0;
-            //     $curlError = '';
-
-
-            //     $qdocResponse = '';
-
-            //     $curl = curl_init();
-            //     if ($curl) {
-            //         curl_setopt_array($curl, $curlOptions);
-            //         $qdocResponse = curl_exec($curl);           // sending qdocRequest here, the result is qdocResponse.
-            //         //
-            //         $curlErrno = curl_errno($curl);
-            //         $curlError = curl_error($curl);
-            //         $first = true;
-            //         foreach (curl_getinfo($curl) as $key => $value) {
-            //             if (gettype($value) != 'array') {
-            //                 if (!$first) $getInfo .= ", ";
-            //                 $getInfo = $getInfo . $key . '=>' . $value;
-            //                 $first = false;
-            //                 if ($key == 'http_code') $httpCode = $value;
-            //             }
-            //         }
-            //         curl_close($curl);
-            //     }
-
-            //     if (is_bool($qdocResponse)) {
-
-            //         DB::rollBack();
-            //         toast('Something Wrong with Qxtend', 'error');
-            //         return redirect()->route('woreport');
-            //     }
-            //     $xmlResp = simplexml_load_string($qdocResponse);
-            //     $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
-            //     $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
+                $getInfo = '';
+                $httpCode = 0;
+                $curlErrno = 0;
+                $curlError = '';
 
 
+                $qdocResponse = '';
 
-            //     if ($qdocResult == "success" or $qdocResult == "warning") {
-            //     } else {
+                $curl = curl_init();
+                if ($curl) {
+                    curl_setopt_array($curl, $curlOptions);
+                    $qdocResponse = curl_exec($curl);           // sending qdocRequest here, the result is qdocResponse.
+                    //
+                    $curlErrno = curl_errno($curl);
+                    $curlError = curl_error($curl);
+                    $first = true;
+                    foreach (curl_getinfo($curl) as $key => $value) {
+                        if (gettype($value) != 'array') {
+                            if (!$first) $getInfo .= ", ";
+                            $getInfo = $getInfo . $key . '=>' . $value;
+                            $first = false;
+                            if ($key == 'http_code') $httpCode = $value;
+                        }
+                    }
+                    curl_close($curl);
+                }
 
-            //         DB::rollBack();
-            //         toast('Qxtend Response Error', 'error');
-            //         return redirect()->route('woreport');
-            //     }
+                if (is_bool($qdocResponse)) {
+
+                    DB::rollBack();
+                    toast('Something Wrong with Qxtend', 'error');
+                    return redirect()->route('woreport');
+                }
+                $xmlResp = simplexml_load_string($qdocResponse);
+                $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
+                $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
 
 
 
-            //     /* QXTEND issue - unplanned */
-            // }
+                if ($qdocResult == "success" or $qdocResult == "warning") {
+                } else {
+
+                    DB::rollBack();
+
+                    $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
+					$qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
+					$output = '';
+					foreach($qdocMsgDesc as $datas){
+						if(str_contains($datas, 'ERROR:')){
+							$output .= $datas. ' - ';
+						}
+					}
+					$output = substr($output, 0, -3);
+					
+					alert()->error('Error','Qxtend Error berikut, '.$output.'')->persistent('Dismiss');
+
+                    // toast('Qxtend Response Error', 'error');
+                    return redirect()->route('woreport');
+                }
+
+
+
+                /* QXTEND issue - unplanned */
+            }
 
 
             $arrayy = [
@@ -3823,7 +3836,7 @@ class wocontroller extends Controller
 
         try {
 
-            /*
+            
             $qxwsa = Qxwsa::first();
 
             // Var Qxtend
@@ -3863,7 +3876,7 @@ class wocontroller extends Controller
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                     <qcom:propertyName>scopeTransaction</qcom:propertyName>
-                    <qcom:propertyValue>false</qcom:propertyValue>
+                    <qcom:propertyValue>true</qcom:propertyValue>
                     </qcom:ttContext>
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -3883,7 +3896,7 @@ class wocontroller extends Controller
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                     <qcom:propertyName>password</qcom:propertyName>
-                    <qcom:propertyValue></qcom:propertyValue>
+                    <qcom:propertyValue>DuaKelinc1P4t1</qcom:propertyValue>
                     </qcom:ttContext>
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -3975,7 +3988,7 @@ class wocontroller extends Controller
             if (is_bool($qdocResponse)) {
 
                 DB::rollBack();
-                toast('Something Wrong with Qxtend', 'error');
+                toast('Something Wrong with Qxtend Connection', 'error');
                 return redirect()->route('woreport');
             }
             $xmlResp = simplexml_load_string($qdocResponse);
@@ -4017,11 +4030,23 @@ class wocontroller extends Controller
             } else {
 
                 DB::rollBack();
-                toast('Qxtend Response Error', 'error');
+
+                $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
+                $qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
+                $output = '';
+                foreach($qdocMsgDesc as $datas){
+                    if(str_contains($datas, 'ERROR:')){
+                        $output .= $datas. ' - ';
+                    }
+                }
+                $output = substr($output, 0, -3);
+                
+                alert()->error('Error','Qxtend Error berikut, '.$output.'')->persistent('Dismiss');
+                // toast('Qxtend Response Error', 'error');
                 return redirect()->route('woreport');
 
             }
-            */
+            
 
             foreach ($req->spcode_hidden as $jmlspcode => $value) {
 
@@ -4187,8 +4212,8 @@ class wocontroller extends Controller
             ->get();
         // dd($wodet);
         $data = DB::table('wo_mstr')
-            ->selectRaw('wo_nbr,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status,
-                wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,wo_engineer2 as woen2, 
+            ->selectRaw('wo_nbr,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status, wo_created_at, wo_schedule, wo_duedate
+                wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,wo_engineer2 as woen2, wo_note,
                 wo_engineer3 as woen3,wo_engineer4 as woen4,wo_engineer5 as woen5,u1.eng_desc as u11,
                 u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, 
                 loc_code,loc_desc,astype_code,astype_desc,wo_new_type,wotyp_desc,wo_impact,wo_impact_desc,
@@ -4552,14 +4577,32 @@ class wocontroller extends Controller
         $users = DB::table('users')->get();
         $datasr = DB::table('service_req_mstr')
             ->whereWo_number($wo)
+            ->selectRaw('fn1.fn_desc as fn1, fn2.fn_desc as fn2, fn3.fn_desc as fn3, dept_desc, eng_desc, sr_number, sr_wotype, sr_dept,
+            sr_created_at, sr_assetcode, asset_desc, req_by, sr_approver, sr_impact, imp_desc, sr_date, sr_time, asset_desc, wotyp_desc, 
+            sr_note, imp_code, dept_user, req_by, wo_nbr, wo_duedate, wo_schedule')
+            ->leftjoin('eng_mstr', 'service_req_mstr.req_username', 'eng_mstr.eng_code')
+            ->leftJoin('dept_mstr', 'service_req_mstr.sr_dept', 'dept_mstr.dept_code')
+            ->leftJoin('asset_mstr', 'service_req_mstr.sr_assetcode', 'asset_mstr.asset_code')
+            ->leftJoin('fn_mstr as fn1', 'service_req_mstr.sr_failurecode1', 'fn1.fn_code')
+            ->leftJoin('fn_mstr as fn2', 'service_req_mstr.sr_failurecode2', 'fn2.fn_code')
+            ->leftJoin('fn_mstr as fn3', 'service_req_mstr.sr_failurecode3', 'fn3.fn_code')
+            ->leftJoin('wotyp_mstr', 'service_req_mstr.sr_wotype', 'wotyp_mstr.wotyp_code')
+            ->leftJoin('wo_mstr', 'service_req_mstr.sr_number', 'wo_mstr.wo_sr_nbr')
+            ->leftJoin('imp_mstr', 'service_req_mstr.sr_impact', 'imp_mstr.imp_code')
+            ->leftJoin('users', 'service_req_mstr.sr_approver', 'users.username')
             ->first();
+
+        $impact = DB::table(('imp_mstr'))
+            ->get();
+        $dept = DB::table(('dept_mstr'))
+            ->get();
 
         // $pdf = PDF::loadview('workorder.pdfprint-template',['womstr' => $womstr,'wodet' => $wodet, 'data' => $data,'printdate' =>$printdate,'repair'=>$repair,'sparepart'=>$array])->setPaper('A4','portrait');
         $pdf = PDF::loadview('workorder.pdfprint-template', [
             'sparepart' => $sparepartarray, 'womstr' => $womstr,
             'repairlist' => $repairlist, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb,
             'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printdate' => $printdate, 'engineerlist' => $engineerlist,
-            'users' => $users, 'datasr' => $datasr
+            'users' => $users, 'datasr' => $datasr, 'impact' => $impact, 'dept' => $dept, 
         ])->setPaper('A4', 'portrait');
         //return view('picklistbrowse.shipperprint-template',['printdata1' => $printdata1, 'printdata2' => $printdata2, 'runningnbr' => $runningnbr,'user' => $user,'last' =>$countprint]);
         return $pdf->stream($wo . '.pdf');
@@ -4675,18 +4718,18 @@ class wocontroller extends Controller
                     $grouptool->ins_tool = $exparr;
                 }
                 // dd($repair,$arrayrepaircode[$i]);
-                $check[$i] = DB::table('wo_mstr')
-                    ->selectRaw('wrd_flag')
-                    ->leftjoin('wo_rc_detail as a', 'wo_mstr.wo_nbr', 'a.wrd_wo_nbr')
-                    ->where('wo_mstr.wo_nbr', '=', $wo)
-                    ->where('a.wrd_repair_code', '=', $arrayrepaircode[$i])
-                    ->first();
-                if (isset($check[$i]) == true) {
-                    $checkstr[$i] = $check[$i]->wrd_flag;
-                } else {
-                    $checkstr[$i] = 0;
-                }
-                $countdb[$i] = count($repair[$i]);
+                // $check[$i] = DB::table('wo_mstr')
+                //     ->selectRaw('wrd_flag')
+                //     ->leftjoin('wo_rc_detail as a', 'wo_mstr.wo_nbr', 'a.wrd_wo_nbr')
+                //     ->where('wo_mstr.wo_nbr', '=', $wo)
+                //     ->where('a.wrd_repair_code', '=', $arrayrepaircode[$i])
+                //     ->first();
+                // if (isset($check[$i]) == true) {
+                //     $checkstr[$i] = $check[$i]->wrd_flag;
+                // } else {
+                //     $checkstr[$i] = 0;
+                // }
+                // $countdb[$i] = count($repair[$i]);
             }
         } else if ($statusrepair->wo_repair_type == 'code') {
             // dd($statusrepair);
@@ -4752,17 +4795,17 @@ class wocontroller extends Controller
                     $grouptool->ins_tool = $exparr;
                 }
 
-                $check[$i] = DB::table('wo_mstr')
-                    ->selectRaw('wrd_flag')
-                    ->leftjoin('wo_rc_detail as a', 'wo_mstr.wo_nbr', 'a.wrd_wo_nbr')
-                    ->where('wo_mstr.wo_nbr', '=', $wo)
-                    ->where('a.wrd_repair_code', '=', $arrayrepaircode[$i])
-                    ->first();
-                if (isset($check[$i]) == true) {
-                    $checkstr[$i] = $check[$i]->wrd_flag;
-                } else {
-                    $checkstr[$i] = 0;
-                }
+                // $check[$i] = DB::table('wo_mstr')
+                //     ->selectRaw('wrd_flag')
+                //     ->leftjoin('wo_rc_detail as a', 'wo_mstr.wo_nbr', 'a.wrd_wo_nbr')
+                //     ->where('wo_mstr.wo_nbr', '=', $wo)
+                //     ->where('a.wrd_repair_code', '=', $arrayrepaircode[$i])
+                //     ->first();
+                // if (isset($check[$i]) == true) {
+                //     $checkstr[$i] = $check[$i]->wrd_flag;
+                // } else {
+                //     $checkstr[$i] = 0;
+                // }
                 // if(count($repair[$i])!= )
 
                 // dd(count($repair[1]));
@@ -4775,14 +4818,39 @@ class wocontroller extends Controller
         //     }
 
         // }
+
+        $datasr = DB::table('service_req_mstr')
+            ->whereWo_number($wo)
+            ->selectRaw('fn1.fn_desc as fn1, fn2.fn_desc as fn2, fn3.fn_desc as fn3, dept_desc, eng_desc, sr_number, sr_wotype, sr_dept,
+            sr_created_at, sr_assetcode, asset_desc, req_by, sr_approver, sr_impact, imp_desc, sr_date, sr_time, asset_desc, wotyp_desc, 
+            sr_note, imp_code, dept_user, req_by, wo_nbr, wo_duedate, wo_schedule')
+            ->leftjoin('eng_mstr', 'service_req_mstr.req_username', 'eng_mstr.eng_code')
+            ->leftJoin('dept_mstr', 'service_req_mstr.sr_dept', 'dept_mstr.dept_code')
+            ->leftJoin('asset_mstr', 'service_req_mstr.sr_assetcode', 'asset_mstr.asset_code')
+            ->leftJoin('fn_mstr as fn1', 'service_req_mstr.sr_failurecode1', 'fn1.fn_code')
+            ->leftJoin('fn_mstr as fn2', 'service_req_mstr.sr_failurecode2', 'fn2.fn_code')
+            ->leftJoin('fn_mstr as fn3', 'service_req_mstr.sr_failurecode3', 'fn3.fn_code')
+            ->leftJoin('wotyp_mstr', 'service_req_mstr.sr_wotype', 'wotyp_mstr.wotyp_code')
+            ->leftJoin('wo_mstr', 'service_req_mstr.sr_number', 'wo_mstr.wo_sr_nbr')
+            ->leftJoin('imp_mstr', 'service_req_mstr.sr_impact', 'imp_mstr.imp_code')
+            ->leftJoin('users', 'service_req_mstr.sr_approver', 'users.username')
+            ->first();
+
+        $impact = DB::table(('imp_mstr'))
+            ->get();
+        $dept = DB::table(('dept_mstr'))
+            ->get();
+
         $printdate = Carbon::now('ASIA/JAKARTA')->toDateTimeString();
         $printname = session::get('username');
         // dd($repair);
 
         if ($statusrepair->wo_repair_type == 'manual') {
-            $pdf = PDF::loadview('workorder.pdfprint2-template', ['wotype' => $wotype, 'data' => $data, 'datamanual' => $datamanual, 'counter' => 0, 'countdb' => $countdb, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
+            // $pdf = PDF::loadview('workorder.pdfprint2-template', ['wotype' => $wotype, 'data' => $data, 'datamanual' => $datamanual, 'counter' => 0, 'countdb' => $countdb, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
+            $pdf = PDF::loadview('workorder.pdfprint-template', ['datasr' => $datasr, 'impact' => $impact, 'dept' => $dept, 'wotype' => $wotype, 'data' => $data, 'datamanual' => $datamanual, 'counter' => 0, 'countdb' => $countdb, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
         } else {
-            $pdf = PDF::loadview('workorder.pdfprint2-template', ['wotype' => $wotype, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb, 'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printname' => $printname, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
+            // $pdf = PDF::loadview('workorder.pdfprint2-template', ['wotype' => $wotype, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb, 'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printname' => $printname, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
+            $pdf = PDF::loadview('workorder.pdfprint-template', ['datasr' => $datasr, 'impact' => $impact, 'dept' => $dept, 'wotype' => $wotype, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb, 'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printname' => $printname, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
         }
 
 

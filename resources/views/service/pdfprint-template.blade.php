@@ -97,190 +97,349 @@
 
   <!--------------- INI UNTUK PRINT TEMPLATE --------------->
   @include('service.pdfprint-header')
-  <table style="width:730px; height:800.5px; margin-bottom:-5cm;border:1px solid;" class="borderless">
+  <table style="width:730px; height:800.5px; margin-bottom:-5cm;border:1px solid; padding: 0px 5px 5px 5px; border-top:0" class="borderless">
     <tr>
-      <td colspan="1">
-        <p style="margin-left:5px; margin-bottom:5px; margin-top:5px">1. Departemen/Seksi -- Nama Engineer</p>
+      <td colspan="1" style="border-left: 2px solid; border-right:0; border-top:2px solid; width:350px">
+        <table style="border-collapse: collapse;margin-left:5px;">
+          <tr>
+            <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
+              <p style="margin:0;padding:0;font-size:12px"><b>Failure Type </b></p>
+            </td>
+            <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
+              <p style="margin-top: 0px; font-size:12px;">: {{$srmstr->sr_wotype}} -- {{$srmstr->wotyp_desc}}</p>
+            </td>
+          </tr>
+          <tr style="line-height: 2px;">
+            <td style="border-top:0px;border-right:0px;border-collapse: collapse;">
+              <p style="margin-top: -2px; font-size:12px;"><b>Failure Code &nbsp;</b></p>
+            </td>
+            <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
+              <p style="margin-top: -2px; font-size:12px">
+                : @if($srmstr->fn1 != null)
+                {{$srmstr->fn1}},
+                @endif
+                @if($srmstr->fn2 != null)
+                {{$srmstr->fn2}},
+                @endif
+                @if($srmstr->fn3 != null)
+                {{$srmstr->fn3}}
+                @endif
+              </p>
+            </td>
+          </tr>
+          <tr style="line-height: 2px;">
+            <td style="border-top:0px;border-right:0px;">
+              <p style="margin-top: 0px; font-size:12px"><b>Impact</b></p>
+            </td>
+            <td style="border-top:0px solid;border-right:0px">
+              <p style="margin-top: 0px; font-size:12px">
+                : @if (strlen($srmstr->sr_impact) > 11)
+                <?php
+                $imp = explode(',', $srmstr->sr_impact);
+                $impc = $impact->where('imp_code', '=', $imp[0]);
+                $impc1 = $impact->where('imp_code', '=', $imp[1]);
+                $impc2 = $impact->where('imp_code', '=', $imp[2]);
+                // dd(strlen($srmstr->sr_impact));
+                ?>
+                @foreach($impc as $impct)
+                {{$impct->imp_desc}},
+                @endforeach
+                @foreach($impc1 as $impct)
+                {{$impct->imp_desc}},
+                @endforeach
+                @foreach($impc2 as $impct)
+                {{$impct->imp_desc}}
+                @endforeach
+                @elseif (strlen($srmstr->sr_impact) >= 6)
+                <?php
+                $imp = explode(',', $srmstr->sr_impact);
+                $impc = $impact->where('imp_code', '=', $imp[0]);
+                $impc1 = $impact->where('imp_code', '=', $imp[1]);
+                ?>
+                @foreach($impc as $impct)
+                {{$impct->imp_desc}},
+                @endforeach
+                @foreach($impc1 as $impct)
+                {{$impct->imp_desc}},
+                @endforeach
+                @else
+                {{$srmstr->imp_desc}}
+                @endif
+              </p>
+            </td>
+          </tr>
+        </table>
       </td>
-      <td colspan="2" style="border-left: 0;">
-        <p style="margin-left:5px; margin-bottom:5px; margin-top:5px">{{$srmstr->dept_desc}} -- {{$srmstr->eng_desc}}</p>
+      <td colspan="2" style="border-left: 0px; border-top:2px solid; border-right: 1.5px solid;">
+        <!-- <p style="margin-left:5px; margin-bottom:5px; margin-top:5px">{{$srmstr->dept_desc}} -- {{$srmstr->eng_desc}}</p> -->
+        <table style="border-collapse: collapse;margin-left:5px;">
+          <tr>
+            <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
+              <p style="margin:0;padding:0;font-size:12px"><b>No. SR </b></p>
+            </td>
+            <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
+              <p style="margin-top: 0px; font-size:12px;">: {{$srmstr->sr_number}}</p>
+            </td>
+          </tr>
+          <tr style="line-height: 2px;">
+            <td style="border-top:0px;border-right:0px;border-collapse: collapse;">
+              <p style="margin-top: -2px; font-size:12px;"><b>Tanggal & Jam SR</b></p>
+            </td>
+            <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
+              <p style="margin-top: -2px; font-size:12px">
+                : {{$srmstr->sr_date}} & {{date('H:i', strtotime($srmstr->sr_time))}}
+              </p>
+            </td>
+          </tr>
+          <tr style="line-height: 2px;">
+            <td style="border-top:0px;border-right:0px;">
+              <p style="margin-top: 0px; font-size:12px"><b>Divisi</b></p>
+            </td>
+            <td style="border-top:0px solid;border-right:0px">
+              <p style="margin-top: 0px; font-size:12px">: {{$srmstr->sr_dept}}</p>
+            </td>
+          </tr>
+          <tr style="line-height: 2px;">
+            <td style="border-top:0px;border-right:0px;">
+              <p style="margin-top: 0px; font-size:12px"><b>Nama & No. Mesin &nbsp;</b></p>
+            </td>
+            <td style="border-top:0px solid;border-right:0px">
+              <p style="margin-top: 0px; font-size:12px">: {{$srmstr->asset_desc}} & {{$srmstr->sr_assetcode}}</p>
+            </td>
+          </tr>
+        </table>
       </td>
     </tr>
     <tr>
-      <td colspan="1">
-        <p style="margin-left:5px; margin-bottom:5px; margin-top:5px">2. SR Number -- Tanggal</p>
-      </td>
-      <td colspan="2" style="border-left: 0;">
-        <p style="margin-left:5px; margin-bottom:5px; margin-top:5px">{{$srmstr->sr_number}} -- {{date('d-m-Y',strtotime($srmstr->sr_created_at))}}</p>
-      </td>
-    </tr>
-    <tr>
-      <td colspan="1">
-        <p style="margin-left:5px; margin-bottom:5px; margin-top:5px">3. Nama Mesin/Peralatan/Fasilitas Umum/Bangunan</p>
-      </td>
-      <td colspan="2" style="border-left: 0; width:500px">
-        <p style="margin-left:5px; margin-bottom:5px; margin-top:5px">{{$srmstr->asset_desc}}</p>
-      </td>
-    </tr>
-    <tr>
-      <td bgcolor="#bbbbbb" style="text-align:center;" colspan="3">
-        <p style=" margin-bottom:5px; margin-top:5px"><b>MACAM PERMINTAAN TINDAKAN PERBAIKAN</b></p>
-      </td>
-    </tr>
-    <tr>
-      <td style="height: 65px" colspan="3">
-        <p style=" margin-bottom:5px; margin-top:5px">
-          <b>Deskripsi kerusakan :</b>
-          @if($srmstr->fn1 != null)
-          {{$srmstr->fn1}},
-          @endif
-          @if($srmstr->fn2 != null)
-          {{$srmstr->fn2}},
-          @endif
-          @if($srmstr->fn3 != null)
-          {{$srmstr->fn3}}
-          @endif
+      <td style="height: 65px;border-left: 2px solid; border-right:1.5px" colspan="3">
+        <p style=" margin-bottom:0px; margin-top:0px; margin-left: 5px; font-size:12px">
+          <b><span style="padding-bottom: 0px;border-bottom:1px solid black;">Uraian</span>:</b>
           <br>
-          <b>Tipe kerusakan : </b> {{$srmstr->wotyp_desc}}
-          <br>
-          <b>Catatan : </b>{{$srmstr->sr_note}}
+          {{$srmstr->sr_note}}
         </p>
       </td>
     </tr>
     <tr>
-      <th>Pemohon</th>
-      <th>Mengetahui</th>
-      <th>Menyetujui</th>
-    </tr>
-    <tr>
-      <td style="height: 50px; text-align:center;">
-        <p style=" margin-bottom:0;">{{$srmstr->req_by}}</p>
+      <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0; border-top:0.5px solid; border-bottom:2px solid; width:350px">
+        <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diusulkan oleh,</span></p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->req_by}}</p>
       </td>
-      <td style="height: 50px; vertical-align:bottom; text-align:center;">
-        <p style=" margin-bottom:0;">Unit Head/Section Head</p>
-      </td>
-      <td style="height: 50px; vertical-align:bottom; text-align:center;">
-        <p style=" margin-bottom:0;">Dept. Head</p>
+      <td colspan="2" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
+        <p style=" margin-bottom:5px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Penanggung Jawab,</span></p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->sr_approver}}</p>
       </td>
     </tr>
     <tr>
-      <td style="height: 15px; border-bottom: 1px solid" colspan="1"></td>
-      <td style="height: 15px; border-bottom: 1px solid" colspan="1"></td>
-      <td style="height: 15px; border-bottom: 1px solid" colspan="1"></td>
-    </tr>
-    <tr>
-      <td bgcolor="#bbbbbb" style="text-align:center;" colspan="3">
-        <hr>
-        <p style=" margin-bottom:5px; margin-top:5px"><b>VERIFIKASI PERMINTAAN TINDAKAN PERBAIKAN</b></p>
+      <td style="border-top:0px; border-right:0px; border-bottom:0px; font-size: 11px; padding:0;" colspan="5">
+        <p style="margin-top: 2px; margin-bottom:2px;">
+          <b><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diisi oleh Petugas yang Melakukan Pemeriksaan</span></b>
+        </p>
       </td>
     </tr>
     <tr>
-      <td rowspan="2" style="height: 15px; border-bottom: 1px solid">
-        <div style="margin-top:5px; margin-left: 10px;">
-          @if($srmstr->wo_nbr != null)
-          <input type="checkbox" id="checkboxreject" style="vertical-align: middle;" checked><label for="checkboxreject" style="vertical-align:middle"> Disetujui</label>
-          @else
-          <input type="checkbox" id="checkboxreject" style="vertical-align: middle;"><label for="checkboxreject" style="vertical-align:middle"> Disetujui</label>
-          @endif
-          <?php
-          $datefr = strtotime($srmstr->wo_schedule);
-          $dateto = strtotime($srmstr->wo_duedate);
-          // $count = round(($dateto - $datefr)/3600); -- hour
-          $count = round(($dateto - $datefr) / 86400);
-          ?>
-          <p style="margin-top: 0;">
-            Estimasi Pengerjaan :
-            @if($srmstr->wo_nbr != null)
-            {{$count + 1}} hari
-            @endif
-          </p>
-        </div>
+      <td colspan="1" style="border-left: 2px solid; border-right:0; border-top:2px solid; width:350px">
+        <table style="border-collapse: collapse;margin-left:5px;">
+          <tr>
+            <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
+            <p style="margin:0;padding:0;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Divisi yang melakukan <b>Pemeriksaan</b></span> :</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="border-top:0px;border-right:0px;border-collapse: collapse;">
+              <p style="margin-top: 0px; font-size:12px">
+                <?php
+                $dept_appr = $dept->where('dept_code', '=', $srmstr->dept_user);
+                ?>
+                @foreach($dept_appr as $dept)
+                {{$dept->dept_desc}} -- 
+                @endforeach
+                {{$srmstr->sr_approver}}
+              </p>
+            </td>
+          </tr>
+        </table>
       </td>
-      <td rowspan="2" style="height: 15px; border-bottom: 1px solid">
-        <div style="margin-top:5px; margin-left: 10px;">
-          <input type="checkbox" id="checkboxreject" style="vertical-align: middle;"><label for="checkboxreject" style="vertical-align:middle"> Ditolak</label>
-          <p style="margin-top: 0;">Alasan :</p>
-        </div>
-      </td>
-      <th>Engineering Unit Head</th>
-    </tr>
-    <tr>
-      <td style="height: 50px; vertical-align:bottom; border-bottom: 1px solid">
-        <p style=" margin-bottom:0;">Tgl.</p>
-      </td>
-    </tr>
-    <tr>
-      <td bgcolor="#bbbbbb" style="text-align:center;" colspan="3">
-        <hr>
-        <p style=" margin-bottom:5px; margin-top:5px"><b>HASIL TINDAKAN PERBAIKAN</b></p>
-      </td>
-    </tr>
-    <tr>
-      <td colspan="3">
-        <p style="margin-left:5px; margin-top:-3px; margin-bottom: -1px;"><b>A. Penyebab Ketidaksesuaian</b></p>
-      </td>
-    </tr>
-    <tr>
-      <td style="height: 50px" colspan="3">
-      </td>
-    </tr>
-    <tr>
-      <td colspan="3">
-        <p style="margin-left:5px; margin-top:-3px; margin-bottom: -1px;"><b>B. Data Hasil Tindakan Perbaikan</b></p>
-      </td>
-    </tr>
-    <tr>
-      <td rowspan="4">
-        <p style="margin-top: 0;margin-left:20px">Tindakan yang telah dilakukan :</p>
-      </td>
-      <th rowspan="1">Operator/Shift Head</th>
-      <th>Tanggal</th>
-    </tr>
-    <tr>
-      <td rowspan="3"></td>
-      <td style="height: 30px; vertical-align:bottom;">
-        <!-- <p style=" margin-bottom:0;"></p> -->
-      </td>
-    <tr>
-      <th>Waktu</th>
-    </tr>
-    <tr>
-      <td style="height: 30px; vertical-align:bottom;">
-        <!-- <p style=" margin-bottom:0;"></p> -->
-      </td>
-    </tr>
-    </tr>
-    <tr>
-      <td style="height: 70px;" colspan="2">
-        <p style="margin-top: 0;margin-left:20px">Spare part yang digunakan :</p>
-      </td>
-      <td style="height: 70px;" colspan="1">
-        <p style="margin-top: 0;margin-left:20px">Hasil perbaikan :</p>
+      <td colspan="2" style="border-left: 0px; border-top:2px solid; border-right: 1.5px solid;">
+        <!-- <p style="margin-left:5px; margin-bottom:5px; margin-top:5px">{{$srmstr->dept_desc}} -- {{$srmstr->eng_desc}}</p> -->
+        <table style="border-collapse: collapse;margin-left:5px;margin-top:-3px; margin-bottom:-1.5px">
+          <tr>
+            <td style="text-align:center;vertical-align:middle;border:1px solid;width:150px">
+              <p style="margin:0;padding:0;font-size:12px">Waktu Pemeriksaan</p>
+            </td>
+            <td style="text-align:center;vertical-align:middle;border:1px solid;width:100px">
+            <p style="margin:0;padding:0;font-size:12px">Mulai</p>
+            </td>
+            <td style="text-align:center;vertical-align:middle;border:1px solid;width:98px">
+            <p style="margin:0;padding:0;font-size:12px">Selesai</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align:center;border:1px solid;">
+            <p style="margin:0;padding:0;font-size:12px">Tanggal</p>
+            </td>
+            <td style="text-align:center;border:1px solid;">
+            
+            </td>
+            <td style="text-align:center;border:1px solid;">
+            
+            </td>
+          </tr>
+          <tr>
+          <td style="text-align:center;border:1px solid;">
+            <p style="margin:0;padding:0;font-size:12px">Jam</p>
+            </td>
+            <td style="text-align:center;border:1px solid;">
+            <p style="margin:0;padding:0;font-size:12px"></p>
+            </td>
+            <td style="text-align:center;border:1px solid;">
+            <p style="margin:0;padding:0;font-size:12px"></p>
+            </td>
+          </tr>
+        </table>
       </td>
     </tr>
     <tr>
-      <td bgcolor="#bbbbbb" style="text-align:center;" colspan="3">
-        <p style=" margin-bottom:5px; margin-top:5px"><b>KONFIRMASI HASIL PERBAIKAN</b></p>
+      <td style="height: 65px;border-left: 2px solid; border-right:1.5px" colspan="3">
+        <p style=" margin-bottom:0px; margin-top:0px; margin-left: 5px; font-size:12px">
+          <span style="padding-bottom: 0px;border-bottom:1px solid black;">Uraian Pemeriksaan</span>:
+          <br>
+          {{$srmstr->sr_note}}
+        </p>
       </td>
     </tr>
     <tr>
-      <th>Dilaporkan oleh</th>
-      <th>Mengetahui</th>
-      <th>Mengetahui</th>
-    </tr>
-    <tr>
-      <td style="height: 50px"></td>
-      <td style="height: 50px; vertical-align:bottom; text-align:center;">
-        <p style=" margin-bottom:0;">Unit Head/Section Head</p>
+      <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0; border-top:0.5px solid; border-bottom:2px solid; width:350px">
+        <!-- <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diusulkan oleh,</span></p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->req_by}}</p> -->
       </td>
-      <td style="height: 50px; vertical-align:bottom; text-align:center;">
-        <p style=" margin-bottom:0;">Unit Head/Section Head Dept. Terkait</p>
+      <td colspan="2" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
+        <p style=" margin-bottom:5px; margin-left: 230px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Petugas yang melakukan pemeriksaan,</span></p>
+        <p style=" margin-bottom:5px; margin-left: 230px; margin-top:30px;font-size:12px">{{$srmstr->sr_approver}}</p>
       </td>
     </tr>
     <tr>
-      <td style="height: 15px; border-bottom: 0px solid" colspan="1"></td>
-      <td style="height: 15px; border-bottom: 0px solid" colspan="1"></td>
-      <td style="height: 15px; border-bottom: 0px solid" colspan="1"></td>
+      <td style="border-top:0px; border-right:0px; border-bottom:0px; font-size: 11px; padding:0;" colspan="5">
+        <p style="margin-top: 2px; margin-bottom:2px;">
+          <b><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diisi oleh Petugas yang Melakukan Penyelesaian Job</span></b>
+        </p>
+      </td>
+    </tr>
+    <tr>
+    <tr>
+     <td colspan="1" style="border-left: 2px solid; border-right:0; border-top:2px solid; width:350px">
+        <table style="border-collapse: collapse;margin-left:5px;">
+          <tr>
+            <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
+              <p style="margin:0;padding:0;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Divisi yang melakukan <b>Penyelesaian Job</b></span> :</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="border-top:0px;border-right:0px;border-collapse: collapse;">
+              <p style="margin-top: 0px; font-size:12px">
+                
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+      <td colspan="2" style="border-left: 0px; border-top:2px solid; border-right: 1.5px solid;">
+        <!-- <p style="margin-left:5px; margin-bottom:5px; margin-top:5px">{{$srmstr->dept_desc}} -- {{$srmstr->eng_desc}}</p> -->
+        <table style="border-collapse: collapse;margin-left:5px;margin-top:-3px; margin-bottom:-1.5px">
+          <tr>
+            <td style="text-align:center;vertical-align:middle;border:1px solid;width:150px">
+              <p style="margin:0;padding:0;font-size:12px">Waktu Penyelesaian</p>
+            </td>
+            <td style="text-align:center;vertical-align:middle;border:1px solid;width:100px">
+            <p style="margin:0;padding:0;font-size:12px">Mulai</p>
+            </td>
+            <td style="text-align:center;vertical-align:middle;border:1px solid;width:98px">
+            <p style="margin:0;padding:0;font-size:12px">Selesai</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align:center;border:1px solid;">
+            <p style="margin:0;padding:0;font-size:12px">Tanggal</p>
+            </td>
+            <td style="text-align:center;border:1px solid;">
+            
+            </td>
+            <td style="text-align:center;border:1px solid;">
+            
+            </td>
+          </tr>
+          <tr>
+          <td style="text-align:center;border:1px solid;">
+            <p style="margin:0;padding:0;font-size:12px">Jam</p>
+            </td>
+            <td style="text-align:center;border:1px solid;">
+            <p style="margin:0;padding:0;font-size:12px"></p>
+            </td>
+            <td style="text-align:center;border:1px solid;">
+            <p style="margin:0;padding:0;font-size:12px"></p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td style="height: 65px;border-left: 2px solid; border-right:1.5px" colspan="3">
+        <p style=" margin-bottom:0px; margin-top:0px; margin-left: 5px; font-size:12px">
+          <span style="padding-bottom: 0px;border-bottom:1px solid black;">Uraian Penyelesaian Job</span>:
+          <br>
+          {{$srmstr->sr_note}}
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0; border-top:0.5px solid; border-bottom:2px solid; width:350px">
+        <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diselesaikan oleh,</span></p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->req_by}}</p>
+      </td>
+      <td colspan="2" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
+        <p style=" margin-bottom:5px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Penanggung Jawab,</span></p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->sr_approver}}</p>
+      </td>
+    </tr>
+    <!-- SERAH TERIMA -->
+    <tr>
+      <td style="border-top:0px; border-right:0px; border-bottom:0px; font-size: 11px; padding:0;" colspan="5">
+        <p style="margin-top: 2px; margin-bottom:2px;">
+          <b><span style="padding-bottom: 0px;border-bottom:1px solid black;">Serah Terima</span></b>
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3" style="border-left: 2px solid; border-right:1.5px solid; border-top:2px solid; width:350px">
+        <table style="border-collapse: collapse;margin-left:5px;">
+          <tr>
+            <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
+              <p style="margin:0;padding:0;font-size:12px"><b>Tanggal & Jam Serah Terima</b></p>
+            </td>
+            <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
+              <p style="margin-top: 0px; font-size:12px;">: {{$srmstr->sr_date}} & {{date('H:i', strtotime($srmstr->sr_time))}}</p>
+            </td>
+          </tr>
+        </table>
+      </td>s
+    </tr>
+    <tr>
+      <td style="height: 65px;border-left: 2px solid; border-right:1.5px" colspan="3">
+        <p style=" margin-bottom:0px; margin-top:0px; margin-left: 5px; font-size:12px">
+          <b><span style="padding-bottom: 0px;border-bottom:1px solid black;">Uraian</span>:</b>
+          <br>
+          {{$srmstr->sr_note}}
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0; border-top:0.5px solid; border-bottom:2px solid; width:350px">
+        <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diserahkan oleh,</span></p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->req_by}}</p>
+      </td>
+      <td colspan="2" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
+        <p style=" margin-bottom:5px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Diterima oleh,</span></p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->sr_approver}}</p>
+      </td>
     </tr>
 
 

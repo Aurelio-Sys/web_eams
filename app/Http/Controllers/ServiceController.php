@@ -155,6 +155,7 @@ class ServiceController extends Controller
                             // dd(session::get('department'));            
             $newyear = Carbon::now()->format('y');
 
+            // dd($runnumber);
             if($runnumber->dept_running_nbr == null){
                 DB::rollBack();
                 toast('Please set running number for department code '.session::get('department').' first.', 'error');
@@ -1583,8 +1584,9 @@ class ServiceController extends Controller
             ->first();
         $srmstr = DB::table('service_req_mstr')
             ->where('sr_number', '=', $sr)
-            ->selectRaw('fn1.fn_desc as fn1, fn2.fn_desc as fn2, fn3.fn_desc as fn3, dept_desc, eng_desc, sr_number,
-            sr_created_at, asset_desc, wotyp_desc, sr_note, req_by, wo_nbr, wo_duedate, wo_schedule')
+            ->selectRaw('fn1.fn_desc as fn1, fn2.fn_desc as fn2, fn3.fn_desc as fn3, dept_desc, eng_desc, sr_number, sr_wotype, sr_dept,
+            sr_created_at, sr_assetcode, asset_desc, req_by, sr_approver, sr_impact, imp_desc, sr_date, sr_time, asset_desc, wotyp_desc, 
+            sr_note, imp_code, dept_user, req_by, wo_nbr, wo_duedate, wo_schedule')
             ->leftjoin('eng_mstr', 'service_req_mstr.req_username', 'eng_mstr.eng_code')
             ->leftJoin('dept_mstr', 'service_req_mstr.sr_dept', 'dept_mstr.dept_code')
             ->leftJoin('asset_mstr', 'service_req_mstr.sr_assetcode', 'asset_mstr.asset_code')
@@ -1593,7 +1595,14 @@ class ServiceController extends Controller
             ->leftJoin('fn_mstr as fn3', 'service_req_mstr.sr_failurecode3', 'fn3.fn_code')
             ->leftJoin('wotyp_mstr', 'service_req_mstr.sr_wotype', 'wotyp_mstr.wotyp_code')
             ->leftJoin('wo_mstr', 'service_req_mstr.sr_number', 'wo_mstr.wo_sr_nbr')
+            ->leftJoin('imp_mstr', 'service_req_mstr.sr_impact', 'imp_mstr.imp_code')
+            ->leftJoin('users', 'service_req_mstr.sr_approver', 'users.username')
             ->first();
+
+        $impact = DB::table(('imp_mstr'))
+            ->get();
+        $dept = DB::table(('dept_mstr'))
+            ->get();
         // dd($srmstr);
         // $wodet = DB::table('wo_dets')
         //     ->join('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')
@@ -1969,7 +1978,7 @@ class ServiceController extends Controller
             ->first();
 
         // $pdf = PDF::loadview('workorder.pdfprint-template',['womstr' => $womstr,'wodet' => $wodet, 'data' => $data,'printdate' =>$printdate,'repair'=>$repair,'sparepart'=>$array])->setPaper('A4','portrait');
-        $pdf = PDF::loadview('service.pdfprint-template', ['srmstr' => $srmstr, 'printdate' => $printdate, 'users' => $users, 'datasr' => $datasr])->setPaper('A4', 'portrait');
+        $pdf = PDF::loadview('service.pdfprint-template', ['impact' => $impact, 'srmstr' => $srmstr, 'dept' => $dept, 'printdate' => $printdate, 'users' => $users, 'datasr' => $datasr])->setPaper('A4', 'portrait');
         //return view('picklistbrowse.shipperprint-template',['printdata1' => $printdata1, 'printdata2' => $printdata2, 'runningnbr' => $runningnbr,'user' => $user,'last' =>$countprint]);
         return $pdf->stream($sr . '.pdf');
     }
