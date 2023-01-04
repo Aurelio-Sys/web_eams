@@ -70,12 +70,15 @@ class ServiceController extends Controller
             ->get();
 
         $wotype = DB::table('wotyp_mstr')
+            ->orderBy('wotyp_code')
             ->get();
 
         $impact = DB::table('imp_mstr')
+            ->orderBy('imp_code')
             ->get();
 
         $fcode = DB::table('fn_mstr')
+            ->orderBy('fn_code')
             ->get();
 
         $dataapp = DB::table('eng_mstr')

@@ -38,13 +38,13 @@ class WHSConfirm extends Controller
         $data = DB::table('wo_mstr')
             ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset')
             ->where('wo_status', '=', 'Released')
-            ->where(function ($query) {
+            /* ->where(function ($query) {
                 $query->where('wo_engineer1', '=', Session()->get('username'))
                     ->orwhere('wo_engineer2', '=', Session()->get('username'))
                     ->orwhere('wo_engineer3', '=', Session()->get('username'))
                     ->orwhere('wo_engineer4', '=', Session()->get('username'))
                     ->orwhere('wo_engineer5', '=', Session()->get('username'));
-            })
+            }) */
             ->orderby('wo_created_at', 'desc')
             ->orderBy('wo_mstr.wo_id', 'desc');
 
