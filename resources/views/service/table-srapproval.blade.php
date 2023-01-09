@@ -23,7 +23,7 @@
 </tr>
 @empty
 <tr>
-    <td colspan="6" style="color:red">
+    <td colspan="8" style="color:red">
         <center>No Data Available</center>
     </td>
 </tr>

@@ -2305,7 +2305,7 @@ class wocontroller extends Controller
             DB::table('wo_mstr')
                 ->where('wo_nbr', '=', $nomorwo)
                 ->update([
-                    'wo_status' => 'open',
+                    'wo_status' => 'plan',
                     'wo_start_date' => null,
                     'wo_start_time' => null,
                     'wo_access'     => 0
@@ -3616,7 +3616,7 @@ class wocontroller extends Controller
                             <lotserialQty>' . $dtqx->qtytoqx . '</lotserialQty>
                             <site>' . $dtqx->wo_dets_wh_tosite . '</site>
                             <location>' . $dtqx->wo_dets_wh_toloc . '</location>
-                            <rmks>' . $dtqx->wo_dets_nbr . '</rmks>
+                            <ordernbr>' . $dtqx->wo_dets_nbr . '</ordernbr>
                         </inventoryIssue>';
                 }
                 $qdocfooter =   '</dsInventoryIssue>
@@ -3932,7 +3932,7 @@ class wocontroller extends Controller
                         <site>' . $req->site_hidden[$spcode] . '</site>
                         <location>' . $req->loc_hidden[$spcode] . '</location>
                         <lotserial>' . $req->lotserial[$spcode] . '</lotserial>
-                        <rmks>' . $req->wonbr_hidden[$spcode] . '</rmks>
+                        <ordernbr>' . $req->wonbr_hidden[$spcode] . '</ordernbr>
                     </inventoryIssue>';
                 }
 

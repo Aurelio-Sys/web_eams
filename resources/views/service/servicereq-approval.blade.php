@@ -206,19 +206,33 @@
           <div class="form-group row">
             <label for="wotype" class="col-md-5 col-form-label text-md-right">Failure Type</label>
             <div class="col-md-6">
-              <input id="wotype" type="text" class="form-control" name="wotype" autocomplete="off" />
+              <select class="form-control" id="wotype" name="wotype">
+                <option></option>
+                @foreach($wotype as $wotypeshow)
+                <option value="{{$wotypeshow->wotyp_code}}">{{$wotypeshow->wotyp_code}} -- {{$wotypeshow->wotyp_desc}}</option>
+                @endforeach
+              </select>
             </div>
           </div>
           <div class="form-group row">
             <label for="fclist" class="col-md-5 col-form-label text-md-right">Failure Code</label>
             <div class="col-md-6">
-              <textarea id="fclist" type="text" class="form-control" name="fclist" rows="3"></textarea>
+              <select class="form-control" id="fclist" name="fclist[]" multiple="multiple">
+                <option></option>
+                @foreach($fc as $fcshow)
+                <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}} -- {{$fcshow->fn_impact}}</option>
+                @endforeach
+              </select>
             </div>
           </div>
           <div class="form-group row">
             <label for="impact" class="col-md-5 col-form-label text-md-right">Impact</label>
             <div class="col-md-6">
-              <textarea id="impact" type="text" class="form-control" name="impact" autocomplete="off" rows="3"></textarea>
+              <select id="impact" class="form-control impact" name="impact[]" multiple="multiple">
+                @foreach($impact as $impactshow)
+                <option value="{{$impactshow->imp_code}}">{{$impactshow->imp_code}} -- {{$impactshow->imp_desc}}</option>
+                @endforeach
+              </select>
             </div>
           </div>
           <div class="form-group row">
@@ -452,6 +466,33 @@
       // theme : 'bootstrap4',
     });
 
+    $('#impact').select2({
+      placeholder: "Select Value",
+      width: '100%',
+      closeOnSelect: false,
+      allowClear: true,
+      theme: 'bootstrap4',
+    });
+
+    $("#fclist").select2({
+      width: '100%',
+      placeholder: "Select Failure Code",
+      theme: "bootstrap4",
+      allowClear: true,
+      maximumSelectionLength: 3,
+      closeOnSelect: false,
+      allowClear: true,
+      multiple: true,
+    });
+
+    $("#wotype").select2({
+      width: '100%',
+      // theme : 'bootstrap4',
+      allowClear: true,
+      placeholder: 'Select Failure Type',
+
+    });
+
     $(document).on('change', '#rad_repgroup1', function(e) {
       document.getElementById('tampilanrepgroup').style.display = '';
       document.getElementById('repgroup').value = null;
@@ -646,6 +687,20 @@
       var failcode2 = $(this).data('fc2');
       var failcode3 = $(this).data('fc3');
 
+      var newarrfc = [];
+
+      if(fail1 != null){
+        newarrfc.push(fail1);
+      }
+
+      if(fail2 != null){
+        newarrfc.push(fail2);
+      }
+
+      if(fail3 != null){
+        newarrfc.push(fail3);
+      }
+
 
 
       var fail_list = fail1 + '\n' + fail2 + '\n' + fail3;
@@ -659,26 +714,7 @@
       })
 
       // alert(assetdesc);
-      $.ajax({
-        url: "/searchimpactdesc",
-        data: {
-          impact: impact,
-        },
-        success: function(data) {
-          // console.log(data);
-          // alert('test');
-
-          var imp_desc = data;
-
-          var desc = imp_desc.replaceAll(",", "\n");
-
-          // console.log(desc);
-
-          document.getElementById('impact').value = desc;
-          // }
-
-        }
-      })
+    
 
 
       // alert(impactcode1);

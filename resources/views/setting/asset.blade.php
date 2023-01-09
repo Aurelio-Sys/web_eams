@@ -275,7 +275,7 @@
                     <div class="form-group row">
                         <label for="t_active" class="col-md-4 col-form-label text-md-right">Active</label>
                         <div class="col-md-6">
-                            <select id="t_active" class="form-control" name="t_active" >
+                            <select id="t_active" class="form-control" name="t_active" required >
                                 <option value="Yes" selected>Yes</option>
                                 <option value="No">No</option>
                             </select>

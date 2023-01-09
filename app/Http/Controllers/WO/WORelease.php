@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Session;
 
 class WORelease extends Controller
 {
@@ -23,18 +24,17 @@ class WORelease extends Controller
             ->get();
 
         $data = DB::table('wo_mstr')
-            ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset')
-            ->whereIn('wo_status', ['open', 'Released', 'whsconfirm', 'plan', 'started'])
-            ->where(function ($query) {
-                $query->where('wo_engineer1', '=', Session()->get('username'))
-                    ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                    ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                    ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                    ->orwhere('wo_engineer5', '=', Session()->get('username'));
-            })
-            ->orderby('wo_created_at', 'desc')
-            ->orderBy('wo_mstr.wo_id', 'desc');
-
+        ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset')
+        ->whereIn('wo_status', ['open', 'Released', 'whsconfirm', 'plan', 'started'])
+        ->where(function ($query) {
+            $query->where('wo_engineer1', '=', Session()->get('username'))
+                ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                ->orwhere('wo_engineer5', '=', Session()->get('username'));
+        })
+        ->orderby('wo_created_at', 'desc')
+        ->orderBy('wo_mstr.wo_id', 'desc');
 
         if ($request->s_nomorwo) {
             $data->where('wo_nbr', '=', $request->s_nomorwo);
@@ -239,6 +239,7 @@ class WORelease extends Controller
                 ->join('wo_dets', 'wo_mstr.wo_nbr', 'wo_dets.wo_dets_nbr')
                 ->join('rep_master', 'wo_dets.wo_dets_rc', 'rep_master.repm_code')
                 ->where('wo_id', '=', $id)
+                ->distinct('wo_dets_rc')
                 ->get();
         } /*  else ($data->wo_status == 'open') */
 

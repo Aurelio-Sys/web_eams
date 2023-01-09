@@ -1140,7 +1140,7 @@ class UserChartController extends Controller
             $table->date('temp_sch_date');
             $table->string('temp_status');
             $table->string('temp_sp');
-            $table->string('temp_sp_desc');
+            $table->string('temp_sp_desc')->nullable();
             $table->decimal('temp_qty_req',10,2)->nullable();
             $table->decimal('temp_qty_whs',10,2)->nullable();
             $table->decimal('temp_qty_need',10,2)->nullable();
@@ -1350,7 +1350,7 @@ class UserChartController extends Controller
                         $table->date('temp_sch_date');
                         $table->string('temp_status');
                         $table->string('temp_sp');
-                        $table->string('temp_sp_desc');
+                        $table->string('temp_sp_desc')->nullable();
                         $table->decimal('temp_qty_req',10,2)->nullable();
                         $table->decimal('temp_qty_whs',10,2)->nullable();
                         $table->decimal('temp_qty_need',10,2)->nullable();
@@ -1900,7 +1900,7 @@ class UserChartController extends Controller
                                             <qcom:ttContext>
                                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                                             <qcom:propertyName>version</qcom:propertyName>
-                                            <qcom:propertyValue>ERP3_3</qcom:propertyValue>
+                                            <qcom:propertyValue>ERP3_2</qcom:propertyValue>
                                             </qcom:ttContext>
                                             <qcom:ttContext>
                                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
