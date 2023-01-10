@@ -61,94 +61,91 @@
   A211015 : Merubah view SR 
 -->
 <div class="container-fluid mb-2">
-  <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-    <li class="nav-item has-treeview bg-black">
-      <a href="javascript:void(0)" class="nav-link mb-0 p-0">
-        <p>
-          <label class="col-md-2 col-form-label text-md-left" style="color:white;">{{ __('Click here to search') }}</label>
-          <i class="right fas fa-angle-left"></i>
-        </p>
-      </a>
-      <ul class="nav nav-treeview">
-        <li class="nav-item">
+    <div class="row">
+      <div class="col-md-12">
+        <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
+      </div>  
+    </div>
+    <!-- Element div yang akan collapse atau expand -->
+    <div class="collapse" id="collapseExample">
+        <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+        <div class="card card-body bg-black rounded-0">
           <div class="col-12 form-group row">
-            <!--FORM Search Disini-->
-            <label for="s_servicenbr" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Service Request Number') }}</label>
-            <div class="col-md-3 col-sm-4 mb-2 input-group">
-              <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off">
+              <!--FORM Search Disini-->
+              <label for="s_servicenbr" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Service Request Number') }}</label>
+              <div class="col-md-3 col-sm-4 mb-2 input-group">
+                <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off">
+              </div>
+              <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Desc Asset') }}</label>
+              <div class="col-md-3 col-sm-4 mb-2 input-group">
+                <!-- <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
+                  <option value="">--Select Asset--</option>
+                  @foreach($asset as $show)
+                  <option value="{{$show->asset_desc}}">{{$show->asset_code}} -- {{$show->asset_desc}}</option>
+                  @endforeach
+                </select> -->
+                <input id="s_asset" type="text" class="form-control" name="s_asset" value="" autofocus autocomplete="off">
+              </div>
             </div>
-            <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Desc Asset') }}</label>
-            <div class="col-md-3 col-sm-4 mb-2 input-group">
-              <!-- <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
-                <option value="">--Select Asset--</option>
-                @foreach($asset as $show)
-                <option value="{{$show->asset_desc}}">{{$show->asset_code}} -- {{$show->asset_desc}}</option>
-                @endforeach
-              </select> -->
-              <input id="s_asset" type="text" class="form-control" name="s_asset" value="" autofocus autocomplete="off">
-            </div>
-          </div>
-          <div class="col-12 form-group row">
-            <label for="s_priority" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Priority') }}</label>
-            <div class="col-md-3 col-sm-4 mb-2 input-group">
-              <select id="s_priority" name="s_priority" class="form-control" value="" autofocus autocomplete="off">
-                <option value="">--Select Priority--</option>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
-            </div>
-            <!-- <label for="s_period" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('SR Period') }}</label>
-            <div class="col-md-3 col-sm-4 mb-2 input-group">
-              <select id="s_period" name="s_period" class="form-control" value="" autofocus autocomplete="off">
-                <option value="">--Select Period--</option>
-                <option value="1"> < 3 days </option>
-                <option value="2"> 3-5 days </option>
-                <option value="3"> > 5 days </option>
-              </select>
-            </div> -->
-            <label for="s_user" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Requested by') }}</label>
-            <div class="col-md-3 col-sm-4 mb-2 input-group">
-              <select id="s_user" name="s_user" class="form-control" value="" autofocus autocomplete="off">
-                <option value="">--Select User--</option>
-                @foreach($users as $usershow)
-                <option value="{{$usershow->username}}">{{$usershow->username}} - {{$usershow->name}}</option>
-                @endforeach
-              </select>
-            </div>
+            <div class="col-12 form-group row">
+              <label for="s_priority" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Priority') }}</label>
+              <div class="col-md-3 col-sm-4 mb-2 input-group">
+                <select id="s_priority" name="s_priority" class="form-control" value="" autofocus autocomplete="off">
+                  <option value="">--Select Priority--</option>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+              <!-- <label for="s_period" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('SR Period') }}</label>
+              <div class="col-md-3 col-sm-4 mb-2 input-group">
+                <select id="s_period" name="s_period" class="form-control" value="" autofocus autocomplete="off">
+                  <option value="">--Select Period--</option>
+                  <option value="1"> < 3 days </option>
+                  <option value="2"> 3-5 days </option>
+                  <option value="3"> > 5 days </option>
+                </select>
+              </div> -->
+              <label for="s_user" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Requested by') }}</label>
+              <div class="col-md-3 col-sm-4 mb-2 input-group">
+                <select id="s_user" name="s_user" class="form-control" value="" autofocus autocomplete="off">
+                  <option value="">--Select User--</option>
+                  @foreach($users as $usershow)
+                  <option value="{{$usershow->username}}">{{$usershow->username}} - {{$usershow->name}}</option>
+                  @endforeach
+                </select>
+              </div>
 
-          </div>
-          <div class="col-12 form-group row">
-            <label for="s_status" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Status') }}</label>
-            <div class="col-md-3 col-sm-4 mb-2 input-group">
-              <select id="s_status" name="s_status" class="form-control" value="" autofocus autocomplete="off">
-                <option value="">--Select Status--</option>
-                @if($fromhome == 'open')
-                <option value="1" selected>Open</option>
-                @else
-                <option value="1">Open</option>
-                @endif
-                <option value="2">Assigned</option>
-                <option value="3">Started</option>
-                <option value="4">Finish</option>
-                <option value="5">Closed</option>
-                <option value="6">Incomplete</option>
-                <option value="7">Completed</option>
-                <option value="8">Reprocess</option>
-              </select>
             </div>
-            <div class="col-md-6 col-sm-4 mb-2 input-group">
-              <input type="button" class="btn btn-primary col-md-3" id="btnsearch" value="Search" style="float:right" />
-              &nbsp;&nbsp;&nbsp;
-              <button type="button" class="btn btn-primary col-md-2" id="btnrefresh"><i class="fas fa-redo-alt"></i></button>
-              &nbsp;&nbsp;&nbsp;
-              <input type="button" class="btn btn-primary col-md-4" id="btnexcel" value="Export to Excel" style="float:right" />
+            <div class="col-12 form-group row">
+              <label for="s_status" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Status') }}</label>
+              <div class="col-md-3 col-sm-4 mb-2 input-group">
+                <select id="s_status" name="s_status" class="form-control" value="" autofocus autocomplete="off">
+                  <option value="">--Select Status--</option>
+                  @if($fromhome == 'open')
+                  <option value="1" selected>Open</option>
+                  @else
+                  <option value="1">Open</option>
+                  @endif
+                  <option value="2">Assigned</option>
+                  <option value="3">Started</option>
+                  <option value="4">Finish</option>
+                  <option value="5">Closed</option>
+                  <option value="6">Incomplete</option>
+                  <option value="7">Completed</option>
+                  <option value="8">Reprocess</option>
+                </select>
+              </div>
+              <div class="col-md-6 col-sm-4 mb-2 input-group">
+                <input type="button" class="btn btn-primary col-md-3" id="btnsearch" value="Search" style="float:right" />
+                &nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-primary col-md-2" id="btnrefresh"><i class="fas fa-redo-alt"></i></button>
+                &nbsp;&nbsp;&nbsp;
+                <input type="button" class="btn btn-primary col-md-4" id="btnexcel" value="Export to Excel" style="float:right" />
+              </div>
             </div>
-          </div>
-        </li>
-      </ul>
-    </li>
-  </ul>
+        </div>
+    </div>
 </div>
 
 <input type="hidden" id="tmpsrnumber" />

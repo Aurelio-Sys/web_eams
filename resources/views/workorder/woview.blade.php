@@ -31,95 +31,92 @@
 
 <!-- <hr style="margin:0%"> -->
 <div class="container-fluid mb-2">
-  <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-    <li class="nav-item has-treeview bg-black">
-      <a href="#" class="nav-link mb-0 p-0">
-        <p>
-          <label class="col-md-2 col-form-label text-md-left" style="color:white;">{{ __('Click here to search') }}</label>
-          <i class="right fas fa-angle-left"></i>
-        </p>
-      </a>
-      <ul class="nav nav-treeview">
-        <li class="nav-item">
-          <div class="col-12 form-group row">
+  <div class="row">
+    <div class="col-md-12">
+      <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
+    </div>  
+  </div>
+  <!-- Element div yang akan collapse atau expand -->
+  <div class="collapse" id="collapseExample">
+      <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+      <div class="card card-body bg-black rounded-0">
+        <div class="col-12 form-group row">
 
-            <!--FORM Search Disini-->
-            <label for="s_nomorwo" class="col-md-2 col-form-label text-md-left">{{ __('Work Order Number') }}</label>
-            <div class="col-md-4 col-sm-12 mb-2 input-group">
-              <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="" autofocus autocomplete="off">
-            </div>
-            <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
-            <div class="col-md-4 col-sm-12 mb-2 input-group">
-              <select id="s_asset" class="form-control" style="color:white" name="s_asset" autofocus autocomplete="off">
-                <option value="">--Select Asset--</option>
-                @foreach($asset1 as $assetsearch)
-                <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
-                @endforeach
-              </select>
-            </div>
-            <label for="s_status" class="col-md-2 col-form-label text-md-left">{{ __('Work Order Status') }}</label>
-            <div class="col-md-3 col-sm-12 mb-2 input-group">
-              <select id="s_status" type="text" class="form-control" name="s_status">
-                <option value="">--Select Status--</option>
-                <option value="plan">Plan</option>
-                <option value="open">Open</option>
-                <option value="Released">Released</option>
-                <option value="whsconfirm">Warehouse Confirm</option>
-                <option value="engconfirm">Engineer Confirm</option>
-                <option value="started">Started</option>
-                <option value="finish">Finish</option>
-                <option value="finish">Completed</option>
-                <option value="reprocess">Reprocess</option>
-                <option value="incomplete">Incomplete</option>
-                <option value="closed">Closed</option>
-                <option value="delete">Delete</option>
-
-
-              </select>
-            </div>
-            <label for="" class="col-md-1 col-form-label text-md-left">{{ __('') }}</label>
-            <label for="s_priority" class="col-md-2 col-form-label text-md-right">{{ __('Priority') }}</label>
-            <div class="col-md-4 col-sm-12 mb-2 input-group">
-              <select id="s_priority" type="text" class="form-control" name="s_priority">
-                <option value="">--Select Priority--</option>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
-            </div>
-            <label for="s_engineer" class="col-md-2 col-form-label text-md-left">{{ __('Engineer') }}</label>
-            <div class="col-md-3 col-sm-12 mb-2 input-group">
-              <select id="s_engineer" type="text" class="form-control" name="s_engineer">
-                <option value="">--Select Engineer--</option>
-                @foreach($engine as $enginesearch)
-                <option value="{{$enginesearch->eng_code}}">{{$enginesearch->eng_code}} -- {{$enginesearch->eng_desc}}</option>
-                @endforeach
-              </select>
-            </div>
-            <label for="" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
-            <label for="s_creator" class="col-md-2 col-form-label text-md-right">{{ __('Wo Creator') }}</label>
-            <div class="col-md-4 col-sm-12 mb-2 input-group">
-              <select id="s_creator" type="text" class="form-control" name="s_creator">
-                <option value="">--Select user--</option>
-                @foreach($custrnow as $custrnow)
-                <option value="{{$custrnow->wo_creator}}"><b>{{$custrnow->wo_creator}} -- {{$custrnow->creator_desc}} </b></option>
-                @endforeach
-              </select>
-            </div>
-            <div class="col-md-2 col-sm-12 mb-2 input-group">
-              <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" style="float:right" />
-            </div>
-            <div class="col-md-1 col-sm-12 mb-2 input-group justify-content-center">
-              <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'><i class="fas fa-sync-alt"></i></button>
-            </div>
-            <div class="col-md-2 col-sm-12 mb-2 input-group">
-              <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="Export to Excel" style="float:right" />
-            </div>
+          <!--FORM Search Disini-->
+          <label for="s_nomorwo" class="col-md-2 col-form-label text-md-left">{{ __('Work Order Number') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="" autofocus autocomplete="off">
           </div>
-        </li>
-      </ul>
-    </li>
-  </ul>
+          <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_asset" class="form-control" style="color:white" name="s_asset" autofocus autocomplete="off">
+              <option value="">--Select Asset--</option>
+              @foreach($asset1 as $assetsearch)
+              <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
+              @endforeach
+            </select>
+          </div>
+          <label for="s_status" class="col-md-2 col-form-label text-md-left">{{ __('Work Order Status') }}</label>
+          <div class="col-md-3 col-sm-12 mb-2 input-group">
+            <select id="s_status" type="text" class="form-control" name="s_status">
+              <option value="">--Select Status--</option>
+              <option value="plan">Plan</option>
+              <option value="open">Open</option>
+              <option value="Released">Released</option>
+              <option value="whsconfirm">Warehouse Confirm</option>
+              <option value="engconfirm">Engineer Confirm</option>
+              <option value="started">Started</option>
+              <option value="finish">Finish</option>
+              <option value="finish">Completed</option>
+              <option value="reprocess">Reprocess</option>
+              <option value="incomplete">Incomplete</option>
+              <option value="closed">Closed</option>
+              <option value="delete">Delete</option>
+
+
+            </select>
+          </div>
+          <label for="" class="col-md-1 col-form-label text-md-left">{{ __('') }}</label>
+          <label for="s_priority" class="col-md-2 col-form-label text-md-right">{{ __('Priority') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_priority" type="text" class="form-control" name="s_priority">
+              <option value="">--Select Priority--</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+          <label for="s_engineer" class="col-md-2 col-form-label text-md-left">{{ __('Engineer') }}</label>
+          <div class="col-md-3 col-sm-12 mb-2 input-group">
+            <select id="s_engineer" type="text" class="form-control" name="s_engineer">
+              <option value="">--Select Engineer--</option>
+              @foreach($engine as $enginesearch)
+              <option value="{{$enginesearch->eng_code}}">{{$enginesearch->eng_code}} -- {{$enginesearch->eng_desc}}</option>
+              @endforeach
+            </select>
+          </div>
+          <label for="" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
+          <label for="s_creator" class="col-md-2 col-form-label text-md-right">{{ __('Wo Creator') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_creator" type="text" class="form-control" name="s_creator">
+              <option value="">--Select user--</option>
+              @foreach($custrnow as $custrnow)
+              <option value="{{$custrnow->wo_creator}}"><b>{{$custrnow->wo_creator}} -- {{$custrnow->creator_desc}} </b></option>
+              @endforeach
+            </select>
+          </div>
+          <div class="col-md-2 col-sm-12 mb-2 input-group">
+            <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" style="float:right" />
+          </div>
+          <div class="col-md-1 col-sm-12 mb-2 input-group justify-content-center">
+            <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'><i class="fas fa-sync-alt"></i></button>
+          </div>
+          <div class="col-md-2 col-sm-12 mb-2 input-group">
+            <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="Export to Excel" style="float:right" />
+          </div>
+        </div>      
+      </div>
+  </div>
 </div>
 <input type="hidden" id="tmpwo" value="" />
 <input type="hidden" id="tmpasset" value="" />

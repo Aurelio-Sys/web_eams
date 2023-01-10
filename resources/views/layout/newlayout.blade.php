@@ -24,7 +24,6 @@
   <link rel="stylesheet" href="{{url('plugins/overlayScrollbars/css/OverlayScrollbars.min.css')}}">
   <!-- Theme style -->
   <link rel="stylesheet" href="{{url('dist/css/adminlte.min.css')}}">
-  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/css/adminlte.min.css"> -->
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
@@ -168,7 +167,7 @@ to get the desired effect
             @if(str_contains( Session::get('menu_access'), 'SR'))
             <li class="nav-item has-treeview">
               <a href="javascript:void(0)" class="nav-link">
-                <i class="nav-icon fas fa-concierge-bell"></i>
+                <i class="nav-icon fas fa-dolly"></i>
                 <p>
                   Service Request
                   <i class="right fas fa-angle-left"></i>
@@ -176,7 +175,7 @@ to get the desired effect
               </a>
               <ul class="nav nav-treeview">
                 @if(str_contains( Session::get('menu_access'), 'SR01'))
-                <li class="nav-item">
+                <li class="nav-item has-treeview">
                   <a href="/servicerequest" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Service Request Create</p>
@@ -184,7 +183,7 @@ to get the desired effect
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'SR03'))
-                <li class="nav-item">
+                <li class="nav-item has-treeview">
                   <a href="/srbrowse" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                      <p>Service Request Browse</p>
@@ -192,7 +191,7 @@ to get the desired effect
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'SR02'))
-                <li class="nav-item">
+                <li class="nav-item has-treeview">
                   <a href="/srapproval" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Service Request Approval</p>
@@ -323,7 +322,7 @@ to get the desired effect
               <ul class="nav nav-treeview">
                 @if(str_contains( Session::get('menu_access'), 'US01'))
                 <li class="nav-item has-treeview">
-                  <a href="{{url('/usagemt')}}" class="nav-link ">
+                  <a href="/usagemt" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Asset PM Calculate</p>
                   </a>
@@ -331,7 +330,7 @@ to get the desired effect
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'US02'))
                 <li class="nav-item has-treeview">
-                  <a href="{{url('/usagemulti')}}" class="nav-link ">
+                  <a href="/usagemulti" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Asset Multi Batch</p>
                   </a>
@@ -914,13 +913,12 @@ to get the desired effect
   <!--sweetalert-->
   <script src="{{url('plugins\sweetalert2\sweetalert2.min.js')}}"></script>
   <!-- AdminLTE -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script> -->
   <script src="{{url('dist/js/adminlte.js')}}"></script>
   <script src="{{url('plugins/select2/js/select2.min.js')}}"></script>
   <script src="{{url('assets/css/jquery-ui.js')}}"></script>
   <!-- OPTIONAL SCRIPTS -->
   <!-- <script src="plugins/chart.js/Chart.min.js"></script> -->
-  <script src="{{url('dist/js/demo.js')}}"></script>
+  <!-- <script src="{{url('dist/js/demo.js')}}"></script> -->
   <!-- <script src="dist/js/pages/dashboard3.js"></script> -->
   <script src="{{url('vendors/chart.js/dist/Chart.bundle.min.js')}}"></script>
 
