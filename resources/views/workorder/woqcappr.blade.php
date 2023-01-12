@@ -31,6 +31,9 @@
                     <div class="col-md-4 col-sm-12 mb-2 input-group">
                         <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
                             <option value="">--Select Asset--</option>
+                            @foreach($asset1 as $assetsearch)
+                            <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_desc}}</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -96,6 +99,12 @@
 
         $('#s_asset').val(asset).trigger('change');
         $('#s_priority').val(priority).trigger('change');
+
+        $('#s_asset').select2({
+            width : '100%',
+            closeOnSelect : true,
+            theme : 'bootstrap4'
+        });
     });
 
     $(document).on('click', '#btnrefresh', function() {

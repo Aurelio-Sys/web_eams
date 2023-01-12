@@ -48,7 +48,6 @@
       <option value="finish">Finish</option>
       <option value="finish">Completed</option>
       <option value="reprocess">Reprocess</option>
-      <option value="incomplete">Incomplete</option>
       <option value="closed">Closed</option>
       <option value="delete">Delete</option>
     </select>

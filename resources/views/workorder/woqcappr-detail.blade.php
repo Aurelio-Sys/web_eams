@@ -121,9 +121,9 @@
                 <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
             </button>
         </div>
-        <div class="col-md-2">
+        <!-- <div class="col-md-2">
             <input type="submit" name="submit" id='s_btnconf' value='reject' class="btn btn-info" style="width: 100%;">
-        </div>
+        </div> -->
     </div>
 
 </form>

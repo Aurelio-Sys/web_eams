@@ -1723,71 +1723,111 @@ class wocontroller extends Controller
                 ->where('username', '=', session()->get('username'))
                 ->get();
 
-            if ($wonumber == '' and $asset == '' and $status == '' and $priority == '') {
+            if(Session::get('role') == 'ADMIN'){
+                //ADMIN
+                if ($wonumber == '' and $asset == '' and $status == '' and $priority == '') {
 
-                $data = DB::table('wo_mstr')
-                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-                    ->where(function ($status) {
-                        $status->where('wo_status', '=', 'open')
-                            ->orwhere('wo_status', '=', 'started');
-                    })
-                    ->where(function ($query) {
-                        $query->where('wo_engineer1', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer5', '=', Session()->get('username'));
-                    })
-                    ->orderby('wo_created_at', 'desc')
-                    ->orderBy('wo_mstr.wo_id', 'desc')
-                    ->paginate(10);
-
-                return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
-            } else {
-                $kondisi = "wo_mstr.wo_id > 0";
-
-                if ($wonumber != '') {
-                    $kondisi .= " and wo_nbr = '" . $wonumber . "'";
-                }
-                if ($asset != '') {
-                    $kondisi .= " and asset_code = '" . $asset . "'";
-                }
-                if ($status != '') {
-                    $kondisi .= " and wo_status ='" . $status . "'";
+                    $data = DB::table('wo_mstr')
+                        ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                        ->where(function ($status) {
+                            $status->where('wo_status', '=', 'open')
+                                ->orwhere('wo_status', '=', 'started');
+                        })
+                        ->orderby('wo_created_at', 'desc')
+                        ->orderBy('wo_mstr.wo_id', 'desc')
+                        ->paginate(10);
+    
+                    return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
                 } else {
-                    $kondisi .= " and (wo_status = 'open' or wo_status = 'started')";
-                }
-                if ($priority != '') {
-                    $kondisi .= " and wo_priority = '" . $priority . "'";
+                    $kondisi = "wo_mstr.wo_id > 0";
+    
+                    if ($wonumber != '') {
+                        $kondisi .= " and wo_nbr = '" . $wonumber . "'";
+                    }
+                    if ($asset != '') {
+                        $kondisi .= " and asset_code = '" . $asset . "'";
+                    }
+                    if ($status != '') {
+                        $kondisi .= " and wo_status ='" . $status . "'";
+                    } else {
+                        $kondisi .= " and (wo_status = 'open' or wo_status = 'started')";
+                    }
+                    if ($priority != '') {
+                        $kondisi .= " and wo_priority = '" . $priority . "'";
+                    }
+    
+                    $data = DB::table('wo_mstr')
+                        ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                        ->whereRaw($kondisi)
+                        ->orderby('wo_created_at', 'desc')
+                        ->orderBy('wo_mstr.wo_id', 'desc')
+    
+                        ->paginate(10);
+                    // dd($data);
+                    // dd($_SERVER['REQUEST_URI']);                
+                    return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
                 }
 
-                // dd($kondisi);
-                // $data = DB::table('wo_mstr')
-                //     ->selectRaw('wo_mstr.*,asset_mstr.*,file_wonumber')
-                //     ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                //     ->leftjoin('acceptance_image', 'acceptance_image.file_wonumber', 'wo_mstr.wo_nbr')
-                //     ->whereRaw($kondisi)
-                //     ->orderBy($sort_by, $sort_type)
-                //     ->orderBy('wo_mstr.wo_id', 'desc')
-                //     ->distinct('wo_nbr')
-                //     ->paginate(10);
-                $data = DB::table('wo_mstr')
-                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-                    ->whereRaw($kondisi)
-                    ->where(function ($query) {
-                        $query->where('wo_engineer1', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer5', '=', Session()->get('username'));
-                    })
-                    ->orderby('wo_created_at', 'desc')
-                    ->orderBy('wo_mstr.wo_id', 'desc')
+            }else{
+                //engineer yang ditunjuk
+                if ($wonumber == '' and $asset == '' and $status == '' and $priority == '') {
 
-                    ->paginate(10);
-                // dd($data);
-                // dd($_SERVER['REQUEST_URI']);                
-                return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
+                    $data = DB::table('wo_mstr')
+                        ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                        ->where(function ($status) {
+                            $status->where('wo_status', '=', 'open')
+                                ->orwhere('wo_status', '=', 'started');
+                        })
+                        ->where(function ($query) {
+                            $query->where('wo_engineer1', '=', Session()->get('username'))
+                                ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                                ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                                ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                                ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                        })
+                        ->orderby('wo_created_at', 'desc')
+                        ->orderBy('wo_mstr.wo_id', 'desc')
+                        ->paginate(10);
+    
+                    return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
+                } else {
+                    $kondisi = "wo_mstr.wo_id > 0";
+    
+                    if ($wonumber != '') {
+                        $kondisi .= " and wo_nbr = '" . $wonumber . "'";
+                    }
+                    if ($asset != '') {
+                        $kondisi .= " and asset_code = '" . $asset . "'";
+                    }
+                    if ($status != '') {
+                        $kondisi .= " and wo_status ='" . $status . "'";
+                    } else {
+                        $kondisi .= " and (wo_status = 'open' or wo_status = 'started')";
+                    }
+                    if ($priority != '') {
+                        $kondisi .= " and wo_priority = '" . $priority . "'";
+                    }
+    
+                    $data = DB::table('wo_mstr')
+                        ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                        ->whereRaw($kondisi)
+                        ->where(function ($query) {
+                            $query->where('wo_engineer1', '=', Session()->get('username'))
+                                ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                                ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                                ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                                ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                        })
+                        ->orderby('wo_created_at', 'desc')
+                        ->orderBy('wo_mstr.wo_id', 'desc')
+    
+                        ->paginate(10);
+                    // dd($data);
+                    // dd($_SERVER['REQUEST_URI']);                
+                    return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
+                }
+                
+
             }
         }
     }
@@ -1811,72 +1851,110 @@ class wocontroller extends Controller
                 ->where('username', '=', session()->get('username'))
                 ->get();
 
-            if ($wonumber == '' and $asset == '' and $status == '' and $priority == '') {
+            if(Session::get('role') == 'ADMIN'){
 
-                $data = DB::table('wo_mstr')
-                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-                    ->where(function ($status) {
-                        $status->where('wo_status', '=', 'started')
-                            ->orwhere('wo_status', '=', 'finish');
-                    })
-                    ->where(function ($query) {
-                        $query->where('wo_engineer1', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer5', '=', Session()->get('username'));
-                    })
-                    ->orderby('wo_created_at', 'desc')
-                    ->orderBy('wo_mstr.wo_id', 'desc')
-                    ->paginate(10);
+                if ($wonumber == '' and $asset == '' and $status == '' and $priority == '') {
 
-                return view('workorder.table-woclose', ['data' => $data, 'usernow' => $usernow]);
-            } else {
-                $kondisi = "wo_mstr.wo_id > 0";
-
-                if ($wonumber != '') {
-                    $kondisi .= " and wo_nbr = '" . $wonumber . "'";
-                }
-                if ($asset != '') {
-                    $kondisi .= " and wo_asset = '" . $asset . "'";
-                }
-                if ($status != '') {
-                    $kondisi .= " and wo_status = '" . $status . "'";
+                    $data = DB::table('wo_mstr')
+                        ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                        ->where(function ($status) {
+                            $status->where('wo_status', '=', 'started')
+                                ->orwhere('wo_status', '=', 'finish');
+                        })
+                        ->orderby('wo_created_at', 'desc')
+                        ->orderBy('wo_mstr.wo_id', 'desc')
+                        ->paginate(10);
+    
+                    return view('workorder.table-woclose', ['data' => $data, 'usernow' => $usernow]);
                 } else {
-                    $kondisi .= " and (wo_status = 'started' or wo_status = 'finish')";
+                    $kondisi = "wo_mstr.wo_id > 0";
+    
+                    if ($wonumber != '') {
+                        $kondisi .= " and wo_nbr = '" . $wonumber . "'";
+                    }
+                    if ($asset != '') {
+                        $kondisi .= " and wo_asset = '" . $asset . "'";
+                    }
+                    if ($status != '') {
+                        $kondisi .= " and wo_status = '" . $status . "'";
+                    } else {
+                        $kondisi .= " and (wo_status = 'started' or wo_status = 'finish')";
+                    }
+                    if ($priority != '') {
+                        $kondisi .= " and wo_priority = '" . $priority . "'";
+                    }
+                    
+                    $data = DB::table('wo_mstr')
+                        ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                        ->whereRaw($kondisi)
+                        ->orderBy('wo_status', 'desc')
+                        ->orderby('wo_created_at', 'desc')
+                        ->orderBy('wo_mstr.wo_id', 'desc')
+                        ->paginate(10);
+                    // dd($data);
+                    // dd($_SERVER['REQUEST_URI']);                
+                    return view('workorder.table-woclose', ['data' => $data, 'usernow' => $usernow]);
                 }
-                if ($priority != '') {
-                    $kondisi .= " and wo_priority = '" . $priority . "'";
+
+            }else{
+
+                if ($wonumber == '' and $asset == '' and $status == '' and $priority == '') {
+
+                    $data = DB::table('wo_mstr')
+                        ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                        ->where(function ($status) {
+                            $status->where('wo_status', '=', 'started')
+                                ->orwhere('wo_status', '=', 'finish');
+                        })
+                        ->where(function ($query) {
+                            $query->where('wo_engineer1', '=', Session()->get('username'))
+                                ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                                ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                                ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                                ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                        })
+                        ->orderby('wo_created_at', 'desc')
+                        ->orderBy('wo_mstr.wo_id', 'desc')
+                        ->paginate(10);
+    
+                    return view('workorder.table-woclose', ['data' => $data, 'usernow' => $usernow]);
+                } else {
+                    $kondisi = "wo_mstr.wo_id > 0";
+    
+                    if ($wonumber != '') {
+                        $kondisi .= " and wo_nbr = '" . $wonumber . "'";
+                    }
+                    if ($asset != '') {
+                        $kondisi .= " and wo_asset = '" . $asset . "'";
+                    }
+                    if ($status != '') {
+                        $kondisi .= " and wo_status = '" . $status . "'";
+                    } else {
+                        $kondisi .= " and (wo_status = 'started' or wo_status = 'finish')";
+                    }
+                    if ($priority != '') {
+                        $kondisi .= " and wo_priority = '" . $priority . "'";
+                    }
+        
+                    $data = DB::table('wo_mstr')
+                        ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                        ->whereRaw($kondisi)
+                        ->where(function ($query) {
+                            $query->where('wo_engineer1', '=', Session()->get('username'))
+                                ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                                ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                                ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                                ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                        })
+                        ->orderBy('wo_status', 'desc')
+                        ->orderby('wo_created_at', 'desc')
+                        ->orderBy('wo_mstr.wo_id', 'desc')
+                        ->paginate(10);
+                    // dd($data);
+                    // dd($_SERVER['REQUEST_URI']);                
+                    return view('workorder.table-woclose', ['data' => $data, 'usernow' => $usernow]);
                 }
-                // DD($kondisi);
-                // dd($kondisi);
-                // dd($kondisi);
-                // $data = DB::table('wo_mstr')
-                //     ->selectRaw('wo_mstr.*,asset_mstr.*,file_wonumber')
-                //     ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-                //     ->leftjoin('acceptance_image', 'acceptance_image.file_wonumber', 'wo_mstr.wo_nbr')
-                //     ->whereRaw($kondisi)
-                //     ->orderBy($sort_by, $sort_type)
-                //     ->orderBy('wo_mstr.wo_id', 'desc')
-                //     ->distinct('wo_nbr')
-                //     ->paginate(10);
-                $data = DB::table('wo_mstr')
-                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-                    ->whereRaw($kondisi)
-                    ->where(function ($query) {
-                        $query->where('wo_engineer1', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer5', '=', Session()->get('username'));
-                    })
-                    ->orderBy('wo_status', 'desc')
-                    ->orderby('wo_created_at', 'desc')
-                    ->orderBy('wo_mstr.wo_id', 'desc')
-                    ->paginate(10);
-                // dd($data);
-                // dd($_SERVER['REQUEST_URI']);                
-                return view('workorder.table-woclose', ['data' => $data, 'usernow' => $usernow]);
+
             }
         }
     }
@@ -1981,6 +2059,10 @@ class wocontroller extends Controller
             ->distinct('wo_dets_rc')
             ->get();
 
+        $fc = DB::table('fn_mstr')
+            ->orderBy('fn_code')
+            ->get();
+
         $data2 = "";
         if ($currwo->wo_repair_type == "group") {
             $data2 = DB::table('wo_mstr')
@@ -2056,7 +2138,7 @@ class wocontroller extends Controller
         $instruction = DB::table('ins_mstr')
             ->get();
 
-        return view('workorder.wofinish-done', compact('data', 'data_alldets', 'data2', 'engineer', 'asset', 'repaircode', 'sparepart', 'repairgroup', 'instruction', 'datadetail', 'detailsp'));
+        return view('workorder.wofinish-done', compact('data', 'data_alldets', 'data2', 'engineer', 'asset', 'repaircode', 'sparepart', 'repairgroup', 'instruction', 'datadetail', 'detailsp','fc'));
     }
 
     public function approvewo(Request $req)
@@ -2197,59 +2279,75 @@ class wocontroller extends Controller
                 ->where('username', '=', Session()->get('username'))
                 ->first();
 
-            //  if($getuser->role_user == 'ADM'){
-            //     $data = DB::table('wo_mstr')
-            //     ->leftjoin('asset_mstr','wo_mstr.wo_asset','asset_mstr.asset_code')
-            //     ->where(function($status){
-            //         $status->where('wo_status','=','open')
-            //         ->orwhere('wo_status','=','started');
-            //     })
-            //     ->orderby('wo_created_at','desc')
-            //     ->orderBy('wo_mstr.wo_id', 'desc')
-            //     ->paginate(10);
-            //  }   
-            //  else{    
-            $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-                ->where(function ($status) {
-                    $status->where('wo_status', '=', 'engconfirm')
-                        ->orWhere('wo_status', '=', 'open')
-                        ->orwhere('wo_status', '=', 'started');
-                })
-                ->where(function ($query) {
-                    $query->where('wo_engineer1', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer5', '=', Session()->get('username'));
-                })
-                ->orderby('wo_created_at', 'desc')
-                ->orderBy('wo_mstr.wo_id', 'desc')
-                ->paginate(10);
-            // dd($data);
-            // }
-            // dd($data);
-            $engineer = DB::table('users')
-                ->join('roles', 'users.role_user', 'roles.role_code')
-                ->where('role_desc', '=', 'Engineer')
-                ->get();
-            $asset = DB::table('wo_mstr')
-                ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
-                ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-                ->where(function ($status) {
-                    $status->where('wo_status', '=', 'ENG Confirmed')
-                        ->orwhere('wo_status', '=', 'started');
-                })
-                ->where(function ($query) {
-                    $query->where('wo_engineer1', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer5', '=', Session()->get('username'));
-                })
-                ->groupBy('asset_code')
-                ->orderBy('asset_code')
-                ->get();
+            if(Session::get('role') == 'ADMIN'){
+                $data = DB::table('wo_mstr')
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->where(function ($status) {
+                        $status->where('wo_status', '=', 'open')
+                            ->orwhere('wo_status', '=', 'started');
+                    })
+                    ->orderby('wo_created_at', 'desc')
+                    ->orderBy('wo_mstr.wo_id', 'desc')
+                    ->paginate(10);
+                // dd($data);
+                // }
+                // dd($data);
+                $engineer = DB::table('users')
+                    ->join('roles', 'users.role_user', 'roles.role_code')
+                    ->where('role_desc', '=', 'Engineer')
+                    ->get();
+                $asset = DB::table('wo_mstr')
+                    ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
+                    ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->where(function ($status) {
+                        $status->where('wo_status', '=', 'open')
+                            ->orwhere('wo_status', '=', 'started');
+                    })
+                    ->groupBy('asset_code')
+                    ->orderBy('asset_code')
+                    ->get();
+            }else{
+                $data = DB::table('wo_mstr')
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->where(function ($status) {
+                        $status->where('wo_status', '=', 'open')
+                            ->orwhere('wo_status', '=', 'started');
+                    })
+                    ->where(function ($query) {
+                        $query->where('wo_engineer1', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                    })
+                    ->orderby('wo_created_at', 'desc')
+                    ->orderBy('wo_mstr.wo_id', 'desc')
+                    ->paginate(10);
+                // dd($data);
+                // }
+                // dd($data);
+                $engineer = DB::table('users')
+                    ->join('roles', 'users.role_user', 'roles.role_code')
+                    ->where('role_desc', '=', 'Engineer')
+                    ->get();
+                $asset = DB::table('wo_mstr')
+                    ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
+                    ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->where(function ($status) {
+                        $status->where('wo_status', '=', 'open')
+                            ->orwhere('wo_status', '=', 'started');
+                    })
+                    ->where(function ($query) {
+                        $query->where('wo_engineer1', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                    })
+                    ->groupBy('asset_code')
+                    ->orderBy('asset_code')
+                    ->get();
+            }
             if ($req->ajax()) {
                 return view('workorder.table-wostart', ['data' => $data]);
             } else {
@@ -2350,7 +2448,49 @@ class wocontroller extends Controller
 
         //dd(Session()->get('username'));
         if (strpos(Session::get('menu_access'), 'WO03') !== false) {
-            $data = DB::table('wo_mstr')
+
+            if(Session::get('role') == 'ADMIN'){
+
+                $data = DB::table('wo_mstr')
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->where(function ($status) {
+                    $status->where('wo_status', '=', 'started')
+                        ->orwhere('wo_status', '=', 'finish');
+                })
+                ->orderBy('wo_status', 'desc')
+                ->orderby('wo_created_at', 'desc')
+                ->orderBy('wo_mstr.wo_id', 'desc')
+                ->paginate(10);
+
+                $engineer = DB::table('users')
+                    ->join('roles', 'users.role_user', 'roles.role_code')
+                    ->where('role_desc', '=', 'Engineer')
+                    ->get();
+                $asset = DB::table('wo_mstr')
+                    ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
+                    ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->where(function ($status) {
+                        $status->where('wo_status', '=', 'started')
+                            ->orwhere('wo_status', '=', 'finish');
+                    })
+                    ->groupBy('asset_code')
+                    ->orderBy('asset_code')
+                    ->get();
+                $repaircode = DB::table('rep_master')
+                    ->get();
+
+                $sparepart = DB::table('sp_mstr')
+                    ->get();
+                $repairgroup = DB::table('xxrepgroup_mstr')
+                    ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
+                    ->distinct('xxrepgroup_nbr')
+                    ->get();
+                $instruction = DB::table('ins_mstr')
+                    ->get();
+
+            }else{
+                
+                $data = DB::table('wo_mstr')
                 ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
                 ->where(function ($status) {
                     $status->where('wo_status', '=', 'started')
@@ -2367,38 +2507,42 @@ class wocontroller extends Controller
                 ->orderby('wo_created_at', 'desc')
                 ->orderBy('wo_mstr.wo_id', 'desc')
                 ->paginate(10);
-            $engineer = DB::table('users')
-                ->join('roles', 'users.role_user', 'roles.role_code')
-                ->where('role_desc', '=', 'Engineer')
-                ->get();
-            $asset = DB::table('wo_mstr')
-                ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
-                ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-                ->where(function ($status) {
-                    $status->where('wo_status', '=', 'started')
-                        ->orwhere('wo_status', '=', 'finish');
-                })
-                ->where(function ($query) {
-                    $query->where('wo_engineer1', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer5', '=', Session()->get('username'));
-                })
-                ->groupBy('asset_code')
-                ->orderBy('asset_code')
-                ->get();
-            $repaircode = DB::table('rep_master')
-                ->get();
+                $engineer = DB::table('users')
+                    ->join('roles', 'users.role_user', 'roles.role_code')
+                    ->where('role_desc', '=', 'Engineer')
+                    ->get();
+                $asset = DB::table('wo_mstr')
+                    ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
+                    ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->where(function ($status) {
+                        $status->where('wo_status', '=', 'started')
+                            ->orwhere('wo_status', '=', 'finish');
+                    })
+                    ->where(function ($query) {
+                        $query->where('wo_engineer1', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                    })
+                    ->groupBy('asset_code')
+                    ->orderBy('asset_code')
+                    ->get();
+                $repaircode = DB::table('rep_master')
+                    ->get();
 
-            $sparepart = DB::table('sp_mstr')
-                ->get();
-            $repairgroup = DB::table('xxrepgroup_mstr')
-                ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
-                ->distinct('xxrepgroup_nbr')
-                ->get();
-            $instruction = DB::table('ins_mstr')
-                ->get();
+                $sparepart = DB::table('sp_mstr')
+                    ->get();
+                $repairgroup = DB::table('xxrepgroup_mstr')
+                    ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
+                    ->distinct('xxrepgroup_nbr')
+                    ->get();
+                $instruction = DB::table('ins_mstr')
+                    ->get();
+
+            }
+
+            
             return view('workorder.woclose', ['data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'repaircode' => $repaircode, 'sparepart' => $sparepart, 'repairgroup' => $repairgroup, 'instruction' => $instruction]);
         } else {
             toast('you dont have access, please contact admin', 'error');
@@ -3510,7 +3654,7 @@ class wocontroller extends Controller
 
             /* get data buat qxtend issue unplanned */
             $dataqxtend = DB::table('wo_dets')
-                ->select('wo_dets_nbr', 'wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc', DB::raw('SUM(wo_dets_qty_used) as qtytoqx', 'wo_dets_wh_tosite','wo_dets_wh_toloc'))
+                ->select('wo_dets_nbr', 'wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc','wo_dets_wh_tosite','wo_dets_wh_toloc', DB::raw('SUM(wo_dets_qty_used) as qtytoqx'))
                 ->where('wo_dets_nbr', '=', $req->c_wonbr)
                 ->where('wo_dets_qty_used', '!=', 0)
                 ->groupBy('wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc')
@@ -3581,7 +3725,7 @@ class wocontroller extends Controller
                     <qcom:ttContext>
                       <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                       <qcom:propertyName>password</qcom:propertyName>
-                      <qcom:propertyValue>DuaKelinc1P4t1</qcom:propertyValue>
+                      <qcom:propertyValue></qcom:propertyValue>
                     </qcom:ttContext>
                     <qcom:ttContext>
                       <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -3674,6 +3818,20 @@ class wocontroller extends Controller
                     return redirect()->route('woreport');
                 }
                 $xmlResp = simplexml_load_string($qdocResponse);
+                $xmlResp->registerXPathNamespace('soapenv', 'urn:schemas-qad-com:xml-services:common');
+                $qdocFault = '';
+                $qdocFault = $xmlResp->xpath('//soapenv:faultstring');
+                // dd($qdocFault);
+
+                if(!empty($qdocFault)){
+                    DB::rollBack();
+
+                    $qdocFault = (string) $xmlResp->xpath('//soapenv:faultstring')[0];
+
+                    alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$qdocFault."",'error')->persistent('Dismiss');
+                    return redirect()->back();
+                }
+
                 $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
                 $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
 
@@ -3685,18 +3843,27 @@ class wocontroller extends Controller
                     DB::rollBack();
 
                     $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
-					$qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
-					$output = '';
-					foreach($qdocMsgDesc as $datas){
-						if(str_contains($datas, 'ERROR:')){
-							$output .= $datas. ' - ';
-						}
-					}
-					$output = substr($output, 0, -3);
-					
-					alert()->error('Error','Qxtend Error berikut, '.$output.'')->persistent('Dismiss');
+                    $outputerror = '';
+                    foreach ($xmlResp->xpath('//ns3:temp_err_msg') as $temp_err_msg) {
+                        $context = $temp_err_msg->xpath('./ns3:tt_msg_context')[0];
+                        $desc = $temp_err_msg->xpath('./ns3:tt_msg_desc')[0];
+                        $outputerror .= "&bull;  ".$context . " - " . $desc . "<br>";
+                    }
 
-                    // toast('Qxtend Response Error', 'error');
+                    // dd('stop');
+					// $qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
+					// $output = '';
+
+					// foreach($qdocMsgDesc as $datas){
+					// 	if(str_contains($datas, 'ERROR:')){
+					// 		$output .= $datas. ' <br> ';
+					// 	}
+					// }
+
+					// $output = substr($output, 0, -6);
+
+                    alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$outputerror."",'error')->persistent('Dismiss');
+					
                     return redirect()->route('woreport');
                 }
 
@@ -3896,7 +4063,7 @@ class wocontroller extends Controller
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                     <qcom:propertyName>password</qcom:propertyName>
-                    <qcom:propertyValue>DuaKelinc1P4t1</qcom:propertyValue>
+                    <qcom:propertyValue></qcom:propertyValue>
                     </qcom:ttContext>
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -3992,10 +4159,22 @@ class wocontroller extends Controller
                 return redirect()->route('woreport');
             }
             $xmlResp = simplexml_load_string($qdocResponse);
+            $xmlResp->registerXPathNamespace('soapenv', 'urn:schemas-qad-com:xml-services:common');
+            $qdocFault = '';
+            $qdocFault = $xmlResp->xpath('//soapenv:faultstring');
+            // dd($qdocFault);
+
+            if(!empty($qdocFault)){
+                DB::rollBack();
+
+                $qdocFault = (string) $xmlResp->xpath('//soapenv:faultstring')[0];
+
+                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$qdocFault."",'error')->persistent('Dismiss');
+                return redirect()->back();
+            }
+
             $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
             $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
-
-
 
             if ($qdocResult == "success" or $qdocResult == "warning") {
 
@@ -4032,17 +4211,26 @@ class wocontroller extends Controller
                 DB::rollBack();
 
                 $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
-                $qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
-                $output = '';
-                foreach($qdocMsgDesc as $datas){
-                    if(str_contains($datas, 'ERROR:')){
-                        $output .= $datas. ' - ';
-                    }
+                $outputerror = '';
+                foreach ($xmlResp->xpath('//ns3:temp_err_msg') as $temp_err_msg) {
+                    $context = $temp_err_msg->xpath('./ns3:tt_msg_context')[0];
+                    $desc = $temp_err_msg->xpath('./ns3:tt_msg_desc')[0];
+                    $outputerror .= "&bull;  ".$context . " - " . $desc . "<br>";
                 }
-                $output = substr($output, 0, -3);
-                
-                alert()->error('Error','Qxtend Error berikut, '.$output.'')->persistent('Dismiss');
-                // toast('Qxtend Response Error', 'error');
+
+                // dd('stop');
+                // $qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
+                // $output = '';
+
+                // foreach($qdocMsgDesc as $datas){
+                // 	if(str_contains($datas, 'ERROR:')){
+                // 		$output .= $datas. ' <br> ';
+                // 	}
+                // }
+
+                // $output = substr($output, 0, -6);
+
+                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$outputerror."",'error')->persistent('Dismiss');
                 return redirect()->route('woreport');
 
             }
@@ -5061,7 +5249,7 @@ class wocontroller extends Controller
                 ->where('wo_nbr', $wonumber)
                 // ->update(['wo_status'=>'closed','wo_reject_reason'=>$req->uncompletenote]); --> A210927
                 ->update([
-                    'wo_status' => 'reprocess',
+                    'wo_status' => 'started',
                     'wo_reject_reason' => $req->uncompletenote,
                     'wo_approval_note' => $wonote, //B211019
                 ]);
@@ -5072,7 +5260,7 @@ class wocontroller extends Controller
                 DB::table('service_req_mstr')
                     ->where('sr_number', '=', $srnbr)
                     ->update([
-                        'sr_status' => '8',
+                        'sr_status' => '3',
                     ]);
             }
 

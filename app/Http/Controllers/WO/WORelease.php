@@ -19,22 +19,34 @@ class WORelease extends Controller
     public function browse(Request $request)
     {
 
+        // dd(Session::get('role'));
+
         $asset1 = DB::table('asset_mstr')
             ->where('asset_active', '=', 'Yes')
             ->get();
 
-        $data = DB::table('wo_mstr')
-        ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset')
-        ->whereIn('wo_status', ['open', 'Released', 'whsconfirm', 'plan', 'started'])
-        ->where(function ($query) {
-            $query->where('wo_engineer1', '=', Session()->get('username'))
-                ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                ->orwhere('wo_engineer5', '=', Session()->get('username'));
-        })
-        ->orderby('wo_created_at', 'desc')
-        ->orderBy('wo_mstr.wo_id', 'desc');
+        if(Session::get('role') == 'ADMIN'){
+            $data = DB::table('wo_mstr')
+                ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset')
+                ->whereIn('wo_status', ['open', 'Released', 'whsconfirm', 'plan', 'started'])
+                ->orderby('wo_created_at', 'desc')
+                ->orderBy('wo_mstr.wo_id', 'desc');
+        }else{
+            $data = DB::table('wo_mstr')
+            ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset')
+            ->whereIn('wo_status', ['open', 'Released', 'whsconfirm', 'plan', 'started'])
+            ->where(function ($query) {
+                $query->where('wo_engineer1', '=', Session()->get('username'))
+                    ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                    ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                    ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                    ->orwhere('wo_engineer5', '=', Session()->get('username'));
+            })
+            ->orderby('wo_created_at', 'desc')
+            ->orderBy('wo_mstr.wo_id', 'desc');
+        }
+
+        
 
         if ($request->s_nomorwo) {
             $data->where('wo_nbr', '=', $request->s_nomorwo);
