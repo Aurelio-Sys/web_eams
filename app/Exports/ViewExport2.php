@@ -79,6 +79,8 @@ class ViewExport2 implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
         if($this->engineer != null ||$this->engineer != '' ){
             $kondisi .= " and (wo_engineer1 = '".$this->engineer."' or wo_engineer2 = '".$this->engineer."' or wo_engineer3 = '".$this->engineer."' or wo_engineer4 = '".$this->engineer."' or wo_engineer5 = '".$this->engineer."')";
         }
+
+        // dd($kondisi);
         
         return  DB::table('wo_mstr')
         ->selectRaw("wo_nbr,CAST(wo_created_at AS DATE) AS wo_created_at2, CAST(wo_created_at AS TIME) AS wo_time,
