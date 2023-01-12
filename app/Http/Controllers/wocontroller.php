@@ -5109,7 +5109,7 @@ class wocontroller extends Controller
                 ->where('wo_nbr', $wonumber)
                 // ->update(['wo_status'=>'closed','wo_reject_reason'=>$req->uncompletenote]); --> A210927
                 ->update([
-                    'wo_status' => 'reprocess',
+                    'wo_status' => 'started',
                     'wo_reject_reason' => $req->uncompletenote,
                     'wo_approval_note' => $wonote, //B211019
                 ]);
@@ -5120,7 +5120,7 @@ class wocontroller extends Controller
                 DB::table('service_req_mstr')
                     ->where('sr_number', '=', $srnbr)
                     ->update([
-                        'sr_status' => '8',
+                        'sr_status' => '3',
                     ]);
             }
 
