@@ -24,6 +24,10 @@ class WoQcController extends Controller
             ->where('wo_status', '=', 'QC Approval')
             ->orderBy('wo_updated_at');
 
+        $asset1 = DB::table('asset_mstr')
+            ->where('asset_active', '=', 'Yes')
+            ->get();
+
         if ($request->s_nomorwo) {
             $dataApproval->where('wo_nbr', '=', $request->s_nomorwo);
         }
@@ -39,7 +43,7 @@ class WoQcController extends Controller
         $dataApproval = $dataApproval->paginate(10);
 
 
-        return view('workorder.woqcappr', compact('dataApproval'));
+        return view('workorder.woqcappr', compact('dataApproval','asset1'));
     }
 
     /**
