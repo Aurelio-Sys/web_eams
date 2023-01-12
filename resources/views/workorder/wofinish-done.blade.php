@@ -353,21 +353,30 @@
                     <input type="time" class="form-control" name="c_finishtime" autofocus required/>
                 </div>
             </div>
+
+            <div class="form-group row col-md-12">
+                <label for="failurecode" class="col-md-4 col-form-label my-auto">Failure Code</label>
+                <div class="col-md-5 col-sm-12">
+                    <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple">
+                    <option></option>
+                    @foreach($fc as $fcshow)
+                    <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}} -- {{$fcshow->fn_impact}}</option>
+                    @endforeach
+                    </select>
+                </div>
+            </div>
+
             <div class="form-group row col-md-12">
                 <label for="c_note" class="col-md-4 col-form-label text-md-left">Reporting Note <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                 <div class="col-md-6">
                     <textarea id="c_note" class="form-control c_note" name="c_note" autofocus></textarea>
                 </div>
             </div>
-            <div class="form-group row justify-content-center">
+            <div class="form-group row col-md-12">
                 <!-- <label class="col-md-12 col-form-label text-md-center"><b>Completed</b></label> -->
-                <label class="col-md-12 col-form-label text-md-left">Photo Upload : </label>
-            </div>
-            <div class="form-group row justify-content-center" style="margin-bottom: 10%;">
-                <div class="col-md-12 images">
-                    <div class="pic">
-                        add
-                    </div>
+                <label class="col-md-4 col-form-label text-md-left">Upload</label>
+                <div class="col-md-5 input-file-container" style="margin-bottom: 10%;">
+                    <input type="file" class="form-control" id="imgname" name="imgname[]" multiple>
                 </div>
             </div>
             <input type="hidden" id="hidden_var" name="hidden_var" value="0" />
@@ -389,7 +398,17 @@
 @section('scripts')
 <script type="text/javascript">
     $(document).ready(function() {
-        console.log("ready!");
+
+        $("#failurecode").select2({
+            width: '100%',
+            placeholder: "Select Failure Code",
+            theme: "bootstrap4",
+            allowClear: true,
+            maximumSelectionLength: 3,
+            closeOnSelect: false,
+            allowClear: true,
+            multiple: true,
+        });
 
         // if (document.getElementById('argcheck').checked) {
         //     $('#argcheck').change();

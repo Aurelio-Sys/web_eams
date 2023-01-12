@@ -920,7 +920,7 @@ to get the desired effect
   <!-- <script src="plugins/chart.js/Chart.min.js"></script> -->
   <!-- <script src="{{url('dist/js/demo.js')}}"></script> -->
   <!-- <script src="dist/js/pages/dashboard3.js"></script> -->
-  <script src="{{url('vendors/chart.js/dist/Chart.bundle.min.js')}}"></script>
+  <script src="{{url('plugins/chart.js/Chart.bundle.min.js')}}"></script>
 
   <script src="{{url('assets/js/bootstrap-select.min.js')}}"></script>
 

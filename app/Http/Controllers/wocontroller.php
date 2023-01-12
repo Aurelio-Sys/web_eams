@@ -1981,6 +1981,10 @@ class wocontroller extends Controller
             ->distinct('wo_dets_rc')
             ->get();
 
+        $fc = DB::table('fn_mstr')
+            ->orderBy('fn_code')
+            ->get();
+
         $data2 = "";
         if ($currwo->wo_repair_type == "group") {
             $data2 = DB::table('wo_mstr')
@@ -2056,7 +2060,7 @@ class wocontroller extends Controller
         $instruction = DB::table('ins_mstr')
             ->get();
 
-        return view('workorder.wofinish-done', compact('data', 'data_alldets', 'data2', 'engineer', 'asset', 'repaircode', 'sparepart', 'repairgroup', 'instruction', 'datadetail', 'detailsp'));
+        return view('workorder.wofinish-done', compact('data', 'data_alldets', 'data2', 'engineer', 'asset', 'repaircode', 'sparepart', 'repairgroup', 'instruction', 'datadetail', 'detailsp','fc'));
     }
 
     public function approvewo(Request $req)
@@ -3510,7 +3514,7 @@ class wocontroller extends Controller
 
             /* get data buat qxtend issue unplanned */
             $dataqxtend = DB::table('wo_dets')
-                ->select('wo_dets_nbr', 'wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc', DB::raw('SUM(wo_dets_qty_used) as qtytoqx', 'wo_dets_wh_tosite','wo_dets_wh_toloc'))
+                ->select('wo_dets_nbr', 'wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc','wo_dets_wh_tosite','wo_dets_wh_toloc', DB::raw('SUM(wo_dets_qty_used) as qtytoqx'))
                 ->where('wo_dets_nbr', '=', $req->c_wonbr)
                 ->where('wo_dets_qty_used', '!=', 0)
                 ->groupBy('wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc')
@@ -3581,7 +3585,7 @@ class wocontroller extends Controller
                     <qcom:ttContext>
                       <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                       <qcom:propertyName>password</qcom:propertyName>
-                      <qcom:propertyValue>DuaKelinc1P4t1</qcom:propertyValue>
+                      <qcom:propertyValue></qcom:propertyValue>
                     </qcom:ttContext>
                     <qcom:ttContext>
                       <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -3674,6 +3678,20 @@ class wocontroller extends Controller
                     return redirect()->route('woreport');
                 }
                 $xmlResp = simplexml_load_string($qdocResponse);
+                $xmlResp->registerXPathNamespace('soapenv', 'urn:schemas-qad-com:xml-services:common');
+                $qdocFault = '';
+                $qdocFault = $xmlResp->xpath('//soapenv:faultstring');
+                // dd($qdocFault);
+
+                if(!empty($qdocFault)){
+                    DB::rollBack();
+
+                    $qdocFault = (string) $xmlResp->xpath('//soapenv:faultstring')[0];
+
+                    alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$qdocFault."",'error')->persistent('Dismiss');
+                    return redirect()->back();
+                }
+
                 $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
                 $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
 
@@ -3685,18 +3703,27 @@ class wocontroller extends Controller
                     DB::rollBack();
 
                     $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
-					$qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
-					$output = '';
-					foreach($qdocMsgDesc as $datas){
-						if(str_contains($datas, 'ERROR:')){
-							$output .= $datas. ' - ';
-						}
-					}
-					$output = substr($output, 0, -3);
-					
-					alert()->error('Error','Qxtend Error berikut, '.$output.'')->persistent('Dismiss');
+                    $outputerror = '';
+                    foreach ($xmlResp->xpath('//ns3:temp_err_msg') as $temp_err_msg) {
+                        $context = $temp_err_msg->xpath('./ns3:tt_msg_context')[0];
+                        $desc = $temp_err_msg->xpath('./ns3:tt_msg_desc')[0];
+                        $outputerror .= "&bull;  ".$context . " - " . $desc . "<br>";
+                    }
 
-                    // toast('Qxtend Response Error', 'error');
+                    // dd('stop');
+					// $qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
+					// $output = '';
+
+					// foreach($qdocMsgDesc as $datas){
+					// 	if(str_contains($datas, 'ERROR:')){
+					// 		$output .= $datas. ' <br> ';
+					// 	}
+					// }
+
+					// $output = substr($output, 0, -6);
+
+                    alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$outputerror."",'error')->persistent('Dismiss');
+					
                     return redirect()->route('woreport');
                 }
 
@@ -3896,7 +3923,7 @@ class wocontroller extends Controller
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                     <qcom:propertyName>password</qcom:propertyName>
-                    <qcom:propertyValue>DuaKelinc1P4t1</qcom:propertyValue>
+                    <qcom:propertyValue></qcom:propertyValue>
                     </qcom:ttContext>
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -3992,10 +4019,22 @@ class wocontroller extends Controller
                 return redirect()->route('woreport');
             }
             $xmlResp = simplexml_load_string($qdocResponse);
+            $xmlResp->registerXPathNamespace('soapenv', 'urn:schemas-qad-com:xml-services:common');
+            $qdocFault = '';
+            $qdocFault = $xmlResp->xpath('//soapenv:faultstring');
+            // dd($qdocFault);
+
+            if(!empty($qdocFault)){
+                DB::rollBack();
+
+                $qdocFault = (string) $xmlResp->xpath('//soapenv:faultstring')[0];
+
+                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$qdocFault."",'error')->persistent('Dismiss');
+                return redirect()->back();
+            }
+
             $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
             $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
-
-
 
             if ($qdocResult == "success" or $qdocResult == "warning") {
 
@@ -4032,17 +4071,26 @@ class wocontroller extends Controller
                 DB::rollBack();
 
                 $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
-                $qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
-                $output = '';
-                foreach($qdocMsgDesc as $datas){
-                    if(str_contains($datas, 'ERROR:')){
-                        $output .= $datas. ' - ';
-                    }
+                $outputerror = '';
+                foreach ($xmlResp->xpath('//ns3:temp_err_msg') as $temp_err_msg) {
+                    $context = $temp_err_msg->xpath('./ns3:tt_msg_context')[0];
+                    $desc = $temp_err_msg->xpath('./ns3:tt_msg_desc')[0];
+                    $outputerror .= "&bull;  ".$context . " - " . $desc . "<br>";
                 }
-                $output = substr($output, 0, -3);
-                
-                alert()->error('Error','Qxtend Error berikut, '.$output.'')->persistent('Dismiss');
-                // toast('Qxtend Response Error', 'error');
+
+                // dd('stop');
+                // $qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
+                // $output = '';
+
+                // foreach($qdocMsgDesc as $datas){
+                // 	if(str_contains($datas, 'ERROR:')){
+                // 		$output .= $datas. ' <br> ';
+                // 	}
+                // }
+
+                // $output = substr($output, 0, -6);
+
+                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$outputerror."",'error')->persistent('Dismiss');
                 return redirect()->route('woreport');
 
             }
