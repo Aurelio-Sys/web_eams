@@ -53,9 +53,8 @@
               <div class="col-md-3 col-sm-12 mb-2 input-group">
                 <select id="s_status" type="text" class="form-control"  name="s_status">
                   <option value="">--Select Status--</option>
+                  <option value="open">Open</option>
                   <option value="started">Started</option>
-                  <option value="finish">Finish</option>
-
                 </select>
               </div>
               <label for="" class="col-md-1 col-form-label text-md-left">{{ __('') }}</label>

@@ -32,7 +32,7 @@
                         <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
                             <option value="">--Select Asset--</option>
                             @foreach($asset1 as $assetsearch)
-                            <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_desc}}</option>
+                            <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -60,8 +60,8 @@
 </form>
 
 
-<div class="table-responsive">
-    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+<div class="table-responsive col-12 mt-0 pt-0">
+    <table class="table table-bordered mt-0" id="dataTable" width="100%" cellspacing="0" style="width:100%;padding: .2rem !important;">
         <thead>
             <tr style="text-align: center;">
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="15%">WO Number<span id="name_icon"></span></th>

@@ -68,7 +68,7 @@ class WORelease extends Controller
 
     public function detailrelease($id)
     {
-        // dd('test?');
+        dd('test?');
         $data = DB::table('wo_mstr')
             ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
             ->where('wo_id', '=', $id)
@@ -138,6 +138,8 @@ class WORelease extends Controller
 
                 $combineSP = $sparepart1;
                 $rc = $rc1;
+
+                dd('aaa');
             }
 
             if ($data->wo_repair_code2 != "") {
