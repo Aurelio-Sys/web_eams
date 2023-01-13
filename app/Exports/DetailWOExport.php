@@ -25,11 +25,14 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         ];
     }
 
-    function __construct($wonbr,$sasset,$per1,$per2) {
+    function __construct($wonbr,$sasset,$per1,$per2,$dept,$loc,$eng) {
         $this->wonbr    = $wonbr;
         $this->sasset    = $sasset;
         $this->per1   = $per1;
         $this->per2 = $per2;
+        $this->dept = $dept;
+        $this->loc = $loc;
+        $this->eng = $eng;
     }
 
     public function query()
@@ -40,6 +43,9 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         $sasset     = $this->sasset;
         $per1    = $this->per1;
         $per2  = $this->per2;
+        $dept = $this->dept;
+        $loc = $this->loc;
+        $eng = $this->eng;
 
         Schema::create('temp_wo', function ($table) {
             $table->increments('id');
@@ -350,10 +356,10 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
                 'temp_time1','temp_time2','temp_time3',
                 'temp_cfail1','temp_nfail1','temp_cfail2','temp_nfail2','temp_cfail3','temp_nfail3','temp_finish_note',
                 'temp_sp','temp_sp_desc','temp_sp_price','temp_qty_req','temp_qty_whs','temp_qty_used')
-            ->orderBy('temp_wo','desc');
+            ->orderBy('temp_create_date','desc')->orderBy('temp_wo','desc');
 
         if($this->wonbr) {
-            $datatemp = $data->where('temp_wo','=',$this->wonbr);
+            $datatemp = $data->where('temp_wo','like','%'.$this->wonbr.'%');
         }
 
         if($this->sasset) {
@@ -362,6 +368,19 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
 
         if($this->per1) {
             $data = $data->whereBetween ('temp_create_date',[$this->per1,$this->per2]);
+        }
+        if($this->dept) {
+            $data = $data->where('temp_wo_dept','=',$this->dept);
+        }
+        if($this->loc) {
+            $data = $data->where('temp_asset_loc','=',$this->loc);
+        }
+        if($this->eng) {
+            $datatemp = $datatemp->where('temp_ceng1','=',$this->eng)
+                ->orWhere('temp_ceng2','=',$this->eng)
+                ->orWhere('temp_ceng3','=',$this->eng)
+                ->orWhere('temp_ceng4','=',$this->eng)
+                ->orWhere('temp_ceng5','=',$this->eng);
         }
 
         // dd($data);
