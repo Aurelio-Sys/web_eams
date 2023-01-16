@@ -288,6 +288,7 @@ class RptDetWOController extends Controller
             $datatemp = $datatemp->whereBetween ('temp_create_date',[$request->s_per1,$request->s_per2]);
         }
         if($request->s_dept) {
+            // dd("dept",$request->s_dept);
             $a = $request->s_dept;
             $datatemp = $datatemp->whereIn('temp_creator', function($query) use ($a)
             {
@@ -312,22 +313,26 @@ class RptDetWOController extends Controller
                 ->orWhere('temp_eng4','=',$request->s_eng)
                 ->orWhere('temp_eng5','=',$request->s_eng);
         }
+        if($request->s_type) {
+            $datatemp = $datatemp->where('temp_type','=',$request->s_type);
+        }
             
         $datatemp = $datatemp->paginate(10); 
 
         Schema::dropIfExists('temp_wo');
         // dd($impact);
         if ($request->dexcel == "excel") {
+            // dd($request->stype);
             return Excel::download(new DetailWOExport($request->swo,$request->sasset,$request->per1,$request->per2,
-            $request->s_dept,$request->s_loc,$request->s_eng), 'DetailWO.xlsx');
+            $request->sdept,$request->sloc,$request->seng,$request->stype), 'DetailWO.xlsx');
             
         } else {
             // dd($request->s_nomorwo);
             return view('report.rptdetwo', ['impact' => $impact, 'wottype' => $wottype, 'custrnow' => $custrnow, 
             'data' => $datatemp, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 
             'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '', 'dataloc' => $dataloc,
-            'swo' => $request->s_nomorwo, 'sasset' => $request->sasset, 'sper1' => $request->per1, 'sper2' => $request->per2,
-            'sdept' => $request->s_dept, 'sloc' => $request->s_loc, 'seng' => $request->s_eng]);
+            'swo' => $request->s_nomorwo, 'sasset' => $request->s_asset, 'sper1' => $request->s_per1, 'sper2' => $request->s_per2,
+            'sdept' => $request->s_dept, 'sloc' => $request->s_loc, 'seng' => $request->s_eng, 'stype' => $request->s_type]);
         }
         
 

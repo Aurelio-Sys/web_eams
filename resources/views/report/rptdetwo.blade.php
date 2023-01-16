@@ -49,7 +49,7 @@
             <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
               <option value="">--Select Asset--</option>
               @foreach($asset1 as $assetsearch)
-                <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
+                <option value="{{$assetsearch->asset_code}}" {{$assetsearch->asset_code === $sasset ? "selected" : ""}}>{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
               @endforeach
             </select>
           </div>
@@ -58,7 +58,7 @@
             <select id="s_dept" class="form-control" style="color:black" name="s_dept" autofocus autocomplete="off">
               <option value="">--Select Departement--</option>
               @foreach($dept as $dd)
-                <option value="{{$dd->dept_code}}">{{$dd->dept_code}} -- {{$dd->dept_desc}}</option>
+                <option value="{{$dd->dept_code}}" {{$dd->dept_code === $sdept ? "selected" : ""}}>{{$dd->dept_code}} -- {{$dd->dept_desc}}</option>
               @endforeach
             </select>
           </div>
@@ -66,8 +66,8 @@
           <div class="col-md-4 col-sm-12 mb-2 input-group">
             <select id="s_type" class="form-control" style="color:black" name="s_type" autofocus autocomplete="off">
               <option value="">--</option>
-              <option value="PM">PM</option>
-              <option value="WO">WO</option>
+              <option value="PM" {{$stype === "PM" ? "selected" : ""}}>PM</option>
+              <option value="WO" {{$stype === "WO" ? "selected" : ""}}>WO</option>
             </select>
           </div>
           <label for="s_loc" class="col-md-2 col-form-label text-md-right">{{ __('Location') }}</label>
@@ -75,7 +75,7 @@
             <select id="s_loc" class="form-control" style="color:black" name="s_loc" autofocus autocomplete="off">
               <option value="">--Select Location--</option>
               @foreach($dataloc as $dl)
-                <option value="{{$dl->asloc_code}}">{{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
+                <option value="{{$dl->asloc_code}}" {{$dl->asloc_code === $sloc ? "selected" : ""}}>{{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
               @endforeach
             </select>
           </div>
@@ -84,17 +84,17 @@
             <select id="s_eng" class="form-control" style="color:black" name="s_eng" autofocus autocomplete="off">
               <option value="">--Select Engineer--</option>
               @foreach($engine as $de)
-                <option value="{{$de->eng_code}}">{{$de->eng_code}} -- {{$de->eng_desc}}</option>
+                <option value="{{$de->eng_code}}" {{$de->eng_code === $seng ? "selected" : ""}}>{{$de->eng_code}} -- {{$de->eng_desc}}</option>
               @endforeach
             </select>
           </div>
-          <label for="s_per1" class="col-md-2 col-form-label text-md-right">{{ __('Periode 1') }}</label>
+          <label for="s_per1" class="col-md-2 col-form-label text-md-right">{{ __('WO Date') }}</label>
           <div class="col-md-4 col-sm-12 mb-2 input-group">
-            <input type="date" name="s_per1" id="s_per1" class="form-control">
+            <input type="date" name="s_per1" id="s_per1" class="form-control" value="{{$sper1}}">
           </div>
-          <label for="s_per2" class="col-md-2 col-form-label text-md-right">{{ __('Periode 2') }}</label>
+          <label for="s_per2" class="col-md-2 col-form-label text-md-right">{{ __('s/d') }}</label>
           <div class="col-md-4 col-sm-12 mb-2 input-group">
-            <input type="date" name="s_per2" id="s_per2" class="form-control">
+            <input type="date" name="s_per2" id="s_per2" class="form-control" value="{{$sper2}}">
           </div>
           <div class="col-md-2 col-sm-12 mb-2 input-group">
             <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
@@ -126,7 +126,7 @@
         <th>Asset</th>
         <th>Desc</th>
         <th>Req By</th>
-        <th>Req Date</th>
+        <th>Create Date</th>
         <th>Sch Date</th>
         <th>Note</th>
         <th>Repair</th>
@@ -584,6 +584,10 @@
     $('#s_asset').val('');
     $('#s_per1').val('');
     $('#s_per2').val('');
+    $('#s_dept').val('');
+    $('#s_loc').val('');
+    $('#s_eng').val('');
+    $('#s_type').val('');
   }
 
   $(document).on('click', '#btnrefresh', function() {
@@ -598,8 +602,13 @@
     var sasset = $('#s_asset').val();
     var per1 = $('#s_per1').val();
     var per2 = $('#s_per2').val();
-     
-    window.open("/exceldetwo?dexcel=excel&swo=" + swo + "&sasset=" + sasset + "&per1=" + per1 + "&per2=" + per2, '_blank');
+    var dept = $('#s_dept').val();
+    var loc = $('#s_loc').val();
+    var eng = $('#s_eng').val();
+    var type = $('#s_type').val();
+    
+    window.open("/exceldetwo?dexcel=excel&swo=" + swo + "&sasset=" + sasset + "&per1=" + per1 + "&per2=" + per2 +
+        "&sdept=" + dept + "&sloc=" + loc + "&seng=" + eng + "&stype=" + type , '_blank');
   });
 
   $(document).on('click', '.imageview', function() {

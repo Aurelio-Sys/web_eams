@@ -25,7 +25,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         ];
     }
 
-    function __construct($wonbr,$sasset,$per1,$per2,$dept,$loc,$eng) {
+    function __construct($wonbr,$sasset,$per1,$per2,$dept,$loc,$eng,$type) {
         $this->wonbr    = $wonbr;
         $this->sasset    = $sasset;
         $this->per1   = $per1;
@@ -33,12 +33,11 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         $this->dept = $dept;
         $this->loc = $loc;
         $this->eng = $eng;
+        $this->type = $type;
     }
 
     public function query()
     {
-        // dd($this->wonbr);
-        
         $wonbr    = $this->wonbr;
         $sasset     = $this->sasset;
         $per1    = $this->per1;
@@ -46,12 +45,14 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         $dept = $this->dept;
         $loc = $this->loc;
         $eng = $this->eng;
+        $type = $this->type;
 
         Schema::create('temp_wo', function ($table) {
             $table->increments('id');
             $table->string('temp_wo');
             $table->string('temp_creator')->nullable(); /* Untuk PM Creator nya kosong */
             $table->date('temp_create_date');
+            $table->string('temp_wo_codedept')->nullable();
             $table->string('temp_wo_dept')->nullable();
             $table->string('temp_wo_type');
             $table->string('temp_wo_priority');
@@ -315,8 +316,9 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
             DB::table('temp_wo')
                 ->where('temp_wo','=',$updwo->temp_wo)
                 ->update([
+                    'temp_wo_codedept' => isset($upddatawo->wo_dept) ? $upddatawo->wo_dept : "",
                     'temp_wo_dept' => isset($upddeptwo->dept_desc) ? $upddeptwo->dept_desc : "",
-                    'temp_wo_type' => $upddatawo->wo_type,
+                    'temp_wo_type' => $upddatawo->wo_type == 'auto' ? 'PM' : 'WO',
                     'temp_wo_priority' => $upddatawo->wo_priority,
                     'temp_sr_date' => isset($updsr->sr_date) ? $updsr->sr_date : "",
                     'temp_sr_request' => isset($updsr->req_username) ? $updsr->req_username : "",
@@ -358,29 +360,32 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
                 'temp_sp','temp_sp_desc','temp_sp_price','temp_qty_req','temp_qty_whs','temp_qty_used')
             ->orderBy('temp_create_date','desc')->orderBy('temp_wo','desc');
 
+        // dd($this->type);
+
         if($this->wonbr) {
             $datatemp = $data->where('temp_wo','like','%'.$this->wonbr.'%');
         }
-
         if($this->sasset) {
             $data = $data->where('temp_asset','=',$this->sasset);
         }
-
         if($this->per1) {
             $data = $data->whereBetween ('temp_create_date',[$this->per1,$this->per2]);
         }
         if($this->dept) {
-            $data = $data->where('temp_wo_dept','=',$this->dept);
+            $data = $data->where('temp_wo_codedept','=',$this->dept);
         }
         if($this->loc) {
             $data = $data->where('temp_asset_loc','=',$this->loc);
         }
         if($this->eng) {
-            $datatemp = $datatemp->where('temp_ceng1','=',$this->eng)
+            $data = $data->where('temp_ceng1','=',$this->eng)
                 ->orWhere('temp_ceng2','=',$this->eng)
                 ->orWhere('temp_ceng3','=',$this->eng)
                 ->orWhere('temp_ceng4','=',$this->eng)
                 ->orWhere('temp_ceng5','=',$this->eng);
+        }
+        if($this->type) {
+            $data = $data->where('temp_wo_type','=',$this->type);
         }
 
         // dd($data);
