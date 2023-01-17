@@ -629,7 +629,6 @@ div #munculgambar .gambar:hover{
               <label class="form-check-label" for="eargcheck">
                 Repair Group
               </label>
-
               <input class="d-inline ml-5" type="radio" name="erepairtype" id="earccheck" value="code">
               <label class="form-check-label" for="earccheck">
                 Repair Code
@@ -640,6 +639,7 @@ div #munculgambar .gambar:hover{
             <label for="erepaircode" class="col-md-5 col-form-label text-md-left">Repair Code(Max 3) <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-7">
               <select id="erepaircode" name="erepaircode[]" class="form-control" multiple="multiple">
+                <option></option>
                 @foreach($repaircode as $rc)
                 <option value="{{$rc->repm_code}}">{{$rc->repm_code}} -- {{$rc->repm_desc}}</option>
                 @endforeach
@@ -650,6 +650,7 @@ div #munculgambar .gambar:hover{
             <label for="erepairgroup" class="col-md-5 col-form-label text-md-left">Repair Group <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-7">
               <select id="erepairgroup" name="erepairgroup" class="form-control">
+                <option></option>
                 @foreach($repairgroup as $rp)
                 <option value="{{$rp->xxrepgroup_nbr}}">{{$rp->xxrepgroup_nbr}} -- {{$rp->xxrepgroup_desc}}</option>
                 @endforeach
@@ -931,56 +932,26 @@ div #munculgambar .gambar:hover{
             <textarea id="v_impact" class="form-control" name="v_impact" value="{{ old('v_impact') }}" autofocus readonly></textarea>
           </div>
         </div>
-
-        <!-- 
-          <label for="v_priority" class="col-md-2 col-form-label text-md-left">Priority</label>
-            <div class="col-md-4">
-              <input id="v_priority" type="text" class="form-control" name="v_priority" value="{{ old('v_priority') }}" autofocus readonly>
-            </div>
-          
-          
-          
-            
-          <label for="v_proc" class="col-md-2 col-form-label text-md-left">Process / Technology</label>
-            <div class="col-md-4">
-              <input id="v_proc" type="text" class="form-control" name="v_proc" value="{{ old('v_proc') }}" autofocus readonly>
-            </div>
-          <div class="form-group row justify-content-center" id="divviewcode" style="display: none;">
-            <label for="v_repaircode" class="col-md-2 col-form-label text-md-left">Repair Code</label>
-            <div class="col-md-4">
-              <textarea id="v_repaircode" readonly  class="form-control" name="v_repaircode" value="{{ old('v_repaircode') }}"   autofocus></textarea>
-            </div>
-          </div>
-          <div class="form-group row justify-content-center" id="divviewgroup" style="display: none;">
-            <label for="v_repairgroup" class="col-md-2 col-form-label text-md-left">Repair Group</label>
-            <div class="col-md-4">
-              <input  id="v_repairgroup" readonly  class="form-control" name="v_repairgroup" value="{{ old('v_repairgroup') }}"  autofocus>
-            </div>
-          </div>
-          <div class="form-group row justify-content-center" id="divviewmanual" style="display: none;">
-            <label for="v_repairmanual" class="col-md-2 col-form-label text-md-left">Repair</label>
-            <div class="col-md-4">
-              <input  id="v_repairmanual" readonly  class="form-control" name="v_repairmanual" value="Manual"  autofocus>
-            </div>
-          </div> -->
         <div class="form-group row">
-          
             <label for="v_schedule" class="col-md-2 col-form-label text-md-left">Schedule Date</label>
             <div class="col-md-4">
               <input id="v_schedule" readonly type="date" class="form-control" name="v_schedule" value="{{ old('v_schedule') }}" autofocus>
             </div>
-            <label for="v_mtcby" class="col-md-2 col-form-label text-md-left">Maintenance By</label>
+            <label id="divviewcode" for="v_repaircode" class="col-md-2 col-form-label text-md-left" style="display: none;">Repair Code</label>
+            <label id="divviewgroup" for="v_repairgroup" class="col-md-2 col-form-label text-md-left" style="display: none;">Repair Group</label>
             <div class="col-md-4">
-              <input id="v_mtcby" type="text" class="form-control" name="v_mtcby" readonly>
+              <textarea id="v_repaircode" style="display: none;" readonly  class="form-control" name="v_repaircode" value="{{ old('v_repaircode') }}"   autofocus></textarea>
+              <input  id="v_repairgroup" style="display: none;" readonly  class="form-control" name="v_repairgroup" value="{{ old('v_repairgroup') }}"  autofocus>
             </div>
         </div>
         <div class="form-group row">
-          <label class="col-md-2 col-form-label"></label>
-          <div class="col-md-4">
-          </div>
           <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
           <div class="col-md-4">
             <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
+          </div>
+          <label for="v_mtcby" class="col-md-2 col-form-label text-md-left">Maintenance By</label>
+          <div class="col-md-4">
+            <input id="v_mtcby" type="text" class="form-control" name="v_mtcby" readonly>
           </div>
         </div>
         <div class="form-group row">
@@ -2092,25 +2063,17 @@ div #munculgambar .gambar:hover{
           document.getElementById('erepairgroup').value = null;
           $("#erepairgroup").val(null).trigger('change');
           $("#erepaircode").val(arrrc).trigger('change');
-          // document.getElementById('erepaircode').value = arrrc;
-          // document.getElementById('erepairgroup').value = null;
-          // alert(arrrc);
-          // alert(document.getElementById('erepaircode').value);
           document.getElementById('repairtypeedit').value = 'code';
         } else if (rprstatus == 'group') {
           document.getElementById('eargcheck').checked = true;
           document.getElementById('earccheck').checked = false;
-          document.getElementById('erepairgroupdiv').style.display = '';
           document.getElementById('erepaircodediv').style.display = 'none';
-          // alert(repairgroup);
-          $("#erepairgroup").val(rprgroup).trigger('change');
+          document.getElementById('erepairgroupdiv').style.display = '';
           $("#erepaircode").val(null).trigger('change');
-          // document.getElementById('erepairgroup').value = repairgroup;
-          // document.getElementById('erepaircode').value = null;
+          $("#erepairgroup").val(rprgroup).trigger('change');
           document.getElementById('repairtypeedit').value = 'group';
 
         }
-        // document.getElementById('erepaircode').value = arrrc;
         if (counter == 5) {
           document.getElementById('e_addeng').style.display = 'none';
         } else {
@@ -2128,11 +2091,7 @@ div #munculgambar .gambar:hover{
         }
 
         if (wostatus == 'plan') {
-          document.getElementById('erepairgroupdiv').style.display = 'none';
-          document.getElementById('erepaircodediv').style.display = '';
-          document.getElementById('edevrepairtype').style.display = '';
-          document.getElementById('erepaircode').value = null;
-          document.getElementById('erepairgroup').value = null;
+          
           if (counterfail == 0) {
             // document.getElementById('divfail1').style.display = '';
             counterfail = 1
@@ -2157,9 +2116,7 @@ div #munculgambar .gambar:hover{
           maximumSelectionLength: 3,
           closeOnSelect: false,
           allowClear: true,
-          arrrc
-          // theme : 'bootstrap4'
-          // arrrc
+          arrrc,
         });
         // $('#e_repaircode').val(arrrc).trigger('change');
 
@@ -2422,21 +2379,24 @@ div #munculgambar .gambar:hover{
         document.getElementById('v_mtcby').value = mtcby;
         document.getElementById('v_fclist').value = fclist;
 
-        /*if(repairtype == 'code'){
+        if(repairtype == 'code'){
           var textareaview = document.getElementById('v_repaircode');
           textareaview.value = arrrc.join("\n");
           document.getElementById('divviewcode').style.display = '';
+          document.getElementById('v_repaircode').style.display = '';
+          document.getElementById('v_repairgroup').style.display = 'none';
           document.getElementById('divviewgroup').style.display = 'none';
-          document.getElementById('divviewmanual').style.display='none';
         }
         else if (repairtype == 'group'){
           
           var vgroup = document.getElementById('v_repairgroup').value = result[0].xxrepgroup_nbr + ' -- ' + repairgroup;
           document.getElementById('divviewcode').style.display = 'none';
-          document.getElementById('divviewmanual').style.display='none';
+          document.getElementById('v_repaircode').style.display = 'none';
           document.getElementById('divviewgroup').style.display = '';
+          document.getElementById('v_repairgroup').style.display = '';
+
         }
-        else if (repairtype == 'manual'){
+        /*else if (repairtype == 'manual'){
           document.getElementById('divviewcode').style.display = 'none';
           document.getElementById('divviewgroup').style.display = 'none';
           document.getElementById('divviewmanual').style.display='';
@@ -3096,7 +3056,7 @@ div #munculgambar .gambar:hover{
             wonumber: wonbr,
           },
           success: function(data) {
-            console.log(data);
+            // console.log(data);
 
             /* coding asli ada di backup-20211026 sblm PM attach file, coding aslinya nampilin gambar*/
             //alert('test');
@@ -3159,7 +3119,7 @@ div #munculgambar .gambar:hover{
           location.reload(true);
         },
         error: function(data, textStatus, errorThrown) {
-          console.log(data);
+          // console.log(data);
         }
       });
     } else {
