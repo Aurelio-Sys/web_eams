@@ -936,7 +936,7 @@ class UserChartController extends Controller
         }
 
         if ($stype == "" && $sasset == "" && $sloc == "" && $seng == "") {
-            $dataAsset = $dataAsset->where('id','=',0);
+            $dataAsset = $dataAsset->where('asset_mstr.id','=',0);
         }
 
         $dataAsset = $dataAsset->get();

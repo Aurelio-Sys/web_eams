@@ -107,27 +107,27 @@
       @php($jmlwo = $datawo->where('wo_asset','=',$de->asset_code)->count())
 
 
-      <div class="col-xl-2 col-lg-4 col-md-6 col-xs-12 pl-0 pr-0" >
+      <div class="col-xl-3 col-lg-5 col-md-4 col-xs-12 pl-0 pr-0" >
         <div class="card" style="height:100%">
-          <div style="height:70%">
-         <a href="" class="editarea2" id='editdata' data-toggle="modal" data-target="#editModal"
-          data-code="{{$de->asset_code}}" data-desc="{{$de->asset_desc}}">
-          <img class="card-img-top" src="/uploadassetimage/{{$de->asset_image}}" alt="Card image cap" width="200" height="200" >
-        </a>
-        <input type="hidden" name="code" id="code" value="{{$de->asset_code}}">
-      </div>
-      <div style="height:30%">
-          <div class="card-body">
-            <p class="card-text">
-              <small class="font-weight-bold">
-              <br>{{$de->asset_code}}
-              <br>{{$de->asset_desc}}
-              <br>{{$de->asloc_desc}}
-              <br>Work Order : {{$jmlwo}}
-              </small>
-            </p>
+          <div style="height:55%">
+            <a href="" class="editarea2" id='editdata' data-toggle="modal" data-target="#editModal"
+              data-code="{{$de->asset_code}}" data-desc="{{$de->asset_desc}}">
+              <img class="card-img-top" src="/uploadassetimage/{{$de->asset_image}}" alt="Card image cap" width="200" height="200" >
+            </a>
+            <input type="hidden" name="code" id="code" value="{{$de->asset_code}}">
           </div>
-        </div>
+          <div style="height:30%">
+              <div class="card-body">
+                <p class="card-text">
+                  <small class="font-weight-bold">
+                  <br>{{$de->asset_code}}
+                  <br>{{$de->asset_desc}}
+                  <br>{{$de->asloc_desc}}
+                  <br>Work Order : {{$jmlwo}}
+                  </small>
+                </p>
+              </div>
+          </div>
         </div>
       </div>
       
