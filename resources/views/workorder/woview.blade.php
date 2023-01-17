@@ -226,49 +226,26 @@
             <textarea id="v_impact" class="form-control" name="v_impact" value="{{ old('v_impact') }}" autofocus readonly></textarea>
           </div>
         </div>
-        <!--<div class="form-group row justify-content-center" id="divviewcode" style="display: none;">
-          <label for="v_proc" class="col-md-2 col-form-label text-md-left">Process / Technology</label>
-          <div class="col-md-4">
-            <input id="v_proc" type="text" class="form-control" name="v_proc" value="{{ old('v_proc') }}" autofocus readonly>
-          </div>
-          <label for="v_priority" class="col-md-2 col-form-label text-md-left">Priority</label>
-          <div class="col-md-4">
-            <input id="v_priority" type="text" class="form-control" name="v_priority" value="{{ old('v_priority') }}" autofocus readonly>
-          </div>
-            <label for="v_repaircode" class="col-md-2 col-form-label text-md-left">Repair Code</label>
+        <div class="form-group row">
+            <label for="v_schedule" class="col-md-2 col-form-label text-md-left">Schedule Date</label>
             <div class="col-md-4">
-              <textarea id="v_repaircode" readonly  class="form-control" name="v_repaircode" value="{{ old('v_repaircode') }}"   autofocus></textarea>
+              <input id="v_schedule" readonly type="date" class="form-control" name="v_schedule" value="{{ old('v_schedule') }}" autofocus>
             </div>
-          </div>
-          <div class="form-group row justify-content-center" id="divviewgroup" style="display: none;">
-            <label for="v_repairgroup" class="col-md-2 col-form-label text-md-left">Repair Group</label>
+            <label id="divviewcode" for="v_repaircode" class="col-md-2 col-form-label text-md-left" style="display: none;">Repair Code</label>
+            <label id="divviewgroup" for="v_repairgroup" class="col-md-2 col-form-label text-md-left" style="display: none;">Repair Group</label>
             <div class="col-md-4">
-              <input  id="v_repairgroup" readonly  class="form-control" name="v_repairgroup" value="{{ old('v_repairgroup') }}"  autofocus>
+              <textarea id="v_repaircode" style="display: none;" readonly  class="form-control" name="v_repaircode" value="{{ old('v_repaircode') }}"   autofocus></textarea>
+              <input  id="v_repairgroup" style="display: none;" readonly  class="form-control" name="v_repairgroup" value="{{ old('v_repairgroup') }}"  autofocus>
             </div>
-          </div>
-          <div class="form-group row justify-content-center" id="divviewmanual" style="display: none;">
-            <label for="v_repairmanual" class="col-md-2 col-form-label text-md-left">Repair</label>
-            <div class="col-md-4">
-              <input  id="v_repairmanual" readonly  class="form-control" name="v_repairmanual" value="Manual"  autofocus>
-            </div>
-          </div> -->
-        <div class="form-group row justify-content-center">
-          <label for="v_schedule" class="col-md-2 col-form-label text-md-left">Schedule Date</label>
+        </div>
+        <div class="form-group row">
+          <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
           <div class="col-md-4">
-            <input id="v_schedule" readonly type="date" class="form-control" name="v_schedule" value="{{ old('v_schedule') }}" autofocus>
+            <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
           </div>
           <label for="v_mtcby" class="col-md-2 col-form-label text-md-left">Maintenance By</label>
           <div class="col-md-4">
             <input id="v_mtcby" type="text" class="form-control" name="v_mtcby" readonly>
-          </div>
-        </div>
-        <div class="form-group row justify-content-center">
-          <label for="v_schedule" class="col-md-2 col-form-label text-md-left"></label>
-          <div class="col-md-4">
-          </div>
-          <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
-          <div class="col-md-4">
-            <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
           </div>
         </div>
         <div class="form-group row" id="reportnote">
@@ -518,21 +495,25 @@
         document.getElementById('v_mtcby').value = mtcby;
         document.getElementById('v_fclist').value = fclist;
 
-        /*
+        
         if(repairtype == 'code'){
           var textareaview = document.getElementById('v_repaircode');
           textareaview.value = arrrc.join("\n");
           document.getElementById('divviewcode').style.display = '';
+          document.getElementById('v_repaircode').style.display = '';
+          document.getElementById('v_repairgroup').style.display = 'none';
           document.getElementById('divviewgroup').style.display = 'none';
-          document.getElementById('divviewmanual').style.display='none';
         }
         else if (repairtype == 'group'){
           
           var vgroup = document.getElementById('v_repairgroup').value = result[0].xxrepgroup_nbr + ' -- ' + repairgroup;
           document.getElementById('divviewcode').style.display = 'none';
-          document.getElementById('divviewmanual').style.display='none';
+          document.getElementById('v_repaircode').style.display = 'none';
           document.getElementById('divviewgroup').style.display = '';
+          document.getElementById('v_repairgroup').style.display = '';
         }
+
+        /*
         else if (repairtype == 'manual'){
           document.getElementById('divviewcode').style.display = 'none';
           document.getElementById('divviewgroup').style.display = 'none';
