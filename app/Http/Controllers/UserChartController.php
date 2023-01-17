@@ -888,16 +888,74 @@ class UserChartController extends Controller
 
     public function assetrpt(Request $req)
     {
-       
+        $stype = $req->s_type;
+        $sasset = $req->s_asset;
+        $seng = $req->s_eng;
+        $sloc = $req->s_loc;
+
         $dataAsset = DB::table('asset_mstr')
-                    ->orderBy('asset_code')
-                    ->get();
+                    ->orderBy('asset_code');
+
+        if ($sasset) {
+            $dataAsset->where('asset_code', '=', $sasset);
+        }
+        if ($sloc) {
+            $dataAsset->where('asset_loc', '=', $sloc);
+        }
+        if($seng) {
+            $a = $seng;
+            $dataAsset = $dataAsset->whereIn('asset_code', function($query) use ($a)
+            {
+                $query->select('wo_asset')
+                        ->from('wo_mstr')
+                        ->where('wo_engineer1','=',$a)
+                        ->orWhere('wo_engineer2','=',$a)
+                        ->orWhere('wo_engineer3','=',$a)
+                        ->orWhere('wo_engineer4','=',$a)
+                        ->orWhere('wo_engineer5','=',$a);
+            });
+        }
+        if ($stype == "WO") {
+            $a = $stype;
+            $dataAsset = $dataAsset->whereIn('asset_code', function($query)
+            {
+                $query->select('wo_asset')
+                        ->from('wo_mstr')
+                        ->where('wo_type','<>','auto');
+            });
+        }
+        if ($stype == "PM") {
+            $a = $stype;
+            $dataAsset = $dataAsset->whereIn('asset_code', function($query)
+            {
+                $query->select('wo_asset')
+                        ->from('wo_mstr')
+                        ->where('wo_type','=','auto');
+            });
+        }
+
+        if ($stype == "" && $sasset == "" && $sloc == "" && $seng == "") {
+            $dataAsset = $dataAsset->where('id','=',0);
+        }
+
+        $dataAsset = $dataAsset->get();
 
         $datawo = DB::table('wo_mstr')
                 ->join('asset_mstr','asset_code','=','wo_asset')
                 ->whereNotIn('wo_status', ['closed','finish','delete'])
                 ->orderBy('wo_schedule')
                 ->get();
+        
+        $dataeng = DB::table('eng_mstr')
+            ->where('eng_active', '=', 'Yes')
+            ->orderBy('eng_code')
+            ->get();
+
+        $dataloc = DB::table('asset_loc')
+            ->orderBy('asloc_code')
+            ->get();
+
+        
 
         $thn = Carbon::now('ASIA/JAKARTA')->addMonth(-11)->toDateTimeString();
         $tgl = Carbon::now('ASIA/JAKARTA')->toDateTimeString();
@@ -909,7 +967,8 @@ class UserChartController extends Controller
             array_push($arraynewdate, [$dt->format("Y-m")]);
         }
 
-        return view('report.assetrpt',compact('dataAsset','datawo','arraynewdate'));
+        return view('report.assetrpt',compact('dataAsset','datawo','arraynewdate','dataeng','dataloc',
+            'stype','sasset','sloc','seng'));
     }
 
     public function assetrptview(Request $req)
