@@ -60,7 +60,7 @@
             <div class="col-md-4 col-sm-12 mb-2 input-group">
             <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
                 <option value="">--Select Asset--</option>
-                @foreach($dataAsset as $assetsearch)
+                @foreach($dataAsset2 as $assetsearch)
                 <option value="{{$assetsearch->asset_code}}" {{$assetsearch->asset_code === $sasset ? "selected" : ""}}>{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
                 @endforeach
             </select>
@@ -89,9 +89,6 @@
             <div class="col-md-1 col-sm-6 mb-1 input-group justify-content-md-center">
             <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'/><i class="fas fa-sync-alt"></i></button>
             </div>
-            <div class="col-md-2 col-sm-12 mb-2 input-group">
-            <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="Export to Excel" style="float:right" />
-            </div>
         </div>
         </div>
     </div>
@@ -104,7 +101,7 @@
   @foreach($dataAsset as $de)
       
       @if($line == 1)
-        <div class="card-deck mb-2 col-12">
+        <div class="card-deck mb-3 col-12">
       @endif
       
       @php($jmlwo = $datawo->where('wo_asset','=',$de->asset_code)->count())
@@ -122,7 +119,10 @@
       <div style="height:30%">
           <div class="card-body">
             <p class="card-text">
-              <small class="font-weight-bold">{{$de->asset_desc}}
+              <small class="font-weight-bold">
+              <br>{{$de->asset_code}}
+              <br>{{$de->asset_desc}}
+              <br>{{$de->asloc_desc}}
               <br>Work Order : {{$jmlwo}}
               </small>
             </p>
@@ -133,7 +133,7 @@
       
       @php($line++)
       
-      @if($line == 7)
+      @if($line == 5)
         </div>
         <br>
         @php($line = 1)
@@ -213,6 +213,26 @@ function noexpitm(event, array){
 </script>
 
     <script>
+
+      $("#s_loc").select2({
+        width : '100%',
+        theme : 'bootstrap4',
+      });
+      $("#s_asset").select2({
+          width : '100%',
+          theme : 'bootstrap4',
+      });
+      $("#s_eng").select2({
+          width : '100%',
+          theme : 'bootstrap4',
+      });
+
+      $(document).on('click', '#btnrefresh', function() {
+        document.getElementById('s_asset').value  = '';
+        document.getElementById('s_type').value  = '';
+        document.getElementById('s_loc').value  = '';
+        document.getElementById('s_eng').value  = '';
+      }); 
 
 
        $(document).on('click', '#editdata', function(e){

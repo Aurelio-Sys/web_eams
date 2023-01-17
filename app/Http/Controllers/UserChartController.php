@@ -894,7 +894,8 @@ class UserChartController extends Controller
         $sloc = $req->s_loc;
 
         $dataAsset = DB::table('asset_mstr')
-                    ->orderBy('asset_code');
+            ->leftJoin('asset_loc','asloc_code','=','asset_loc')
+            ->orderBy('asset_code');
 
         if ($sasset) {
             $dataAsset->where('asset_code', '=', $sasset);
@@ -955,6 +956,10 @@ class UserChartController extends Controller
             ->orderBy('asloc_code')
             ->get();
 
+        $dataAsset2 = DB::table('asset_mstr')
+            ->orderBy('asset_code')
+            ->get();
+
         
 
         $thn = Carbon::now('ASIA/JAKARTA')->addMonth(-11)->toDateTimeString();
@@ -968,7 +973,7 @@ class UserChartController extends Controller
         }
 
         return view('report.assetrpt',compact('dataAsset','datawo','arraynewdate','dataeng','dataloc',
-            'stype','sasset','sloc','seng'));
+            'stype','sasset','sloc','seng','dataAsset2'));
     }
 
     public function assetrptview(Request $req)
