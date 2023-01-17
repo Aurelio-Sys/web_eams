@@ -810,13 +810,29 @@ class UserChartController extends Controller
     public function engrpt(Request $req)
     {
        
+        $sdept = $req->s_dept;
+        
         $dataeng = DB::table('users')
-                ->join('eng_mstr','eng_code','=','username')
-                ->whereAccess('Engineer')
-                ->whereActive('Yes')
-                ->orderBy('eng_desc')
-                ->get();
-        //dd($dataeng);
+            ->join('eng_mstr','eng_code','=','username')
+            ->join('dept_mstr','dept_code','=','dept_user')
+            ->whereAccess('Engineer')
+            ->orderBy('eng_desc');
+
+        if ($sdept) {
+            $dataeng = $dataeng->where('eng_dept','=',$sdept);
+        }
+
+        $dataeng = $dataeng->get();
+
+        $datadept = DB::table('dept_mstr')
+            ->whereIn('dept_code', function($query) {
+                $query->select('dept_user')
+                        ->from('users')
+                        ->whereAccess('Engineer');
+            })
+            ->orderBy('dept_code')
+            ->get();
+
         $datawo = DB::table('wo_mstr')
                 ->join('asset_mstr','asset_code','=','wo_asset')
                 ->whereNotIn('wo_status', ['closed','finish','delete'])
@@ -833,7 +849,8 @@ class UserChartController extends Controller
             array_push($arraynewdate, [$dt->format("Y-m")]);
         }
 
-        return view('report.engrpt',compact('dataeng','datawo','arraynewdate'));
+        return view('report.engrpt',compact('dataeng','datawo','arraynewdate','datadept',
+        'sdept'));
     }
 
     public function engrptview(Request $req)
@@ -936,7 +953,7 @@ class UserChartController extends Controller
         }
 
         if ($stype == "" && $sasset == "" && $sloc == "" && $seng == "") {
-            $dataAsset = $dataAsset->where('id','=',0);
+            $dataAsset = $dataAsset->where('asset_mstr.id','=',0);
         }
 
         $dataAsset = $dataAsset->get();
@@ -947,10 +964,11 @@ class UserChartController extends Controller
                 ->orderBy('wo_schedule')
                 ->get();
         
-        $dataeng = DB::table('eng_mstr')
-            ->where('eng_active', '=', 'Yes')
-            ->orderBy('eng_code')
-            ->get();
+        $dataeng = DB::table('users')
+                ->join('eng_mstr','eng_code','=','username')
+                ->whereAccess('Engineer')
+                ->orderBy('eng_desc')
+                ->get();
 
         $dataloc = DB::table('asset_loc')
             ->orderBy('asloc_code')
