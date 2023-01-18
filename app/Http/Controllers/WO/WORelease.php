@@ -68,7 +68,6 @@ class WORelease extends Controller
 
     public function detailrelease($id)
     {
-        dd('test?');
         $data = DB::table('wo_mstr')
             ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
             ->where('wo_id', '=', $id)
@@ -98,6 +97,7 @@ class WORelease extends Controller
         $insdata = DB::table('rep_det')
             ->join('rep_master', 'repm_code', 'repdet_code')
             ->join('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+            // ->where('repm_code','=','IT01')
             ->select('repm_code', 'repdet_ins', 'repm_desc', 'ins_code', 'ins_desc')
             ->orderby('repdet_code')
             ->get();
@@ -113,7 +113,6 @@ class WORelease extends Controller
             ->get();
 
         if ($data->wo_status == 'plan') {
-
             if ($data->wo_repair_code1 != "") {
 
                 $sparepart1 = DB::table('wo_mstr')
@@ -139,7 +138,6 @@ class WORelease extends Controller
                 $combineSP = $sparepart1;
                 $rc = $rc1;
 
-                dd('aaa');
             }
 
             if ($data->wo_repair_code2 != "") {
@@ -196,6 +194,8 @@ class WORelease extends Controller
 
             // dd($rc);
 
+            // dd($rc);
+
             if ($data->wo_repair_code1 == "" && $data->wo_repair_code2 == "" && $data->wo_repair_code3 == "") {
                 // dd('aa');
                 $combineSP = DB::table('xxrepgroup_mstr')
@@ -214,12 +214,14 @@ class WORelease extends Controller
                     ->orderBy('ins_code', 'asc')
                     ->get();
 
-                // dd($combineSP);
 
                 $rc = DB::table('xxrepgroup_mstr')
                     ->select('repm_code', 'repm_desc')
                     ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
                     ->get();
+
+
+                // dd($rc);
             }
         } /* if($data->wo_status == 'plan') */ else {
             $combineSP = DB::table('wo_mstr')
@@ -245,8 +247,8 @@ class WORelease extends Controller
                 ->orderBy('repdet_step', 'asc')
                 ->get();
 
-            // dd($combineSP);
-
+            
+            dd($combineSP);
 
             $rc = DB::table('wo_mstr')
                 ->select('repm_code', 'repm_desc')
@@ -255,9 +257,11 @@ class WORelease extends Controller
                 ->where('wo_id', '=', $id)
                 ->distinct('wo_dets_rc')
                 ->get();
+
         } /*  else ($data->wo_status == 'open') */
 
         // dd($combineSP);
+        // dd($insdata);
 
         return view('workorder.worelease-detail', compact('data', 'spdata', 'combineSP', 'rpdata', 'insdata', 'rc', 'wodetdata'));
     }

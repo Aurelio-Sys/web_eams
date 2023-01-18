@@ -375,14 +375,9 @@
 
             a.each(function(e) {
 
-                console.log($(this).val());
-                if ($(this).data('repcode2') == rc) {
-
-                    $(this).show();
-                    $(this).prop('disabled', false);
-                } else {
-                    $(this).hide();
-                    $(this).prop('disabled', true);
+                if ($(this).data('repcode2') != rc) {
+                    $(this).remove();
+                    // $(this).prop('disabled', false);
                 }
 
             })
