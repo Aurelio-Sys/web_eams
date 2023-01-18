@@ -520,10 +520,8 @@
       // console.log(inputreject.value.length);
       if (inputreject.value.length > 0) {
         btnapprove.disabled = true;
-        btnreject.disabled = true;
       } else {
         btnapprove.disabled = false;
-        btnreject.disabled = false;
       }
     })
 
@@ -695,19 +693,20 @@
       var failcode2 = $(this).data('fc2');
       var failcode3 = $(this).data('fc3');
 
-      var fail_list = fail1 + '\n' + fail2 + '\n' + fail3;
+      // var fail_list = fail1 + '\n' + fail2 + '\n' + fail3;
 
       // array failure code
       var newarrfc = [];
-      if (failcode1 != null) {
+      if (failcode1 != '') {
         newarrfc.push(failcode1);
       }
-      if (failcode2 != null) {
+      if (failcode2 != '') {
         newarrfc.push(failcode2);
       }
-      if (failcode3 != null) {
+      if (failcode3 != '') {
         newarrfc.push(failcode3);
       }
+
 
       // array impact
       var newarrimp = [];

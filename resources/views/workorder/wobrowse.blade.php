@@ -1974,6 +1974,7 @@ div #munculgambar .gambar:hover{
           newarrfc.push(fc3);
         }
 
+        console.log(newarrfc);
 
         document.getElementById('statusedit').value = wostatus;
 

@@ -17,7 +17,7 @@
   <form method="post" id="srform" action="/inputsr" style="background-color: white; padding: 2%;" enctype="multipart/form-data">
     {{csrf_field()}}
     <div class="form-group row">
-      <label for="assetcode" class="col-md-2 col-lg-3 col-form-label my-auto">Asset Code <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+      <label for="assetcode" class="col-md-2 col-lg-3 col-form-label my-auto">Asset Code<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
       <div class="col-md-5 col-sm-12">
         <select id="assetcode" name="assetcode" class="form-control" required>
           <option value="">-- Select Asset Code --</option>
@@ -40,9 +40,9 @@
       </div>
     </div>
     <div class="form-group row">
-      <label for="wotype" class="col-md-2 col-lg-3 col-form-label my-auto">Failure Type</label>
+      <label for="wotype" class="col-md-2 col-lg-3 col-form-label my-auto">Failure Type<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
       <div class="col-md-5 col-sm-12">
-        <select class="form-control" id="wotype" name="wotype">
+        <select class="form-control" id="wotype" name="wotype" required>
           <option></option>
           @foreach($wotype as $wotypeshow)
           <option value="{{$wotypeshow->wotyp_code}}">{{$wotypeshow->wotyp_code}} -- {{$wotypeshow->wotyp_desc}}</option>
@@ -51,9 +51,9 @@
       </div>
     </div>
     <div class="form-group row">
-      <label for="failurecode" class="col-md-2 col-lg-3 col-form-label my-auto">Failure Code</label>
+      <label for="failurecode" class="col-md-2 col-lg-3 col-form-label my-auto">Failure Code<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
       <div class="col-md-5 col-sm-12">
-        <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple">
+        <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple" required>
           <option></option>
           @foreach($fc as $fcshow)
           <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}} -- {{$fcshow->fn_impact}}</option>
@@ -73,9 +73,9 @@
       </div>
     </div> -->
     <div class="form-group row">
-      <label for="impact" class="col-md-2 col-lg-3 col-form-label my-auto">Impact</label>
+      <label for="impact" class="col-md-2 col-lg-3 col-form-label my-auto">Impact<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
       <div class="col-md-5 col-sm-12">
-        <select id="impact" class="form-control impact" name="impact[]" multiple="multiple">
+        <select id="impact" class="form-control impact" name="impact[]" multiple="multiple" required>
           @foreach($impact as $impactshow)
           <option value="{{$impactshow->imp_code}}">{{$impactshow->imp_code}} -- {{$impactshow->imp_desc}}</option>
           @endforeach
@@ -97,9 +97,9 @@
       </div>
     </div>
     <div class="form-group row">
-      <label class="col-sm-12 col-lg-3 col-form-label">Priority</label>
+      <label class="col-sm-12 col-lg-3 col-form-label">Priority<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
       <div class="col-sm-12 col-md-5">
-        <select class="form-control" id="priority" name="priority">
+        <select class="form-control" id="priority" name="priority" required>
           <option value="">--Select Data--</option>
           <option value="low">Low</optio>
           <option value="medium">Medium</optio>
