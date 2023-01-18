@@ -35,6 +35,41 @@
   }
 </style>
 
+<!--FORM Search Disini -->
+<form action="/engrpt" method="GET">
+    <div class="row">
+        <div class="col-md-12">
+          <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
+        </div>  
+    </div>
+    <!-- Element div yang akan collapse atau expand -->
+    <div class="collapse" id="collapseExample">
+        <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+        <div class="card card-body bg-black rounded-0">
+        <div class="col-12 form-group row">
+            <!--FORM Search Disini-->
+            <label for="s_dept" class="col-md-2 col-form-label text-md-right">{{ __('Departement') }}</label>
+            <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_dept" class="form-control" style="color:black" name="s_dept" autofocus autocomplete="off">
+                <option value="">--Select Dept--</option>
+                @foreach($datadept as $datadept)
+                <option value="{{$datadept->dept_code}}" {{$datadept->dept_code === $sdept ? "selected" : ""}}>{{$datadept->dept_code}} -- {{$datadept->dept_desc}}</option>
+                @endforeach
+            </select>
+            </div>
+            <div class="col-md-2 col-sm-12 mb-2 input-group">
+            <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
+            </div>
+            <div class="col-md-1 col-sm-6 mb-1 input-group justify-content-md-center">
+            <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'/><i class="fas fa-sync-alt"></i></button>
+            </div>
+        </div>
+        </div>
+    </div>
+</form>
+
+<div class="col-md-12"><hr></div>
+
 <div class="row">
   @php($line = 1)
   @foreach($dataeng as $de)
@@ -59,7 +94,9 @@
           </a>
           <div class="card-body">
             <p class="card-text">
-              <small class="font-weight-bold">{{$de->eng_desc}}
+              <small class="font-weight-bold">
+              {{$de->eng_code}} -- {{$de->eng_desc}}
+              <br>{{$de->dept_desc}}
               <br>Work Order : {{$jmlwo}}
               </small>
             </p>
@@ -271,44 +308,16 @@ function noexpitm(event, array){
       }); /* editModal */
        
         
-	   // var ctx = document.getElementById("myexpitm");
-	   //  var myMachineDown = new Chart(ctx, {
-	   //    type: 'horizontalBar',
-		  	  
-	   //    data: {	  
-	   //      labels: ["0 days", "30 days", "90 days", "180 days"],       
-			 //  datasets: [{
-	   //        label: "Total",
-	   //        backgroundColor: ["red","green","black","orange"],
-	   //        hoverBorderColor: "rgba(234, 236, 244, 1)",
-			  
-	   //        data: [
-	   //         10
-			 //   ,8
-			 //   ,12		   
-			 //   ,16],
-	   //      }],
-	   //    },
-	   //     options: {
-	   //       enable3D: true,
-	   //      onClick: noexpitm,
-	   //      maintainAspectRatio: false,
-	   //      tooltips: {
-	   //        backgroundColor: "rgb(255,255,255)",
-	   //        bodyFontColor: "#858796",
-	   //        borderColor: '#dddfeb',
-	   //        borderWidth: 1,
-	   //        xPadding: 15,
-	   //        yPadding: 15,
-	   //        displayColors: false,
-	   //        caretPadding: 10,
-	   //      },
-	   //      legend: {
-	   //        display: false
-	   //      },
-	   //      cutoutPercentage: 60,
-	   //    },
-	   //  });
+      $("#s_dept").select2({
+        width : '100%',
+        theme : 'bootstrap4',
+      });
+
+      $(document).on('click', '#btnrefresh', function() {
+        document.getElementById('s_dept').value  = '';
+      }); 
+
+
     </script>
 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">
