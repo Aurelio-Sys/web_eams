@@ -2248,7 +2248,6 @@ div #munculgambar .gambar:hover{
 
   $(document).on('click', '.viewwo', function() {
     $('#loadingtable').modal('show');
-
     var wonbr = $(this).data('wonbr');
     var btnendel1 = document.getElementById("btndeleteen1");
     var btnendel2 = document.getElementById("btndeleteen2");

@@ -62,10 +62,10 @@ class ServiceController extends Controller
         $asset = DB::table('asset_mstr')
             ->leftJoin('asset_loc','asloc_code','=','asset_loc')
             ->where('asset_active', '=', 'Yes')
-            ->where('asset_loc','=',session::get('department'))
+            // ->where('asset_loc','=',session::get('department'))
             ->orderBy('asset_code')
             ->get();
-        // dd(session::get('department'));
+        // dd($asset);
         $datadepart = DB::table('dept_mstr')
             ->get();
 
@@ -79,11 +79,14 @@ class ServiceController extends Controller
             ->get();
 
         $dataapp = DB::table('eng_mstr')
+            ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'eng_mstr.eng_dept')
+            ->selectRaw('dept_mstr.*,eng_mstr.*')
             ->where('eng_active','=','Yes')
             ->where('approver','=',1)
+            ->groupBy('eng_dept')
             ->orderBy('eng_code')
             ->get();
-        // dd($asset);
+        // dd($dataapp);
         return view('service.servicerequest_create', ['showasset' => $asset, 'dept' => $datadepart, 
         'wotype' => $wotype, 'impact' => $impact, 'fc' => $fcode, 'dataapp' => $dataapp ]);
     }
@@ -248,9 +251,9 @@ class ServiceController extends Controller
         }
     }
 
-    public function srapproval() /* blade : service.servicereq-approval */
+    public function srapproval(Request $req) /* blade : service.servicereq-approval */
     { 
-
+       
         $kepalaengineer = DB::table('eng_mstr')
             ->where('approver', '=', 1)
             ->where('eng_active', '=', 'Yes')
@@ -284,6 +287,7 @@ class ServiceController extends Controller
                 $data = $data->where('sr_approver','=',Session::get('username'));
             }
 
+           
             $data = $data->paginate(10);
 
             $datarepair = DB::table('rep_master')
@@ -297,8 +301,18 @@ class ServiceController extends Controller
                 ->selectRaw('MIN(xxrepgroup_id) as xxrepgroup_id , xxrepgroup_nbr, MIN(xxrepgroup_desc) as xxrepgroup_desc')
                 ->groupBy('xxrepgroup_nbr')
                 ->get();
+            
+            $wotypes = DB::table('wotyp_mstr')
+                ->get();
+            // dd($wotype);    
+    
+            $impacts = DB::table('imp_mstr')
+                ->get();
+    
+            $fcodes = DB::table('fn_mstr')
+                ->get();
 
-            return view('service.servicereq-approval', ['datas' => $data, 'asset' => $datasset, 'repaircode' => $datarepair, 'repgroup' => $datarepgroup]);
+            return view('service.servicereq-approval', ['wotypes' => $wotypes, 'impacts' => $impacts, 'fcodes' => $fcodes, 'datas' => $data, 'asset' => $datasset, 'repaircode' => $datarepair, 'repgroup' => $datarepgroup]);
         } else {
             // toast('anda tidak memiliki akses sebagai approver', 'error');
             return view('service.accessdenied');
@@ -323,12 +337,11 @@ class ServiceController extends Controller
 
     public function approval(Request $req)
     { /* blade : service.servicereq-approval */
-        // dd($req->all());
+        dump($req->all());
 
         $wotype = $req->wotype;
         $imcode = $req->impactcode1;
         $imdesc = $req->impact;
-
 
         switch ($req->input('action')) {
             case 'reject':
@@ -349,7 +362,7 @@ class ServiceController extends Controller
                 $asset = $req->assetcode . ' -- ' . $req->assetdesc;
                 $a = 4; //direject 
                 $wo = $runningnbr;
-                $wotype = $req->wotype;
+                // $wotype = $req->wotype;
                 $imdesc = $req->impact;
 
                 $statusakses = DB::table('service_req_mstr')
@@ -442,22 +455,22 @@ class ServiceController extends Controller
 
                     $arrayarray = [];
 
-                    if ($req->tmpfail1 == '-') {
+                    if ($req->fclist[0] == '-') {
                         $fail1 = null;
                     } else {
-                        $fail1 = $req->tmpfail1;
+                        $fail1 = $req->fclist[0];
                     }
 
-                    if ($req->tmpfail2 == '-') {
+                    if ($req->fclist[1] == '-') {
                         $fail2 = null;
                     } else {
-                        $fail2 = $req->tmpfail2;
+                        $fail2 = $req->fclist[1];
                     }
 
-                    if ($req->tmpfail3 == '-') {
+                    if ($req->fclist[2] == '-') {
                         $fail3 = null;
                     } else {
-                        $fail3 = $req->tmpfail3;
+                        $fail3 = $req->fclist[2];
                     }
 
                     if ($req->rad_repgroup == "group") {
@@ -473,39 +486,26 @@ class ServiceController extends Controller
 
                     // dd($ambildata);
 
-                    $newimpact = str_replace(',', ';', $ambildata->sr_impact);
+                    //impact code
+                    $newimpact = implode(';', $req->impact);
 
-                    // dd($newimpact);
-
-                    $impact = $ambildata->sr_impact;
-
-                    $array_impact = explode(',', $impact);
-
-                    // dd($array_impact);
+                    //impact desc
+                    $array_impact = explode(';', $newimpact);
                     $countarray = count($array_impact);
-                    // dd($countarray);
                     $desc = "";
 
                     // $tampungdesc = [];
 
                     for ($i = 0; $i < $countarray; $i++) {
-
-                        // dump($array_impact[$i]);
-
                         $impactdesc = DB::table('imp_mstr')
                             ->where('imp_code', '=', $array_impact[$i])
                             ->selectRaw('imp_desc')
                             ->first();
 
-                        // dump($impactdesc);
-
                         $desc .= $impactdesc->imp_desc . ';';
                     }
 
-
                     $desc = substr($desc, 0, strlen($desc) - 1);
-
-                    // dd($desc);
 
                     $arrayarray = [
                         'wo_nbr' => $runningnbr,
@@ -535,7 +535,7 @@ class ServiceController extends Controller
                         'wo_created_at' => Carbon::now()->toDateTimeString(),
                         'wo_updated_at' => Carbon::now()->toDateTimeString(),
                         'wo_type'       => 'other',
-                        'wo_new_type'       => $ambildata->sr_wotype,
+                        'wo_new_type'       => $wotype,
                         'wo_impact'       => $newimpact,
                         'wo_impact_desc' => $desc
                     ];
@@ -570,22 +570,23 @@ class ServiceController extends Controller
                     $jmlarray = count($tampungarray);
 
                     $arrayarray = [];
-                    if ($req->tmpfail1 == '-') {
+
+                    if ($req->fclist[0] == '-') {
                         $fail1 = null;
                     } else {
-                        $fail1 = $req->tmpfail1;
+                        $fail1 = $req->fclist[0];
                     }
 
-                    if ($req->tmpfail2 == '-') {
+                    if ($req->fclist[1] == '-') {
                         $fail2 = null;
                     } else {
-                        $fail2 = $req->tmpfail2;
+                        $fail2 = $req->fclist[1];
                     }
 
-                    if ($req->tmpfail3 == '-') {
+                    if ($req->fclist[2] == '-') {
                         $fail3 = null;
                     } else {
-                        $fail3 = $req->tmpfail3;
+                        $fail3 = $req->fclist[2];
                     }
 
                     $ambildata = DB::table('service_req_mstr')
@@ -594,17 +595,12 @@ class ServiceController extends Controller
 
                     // dd($ambildata);
 
-                    $newimpact = str_replace(',', ';', $ambildata->sr_impact);
+                    //impact code
+                    $newimpact = implode(';', $req->impact);
 
-                    // dd($newimpact);
-
-                    $impact = $ambildata->sr_impact;
-
-                    $array_impact = explode(',', $impact);
-
-                    // dd($array_impact);
+                    //impact desc
+                    $array_impact = explode(';', $newimpact);
                     $countarray = count($array_impact);
-
                     $desc = "";
 
                     // $tampungdesc = [];
@@ -657,7 +653,7 @@ class ServiceController extends Controller
                         'wo_updated_at' => Carbon::now()->toDateTimeString(),
                         'wo_type'      => 'other',
                         'wo_impact'     => $newimpact,
-                        'wo_new_type'   => $ambildata->sr_wotype,
+                        'wo_new_type'   => $wotype,
                         'wo_impact_desc' => $desc
                     ];
 
