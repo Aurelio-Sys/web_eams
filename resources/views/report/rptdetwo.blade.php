@@ -572,8 +572,6 @@
   });
   // flag tunggu semua menu
 
-
-
   function clear_icon() {
     $('#id_icon').html('');
     $('#post_title_icon').html('');

@@ -16,21 +16,71 @@ class RemainSpController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $swo = $request->s_nomorwo;
+        $sasset = $request->s_asset;
+        // $sper1 = Carbon::createFromDate($request->s_per1;
+        // $sper2 = Carbon::createFromDate($request->s_per1)->subDay();
+        $sper1 = $request->s_per1;
+        $sper2 = $request->s_per1;
+        $ssp = $request->s_sp;
+        $seng = $request->s_eng;
+// dd($sper1);
         $dataremsp = DB::table('wo_dets')
             ->join('wo_mstr','wo_nbr','=','wo_dets_nbr')
             ->join('sp_mstr','spm_code','=','wo_dets_sp')
-            ->where('wo_status','=','finish')
-            ->where('wo_dets_sp_qty','>','wo_dets_qty_used')
-            // ->get();
-            ->paginate(10);
+            ->join('asset_mstr','asset_code','=','wo_asset')
+            // ->where('wo_status','=','finish')
+            ->where('wo_dets_sp_qty','>','wo_dets_qty_used');
+
+        // dd($dataremsp->get());
+
+        if($swo) {
+            $dataremsp = $dataremsp->where('wo_nbr','like','%'.$swo.'%');
+        }
+        if($sasset) {
+            $dataremsp = $dataremsp->where('wo_asset','=',$sasset);
+        }
+        if($sper1) {
+            $dataremsp = $dataremsp->whereBetween('wo_created_at',[$sper1,$sper2]);
+        }
+        if($ssp) {
+            $dataremsp = $dataremsp->where('wo_dets_sp',$ssp);
+        }
+        if($seng) {
+            $dataremsp = $dataremsp->where('wo_engineer1','=',$seng)
+                ->orWhere('wo_engineer2','=',$seng)
+                ->orWhere('wo_engineer3','=',$seng)
+                ->orWhere('wo_engineer4','=',$seng)
+                ->orWhere('wo_engineer5','=',$seng);
+        }
+
+        $dataremsp = $dataremsp->paginate(10);
 
         $datasp = DB::table('sp_mstr')
             ->orderBy('spm_code')
             ->get();
 
-        return view('report.remainsp', ['data' => $dataremsp, 'datasp' => $datasp]);
+        $dataloc = DB::table('asset_loc')
+            ->orderBy('asloc_code')
+            ->get();
+
+        $dataasset = DB::table('asset_mstr')
+            ->orderBy('asset_code')
+            ->get();
+
+        $dataeng = DB::table('eng_mstr')
+            ->orderBy('eng_code')
+            ->get();
+
+        $datadept = DB::table('dept_mstr')
+            ->orderBy('dept_code')
+            ->get();
+
+        return view('report.remainsp', ['data' => $dataremsp, 'datasp' => $datasp, 'dataasset' => $dataasset, 'dataloc' => $dataloc,
+            'dataeng' => $dataeng, 'datadept' => $datadept, 'swo' => $swo, 'sasset' => $sasset, 'sper1' => $sper1,
+            'sper2' => $sper2, 'seng' => $seng, 'ssp' => $ssp]);
     }
 
     /**

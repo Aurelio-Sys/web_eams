@@ -7,7 +7,7 @@
     @foreach (range(1,12) as $count)
         {{--  @php(dd($datatemp))  --}}
         <td style="text-align:center">
-            <!-- mencari bulan jadwal Preventive -->
+            {{--  <!-- mencari bulan jadwal Preventive -->
             @foreach($datatemp->where('temp_code','=',$show->asset_code) as $pa)
                 @php($bulantampil = '')
                 @php($bln = substr($pa->temp_sch,4,1) == '0' ? substr($pa->temp_sch,5,1) : substr($pa->temp_sch,4,2) )
@@ -19,15 +19,26 @@
                 <span class="badge badge-primary">{{ $bulantampil }}</span></a>
                     
                 @endif
-            @endforeach
+            @endforeach  --}}
             <!-- menampilkan aktual WO -->
-            @php($wotampil = '')
+            @php($wotampil = [])
             @foreach($datawo->where('wo_asset','=',$show->asset_code) as $do)
-                @php($wotampil = $do->wo_nbr)
-                @if (date('Y',strtotime($do->wo_schedule)) == $bulan && date('n',strtotime($do->wo_schedule)) == $count)
-                <span class="badge badge-danger">{{ $wotampil }}</span>
+                {{--  @php($wotampil = $do->wo_nbr)  --}}
+                @if ($do->thnwo == $bulan && $do->blnwo == $count)
+                    @if($do->wo_type == "auto")
+                        @php($wotampil[] = "PM")
+                    @else
+                        @php($wotampil[] = "WO")
+                    @endif
                 @endif
             @endforeach
+            @php($wotampil = array_unique($wotampil))
+            @if(count($wotampil) == 2)
+                <span class="badge badge-primary">WO & PM</span>
+            @else
+                <span class="badge badge-primary">{{ count($wotampil) > 0 ? $wotampil[0] : ""}}</span>
+            @endif
+            
         </td>
     @endforeach
 </tr>
@@ -40,6 +51,6 @@
 @endforelse
 <tr>
     <td style="border: none !important;" colspan="16">
-        {{ $data->appends($_GET)->links() }}
+        {{ $dataasset->appends($_GET)->links() }}
     </td>
 </tr>
