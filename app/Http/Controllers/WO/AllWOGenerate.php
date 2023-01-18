@@ -43,11 +43,8 @@ class AllWOGenerate extends Controller
                     DATE_FORMAT(NOW(),"%Y-%m-%d") as from_date') 
                     //interval date untuk to_date akan diganti dengan inputan hari dari depan
             ->where('asset_measure', '=', 'C')
-            // ->whereRaw('PERIOD_DIFF(PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal), date_format(now(),"%Y%m")) <= - asset_tolerance')
-            ->whereRaw('DATE_ADD(DATE_ADD(asset_last_mtc, INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY) >= date_format(now(),"%Y-%m-%d")')
-            ->havingRaw('persiapan_mtc between from_date and to_date')
+            ->whereRaw('DATE_ADD(asset_last_mtc, INTERVAL asset_cal DAY) >= date_format(now(),"%Y-%m-%d")')
             ->orderBy('next_duedate_mtc', 'asc')
-            // ->limit(10) //sementara ambil hanya 10 data
             ->get();
 
         // dd($data);

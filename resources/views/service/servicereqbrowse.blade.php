@@ -472,7 +472,7 @@
         /*  var period = $('#s_period').val(); */
         var status = $('#s_status').val();
         var requestby = $('#s_user').val();
-
+        // alert(1);
         // var column_name = $('#hidden_column_name').val();
         // var sort_type = $('#hidden_sort_type').val();
         var page = 1;
@@ -485,6 +485,7 @@
         document.getElementById('tmpuser').value = requestby;
 
         fetch_data(page, srnumber, asset, priority /*period*/ , status, requestby);
+        
       });
 
 
@@ -514,6 +515,7 @@
         var requestby = '';
         var page = 1;
 
+        // alert(1);
         document.getElementById('s_servicenbr').value = '';
         document.getElementById('s_asset').value = '';
         document.getElementById('s_priority').value = '';
@@ -529,12 +531,12 @@
 
         fetch_data(page, srnumber, asset, priority /*period*/ , status, requestby);
 
-        $("#s_asset").select2({
-          width: '100%',
-          // placeholder : "Select Asset",
-          theme: 'bootstrap4',
-          asset,
-        });
+        // $("#s_asset").select2({
+        //   width: '100%',
+        //   // placeholder : "Select Asset",
+        //   theme: 'bootstrap4',
+        //   asset,
+        // });
 
         $("#s_user").select2({
           width: '100%',

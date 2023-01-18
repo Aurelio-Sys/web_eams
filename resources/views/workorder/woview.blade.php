@@ -320,7 +320,6 @@
 
   $(document).on('click', '.viewwo', function() {
     $('#loadingtable').modal('show');
-
     var wonbr = $(this).data('wonbr');
     var btnendel1 = document.getElementById("btndeleteen1");
     var btnendel2 = document.getElementById("btndeleteen2");
@@ -334,6 +333,7 @@
       success: function(vamp) {
         var tempres = JSON.stringify(vamp);
         var result = JSON.parse(tempres);
+        console.log(result);
         var wonbr = result[0].wo_nbr;
         var srnbr = result[0].wo_sr_nbr;
         var en1val = result[0].u11;
@@ -377,15 +377,15 @@
         var fclist = "";
 
         if (fn1 != null) {
-          fclist = fc1 + '--' + fn1;
+          fclist = fc1 + ' -- ' + fn1;
         }
 
         if (fn1 != null && fn2 != null){
-          fclist = fc1 + '--' + fn1 + '\n' + fc2 + '--' + fn2;
+          fclist = fc1 + ' -- ' + fn1 + '\n' + fc2 + ' -- ' + fn2;
         }
 
         if(fn1 != null && fn2 != null && fn3 != null){
-          fclist = fc1 + '--' + fn1 + '\n' + fc2 + '--' + fn2 + '\n' + fc3 + '--' + fn3;
+          fclist = fc1 + ' -- ' + fn1 + '\n' + fc2 + ' -- ' + fn2 + '\n' + fc3 + ' -- ' + fn3;
         }
 
         
@@ -395,8 +395,8 @@
         if (vimpact != null && vimpactdesc != null) {
           var arrimpact = vimpact.split(';');
           var arrimpactdesc = vimpactdesc.split(';');
-          if (arrimpact.length != 0 && arrimpactdesc.length != 0) {
-            for (var oo = 0; oo < (arrimpact.length - 1); oo++) {
+          if (arrimpact != null) {
+            for (var oo = 0; oo <= (arrimpact.length - 1); oo++) {
               strimp += arrimpact[oo] + ' -- ' + arrimpactdesc[oo] + '\n';
             }
           }
@@ -473,6 +473,12 @@
         } else {
           vwottype = vwottype;
         }
+
+        if (vwottype == 'null -- null') {
+          vwottype = '';
+        } else {
+          vwottype = vwottype;
+        }
         // alert(arrrc);
         document.getElementById('counter').value = counter;
         document.getElementById('v_nowo').value = wonbr;
@@ -480,7 +486,7 @@
         document.getElementById('v_schedule').value = schedule;
         document.getElementById('v_duedate').value = duedate;
         document.getElementById('v_engineerl').innerHTML = arreng;
-        document.getElementById('v_impact').innerHTML = strimp;
+        document.getElementById('v_impact').value = strimp;
         document.getElementById('v_wottype').value = vwottype;
         document.getElementById('v_asset').value = asset;
         document.getElementById('v_assetdesc').value = assdesc;

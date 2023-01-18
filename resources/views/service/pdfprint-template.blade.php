@@ -393,11 +393,11 @@
     <tr>
       <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0; border-top:0.5px solid; border-bottom:2px solid; width:350px">
         <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diselesaikan oleh,</span></p>
-        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->req_by}}</p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px"></p>
       </td>
       <td colspan="2" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
         <p style=" margin-bottom:5px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Penanggung Jawab,</span></p>
-        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->sr_approver}}</p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px"></p>
       </td>
     </tr>
     <!-- SERAH TERIMA -->
@@ -416,7 +416,7 @@
               <p style="margin:0;padding:0;font-size:12px"><b>Tanggal & Jam Serah Terima</b></p>
             </td>
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
-              <p style="margin-top: 0px; font-size:12px;">: {{$srmstr->sr_date}} & {{date('H:i', strtotime($srmstr->sr_time))}}</p>
+              <p style="margin-top: 0px; font-size:12px;">: </p>
             </td>
           </tr>
         </table>
@@ -427,18 +427,18 @@
         <p style=" margin-bottom:0px; margin-top:0px; margin-left: 5px; font-size:12px">
           <b><span style="padding-bottom: 0px;border-bottom:1px solid black;">Uraian</span>:</b>
           <br>
-          {{$srmstr->sr_note}}
+          
         </p>
       </td>
     </tr>
     <tr>
       <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0; border-top:0.5px solid; border-bottom:2px solid; width:350px">
         <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diserahkan oleh,</span></p>
-        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->req_by}}</p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px"></p>
       </td>
       <td colspan="2" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
         <p style=" margin-bottom:5px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Diterima oleh,</span></p>
-        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->sr_approver}}</p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px"></p>
       </td>
     </tr>
 

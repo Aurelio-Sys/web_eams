@@ -275,18 +275,18 @@
           </tr>
           <tr>
             <td style="text-align:center;border:1px solid;">
-              <p style="margin:0;padding:0;font-size:12px">{{date('d/m/Y', strtotime($data->wo_created_at))}}</p>
+              <p style="margin:0;padding:0;font-size:12px">{{date('d/m/Y', strtotime($womstr->wo_created_at))}}</p>
             </td>
             <td style="text-align:center;border:1px solid;">
-              <p style="margin:0;padding:0;font-size:12px">{{date('d/m/Y', strtotime($data->wo_schedule))}}</p>
+              <p style="margin:0;padding:0;font-size:12px">{{date('d/m/Y', strtotime($womstr->wo_schedule))}}</p>
             </td>
             <td style="text-align:center;border:1px solid;">
-              <p style="margin:0;padding:0;font-size:12px">{{date('d/m/Y', strtotime($data->wo_duedate))}}</p>
+              <p style="margin:0;padding:0;font-size:12px">{{date('d/m/Y', strtotime($womstr->wo_duedate))}}</p>
             </td>
           </tr>
           <tr>
             <td style="text-align:center;border:1px solid;">
-              <p style="margin:0;padding:0;font-size:12px">{{date('H:i', strtotime($data->wo_created_at))}}</p>
+              <p style="margin:0;padding:0;font-size:12px">{{date('H:i', strtotime($womstr->wo_created_at))}}</p>
             </td>
             <td style="text-align:center;border:1px solid;">
               <p style="margin:0;padding:0;font-size:12px"></p>
@@ -303,7 +303,7 @@
         <p style=" margin-bottom:0px; margin-top:0px; margin-left: 5px; font-size:12px">
           <span style="padding-bottom: 0px;border-bottom:1px solid black;">Uraian Pemeriksaan</span>:
           <br>
-          {{$data->wo_note}}
+          {{$womstr->wo_note}}
         </p>
       </td>
       <td style="text-align:center;height: 65px;border-left: 0px solid; border-right:1.5px; border-bottom:2px solid;" colspan="2">
@@ -380,10 +380,10 @@
               <p style="margin:0;padding:0;font-size:12px">Tanggal</p>
             </td>
             <td style="text-align:center;border:1px solid;">
-            <p style="margin:0;padding:0;font-size:12px">{{date('d/m/Y', strtotime($data->wo_start_date))}}</p>
+            <p style="margin:0;padding:0;font-size:12px">{{date('d/m/Y', strtotime($womstr->wo_start_date))}}</p>
             </td>
             <td style="text-align:center;border:1px solid;">
-            <p style="margin:0;padding:0;font-size:12px">{{date('d/m/Y', strtotime($data->wo_finish_date))}}</p>
+            <p style="margin:0;padding:0;font-size:12px">{{date('d/m/Y', strtotime($womstr->wo_finish_date))}}</p>
             </td>
           </tr>
           <tr>
@@ -391,10 +391,10 @@
               <p style="margin:0;padding:0;font-size:12px">Jam</p>
             </td>
             <td style="text-align:center;border:1px solid;">
-              <p style="margin:0;padding:0;font-size:12px">{{date('H:i', strtotime($data->wo_start_time))}}</p>
+              <p style="margin:0;padding:0;font-size:12px">{{date('H:i', strtotime($womstr->wo_start_time))}}</p>
             </td>
             <td style="text-align:center;border:1px solid;">
-              <p style="margin:0;padding:0;font-size:12px">{{date('H:i', strtotime($data->wo_finish_time))}}</p>
+              <p style="margin:0;padding:0;font-size:12px">{{date('H:i', strtotime($womstr->wo_finish_time))}}</p>
             </td>
           </tr>
         </table>
@@ -405,7 +405,7 @@
         <p style=" margin-bottom:0px; margin-top:0px; margin-left: 5px; font-size:12px">
           <span style="padding-bottom: 0px;border-bottom:1px solid black;">Uraian Penyelesaian Job</span>:
           <br>
-          {{$data->wo_approval_note}}
+          {{$womstr->wo_approval_note}}
         </p>
       </td>
     </tr>
