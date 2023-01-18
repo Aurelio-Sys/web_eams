@@ -25,27 +25,34 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         ];
     }
 
-    function __construct($wonbr,$sasset,$per1,$per2) {
+    function __construct($wonbr,$sasset,$per1,$per2,$dept,$loc,$eng,$type) {
         $this->wonbr    = $wonbr;
         $this->sasset    = $sasset;
         $this->per1   = $per1;
         $this->per2 = $per2;
+        $this->dept = $dept;
+        $this->loc = $loc;
+        $this->eng = $eng;
+        $this->type = $type;
     }
 
     public function query()
     {
-        // dd($this->wonbr);
-        
         $wonbr    = $this->wonbr;
         $sasset     = $this->sasset;
         $per1    = $this->per1;
         $per2  = $this->per2;
+        $dept = $this->dept;
+        $loc = $this->loc;
+        $eng = $this->eng;
+        $type = $this->type;
 
         Schema::create('temp_wo', function ($table) {
             $table->increments('id');
             $table->string('temp_wo');
             $table->string('temp_creator')->nullable(); /* Untuk PM Creator nya kosong */
             $table->date('temp_create_date');
+            $table->string('temp_wo_codedept')->nullable();
             $table->string('temp_wo_dept')->nullable();
             $table->string('temp_wo_type');
             $table->string('temp_wo_priority');
@@ -74,6 +81,9 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
             $table->date('temp_finish_date')->nullable();
             $table->time('temp_finish_time')->nullable();
             $table->date('temp_due_date')->nullable();
+            $table->integer('temp_time1')->nullable();
+            $table->integer('temp_time2')->nullable();
+            $table->integer('temp_time3')->nullable();
             $table->string('temp_cfail1')->nullable();
             $table->string('temp_nfail1')->nullable();
             $table->string('temp_cfail2')->nullable();
@@ -270,7 +280,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
                 ->selectRaw('wo_dept,wo_type,wo_priority,wo_start_date,wo_start_time,wo_finish_date,wo_finish_time,wo_duedate')
                 ->selectRaw('wo_engineer1,wo_engineer2,wo_engineer3,wo_engineer4,wo_engineer5')
                 ->selectRaw('wo_failure_code1,f1.fn_desc as "fd1",wo_failure_code2,f2.fn_desc as "fd2",wo_failure_code3,f3.fn_desc as "fd3"')
-                ->selectRaw('wo_action')
+                ->selectRaw('wo_action,wo_created_at')
                 ->leftjoin('fn_mstr as f1','f1.fn_code','=','wo_failure_code1')
                 ->leftjoin('fn_mstr as f2','f2.fn_code','=','wo_failure_code2')
                 ->leftjoin('fn_mstr as f3','f3.fn_code','=','wo_failure_code3')
@@ -306,8 +316,9 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
             DB::table('temp_wo')
                 ->where('temp_wo','=',$updwo->temp_wo)
                 ->update([
+                    'temp_wo_codedept' => isset($upddatawo->wo_dept) ? $upddatawo->wo_dept : "",
                     'temp_wo_dept' => isset($upddeptwo->dept_desc) ? $upddeptwo->dept_desc : "",
-                    'temp_wo_type' => $upddatawo->wo_type,
+                    'temp_wo_type' => $upddatawo->wo_type == 'auto' ? 'PM' : 'WO',
                     'temp_wo_priority' => $upddatawo->wo_priority,
                     'temp_sr_date' => isset($updsr->sr_date) ? $updsr->sr_date : "",
                     'temp_sr_request' => isset($updsr->req_username) ? $updsr->req_username : "",
@@ -323,6 +334,9 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
                     'temp_finish_date' => $upddatawo->wo_finish_date,
                     'temp_finish_time' => $upddatawo->wo_finish_time,
                     'temp_due_date' => $upddatawo->wo_duedate,
+                    'temp_time1' => (strtotime($upddatawo->wo_finish_time) - strtotime($upddatawo->wo_start_time)) / 60,
+                    'temp_time2' => isset($updsr->sr_time) ? (strtotime($upddatawo->wo_finish_time) - strtotime($updsr->sr_time)) / 60 : "0",
+                    'temp_time2' => isset($updsr->sr_time) ? (strtotime($upddatawo->wo_created_at) - strtotime($updsr->sr_time)) / 60 : "0",
                     'temp_cfail1' => $upddatawo->wo_failure_code1,
                     'temp_nfail1' => $upddatawo->fd1,
                     'temp_cfail2' => $upddatawo->wo_failure_code2,
@@ -341,20 +355,37 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
                 'temp_asset','temp_asset_desc','temp_asset_loc','temp_note',
                 'temp_ceng1','temp_ceng2','temp_ceng3','temp_ceng4','temp_ceng5',
                 'temp_sch_date','temp_start_date','temp_start_time','temp_finish_date','temp_finish_time','temp_due_date',
+                'temp_time1','temp_time2','temp_time3',
                 'temp_cfail1','temp_nfail1','temp_cfail2','temp_nfail2','temp_cfail3','temp_nfail3','temp_finish_note',
                 'temp_sp','temp_sp_desc','temp_sp_price','temp_qty_req','temp_qty_whs','temp_qty_used')
-            ->orderBy('temp_wo','desc');
+            ->orderBy('temp_create_date','desc')->orderBy('temp_wo','desc');
+
+        // dd($this->type);
 
         if($this->wonbr) {
-            $datatemp = $data->where('temp_wo','=',$this->wonbr);
+            $datatemp = $data->where('temp_wo','like','%'.$this->wonbr.'%');
         }
-
         if($this->sasset) {
             $data = $data->where('temp_asset','=',$this->sasset);
         }
-
         if($this->per1) {
             $data = $data->whereBetween ('temp_create_date',[$this->per1,$this->per2]);
+        }
+        if($this->dept) {
+            $data = $data->where('temp_wo_codedept','=',$this->dept);
+        }
+        if($this->loc) {
+            $data = $data->where('temp_asset_loc','=',$this->loc);
+        }
+        if($this->eng) {
+            $data = $data->where('temp_ceng1','=',$this->eng)
+                ->orWhere('temp_ceng2','=',$this->eng)
+                ->orWhere('temp_ceng3','=',$this->eng)
+                ->orWhere('temp_ceng4','=',$this->eng)
+                ->orWhere('temp_ceng5','=',$this->eng);
+        }
+        if($this->type) {
+            $data = $data->where('temp_wo_type','=',$this->type);
         }
 
         // dd($data);
@@ -369,6 +400,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         'Asset Code','Asset Name','Asset Location', 'Note',
         'Engineer 1','Engineer 2','Engineer 3','Engineer 4','Engineer 5',
         'Schedule Date', 'Start Date', 'Start Time','Finish Date', 'Finish Time','Due Date', 
+        'Finish - Start','Finish - SR Create','WO Create - SR Create',
         'Failure Code 1', 'Failure Desc 1', 'Failure Code 2', 'Failure Desc 2', 'Failure Code 3', 'Failure Desc 3', 'Finish Note',
         'Sparepart','Sparepart Desc','Price','Qty Required','Qty Confirm Whs','Qty Used'];
     }

@@ -70,12 +70,15 @@ class ServiceController extends Controller
             ->get();
 
         $wotype = DB::table('wotyp_mstr')
+            ->orderBy('wotyp_code')
             ->get();
 
         $impact = DB::table('imp_mstr')
+            ->orderBy('imp_code')
             ->get();
 
         $fcode = DB::table('fn_mstr')
+            ->orderBy('fn_code')
             ->get();
 
         $dataapp = DB::table('eng_mstr')
@@ -263,6 +266,17 @@ class ServiceController extends Controller
 
 
         if ($kepalaengineer || Session::get('role') == 'ADMIN') {
+            $wotype = DB::table('wotyp_mstr')
+            ->orderBy('wotyp_code')
+            ->get();
+
+            $impact = DB::table('imp_mstr')
+                ->orderBy('imp_code')
+                ->get();
+
+            $fcode = DB::table('fn_mstr')
+                ->orderBy('fn_code')
+                ->get();
 
 
             $data = DB::table('service_req_mstr')
@@ -615,8 +629,13 @@ class ServiceController extends Controller
                             ->first();
 
                         // dump($impactdesc);
-
-                        $desc .= $impactdesc->imp_desc . ';';
+                        if ($impactdesc != null) {
+                            // Access the imp_desc property here
+                            $desc .= $impactdesc->imp_desc . ';';
+                        } else {
+                            // Handle the case where $impactdesc is not an object or does not have the imp_desc property
+                            $desc .= '';
+                        }
                     }
 
 

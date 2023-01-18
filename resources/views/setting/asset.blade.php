@@ -27,70 +27,67 @@
 
 <!-- Bagian Searching -->
 <div class="container-fluid mb-2">
-<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-<li class="nav-item has-treeview bg-black">
-<a href="#" class="nav-link mb-0 p-0"> 
-<p>
-  <label class="col-md-2 col-form-label text-md-left" style="color:white;">{{ __('Click here to search') }}</label>
-  <i class="right fas fa-angle-left"></i>
-</p>
-</a>
-<ul class="nav nav-treeview">
-<li class="nav-item">
-<div class="col-12 form-group row">
-    <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Code</label>
-    <div class="col-md-4 mb-2 input-group">
-        <select id="s_code" class="form-control" name="s_code">
-            <option value=""></option>
-            @foreach($datasearch as $sdata)
-                <option value="{{$sdata->asset_code}}">{{$sdata->asset_code}} - {{$sdata->asset_desc}}</option>
-            @endforeach
-        </select>
+    <div class="row">
+      <div class="col-md-12">
+        <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
+      </div>  
     </div>
-    
-    <label for="s_loc" class="col-md-2 col-sm-2 col-form-label text-md-right">Location</label>
-    <div class="col-md-4 mb-2 input-group">
-        <select id="s_loc" class="form-control" name="s_loc" required>
-            <option value="">--Select Data--</option>
-            @foreach($dataloc as $dl)
-                <option value="{{$dl->asloc_site}}.{{$dl->asloc_code}}">{{$dl->asloc_site}} : {{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
-            @endforeach
-        </select>
+    <!-- Element div yang akan collapse atau expand -->
+    <div class="collapse" id="collapseExample">
+        <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+        <div class="card card-body bg-black rounded-0">
+            <div class="col-12 form-group row">
+                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Code</label>
+                <div class="col-md-4 mb-2 input-group">
+                    <select id="s_code" class="form-control" name="s_code">
+                        <option value=""></option>
+                        @foreach($datasearch as $sdata)
+                            <option value="{{$sdata->asset_code}}">{{$sdata->asset_code}} - {{$sdata->asset_desc}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                <label for="s_loc" class="col-md-2 col-sm-2 col-form-label text-md-right">Location</label>
+                <div class="col-md-4 mb-2 input-group">
+                    <select id="s_loc" class="form-control" name="s_loc" required>
+                        <option value="">--Select Data--</option>
+                        @foreach($dataloc as $dl)
+                            <option value="{{$dl->asloc_site}}.{{$dl->asloc_code}}">{{$dl->asloc_site}} : {{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <label for="s_type" class="col-md-2 col-sm-2 col-form-label text-md-right">Type</label>
+                <div class="col-md-4 mb-2 input-group">
+                    <select id="s_type" class="form-control" name="s_type" required>
+                        <option value="">--Select Data--</option>
+                        @foreach($dataastype as $stype)
+                            <option value="{{$stype->astype_code}}">{{$stype->astype_code}} -- {{$stype->astype_desc}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <label for="s_group" class="col-md-2 col-sm-2 col-form-label text-md-right">Group</label>
+                <div class="col-md-4 mb-2 input-group">
+                    <select id="s_group" class="form-control" name="s_group" required>
+                        <option value="">--Select Data--</option>
+                        @foreach($dataasgroup as $sgroup)
+                            <option value="{{$sgroup->asgroup_code}}">{{$sgroup->asgroup_code}} -- {{$sgroup->asgroup_desc}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
+                <div class="col-md-2 col-sm-4 mb-2 input-group">
+                    <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search"/> 
+                </div>
+                <div class="col-md-2 col-sm-4 mb-2 input-group">
+                    <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
+                </div>
+                <input type="hidden" id="tmpcode"/>
+                <input type="hidden" id="tmploc"/>
+                <input type="hidden" id="tmptype"/>
+                <input type="hidden" id="tmpgroup"/>
+            </div>
+        </div>
     </div>
-    <label for="s_type" class="col-md-2 col-sm-2 col-form-label text-md-right">Type</label>
-    <div class="col-md-4 mb-2 input-group">
-        <select id="s_type" class="form-control" name="s_type" required>
-            <option value="">--Select Data--</option>
-            @foreach($dataastype as $stype)
-                <option value="{{$stype->astype_code}}">{{$stype->astype_code}} -- {{$stype->astype_desc}}</option>
-            @endforeach
-        </select>
-    </div>
-    <label for="s_group" class="col-md-2 col-sm-2 col-form-label text-md-right">Group</label>
-    <div class="col-md-4 mb-2 input-group">
-        <select id="s_group" class="form-control" name="s_group" required>
-            <option value="">--Select Data--</option>
-            @foreach($dataasgroup as $sgroup)
-                <option value="{{$sgroup->asgroup_code}}">{{$sgroup->asgroup_code}} -- {{$sgroup->asgroup_desc}}</option>
-            @endforeach
-        </select>
-    </div>
-    <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
-    <div class="col-md-2 col-sm-4 mb-2 input-group">
-        <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search"/> 
-    </div>
-    <div class="col-md-2 col-sm-4 mb-2 input-group">
-        <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
-    </div>
-    <input type="hidden" id="tmpcode"/>
-    <input type="hidden" id="tmploc"/>
-    <input type="hidden" id="tmptype"/>
-    <input type="hidden" id="tmpgroup"/>
-</div>
-</li>
-</ul>
-</li>
-</ul>
 </div>
 
 <div class="col-md-12"><hr></div>
@@ -275,7 +272,7 @@
                     <div class="form-group row">
                         <label for="t_active" class="col-md-4 col-form-label text-md-right">Active</label>
                         <div class="col-md-6">
-                            <select id="t_active" class="form-control" name="t_active" >
+                            <select id="t_active" class="form-control" name="t_active" required >
                                 <option value="Yes" selected>Yes</option>
                                 <option value="No">No</option>
                             </select>

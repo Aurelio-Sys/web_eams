@@ -38,13 +38,13 @@ class WHSConfirm extends Controller
         $data = DB::table('wo_mstr')
             ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset')
             ->where('wo_status', '=', 'Released')
-            ->where(function ($query) {
+            /* ->where(function ($query) {
                 $query->where('wo_engineer1', '=', Session()->get('username'))
                     ->orwhere('wo_engineer2', '=', Session()->get('username'))
                     ->orwhere('wo_engineer3', '=', Session()->get('username'))
                     ->orwhere('wo_engineer4', '=', Session()->get('username'))
                     ->orwhere('wo_engineer5', '=', Session()->get('username'));
-            })
+            }) */
             ->orderby('wo_created_at', 'desc')
             ->orderBy('wo_mstr.wo_id', 'desc');
 
@@ -335,7 +335,7 @@ class WHSConfirm extends Controller
                         <qcom:ttContext>
                         <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                         <qcom:propertyName>scopeTransaction</qcom:propertyName>
-                        <qcom:propertyValue>false</qcom:propertyValue>
+                        <qcom:propertyValue>true</qcom:propertyValue>
                         </qcom:ttContext>
                         <qcom:ttContext>
                         <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -449,8 +449,6 @@ class WHSConfirm extends Controller
                     curl_close($curl);
                 }
 
-                // dd($qdocResponse);
-
                 if (is_bool($qdocResponse)) {
 
                     DB::rollBack();
@@ -458,6 +456,20 @@ class WHSConfirm extends Controller
                     /* jika qxtend servicenya mati */
                 }
                 $xmlResp = simplexml_load_string($qdocResponse);
+                $xmlResp->registerXPathNamespace('soapenv', 'urn:schemas-qad-com:xml-services:common');
+                $qdocFault = '';
+                $qdocFault = $xmlResp->xpath('//soapenv:faultstring');
+                // dd($qdocFault);
+
+                if(!empty($qdocFault)){
+                    DB::rollBack();
+
+                    $qdocFault = (string) $xmlResp->xpath('//soapenv:faultstring')[0];
+
+                    alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$qdocFault."",'error')->persistent('Dismiss');
+                    return redirect()->back();
+                }
+
                 $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
                 $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
 
@@ -469,7 +481,27 @@ class WHSConfirm extends Controller
                 } else {
 
                     DB::rollBack();
-                    toast('Qxtend Response Error', 'error');
+                    $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
+                    $outputerror = '';
+                    foreach ($xmlResp->xpath('//ns3:temp_err_msg') as $temp_err_msg) {
+                        $context = $temp_err_msg->xpath('./ns3:tt_msg_context')[0];
+                        $desc = $temp_err_msg->xpath('./ns3:tt_msg_desc')[0];
+                        $outputerror .= "&bull;  ".$context . " - " . $desc . "<br>";
+                    }
+
+                    // dd('stop');
+					// $qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
+					// $output = '';
+
+					// foreach($qdocMsgDesc as $datas){
+					// 	if(str_contains($datas, 'ERROR:')){
+					// 		$output .= $datas. ' <br> ';
+					// 	}
+					// }
+
+					// $output = substr($output, 0, -6);
+
+                    alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$outputerror."",'error')->persistent('Dismiss');
                     return redirect()->route('browseWhconfirm');
                     /* jika qxtend response error */
                 }
@@ -507,7 +539,7 @@ class WHSConfirm extends Controller
 
             $domain = ModelsQxwsa::first();
 
-            $stokdata = (new WSAServices())->wsastok($domain->wsas_domain);
+            $stokdata = (new WSAServices())->wsastok($domain->wsas_domain,$req->t_site);
 
             if ($stokdata === false) {
                 toast('WSA Failed', 'error')->persistent('Dismiss');

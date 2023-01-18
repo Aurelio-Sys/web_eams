@@ -543,7 +543,8 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/exceldetwo', [RptDetWOController::class, 'index'])->name('excelDetailWO');
 	
 	Route::get('/rptcost', [RptCostController::class, 'index'])->name('rptcost');
-	Route::get('/yearcost', [RptCostController::class, 'yearcost'])->name('yearcost');
+	Route::get('/rptcostview', [RptCostController::class, 'rptcostview'])->name('rptcostview');
+	// Route::get('/yearcost', [RptCostController::class, 'yearcost'])->name('yearcost');
 
 	// Asset Site
 	Route::get('/assetsite', [AssetSiteController::class, 'index']);

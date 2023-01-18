@@ -15,54 +15,76 @@
 
 <!--FORM Search Disini -->
 <form action="/rptcost" method="GET">
-<div class="container-fluid mb-2">
-<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-<li class="nav-item has-treeview bg-black">
-<a href="#" class="nav-link mb-0 p-0"> 
-<p>
-  <label class="col-md-2 col-form-label text-md-left" style="color:white;">{{ __('Click here to search') }}</label>
-  <i class="right fas fa-angle-left"></i>
-</p>
-</a>
-<ul class="nav nav-treeview">
-<li class="nav-item">
-<div class="col-12 form-group row">
-    <div class="col-12 form-group row">
-        <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset</label>
-        <div class="col-md-4 mb-2 input-group">
-            <select id="s_code" name="s_code" class="form-control">
-                <option value=""></option>
-                @foreach($dataasset as $da)
-                <option value="{{$da->asset_code}}" {{$sasset === $da->asset_code ? "selected" : ""}}>{{$da->asset_code}} -- {{$da->asset_desc}}</option>
+    <div class="row">
+        <div class="col-md-12">
+          <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
+        </div>  
+    </div>
+    <!-- Element div yang akan collapse atau expand -->
+    <div class="collapse" id="collapseExample">
+        <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+        <div class="card card-body bg-black rounded-0">
+        <div class="col-12 form-group row">
+            <!--FORM Search Disini-->
+            <input type="hidden" name="bulan" value="{{$bulan}}">
+            <input type="hidden" name="stat" value="">
+            <label for="s_type" class="col-md-2 col-form-label text-md-right">{{ __('Type') }}</label>
+            <div class="col-md-4 col-sm-12 mb-2 input-group">
+                <select id="s_type" class="form-control" style="color:black" name="s_type" autofocus autocomplete="off">
+                <option value="">--</option>
+                <option value="PM" {{$stype === "PM" ? "selected" : ""}}>PM</option>
+                <option value="WO" {{$stype === "WO" ? "selected" : ""}}>WO</option>
+                </select>
+            </div>
+            <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
+            <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
+                <option value="">--Select Asset--</option>
+                @foreach($dataasset as $assetsearch)
+                <option value="{{$assetsearch->asset_code}}" {{$assetsearch->asset_code === $sasset ? "selected" : ""}}>{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
                 @endforeach
             </select>
-        </div>
-        <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('') }}</label>
-        <div class="col-md-2 mb-2 input-group">
+            </div>
+            <label for="s_loc" class="col-md-2 col-form-label text-md-right">{{ __('Location') }}</label>
+            <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_loc" class="form-control" style="color:black" name="s_loc" autofocus autocomplete="off">
+                <option value="">--Select Location--</option>
+                @foreach($dataloc as $dl)
+                <option value="{{$dl->asloc_code}}" {{$dl->asloc_code === $sloc ? "selected" : ""}}>{{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
+                @endforeach
+            </select>
+            </div>
+            <label for="s_eng" class="col-md-2 col-form-label text-md-right">{{ __('Engineer') }}</label>
+            <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_eng" class="form-control" style="color:black" name="s_eng" autofocus autocomplete="off">
+                <option value="">--Select Engineer--</option>
+                @foreach($dataeng as $de)
+                <option value="{{$de->eng_code}}" {{$de->eng_code === $seng ? "selected" : ""}}>{{$de->eng_code}} -- {{$de->eng_desc}}</option>
+                @endforeach
+            </select>
+            </div>
+            <div class="col-md-2 col-sm-12 mb-2 input-group">
             <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
+            </div>
+            <div class="col-md-1 col-sm-6 mb-1 input-group justify-content-md-center">
+            <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'/><i class="fas fa-sync-alt"></i></button>
+            </div>
+            <div class="col-md-2 col-sm-12 mb-2 input-group">
+            <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="Export to Excel" style="float:right" />
+            </div>
         </div>
-        <div class="col-md-2 col-sm-12 mb-2 input-group">
-            <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
         </div>
-        <input type="hidden" id="tmpcode"/>
-        <input type="hidden" id="tmpdesc"/>
     </div>
-</div>
-</li>
-</ul>
-</li>
-</ul>
-</div>
 </form>
 
 <!-- Bagian Searching -->
 <div class="col-md-12"><hr></div>
 
 <div class="col-md-12" style="color:black; font-size:2rem; text-align:end">
-    <a href="/yearcost?bulan={{$bulan}}&stat=mundur&asset={{$sasset}}" id="mundur"><i class="fas fa-angle-left"></i></a>
+    <a href="/rptcost?bulan={{$bulan}}&stat=mundur&s_asset={{$sasset}}&s_loc={{$sloc}}&s_type={{$stype}}&s_eng={{$seng}}" id="mundur"><i class="fas fa-angle-left"></i></a>
     &ensp;&ensp;<span>{{$bulan}}</span>&ensp;&ensp;
     <input type='hidden' name='bulan' id='bulan' value='{{ $bulan }}'>
-    <a href="/yearcost?bulan={{$bulan}}&stat=maju&asset={{$sasset}}" id="maju" ><i class="fas fa-angle-right"></i></a>
+    <a href="/rptcost?bulan={{$bulan}}&stat=maju&s_asset={{$sasset}}&s_loc={{$sloc}}&s_type={{$stype}}&s_eng={{$seng}}" id="maju" ><i class="fas fa-angle-right"></i></a>
 </div>
 
 <div class="table-responsive col-12">
@@ -96,6 +118,62 @@
     <input type="hidden" name="hidden_sort_type" id="hidden_sort_type" value="asc" />
 </div>
 
+<!-- Modal View -->
+<div class="modal fade" id="editModal" role="dialog" aria-hidden="true" data-backdrop="static">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title text-center" id="exampleModalLabel">Detail Cost per Asset</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+    	    </div>
+         	<div class="panel-body">
+              	<div class="modal-body">
+                	<div class="form-group row col-md-12">
+                        <label for="e_code" class="col-md-1 col-form-label text-md-left">{{ __('Asset') }}</label>
+                        <div class="col-md-4">
+                            <input id="e_code" type="text" class="form-control" name="e_code" readonly="true">
+                        </div>
+                        <label for="e_desc" class="col-md-1 col-form-label text-md-left">{{ __('Name') }}</label>
+                        <div class="col-md-6">
+                            <input id="e_desc" type="text" class="form-control" name="e_desc" readonly="true">
+                        </div>
+                    </div>
+                    <div class="form-group row col-md-12">
+                        <label for="e_locdesc" class="col-md-1 col-form-label text-md-left">{{ __('Location') }}</label>
+                        <div class="col-md-11">
+                            <input id="e_locdesc" type="text" class="form-control" name="e_locdesc" readonly="true">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
+                            <thead>
+                              <tr id='full'>
+                                <th width="15%">WO Number</th>
+                                <th width="25%">Engineer</th>
+                                <th width="15%">WO Create</th>
+                                <th width="10%">Status</th>
+                                <th width="10%">Cost</th>
+                              </tr>
+                            </thead>
+                            <tbody id='detailapp'>
+                            </tbody>
+                        </table>
+                    </div> 
+                    <div class="chart-pie pt-4 pb-2 col-12">
+                       <canvas id="myexpitm" width="568" height="400"></canvas>
+                  </div>      
+              	</div>	              									
+            </div>    
+
+          	<div class="modal-footer">
+    	        <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Close</button>
+    	    </div>
+		</div>
+	</div>
+</div>
+
 
 @endsection
 
@@ -107,7 +185,27 @@
             $('#post_title_icon').html('');
        }
 
-      
+       $(document).on('click', '#editdata', function(e){
+        $('#editModal').modal('show');
+
+        var code         = $(this).data('code');
+        var desc         = $(this).data('desc');
+        var locdesc      = $(this).data('locdesc');
+        
+        document.getElementById('e_code').value         = code;
+        document.getElementById('e_desc').value         = desc;
+        document.getElementById('e_locdesc').value      = locdesc;
+
+        $.ajax({
+            url:"rptcostview?code="+code,
+            success: function(data) {
+            // console.log(data);
+            //alert(data);
+            $('#detailapp').html('').append(data);
+          }
+        })
+        
+    });
 
         $(document).ready(function() {
             var cur_url = window.location.href;
@@ -122,55 +220,22 @@
             $('#s_priority').val(priority).trigger('change');  --}}
         });
 
-        {{--  function fetch_data(page, sort_type, sort_by, code, desc){
-            $.ajax({
-                url:"prevsch/pagination?page="+page+"&sorttype="+sort_type+"&sortby="+sort_by+"&code="+code+"&desc="+desc,
-                success:function(data){
-                    console.log(data);
-                    $('tbody').html('');
-                    $('tbody').html(data);
-                }
-            })
-        }
-
-        $(document).on('click', '#btnsearch', function(){
-
-            var code = $('#s_code').val();
-            var desc = $('#s_desc').val();
-            var column_name = $('#hidden_column_name').val();
-			var sort_type = $('#hidden_sort_type').val();
-            var page = 1;
-            
-            document.getElementById('tmpcode').value = code;
-            document.getElementById('tmpdesc').value = desc;
-
-            fetch_data(page, sort_type, column_name, code, desc);
-        });
-
-       $(document).on('click', '#btnrefresh', function() {
-
-            var code  = ''; 
-            var desc = '';
-
-            var column_name = $('#hidden_column_name').val();
-            var sort_type = $('#hidden_sort_type').val();
-            var page = 1;
-
-            document.getElementById('s_code').value  = '';
-            document.getElementById('s_desc').value  = '';
-            document.getElementById('tmpcode').value  = code;
-            document.getElementById('tmpdesc').value  = desc;
-
-            fetch_data(page, sort_type, column_name, code, desc);
-        });  --}}
-
-        {{--  document.getElementById('bulandisplay').innerHTML='{{ $bulan }}';  --}}
-
         $(document).on('click', '#btnrefresh', function() {
-            document.getElementById('s_code').value  = '';
+            document.getElementById('s_asset').value  = '';
+            document.getElementById('s_type').value  = '';
+            document.getElementById('s_loc').value  = '';
+            document.getElementById('s_eng').value  = '';
         }); 
 
-        $("#s_code").select2({
+        $("#s_loc").select2({
+            width : '100%',
+            theme : 'bootstrap4',
+        });
+        $("#s_asset").select2({
+            width : '100%',
+            theme : 'bootstrap4',
+        });
+        $("#s_eng").select2({
             width : '100%',
             theme : 'bootstrap4',
         });

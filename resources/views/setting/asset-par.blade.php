@@ -19,55 +19,53 @@
 @section('content')
 <!-- Bagian Searching -->
 <div class="container-fluid mb-2">
-<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-<li class="nav-item has-treeview bg-black">
-<a href="#" class="nav-link mb-0 p-0"> 
-<p>
-  <label class="col-md-2 col-form-label text-md-left" style="color:white;">{{ __('Click here to search') }}</label>
-  <i class="right fas fa-angle-left"></i>
-</p>
-</a>
-<ul class="nav nav-treeview">
-<li class="nav-item">
-<div class="col-12 form-group row">
-    <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Parent Code</label>
-    <div class="col-md-4 col-sm-4 mb-2 input-group">
-        <input id="s_code" type="text" class="form-control selectpicker" name="s_code"
-        value="" autofocus autocomplete="off"/>
+
+    <div class="row">
+      <div class="col-md-12">
+        <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
+      </div>  
     </div>
-    <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Parent Description</label>
-    <div class="col-md-4 col-sm-4 mb-2 input-group">
-        <input id="s_desc" type="text" class="form-control" name="s_desc"
-        value="" autofocus autocomplete="off"/>
+    <!-- Element div yang akan collapse atau expand -->
+    <div class="collapse" id="collapseExample">
+        <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+        <div class="card card-body bg-black rounded-0">
+            <div class="col-12 form-group row">
+                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Parent Code</label>
+                <div class="col-md-4 col-sm-4 mb-2 input-group">
+                    <input id="s_code" type="text" class="form-control selectpicker" name="s_code"
+                    value="" autofocus autocomplete="off"/>
+                </div>
+                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Parent Description</label>
+                <div class="col-md-4 col-sm-4 mb-2 input-group">
+                    <input id="s_desc" type="text" class="form-control" name="s_desc"
+                    value="" autofocus autocomplete="off"/>
+                </div>
+                <input type="hidden" id="tmpcode"/>
+                <input type="hidden" id="tmpdesc"/>
+            </div>
+            <div class="col-12 form-group row">
+                <label for="s_code1" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Child Code</label>
+                <div class="col-md-4 col-sm-4 mb-2 input-group">
+                    <input id="s_code1" type="text" class="form-control" name="s_code1"
+                    value="" autofocus autocomplete="off"/>
+                </div>
+                <label for="s_desc1" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Child Description</label>
+                <div class="col-md-4 col-sm-4 mb-2 input-group">
+                    <input id="s_desc1" type="text" class="form-control" name="s_desc1"
+                    value="" autofocus autocomplete="off"/>
+                </div>
+                <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
+                <div class="col-md-2 col-sm-4 mb-2 input-group">
+                    <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search"/> 
+                </div>
+                <div class="col-md-2 col-sm-4 mb-2 input-group">
+                    <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
+                </div>
+                <input type="hidden" id="tmpcode1"/>
+                <input type="hidden" id="tmpdesc1"/>
+            </div>
+        </div>
     </div>
-    <input type="hidden" id="tmpcode"/>
-    <input type="hidden" id="tmpdesc"/>
-</div>
-<div class="col-12 form-group row">
-    <label for="s_code1" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Child Code</label>
-    <div class="col-md-4 col-sm-4 mb-2 input-group">
-        <input id="s_code1" type="text" class="form-control" name="s_code1"
-        value="" autofocus autocomplete="off"/>
-    </div>
-    <label for="s_desc1" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Child Description</label>
-    <div class="col-md-4 col-sm-4 mb-2 input-group">
-        <input id="s_desc1" type="text" class="form-control" name="s_desc1"
-        value="" autofocus autocomplete="off"/>
-    </div>
-    <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
-    <div class="col-md-2 col-sm-4 mb-2 input-group">
-        <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search"/> 
-    </div>
-    <div class="col-md-2 col-sm-4 mb-2 input-group">
-        <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
-    </div>
-    <input type="hidden" id="tmpcode1"/>
-    <input type="hidden" id="tmpdesc1"/>
-</div>   
-</li>
-</ul>
-</li>
-</ul>
 </div>
 
 <div class="col-md-12"><hr></div>

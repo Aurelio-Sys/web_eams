@@ -35,41 +35,105 @@
   }
 </style>
 
+<!--FORM Search Disini -->
+<form action="/assetrpt" method="GET">
+    <div class="row">
+        <div class="col-md-12">
+          <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
+        </div>  
+    </div>
+    <!-- Element div yang akan collapse atau expand -->
+    <div class="collapse" id="collapseExample">
+        <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+        <div class="card card-body bg-black rounded-0">
+        <div class="col-12 form-group row">
+            <!--FORM Search Disini-->
+            <label for="s_type" class="col-md-2 col-form-label text-md-right">{{ __('Type') }}</label>
+            <div class="col-md-4 col-sm-12 mb-2 input-group">
+                <select id="s_type" class="form-control" style="color:black" name="s_type" autofocus autocomplete="off">
+                <option value="">--</option>
+                <option value="PM" {{$stype === "PM" ? "selected" : ""}}>PM</option>
+                <option value="WO" {{$stype === "WO" ? "selected" : ""}}>WO</option>
+                </select>
+            </div>
+            <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
+            <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
+                <option value="">--Select Asset--</option>
+                @foreach($dataAsset2 as $assetsearch)
+                <option value="{{$assetsearch->asset_code}}" {{$assetsearch->asset_code === $sasset ? "selected" : ""}}>{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
+                @endforeach
+            </select>
+            </div>
+            <label for="s_loc" class="col-md-2 col-form-label text-md-right">{{ __('Location') }}</label>
+            <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_loc" class="form-control" style="color:black" name="s_loc" autofocus autocomplete="off">
+                <option value="">--Select Location--</option>
+                @foreach($dataloc as $dl)
+                <option value="{{$dl->asloc_code}}" {{$dl->asloc_code === $sloc ? "selected" : ""}}>{{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
+                @endforeach
+            </select>
+            </div>
+            <label for="s_eng" class="col-md-2 col-form-label text-md-right">{{ __('Engineer') }}</label>
+            <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_eng" class="form-control" style="color:black" name="s_eng" autofocus autocomplete="off">
+                <option value="">--Select Engineer--</option>
+                @foreach($dataeng as $de)
+                <option value="{{$de->eng_code}}" {{$de->eng_code === $seng ? "selected" : ""}}>{{$de->eng_code}} -- {{$de->eng_desc}}</option>
+                @endforeach
+            </select>
+            </div>
+            <div class="col-md-2 col-sm-12 mb-2 input-group">
+            <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
+            </div>
+            <div class="col-md-1 col-sm-6 mb-1 input-group justify-content-md-center">
+            <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'/><i class="fas fa-sync-alt"></i></button>
+            </div>
+        </div>
+        </div>
+    </div>
+</form>
+
+<div class="col-md-12"><hr></div>
+
 <div class="row">
   @php($line = 1)
   @foreach($dataAsset as $de)
       
       @if($line == 1)
-        <div class="card-deck mb-2 col-12">
+        <div class="card-deck mb-3 col-12">
       @endif
       
       @php($jmlwo = $datawo->where('wo_asset','=',$de->asset_code)->count())
 
 
-      <div class="col-xl-2 col-lg-4 col-md-6 col-xs-12 pl-0 pr-0" >
+      <div class="col-xl-3 col-lg-5 col-md-4 col-xs-12 pl-0 pr-0" >
         <div class="card" style="height:100%">
-          <div style="height:70%">
-         <a href="" class="editarea2" id='editdata' data-toggle="modal" data-target="#editModal"
-          data-code="{{$de->asset_code}}" data-desc="{{$de->asset_desc}}">
-          <img class="card-img-top" src="/uploadassetimage/{{$de->asset_image}}" alt="Card image cap" width="200" height="200" >
-        </a>
-        <input type="hidden" name="code" id="code" value="{{$de->asset_code}}">
-      </div>
-      <div style="height:30%">
-          <div class="card-body">
-            <p class="card-text">
-              <small class="font-weight-bold">{{$de->asset_desc}}
-              <br>Work Order : {{$jmlwo}}
-              </small>
-            </p>
+          <div style="height:55%">
+            <a href="" class="editarea2" id='editdata' data-toggle="modal" data-target="#editModal"
+              data-code="{{$de->asset_code}}" data-desc="{{$de->asset_desc}}">
+              <img class="card-img-top" src="/uploadassetimage/{{$de->asset_image}}" alt="Card image cap" width="200" height="200" >
+            </a>
+            <input type="hidden" name="code" id="code" value="{{$de->asset_code}}">
           </div>
-        </div>
+          <div style="height:30%">
+              <div class="card-body">
+                <p class="card-text">
+                  <small class="font-weight-bold">
+                  <br>{{$de->asset_code}}
+                  <br>{{$de->asset_desc}}
+                  <br>{{$de->asloc_desc}}
+                  <br>Work Order : {{$jmlwo}}
+                  </small>
+                </p>
+              </div>
+          </div>
         </div>
       </div>
       
       @php($line++)
       
-      @if($line == 7)
+      @if($line == 5)
         </div>
         <br>
         @php($line = 1)
@@ -149,6 +213,26 @@ function noexpitm(event, array){
 </script>
 
     <script>
+
+      $("#s_loc").select2({
+        width : '100%',
+        theme : 'bootstrap4',
+      });
+      $("#s_asset").select2({
+          width : '100%',
+          theme : 'bootstrap4',
+      });
+      $("#s_eng").select2({
+          width : '100%',
+          theme : 'bootstrap4',
+      });
+
+      $(document).on('click', '#btnrefresh', function() {
+        document.getElementById('s_asset').value  = '';
+        document.getElementById('s_type').value  = '';
+        document.getElementById('s_loc').value  = '';
+        document.getElementById('s_eng').value  = '';
+      }); 
 
 
        $(document).on('click', '#editdata', function(e){

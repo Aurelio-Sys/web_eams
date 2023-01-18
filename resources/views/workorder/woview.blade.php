@@ -31,95 +31,91 @@
 
 <!-- <hr style="margin:0%"> -->
 <div class="container-fluid mb-2">
-  <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-    <li class="nav-item has-treeview bg-black">
-      <a href="#" class="nav-link mb-0 p-0">
-        <p>
-          <label class="col-md-2 col-form-label text-md-left" style="color:white;">{{ __('Click here to search') }}</label>
-          <i class="right fas fa-angle-left"></i>
-        </p>
-      </a>
-      <ul class="nav nav-treeview">
-        <li class="nav-item">
-          <div class="col-12 form-group row">
+  <div class="row">
+    <div class="col-md-12">
+      <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
+    </div>  
+  </div>
+  <!-- Element div yang akan collapse atau expand -->
+  <div class="collapse" id="collapseExample">
+      <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+      <div class="card card-body bg-black rounded-0">
+        <div class="col-12 form-group row">
 
-            <!--FORM Search Disini-->
-            <label for="s_nomorwo" class="col-md-2 col-form-label text-md-left">{{ __('Work Order Number') }}</label>
-            <div class="col-md-4 col-sm-12 mb-2 input-group">
-              <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="" autofocus autocomplete="off">
-            </div>
-            <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
-            <div class="col-md-4 col-sm-12 mb-2 input-group">
-              <select id="s_asset" class="form-control" style="color:white" name="s_asset" autofocus autocomplete="off">
-                <option value="">--Select Asset--</option>
-                @foreach($asset1 as $assetsearch)
-                <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
-                @endforeach
-              </select>
-            </div>
-            <label for="s_status" class="col-md-2 col-form-label text-md-left">{{ __('Work Order Status') }}</label>
-            <div class="col-md-3 col-sm-12 mb-2 input-group">
-              <select id="s_status" type="text" class="form-control" name="s_status">
-                <option value="">--Select Status--</option>
-                <option value="plan">Plan</option>
-                <option value="open">Open</option>
-                <option value="Released">Released</option>
-                <option value="whsconfirm">Warehouse Confirm</option>
-                <option value="engconfirm">Engineer Confirm</option>
-                <option value="started">Started</option>
-                <option value="finish">Finish</option>
-                <option value="finish">Completed</option>
-                <option value="reprocess">Reprocess</option>
-                <option value="incomplete">Incomplete</option>
-                <option value="closed">Closed</option>
-                <option value="delete">Delete</option>
-
-
-              </select>
-            </div>
-            <label for="" class="col-md-1 col-form-label text-md-left">{{ __('') }}</label>
-            <label for="s_priority" class="col-md-2 col-form-label text-md-right">{{ __('Priority') }}</label>
-            <div class="col-md-4 col-sm-12 mb-2 input-group">
-              <select id="s_priority" type="text" class="form-control" name="s_priority">
-                <option value="">--Select Priority--</option>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
-            </div>
-            <label for="s_engineer" class="col-md-2 col-form-label text-md-left">{{ __('Engineer') }}</label>
-            <div class="col-md-3 col-sm-12 mb-2 input-group">
-              <select id="s_engineer" type="text" class="form-control" name="s_engineer">
-                <option value="">--Select Engineer--</option>
-                @foreach($engine as $enginesearch)
-                <option value="{{$enginesearch->eng_code}}">{{$enginesearch->eng_code}} -- {{$enginesearch->eng_desc}}</option>
-                @endforeach
-              </select>
-            </div>
-            <label for="" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
-            <label for="s_creator" class="col-md-2 col-form-label text-md-right">{{ __('Wo Creator') }}</label>
-            <div class="col-md-4 col-sm-12 mb-2 input-group">
-              <select id="s_creator" type="text" class="form-control" name="s_creator">
-                <option value="">--Select user--</option>
-                @foreach($custrnow as $custrnow)
-                <option value="{{$custrnow->wo_creator}}"><b>{{$custrnow->wo_creator}} -- {{$custrnow->creator_desc}} </b></option>
-                @endforeach
-              </select>
-            </div>
-            <div class="col-md-2 col-sm-12 mb-2 input-group">
-              <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" style="float:right" />
-            </div>
-            <div class="col-md-1 col-sm-12 mb-2 input-group justify-content-center">
-              <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'><i class="fas fa-sync-alt"></i></button>
-            </div>
-            <div class="col-md-2 col-sm-12 mb-2 input-group">
-              <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="Export to Excel" style="float:right" />
-            </div>
+          <!--FORM Search Disini-->
+          <label for="s_nomorwo" class="col-md-2 col-form-label text-md-left">{{ __('Work Order Number') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="" autofocus autocomplete="off">
           </div>
-        </li>
-      </ul>
-    </li>
-  </ul>
+          <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_asset" class="form-control" style="color:white" name="s_asset" autofocus autocomplete="off">
+              <option value="">--Select Asset--</option>
+              @foreach($asset1 as $assetsearch)
+              <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
+              @endforeach
+            </select>
+          </div>
+          <label for="s_status" class="col-md-2 col-form-label text-md-left">{{ __('Work Order Status') }}</label>
+          <div class="col-md-3 col-sm-12 mb-2 input-group">
+            <select id="s_status" type="text" class="form-control" name="s_status">
+              <option value="">--Select Status--</option>
+              <option value="plan">Plan</option>
+              <option value="open">Open</option>
+              <option value="Released">Released</option>
+              <option value="whsconfirm">Warehouse Confirm</option>
+              <option value="engconfirm">Engineer Confirm</option>
+              <option value="started">Started</option>
+              <option value="finish">Finish</option>
+              <option value="finish">Completed</option>
+              <option value="reprocess">Reprocess</option>
+              <option value="closed">Closed</option>
+              <option value="delete">Delete</option>
+
+
+            </select>
+          </div>
+          <label for="" class="col-md-1 col-form-label text-md-left">{{ __('') }}</label>
+          <label for="s_priority" class="col-md-2 col-form-label text-md-right">{{ __('Priority') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_priority" type="text" class="form-control" name="s_priority">
+              <option value="">--Select Priority--</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+          <label for="s_engineer" class="col-md-2 col-form-label text-md-left">{{ __('Engineer') }}</label>
+          <div class="col-md-3 col-sm-12 mb-2 input-group">
+            <select id="s_engineer" type="text" class="form-control" name="s_engineer">
+              <option value="">--Select Engineer--</option>
+              @foreach($engine as $enginesearch)
+              <option value="{{$enginesearch->eng_code}}">{{$enginesearch->eng_code}} -- {{$enginesearch->eng_desc}}</option>
+              @endforeach
+            </select>
+          </div>
+          <label for="" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
+          <label for="s_creator" class="col-md-2 col-form-label text-md-right">{{ __('Wo Creator') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_creator" type="text" class="form-control" name="s_creator">
+              <option value="">--Select user--</option>
+              @foreach($custrnow as $custrnow)
+              <option value="{{$custrnow->wo_creator}}"><b>{{$custrnow->wo_creator}} -- {{$custrnow->creator_desc}} </b></option>
+              @endforeach
+            </select>
+          </div>
+          <div class="col-md-2 col-sm-12 mb-2 input-group">
+            <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" style="float:right" />
+          </div>
+          <div class="col-md-1 col-sm-12 mb-2 input-group justify-content-center">
+            <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'><i class="fas fa-sync-alt"></i></button>
+          </div>
+          <div class="col-md-2 col-sm-12 mb-2 input-group">
+            <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="Export to Excel" style="float:right" />
+          </div>
+        </div>      
+      </div>
+  </div>
 </div>
 <input type="hidden" id="tmpwo" value="" />
 <input type="hidden" id="tmpasset" value="" />
@@ -230,49 +226,26 @@
             <textarea id="v_impact" class="form-control" name="v_impact" value="{{ old('v_impact') }}" autofocus readonly></textarea>
           </div>
         </div>
-        <!--<div class="form-group row justify-content-center" id="divviewcode" style="display: none;">
-          <label for="v_proc" class="col-md-2 col-form-label text-md-left">Process / Technology</label>
-          <div class="col-md-4">
-            <input id="v_proc" type="text" class="form-control" name="v_proc" value="{{ old('v_proc') }}" autofocus readonly>
-          </div>
-          <label for="v_priority" class="col-md-2 col-form-label text-md-left">Priority</label>
-          <div class="col-md-4">
-            <input id="v_priority" type="text" class="form-control" name="v_priority" value="{{ old('v_priority') }}" autofocus readonly>
-          </div>
-            <label for="v_repaircode" class="col-md-2 col-form-label text-md-left">Repair Code</label>
+        <div class="form-group row">
+            <label for="v_schedule" class="col-md-2 col-form-label text-md-left">Schedule Date</label>
             <div class="col-md-4">
-              <textarea id="v_repaircode" readonly  class="form-control" name="v_repaircode" value="{{ old('v_repaircode') }}"   autofocus></textarea>
+              <input id="v_schedule" readonly type="date" class="form-control" name="v_schedule" value="{{ old('v_schedule') }}" autofocus>
             </div>
-          </div>
-          <div class="form-group row justify-content-center" id="divviewgroup" style="display: none;">
-            <label for="v_repairgroup" class="col-md-2 col-form-label text-md-left">Repair Group</label>
+            <label id="divviewcode" for="v_repaircode" class="col-md-2 col-form-label text-md-left" style="display: none;">Repair Code</label>
+            <label id="divviewgroup" for="v_repairgroup" class="col-md-2 col-form-label text-md-left" style="display: none;">Repair Group</label>
             <div class="col-md-4">
-              <input  id="v_repairgroup" readonly  class="form-control" name="v_repairgroup" value="{{ old('v_repairgroup') }}"  autofocus>
+              <textarea id="v_repaircode" style="display: none;" readonly  class="form-control" name="v_repaircode" value="{{ old('v_repaircode') }}"   autofocus></textarea>
+              <input  id="v_repairgroup" style="display: none;" readonly  class="form-control" name="v_repairgroup" value="{{ old('v_repairgroup') }}"  autofocus>
             </div>
-          </div>
-          <div class="form-group row justify-content-center" id="divviewmanual" style="display: none;">
-            <label for="v_repairmanual" class="col-md-2 col-form-label text-md-left">Repair</label>
-            <div class="col-md-4">
-              <input  id="v_repairmanual" readonly  class="form-control" name="v_repairmanual" value="Manual"  autofocus>
-            </div>
-          </div> -->
-        <div class="form-group row justify-content-center">
-          <label for="v_schedule" class="col-md-2 col-form-label text-md-left">Schedule Date</label>
+        </div>
+        <div class="form-group row">
+          <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
           <div class="col-md-4">
-            <input id="v_schedule" readonly type="date" class="form-control" name="v_schedule" value="{{ old('v_schedule') }}" autofocus>
+            <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
           </div>
           <label for="v_mtcby" class="col-md-2 col-form-label text-md-left">Maintenance By</label>
           <div class="col-md-4">
             <input id="v_mtcby" type="text" class="form-control" name="v_mtcby" readonly>
-          </div>
-        </div>
-        <div class="form-group row justify-content-center">
-          <label for="v_schedule" class="col-md-2 col-form-label text-md-left"></label>
-          <div class="col-md-4">
-          </div>
-          <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
-          <div class="col-md-4">
-            <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
           </div>
         </div>
         <div class="form-group row" id="reportnote">
@@ -528,21 +501,25 @@
         document.getElementById('v_mtcby').value = mtcby;
         document.getElementById('v_fclist').value = fclist;
 
-        /*
+        
         if(repairtype == 'code'){
           var textareaview = document.getElementById('v_repaircode');
           textareaview.value = arrrc.join("\n");
           document.getElementById('divviewcode').style.display = '';
+          document.getElementById('v_repaircode').style.display = '';
+          document.getElementById('v_repairgroup').style.display = 'none';
           document.getElementById('divviewgroup').style.display = 'none';
-          document.getElementById('divviewmanual').style.display='none';
         }
         else if (repairtype == 'group'){
           
           var vgroup = document.getElementById('v_repairgroup').value = result[0].xxrepgroup_nbr + ' -- ' + repairgroup;
           document.getElementById('divviewcode').style.display = 'none';
-          document.getElementById('divviewmanual').style.display='none';
+          document.getElementById('v_repaircode').style.display = 'none';
           document.getElementById('divviewgroup').style.display = '';
+          document.getElementById('v_repairgroup').style.display = '';
         }
+
+        /*
         else if (repairtype == 'manual'){
           document.getElementById('divviewcode').style.display = 'none';
           document.getElementById('divviewgroup').style.display = 'none';

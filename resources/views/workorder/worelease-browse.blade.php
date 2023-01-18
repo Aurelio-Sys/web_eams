@@ -11,54 +11,51 @@
 @section('content')
 <form action="/worelease" method="GET">
     <div class="container-fluid mb-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-            <li class="nav-item has-treeview bg-black">
-                <a href="#" class="nav-link mb-0 p-0">
-                    <p>
-                        <label class="col-md-2 col-form-label text-md-left" style="color:white;">{{ __('Click here to search') }}</label>
-                        <i class="right fas fa-angle-left"></i>
-                    </p>
-                </a>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item">
-                        <div class="col-12 form-group row">
+        <div class="row">
+            <div class="col-md-12">
+                <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
+            </div>  
+        </div>
+        <!-- Element div yang akan collapse atau expand -->
+        <div class="collapse" id="collapseExample">
+            <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+            <div class="card card-body bg-black rounded-0">
+                <div class="col-12 form-group row">
 
-                            <!--FORM Search Disini-->
-                            <label for="s_nomorwo" class="col-md-2 col-form-label text-md-left">{{ __('Work Order Number') }}</label>
-                            <div class="col-md-4 col-sm-12 mb-2 input-group">
-                                <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="" autofocus autocomplete="off">
-                            </div>
-                            <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
-                            <div class="col-md-4 col-sm-12 mb-2 input-group">
-                                <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
-                                    <option value="">--Select Asset--</option>
-                                    @foreach($asset1 as $assetsearch)
-                                    <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_desc}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                    <!--FORM Search Disini-->
+                    <label for="s_nomorwo" class="col-md-2 col-form-label text-md-right">{{ __('WO Number') }}</label>
+                    <div class="col-md-4 col-sm-12 mb-2 input-group">
+                        <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="" autofocus autocomplete="off">
+                    </div>
+                    <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
+                    <div class="col-md-4 col-sm-12 mb-2 input-group">
+                        <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
+                            <option value="">--Select Asset--</option>
+                            @foreach($asset1 as $assetsearch)
+                            <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                            <label for="s_priority" class="col-md-2 col-form-label text-md-right">{{ __('Priority') }}</label>
-                            <div class="col-md-4 col-sm-12 mb-2 input-group">
-                                <select id="s_priority" type="text" class="form-control" name="s_priority">
-                                    <option value="">--Select Priority--</option>
-                                    <option value="low">Low</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="high">High</option>
-                                </select>
-                            </div>
-                            <label for="" class="col-md-2 col-form-label text-md-right">{{ __('') }}</label>
-                            <div class="col-md-2 col-sm-12 mb-2 input-group">
-                                <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
-                            </div>
-                            <div class="col-md-2 col-sm-12 mb-2 input-group">
-                                <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+                    <label for="s_priority" class="col-md-2 col-form-label text-md-right">{{ __('Priority') }}</label>
+                    <div class="col-md-4 col-sm-12 mb-2 input-group">
+                        <select id="s_priority" type="text" class="form-control" name="s_priority">
+                            <option value="">--Select Priority--</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <label for="" class="col-md-2 col-form-label text-md-right">{{ __('') }}</label>
+                    <div class="col-md-2 col-sm-12 mb-2 input-group">
+                        <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
+                    </div>
+                    <div class="col-md-2 col-sm-12 mb-2 input-group">
+                        <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </form>
 
@@ -104,6 +101,12 @@
 
         $('#s_asset').val(asset).trigger('change');
         $('#s_priority').val(priority).trigger('change');
+
+        $('#s_asset').select2({
+            width : '100%',
+            closeOnSelect : true,
+            theme : 'bootstrap4',
+        });
     });
 
     $(document).on('click', '#btnrefresh', function() {

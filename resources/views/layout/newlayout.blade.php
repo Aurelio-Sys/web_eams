@@ -146,6 +146,16 @@ to get the desired effect
 
       <!-- Sidebar -->
       <div class="sidebar">
+        <div class="form-inline mt-2">
+          <div class="input-group" data-widget="sidebar-search" data-min-length='1' data-not-found-text='No results' data-highlight-class='text-green' data-max-results='10' data-highlight-name='true' data-highlight-path='true' data-arrow-sign='=>'>
+            <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+            <div class="input-group-append">
+              <button class="btn btn-sidebar">
+                <i class="fas fa-search fa-fw"></i>
+              </button>
+            </div>
+          </div>
+        </div>
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
@@ -157,7 +167,7 @@ to get the desired effect
             @if(str_contains( Session::get('menu_access'), 'SR'))
             <li class="nav-item has-treeview">
               <a href="javascript:void(0)" class="nav-link">
-                <i class="nav-icon fas fa-concierge-bell"></i>
+                <i class="nav-icon fas fa-dolly"></i>
                 <p>
                   Service Request
                   <i class="right fas fa-angle-left"></i>
@@ -165,7 +175,7 @@ to get the desired effect
               </a>
               <ul class="nav nav-treeview">
                 @if(str_contains( Session::get('menu_access'), 'SR01'))
-                <li class="nav-item">
+                <li class="nav-item has-treeview">
                   <a href="/servicerequest" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Service Request Create</p>
@@ -173,7 +183,7 @@ to get the desired effect
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'SR03'))
-                <li class="nav-item">
+                <li class="nav-item has-treeview">
                   <a href="/srbrowse" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                      <p>Service Request Browse</p>
@@ -181,7 +191,7 @@ to get the desired effect
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'SR02'))
-                <li class="nav-item">
+                <li class="nav-item has-treeview">
                   <a href="/srapproval" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Service Request Approval</p>
@@ -312,7 +322,7 @@ to get the desired effect
               <ul class="nav nav-treeview">
                 @if(str_contains( Session::get('menu_access'), 'US01'))
                 <li class="nav-item has-treeview">
-                  <a href="{{url('/usagemt')}}" class="nav-link ">
+                  <a href="/usagemt" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Asset PM Calculate</p>
                   </a>
@@ -320,7 +330,7 @@ to get the desired effect
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'US02'))
                 <li class="nav-item has-treeview">
-                  <a href="{{url('/usagemulti')}}" class="nav-link ">
+                  <a href="/usagemulti" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Asset Multi Batch</p>
                   </a>
@@ -367,7 +377,7 @@ to get the desired effect
               <ul class="nav nav-treeview">
                 @if(str_contains( Session::get('menu_access'), 'RT08'))
                 <li class="nav-item">
-                  <a href="{{url('/rptdetwo')}}" class="nav-link ">
+                  <a href="/rptdetwo" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Detail WO Report</p>
                   </a>
@@ -375,7 +385,7 @@ to get the desired effect
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'RT09'))
                 <li class="nav-item">
-                  <a href="{{url('/rptcost')}}" class="nav-link ">
+                  <a href="/rptcost" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Cost Report</p>
                   </a>
@@ -383,7 +393,7 @@ to get the desired effect
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'RT05'))
                 <li class="nav-item">
-                  <a href="{{url('/assetrpt')}}" class="nav-link ">
+                  <a href="/assetrpt" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Asset Report</p>
                   </a>
@@ -391,7 +401,7 @@ to get the desired effect
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'RT04'))
                 <li class="nav-item">
-                  <a href="{{url('/engrpt')}}" class="nav-link ">
+                  <a href="/engrpt" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Engineer Report</p>
                   </a>
@@ -399,7 +409,7 @@ to get the desired effect
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'RT10'))
                 <li class="nav-item">
-                  <a href="{{url('remsp')}}" class="nav-link ">
+                  <a href="/remsp" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Remaining Sparepart</p>
                   </a>
@@ -416,41 +426,41 @@ to get the desired effect
                   </a>
                   <ul class="nav nav-treeview">
                     {{--  <li class="nav-item">
-                      <a href="{{url('/allrpt')}}" class="nav-link ">
+                      <a href="/allrpt" class="nav-link ">
                           <p>All Asset Schedule</p>
                       </a>
                     </li>  --}}
                     @if(str_contains( Session::get('menu_access'), 'RT03'))
                     <li class="nav-item">
-                      <a href="{{url('/assetsch')}}" class="nav-link ">
+                      <a href="/assetsch" class="nav-link ">
                           <p>Asset Schedule</p>
                       </a>
                     </li>
                     @endif
                     @if(str_contains( Session::get('menu_access'), 'RT07'))
                     <li class="nav-item">
-                      <a href="{{url('/assetyear')}}" class="nav-link ">
+                      <a href="/assetyear" class="nav-link ">
                           <p>Asset Schedule (Year)</p>
                       </a>
                     </li>
                     @endif
                     @if(str_contains( Session::get('menu_access'), 'RT01'))
                     <li class="nav-item">
-                      <a href="{{url('/engsch')}}" class="nav-link ">
+                      <a href="/engsch" class="nav-link ">
                           <p>Engineer Schedule</p>
                       </a>
                     </li>
                     @endif
                     @if(str_contains( Session::get('menu_access'), 'RT06'))
                     <li class="nav-item">
-                      <a href="{{url('/needsp')}}" class="nav-link ">
+                      <a href="/needsp" class="nav-link ">
                           <p>Sparepart Needs</p>
                       </a>
                     </li>
                     @endif
                     @if(str_contains( Session::get('menu_access'), 'RT02'))
                     <li class="nav-item">
-                      <a href="{{url('/bookcal')}}" class="nav-link ">
+                      <a href="/bookcal" class="nav-link ">
                           <p>Asset Booking Schedule</p>
                       </a>
                     </li>
@@ -531,7 +541,7 @@ to get the desired effect
                   <ul class="nav nav-treeview">
                     @if(str_contains(Session::get('menu_access'), 'MT99'))
                     <li class="nav-item">
-                      <a href="{{url('/runningmstr')}}" class="nav-link ">
+                      <a href="/runningmstr" class="nav-link ">
                         <p>Running Number</p>
                       </a>
                     </li>
@@ -539,14 +549,14 @@ to get the desired effect
                     {{--  Belum Digunakan
                       @if(str_contains(Session::get('menu_access'), 'MT30'))
                     <li class="nav-item">
-                      <a href="{{url('/picklogic')}}" class="nav-link ">
+                      <a href="/picklogic" class="nav-link ">
                         <p>Picking Logic</p>
                       </a>
                     </li>
                     @endif  --}}
                     @if(str_contains(Session::get('menu_access'), 'MT20'))
                     <li class="nav-item">
-                      <a href="{{url('qxwsa')}}" class="nav-link ">
+                      <a href="/qxwsa" class="nav-link ">
                         <p>WSA Qxtend Maintenance</p>
                       </a>
                     </li>
@@ -566,7 +576,7 @@ to get the desired effect
                   <ul class="nav nav-treeview">
                     @if(str_contains(Session::get('menu_access'), 'MT32'))
                     <li class="nav-item">
-                      <a href="{{url('/wotyp')}}" class="nav-link ">
+                      <a href="/wotyp" class="nav-link ">
                         <p>Failure Type Maintenance</p>
                       </a>
                     </li>
@@ -580,7 +590,7 @@ to get the desired effect
                     @endif
                     @if(str_contains(Session::get('menu_access'), 'MT34'))
                     <li class="nav-item">
-                      <a href="{{url('/imp')}}" class="nav-link ">
+                      <a href="/imp" class="nav-link ">
                         <p>Impact Maintenance</p>
                       </a>
                     </li>
@@ -908,9 +918,9 @@ to get the desired effect
   <script src="{{url('assets/css/jquery-ui.js')}}"></script>
   <!-- OPTIONAL SCRIPTS -->
   <!-- <script src="plugins/chart.js/Chart.min.js"></script> -->
-  <script src="{{url('dist/js/demo.js')}}"></script>
+  <!-- <script src="{{url('dist/js/demo.js')}}"></script> -->
   <!-- <script src="dist/js/pages/dashboard3.js"></script> -->
-  <script src="{{url('vendors/chart.js/dist/Chart.bundle.min.js')}}"></script>
+  <script src="{{url('plugins/chart.js/Chart.bundle.min.js')}}"></script>
 
   <script src="{{url('assets/js/bootstrap-select.min.js')}}"></script>
 
@@ -938,6 +948,7 @@ to get the desired effect
       //   alert("Hello!");
       //   // $(".hide_div").hide();
       // });
+
     });
 
 

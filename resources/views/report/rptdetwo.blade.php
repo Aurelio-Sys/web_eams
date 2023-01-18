@@ -29,55 +29,84 @@
 </style>
 
 <form action="/rptdetwo" method="GET">
-  <div class="container-fluid mb-2">
-    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-      <li class="nav-item has-treeview bg-black">
-        <a href="#" class="nav-link mb-0 p-0">
-          <p>
-            <label class="col-md-2 col-form-label text-md-left" style="color:white;">{{ __('Click here to search') }}</label>
-            <i class="right fas fa-angle-left"></i>
-          </p>
-        </a>
-        <ul class="nav nav-treeview">
-          <li class="nav-item">
-            <div class="col-12 form-group row">
-              <!--FORM Search Disini-->
-              <label for="s_nomorwo" class="col-md-2 col-form-label text-md-right">{{ __('Work Order Number') }}</label>
-              <div class="col-md-4 col-sm-12 mb-2 input-group">
-                <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="" autofocus autocomplete="off">
-              </div>
-              <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
-              <div class="col-md-4 col-sm-12 mb-2 input-group">
-                <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
-                  <option value="">--Select Asset--</option>
-                  @foreach($asset1 as $assetsearch)
-                    <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
-                  @endforeach
-                </select>
-              </div>
-              <label for="s_per1" class="col-md-2 col-form-label text-md-right">{{ __('Periode 1') }}</label>
-              <div class="col-md-4 col-sm-12 mb-2 input-group">
-                <input type="date" name="s_per1" id="s_per1" class="form-control">
-              </div>
-              <label for="s_per2" class="col-md-2 col-form-label text-md-right">{{ __('Periode 2') }}</label>
-              <div class="col-md-4 col-sm-12 mb-2 input-group">
-                <input type="date" name="s_per2" id="s_per2" class="form-control">
-              </div>
-              <label for="" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
-              <div class="col-md-2 col-sm-12 mb-2 input-group">
-                <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
-              </div>
-              <div class="col-md-1 col-sm-12 mb-1 input-group">
-                <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
-              </div>
-              <div class="col-md-2 col-sm-12 mb-2 input-group">
-                <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="Export to Excel" style="float:right" />
-              </div>
-            </div>
-          </li>
-        </ul>
-      </li>
-    </ul>
+  <div class="row">
+    <div class="col-md-12">
+      <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
+    </div>  
+  </div>
+  <!-- Element div yang akan collapse atau expand -->
+  <div class="collapse" id="collapseExample">
+      <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+      <div class="card card-body bg-black rounded-0">
+        <div class="col-12 form-group row">
+          <!--FORM Search Disini-->
+          <label for="s_nomorwo" class="col-md-2 col-form-label text-md-right">{{ __('Work Order Number') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="{{$swo}}" autofocus autocomplete="off">
+          </div>
+          <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
+              <option value="">--Select Asset--</option>
+              @foreach($asset1 as $assetsearch)
+                <option value="{{$assetsearch->asset_code}}" {{$assetsearch->asset_code === $sasset ? "selected" : ""}}>{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
+              @endforeach
+            </select>
+          </div>
+          <label for="s_dept" class="col-md-2 col-form-label text-md-right">{{ __('Departement') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_dept" class="form-control" style="color:black" name="s_dept" autofocus autocomplete="off">
+              <option value="">--Select Departement--</option>
+              @foreach($dept as $dd)
+                <option value="{{$dd->dept_code}}" {{$dd->dept_code === $sdept ? "selected" : ""}}>{{$dd->dept_code}} -- {{$dd->dept_desc}}</option>
+              @endforeach
+            </select>
+          </div>
+          <label for="s_type" class="col-md-2 col-form-label text-md-right">{{ __('Type') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_type" class="form-control" style="color:black" name="s_type" autofocus autocomplete="off">
+              <option value="">--</option>
+              <option value="PM" {{$stype === "PM" ? "selected" : ""}}>PM</option>
+              <option value="WO" {{$stype === "WO" ? "selected" : ""}}>WO</option>
+            </select>
+          </div>
+          <label for="s_loc" class="col-md-2 col-form-label text-md-right">{{ __('Location') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_loc" class="form-control" style="color:black" name="s_loc" autofocus autocomplete="off">
+              <option value="">--Select Location--</option>
+              @foreach($dataloc as $dl)
+                <option value="{{$dl->asloc_code}}" {{$dl->asloc_code === $sloc ? "selected" : ""}}>{{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
+              @endforeach
+            </select>
+          </div>
+          <label for="s_eng" class="col-md-2 col-form-label text-md-right">{{ __('Engineer') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_eng" class="form-control" style="color:black" name="s_eng" autofocus autocomplete="off">
+              <option value="">--Select Engineer--</option>
+              @foreach($engine as $de)
+                <option value="{{$de->eng_code}}" {{$de->eng_code === $seng ? "selected" : ""}}>{{$de->eng_code}} -- {{$de->eng_desc}}</option>
+              @endforeach
+            </select>
+          </div>
+          <label for="s_per1" class="col-md-2 col-form-label text-md-right">{{ __('WO Date') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <input type="date" name="s_per1" id="s_per1" class="form-control" value="{{$sper1}}">
+          </div>
+          <label for="s_per2" class="col-md-2 col-form-label text-md-right">{{ __('s/d') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <input type="date" name="s_per2" id="s_per2" class="form-control" value="{{$sper2}}">
+          </div>
+          <div class="col-md-2 col-sm-12 mb-2 input-group">
+            <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
+          </div>
+          <div class="col-md-1 col-sm-6 mb-1 input-group justify-content-md-center">
+            <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'/><i class="fas fa-sync-alt"></i></button>
+          </div>
+          <div class="col-md-2 col-sm-12 mb-2 input-group">
+            <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="Export to Excel" style="float:right" />
+          </div>
+        </div>
+      </div>
   </div>
 </form>
 
@@ -97,7 +126,7 @@
         <th>Asset</th>
         <th>Desc</th>
         <th>Req By</th>
-        <th>Req Date</th>
+        <th>Create Date</th>
         <th>Sch Date</th>
         <th>Note</th>
         <th>Repair</th>
@@ -298,8 +327,15 @@
     width: '100%',
     theme: 'bootstrap4',
   });
-
-  $('#s_engineer').select2({
+  $('#s_dept').select2({
+    width: '100%',
+    theme: 'bootstrap4',
+  });
+  $('#s_loc').select2({
+    width: '100%',
+    theme: 'bootstrap4',
+  });
+  $('#s_eng').select2({
     width: '100%',
     theme: 'bootstrap4',
   });
@@ -548,6 +584,10 @@
     $('#s_asset').val('');
     $('#s_per1').val('');
     $('#s_per2').val('');
+    $('#s_dept').val('');
+    $('#s_loc').val('');
+    $('#s_eng').val('');
+    $('#s_type').val('');
   }
 
   $(document).on('click', '#btnrefresh', function() {
@@ -562,8 +602,13 @@
     var sasset = $('#s_asset').val();
     var per1 = $('#s_per1').val();
     var per2 = $('#s_per2').val();
-     
-    window.open("/exceldetwo?dexcel=excel&swo=" + swo + "&sasset=" + sasset + "&per1=" + per1 + "&per2=" + per2, '_blank');
+    var dept = $('#s_dept').val();
+    var loc = $('#s_loc').val();
+    var eng = $('#s_eng').val();
+    var type = $('#s_type').val();
+    
+    window.open("/exceldetwo?dexcel=excel&swo=" + swo + "&sasset=" + sasset + "&per1=" + per1 + "&per2=" + per2 +
+        "&sdept=" + dept + "&sloc=" + loc + "&seng=" + eng + "&stype=" + type , '_blank');
   });
 
   $(document).on('click', '.imageview', function() {

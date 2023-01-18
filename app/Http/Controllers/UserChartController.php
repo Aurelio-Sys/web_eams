@@ -810,13 +810,29 @@ class UserChartController extends Controller
     public function engrpt(Request $req)
     {
        
+        $sdept = $req->s_dept;
+        
         $dataeng = DB::table('users')
-                ->join('eng_mstr','eng_code','=','username')
-                ->whereAccess('Engineer')
-                ->whereActive('Yes')
-                ->orderBy('eng_desc')
-                ->get();
-        //dd($dataeng);
+            ->join('eng_mstr','eng_code','=','username')
+            ->join('dept_mstr','dept_code','=','dept_user')
+            ->whereAccess('Engineer')
+            ->orderBy('eng_desc');
+
+        if ($sdept) {
+            $dataeng = $dataeng->where('eng_dept','=',$sdept);
+        }
+
+        $dataeng = $dataeng->get();
+
+        $datadept = DB::table('dept_mstr')
+            ->whereIn('dept_code', function($query) {
+                $query->select('dept_user')
+                        ->from('users')
+                        ->whereAccess('Engineer');
+            })
+            ->orderBy('dept_code')
+            ->get();
+
         $datawo = DB::table('wo_mstr')
                 ->join('asset_mstr','asset_code','=','wo_asset')
                 ->whereNotIn('wo_status', ['closed','finish','delete'])
@@ -833,7 +849,8 @@ class UserChartController extends Controller
             array_push($arraynewdate, [$dt->format("Y-m")]);
         }
 
-        return view('report.engrpt',compact('dataeng','datawo','arraynewdate'));
+        return view('report.engrpt',compact('dataeng','datawo','arraynewdate','datadept',
+        'sdept'));
     }
 
     public function engrptview(Request $req)
@@ -888,16 +905,80 @@ class UserChartController extends Controller
 
     public function assetrpt(Request $req)
     {
-       
+        $stype = $req->s_type;
+        $sasset = $req->s_asset;
+        $seng = $req->s_eng;
+        $sloc = $req->s_loc;
+
         $dataAsset = DB::table('asset_mstr')
-                    ->orderBy('asset_code')
-                    ->get();
+            ->leftJoin('asset_loc','asloc_code','=','asset_loc')
+            ->orderBy('asset_code');
+
+        if ($sasset) {
+            $dataAsset->where('asset_code', '=', $sasset);
+        }
+        if ($sloc) {
+            $dataAsset->where('asset_loc', '=', $sloc);
+        }
+        if($seng) {
+            $a = $seng;
+            $dataAsset = $dataAsset->whereIn('asset_code', function($query) use ($a)
+            {
+                $query->select('wo_asset')
+                        ->from('wo_mstr')
+                        ->where('wo_engineer1','=',$a)
+                        ->orWhere('wo_engineer2','=',$a)
+                        ->orWhere('wo_engineer3','=',$a)
+                        ->orWhere('wo_engineer4','=',$a)
+                        ->orWhere('wo_engineer5','=',$a);
+            });
+        }
+        if ($stype == "WO") {
+            $a = $stype;
+            $dataAsset = $dataAsset->whereIn('asset_code', function($query)
+            {
+                $query->select('wo_asset')
+                        ->from('wo_mstr')
+                        ->where('wo_type','<>','auto');
+            });
+        }
+        if ($stype == "PM") {
+            $a = $stype;
+            $dataAsset = $dataAsset->whereIn('asset_code', function($query)
+            {
+                $query->select('wo_asset')
+                        ->from('wo_mstr')
+                        ->where('wo_type','=','auto');
+            });
+        }
+
+        if ($stype == "" && $sasset == "" && $sloc == "" && $seng == "") {
+            $dataAsset = $dataAsset->where('asset_mstr.id','=',0);
+        }
+
+        $dataAsset = $dataAsset->get();
 
         $datawo = DB::table('wo_mstr')
                 ->join('asset_mstr','asset_code','=','wo_asset')
                 ->whereNotIn('wo_status', ['closed','finish','delete'])
                 ->orderBy('wo_schedule')
                 ->get();
+        
+        $dataeng = DB::table('users')
+                ->join('eng_mstr','eng_code','=','username')
+                ->whereAccess('Engineer')
+                ->orderBy('eng_desc')
+                ->get();
+
+        $dataloc = DB::table('asset_loc')
+            ->orderBy('asloc_code')
+            ->get();
+
+        $dataAsset2 = DB::table('asset_mstr')
+            ->orderBy('asset_code')
+            ->get();
+
+        
 
         $thn = Carbon::now('ASIA/JAKARTA')->addMonth(-11)->toDateTimeString();
         $tgl = Carbon::now('ASIA/JAKARTA')->toDateTimeString();
@@ -909,7 +990,8 @@ class UserChartController extends Controller
             array_push($arraynewdate, [$dt->format("Y-m")]);
         }
 
-        return view('report.assetrpt',compact('dataAsset','datawo','arraynewdate'));
+        return view('report.assetrpt',compact('dataAsset','datawo','arraynewdate','dataeng','dataloc',
+            'stype','sasset','sloc','seng','dataAsset2'));
     }
 
     public function assetrptview(Request $req)
@@ -1140,7 +1222,7 @@ class UserChartController extends Controller
             $table->date('temp_sch_date');
             $table->string('temp_status');
             $table->string('temp_sp');
-            $table->string('temp_sp_desc');
+            $table->string('temp_sp_desc')->nullable();
             $table->decimal('temp_qty_req',10,2)->nullable();
             $table->decimal('temp_qty_whs',10,2)->nullable();
             $table->decimal('temp_qty_need',10,2)->nullable();
@@ -1350,7 +1432,7 @@ class UserChartController extends Controller
                         $table->date('temp_sch_date');
                         $table->string('temp_status');
                         $table->string('temp_sp');
-                        $table->string('temp_sp_desc');
+                        $table->string('temp_sp_desc')->nullable();
                         $table->decimal('temp_qty_req',10,2)->nullable();
                         $table->decimal('temp_qty_whs',10,2)->nullable();
                         $table->decimal('temp_qty_need',10,2)->nullable();
@@ -1559,7 +1641,7 @@ class UserChartController extends Controller
                                             <qcom:ttContext>
                                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                                             <qcom:propertyName>scopeTransaction</qcom:propertyName>
-                                            <qcom:propertyValue>false</qcom:propertyValue>
+                                            <qcom:propertyValue>true</qcom:propertyValue>
                                             </qcom:ttContext>
                                             <qcom:ttContext>
                                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -1688,10 +1770,24 @@ class UserChartController extends Controller
                                 return redirect()->back();
                             }
                             $xmlResp = simplexml_load_string($qdocResponse);
+                            $xmlResp->registerXPathNamespace('soapenv', 'urn:schemas-qad-com:xml-services:common');
+                            $qdocFault = '';
+                            $qdocFault = $xmlResp->xpath('//soapenv:faultstring');
+                            // dd($qdocFault);
+
+                            if(!empty($qdocFault)){
+                                DB::rollBack();
+
+                                $qdocFault = (string) $xmlResp->xpath('//soapenv:faultstring')[0];
+
+                                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$qdocFault."",'error')->persistent('Dismiss');
+                                return redirect()->back();
+                            }
+
                             $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
                             $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
 
-
+                            
 
                             if ($qdocResult == "success" or $qdocResult == "warning") {
                                 DB::commit();
@@ -1699,7 +1795,27 @@ class UserChartController extends Controller
                                 return redirect()->back();
                             } else {
                                 DB::rollBack();
-                                toast('Delete SO EAMS Error', 'error');
+                                $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
+                                $outputerror = '';
+                                foreach ($xmlResp->xpath('//ns3:temp_err_msg') as $temp_err_msg) {
+                                    $context = $temp_err_msg->xpath('./ns3:tt_msg_context')[0];
+                                    $desc = $temp_err_msg->xpath('./ns3:tt_msg_desc')[0];
+                                    $outputerror .= "&bull;  ".$context . " - " . $desc . "<br>";
+                                }
+
+                                // dd('stop');
+                                // $qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
+                                // $output = '';
+
+                                // foreach($qdocMsgDesc as $datas){
+                                // 	if(str_contains($datas, 'ERROR:')){
+                                // 		$output .= $datas. ' <br> ';
+                                // 	}
+                                // }
+
+                                // $output = substr($output, 0, -6);
+
+                                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$outputerror."",'error')->persistent('Dismiss');
                                 return redirect()->back();
                             }
                         } else {
@@ -1853,10 +1969,22 @@ class UserChartController extends Controller
                                 return redirect()->back();
                             }
                             $xmlResp = simplexml_load_string($qdocResponse);
+                            $xmlResp->registerXPathNamespace('soapenv', 'urn:schemas-qad-com:xml-services:common');
+                            $qdocFault = '';
+                            $qdocFault = $xmlResp->xpath('//soapenv:faultstring');
+                            // dd($qdocFault);
+
+                            if(!empty($qdocFault)){
+                                DB::rollBack();
+
+                                $qdocFault = (string) $xmlResp->xpath('//soapenv:faultstring')[0];
+
+                                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$qdocFault."",'error')->persistent('Dismiss');
+                                return redirect()->back();
+                            }
+
                             $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
                             $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
-
-
 
                             if ($qdocResult == "success" or $qdocResult == "warning") {
                                 // DB::commit();
@@ -1864,7 +1992,27 @@ class UserChartController extends Controller
                                 // return redirect()->back();
                             } else {
                                 DB::rollBack();
-                                toast('Delete SO EAMS Error', 'error');
+                                $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
+                                $outputerror = '';
+                                foreach ($xmlResp->xpath('//ns3:temp_err_msg') as $temp_err_msg) {
+                                    $context = $temp_err_msg->xpath('./ns3:tt_msg_context')[0];
+                                    $desc = $temp_err_msg->xpath('./ns3:tt_msg_desc')[0];
+                                    $outputerror .= "&bull;  ".$context . " - " . $desc . "<br>";
+                                }
+
+                                // dd('stop');
+                                // $qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
+                                // $output = '';
+
+                                // foreach($qdocMsgDesc as $datas){
+                                // 	if(str_contains($datas, 'ERROR:')){
+                                // 		$output .= $datas. ' <br> ';
+                                // 	}
+                                // }
+
+                                // $output = substr($output, 0, -6);
+
+                                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$outputerror."",'error')->persistent('Dismiss');
                                 return redirect()->back();
                             }
 
@@ -1895,12 +2043,12 @@ class UserChartController extends Controller
                                             <qcom:ttContext>
                                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                                             <qcom:propertyName>scopeTransaction</qcom:propertyName>
-                                            <qcom:propertyValue>false</qcom:propertyValue>
+                                            <qcom:propertyValue>true</qcom:propertyValue>
                                             </qcom:ttContext>
                                             <qcom:ttContext>
                                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                                             <qcom:propertyName>version</qcom:propertyName>
-                                            <qcom:propertyValue>ERP3_3</qcom:propertyValue>
+                                            <qcom:propertyValue>ERP3_2</qcom:propertyValue>
                                             </qcom:ttContext>
                                             <qcom:ttContext>
                                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -2023,6 +2171,20 @@ class UserChartController extends Controller
                                 return redirect()->back();
                             }
                             $xmlResp = simplexml_load_string($qdocResponse);
+                            $xmlResp->registerXPathNamespace('soapenv', 'urn:schemas-qad-com:xml-services:common');
+                            $qdocFault = '';
+                            $qdocFault = $xmlResp->xpath('//soapenv:faultstring');
+                            // dd($qdocFault);
+
+                            if(!empty($qdocFault)){
+                                DB::rollBack();
+
+                                $qdocFault = (string) $xmlResp->xpath('//soapenv:faultstring')[0];
+
+                                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$qdocFault."",'error')->persistent('Dismiss');
+                                return redirect()->back();
+                            }
+
                             $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
                             $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
 
@@ -2034,7 +2196,27 @@ class UserChartController extends Controller
                                 // return redirect()->back();
                             } else {
                                 DB::rollBack();
-                                toast('Delete SO EAMS Error', 'error');
+                                $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
+                                $outputerror = '';
+                                foreach ($xmlResp->xpath('//ns3:temp_err_msg') as $temp_err_msg) {
+                                    $context = $temp_err_msg->xpath('./ns3:tt_msg_context')[0];
+                                    $desc = $temp_err_msg->xpath('./ns3:tt_msg_desc')[0];
+                                    $outputerror .= "&bull;  ".$context . " - " . $desc . "<br>";
+                                }
+
+                                // dd('stop');
+                                // $qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
+                                // $output = '';
+
+                                // foreach($qdocMsgDesc as $datas){
+                                // 	if(str_contains($datas, 'ERROR:')){
+                                // 		$output .= $datas. ' <br> ';
+                                // 	}
+                                // }
+
+                                // $output = substr($output, 0, -6);
+
+                                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$outputerror."",'error')->persistent('Dismiss');
                                 return redirect()->back();
                             }
 

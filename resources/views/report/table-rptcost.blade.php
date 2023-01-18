@@ -2,7 +2,7 @@
 <tr>
     <td>{{$show->asset_code}}</td>
     <td>{{$show->asset_desc}}</td>
-    <td>{{$show->asset_loc}}</td>
+    <td>{{$show->asloc_desc}}</td>
     @foreach (range(1,12) as $count)
         <td style="text-align:center">
             <!-- mencari bulan jadwal Preventive -->
@@ -12,7 +12,10 @@
                 @php($tahun = $pa->temp_thn)
                 @php($bulantampil = $bln == $count ? $pa->temp_cost : '')
                 @if ($tahun == $bulan)
-                    <span class="badge badge-primary">{{ $bulantampil }}</span>
+                <a href="" class="editarea2" id='editdata' data-toggle="modal" data-target="#editModal"
+                data-code="{{$show->asset_code}}" data-desc="{{$show->asset_desc}}" data-locdesc="{{$show->asloc_desc}}">
+                <span class="badge badge-primary">{{ $bulantampil }}</span>
+                </a>
                 @endif
             @endforeach
         </td>

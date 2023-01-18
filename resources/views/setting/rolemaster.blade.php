@@ -57,37 +57,34 @@
 
 <!--FORM Search Disini -->
 <div class="container-fluid mb-2">
-  <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-    <li class="nav-item has-treeview bg-black">
-      <a href="#" class="nav-link mb-0 p-0"> 
-      <p>
-        <label class="col-md-2 col-form-label text-md-left" style="color:white;">{{ __('Click here to search') }}</label>
-        <i class="right fas fa-angle-left"></i>
-      </p>
-      </a>
-      <ul class="nav nav-treeview">
-        <li class="nav-item">
-          <div class="col-12 form-group row">
-            <label for="s_rolecode" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('Role Code') }}</label>
-            <div class="col-md-4 mb-2 input-group">
-              <input id="s_rolecode" type="text" class="form-control" name="s_rolecode" value="" autofocus autocomplete="off">
-            </div>
-            <label for="s_roledesc" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Role Description') }}</label>
-            <div class="col-md-4 mb-2 input-group">
-              <input id="s_roledesc" type="text" class="form-control" name="s_roledesc" value="" autofocus autocomplete="off" min="0">
-            </div>
-            <label for="s_roledesc" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('') }}</label>
-            <div class="col-md-2 mb-2 input-group">
-              <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" />
-            </div>
-            <div class="col-md-2 col-sm-12 mb-2 input-group">
-              <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </li>
-  </ul>
+  <div class="row">
+    <div class="col-md-12">
+      <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
+    </div>  
+  </div>
+  <!-- Element div yang akan collapse atau expand -->
+  <div class="collapse" id="collapseExample">
+      <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+      <div class="card card-body bg-black rounded-0">
+        <div class="col-12 form-group row">
+              <label for="s_rolecode" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('Role Code') }}</label>
+              <div class="col-md-4 mb-2 input-group">
+                <input id="s_rolecode" type="text" class="form-control" name="s_rolecode" value="" autofocus autocomplete="off">
+              </div>
+              <label for="s_roledesc" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Role Description') }}</label>
+              <div class="col-md-4 mb-2 input-group">
+                <input id="s_roledesc" type="text" class="form-control" name="s_roledesc" value="" autofocus autocomplete="off" min="0">
+              </div>
+              <label for="s_roledesc" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('') }}</label>
+              <div class="col-md-2 mb-2 input-group">
+                <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" />
+              </div>
+              <div class="col-md-2 col-sm-12 mb-2 input-group">
+                <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
+              </div>
+        </div>
+      </div>
+  </div>
 </div>
 
 <div class="col-md-12">
