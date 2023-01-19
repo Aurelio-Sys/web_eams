@@ -248,7 +248,7 @@ class WORelease extends Controller
                 ->get();
 
             
-            dd($combineSP);
+            // dd($combineSP);
 
             $rc = DB::table('wo_mstr')
                 ->select('repm_code', 'repm_desc')

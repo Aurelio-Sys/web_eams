@@ -69,6 +69,7 @@
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_schedule" width="8%">Schedule Date<span id="name_icon"></span></th>
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="8%">Due Date<span id="username_icon"></span></th>
                 <th width="6%">Priority</th>
+                <th width="10%">Confirm Status</th>
                 <th width="8%">Action</th>
             </tr>
         </thead>

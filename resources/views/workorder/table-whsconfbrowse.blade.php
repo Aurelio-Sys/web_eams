@@ -5,6 +5,13 @@
     <td>{{ $datas->wo_schedule }}</td>
     <td>{{ $datas->wo_duedate }}</td>
     <td>{{ $datas->wo_priority }}</td>
+    <td>
+        @if ($data2->where('wo_nbr', $datas->wo_nbr)->where('wo_dets_wh_qx','yes')->count() > 0)
+            Partial
+        @else
+            Not Yet
+        @endif
+    </td>
     <td style="text-align: center;">
         <a class="btn btn-info" href="{{route('WhsconfDetail', $datas->wo_id)}}"><i class="fa fa-check-circle"></i> Confirm</a>
     </td>

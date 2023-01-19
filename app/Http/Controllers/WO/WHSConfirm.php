@@ -62,7 +62,12 @@ class WHSConfirm extends Controller
 
         $data = $data->paginate(10);
 
-        return view('workorder.whsconfirm-browse', ['asset1' => $asset1, 'data' => $data]);
+        $data2 = DB::table('wo_mstr')
+                        ->join('wo_dets','wo_dets.wo_dets_nbr','wo_mstr.wo_nbr')
+                        ->where('wo_status','=','Released')
+                        ->get();
+
+        return view('workorder.whsconfirm-browse', ['asset1' => $asset1, 'data' => $data, 'data2' => $data2]);
     }
 
     public function detailwhs($id)
@@ -506,9 +511,6 @@ class WHSConfirm extends Controller
                     /* jika qxtend response error */
                 }
             } /* endif($qx->count()) */ 
-            else { /* else($qx->count()) */ 
-                
-            } /* endelse($qx->count()) */ 
             
             DB::table('wo_dets')
                 ->where('wo_dets_nbr',$req->hide_wonum)
@@ -520,7 +522,20 @@ class WHSConfirm extends Controller
 
             DB::commit();
 
-            toast('Confirm Successfuly !', 'success');
+            $cekpartial = DB::table('wo_dets')
+                        ->where('wo_dets_nbr', $req->hide_wonum)
+                        ->where('wo_dets_wh_qx', 'no')
+                        ->get();
+
+            /* jika masih ada yang no berarti pop up message partial/ jika sudah diconfirm semua berarti pop up message complete */
+            $thisstatus = "";
+            if($cekpartial->count() > 0){
+                $thisstatus = "Partial";
+            }else{
+                $thisstatus = "Complete";
+            }
+
+            toast('Confirm '.$thisstatus.' Successfuly !', 'success');
             return redirect()->route('browseWhconfirm');
             
         } catch (Exception $e) {

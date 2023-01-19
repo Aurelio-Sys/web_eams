@@ -357,12 +357,18 @@
             <div class="form-group row col-md-12">
                 <label for="failurecode" class="col-md-4 col-form-label my-auto">Failure Code</label>
                 <div class="col-md-5 col-sm-12">
+                    
                     <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple">
-                    <option></option>
-                    @foreach($fc as $fcshow)
-                    <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}} -- {{$fcshow->fn_impact}}</option>
-                    @endforeach
+                        <option></option>
+                        @foreach($fc as $fcshow)
+                        <option value="{{$fcshow->fn_code}}"
+                        @if(old('failurecode') ? in_array($fcshow->fn_code, old('failurecode')) : in_array($fcshow->fn_code, [$data->first()->wofc1, $data->first()->wofc2, $data->first()->wofc3]))
+                        selected
+                        @endif
+                        >{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}} -- {{$fcshow->fn_impact}}</option>
+                        @endforeach
                     </select>
+
                 </div>
             </div>
 
