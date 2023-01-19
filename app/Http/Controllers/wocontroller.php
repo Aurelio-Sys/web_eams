@@ -2051,6 +2051,8 @@ class wocontroller extends Controller
             ->leftjoin('xxrepgroup_mstr', 'xxrepgroup_mstr.xxrepgroup_nbr', 'wo_mstr.wo_repair_group')
             ->where('wo_mstr.wo_nbr', '=', $nowo)
             ->get();
+        
+        // dd($data);
 
         $data_alldets = DB::table('wo_dets')
             ->select('wo_dets_nbr', 'wo_dets_rc', 'repm_desc')
@@ -2552,28 +2554,30 @@ class wocontroller extends Controller
 
     public function reportingwo(Request $req)
     {
-        // dd($req->all());
+        DB::beginTransaction();
 
-        $dataaccess = DB::table('wo_mstr')
-            ->where('wo_nbr', '=', $req->c_wonbr)
-            ->first();
-        if ($dataaccess->wo_access == 0) {
-            DB::table('wo_mstr')
+        try {
+
+            $dataaccess = DB::table('wo_mstr')
                 ->where('wo_nbr', '=', $req->c_wonbr)
-                ->update([
-                    'wo_access' => 1,
-                    'wo_access_user' => session::get('username')
-                ]);
-        } else {
-            if ($dataaccess->wo_access_user != session::get('username')) {
-                toast('WO ' . $req->c_wonbr . ' is being used right now', 'error');
+                ->first();
+            if ($dataaccess->wo_access == 0) {
+                DB::table('wo_mstr')
+                    ->where('wo_nbr', '=', $req->c_wonbr)
+                    ->update([
+                        'wo_access' => 1,
+                        'wo_access_user' => session::get('username')
+                    ]);
+            } else {
+                if ($dataaccess->wo_access_user != session::get('username')) {
+                    toast('WO ' . $req->c_wonbr . ' is being used right now', 'error');
+                    return redirect()->route('woreport');
+                }
+            }
+            if ($dataaccess->wo_status == 'finish') {
+                toast('WO ' . $req->c_wonbr . ' status has changed, please refresh page', 'error');
                 return redirect()->route('woreport');
             }
-        }
-        if ($dataaccess->wo_status == 'finish') {
-            toast('WO ' . $req->c_wonbr . ' status has changed, please refresh page', 'error');
-            return redirect()->route('woreport');
-        }
         // if($req->repairpartnow == 'auto'){
         //     // dd($req->all());
         //     $finisht = $req->c_finishtime.':'.$req->c_finishtimeminute;
@@ -2654,9 +2658,7 @@ class wocontroller extends Controller
         // }
         // else{
         //     dd('aaa');
-        DB::beginTransaction();
-
-        try {
+        
 
             // if ($req->repairtype == 'manual') {
             //     // dd($req->all());
@@ -3876,6 +3878,9 @@ class wocontroller extends Controller
             $arrayy = [
                 'wo_updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                 'wo_status'        => 'finish',
+                'wo_failure_code1' => isset($req->failurecode[0]) ? $req->failurecode[0] : null,
+                'wo_failure_code2' => isset($req->failurecode[1]) ? $req->failurecode[1] : null,
+                'wo_failure_code3' => isset($req->failurecode[2]) ? $req->failurecode[2] : null,
                 'wo_finish_date'   => $req->c_finishdate,
                 'wo_finish_time'   => $req->c_finishtime,
                 'wo_approval_note' => $req->c_note,
