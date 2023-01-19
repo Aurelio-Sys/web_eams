@@ -26,10 +26,11 @@
                 <div class="row col-md-12">
                     <div class="col-md-10">
                         <div class="row col-md-12">
+                          <div class="col-md-6">
                             <div class="col-md-2">
                                 <label for="t_asset" class="col-form-label text-md-left">Engineer</label>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-8">
                                 <select id="engcode" class="form-control" name="engcode">
                                     <option value="">--Select Data--</option>
                                    @foreach($dataeng as $da)
@@ -37,6 +38,18 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="col-md-2">
+                                <label for="s_dept" class="col-form-label text-md-left">Departement</label>
+                            </div>
+                            <div class="col-md-8">
+                                <select id="s_dept" class="form-control" name="s_dept">
+                                    <option value="">--Select Data--</option>
+                                  @foreach($datadept as $dd)
+                                      <option value="{{$dd->dept_code}}">{{$dd->dept_code}} -- {{$dd->dept_desc}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                          </div>
                             <div class="col-md-1">
                                 <label for="t_type" class="col-form-label text-md-right">Type</label>    
                             </div>
@@ -207,7 +220,7 @@
           <!-- <div class="form-group row">
             <label for="v_failure" class="col-md-3 col-form-label text-md-left">Failure Code</label>
             <div class="col-md-8">
-              <textarea id="v_failure" class="form-control v_failure readonly></textarea>
+              <textarea id="v_failure" class="form-control v_failure" readonly></textarea>
             </div>
           </div> -->
           <div class="form-group row">
@@ -297,6 +310,11 @@
         theme : 'bootstrap4',
         
     });
+    $("#s_dept").select2({
+      width : '100%',
+      theme : 'bootstrap4',
+      
+  });
 
 </script>
 @endsection

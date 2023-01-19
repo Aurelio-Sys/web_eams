@@ -1,6 +1,10 @@
 @forelse($data as $show)
 <tr>
     <td>{{$show->temp_wo}}</td>
+    <td>{{$show->temp_asset}}</td>
+    @php($qdesc = $dataasset->where('asset_code','=',$show->temp_asset)->first())
+    <td>{{ $qdesc->asset_desc }}</td>
+    <td>{{$show->temp_create_date}}</td>
     <td>{{$show->temp_sch_date}}</td>
     <td>{{$show->temp_status}}</td>
     <td>{{$show->temp_sp}}</td>

@@ -71,7 +71,7 @@
           </div>
         </div>
     </div>
-  </form>
+</form>
 
 <!-- Bagian Searching -->
 <div class="col-md-12"><hr></div>

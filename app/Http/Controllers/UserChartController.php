@@ -351,6 +351,7 @@ class UserChartController extends Controller
         
         $engcode = $req->input('engcode');
         $wotype  = $req->input('wotype');
+        $sdept  = $req->input('s_dept');
        
         $skrg = Carbon::createFromDate($tgl)->lastOfMonth()->day;
         $hari = Carbon::createFromDate($tgl)->startOfMonth()->isoFormat('dddd');
@@ -403,7 +404,7 @@ class UserChartController extends Controller
             $wotype = "All";
         }
 
-        if (!isset($engcode)){
+        if (!isset($engcode) && !isset($sdept)){
             $datawo = DB::table('wo_mstr')
                 ->select('wo_nbr','wo_status','wo_schedule','wo_engineer1', 'wo_engineer2', 'wo_engineer3', 'wo_engineer4',
                     'wo_engineer5','wo_asset','asset_desc','wo_sr_nbr','wo_duedate','wo_failure_code1','wo_failure_code2',
@@ -434,29 +435,41 @@ class UserChartController extends Controller
                 ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_schedule) else day(wo_finish_date) end) as tgl")
                 ->join('asset_mstr','asset_code','=','wo_asset')
                 ->whereRaw($kondisi)
-                ->where(function ($query) use ($engcode) {
-                    $query->where('wo_engineer1', '=', $engcode)
-                          ->orWhere('wo_engineer2', '=', $engcode)
-                          ->orWhere('wo_engineer3', '=', $engcode)
-                          ->orWhere('wo_engineer4', '=', $engcode)
-                          ->orWhere('wo_engineer5', '=', $engcode);
-                })
                 ->where(function ($query) use ($tgl) {
                     $query->where('wo_schedule','like',date("Y-m",strtotime($tgl)).'%')
                         ->orwhere('wo_finish_date','like',date("Y-m",strtotime($tgl)).'%');
                 })
                 // ->whereIn('wo_status',['open','plan','started'])
                 ->orderBy('tgl')
-                ->orderBy('wo_nbr')
-                ->get();
+                ->orderBy('wo_nbr');
+            
+            if(isset($engcode)) {
+                $datawo = $datawo->where(function ($query) use ($engcode) {
+                    $query->where('wo_engineer1', '=', $engcode)
+                          ->orWhere('wo_engineer2', '=', $engcode)
+                          ->orWhere('wo_engineer3', '=', $engcode)
+                          ->orWhere('wo_engineer4', '=', $engcode)
+                          ->orWhere('wo_engineer5', '=', $engcode);
+                });
+            }
+            if(isset($sdept)) {
+                $datawo = $datawo->where('eng_dept','=',$sdept);
+            }
+
+            $datawo = $datawo->get();
           
            $fotoeng = $dataeng->where('eng_code','=',$engcode)->first();
         }
-        //dd(count($datawo));
+        // dd(count($datawo));
         $datafn = DB::table('fn_mstr')
                 ->get();
 
-        return view('report.engsch',compact('skrg','hari','kosong','bulan','datawo','dataeng','fotoeng','engcode','datafn','wotype'));
+        $datadept = DB::table('dept_mstr')
+            ->orderBy('dept_code')
+            ->get();
+
+        return view('report.engsch',compact('skrg','hari','kosong','bulan','datawo','dataeng','fotoeng','engcode','datafn','wotype',
+            'datadept'));
     }
     
     public function allrpt(Request $req)
@@ -1235,13 +1248,22 @@ class UserChartController extends Controller
     /* Kebutuhan sparepart */
     public function needsp(Request $req)
     {   
+        $swo = $req->s_nomorwo;
+        $sasset = $req->s_asset;
+        $sper1 = $req->s_per1;
+        $sper2 = $req->s_per2;
+        $ssp = $req->s_sp;
+        $seng = $req->s_eng;
+        
         /* Temp table untuk menampun data spare part dari Wo detail, Wo yang belum ada detailnya, Wo yang belum terbentuk */
         Schema::create('temp_wo', function ($table) {
             $table->increments('id');
             $table->string('temp_wo');
+            $table->string('temp_asset');
             $table->date('temp_sch_date');
+            $table->date('temp_create_date');
             $table->string('temp_status');
-            $table->string('temp_sp');
+            $table->string('temp_sp')->nullable();
             $table->string('temp_sp_desc')->nullable();
             $table->decimal('temp_qty_req',10,2)->nullable();
             $table->decimal('temp_qty_whs',10,2)->nullable();
@@ -1260,6 +1282,8 @@ class UserChartController extends Controller
         foreach($data as $da){
             DB::table('temp_wo')->insert([
                 'temp_wo' => $da->wo_nbr,
+                'temp_asset' => $da->wo_asset,
+                'temp_create_date' => $da->wo_created_at,
                 'temp_sch_date' => $da->wo_schedule,
                 'temp_status' => $da->wo_status,
                 'temp_sp' => $da->wo_dets_sp,
@@ -1282,7 +1306,7 @@ class UserChartController extends Controller
 
                 $sparepart1 = DB::table('wo_mstr')
                     ->select('wo_nbr','wo_repair_code1 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
-                    'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
+                    'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule','wo_asset','wo_created_at')
                     ->leftJoin('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
                     ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                     ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -1308,7 +1332,7 @@ class UserChartController extends Controller
                 // dump('repaircode2');
                 $sparepart2 = DB::table('wo_mstr')
                     ->select('wo_nbr','wo_repair_code2 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
-                    'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
+                    'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule','wo_asset','wo_created_at')
                     ->leftJoin('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
                     ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                     ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -1335,7 +1359,7 @@ class UserChartController extends Controller
                 // dump('repaircode3');
                 $sparepart3 = DB::table('wo_mstr')
                     ->select('wo_nbr','wo_repair_code3 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
-                    'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
+                    'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule','wo_asset','wo_created_at')
                     ->leftJoin('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
                     ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                     ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -1364,7 +1388,7 @@ class UserChartController extends Controller
                 // dd('aa');
                 $combineSP = DB::table('xxrepgroup_mstr')
                     ->select('wo_nbr','repm_code as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 
-                    'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
+                    'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule','wo_asset','wo_created_at')
                     ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
                     ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                     ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -1390,6 +1414,8 @@ class UserChartController extends Controller
         foreach($combineSP as $dc){
             DB::table('temp_wo')->insert([
                 'temp_wo' => $dc->wo_nbr,
+                'temp_asset' => $da->wo_asset,
+                'temp_create_date' => $da->wo_created_at,
                 'temp_sch_date' => $dc->wo_schedule,
                 'temp_status' => $dc->wo_status,
                 'temp_sp' => $dc->insd_part,
@@ -1402,12 +1428,23 @@ class UserChartController extends Controller
 
         $datatemp = DB::table('temp_wo')
             ->whereNotIn('temp_status',['closed','delete'])
-            // ->where('temp_wo','=','WO-22-0098')
             ->orderBy('temp_sch_date')
-            ->orderBy('temp_wo')
-            ->paginate(10);
-            // ->get();
-        // dd($datatemp);   
+            ->orderBy('temp_wo');
+
+        if($swo) {
+            $datatemp = $datatemp->where('temp_wo','like','%'.$swo.'%');
+        }
+        if($sasset) {
+            $datatemp = $datatemp->where('temp_asset','=',$sasset);
+        }
+        if($sper1) {
+            $datatemp = $datatemp->whereBetween('temp_create_date',[$sper1,$sper2]);
+        }
+        if($ssp) {
+            $datatemp = $datatemp->where('temp_sp',$ssp);
+        }
+            
+        $datatemp = $datatemp->paginate(10);   
 
         Schema::dropIfExists('temp_wo');
 
@@ -1420,7 +1457,13 @@ class UserChartController extends Controller
                         ->where('site_flag','=','yes')
                         ->get();
 
-        return view('report.needsp', ['data' => $datatemp, 'dataasset' => $dataasset, 'datasite' => $datasite]);
+        $datasp = DB::table('sp_mstr')
+            ->orderBy('spm_code')
+            ->get();
+
+        return view('report.needsp', ['data' => $datatemp, 'dataasset' => $dataasset, 'datasite' => $datasite,
+            'datasp' => $datasp, 'swo' => $swo, 'sasset' => $sasset, 'sper1' => $sper1,
+            'sper2' => $sper2, 'ssp' => $ssp]);
     }
     
     public function generateso(Request $req)
@@ -1451,7 +1494,7 @@ class UserChartController extends Controller
                         $table->string('temp_wo');
                         $table->date('temp_sch_date');
                         $table->string('temp_status');
-                        $table->string('temp_sp');
+                        $table->string('temp_sp')->nullable();
                         $table->string('temp_sp_desc')->nullable();
                         $table->decimal('temp_qty_req',10,2)->nullable();
                         $table->decimal('temp_qty_whs',10,2)->nullable();
