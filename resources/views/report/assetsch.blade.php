@@ -33,23 +33,31 @@
                         <div class="row col-md-12">
                             <div class="col-md-2">
                                 <label for="t_asset" class="col-form-label text-md-right">Asset Code</label>
-
+                                <br><br>
+                                <label for="t_asset" class="col-form-label text-md-right">Location</label>
                             </div>
                             <div class="col-md-6">
-                                <select id="t_asset" class="form-control" name="t_asset" required>
+                                <select id="t_asset" class="form-control" name="t_asset">
                                     <option value="">--Select Data--</option>
                                    @foreach($dataAsset as $da)
                                       <option value="{{$da->asset_code}}" {{$dtasset === $da->asset_code ? "selected" : ""}}>{{$da->asset_code}} -- {{$da->asset_desc}}</option>
                                     @endforeach
                                 </select>
+                                <br>
+                                <select id="t_loc" class="form-control" name="t_loc">
+                                  <option value="">--Select Data--</option>
+                                 @foreach($dataloc as $dl)
+                                    <option value="{{$dl->asloc_code}}" {{$sloc === $dl->asloc_code ? "selected" : ""}}>{{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
+                                  @endforeach
+                              </select>
                                 <!-- Label kosong untuk spasi -->
                                 <label class="col-md-12>"></label>
                                 <div>
                                 <h1 class="m-0 text-dark text-center">
-                                    <a href="/assetsch?bulan={{$bulan}}&stat=mundur&t_asset={{$dtasset}}" ><i class="fas fa-angle-left"></i></a>
+                                    <a href="/assetsch?bulan={{$bulan}}&stat=mundur&t_asset={{$dtasset}}&t_loc={{$sloc}}" ><i class="fas fa-angle-left"></i></a>
                                     &ensp;&ensp;{{$bulan}}&ensp;&ensp;
                                     <input type='hidden' name='bulan' id='bulan' value='{{$bulan}}'>
-                                    <a href="/assetsch?bulan={{$bulan}}&stat=maju&t_asset={{$dtasset}}" ><i class="fas fa-angle-right"></i></a>
+                                    <a href="/assetsch?bulan={{$bulan}}&stat=maju&t_asset={{$dtasset}}&t_loc={{$sloc}}" ><i class="fas fa-angle-right"></i></a>
                                 </h1>
                             </div>
                             </div>
@@ -286,9 +294,12 @@
 
     $("#t_asset").select2({
         width : '100%',
-        theme : 'bootstrap4',
-        
+        theme : 'bootstrap4',   
     });
+    $("#t_loc").select2({
+      width : '100%',
+      theme : 'bootstrap4',   
+  });
 
 </script>
 @endsection

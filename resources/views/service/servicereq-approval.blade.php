@@ -203,10 +203,11 @@
           <div class="form-group row">
             <label for="wotype" class="col-md-5 col-form-label text-md-right">Failure Type</label>
             <div class="col-md-6">
-              <select class="form-control" id="wotype" name="wotype">
-                <option></option>
-                @foreach($wotype as $wotypeshow)
-                <option value="{{$wotypeshow->wotyp_code}}">{{$wotypeshow->wotyp_code}} -- {{$wotypeshow->wotyp_desc}}</option>
+              <!-- <input id="wotype" type="text" class="form-control" name="wotype" autocomplete="off" /> -->
+              <select class="form-control wotype" name="wotype" id="wotype">
+                <option value="">Select Failure Type</option>
+                @foreach($wotypes as $wotype)
+                <option value="{{$wotype->wotyp_code}}">{{$wotype->wotyp_code}} - {{$wotype->wotyp_desc}}</option>
                 @endforeach
               </select>
             </div>
@@ -214,10 +215,11 @@
           <div class="form-group row">
             <label for="fclist" class="col-md-5 col-form-label text-md-right">Failure Code</label>
             <div class="col-md-6">
-              <select class="form-control" id="fclist" name="fclist[]" multiple="multiple">
-                <option></option>
-                @foreach($fc as $fcshow)
-                <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}} -- {{$fcshow->fn_impact}}</option>
+              <!-- <textarea id="fclist" type="text" class="form-control" name="fclist" rows="3"></textarea> -->
+              <select class="form-control fclist" name="fclist[]" id="fclist" multiple="multiple">
+                <option value=""></option>
+                @foreach($fcodes as $fcode)
+                <option value="{{$fcode->fn_code}}">{{$fcode->fn_code}} - {{$fcode->fn_desc}}</option>
                 @endforeach
               </select>
             </div>
@@ -225,9 +227,11 @@
           <div class="form-group row">
             <label for="impact" class="col-md-5 col-form-label text-md-right">Impact</label>
             <div class="col-md-6">
-              <select id="impact" class="form-control impact" name="impact[]" multiple="multiple">
-                @foreach($impact as $impactshow)
-                <option value="{{$impactshow->imp_code}}">{{$impactshow->imp_code}} -- {{$impactshow->imp_desc}}</option>
+              <!-- <textarea id="impact" type="text" class="form-control" name="impact" autocomplete="off" rows="3"></textarea> -->
+              <select class="form-control impact" name="impact[]" id="impact" multiple="multiple">
+                <option value=""></option>
+                @foreach($impacts as $impact)
+                <option value="{{$impact->imp_code}}">{{$impact->imp_code}} - {{$impact->imp_desc}}</option>
                 @endforeach
               </select>
             </div>
@@ -235,7 +239,12 @@
           <div class="form-group row">
             <label for="priority" class="col-md-5 col-form-label text-md-right">Priority</label>
             <div class="col-md-6">
-              <input id="priority" type="text" name="priority" class="form-control">
+              <!-- <input id="priority" type="text" name="priority" class="form-control"> -->
+              <select class="form-control priority" name="priority" id="priority">
+                <option value='low'>Low</option>
+                <option value='medium'>Medium</option>
+                <option value='high'>High</option>
+              </select>
             </div>
           </div>
 
@@ -511,7 +520,7 @@
       // console.log(inputreject.value.length);
       if (inputreject.value.length > 0) {
         btnapprove.disabled = true;
-      }else{
+      } else {
         btnapprove.disabled = false;
       }
     })
@@ -684,28 +693,36 @@
       var failcode2 = $(this).data('fc2');
       var failcode3 = $(this).data('fc3');
 
+      // var fail_list = fail1 + '\n' + fail2 + '\n' + fail3;
+
+      // array failure code
       var newarrfc = [];
-
-      if(fail1 != null){
-        newarrfc.push(fail1);
+      if (failcode1 != '') {
+        newarrfc.push(failcode1);
       }
-
-      if(fail2 != null){
-        newarrfc.push(fail2);
+      if (failcode2 != '') {
+        newarrfc.push(failcode2);
       }
-
-      if(fail3 != null){
-        newarrfc.push(fail3);
+      if (failcode3 != '') {
+        newarrfc.push(failcode3);
       }
 
 
-
-      var fail_list = fail1 + '\n' + fail2 + '\n' + fail3;
+      // array impact
+      var newarrimp = [];
+      var desc = impact.split(",");
+      if (desc != null) {
+        for (var i = 0; i <= (desc.length - 1); i++) {
+          if (desc[i] != '') {
+            newarrimp.push(desc[i]);
+          }
+        }
+      }
 
       $.ajax({
         url: "/listupload/" + srnumber,
         success: function(data) {
-
+          // console.log(data);
           $('#listupload').html('').append(data);
         }
       })
@@ -718,7 +735,8 @@
       document.getElementById('srnumber').value = srnumber;
       document.getElementById('srdate').value = srdate;
       document.getElementById('assetcode').value = assetcode;
-      document.getElementById('assetdesc').value = assetdesc; {
+      document.getElementById('assetdesc').value = assetdesc;
+      {
         {
           // --document.getElementById('assettype').value = astype;
           // --
@@ -737,13 +755,45 @@
       document.getElementById('dept').value = dept;
       document.getElementById('hiddendeptcode').value = deptcode;
       document.getElementById('reqbyname').value = reqbyname;
-      document.getElementById('fclist').value = fail_list;
+      // document.getElementById('fclist').value = fail_list;
+
+      //value multiple failurecode
+      document.getElementById('fclist').selectedIndex = newarrfc;
+      $('#fclist').val(newarrfc);
+      $('#fclist').trigger('change');
+
+      //value multiple impact
+      document.getElementById('impact').selectedIndex = newarrimp;
+      $('#impact').val(newarrimp);
+      $('#impact').trigger('change');
 
       document.getElementById('tmpfail1').value = failcode1;
       document.getElementById('tmpfail2').value = failcode2;
       document.getElementById('tmpfail3').value = failcode3;
 
+      $('#wotype').select2({
+        theme: 'bootstrap4',
+        width: '100%',
+        wotype,
+      });
+
+      $('#fclist').select2({
+        placeholder: "Select Failure Code",
+        width: '100%',
+        closeOnSelect: false,
+        allowClear: true,
+        maximumSelectionLength: 3,
+      });
+
+      $('#impact').select2({
+        placeholder: "Select Value",
+        width: '100%',
+        closeOnSelect: false,
+        allowClear: true,
+      });
+
     });
+
 
     function ambilenjiner() {
       // alert('ketrigger');

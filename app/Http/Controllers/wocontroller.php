@@ -4452,7 +4452,7 @@ class wocontroller extends Controller
         if ($statusrepair->wo_repair_type == 'manual') {
             $data = DB::table('wo_mstr')
                 ->selectRaw('wo_nbr,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,
-                                    wo_status,wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,
+                                    wo_status,wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1, wo_created_at,
                                     wo_engineer2 as woen2, wo_engineer3 as woen3,wo_engineer4 as woen4,
                                     wo_engineer5 as woen5,u1.eng_desc as u11,u2.eng_desc as u22, u3.eng_desc as u33, 
                                     u4.eng_desc as u44, u5.eng_desc as u55,loc_code,loc_desc,astype_code,astype_desc,wo_new_type,wotyp_desc,wo_impact,wo_impact_desc,
@@ -4475,7 +4475,7 @@ class wocontroller extends Controller
             $countdb = count($datamanual);
         } else if ($statusrepair->wo_repair_type == 'group') {
             $data = DB::table('wo_mstr')
-                ->selectRaw('wo_nbr,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status,wo_asset,asset_desc,wo_schedule,
+                ->selectRaw('wo_nbr,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status,wo_asset,asset_desc,wo_schedule, wo_created_at,
                             wo_duedate,wo_engineer1 as woen1,wo_engineer2 as woen2, wo_engineer3 as woen3,wo_engineer4 as woen4,wo_engineer5 as woen5,u1.eng_desc as u11,u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, 
                             loc_code,loc_desc,astype_code,astype_desc,wo_new_type,wotyp_desc,wo_impact,wo_impact_desc,wo_reviewer,wo_approver,wo_created_at,wo_reviewer_appdate,wo_approver_appdate,wo_action,wo_sparepart')
                 ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
@@ -4591,7 +4591,7 @@ class wocontroller extends Controller
 
         } else if ($statusrepair->wo_repair_type == 'code') {
             $data = DB::table('wo_mstr')
-                ->selectRaw('wo_nbr,wo_repair_code1,wo_repair_code2,wo_repair_code3,wo_priority,wo_dept,dept_desc,
+                ->selectRaw('wo_nbr,wo_repair_code1,wo_repair_code2,wo_repair_code3,wo_priority,wo_dept,dept_desc, wo_created_at,
                             wo_note,wo_sr_nbr,wo_status,wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,
                             wo_engineer2 as woen2, wo_engineer3 as woen3,wo_engineer4 as woen4,wo_engineer5 as woen5,
                             u1.eng_desc as u11,u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, 
@@ -4795,7 +4795,7 @@ class wocontroller extends Controller
             'sparepart' => $sparepartarray, 'womstr' => $womstr,
             'repairlist' => $repairlist, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb,
             'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printdate' => $printdate, 'engineerlist' => $engineerlist,
-            'users' => $users, 'datasr' => $datasr, 'impact' => $impact, 'dept' => $dept, 
+            'users' => $users, 'datasr' => $datasr, 'impact' => $impact, 'dept' => $dept 
         ])->setPaper('A4', 'portrait');
         //return view('picklistbrowse.shipperprint-template',['printdata1' => $printdata1, 'printdata2' => $printdata2, 'runningnbr' => $runningnbr,'user' => $user,'last' =>$countprint]);
         return $pdf->stream($wo . '.pdf');

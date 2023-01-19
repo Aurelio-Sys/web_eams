@@ -27,6 +27,8 @@ class RptAssetYearController extends Controller
             $tgl = Carbon::createFromDate($req->bulan)->addYear(-1)->toDateTimeString();
         } elseif ($req->stat == 'maju') {
             $tgl = Carbon::createFromDate($req->bulan)->addYear(1)->toDateTimeString();
+        } elseif (isset($req->s_type) || isset($req->s_asset) || isset($req->s_loc) || isset($req->s_eng)) {
+            $tgl = Carbon::createFromDate($req->bulan)->toDateTimeString();
         } else {
             toast('Back to Home!!', 'error');
             return back();
@@ -43,7 +45,7 @@ class RptAssetYearController extends Controller
         // rumus untuk sch by bulan ->whereRaw('PERIOD_DIFF(PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal), date_format(now(),"%Y%m")) <= - asset_tolerance') // fungsi MYSQL
         ->whereRaw('DATE_ADD(DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY) < curdate()')
         ->orderBy('asset_code')
-        ->paginate(10);
+        ->get();
 // dd($data);        
         Schema::create('temp_asset', function ($table) {
             $table->increments('id');
@@ -94,22 +96,78 @@ class RptAssetYearController extends Controller
         
         /* Actual data WO */
         $datawo = DB::table('wo_mstr')
-            // ->where('wo_type','=','auto')
+            ->selectRaw('wo_asset,year(wo_schedule) as "thnwo", month(wo_schedule) as "blnwo", wo_type')
             ->orderBy('wo_asset')
             ->orderBy('wo_nbr')
+            ->groupBy('wo_asset','thnwo','blnwo','wo_type')
             ->get();
-// dd($data);
+
+        // dd($datawo);
+
         Schema::dropIfExists('temp_asset');
 
         $dataasset = DB::table('asset_mstr')
             ->orderBy('asset_code')
-            // ->where('asset_measure','=','C')
-            ->where('asset_active','=','Yes')
-            ->paginate(10);
-            // ->get();
+            ->where('asset_active','=','Yes');
+
+        if ($req->s_asset) {
+            $dataasset->where('asset_code', '=', $req->s_asset);
+        }
+        if ($req->s_loc) {
+            $dataasset->where('asset_loc', '=', $req->s_loc);
+        }
+        if($req->s_eng) {
+            $a = $req->s_eng;
+            $dataasset = $dataasset->whereIn('asset_code', function($query) use ($a, $bulan)
+            {
+                $query->select('wo_asset')
+                        ->from('wo_mstr')
+                        ->whereYear('wo_created_at','=',$bulan)
+                        ->where(function ($query) use ($a) {
+                            $query->where('wo_engineer1', '=', $a)
+                                  ->orWhere('wo_engineer2', '=', $a)
+                                  ->orWhere('wo_engineer3', '=', $a)
+                                  ->orWhere('wo_engineer4', '=', $a)
+                                  ->orWhere('wo_engineer5', '=', $a);
+                            });
+            });
+        }
+        if($req->s_type == "WO") {
+            $dataasset = $dataasset->whereIn('asset_code', function($query) use ($bulan)
+            {
+                $query->select('wo_asset')
+                        ->from('wo_mstr')
+                        ->whereYear('wo_created_at','=',$bulan)
+                        ->where('wo_type','<>','auto');
+            });
+        }
+        if($req->s_type == "PM") {
+            $dataasset = $dataasset->whereIn('asset_code', function($query) use ($bulan)
+            {
+                $query->select('wo_asset')
+                        ->from('wo_mstr')
+                        ->whereYear('wo_created_at','=',$bulan)
+                        ->where('wo_type','=','auto');
+            });
+        }
+
+        $dataasset = $dataasset->paginate(10);
+
+        $dataeng = DB::table('eng_mstr')
+            ->where('eng_active', '=', 'Yes')
+            ->orderBy('eng_code')
+            ->get();
+
+        $dataloc = DB::table('asset_loc')
+            ->orderBy('asloc_code')
+            ->get();
+
+        $sasset = $req->s_code;
 
         return view('report.assetyear', ['data' => $data, 'datatemp' => $datatemp, 'datawo' => $datawo, 'bulan' => $bulan,
-            'dataasset' => $dataasset]);
+            'dataasset' => $dataasset, 'sasset' => $sasset, 'swo' => $req->s_nomorwo, 'sasset' => $req->s_asset,
+            'sloc' => $req->s_loc, 'seng' => $req->s_eng,
+            'dataloc' => $dataloc, 'dataeng' => $dataeng, 'stype' => $req->s_type]);
     }
 
     /**

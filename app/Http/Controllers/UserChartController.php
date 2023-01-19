@@ -712,14 +712,14 @@ class UserChartController extends Controller
 
     public function assetsch(Request $req)
     {
-        
+        // dd($req->all());
         if (is_null($req->bulan)) {
             $tgl = Carbon::now('ASIA/JAKARTA')->toDateTimeString();
         } elseif ($req->stat == 'mundur') {
             $tgl = Carbon::createFromDate($req->bulan)->addMonth(-1)->toDateTimeString();
         } elseif ($req->stat == 'maju') {
             $tgl = Carbon::createFromDate($req->bulan)->addMonth(1)->toDateTimeString();
-        } elseif (!is_null($req->t_asset)) {
+        } elseif (!is_null($req->t_asset) || !is_null($req->t_loc)) {
             $tgl = Carbon::createFromDate($req->bulan)->toDateTimeString();
         } else {
             toast('Back to Home!!', 'error');
@@ -728,6 +728,7 @@ class UserChartController extends Controller
         //dd($req->all(),$tgl);
 
         $code = $req->input('t_asset');
+        $sloc = $req->input('t_loc');
        
         $skrg = Carbon::createFromDate($tgl)->lastOfMonth()->day;
         $hari = Carbon::createFromDate($tgl)->startOfMonth()->isoFormat('dddd');
@@ -761,7 +762,7 @@ class UserChartController extends Controller
                     ->orderBy('asset_code')
                     ->get();
 
-        if (!isset($code)){
+        if (!isset($code) && !isset($sloc)){
 
             $datawo = DB::table('wo_mstr')
                 ->select('wo_nbr','wo_status','wo_schedule','wo_engineer1', 'wo_engineer2', 'wo_engineer3', 'wo_engineer4',
@@ -792,11 +793,25 @@ class UserChartController extends Controller
                     $query->where('wo_schedule','like',date("Y-m",strtotime($tgl)).'%')
                         ->orwhere('wo_finish_date','like',date("Y-m",strtotime($tgl)).'%');
                 })
-                ->where('wo_asset',$code)
-                // ->whereIn('wo_status',['open','plan','started'])
                 ->orderBy('tgl')
-                ->orderBy('wo_nbr')
-                ->get();
+                ->orderBy('wo_nbr');
+
+            if(isset($code)) {
+                $datawo = $datawo->where('wo_asset',$code);
+            }
+            if(isset($sloc)) {
+                
+                $datawo = $datawo->whereIn('wo_asset', function($query) use ($sloc)
+                {
+                    $query->select('asset_code')
+                          ->from('asset_mstr')
+                          ->where('asset_loc','=',$sloc);
+                });
+            }
+
+            $datawo = $datawo->get();
+
+            // dd($datawo);
            
            $foto = $dataAsset->where('asset_code','=',$code)->first();
         }
@@ -804,7 +819,12 @@ class UserChartController extends Controller
         $datafn = DB::table('fn_mstr')
                 ->get();
 
-        return view('report.assetsch',compact('skrg','hari','kosong','bulan','datawo','dataAsset','foto','datafn'));
+        $dataloc = DB::table('asset_loc')
+            ->orderBy('asloc_code')
+            ->get();
+
+        return view('report.assetsch',compact('skrg','hari','kosong','bulan','datawo','dataAsset','foto','datafn','dataloc',
+            'sloc'));
     }
 
     public function engrpt(Request $req)

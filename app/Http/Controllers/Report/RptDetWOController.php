@@ -315,7 +315,7 @@ class RptDetWOController extends Controller
         }
         if($request->s_type) {
             $datatemp = $datatemp->where('temp_type','=',$request->s_type);
-        }
+        } 
             
         $datatemp = $datatemp->paginate(10); 
 

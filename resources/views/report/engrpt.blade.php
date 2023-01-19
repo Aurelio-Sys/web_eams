@@ -75,7 +75,7 @@
   @foreach($dataeng as $de)
       
       @if($line == 1)
-        <div class="card-deck mb-2 col-12">
+        <div class="card-deck mb-3 col-12">
       @endif
       
       @php($woeng1 = $datawo->where('wo_engineer1','=',$de->eng_code)->count())
@@ -85,7 +85,7 @@
       @php($woeng5 = $datawo->where('wo_engineer5','=',$de->eng_code)->count())
       @php($jmlwo = $woeng1 + $woeng2 + $woeng3 + $woeng4 + $woeng5)
 
-      <div class="col-xl-2 col-lg-4 col-md-6 col-xs-12 pl-0 pr-0">
+      <div class="col-xl-3 col-lg-5 col-md-4 col-xs-12 pl-0 pr-0" >
         <div class="card">
           <a href="" class="editarea2" id='editdata' data-toggle="modal" data-target="#editModal"
             data-code="{{$de->eng_code}}" data-desc="{{$de->eng_desc}}" data-email="{{$de->eng_email}}"
@@ -106,7 +106,7 @@
       
       @php($line++)
       
-      @if($line == 7)
+      @if($line == 5)
         </div>
         
         @php($line = 1)
