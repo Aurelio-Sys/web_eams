@@ -311,7 +311,7 @@ div #munculgambar .gambar:hover{
             </div>
           </div>
           <div class="form-group row col-md-12 c_impactdiv" id="c_impactdiv" style="display: none;">
-            <label for="c_impact" class="col-md-5 col-form-label text-md-left">Impact</label>
+            <label for="c_impact" class="col-md-5 col-form-label text-md-left">Impact <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-7">
               <select id="c_impact" class="form-control c_impact" name="c_impact[]" multiple="multiple" required autofocus>
                 <!-- <option value="" selected>Select Impact</option> -->
@@ -551,7 +551,7 @@ div #munculgambar .gambar:hover{
             </div>
           </div>
           <div class="form-group row justify-content-center e_wottypediv" id="e_wottypediv">
-            <label for="e_wottype" class="col-md-5 col-form-label text-md-left">Failure Type</label>
+            <label for="e_wottype" class="col-md-5 col-form-label text-md-left">Failure Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-7">
               <select name="e_wottype" class="form-control" id="e_wottype" required>
                 @foreach($wottype as $e_wottypeval)
@@ -572,7 +572,7 @@ div #munculgambar .gambar:hover{
             </div>
           </div>
           <div class="form-group row justify-content-center e_impactdiv" id="e_impactdiv">
-            <label for="e_impact" class="col-md-5 col-form-label text-md-left">Impact</label>
+            <label for="e_impact" class="col-md-5 col-form-label text-md-left">Impact <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-7">
               <select id="e_impact" class="form-control e_impact" name="e_impact[]" multiple="multiple" required autofocus>
                 <option></option>

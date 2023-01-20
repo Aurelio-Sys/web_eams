@@ -97,9 +97,9 @@
 
   <!--------------- INI UNTUK PRINT TEMPLATE --------------->
   @include('service.pdfprint-header')
-  <table style="width:730px; height:800.5px; margin-bottom:-5cm;border:1px solid; padding: 0px 5px 5px 5px; border-top:0" class="borderless">
+  <table style="width:0px; height:800.5px; margin-bottom:-5cm;border-left:1px solid; border-right:1px solid; border-bottom:1px solid; border-top:0px; padding: 0px 5px 5px 5px; border-top:0" class="borderless">
     <tr>
-      <td colspan="1" style="border-left: 2px solid; border-right:0; border-top:2px solid; width:350px">
+      <td colspan="1" style="border-left: 2px solid; border-right:0px; border-top:2px solid; width:350px">
         <table style="border-collapse: collapse;margin-left:5px;">
           <tr>
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
@@ -220,7 +220,7 @@
       </td>
     </tr>
     <tr>
-      <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0; border-top:0.5px solid; border-bottom:2px solid; width:350px">
+      <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0px; border-top:0.5px solid; border-bottom:2px solid; width:350px">
         <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diusulkan oleh,</span></p>
         <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->req_by}}</p>
       </td>
@@ -237,7 +237,7 @@
       </td>
     </tr>
     <tr>
-      <td colspan="1" style="border-left: 2px solid; border-right:0; border-top:2px solid; width:350px">
+      <td colspan="1" style="border-left: 2px solid; border-right:0px; border-top:2px solid; width:350px">
         <table style="border-collapse: collapse;margin-left:5px;">
           <tr>
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
@@ -261,7 +261,7 @@
       </td>
       <td colspan="2" style="border-left: 0px; border-top:2px solid; border-right: 1.5px solid;">
         <!-- <p style="margin-left:5px; margin-bottom:5px; margin-top:5px">{{$srmstr->dept_desc}} -- {{$srmstr->eng_desc}}</p> -->
-        <table style="border-collapse: collapse;margin-left:5px;margin-top:-3px; margin-bottom:-1.5px">
+        <table style="border-collapse: collapse;margin-left:5px;margin-top:-1px; margin-bottom:-1px">
           <tr>
             <td style="text-align:center;vertical-align:middle;border:1px solid;width:150px">
               <p style="margin:0;padding:0;font-size:12px">Waktu Pemeriksaan</p>
@@ -269,7 +269,7 @@
             <td style="text-align:center;vertical-align:middle;border:1px solid;width:100px">
             <p style="margin:0;padding:0;font-size:12px">Mulai</p>
             </td>
-            <td style="text-align:center;vertical-align:middle;border:1px solid;width:98px">
+            <td style="text-align:center;vertical-align:middle;border:1px solid;width:100px">
             <p style="margin:0;padding:0;font-size:12px">Selesai</p>
             </td>
           </tr>
@@ -308,7 +308,7 @@
       </td>
     </tr>
     <tr>
-      <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0; border-top:0.5px solid; border-bottom:2px solid; width:350px">
+      <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0px; border-top:0.5px solid; border-bottom:2px solid; width:350px">
         <!-- <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diusulkan oleh,</span></p>
         <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->req_by}}</p> -->
       </td>
@@ -325,8 +325,7 @@
       </td>
     </tr>
     <tr>
-    <tr>
-     <td colspan="1" style="border-left: 2px solid; border-right:0; border-top:2px solid; width:350px">
+     <td colspan="1" style="border-left: 2px solid; border-right:0px; border-top:2px solid; width:350px">
         <table style="border-collapse: collapse;margin-left:5px;">
           <tr>
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
@@ -334,7 +333,7 @@
             </td>
           </tr>
           <tr>
-            <td style="border-top:0px;border-right:0px;border-collapse: collapse;">
+            <td style="border-top:0px;border-left:0px;border-collapse: collapse;">
               <p style="margin-top: 0px; font-size:12px">
                 
               </p>
@@ -342,9 +341,9 @@
           </tr>
         </table>
       </td>
-      <td colspan="2" style="border-left: 0px; border-top:2px solid; border-right: 1.5px solid;">
+      <td colspan="2" style="border-left: 1px; border-top:2px solid; border-right: 1.5px solid;">
         <!-- <p style="margin-left:5px; margin-bottom:5px; margin-top:5px">{{$srmstr->dept_desc}} -- {{$srmstr->eng_desc}}</p> -->
-        <table style="border-collapse: collapse;margin-left:5px;margin-top:-3px; margin-bottom:-1.5px">
+        <table style="border-collapse: collapse;margin-left:5px;margin-top:-1px; margin-bottom:-1px">
           <tr>
             <td style="text-align:center;vertical-align:middle;border:1px solid;width:150px">
               <p style="margin:0;padding:0;font-size:12px">Waktu Penyelesaian</p>
@@ -352,7 +351,7 @@
             <td style="text-align:center;vertical-align:middle;border:1px solid;width:100px">
             <p style="margin:0;padding:0;font-size:12px">Mulai</p>
             </td>
-            <td style="text-align:center;vertical-align:middle;border:1px solid;width:98px">
+            <td style="text-align:center;vertical-align:middle;border:1px solid;width:100px">
             <p style="margin:0;padding:0;font-size:12px">Selesai</p>
             </td>
           </tr>
@@ -391,7 +390,7 @@
       </td>
     </tr>
     <tr>
-      <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0; border-top:0.5px solid; border-bottom:2px solid; width:350px">
+      <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0px; border-top:0.5px solid; border-bottom:2px solid; width:350px">
         <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diselesaikan oleh,</span></p>
         <p style=" margin-bottom:5px; margin-top:30px;font-size:12px"></p>
       </td>
@@ -432,7 +431,7 @@
       </td>
     </tr>
     <tr>
-      <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0; border-top:0.5px solid; border-bottom:2px solid; width:350px">
+      <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0px; border-top:0.5px solid; border-bottom:2px solid; width:350px">
         <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diserahkan oleh,</span></p>
         <p style=" margin-bottom:5px; margin-top:30px;font-size:12px"></p>
       </td>
