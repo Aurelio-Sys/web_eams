@@ -78,8 +78,11 @@
                 <div class="col-md-2 col-sm-4 mb-2 input-group">
                     <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search"/> 
                 </div>
-                <div class="col-md-2 col-sm-4 mb-2 input-group">
+                <div class="col-md-1 col-sm-2 mb-1 input-group justify-content-md-center">
                     <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
+                </div>
+                <div class="col-md-2 col-sm-4 mb-2 input-group">
+                    <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="Export to Excel" style="float:right" />
                 </div>
                 <input type="hidden" id="tmpcode"/>
                 <input type="hidden" id="tmploc"/>
@@ -202,7 +205,12 @@
                     <div class="form-group row">
                         <label for="t_qad" class="col-md-4 col-form-label text-md-right">Asset QAD</label>
                         <div class="col-md-6">
-                            <input id="t_qad" type="text" class="form-control" name="t_qad" autocomplete="off" autofocus maxlength="50" />
+                            <select id="t_qad" class="form-control" name="t_qad" >
+                                <option value="">--Select Data--</option>
+                                @foreach($dataassetqad as $dq)
+                                    <option value="{{$dq->temp_code}}">{{$dq->temp_code}} -- {{$dq->temp_desc}}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -428,7 +436,12 @@
                 <div class="form-group row">
                     <label for="te_qad" class="col-md-4 col-form-label text-md-right">Asset QAD</label>
                     <div class="col-md-6">
-                        <input id="te_qad" type="text" class="form-control" name="te_qad" autocomplete="off" autofocus maxlength="50" />
+                        <select id="te_qad" class="form-control" name="te_qad" >
+                            <option value="">--Select Data--</option>
+                            @foreach($dataassetqad as $dq)
+                                <option value="{{$dq->temp_code}}">{{$dq->temp_code}} -- {{$dq->temp_desc}}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -1131,6 +1144,19 @@
             })
         }
 
+        $(document).on('click', '#btnexcel', function() {
+            var swo = $('#s_nomorwo').val();
+            var sasset = $('#s_asset').val();
+            var per1 = $('#s_per1').val();
+            var per2 = $('#s_per2').val();
+            var dept = $('#s_dept').val();
+            var loc = $('#s_loc').val();
+            var eng = $('#s_eng').val();
+            var type = $('#s_type').val();
+            
+            window.open("/excelasset" , '_blank'); 
+          });
+
         $("#s_loc").select2({
             width : '100%',
             theme : 'bootstrap4',
@@ -1150,6 +1176,11 @@
         });
 
         $("#s_group").select2({
+            width : '100%',
+            theme : 'bootstrap4',
+            
+        });
+        $("#t_qad").select2({
             width : '100%',
             theme : 'bootstrap4',
             
