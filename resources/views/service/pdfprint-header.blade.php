@@ -1,5 +1,5 @@
 <!--------------- INI UNTUK PRINT TEMPLATE --------------->
-<table style="width:730px; margin-top:-0.7cm; margin-left:0px" class="borderless">
+<table style="width:733.5px; margin-top:-0.7cm; margin-left:0px" class="borderless">
 
 
   <tr>

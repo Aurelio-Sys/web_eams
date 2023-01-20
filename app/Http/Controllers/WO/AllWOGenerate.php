@@ -32,22 +32,116 @@ class AllWOGenerate extends Controller
         $interval = date_diff($todate, $fromdate, true);
         $this_diff_time =  $interval->format('%a');
 
+        $loopingnumber = (int) $this_diff_time;
+
         // $todate = number_format($req->day / 30, 1);
 
         // perhitungan : tanggal seharusnya - tolerance
 
+        $table_asset = DB::table('asset_mstr')
+                        ->where('asset_measure', '=', 'C')
+                        ->get();
+
+        $arrayTemp = [];
+
+        foreach($table_asset as $tbl_asset){
+            $mtc_totaltime = floor($loopingnumber/$tbl_asset->asset_cal);
+
+            //data awal jadi patokan perhitungan looping berikutnya;
+            $next_mtc = date_add(date_create($tbl_asset->asset_last_mtc), date_interval_create_from_date_string(''.$tbl_asset->asset_cal.' days'));
+            // dd($tbl_asset->asset_last_mtc,$next_mtc);
+
+            if($next_mtc >= $fromdate && $next_mtc <= $todate) {
+                $next_mtc = $next_mtc->format('Y-m-d');
+
+                array_push($arrayTemp,[
+                    'asset_code' => $tbl_asset->asset_code,
+                    'next_woschedule' => $next_mtc,
+                    'asset_cal_measure' => $tbl_asset->asset_cal,
+                ]);
+
+                //looping per asset berapa kali maintenance dalam range tanggal yang dipilih
+                for($i = 0; $i < $mtc_totaltime-1; $i++){
+                    $data = collect($arrayTemp);
+                    $data = $data->where('asset_code',$tbl_asset->asset_code)->sortByDesc(function($item) {
+                        return $item['next_woschedule'];
+                    })->first();
+                    $next_mtc_looping = date_add(date_create($data['next_woschedule']), date_interval_create_from_date_string(''.$tbl_asset->asset_cal.' days'));
+
+                    if($next_mtc_looping >= $fromdate && $next_mtc_looping <= $todate) {
+                        $next_mtc_looping = $next_mtc_looping->format('Y-m-d');
+                        array_push($arrayTemp,[
+                            'asset_code' => $tbl_asset->asset_code,
+                            'next_woschedule' => $next_mtc_looping,
+                            'asset_cal_measure' => $tbl_asset->asset_cal,
+                        ]);
+                    }
+                }
+            }
+        }
+
+        dd($arrayTemp);
+
+        
+        // dd($next_mtc_looping);
+//Kdrn0048
         $data = DB::table('asset_mstr')
             ->selectRaw('asset_mstr.* , DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY) as next_duedate_mtc, 
-                    DATE_ADD(DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY) as persiapan_mtc,
+                    DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY) as persiapan_mtc,
                     DATE_ADD(DATE_FORMAT(NOW(),"%Y-%m-%d"), INTERVAL ' . $this_diff_time . ' DAY) as to_date,
                     DATE_FORMAT(NOW(),"%Y-%m-%d") as from_date') 
                     //interval date untuk to_date akan diganti dengan inputan hari dari depan
             ->where('asset_measure', '=', 'C')
-            ->whereRaw('DATE_ADD(asset_last_mtc, INTERVAL asset_cal DAY) >= date_format(now(),"%Y-%m-%d")')
+            // ->whereRaw('DATE_ADD(asset_last_mtc, INTERVAL asset_cal DAY) >= date_format(now(),"%Y-%m-%d")')
+            ->havingRaw('next_duedate_mtc between from_date and to_date')
             ->orderBy('next_duedate_mtc', 'asc')
             ->get();
 
-        // dd($data);
+        Schema::dropIfExists('temp_datagenerate');
+        Schema::create('temp_datagenerate', function ($table) {
+            $table->string('asset_code');
+            $table->date('asset_last_mtc');
+            $table->date('wo_schedule');
+            $table->integer('asset_cal');
+            $table->temporary();
+        });
+
+        
+
+        foreach($data as $dataFirst){
+            DB::table('temp_datagenerate')
+                ->insert([
+                    'asset_code' => $dataFirst->asset_code,
+                    'asset_last_mtc' => $dataFirst->asset_last_mtc,
+                    'wo_schedule' => $dataFirst->next_duedate_mtc,
+                    'asset_cal' => $dataFirst->asset_cal,
+                ]);
+
+            array_push($arrayTemp,[
+                'asset_code' => $dataFirst->asset_code,
+                'asset_last_mtc' => $dataFirst->asset_last_mtc,
+                'wo_schedule' => $dataFirst->next_duedate_mtc,
+                'asset_cal' => $dataFirst->asset_cal,
+            ]);
+        }
+
+        $data_2 = DB::table('temp_datagenerate')
+            ->selectRaw('*, DATE_ADD(wo_schedule,INTERVAL asset_cal DAY) as next_duedate_mtc, 
+                    DATE_ADD(wo_schedule,INTERVAL asset_cal DAY) as persiapan_mtc,
+                    DATE_ADD(DATE_FORMAT(NOW(),"%Y-%m-%d"), INTERVAL ' . $this_diff_time . ' DAY) as to_date,
+                    DATE_FORMAT(NOW(),"%Y-%m-%d") as from_date') 
+            ->havingRaw('next_duedate_mtc between from_date and to_date')
+            ->orderBy('next_duedate_mtc', 'asc')
+            ->get();
+
+        Schema::dropIfExists('temp_datagenerate');
+
+        array_push($arrayTemp,[
+            'asset_code' => $data_2->asset_code,
+            'asset_last_mtc' => $data_2->asset_last_mtc,
+            'wo_schedule' => $data_2->next_duedate_mtc,
+            'asset_cal' => $data_2->asset_cal,
+        ]);
 
         DB::beginTransaction();
 
