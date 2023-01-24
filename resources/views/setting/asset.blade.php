@@ -74,7 +74,6 @@
                         @endforeach
                     </select>
                 </div>
-                <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
                 <div class="col-md-2 col-sm-4 mb-2 input-group">
                     <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search"/> 
                 </div>
