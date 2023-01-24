@@ -58,7 +58,6 @@ class AssetExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
         //     $table->string('temp_asset');
         //     $table->string('temp_rep')->nullable();
         // });
-
         DB::statement("CREATE TEMPORARY TABLE temp_repair (id INT(11) PRIMARY KEY AUTO_INCREMENT, temp_asset VARCHAR(255), temp_rep VARCHAR(255))");
 
         foreach($dataasset as $da) {
@@ -90,10 +89,6 @@ class AssetExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
         ->leftJoin('temp_repair','temp_asset','=','asset_code')
         ->whereRaw($kondisi)
         ->orderby('asset_code');
-
-        // Schema::dropIfExists('temp_repair');
-
-        DB::statement('DROP TEMPORARY TABLE temp_repair');
 
         return $data;
         
