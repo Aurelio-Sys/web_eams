@@ -24,6 +24,8 @@ use Carbon\Carbon;
 use Svg\Tag\Rect;
 use Response;
 use File;
+use App\Exports\AssetExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SettingController extends Controller
 {
@@ -1759,8 +1761,6 @@ class SettingController extends Controller
                 ->get();
 
             /* Load data asset dari QAD */
-            $domain = ModelsQxwsa::first();
-            $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
 
             Schema::create('temp_asset', function ($table) {
                 $table->increments('id');
@@ -1770,6 +1770,10 @@ class SettingController extends Controller
                 $table->string('temp_desc')->nullable();
                 $table->temporary();
             });
+
+            /* tutup sementara, nanti dibuka lagi
+            $domain = ModelsQxwsa::first();
+            $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
 
             if ($datawsa === false) {
                 toast('WSA Failed', 'error')->persistent('Dismiss');
@@ -1781,7 +1785,7 @@ class SettingController extends Controller
                         'temp_desc' => $datas->t_desc,
                     ]);
                 }
-            }
+            } */
 
             $dataassetqad = DB::table('temp_asset')
                 ->orderBy('temp_code')
@@ -2072,7 +2076,7 @@ class SettingController extends Controller
             $cal    = 0;
         }
 
-// dd($req->all());
+
         $repair = "";
         if ($req->repairtype == "group") {
             $repair = $req->repairgroup;
@@ -2424,6 +2428,20 @@ class SettingController extends Controller
             }
             return response($output);
         }
+    }
+
+    public function excelasset(Request $req)
+    {
+        // dd($req->all());
+        // $wonbr    = $req->wonumber;
+        // $asset    = $req->asset;
+        // $status   = $req->status;
+        // $priority = $req->priority;
+        // $period   = $req->period;
+        // $creator  = $req->creator;
+        // $engineer = $req->engineer;
+
+        return Excel::download(new AssetExport, 'Asset.xlsx');
     }
 /* End Asset Master */
 

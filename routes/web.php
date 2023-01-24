@@ -164,6 +164,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/downloadfile/{id}', 'SettingController@downloadfile');
 	route::get('/listupload/{id}', 'SettingController@listupload')->name('listupload');
 	route::get('/deleteupload/{id}', 'SettingController@deleteupload');
+	route::get('/excelasset', 'SettingController@excelasset'); // untuk download data asset ke excel -> menu master asset
 
 
 	//asset parent

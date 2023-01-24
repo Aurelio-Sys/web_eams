@@ -390,6 +390,8 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
 
         // dd($data);
 
+        Schema::dropIfExists('temp_wo');
+
         return $data;
     }
 
