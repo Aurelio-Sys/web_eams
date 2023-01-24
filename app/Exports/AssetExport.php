@@ -59,7 +59,7 @@ class AssetExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
         //     $table->string('temp_rep')->nullable();
         // });
 
-        DB::statement("CREATE TEMPORARY TABLE temp_repair (id INT(11) PRIMARY KEY, temp_asset VARCHAR(255), temp_rep VARCHAR(255))");
+        DB::statement("CREATE TEMPORARY TABLE temp_repair (id INT(11) PRIMARY KEY AUTO_INCREMENT, temp_asset VARCHAR(255), temp_rep VARCHAR(255))");
 
         foreach($dataasset as $da) {
             if($da->asset_repair_type == 'code') {

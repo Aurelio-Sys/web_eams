@@ -100,7 +100,7 @@
 
                     <!-- WO DIRECT -->
                     <div class="form-group row">
-                        <label for="wdprefix" class="col-md-3 col-form-label text-md-right">{{ __('Work Order Directc Prefix') }}</label>
+                        <label for="wdprefix" class="col-md-3 col-form-label text-md-right">{{ __('Work Order Direct Prefix') }}</label>
                         <div class="col-md-7">
                             <input id="wdprefix" type="text" class="form-control" name="wdprefix" maxlength="2" autocomplete="off"
                             value="<?php echo $datavaluewdprefix; ?>"> 
