@@ -272,8 +272,7 @@
                     <div class="form-group row">
                         <label for="t_note" class="col-md-4 col-form-label text-md-right">Note</label>
                         <div class="col-md-6">
-                            <textarea id="t_note" type="text" class="form-control" name="t_note" autocomplete="off" autofocus maxlength="200" />
-                            </textarea>
+                            <textarea id="t_note" type="text" class="form-control" name="t_note" autocomplete="off" autofocus maxlength="200" rows="5" /></textarea>
                         </div>
                     </div>
                     <div class="form-group row">
