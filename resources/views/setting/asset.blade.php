@@ -1144,45 +1144,36 @@
         }
 
         $(document).on('click', '#btnexcel', function() {
-            var swo = $('#s_nomorwo').val();
-            var sasset = $('#s_asset').val();
-            var per1 = $('#s_per1').val();
-            var per2 = $('#s_per2').val();
-            var dept = $('#s_dept').val();
+            var sasset = $('#s_code').val();
             var loc = $('#s_loc').val();
-            var eng = $('#s_eng').val();
+            var group = $('#s_group').val();
             var type = $('#s_type').val();
             
-            window.open("/excelasset" , '_blank'); 
-          });
+            window.open("/excelasset?sasset=" + sasset + "&sloc=" + loc + "&sgroup=" + group + "&stype=" + type , '_blank'); 
+        });
 
         $("#s_loc").select2({
             width : '100%',
             theme : 'bootstrap4',
-            
         });
 
         $("#s_code").select2({
             width : '100%',
             theme : 'bootstrap4',
-            
         });
 
         $("#s_type").select2({
             width : '100%',
             theme : 'bootstrap4',
-            
         });
 
         $("#s_group").select2({
             width : '100%',
             theme : 'bootstrap4',
-            
         });
         $("#t_qad").select2({
             width : '100%',
             theme : 'bootstrap4',
-            
         });
 
     </script>

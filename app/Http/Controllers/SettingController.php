@@ -2433,15 +2433,12 @@ class SettingController extends Controller
     public function excelasset(Request $req)
     {
         // dd($req->all());
-        // $wonbr    = $req->wonumber;
-        // $asset    = $req->asset;
-        // $status   = $req->status;
-        // $priority = $req->priority;
-        // $period   = $req->period;
-        // $creator  = $req->creator;
-        // $engineer = $req->engineer;
+        $sasset    = $req->sasset;
+        $sloc    = $req->sloc;
+        $stype    = $req->stype;
+        $sgroup    = $req->sgroup;
 
-        return Excel::download(new AssetExport, 'Asset.xlsx');
+        return Excel::download(new AssetExport($sasset,$sloc,$stype,$sgroup), 'Asset.xlsx');
     }
 /* End Asset Master */
 

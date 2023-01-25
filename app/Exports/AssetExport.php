@@ -24,26 +24,31 @@ class AssetExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
             1    => ['font' => ['bold' => true]],
         ];
     }
-    function __construct() {
-        // $this->wonbr    = $wonbr;
-        // $this->status   = $status;
-        // $this->asset    = $asset;
-        // $this->priority = $priority;
-        // $this->period   = $period;
-        // $this->creator  = $creator;
-        // $this->engineer = $engineer;
-        // dd($this->stats);
-        // dd($wonbr,$status,$asset,$priority,$period);
+    function __construct($sasset,$sloc,$stype,$sgroup) {
+        $this->sasset    = $sasset;
+        $this->sloc   = $sloc;
+        $this->stype  = $stype;
+        $this->sgroup = $sgroup;
     }
     public function query()
     {
         $kondisi = 'asset_mstr.id > 0';
-        // // $wonbr = new Array();
-        // if($this->wonbr != null ||$this->wonbr != '' ){
-        //     $kondisi .= "and wo_nbr = '".$this->wonbr."'";
-        // }
 
-        // dd($kondisi);
+        if($this->sasset != null ||$this->sasset != '' ){
+            $kondisi .= " and asset_code = '".$this->sasset."'";
+        }
+        if($this->sloc != null ||$this->sloc != '' ){
+            $explloc = explode(".",$this->sloc);
+            $esite = $explloc[0];
+            $eloc = $explloc[1];
+            $kondisi .= " and asset_site = '".$esite."' and asset_loc = '".$eloc."'";
+        }
+        if($this->stype != null ||$this->stype != '' ){
+            $kondisi .= " and asset_type = '".$this->stype."'";
+        }
+        if($this->sgroup != null ||$this->sgroup != '' ){
+            $kondisi .= " and asset_group = '".$this->sgroup."'";
+        }
         
         /* Mencari deskripsi repair */
         $dataasset = DB::table('asset_mstr')
@@ -51,20 +56,26 @@ class AssetExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
             ->orWhere('asset_repair_type','<>','')
             ->get();
 
-        // Schema::dropIfExists('temp_repair');
-
-        // Schema::create('temp_repair', function($table){
-        //     $table->increments('id');
-        //     $table->string('temp_asset');
-        //     $table->string('temp_rep')->nullable();
-        // });
         DB::statement("CREATE TEMPORARY TABLE temp_repair (id INT(11) PRIMARY KEY AUTO_INCREMENT, temp_asset VARCHAR(255), temp_rep VARCHAR(255))");
 
         foreach($dataasset as $da) {
             if($da->asset_repair_type == 'code') {
-                $repair = 'code';
+                $explrep = explode(",",$da->asset_repair);
+                foreach($explrep as $ep){
+                    $descrep = Db::table('rep_master')
+                        ->whereRepm_code($ep)
+                        ->first();
+                    if(isset($repair)){
+                        $repair = $repair . "," . $descrep->repm_desc;
+                    } else {
+                        $repair = $descrep->repm_desc;
+                    }
+                }
             } elseif ($da->asset_repair_type == 'group') {
-                $repair = 'group';
+                $descrep = Db::table('xxrepgroup_mstr')
+                    ->whereXxrepgroup_nbr($da->asset_repair)
+                    ->first();
+                $repair = $descrep->xxrepgroup_desc;
             } else {
                 $repair = '-';
             }
@@ -82,7 +93,7 @@ class AssetExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
             CASE WHEN asset_measure = 'C' THEN 'Calendar' WHEN asset_measure = 'M' THEN 'Meter' ELSE '-' END as 'mea',
             CASE WHEN asset_measure = 'C' THEN asset_cal WHEN asset_measure = 'M' THEN asset_meter ELSE '-' END as 'cal',
             asset_tolerance,'UM',asset_start_mea,
-            asset_repair,asset_repair_type,asset_last_usage, asset_last_usage_mtc,asset_last_mtc")
+            asset_repair_type,asset_repair,temp_rep")
         ->leftjoin('asset_type','astype_code','=','asset_type')
         ->leftjoin('asset_group','asgroup_code','=','asset_group')
         ->leftjoin('asset_loc','asloc_code','=','asset_loc')
@@ -101,7 +112,7 @@ class AssetExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
             'Measurement',
             'Value',
             'Mea Tolerance','Mea Um','Mea Start Date',
-            'Repair','Engineer','Last Usage','Last Usage Maintenance','Last Maintenance']; 
+            'Repair Type','Repair Code','Repair desc']; 
     }
 
     

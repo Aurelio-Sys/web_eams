@@ -4,6 +4,7 @@ use App\Http\Controllers\Master\AssetSiteController;
 use App\Http\Controllers\Master\AssetLocController;
 use App\Http\Controllers\Master\AssetMoveController;
 use App\Http\Controllers\Master\PmEngController;
+use App\Http\Controllers\Master\UMController;
 use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\Report\RemainSpController;
@@ -573,7 +574,6 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/editpmdets', [PMdetsController::class, 'update']);
 	Route::post('/deletepmdets', [PMdetsController::class, 'destroy']);
 
-
 	//work order approval qc
 	Route::get('woqc', [WoQcController::class,'index'])->name('woQCIndex');
 	Route::post('woqc/update',[WoQcController::class,'update'])->name('woQCUpdate');
@@ -590,6 +590,13 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// Report Schedule Asset Year
 	Route::get('assetyear', [RptAssetYearController::class, 'index']);
+
+	// Master UM
+	Route::get('/um', [UMController::class, 'index']);
+	Route::get('/cekum', [UMController::class, 'cekum']);
+	Route::post('/createum', [UMController::class, 'store']);
+	Route::post('/editum', [UMController::class, 'update']);
+	Route::post('/deleteum', [UMController::class, 'destroy']);
 });
 
 Auth::routes();
