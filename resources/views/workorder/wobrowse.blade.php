@@ -1176,7 +1176,7 @@ div #munculgambar .gambar:hover{
 
           <a id="aprint" target="_blank" class="mr-auto" style="width: 20%;"><button type="button" class="btn btn-warning bt-action" style="width: 70%;"><b>Print</b></button></a>
           <button type="button" class="btn btn-info bt-action" id="ac_btnclose" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-danger bt-action" id="ac_btnuncom">Restart</button>
+          <button type="submit" class="btn btn-danger bt-action" id="ac_btnuncom">Reprocess</button>
           <button type="submit" class="btn btn-success bt-action" id="ac_btncom">Complete</button>
           <input type='hidden' name='switch2' id="switch2" value=''>
           <input type='hidden' name='aprwonbr2' id="apprwonbr3">
