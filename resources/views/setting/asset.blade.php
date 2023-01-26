@@ -23,6 +23,7 @@
     
     A210929 : penambahan start date untuk measurement
     A211102 : calender dirubah dari hari ke bulan
+    A230126 : menambahkan field UM untuk measurement
  -->
 
 <!-- Bagian Searching -->
@@ -247,8 +248,16 @@
                     </div>
                     <div class="form-group row divmeter" id="divmeter" style="display: none;">
                         <label for="t_meter" class="col-md-4 col-form-label text-md-right">Meter</label>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <input id="t_meter" type="number" step="0.01" placeholder="0.00" class="form-control" name="t_meter" autocomplete="off" autofocus max="999999" />
+                        </div>
+                        <div class="col-md-3"> //A20230126
+                            <select id="t_meaum" class="form-control" name="t_meaum" >
+                                <option value="">--Select Data--</option>
+                                @foreach($datameaum as $du)
+                                    <option value="{{$du->um_code}}">{{$du->um_code}} -- {{$du->um_desc}}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="form-group row divcal" id="divcal" style="display: none;">
@@ -477,8 +486,16 @@
                 </div>
                 <div class="form-group row divemeter" id="divemeter" style="display: none;">
                     <label for="te_meter" class="col-md-4 col-form-label text-md-right">Meter</label>
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <input id="te_meter" type="number" step="0.01" placeholder="0.00" class="form-control" name="te_meter" autocomplete="off" autofocus max="999999" />
+                    </div>
+                    <div class="col-md-3"> //A20230126
+                        <select id="te_meaum" class="form-control" name="te_meaum" >
+                            <option value="">--Select Data--</option>
+                            @foreach($datameaum as $du)
+                                <option value="{{$du->um_code}}">{{$du->um_code}} -- {{$du->um_desc}}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row divecal" id="divecal" style="display: none;">

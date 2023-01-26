@@ -1760,6 +1760,10 @@ class SettingController extends Controller
                 ->orderby('asset_code')
                 ->get();
 
+            $datameaum = DB::table('um_mstr')
+                ->orderBy('um_code')
+                ->get();
+
             /* Load data asset dari QAD */
 
             Schema::create('temp_asset', function ($table) {
@@ -1795,7 +1799,8 @@ class SettingController extends Controller
 
             return view('setting.asset', ['data' => $data, 'datasite' => $datasite, 'dataloc' => $dataloc, 
             'dataastype' => $dataastype, 'dataasgroup' => $dataasgroup, 'datasupp' => $datasupp, 'datafn' => $datafn, 
-            'repaircode' => $repaircode, 'repairgroup' => $repairgroup, 'datasearch' => $datasearch, 'dataassetqad' => $dataassetqad]);
+            'repaircode' => $repaircode, 'repairgroup' => $repairgroup, 'datasearch' => $datasearch, 
+            'dataassetqad' => $dataassetqad, 'datameaum' => $datameaum]);
         } else {
             toast('You do not have menu access, please contact admin.', 'error');
             return back();
@@ -1911,6 +1916,7 @@ class SettingController extends Controller
                 'asset_meter'       => $req->t_meter,
                 'asset_cal'         => $req->t_cal,
                 'asset_tolerance'   => $req->t_tolerance,
+                'asset_mea_um'      => $req->t_meaum,
                 'asset_start_mea'   => $req->t_mea_date,
                 'asset_note'        => $req->t_note,  
                 'asset_active'      => $req->t_active,  
