@@ -311,6 +311,9 @@ class ServiceController extends Controller
             $datasset = DB::table('asset_mstr')
                 ->get();
 
+            $datasrnbr = DB::table('service_req_mstr')
+                ->get();
+
             $datarepgroup = DB::table('xxrepgroup_mstr')
                 ->selectRaw('MIN(xxrepgroup_id) as xxrepgroup_id , xxrepgroup_nbr, MIN(xxrepgroup_desc) as xxrepgroup_desc')
                 ->groupBy('xxrepgroup_nbr')
@@ -326,7 +329,7 @@ class ServiceController extends Controller
             $fcodes = DB::table('fn_mstr')
                 ->get();
 
-            return view('service.servicereq-approval', ['wotypes' => $wotypes, 'impacts' => $impacts, 'fcodes' => $fcodes, 'datas' => $data, 'asset' => $datasset, 'repaircode' => $datarepair, 'repgroup' => $datarepgroup]);
+            return view('service.servicereq-approval', ['wotypes' => $wotypes, 'impacts' => $impacts, 'fcodes' => $fcodes, 'datasrnbr' => $datasrnbr, 'datas' => $data, 'asset' => $datasset, 'repaircode' => $datarepair, 'repgroup' => $datarepgroup]);
         } else {
             // toast('anda tidak memiliki akses sebagai approver', 'error');
             return view('service.accessdenied');
@@ -351,7 +354,7 @@ class ServiceController extends Controller
 
     public function approval(Request $req)
     { /* blade : service.servicereq-approval */
-        dump($req->all());
+        // dump($req->all());
 
         $wotype = $req->wotype;
         $imcode = $req->impactcode1;
@@ -731,6 +734,7 @@ class ServiceController extends Controller
             $srnumber = $req->get('srnumber');
             $asset = $req->get('asset');
             $priority = $req->get('priority');
+            // dd($srnumber, $asset, $priority);
             // $period = $req->get('period');
 
             if ($srnumber == "" && $asset == "" && $priority == "") {
