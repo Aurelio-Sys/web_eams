@@ -71,12 +71,18 @@
           <!--FORM Search Disini-->
           <label for="s_servicenbr" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Service Request Number') }}</label>
           <div class="col-md-3 col-sm-4 mb-2 input-group">
-            <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off">
+            <!-- <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off"> -->
+            <select id="s_servicenbr" name="s_servicenbr" class="form-control" value="" autofocus autocomplete="off">
+              <option value="">--Select SR Number--</option>
+              @foreach($datasrnbr as $srnbr)
+              <option value="{{$srnbr->sr_number}}">{{$srnbr->sr_number}}</option>
+              @endforeach
+            </select>
           </div>
           <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Asset Code') }}</label>
           <div class="col-md-3 col-sm-4 mb-2 input-group">
             <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
-              <option value="">Select Asset</option>
+              <option value="">--Select Asset--</option>
               @foreach($asset as $show)
               <option value="{{$show->asset_desc}}">{{$show->asset_desc}}</option>
               @endforeach
@@ -367,7 +373,7 @@
           <div class="form-group row">
             <label for="rejectreason" class="col-md-5 col-form-label text-md-right">Reject Reason</label>
             <div class="col-md-6">
-              <textarea id="rejectreason" type="text" class="form-control" name="rejectreason" maxlength="250" autocomplete="off" autofocus></textarea>
+              <textarea id="rejectreason" type="text" class="form-control" name="rejectreason" maxlength="250" autocomplete="off" autofocus required></textarea>
               <span id="alert3" style="color: red; font-weight: 200;"></span>
             </div>
           </div>
@@ -435,6 +441,12 @@
     });
 
     $("#s_asset").select2({
+      width: '100%',
+      // placeholder : "Select Asset",
+      theme: 'bootstrap4',
+    });
+
+    $("#s_servicenbr").select2({
       width: '100%',
       // placeholder : "Select Asset",
       theme: 'bootstrap4',
@@ -663,6 +675,13 @@
         theme: 'bootstrap4',
         asset,
       });
+
+      $("#s_servicenbr").select2({
+        width: '100%',
+        // placeholder : "Select Asset",
+        theme: 'bootstrap4',
+        asset,
+      });
     });
 
     $(document).on('click', '.approval', function() {
@@ -685,9 +704,9 @@
       var astype = $(this).data('astypedesc');
       var impactcode1 = $(this).data('impactcode');
 
-      var fail1 = $(this).data('failcode1');
-      var fail2 = $(this).data('failcode2');
-      var fail3 = $(this).data('failcode3');
+      // var fail1 = $(this).data('failcode1');
+      // var fail2 = $(this).data('failcode2');
+      // var fail3 = $(this).data('failcode3');
 
       var failcode1 = $(this).data('fc1');
       var failcode2 = $(this).data('fc2');
