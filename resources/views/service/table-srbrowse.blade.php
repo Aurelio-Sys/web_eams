@@ -48,7 +48,7 @@
     data-srdate="{{date('d-m-Y', strtotime($show->sr_date))}}" data-srtime="{{date('H:i', strtotime($show->sr_time))}}" data-wonumber="{{$show->wo_number}}" 
     data-startwo="{{date('d-m-Y', strtotime($show->wo_start_date))}}" 
     data-endwo="{{date('d-m-Y', strtotime($show->wo_finish_date))}}" 
-    data-action="{{$show->wo_action}}" data-approver="{{$show->sr_approver}}"
+    data-action="{{$show->wo_action}}" data-approver="{{$show->sr_approver}} -- {{$show->dept_desc}}"
     data-wostatus="{{$show->wo_status}}"
     data-failtype="{{$show->sr_wotype}}"
     data-faildesc1="{{$show->k11}}" data-faildesc2="{{$show->k22}}" data-faildesc3="{{$show->k33}}">

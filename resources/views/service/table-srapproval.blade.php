@@ -15,8 +15,7 @@
     data-deptdesc="{{$show->dept_desc}}" data-deptcode="{{$show->dept_code}}" data-reqbyname="{{$show->req_by}}" 
     data-assetloc="{{$show->loc_desc}}" data-astypedesc="{{$show->astype_desc}}"
     data-wotypedescx="{{$show->wotyp_code}}" data-impactcode="{{$show->sr_impact}}"
-    data-fc1="{{$show->sr_failurecode1}}" data-fc2="{{$show->sr_failurecode2}}" data-fc3="{{$show->sr_failurecode3}}" 
-    data-failcode1="{{$show->k11}}" data-failcode2="{{$show->k22}}" data-failcode3="{{$show->k33}}">
+    data-fc1="{{$show->sr_failurecode1}}" data-fc2="{{$show->sr_failurecode2}}" data-fc3="{{$show->sr_failurecode3}}">
     <i class="icon-table fas fa-thumbs-up fa-lg">
     </i></a>
     </td>
