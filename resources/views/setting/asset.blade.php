@@ -74,12 +74,14 @@
                         @endforeach
                     </select>
                 </div>
-                <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
                 <div class="col-md-2 col-sm-4 mb-2 input-group">
                     <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search"/> 
                 </div>
-                <div class="col-md-2 col-sm-4 mb-2 input-group">
+                <div class="col-md-1 col-sm-2 mb-1 input-group justify-content-md-center">
                     <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
+                </div>
+                <div class="col-md-2 col-sm-4 mb-2 input-group">
+                    <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="Export to Excel" style="float:right" />
                 </div>
                 <input type="hidden" id="tmpcode"/>
                 <input type="hidden" id="tmploc"/>
@@ -202,7 +204,12 @@
                     <div class="form-group row">
                         <label for="t_qad" class="col-md-4 col-form-label text-md-right">Asset QAD</label>
                         <div class="col-md-6">
-                            <input id="t_qad" type="text" class="form-control" name="t_qad" autocomplete="off" autofocus maxlength="50" />
+                            <select id="t_qad" class="form-control" name="t_qad" >
+                                <option value="">--Select Data--</option>
+                                @foreach($dataassetqad as $dq)
+                                    <option value="{{$dq->temp_code}}">{{$dq->temp_code}} -- {{$dq->temp_desc}}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -265,8 +272,7 @@
                     <div class="form-group row">
                         <label for="t_note" class="col-md-4 col-form-label text-md-right">Note</label>
                         <div class="col-md-6">
-                            <textarea id="t_note" type="text" class="form-control" name="t_note" autocomplete="off" autofocus maxlength="200" />
-                            </textarea>
+                            <textarea id="t_note" type="text" class="form-control" name="t_note" autocomplete="off" autofocus maxlength="200" rows="5" /></textarea>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -428,7 +434,12 @@
                 <div class="form-group row">
                     <label for="te_qad" class="col-md-4 col-form-label text-md-right">Asset QAD</label>
                     <div class="col-md-6">
-                        <input id="te_qad" type="text" class="form-control" name="te_qad" autocomplete="off" autofocus maxlength="50" />
+                        <select id="te_qad" class="form-control" name="te_qad" >
+                            <option value="">--Select Data--</option>
+                            @foreach($dataassetqad as $dq)
+                                <option value="{{$dq->temp_code}}">{{$dq->temp_code}} -- {{$dq->temp_desc}}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -1131,28 +1142,37 @@
             })
         }
 
+        $(document).on('click', '#btnexcel', function() {
+            var sasset = $('#s_code').val();
+            var loc = $('#s_loc').val();
+            var group = $('#s_group').val();
+            var type = $('#s_type').val();
+            
+            window.open("/excelasset?sasset=" + sasset + "&sloc=" + loc + "&sgroup=" + group + "&stype=" + type , '_blank'); 
+        });
+
         $("#s_loc").select2({
             width : '100%',
             theme : 'bootstrap4',
-            
         });
 
         $("#s_code").select2({
             width : '100%',
             theme : 'bootstrap4',
-            
         });
 
         $("#s_type").select2({
             width : '100%',
             theme : 'bootstrap4',
-            
         });
 
         $("#s_group").select2({
             width : '100%',
             theme : 'bootstrap4',
-            
+        });
+        $("#t_qad").select2({
+            width : '100%',
+            theme : 'bootstrap4',
         });
 
     </script>

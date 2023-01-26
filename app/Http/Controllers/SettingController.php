@@ -24,6 +24,8 @@ use Carbon\Carbon;
 use Svg\Tag\Rect;
 use Response;
 use File;
+use App\Exports\AssetExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SettingController extends Controller
 {
@@ -1758,9 +1760,42 @@ class SettingController extends Controller
                 ->orderby('asset_code')
                 ->get();
 
+            /* Load data asset dari QAD */
+
+            Schema::create('temp_asset', function ($table) {
+                $table->increments('id');
+                $table->string('temp_domain');
+                $table->string('temp_entity');
+                $table->string('temp_code')->nullable();
+                $table->string('temp_desc')->nullable();
+                $table->temporary();
+            });
+
+            /* tutup sementara, nanti dibuka lagi
+            $domain = ModelsQxwsa::first();
+            $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
+
+            if ($datawsa === false) {
+                toast('WSA Failed', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+                foreach ($datawsa[0] as $datas) {
+                    DB::table('temp_asset')->insert([
+                        'temp_code' => $datas->t_code,
+                        'temp_desc' => $datas->t_desc,
+                    ]);
+                }
+            } */
+
+            $dataassetqad = DB::table('temp_asset')
+                ->orderBy('temp_code')
+                ->get();
+
+            Schema::dropIfExists('temp_asset');
+
             return view('setting.asset', ['data' => $data, 'datasite' => $datasite, 'dataloc' => $dataloc, 
             'dataastype' => $dataastype, 'dataasgroup' => $dataasgroup, 'datasupp' => $datasupp, 'datafn' => $datafn, 
-            'repaircode' => $repaircode, 'repairgroup' => $repairgroup, 'datasearch' => $datasearch]);
+            'repaircode' => $repaircode, 'repairgroup' => $repairgroup, 'datasearch' => $datasearch, 'dataassetqad' => $dataassetqad]);
         } else {
             toast('You do not have menu access, please contact admin.', 'error');
             return back();
@@ -2041,7 +2076,7 @@ class SettingController extends Controller
             $cal    = 0;
         }
 
-// dd($req->all());
+
         $repair = "";
         if ($req->repairtype == "group") {
             $repair = $req->repairgroup;
@@ -2393,6 +2428,17 @@ class SettingController extends Controller
             }
             return response($output);
         }
+    }
+
+    public function excelasset(Request $req)
+    {
+        // dd($req->all());
+        $sasset    = $req->sasset;
+        $sloc    = $req->sloc;
+        $stype    = $req->stype;
+        $sgroup    = $req->sgroup;
+
+        return Excel::download(new AssetExport($sasset,$sloc,$stype,$sgroup), 'Asset.xlsx');
     }
 /* End Asset Master */
 

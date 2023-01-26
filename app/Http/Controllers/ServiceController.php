@@ -32,10 +32,10 @@ use App\Jobs\EmailScheduleJobs;
 use Carbon\CarbonPeriod;
 use File;
 use Response;
-use PDF;
 
 use App;
 use App\Exports\ExportSR;
+use Barryvdh\DomPDF\Facade as PDF;
 use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Maatwebsite\Excel\Facades\Excel;
