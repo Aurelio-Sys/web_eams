@@ -2055,7 +2055,7 @@ class wocontroller extends Controller
         // dd($data);
 
         $data_alldets = DB::table('wo_dets')
-            ->select('wo_dets_nbr', 'wo_dets_rc', 'repm_desc')
+            ->select('wo_dets_nbr', 'wo_dets_rc', 'repm_desc','wo_dets_do_flag','wo_dets_flag')
             ->join('rep_master', 'wo_dets.wo_dets_rc', 'rep_master.repm_code')
             ->where('wo_dets.wo_dets_nbr', '=', $nowo)
             ->distinct('wo_dets_rc')

@@ -51,14 +51,14 @@
                     ?>
 
                     <!-- SR NUMBER  -->
-                    <div class="form-group row">
+                    <div class="form-group row" style="display: none;">
                         <label for="srprefix" class="col-md-3 col-form-label text-md-right">{{ __('Service Request Prefix') }}</label>
                         <div class="col-md-7">
                             <input id="srprefix" type="text" class="form-control" name="srprefix" maxlength="2" autocomplete="off"
                             value="<?php echo $datavaluesrprefix;?>"> 
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row" style="display: none;">
                         <label for="srnumber" class="col-md-3 col-form-label text-md-right">{{ __('Last Service Request Number') }}</label>
                         <div class="col-md-7">
                             <input id="srnumber" type="text" class="form-control" autocomplete="off" name="srnumber" value="<?php echo $datavaluesrnbr; ?>"  maxlength="6">
