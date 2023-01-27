@@ -17,6 +17,7 @@ use App\Http\Controllers\WO\WORelease;
 use App\Http\Controllers\WO\WHSConfirm;
 use App\Http\Controllers\WO\PMdetsController;
 use App\Http\Controllers\WO\WoQcController;
+use App\Http\Controllers\Usage\UsageBrowseController;
 
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
@@ -597,6 +598,9 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/createum', [UMController::class, 'store']);
 	Route::post('/editum', [UMController::class, 'update']);
 	Route::post('/deleteum', [UMController::class, 'destroy']);
+
+	// Usage Browse untuk melihat data measurement asset yang tipe perhitungan Meter yang telah diinput
+	Route::get('/usbrowse', [UsageBrowseController::class, 'index'])->name('usbrowse');
 });
 
 Auth::routes();

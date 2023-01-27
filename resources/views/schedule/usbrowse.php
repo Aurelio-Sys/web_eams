@@ -110,7 +110,7 @@
               <input id="e_date" type="date" class="form-control e_date" name="e_date" required >
             </div>
             <div class="col-md-4">
-              <input id="e_time" type="time" class="form-control e_time" name="e_time">
+              <input id="e_time" type="time" class="form-control e_time" name="e_time" required>
             </div>
           </div>
 

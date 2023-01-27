@@ -350,7 +350,14 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
-                
+                @if(str_contains( Session::get('menu_access'), 'US04'))
+                <li class="nav-item has-treeview">
+                  <a href="{{route('usbrowse')}}" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>Usage Browse</p>
+                  </a>
+                </li>
+                @endif
               </ul>
             </li>
             @endif

@@ -25,47 +25,32 @@ class UsageController extends Controller
 
             if($asset == ''){
                 $data = DB::table('asset_mstr')
-                            // ->leftJoin('asset_usage_hist','asset_mstr.asset_code','=','asset_usage_hist.asset_code')
                             ->where('asset_measure','=','M')
                             ->selectRaw('*, asset_mstr.asset_code as "assetcode"')
-                            // ->groupBy('asset_mstr.asset_code')
-                            // ->orderBy('asset_usage_hist.last_checked')
                             ->orderby($sort_by, $sort_type)
                             ->paginate(10);
                             
             }else{
                 $data = DB::table('asset_mstr')
-                            // ->leftJoin('asset_usage_hist','asset_mstr.asset_code','=','asset_usage_hist.asset_code')
                             ->where('asset_measure','=','M')
                             ->where('asset_mstr.asset_code','=',$asset)
                             ->selectRaw('*, asset_mstr.asset_code as "assetcode"')
-                            // ->groupBy('asset_mstr.asset_code')
-                            // ->orderBy('asset_usage_hist.last_checked')
                             ->orderby($sort_by, $sort_type)
                             ->paginate(10);
-
             }
 
             return view('schedule.table-usage', ['data' => $data]);
-
-
         }else{
             $data = DB::table('asset_mstr')
-                        // ->leftJoin('asset_usage_hist','asset_mstr.asset_code','=','asset_usage_hist.asset_code')
                         ->where('asset_measure','=','M')
                         ->selectRaw('*, asset_mstr.asset_code as "assetcode"')
-                        // ->groupBy('asset_mstr.asset_code')
-                        // ->orderBy('asset_usage_hist.last_checked')
                         ->paginate(10);
 
             $asset = DB::table('asset_mstr')
                             ->get();
         
-
             return view('schedule.usage',['data' => $data, 'asset' => $asset]);
         }
-
-        
     }
 
     public function updateusage(Request $req){
@@ -75,7 +60,6 @@ class UsageController extends Controller
                     ->first();
 
         if($checkdata){
-
             if(is_null($checkdata->asset_last_usage)){
                 DB::table('asset_mstr')
                     ->where('asset_code','=',$req->e_asset)
@@ -86,76 +70,26 @@ class UsageController extends Controller
             }else{
                 $nextusage = $checkdata->asset_last_usage + $checkdata->asset_meter;
 
-                // if($nextusage <= $req->e_current){
-                  //               DB::table('asset_mstr')
-                  //               ->where('asset_code','=',$req->e_asset)
-                  //               ->update([
-                  //                       'asset_last_usage' => $req->e_current,
-                  //                       'asset_last_usage_mtc' => $req->e_current,
-                  //               ]);
-                                
-                  //               // Buat WO
-
-                  //               $tablern = DB::table('running_mstr')
-                  //                           ->first();
-
-                  //               $tempnewrunnbr = strval(intval($tablern->wt_nbr)+1);
-                  //               $newtemprunnbr = '';
-
-                  //               if(strlen($tempnewrunnbr) <= 4){
-                  //               $newtemprunnbr = str_pad($tempnewrunnbr,4,'0',STR_PAD_LEFT);
-                  //               }
-
-                  //               $runningnbr = $tablern->wt_prefix.'-'.$tablern->year.'-'.$newtemprunnbr;
-                                
-                  //               // dd($runningnbr);
-                  //               $dataarray = array(
-                  //                   'wo_nbr' => $runningnbr,
-                  //                   'wo_status' => 'plan',
-            						// 'wo_priority' => 'high',
-            						// 'wo_dept' => 'ENG',
-                  //                   'wo_asset' => $req->e_asset, 
-                  //                   'wo_schedule' => Carbon::now('ASIA/JAKARTA')->toDateString(),
-                  //                   'wo_duedate' => Carbon::now('ASIA/JAKARTA')->toDateString(),
-                  //                   'wo_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                  //                   'wo_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                  //                   'wo_type'       => 'auto',
-                  //               );
-
-                  //               DB::table('wo_mstr')->insert($dataarray);
-
-                  //               DB::table('running_mstr')
-                  //                   ->update([
-                  //                       'wt_nbr' => $newtemprunnbr
-                  //                   ]);
-
-
-                  //               DB::table('asset_mstr')
-                  //                       ->where('asset_code',$req->asset_code)
-                  //                       ->update([
-                  //                           'asset_on_use' => $runningnbr,
-                  //                       ]);
-
-                  //               // Kirim Email
-                  //               $assettable = DB::table('asset_mstr')
-                  //                           ->where('asset_code','=',$req->e_asset)
-                  //                           ->first();
-                            
-                  //               $asset = $req->e_asset.' - '.$assettable->asset_desc;
-
-                  //               EmailScheduleJobs::dispatch($runningnbr,$asset,'1','','','','');
-
-                  //               toast('Data Updated & WO Succesfully Created', 'success');
-                  //               return back();
-                // }else{
-                    DB::table('asset_mstr')
-                    ->where('asset_code','=',$req->e_asset)
-                    ->update([
-                            'asset_last_usage_mtc' => $req->e_current,
-                    ]);
-                // }
+                DB::table('asset_mstr')
+                ->where('asset_code','=',$req->e_asset)
+                ->update([
+                        'asset_last_usage_mtc' => $req->e_current,
+                ]);
             }
 
+            /* Menyimpan data transaksi pengukuran asset */
+            DB::table('us_hist')->insert([
+                'us_asset' => $checkdata->asset_code,
+                'us_asset_site' => $checkdata->asset_site,
+                'us_asset_loc' => $checkdata->asset_loc,
+                'us_mea_um' => $checkdata->asset_mea_um,
+                'us_date' => $req->e_date,
+                'us_time' => $req->e_time,
+                'us_last_mea' => $req->e_current,
+                'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                'edited_by' => Session::get('username'),
+            ]);
 
             toast('Data Updated', 'success');
             return back();

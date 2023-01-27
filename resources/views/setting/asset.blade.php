@@ -251,7 +251,7 @@
                         <div class="col-md-3">
                             <input id="t_meter" type="number" step="0.01" placeholder="0.00" class="form-control" name="t_meter" autocomplete="off" autofocus max="999999" />
                         </div>
-                        <div class="col-md-3"> //A20230126
+                        <div class="col-md-3"> {{--  A20230126  --}}
                             <select id="t_meaum" class="form-control" name="t_meaum" >
                                 <option value="">--Select Data--</option>
                                 @foreach($datameaum as $du)
@@ -489,7 +489,7 @@
                     <div class="col-md-3">
                         <input id="te_meter" type="number" step="0.01" placeholder="0.00" class="form-control" name="te_meter" autocomplete="off" autofocus max="999999" />
                     </div>
-                    <div class="col-md-3"> //A20230126
+                    <div class="col-md-3"> {{--  A20230126  --}}
                         <select id="te_meaum" class="form-control" name="te_meaum" >
                             <option value="">--Select Data--</option>
                             @foreach($datameaum as $du)
@@ -707,6 +707,7 @@
            var measure      = $(this).data('measure');
            var supp         = $(this).data('supp');
            var meter        = $(this).data('meter');
+           var meaum        = $(this).data('meaum');
            var cal          = $(this).data('cal');
            var start_mea    = $(this).data('start_mea');
            var note         = $(this).data('note');
@@ -739,6 +740,7 @@
            document.getElementById('te_mea').value          = measure;
            document.getElementById('te_supp').value         = supp;
            document.getElementById('te_meter').value        = meter;
+           document.getElementById('te_meaum').value        = meaum;
            document.getElementById('te_cal').value          = cal;
            document.getElementById('te_mea_date').value     = start_mea;
            document.getElementById('te_note').value         = note;

@@ -2074,12 +2074,15 @@ class SettingController extends Controller
         if ($req->te_mea == "C") {
             $meter  = 0;
             $cal    = $req->te_cal;
+            $meaum = "";
         } else if ($req->te_mea == "M") {
             $meter  = $req->te_meter;
             $cal    = 0;
+            $meaum = $req->te_meaum;
         } else {
             $meter  = 0;
             $cal    = 0;
+            $meaum = "";
         }
 
 
@@ -2167,6 +2170,7 @@ class SettingController extends Controller
             'asset_measure'     => $req->te_mea,
             'asset_supp'        => $req->te_supp,
             'asset_meter'       => $meter,
+            'asset_mea_um'       => $meaum,
             'asset_cal'         => $cal,
             'asset_tolerance'   => $req->te_tolerance,
             'asset_start_mea'   => $req->te_mea_date,
@@ -2278,7 +2282,7 @@ class SettingController extends Controller
                             'asset_mstr.asset_repair','asset_mstr.asset_prc_date','asset_mstr.asset_daya',
                             'asset_mstr.asset_prc_price','asset_mstr.asset_start_mea',
                             'asset_mstr.asset_upload','asset_tolerance','asset_last_usage','asset_last_usage_mtc',
-                            'asset_last_mtc','asset_on_use','asset_image','asset_qad')
+                            'asset_last_mtc','asset_on_use','asset_image','asset_qad','asset_mea_um')
                         ->orderby('asset_code')
                         ->paginate(10);
 
@@ -2328,7 +2332,7 @@ class SettingController extends Controller
                             'asset_mstr.asset_repair','asset_mstr.asset_prc_date','asset_mstr.asset_daya',
                             'asset_mstr.asset_prc_price','asset_mstr.asset_start_mea',
                             'asset_mstr.asset_upload','asset_tolerance','asset_last_usage','asset_last_usage_mtc',
-                            'asset_last_mtc','asset_on_use','asset_image','asset_qad')
+                            'asset_last_mtc','asset_on_use','asset_image','asset_qad','asset_mea_um')
                         ->whereRaw($kondisi)
                         ->orderBy($sort_by, $sort_group)
                         ->paginate(10);
