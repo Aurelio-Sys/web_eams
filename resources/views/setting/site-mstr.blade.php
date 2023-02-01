@@ -4,7 +4,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-4">
-            <h1 class="m-0 text-dark">Site Maintenance</h1>
+            <h1 class="m-0 text-dark">Spare Part Site Maintenance</h1>
         </div>
     </div><!-- /.row -->
     <div class="col-md-12">
