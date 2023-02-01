@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 
 
   <title>eAMS Module</title>
@@ -70,6 +71,7 @@ to get the desired effect
 
       <!-- Right navbar links -->
       <div class="om-menu ml-auto">
+      <button id="notifymebutt">Notify me</button>
         <ul class="nav navbar-nav">
           <li class=" nav-item dropdown notifications-menu ">
             <a class="nav-link" data-toggle="dropdown" id="alertsDropdown" href="" aria-expanded="false">
@@ -913,6 +915,7 @@ to get the desired effect
 
   <!-- jQuery -->
   <script src="{{url('plugins/jquery/jquery.min.js')}}"></script>
+  <script src="{{ mix('js/app.js') }}"></script>
   <!-- Bootstrap -->
   <script src="{{url('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 
@@ -933,7 +936,33 @@ to get the desired effect
 
   @yield('scripts')
   <script type="text/javascript">
+
+    function notifyMe() {
+      // Memeriksa apakah browser mendukung notifikasi
+      if (!("Notification" in window)) {
+        alert("This browser does not support desktop notification");
+      } else if (Notification.permission === "granted") {
+        // Membuat notifikasi
+        var notification = new Notification("New Notification");
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(function (permission) {
+          if (permission === "granted") {
+            var notification = new Notification("New Notification");
+          }
+        });
+      }
+    }
+
+        // var socketId = Echo.socketId();
+        
+        
+      
+
     $(document).ready(function() {
+      var userId = {{ Auth::id() }};
+
+      console.log(userId);
+
       if (window.innerWidth <= 576) {
         document.querySelector('body').classList.remove('open');
       } else {
@@ -955,6 +984,43 @@ to get the desired effect
       //   alert("Hello!");
       //   // $(".hide_div").hide();
       // });
+
+      // Echo.channel('notif-bell')
+      //     .listen('NotifBell', post => {
+      //       if (! ('Notification' in window)) {
+      //         alert('Web Notification is not supported');
+      //         return;
+      //       }
+
+      //         let notification = new Notification(post.judul, {
+      //           body: post.pesan, // content for the alert
+      //           icon: "https://pusher.com/static_logos/320x320.png" // optional image url
+      //         });
+
+      //         // link to page on clicking the notification
+      //         notification.onclick = () => {
+      //           window.open(window.location.href);
+      //         };
+      //     });
+      
+
+      Echo.private(`new-notification.${userId}`)
+        .listen('NewNotification', post => {
+            if (! ('Notification' in window)) {
+              alert('Web Notification is not supported');
+              return;
+            }
+
+              let notification = new Notification(post.title, {
+                body: post.message, // content for the alert
+                icon: "https://pusher.com/static_logos/320x320.png" // optional image url
+              });
+
+              // link to page on clicking the notification
+              notification.onclick = () => {
+                window.open(window.location.href);
+              };
+        });
 
     });
 
@@ -1013,6 +1079,10 @@ to get the desired effect
         });
       });
     });
+    $('#notifymebutt').on('click',function(e){
+      notifyMe();
+      console.log('masuk');
+    })
   </script>
 </body>
 

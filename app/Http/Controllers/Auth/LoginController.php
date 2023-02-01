@@ -94,10 +94,10 @@ class LoginController extends Controller
 
         $previous_session = Auth::User()->session_id;
         if ($previous_session) {
-            \Session::getHandler()->destroy($previous_session);
+            Session::getHandler()->destroy($previous_session);
         }
 
-        Auth::user()->session_id = \Session::getId();
+        Auth::user()->session_id = Session::getId();
         
         Auth::user()->save();
         $this->clearLoginAttempts($request);

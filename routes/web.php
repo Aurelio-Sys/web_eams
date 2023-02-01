@@ -21,6 +21,7 @@ use App\Http\Controllers\WO\WoQcController;
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Redirect;
 use Master\QxWsaMTController;
 use Illuminate\Support\Facades\Route;
@@ -42,10 +43,8 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::group(['middleware' => ['auth']], function() {
+Route::group(['middleware' => ['auth','web']], function() {
 	Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
-     
-     
     // Dash
     route::get('/openwo', 'dashController@openwo');
     route::get('/planwo', 'dashController@planwo');
@@ -597,6 +596,11 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/createum', [UMController::class, 'store']);
 	Route::post('/editum', [UMController::class, 'update']);
 	Route::post('/deleteum', [UMController::class, 'destroy']);
+	Broadcast::routes(['middleware' => ['auth']]);
+	Broadcast::channel('new-notification.{userId}',function($user, $userId){
+		return (int) $user->id === (int) $userId;
+		// return true;
+	});
 });
 
 Auth::routes();

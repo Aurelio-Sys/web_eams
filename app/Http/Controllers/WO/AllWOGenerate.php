@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\WO;
 
+use App\Events\NewNotification;
+use App\Events\NotifBell;
 use App\Exports\GenerateWOExport;
 use App\Http\Controllers\Controller;
 use App\Jobs\EmailWOGen;
@@ -11,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
+use Pusher\Pusher;
 
 class AllWOGenerate extends Controller
 {
@@ -255,7 +258,16 @@ class AllWOGenerate extends Controller
                 // );
             }
 
+
             DB::commit();
+
+            $id = 2;
+            $title = 'NOTIKASI ABCD TESTETETET';
+            $message = 'Hallo World';
+
+            // event(new NotifBell($title,$message));
+            event(new NewNotification($id,$title,$message));
+
             toast('Work Order Generated Success', 'success');
             return back();
         } catch (Exception $err) {
