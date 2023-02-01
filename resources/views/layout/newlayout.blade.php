@@ -689,6 +689,13 @@ to get the desired effect
                     </a>
                   </li>
                   @endif
+                  @if(str_contains( Session::get('menu_access'), 'MT37'))
+                  <li class="nav-item">
+                    <a href="/asfn" class="nav-link">
+                      <p>Mapping Asset - Failure</p>
+                    </a>
+                  </li>
+                  @endif
                   
                   
                 </ul><!-- ul asset -->

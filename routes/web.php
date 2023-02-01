@@ -5,6 +5,7 @@ use App\Http\Controllers\Master\AssetLocController;
 use App\Http\Controllers\Master\AssetMoveController;
 use App\Http\Controllers\Master\PmEngController;
 use App\Http\Controllers\Master\UMController;
+use App\Http\Controllers\Master\AsfnController;
 use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\Report\RemainSpController;
@@ -601,6 +602,13 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// Usage Browse untuk melihat data measurement asset yang tipe perhitungan Meter yang telah diinput
 	Route::get('/usbrowse', [UsageBrowseController::class, 'index'])->name('usbrowse');
+
+	// Asset - Failure
+	Route::get('/asfn', [AsfnController::class, 'index']);
+	Route::post('/createaasfn', [AsfnController::class, 'store']);
+	Route::post('/editasfn', [AsfnController::class, 'update']);
+	Route::post('/deleteasfn', [AsfnController::class, 'destroy']);
+	Route::get('/cekasfn', [AsfnController::class, 'cekasfn']);
 });
 
 Auth::routes();
