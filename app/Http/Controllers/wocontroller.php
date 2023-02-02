@@ -5387,5 +5387,79 @@ class wocontroller extends Controller
 
         return response($output);
     }
+
+    public function returnsp (Request $req){
+        if(Session::get('role') == 'ADMIN'){
+            $data = DB::table('wo_mstr')
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->where(function ($status) {
+                    $status->where('wo_status', '=', 'open')
+                        ->orwhere('wo_status', '=', 'started');
+                })
+                ->orderby('wo_created_at', 'desc')
+                ->orderBy('wo_mstr.wo_id', 'desc')
+                ->paginate(10);
+            // dd($data);
+            // }
+            // dd($data);
+            $engineer = DB::table('users')
+                ->join('roles', 'users.role_user', 'roles.role_code')
+                ->where('role_desc', '=', 'Engineer')
+                ->get();
+            $asset = DB::table('wo_mstr')
+                ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
+                ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->where(function ($status) {
+                    $status->where('wo_status', '=', 'open')
+                        ->orwhere('wo_status', '=', 'started');
+                })
+                ->groupBy('asset_code')
+                ->orderBy('asset_code')
+                ->get();
+        }else{
+            $data = DB::table('wo_mstr')
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->where(function ($status) {
+                    $status->where('wo_status', '=', 'open')
+                        ->orwhere('wo_status', '=', 'started');
+                })
+                ->where(function ($query) {
+                    $query->where('wo_engineer1', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                })
+                ->orderby('wo_created_at', 'desc')
+                ->orderBy('wo_mstr.wo_id', 'desc')
+                ->paginate(10);
+            // dd($data);
+            // }
+            // dd($data);
+            $engineer = DB::table('users')
+                ->join('roles', 'users.role_user', 'roles.role_code')
+                ->where('role_desc', '=', 'Engineer')
+                ->get();
+            $asset = DB::table('wo_mstr')
+                ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
+                ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                ->where(function ($status) {
+                    $status->where('wo_status', '=', 'open')
+                        ->orwhere('wo_status', '=', 'started');
+                })
+                ->where(function ($query) {
+                    $query->where('wo_engineer1', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                        ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                })
+                ->groupBy('asset_code')
+                ->orderBy('asset_code')
+                ->get();
+        }
+
+        return view('workorder.wostart', ['data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset]);
+    }
 }
 //tanggal betulin 24 may 2021 - 1553
