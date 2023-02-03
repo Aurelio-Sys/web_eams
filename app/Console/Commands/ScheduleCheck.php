@@ -291,7 +291,7 @@ class ScheduleCheck extends Command
                     ->where('us_asset_loc','=',$data2->asset_loc)
                     ->where('us_last_mea','=',$data2->asset_last_usage_mtc)
                     ->update([
-                        'us_no_pm' => $data2->asset_last_usage_mtc,
+                        'us_no_pm' => $runningnbr,
                     ]);
 
                 // Kirim Email

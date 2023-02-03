@@ -20,7 +20,7 @@ class CreateUsHistTable extends Migration
             $table->string('us_asset')->charset('utf8mb4')->collation('utf8mb4_general_ci');
             $table->string('us_asset_site')->charset('utf8mb4')->collation('utf8mb4_general_ci');
             $table->string('us_asset_loc')->charset('utf8mb4')->collation('utf8mb4_general_ci');
-            $table->string('us_mea_um');
+            $table->string('us_mea_um')->nullable();
             $table->date('us_date');
             $table->time('us_time')->useCurrent()->nullable();
             $table->decimal('us_last_mea');
