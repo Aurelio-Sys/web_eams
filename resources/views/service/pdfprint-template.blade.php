@@ -118,17 +118,17 @@
               <p class="fcode" style="margin-top: -3px; margin-left:6px; font-size:12px">
                 - {{$srmstr->fn1}}
               </p><br>
-                @endif
+              @endif
               &nbsp; @if($srmstr->fn2 != null)
               <p style="margin-top: -3px; margin-left:6px; font-size:12px">
                 - {{$srmstr->fn2}}
               </p><br>
-                @endif
+              @endif
               &nbsp; @if($srmstr->fn3 != null)
               <p style="margin-top: -3px; margin-left:6px; font-size:12px">
                 - {{$srmstr->fn3}}
               </p><br>
-                @endif
+              @endif
             </td>
           </tr>
           <tr style="line-height: 2px;">
@@ -179,10 +179,16 @@
         <table style="border-collapse: collapse;margin-left:5px;">
           <tr>
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
-              <p style="margin:0;padding:0;font-size:12px"><b>No. SR </b></p>
+              <p style="margin:0;padding:0;font-size:12px"><b>No. SR / No. WO </b></p>
             </td>
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
-              <p style="margin-top: 0px; font-size:12px;">: {{$srmstr->sr_number}}</p>
+              <p style="margin-top: 0px; font-size:12px;">
+                @if($womstr != null)
+                : {{$srmstr->sr_number}} / {{$womstr->wo_nbr}}
+                @else
+                : {{$srmstr->sr_number}} /
+                @endif
+              </p>
             </td>
           </tr>
           <tr style="line-height: 2px;">
@@ -271,26 +277,50 @@
               <p style="margin:0;padding:0;font-size:12px">Waktu Pemeriksaan</p>
             </td>
             <td style="text-align:center;vertical-align:middle;border:1px solid;width:100px">
-              <p style="margin:0;padding:0;font-size:12px">Mulai</p>
+              <p style="margin:0;padding:0;font-size:12px">Mulai dijadwalkan</p>
             </td>
             <td style="text-align:center;vertical-align:middle;border:1px solid;width:100px">
-              <p style="margin:0;padding:0;font-size:12px">Selesai</p>
+              <p style="margin:0;padding:0;font-size:12px">Batas pemeriksaan</p>
             </td>
           </tr>
           <tr>
             <td style="text-align:center;border:1px solid;">
-              <p style="margin:0;padding:0;font-size:12px">Tanggal</p>
+              <p style="margin:0;padding:0;font-size:12px">
+                @if($womstr != null)
+                {{date('d/m/Y', strtotime($womstr->wo_created_at))}}
+                @else
+                &nbsp;
+                @endif
+              </p>
             </td>
             <td style="text-align:center;border:1px solid;">
-
+              <p style="margin:0;padding:0;font-size:12px">
+                @if($womstr != null)
+                {{date('d/m/Y', strtotime($womstr->wo_schedule))}}
+                @else
+                &nbsp;
+                @endif
+              </p>
             </td>
             <td style="text-align:center;border:1px solid;">
-
+              <p style="margin:0;padding:0;font-size:12px">
+                @if($womstr != null)
+                {{date('d/m/Y', strtotime($womstr->wo_duedate))}}
+                @else
+                &nbsp;
+                @endif
+              </p>
             </td>
           </tr>
           <tr>
             <td style="text-align:center;border:1px solid;">
-              <p style="margin:0;padding:0;font-size:12px">Jam</p>
+              <p style="margin:0;padding:0;font-size:12px">
+                @if($womstr != null)
+                {{date('H:i', strtotime($womstr->wo_created_at))}}
+                @else
+                &nbsp;
+                @endif
+              </p>
             </td>
             <td style="text-align:center;border:1px solid;">
               <p style="margin:0;padding:0;font-size:12px"></p>
@@ -303,22 +333,20 @@
       </td>
     </tr>
     <tr>
-      <td style="height: 65px;border-left: 2px solid; border-right:1.5px" colspan="3">
+      <td style="height: 65px;border-left: 2px solid; border-bottom: 2px solid; border-right:0px; border-top:0.5px" colspan="2">
         <p style=" margin-bottom:0px; margin-top:0px; margin-left: 5px; font-size:12px">
           <span style="padding-bottom: 0px;border-bottom:1px solid black;">Uraian Pemeriksaan</span>:
           <br>
-          {{$srmstr->sr_note}}
+          @if($womstr != null)
+          {{$womstr->wo_note}}
+          @else
+          &nbsp;
+          @endif
         </p>
       </td>
-    </tr>
-    <tr>
-      <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0px; border-top:0.5px solid; border-bottom:2px solid; width:350px">
-        <!-- <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diusulkan oleh,</span></p>
-        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->req_by}}</p> -->
-      </td>
-      <td colspan="2" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
-        <p style=" margin-bottom:5px; margin-left: 230px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Petugas yang melakukan pemeriksaan,</span></p>
-        <p style=" margin-bottom:5px; margin-left: 230px; margin-top:30px;font-size:12px">{{$srmstr->sr_approver}}</p>
+      <td colspan="1" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
+        <p style=" margin-bottom:5px; margin-left: 100px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Petugas yang melakukan pemeriksaan,</span></p>
+        <p style=" margin-bottom:5px; margin-left: 100px; margin-top:30px;font-size:12px">{{$srmstr->sr_approver}}</p>
       </td>
     </tr>
     <tr>
@@ -334,14 +362,54 @@
           <tr>
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
               <p style="margin:0;padding:0;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Divisi yang melakukan <b>Penyelesaian Job</b></span> :</p>
+              <p style="margin:0px;padding:0px;font-size:12px">
+                @if($engineerlist != null)
+                @if($engineerlist->eng1 != null)
+                {{$engineerlist->eng1}}
+                @else
+                &nbsp;
+                @endif
+                @endif
+              </p>
+              <p style="margin:0px;padding:0px;font-size:12px">
+                @if($engineerlist != null)
+                @if($engineerlist->eng2 != null)
+                {{$engineerlist->eng2}}
+                @else
+                &nbsp;
+                @endif
+                @endif
+              </p>
+              <p style="margin:0px;padding:0px;font-size:12px">
+                @if($engineerlist != null)
+                @if($engineerlist->eng3 != null)
+                {{$engineerlist->eng3}}
+                @else
+                &nbsp;
+                @endif
+                @endif
+              </p>
+              <p style="margin:0px;padding:0px;font-size:12px">
+                @if($engineerlist != null)
+                @if($engineerlist->eng4 != null)
+                {{$engineerlist->eng4}}
+                @else
+                &nbsp;
+                @endif
+                @endif
+              </p>
+              <p style="margin:0px;padding:0px;font-size:12px">
+                @if($engineerlist != null)
+                @if($engineerlist->eng5 != null)
+                {{$engineerlist->eng5}}
+                @else
+                &nbsp;
+                @endif
+                @endif
+              </p>
             </td>
           </tr>
           <tr>
-            <td style="border-top:0px;border-left:0px;border-collapse: collapse;">
-              <p style="margin-top: 0px; font-size:12px">
-
-              </p>
-            </td>
           </tr>
         </table>
       </td>
@@ -364,10 +432,26 @@
               <p style="margin:0;padding:0;font-size:12px">Tanggal</p>
             </td>
             <td style="text-align:center;border:1px solid;">
-
+              <p style="margin:0;padding:0;font-size:12px">
+                @if($womstr != null)
+                @if($womstr->wo_start_date != null)
+                {{date('d/m/Y', strtotime($womstr->wo_start_date))}}
+                @else
+                &nbsp;
+                @endif
+                @endif
+              </p>
             </td>
             <td style="text-align:center;border:1px solid;">
-
+              <p style="margin:0;padding:0;font-size:12px">
+                @if($womstr != null)
+                @if($womstr->wo_finish_date != null)
+                {{date('d/m/Y', strtotime($womstr->wo_finish_date))}}
+                @else
+                &nbsp;
+                @endif
+                @endif
+              </p>
             </td>
           </tr>
           <tr>
@@ -375,10 +459,26 @@
               <p style="margin:0;padding:0;font-size:12px">Jam</p>
             </td>
             <td style="text-align:center;border:1px solid;">
-              <p style="margin:0;padding:0;font-size:12px"></p>
+              <p style="margin:0;padding:0;font-size:12px">
+                @if($womstr != null)
+                @if($womstr->wo_start_time != null)
+                {{date('H:i', strtotime($womstr->wo_start_time))}}
+                @else
+                &nbsp;
+                @endif
+                @endif
+              </p>
             </td>
             <td style="text-align:center;border:1px solid;">
-              <p style="margin:0;padding:0;font-size:12px"></p>
+              <p style="margin:0;padding:0;font-size:12px">
+                @if($womstr != null)
+                @if($womstr->wo_start_time != null)
+                {{date('H:i', strtotime($womstr->wo_finish_time))}}
+                @else
+                &nbsp;
+                @endif
+                @endif
+              </p>
             </td>
           </tr>
         </table>
@@ -389,7 +489,11 @@
         <p style=" margin-bottom:0px; margin-top:0px; margin-left: 5px; font-size:12px">
           <span style="padding-bottom: 0px;border-bottom:1px solid black;">Uraian Penyelesaian Job</span>:
           <br>
-          {{$srmstr->sr_note}}
+          @if($womstr != null)
+          {{$womstr->wo_approval_note}}
+          @else
+          &nbsp;
+          @endif
         </p>
       </td>
     </tr>
@@ -400,7 +504,13 @@
       </td>
       <td colspan="2" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
         <p style=" margin-bottom:5px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Penanggung Jawab,</span></p>
-        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px"></p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">
+          @if($womstr != null)
+          {{$womstr->wo_approver}}
+          @else
+          &nbsp;
+          @endif
+        </p>
       </td>
     </tr>
     <!-- SERAH TERIMA -->
@@ -478,14 +588,5 @@
     </tr>
   </table> -->
 </body>
-
-
-<!-- <script type="text/javascript">
-  $(document).ready(function() {
-    $('.fcode p').filter(function() {
-      return $(this).html().trim().length == 0
-    }).remove();
-  })
-</script> -->
 
 </html>

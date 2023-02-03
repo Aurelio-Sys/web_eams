@@ -60,7 +60,7 @@ class ServiceController extends Controller
     public function servicerequest() /* route : servicerequest  blade : servicerequest_create */
     {
         $asset = DB::table('asset_mstr')
-            ->leftJoin('asset_loc','asloc_code','=','asset_loc')
+            ->leftJoin('asset_loc', 'asloc_code', '=', 'asset_loc')
             ->where('asset_active', '=', 'Yes')
             // ->where('asset_loc','=',session::get('department'))
             ->orderBy('asset_code')
@@ -84,14 +84,16 @@ class ServiceController extends Controller
         $dataapp = DB::table('eng_mstr')
             ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'eng_mstr.eng_dept')
             ->selectRaw('dept_mstr.*,eng_mstr.*')
-            ->where('eng_active','=','Yes')
-            ->where('approver','=',1)
+            ->where('eng_active', '=', 'Yes')
+            ->where('approver', '=', 1)
             ->groupBy('eng_dept')
             ->orderBy('eng_code')
             ->get();
         // dd($dataapp);
-        return view('service.servicerequest_create', ['showasset' => $asset, 'dept' => $datadepart, 
-        'wotype' => $wotype, 'impact' => $impact, 'fc' => $fcode, 'dataapp' => $dataapp ]);
+        return view('service.servicerequest_create', [
+            'showasset' => $asset, 'dept' => $datadepart,
+            'wotype' => $wotype, 'impact' => $impact, 'fc' => $fcode, 'dataapp' => $dataapp
+        ]);
     }
 
     public function failuresearch(Request $req)
@@ -139,7 +141,7 @@ class ServiceController extends Controller
             } else {
                 $counterimpact = 0;
             }
-            
+
 
             $newimpact = "";
 
@@ -153,19 +155,19 @@ class ServiceController extends Controller
                 ->first();
 
             $runnumber = DB::table('dept_mstr')
-                            ->where('dept_code','=', session::get('department'))
-                            ->first();
-                            // dd(session::get('department'));            
+                ->where('dept_code', '=', session::get('department'))
+                ->first();
+            // dd(session::get('department'));            
             $newyear = Carbon::now()->format('y');
 
             // dd($runnumber);
-            if($runnumber->dept_running_nbr == null){
+            if ($runnumber->dept_running_nbr == null) {
                 DB::rollBack();
-                toast('Please set running number for department code '.session::get('department').' first.', 'error');
+                toast('Please set running number for department code ' . session::get('department') . ' first.', 'error');
                 return back();
             }
 
-            
+
             if ($running->year == $newyear) {
                 $tempnewrunnbr = strval(intval($runnumber->dept_running_nbr) + 1);
 
@@ -182,7 +184,7 @@ class ServiceController extends Controller
                 ->where('sr_number', '=', $runningnbr)
                 ->get();
 
-            
+
             if ($cekData->count() == 0) {
 
                 if ($req->hasFile('filename')) {
@@ -190,11 +192,11 @@ class ServiceController extends Controller
                     foreach ($req->file('filename') as $upload) {
                         $dataTime = date('Ymd_His');
                         $filename = $dataTime . '-' . $upload->getClientOriginalName();
-                        
+
                         // Simpan File Upload pada Public
                         $savepath = public_path('uploadasset/');
                         $upload->move($savepath, $filename);
-                        
+
                         // Simpan ke DB Upload
                         DB::table('service_req_upload')
                             ->insert([
@@ -206,7 +208,7 @@ class ServiceController extends Controller
                     }
                 }
             }
-            
+
             DB::table('service_req_mstr')
                 ->insert([
                     'sr_number' => $runningnbr,
@@ -236,7 +238,7 @@ class ServiceController extends Controller
                 ]);
 
             DB::table('dept_mstr')
-                ->where('dept_code','=',session::get('department'))
+                ->where('dept_code', '=', session::get('department'))
                 ->update([
                     'dept_running_nbr' => $newtemprunnbr,
                 ]);
@@ -255,8 +257,8 @@ class ServiceController extends Controller
     }
 
     public function srapproval(Request $req) /* blade : service.servicereq-approval */
-    { 
-       
+    {
+
         $kepalaengineer = DB::table('eng_mstr')
             ->where('approver', '=', 1)
             ->where('eng_active', '=', 'Yes')
@@ -267,8 +269,8 @@ class ServiceController extends Controller
 
         if ($kepalaengineer || Session::get('role') == 'ADMIN') {
             $wotype = DB::table('wotyp_mstr')
-            ->orderBy('wotyp_code')
-            ->get();
+                ->orderBy('wotyp_code')
+                ->get();
 
             $impact = DB::table('imp_mstr')
                 ->orderBy('imp_code')
@@ -293,15 +295,15 @@ class ServiceController extends Controller
                 ->selectRaw('service_req_mstr.*,asset_mstr.*,asset_type.*,loc_mstr.*,wotyp_mstr.*,users.*,dept_mstr.*,
                             k1.fn_desc as k11, k2.fn_desc as k22, k3.fn_desc as k33')
                 ->where('sr_status', '=', '1')
-                ->orderBy('sr_date','DESC')
+                ->orderBy('sr_date', 'DESC')
                 ->orderBy('sr_number', 'DESC');
-            
+
             /* Jika bukan admin, maka yang muncul adalah approver sesuai login */
             if (Session::get('role') <> 'ADMIN') {
-                $data = $data->where('sr_approver','=',Session::get('username'));
+                $data = $data->where('sr_approver', '=', Session::get('username'));
             }
 
-           
+
             $data = $data->paginate(10);
 
             $datarepair = DB::table('rep_master')
@@ -318,14 +320,14 @@ class ServiceController extends Controller
                 ->selectRaw('MIN(xxrepgroup_id) as xxrepgroup_id , xxrepgroup_nbr, MIN(xxrepgroup_desc) as xxrepgroup_desc')
                 ->groupBy('xxrepgroup_nbr')
                 ->get();
-            
+
             $wotypes = DB::table('wotyp_mstr')
                 ->get();
             // dd($wotype);    
-    
+
             $impacts = DB::table('imp_mstr')
                 ->get();
-    
+
             $fcodes = DB::table('fn_mstr')
                 ->get();
 
@@ -820,8 +822,8 @@ class ServiceController extends Controller
                 u1.eng_desc as u11, u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55,
                 wo_mstr.wo_start_date, wo_mstr.wo_finish_date, wo_mstr.wo_action, wo_mstr.wo_status,
                 k1.fn_desc as k11, k2.fn_desc as k22, k3.fn_desc as k33')
-            ->where('sr_dept','=',session::get('department'))
-            ->orderBy('sr_date','DESC')
+            ->where('sr_dept', '=', session::get('department'))
+            ->orderBy('sr_date', 'DESC')
             ->orderBy('sr_number', 'DESC')
             // ->get();
             ->paginate(10);
@@ -891,32 +893,26 @@ class ServiceController extends Controller
                         $zip->addFile($listdown->filepath, $relativeNameInZipFile);
                         // dd($listdown->filepath);
                     }
-    
+
                     /* A211103 */
                     // foreach ($listfinish as $listfinish) {
                     //     $files = File::get($listfinish->file_url);
                     //     $relativeNameInZipFile = basename($listfinish->file_url);
                     //     $zip->addFile($listfinish->file_url, $relativeNameInZipFile);
                     // }
-    
-                    $zip->close();
 
-                    
+                    $zip->close();
                 }
-    
+
                 return response()->download(public_path($fileName));
-                
             } else {
                 toast('Tidak ada dokumen untuk pada SR ' . $sr . '!', 'error');
                 return back();
             }
-
-        } catch ( FileNotFoundException $e) {
+        } catch (FileNotFoundException $e) {
             // dd($e);
             abort('404');
         }
-
-        
     }
 
     public function listupload($id)
@@ -1619,12 +1615,32 @@ class ServiceController extends Controller
             ->get();
         $dept = DB::table(('dept_mstr'))
             ->get();
-        // dd($srmstr);
+
+        $womstr = DB::table('wo_mstr')
+            ->when($sr, function ($q, $sr) {
+                return $q->where('wo_sr_nbr', $sr);
+            })
+            ->leftjoin('users', 'wo_mstr.wo_creator', 'users.username')
+            ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
+            ->first();
+        // dd($womstr);
+
+        $engineerlist = DB::table('wo_mstr')
+            ->when($sr, function ($q, $sr) {
+                return $q->where('wo_sr_nbr', $sr);
+            })
+            ->selectRaw('a.name as eng1,b.name as eng2,c.name as eng3,d.name as eng4,e.name as eng5')
+            ->leftjoin('users as a', 'wo_mstr.wo_engineer1', 'a.username')
+            ->leftjoin('users as b', 'wo_mstr.wo_engineer2', 'b.username')
+            ->leftjoin('users as c', 'wo_mstr.wo_engineer3', 'c.username')
+            ->leftjoin('users as d', 'wo_mstr.wo_engineer4', 'd.username')
+            ->leftjoin('users as e', 'wo_mstr.wo_engineer5', 'e.username')
+            ->first();
         // $wodet = DB::table('wo_dets')
         //     ->join('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')
         //     ->where('wo_dets_nbr', '=', $sr)
         //     ->get();
-        // // dd($wodet);
+        // dd($engineerlist);
         // $data = DB::table('wo_mstr')
         //     ->selectRaw('wo_nbr,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status,
         //         wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,wo_engineer2 as woen2, 
@@ -1994,7 +2010,7 @@ class ServiceController extends Controller
             ->first();
 
         // $pdf = PDF::loadview('workorder.pdfprint-template',['womstr' => $womstr,'wodet' => $wodet, 'data' => $data,'printdate' =>$printdate,'repair'=>$repair,'sparepart'=>$array])->setPaper('A4','portrait');
-        $pdf = PDF::loadview('service.pdfprint-template', ['impact' => $impact, 'srmstr' => $srmstr, 'dept' => $dept, 'printdate' => $printdate, 'users' => $users, 'datasr' => $datasr])->setPaper('A4', 'portrait');
+        $pdf = PDF::loadview('service.pdfprint-template', ['impact' => $impact, 'engineerlist' => $engineerlist, 'womstr' => $womstr, 'srmstr' => $srmstr, 'dept' => $dept, 'printdate' => $printdate, 'users' => $users, 'datasr' => $datasr])->setPaper('A4', 'portrait');
         //return view('picklistbrowse.shipperprint-template',['printdata1' => $printdata1, 'printdata2' => $printdata2, 'runningnbr' => $runningnbr,'user' => $user,'last' =>$countprint]);
         return $pdf->stream($sr . '.pdf');
     }

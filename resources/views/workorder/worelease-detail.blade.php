@@ -206,11 +206,11 @@
                                 </td>
 
                                 <td>
-                                    <input type="number" class="form-control qtyreq" name="qtyreq[]" step="1" min="1" required />
+                                    <input type="number" class="form-control qtyreq" name="qtyreq[]" step="1" min="0" required />
                                 </td>
 
                                 <td>
-                                    <input type="number" class="form-control qtyrequest" name="qtyrequest[]" step="1" min="1" required />
+                                    <input type="number" class="form-control qtyrequest" name="qtyrequest[]" step="1" min="0" required />
                                     <input type="hidden" class="line" name="line[]" id="line" />
                                 </td>
 

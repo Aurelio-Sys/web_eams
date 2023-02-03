@@ -3449,6 +3449,8 @@ class wocontroller extends Controller
             ->where('wo_nbr', '=', $wo)
             ->leftjoin('users', 'wo_mstr.wo_creator', 'users.username')
             ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
+            ->leftJoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+            ->leftJoin('wotyp_mstr', 'wo_mstr.wo_new_type', 'wotyp_mstr.wotyp_code')
             ->first();
         $wodet = DB::table('wo_dets')
             ->join('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')

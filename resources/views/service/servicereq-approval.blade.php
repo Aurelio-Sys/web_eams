@@ -562,7 +562,7 @@
         $("#repaircode").attr('required', false);
         $("#rad_repgroup1").attr('required', false);
         // document.getElementById("alert3").innerHTML = 'Please fill out reason reject';
-        $("#rejectreason").attr('required', true);
+        // $("#rejectreason").attr('required', true);
 
         $('#approval').submit();
 
