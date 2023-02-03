@@ -292,9 +292,17 @@ to get the desired effect
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'WO08'))
                 <li class="nav-item">
-                  <a href="{{route('woQCIndex')}}" class="nav-link ">
+                  <a href="/woqc" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>WO QC Approval</p>
+                  </a>
+                </li>
+                @endif
+                @if(str_contains( Session::get('menu_access'), 'WO04'))
+                <li class="nav-item">
+                  <a href="/returnbacksp" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>WO Return SP</p>
                   </a>
                 </li>
                 @endif

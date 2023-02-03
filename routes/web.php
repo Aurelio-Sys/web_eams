@@ -611,6 +611,9 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/deleteasfn', [AsfnController::class, 'destroy']);
 	Route::get('/cekasfn', [AsfnController::class, 'cekasfn']);
 	Route::get('/editdetailasfn', [AsfnController::class, 'editdetailasfn']);
+
+	//Return Back Spare Part
+	Route::get('/returnbacksp', [wocontroller::class, 'returnsp']);
 });
 
 Auth::routes();
