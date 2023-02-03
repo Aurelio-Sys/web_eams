@@ -197,7 +197,7 @@
                                 </td>
 
                                 <td>
-                                    <select name="partneed[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="200px" required autofocus>
+                                    <select name="partneed[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="200px" autofocus>
                                         <option value=""> -- Select Data -- </option>
                                         @foreach($spdata as $da)
                                         <option value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>
