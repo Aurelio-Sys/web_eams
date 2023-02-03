@@ -245,11 +245,11 @@ class SettingController extends Controller
         $access = $req->cbRoleMaint . $req->cbSite . $req->cbLoc . $req->cbSupp . $req->cbAstype . $req->cbAsgroup . $req->cbFn . $req->cbAsset . $req->cbAspar . $req->cbSpt . $req->cbSpg . $req->cbSpm . $req->cbTool . $req->cbRep . $req->cbIns . /*$req->cbRepdet .*/  $req->cbRepins . $req->cbReppart . $req->cbEng . $req->cbInv . $req->cbDept . $req->cbSkill . $req->cbWoBrowse . $req->cbWoCreatedirect . $req->cbWoStart . $req->cbWoReport . $req->cbWoMaint . $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbUA . $req->cbUSMT . $req->cbUSmultiMT . $req->cbUser . $req->cbRunning . $req->cbBoas . $req->cbEngSchedule . $req->cbBookSchedule . $req->cbAssetSchedule . $req->cbEngReport . $req->cbAssetReport;
 
         $access = $req->dept . $req->Skill . $req->Eng . $req->RoleMaint . $req->cbRunning . $req->SetWsa . $req->SetFntype . $req->Fn . $req->SetImp . 
-            $req->Astype . $req->Asgroup . $req->Supp . $req->SetAssetsite . $req->SetAssetloc . $req->Asset . $req->Aspar . $req->SetMove . $req->SetEngpm . 
+            $req->Astype . $req->Asgroup . $req->Supp . $req->SetAssetsite . $req->SetAssetloc . $req->Asset . $req->Aspar . $req->SetMove . $req->SetEngpm . $req->SetUm . $req->SetAsfn .
             $req->Spt . $req->Spg . $req->SetSpsite . $req->SetSploc . $req->Spm . $req->Rep . $req->SetRepgroup . $req->SetIns . 
             $req->cbWoCreatedirect . $req->cbWoMaint . $req->cbWoBrowse . $req->cbWoRelease . $req->cbWoWhsConf . $req->cbWoStart . $req->cbWoReport . $req->cbWoQc . 
             $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . 
-            $req->cbUSMT . $req->cbUSmultiMT . $req->cbUSGen . 
+            $req->cbUSMT . $req->cbUSmultiMT . $req->cbUSGen . $req->cbUSBrowse .
             $req->cbBoas . 
             $req->cbRptDet . $req->cbRptCost . $req->cbAssetReport . $req->cbEngReport . $req->cbRptRemsp . 
             $req->cbAssetSchedule . $req->cbRptSchyear . $req->cbEngSchedule . $req->cbRptSpneed . $req->cbBookSchedule;
@@ -310,11 +310,11 @@ class SettingController extends Controller
     public function editrole(Request $req)
     {
         $access = $req->e_dept . $req->e_Skill . $req->e_Eng . $req->e_RoleMaint . $req->e_cbRunning . $req->e_SetWsa . $req->e_SetFntype . $req->e_Fn . $req->e_SetImp . 
-            $req->e_Astype . $req->e_Asgroup . $req->e_Supp . $req->e_SetAssetsite . $req->e_SetAssetloc . $req->e_Asset . $req->e_Aspar . $req->e_SetMove . $req->e_SetEngpm . 
+            $req->e_Astype . $req->e_Asgroup . $req->e_Supp . $req->e_SetAssetsite . $req->e_SetAssetloc . $req->e_Asset . $req->e_Aspar . $req->e_SetMove . $req->e_SetEngpm . $req->e_SetUm . $req->e_SetAsfn .
             $req->e_Spt . $req->e_Spg . $req->e_SetSpsite . $req->e_SetSploc . $req->e_Spm . $req->e_Rep . $req->e_SetRepgroup . $req->e_SetIns . 
             $req->e_cbWoCreatedirect . $req->e_cbWoMaint . $req->e_cbWoBrowse . $req->e_cbWoRelease . $req->e_cbWoWhsConf . $req->e_cbWoStart . $req->e_cbWoReport . $req->e_cbWoQc . 
             $req->e_cbSRcreate . $req->e_cbSRapprove . $req->e_cbSRbrowse . 
-            $req->e_cbUSMT . $req->e_cbUSmultiMT . $req->e_cbUSGen . 
+            $req->e_cbUSMT . $req->e_cbUSmultiMT . $req->e_cbUSGen . $req->e_cbUSBrowse .
             $req->e_cbBoas . 
             $req->e_cbRptDet . $req->e_cbRptCost . $req->e_cbAssetReport . $req->e_cbEngReport . $req->e_cbRptRemsp . 
             $req->e_cbAssetSchedule . $req->e_cbRptSchyear . $req->e_cbEngSchedule . $req->e_cbRptSpneed . $req->e_cbBookSchedule;
@@ -1760,6 +1760,10 @@ class SettingController extends Controller
                 ->orderby('asset_code')
                 ->get();
 
+            $datameaum = DB::table('um_mstr')
+                ->orderBy('um_code')
+                ->get();
+
             /* Load data asset dari QAD */
 
             Schema::create('temp_asset', function ($table) {
@@ -1795,7 +1799,8 @@ class SettingController extends Controller
 
             return view('setting.asset', ['data' => $data, 'datasite' => $datasite, 'dataloc' => $dataloc, 
             'dataastype' => $dataastype, 'dataasgroup' => $dataasgroup, 'datasupp' => $datasupp, 'datafn' => $datafn, 
-            'repaircode' => $repaircode, 'repairgroup' => $repairgroup, 'datasearch' => $datasearch, 'dataassetqad' => $dataassetqad]);
+            'repaircode' => $repaircode, 'repairgroup' => $repairgroup, 'datasearch' => $datasearch, 
+            'dataassetqad' => $dataassetqad, 'datameaum' => $datameaum]);
         } else {
             toast('You do not have menu access, please contact admin.', 'error');
             return back();
@@ -1911,6 +1916,7 @@ class SettingController extends Controller
                 'asset_meter'       => $req->t_meter,
                 'asset_cal'         => $req->t_cal,
                 'asset_tolerance'   => $req->t_tolerance,
+                'asset_mea_um'      => $req->t_meaum,
                 'asset_start_mea'   => $req->t_mea_date,
                 'asset_note'        => $req->t_note,  
                 'asset_active'      => $req->t_active,  
@@ -2068,12 +2074,15 @@ class SettingController extends Controller
         if ($req->te_mea == "C") {
             $meter  = 0;
             $cal    = $req->te_cal;
+            $meaum = "";
         } else if ($req->te_mea == "M") {
             $meter  = $req->te_meter;
             $cal    = 0;
+            $meaum = $req->te_meaum;
         } else {
             $meter  = 0;
             $cal    = 0;
+            $meaum = "";
         }
 
 
@@ -2161,6 +2170,7 @@ class SettingController extends Controller
             'asset_measure'     => $req->te_mea,
             'asset_supp'        => $req->te_supp,
             'asset_meter'       => $meter,
+            'asset_mea_um'       => $meaum,
             'asset_cal'         => $cal,
             'asset_tolerance'   => $req->te_tolerance,
             'asset_start_mea'   => $req->te_mea_date,
@@ -2272,7 +2282,7 @@ class SettingController extends Controller
                             'asset_mstr.asset_repair','asset_mstr.asset_prc_date','asset_mstr.asset_daya',
                             'asset_mstr.asset_prc_price','asset_mstr.asset_start_mea',
                             'asset_mstr.asset_upload','asset_tolerance','asset_last_usage','asset_last_usage_mtc',
-                            'asset_last_mtc','asset_on_use','asset_image','asset_qad')
+                            'asset_last_mtc','asset_on_use','asset_image','asset_qad','asset_mea_um')
                         ->orderby('asset_code')
                         ->paginate(10);
 
@@ -2322,7 +2332,7 @@ class SettingController extends Controller
                             'asset_mstr.asset_repair','asset_mstr.asset_prc_date','asset_mstr.asset_daya',
                             'asset_mstr.asset_prc_price','asset_mstr.asset_start_mea',
                             'asset_mstr.asset_upload','asset_tolerance','asset_last_usage','asset_last_usage_mtc',
-                            'asset_last_mtc','asset_on_use','asset_image','asset_qad')
+                            'asset_last_mtc','asset_on_use','asset_image','asset_qad','asset_mea_um')
                         ->whereRaw($kondisi)
                         ->orderBy($sort_by, $sort_group)
                         ->paginate(10);

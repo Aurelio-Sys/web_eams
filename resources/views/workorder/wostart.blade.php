@@ -240,6 +240,12 @@
                 <input id="v_starttime" type="time" class="form-control" name="v_starttime" value="{{ \Carbon\Carbon::now()->format('H:i') }}"  autofocus>
               </div>
             </div>
+            <div id="divreprocessreason" class="form-group row justify-content-center" style="display: none;">
+              <label for="v_rejectreason" class="col-md-5 col-form-label text-md-left">Reprocess Reason</label>
+              <div class="col-md-7">
+                <textarea id="v_rejectreason" class="form-control" rows="3" readonly></textarea>
+              </div>
+            </div>
             <!-- <div class="form-group row justify-content-center">
               <label for="v_mtcby" class="col-md-5 col-form-label text-md-left">Maintenance By</label>
               <div class="col-md-7">
@@ -375,6 +381,7 @@
         var wodept     = result[0].dept_desc;
         var wotype     = result[0].wo_type;
         var mtcby       = result[0].asset_daya;
+        var repo_reason = result[0].wo_reject_reason;
 
         var url = "{{url('openprint','id')}}";
         url = url.replace('id', wonbr);
@@ -479,6 +486,15 @@
           document.getElementById('vien5').style.display = '';
           counter = 5;
         }
+
+        if(repo_reason == null || repo_reason == ''){
+          document.getElementById('divreprocessreason').style.display = 'none';
+          document.getElementById('v_rejectreason').value = '';
+        }else{
+          document.getElementById('divreprocessreason').style.display = '';
+          document.getElementById('v_rejectreason').value = repo_reason;
+        }
+
         document.getElementById('v_counter').value    = counter;
         document.getElementById('v_nowo').value       = wonbr;
         document.getElementById('v_nosr').value       = srnbr;

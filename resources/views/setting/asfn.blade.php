@@ -3,31 +3,19 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-4">
-            <h1 class="m-0 text-dark">Spare Part Location Maintenance</h1>
+        <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Mapping Asset - Failure Maintenance</h1>
         </div>
     </div><!-- /.row -->
     <div class="col-md-12">
         <hr>
     </div>
-    {{--  <div class="row">                 
+    <div class="row">                 
         <div class="col-sm-2">    
-            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Location Create</button>
+            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Asset Movement Create</button>
         </div>
     </div>
-    <br>  --}}
-    <div class="row">
-        <div class="col-md-2">
-            <form action="/loadloc" method="post" id="submit">
-                {{ method_field('post') }}
-                {{ csrf_field() }}
-                <input type="submit" class="btn btn-block btn-primary" id="btnload" value="Load Data" />
-                <button type="button" class="btn btn-block btn-info" id="s_btnloading" style="display:none;">
-                    <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
-                </button>
-            </form>
-        </div>
-    </div><!-- /.row -->
+    <br>
 </div><!-- /.container-fluid -->
 @endsection
 @section('content')
@@ -83,21 +71,20 @@
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                <th>Code</th>
+                <th>Asset Group</th>
                 <th>Description</th>
-                <th>Site</th>
-                <!--
-                <th style="width: 15%;">Action</th>
-                -->
+                <th>Failure Type</th>
+                <th>Description</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
             <!-- untuk isi table -->
-            @include('setting.table-area')
+            @include('setting.table-asfn')
         </tbody>
     </table>
     <input type="hidden" name="hidden_page" id="hidden_page" value="1" />
-    <input type="hidden" name="hidden_column_name" id="hidden_column_name" value="loc_code" />
+    <input type="hidden" name="hidden_column_name" id="hidden_column_name" value="asmove_code" />
     <input type="hidden" name="hidden_sort_type" id="hidden_sort_type" value="asc" />
 </div>
 
@@ -106,37 +93,57 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">Location Create</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Mapping Asset - Failure Create</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/createarea">
+            <form class="form-horizontal" method="post" action="/createaasfn">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label for="t_site" class="col-md-4 col-form-label text-md-right">Site <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                        <label for="t_asset" class="col-md-4 col-form-label text-md-right">Asset Group<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-6">
-                            <select id="t_site" class="form-control" name="t_site" required>
+                            <select id="t_asset" class="form-control" name="t_asset" required>
                                 <option value="">--Select Data--</option>
-                                @foreach($dataSite as $s)
-                                <option value="{{$s->site_code}}">{{$s->site_code}} -- {{$s->site_desc}}</option>
+                                @foreach($dataasgroup as $dg)
+                                <option value="{{$dg->asgroup_code}}">{{$dg->asgroup_code}} -- {{$dg->asgroup_desc}}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_locationid" class="col-md-4 col-form-label text-md-right">Code <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                        <label for="t_fntype" class="col-md-4 col-form-label text-md-right">Failure Type<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-6">
-                            <input id="t_locationid" type="text" class="form-control" name="t_locationid" autocomplete="off" autofocus maxlength="10" required />
+                            <select id="t_fntype" class="form-control" name="t_fntype" required>
+                                <option value="">--Select Data--</option>
+                                @foreach($datafntype as $dt)
+                                <option value="{{$dt->wotyp_code}}">{{$dt->wotyp_code}} -- {{$dt->wotyp_desc}}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <label for="t_locationdesc" class="col-md-4 col-form-label text-md-right">Description <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-                        <div class="col-md-6">
-                            <input id="t_locationdesc" type="text" class="form-control" name="t_locationdesc" autocomplete="off" autofocus maxlength="50" required />
-                        </div>
+                    <div class="col-md-10 offset-md-1">
+                        <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
+                          <thead>
+                            <tr id='full'>
+                              <th width="70%">Failure Code</th>
+                              <th width="20%">Delete</th>
+                            </tr>
+                          </thead>
+                          <tbody id='detailapp'>
+
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <td colspan="2">
+                                <input type="button" class="btn btn-lg btn-block btn-focus" id="addrow" value="Add Item" style="background-color:#1234A5; color:white; font-size:16px" />
+                              </td>
+                            </tr>
+                          </tfoot>
+                        </table>
                     </div>
+                    
                 </div>
 
                 <div class="modal-footer">
@@ -154,34 +161,56 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">Location Modify</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Mapping Asset - Failure Modify</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/editarea">
+            <form class="form-horizontal" method="post" action="/editasfn">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label for="te_dsite" class="col-md-4 col-form-label text-md-right">Site</label>
+                        <label for="te_asset" class="col-md-4 col-form-label text-md-right">Asset Group<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-6">
-                            <input id="te_dsite" type="text" class="form-control" name="te_dsite" readonly />
-                            <input type="hidden" id="te_site" name="te_site">
+                            <select id="te_asset" class="form-control" name="te_asset" required>
+                                <option value="">--Select Data--</option>
+                                @foreach($dataasgroup as $dg)
+                                <option value="{{$dg->asgroup_code}}">{{$dg->asgroup_code}} -- {{$dg->asgroup_desc}}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="te_locationid" class="col-md-4 col-form-label text-md-right">Code</label>
+                        <label for="te_fntype" class="col-md-4 col-form-label text-md-right">Failure Type<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-6">
-                            <input id="te_locationid" type="text" class="form-control" name="te_locationid" readonly />
+                            <select id="te_fntype" class="form-control" name="te_fntype" required>
+                                <option value="">--Select Data--</option>
+                                @foreach($datafntype as $dt)
+                                <option value="{{$dt->wotyp_code}}">{{$dt->wotyp_code}} -- {{$dt->wotyp_desc}}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <label for="te_locationdesc" class="col-md-4 col-form-label text-md-right">Description <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-                        <div class="col-md-6">
-                            <input id="te_locationdesc" type="text" class="form-control" name="te_locationdesc" autocomplete="off" autofocus maxlength="50" />
-                        </div>
+                    <div class="col-md-10 offset-md-1">
+                        <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
+                          <thead>
+                            <tr id='full'>
+                              <th width="70%">Failure Code</th>
+                              <th width="20%">Delete</th>
+                            </tr>
+                          </thead>
+                          <tbody id='ed_detailapp'>
+
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <td colspan="2">
+                                <input type="button" class="btn btn-lg btn-block btn-focus" id="ed_addrow" value="Add Item" style="background-color:#1234A5; color:white; font-size:16px" />
+                              </td>
+                            </tr>
+                          </tfoot>
+                        </table>
                     </div>
-                </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
@@ -202,7 +231,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/deletearea">
+            <form class="form-horizontal" method="post" action="/deleteassetloc">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <input type="hidden" id="d_locationid" name="d_locationid">
@@ -225,15 +254,20 @@
     $(document).on('click', '#editarea', function(e) {
         $('#editModal').modal('show');
 
-        var locationid = $(this).data('locationid');
-        var desc = $(this).data('desc');
-        var site = $(this).data('site');
-        var dsite = $(this).data('dsite');
+        var asset = $(this).data('asset');
+        var fntype = $(this).data('fntype');
 
-        document.getElementById('te_locationid').value = locationid;
-        document.getElementById('te_locationdesc').value = desc;
-        document.getElementById('te_site').value = site
-        document.getElementById('te_dsite').value = site + " - " + dsite;
+        document.getElementById('te_asset').value = asset;
+        document.getElementById('te_fntype').value = fntype;
+
+        $.ajax({
+            url:"editdetailasfn?asset="+asset+"&fntype="+fntype,
+            success: function(data) {
+            console.log(data);
+            $('#ed_detailapp').html('').append(data);
+          }
+        })
+
     });
 
     $(document).on('click', '.deletearea', function(e) {
@@ -254,7 +288,6 @@
         $('#id_icon').html('');
         $('#post_title_icon').html('');
     }
-    
 
     function fetch_data(page, sort_type, sort_by, code, desc, scode, sdesc) {
         $.ajax({
@@ -349,47 +382,119 @@
         fetch_data(page, sort_type, column_name, code, desc, scode, sdesc);
     });
 
-    $(document).on('change', '#t_locationid', function() {
-
-        var site = $('#t_site').val();
-        var code = $('#t_locationid').val();
-        var desc = $('#t_locationdesc').val();
-
-        $.ajax({
-            url: "/cekarea?code=" + code + "&desc=" + desc + "&site=" + site,
-            success: function(data) {
-
-                if (data == "ada") {
-                    alert("Location Already Regitered!!");
-                    document.getElementById('t_locationid').value = '';
-                    document.getElementById('t_locationid').focus();
-                }
-                console.log(data);
-
-            }
-        })
+    $("#t_asset").select2({
+        width : '100%',
+        theme : 'bootstrap4',
+        
     });
 
-    $(document).on('change', '#t_locationdesc', function() {
+    var counter = 1;
 
-        var site = $('#t_site').val();
-        var code = $('#t_locationid').val();
-        var desc = $('#t_locationdesc').val();
+    function selectPicker() {
 
-        $.ajax({
-            url: "/cekarea?code=" + code + "&desc=" + desc + "&site=" + site,
-            success: function(data) {
+        $('.selectpicker').selectpicker().focus();
 
-                if (data == "ada") {
-                    alert("Description Location Already Regitered!!");
-                    document.getElementById('t_locationdesc').value = '';
-                    document.getElementById('t_locationdesc').focus();
-                }
-                console.log(data);
+    }
 
-            }
-        })
+    $("#addrow").on("click", function() {
+
+        var newRow = $("<tr>");
+        var cols = "";
+
+        cols += '<td data-label="Barang">';
+        cols += '<select id="barang" class="form-control barang selectpicker" name="barang[]" data-live-search="true" required>';
+          cols += '<option value = ""> -- Select Data -- </option>'
+        @foreach($datafncode as $df)
+        cols += '<option value="{{$df->fn_code}}"> {{$df->fn_code}} -- {{$df->fn_desc}} </option>';
+        @endforeach
+        cols += '</select>';
+        cols += '</td>';
+
+        cols += '<td data-title="Action"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
+        cols += '</tr>'
+        newRow.append(cols);
+        $("#detailapp").append(newRow);
+        counter++;
+
+        selectPicker();
     });
+
+    $(document).on('change', '#t_asset', function() {
+        var sasset = $('#t_asset').val();
+        var sfntype = $('#t_fntype').val();
+            $.ajax({
+                url:"/cekasfn?sasset="+sasset+"&sfntype="+sfntype,
+                success:function(data){
+                    if (data == "ada") {
+                        alert("Data Already Registered!!");
+                        document.getElementById('t_asset').focus();
+                        document.getElementById('t_asset').value = '';
+                        document.getElementById('t_fntype').value = '';
+                    }
+                    console.log(data);
+                }
+            }) 
+    });
+
+    $(document).on('change', '#t_fntype', function() {
+        var sasset = $('#t_asset').val();
+        var sfntype = $('#t_fntype').val();
+        {{--  alert("type");  --}}
+            $.ajax({
+                url:"/cekasfn?sasset="+sasset+"&sfntype="+sfntype,
+                success:function(data){
+                    if (data == "ada") {
+                        alert("Data Already Registered!!");
+                        document.getElementById('t_asset').focus();
+                        document.getElementById('t_asset').value = '';
+                        document.getElementById('t_fntype').value = '';
+                    }
+                    console.log(data);
+                }
+            }) 
+    });
+
+    $("table.order-list").on("click", ".ibtnDel", function(event) {
+        $(this).closest("tr").remove();
+        counter -= 1
+      });
+
+    $("#ed_addrow").on("click", function() {
+        var newRow = $("<tr>");
+        var cols = "";
+
+        cols += '<td data-label="Barang">';
+        cols += '<select id="barang" class="form-control barang selectpicker" name="barang[]" data-live-search="true" required>';
+        cols += '<option value = ""> -- Select Data -- </option>'
+        @foreach($datafncode as $df)
+        cols += '<option value="{{$df->fn_code}}"> {{$df->fn_code}} -- {{$df->fn_desc}} </option>';
+        @endforeach
+        cols += '</select>';
+        cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
+
+        cols += '<td data-title="Action"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
+        cols += '</tr>'
+        newRow.append(cols);
+        $("#ed_detailapp").append(newRow);
+        counter++;
+
+        selectPicker();
+    });
+
+    $(document).on('change','#cek',function(e){
+        var checkbox = $(this), // Selected or current checkbox
+        value = checkbox.val(); // Value of checkbox
+
+
+        if (checkbox.is(':checked'))
+        {
+            $(this).closest("tr").find('.tick').val(1);
+        } else
+        {
+            $(this).closest("tr").find('.tick').val(0);
+        }        
+    });
+
 </script>
 
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">

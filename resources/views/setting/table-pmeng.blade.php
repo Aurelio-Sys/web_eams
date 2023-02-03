@@ -1,8 +1,8 @@
 @forelse($data as $show)
 <tr>
-    <td>{{$show->pm_type}} -- {{$show->astype_desc}}</td>
+    {{--  <td>{{$show->pm_type}} -- {{$show->astype_desc}}</td>  --}}
     <td>{{$show->pm_group}} -- {{$show->asgroup_desc}}</td>
-    <td>{{$show->pm_asset}} -- {{$show->asset_desc}}</td>
+    {{--  <td>{{$show->pm_asset}} -- {{$show->asset_desc}}</td>  --}}
 
     @php($arrayeng = [])
     @if ($show->pm_engcode != "")
@@ -19,11 +19,11 @@
 
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal"
-        data-code="{{$show->pm_type}}" data-desc="{{$show->pm_type}}">
+        data-code="{{$show->pm_group}}" data-desc="{{$show->asgroup_desc}}" data-eng="{{$show->pm_engcode}}">
             <i class="icon-table fa fa-edit fa-lg"></i></a>
         &ensp;
         <a href="javascript:void(0)" class="deletedata" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal" 
-        data-code="{{$show->pm_type}}" data-desc="{{$show->pm_type}}">
+        data-code="{{$show->pm_group}}" data-desc="{{$show->asgroup_desc}}">
             <i class="icon-table fa fa-trash fa-lg"></i></a>
     </td>
 </tr>

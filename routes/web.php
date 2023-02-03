@@ -5,6 +5,7 @@ use App\Http\Controllers\Master\AssetLocController;
 use App\Http\Controllers\Master\AssetMoveController;
 use App\Http\Controllers\Master\PmEngController;
 use App\Http\Controllers\Master\UMController;
+use App\Http\Controllers\Master\AsfnController;
 use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\Report\RemainSpController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\WO\WORelease;
 use App\Http\Controllers\WO\WHSConfirm;
 use App\Http\Controllers\WO\PMdetsController;
 use App\Http\Controllers\WO\WoQcController;
+use App\Http\Controllers\Usage\UsageBrowseController;
 
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
@@ -587,6 +589,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('createapmeng', [PmEngController::class, 'store']);
 	Route::post('editpmeng', [PmEngController::class, 'update']);
 	Route::post('deletepmeng', [PmEngController::class, 'destroy']);
+	Route::get('searcheng', [PmEngController::class, 'searcheng']);
 
 	// Report Schedule Asset Year
 	Route::get('assetyear', [RptAssetYearController::class, 'index']);
@@ -597,6 +600,20 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/createum', [UMController::class, 'store']);
 	Route::post('/editum', [UMController::class, 'update']);
 	Route::post('/deleteum', [UMController::class, 'destroy']);
+
+	// Usage Browse untuk melihat data measurement asset yang tipe perhitungan Meter yang telah diinput
+	Route::get('/usbrowse', [UsageBrowseController::class, 'index'])->name('usbrowse');
+
+	// Asset - Failure
+	Route::get('/asfn', [AsfnController::class, 'index']);
+	Route::post('/createaasfn', [AsfnController::class, 'store']);
+	Route::post('/editasfn', [AsfnController::class, 'update']);
+	Route::post('/deleteasfn', [AsfnController::class, 'destroy']);
+	Route::get('/cekasfn', [AsfnController::class, 'cekasfn']);
+	Route::get('/editdetailasfn', [AsfnController::class, 'editdetailasfn']);
+
+	//Return Back Spare Part
+	Route::get('/returnbacksp', [wocontroller::class, 'returnsp']);
 });
 
 Auth::routes();

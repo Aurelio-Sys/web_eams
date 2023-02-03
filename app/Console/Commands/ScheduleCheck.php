@@ -110,35 +110,11 @@ class ScheduleCheck extends Command
                 
                 /* Mencari engineer yang bertugas */
                 $dataengpm = DB::table('pm_eng')
-                    ->orderBy('pm_type')
-                    ->orderBy('pm_group')
-                    ->orderBy('pm_asset');
-
-                $engasset = $dataengpm->where('pm_asset','=',$data->asset_code)->value('pm_engcode');
-                $engtype = $dataengpm->where('pm_type','=',$data->asset_type)->value('pm_engcode');
-                $enggroup = $dataengpm->where('pm_group','=',$data->asset_group)->value('pm_engcode');
-                $enggrty = $dataengpm->where('pm_group','=',$data->asset_group)->where('pm_type','=',$data->asset_type)->value('pm_engcode');
-
-                if ($engasset) {
-                    $engpm = $engasset;
-                    // $engpm = "asset";
-                } elseif ($enggrty) {
-                    $engpm = $enggrty;
-                    // $engpm = "duo";
-                } elseif ($enggroup) {
-                    $engpm = $enggroup;
-                    // $engpm = "group";
-                } elseif ($engtype) {
-                    $engpm = $engtype;
-                    // $engpm = "type";
-                } else {
-                    $engpm = "";
-                }
-
-                // dd($engpm);
+                    ->where('pm_group','=',$data->asset_group)
+                    ->first();
 
                 $arrayeng = [];
-                foreach(explode(';', $engpm) as $info) {
+                foreach(explode(';', $dataengpm->pm_engcode) as $info) {
                     $arrayeng[] = $info;
                 }
 
@@ -205,7 +181,7 @@ class ScheduleCheck extends Command
         $data2 = DB::table('asset_mstr')
                     ->where('asset_measure','=','M')
                     ->whereRaw('asset_last_usage_mtc + asset_tolerance >= asset_last_usage + asset_meter')
-                    ->whereRaw("(asset_on_use is null or asset_on_use = '')")
+                    // ->whereRaw("(asset_on_use is null or asset_on_use = '')")
                     ->get();
 
         if($data2->count() > 0){
@@ -256,12 +232,28 @@ class ScheduleCheck extends Command
                 }
 
                 $runningnbr = $tablern->wt_prefix.'-'.$newyear.'-'.$newtemprunnbr;
+
+                /* Mencari engineer yang bertugas */
+                $dataengpm = DB::table('pm_eng')
+                    ->where('pm_group','=',$data2->asset_group)
+                    ->first();
+
+                $arrayeng = [];
+                if($dataengpm) {
+                    foreach(explode(';', $dataengpm->pm_engcode) as $info) {
+                        $arrayeng[] = $info;
+                    }
+                }
+                
                 
                 $dataarray = array(
                     'wo_nbr' => $runningnbr,
-                    'wo_status' => 'open',
-                    'wo_engineer1' => 'azis', //A211025
-                    'wo_engineer2' => 'sukarya', //A211025
+                    'wo_status' => 'plan',
+                    'wo_engineer1' => isset($arrayeng[1]) ? $arrayeng[1] : "", //A211025
+                    'wo_engineer2' => isset($arrayeng[2]) ? $arrayeng[2] : "", //A211025
+                    'wo_engineer3' => isset($arrayeng[3]) ? $arrayeng[3] : "", //A211025
+                    'wo_engineer4' => isset($arrayeng[4]) ? $arrayeng[4] : "", //A211025
+                    'wo_engineer5' => isset($arrayeng[5]) ? $arrayeng[5] : "", //A211025
                     'wo_priority' => 'high',
                     'wo_repair_type' => $data2->asset_repair_type,
                     'wo_repair_group' => $repgroup,
@@ -285,13 +277,23 @@ class ScheduleCheck extends Command
                     'year' => $newyear
                 ]);
 
-
                 DB::table('asset_mstr')
                 ->where('asset_code',$data2->asset_code)
                 ->update([
                     'asset_on_use' => $runningnbr,
+                    'asset_last_usage' => $data2->asset_last_usage_mtc,
                 ]);
                 
+                // Melakukan edit untuk histori transaksi
+                DB::table('us_hist')
+                    ->where('us_asset','=',$data2->asset_code)
+                    ->where('us_asset_site','=',$data2->asset_site)
+                    ->where('us_asset_loc','=',$data2->asset_loc)
+                    ->where('us_last_mea','=',$data2->asset_last_usage_mtc)
+                    ->update([
+                        'us_no_pm' => $data2->asset_last_usage_mtc,
+                    ]);
+
                 // Kirim Email
                 $assettable = DB::table('asset_mstr')
                                 ->where('asset_code','=',$data2->asset_code)

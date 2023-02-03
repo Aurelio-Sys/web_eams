@@ -197,7 +197,7 @@
                                 </td>
 
                                 <td>
-                                    <select name="partneed[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="200px" required autofocus>
+                                    <select name="partneed[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="200px" autofocus>
                                         <option value=""> -- Select Data -- </option>
                                         @foreach($spdata as $da)
                                         <option value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>
@@ -206,11 +206,11 @@
                                 </td>
 
                                 <td>
-                                    <input type="number" class="form-control qtyreq" name="qtyreq[]" step="1" min="1" required />
+                                    <input type="number" class="form-control qtyreq" name="qtyreq[]" step="1" min="0" required />
                                 </td>
 
                                 <td>
-                                    <input type="number" class="form-control qtyrequest" name="qtyrequest[]" step="1" min="1" required />
+                                    <input type="number" class="form-control qtyrequest" name="qtyrequest[]" step="1" min="0" required />
                                     <input type="hidden" class="line" name="line[]" id="line" />
                                 </td>
 
@@ -300,7 +300,7 @@
             cols += '</td>';
 
             cols += '<td>';
-            cols += '<select name="partneed[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="200px" required autofocus >';
+            cols += '<select name="partneed[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="200px" autofocus >';
             cols += '<option value = ""> -- Select Data -- </option>';
             @foreach($spdata as $da)
             cols += '<option value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
@@ -313,7 +313,7 @@
             cols += '</td>';
 
             cols += '<td>';
-            cols += '<input type="number" class="form-control qtyrequest" name="qtyrequest[]" step="1" min="1" required />';
+            cols += '<input type="number" class="form-control qtyrequest" name="qtyrequest[]" step="1" min="0" required />';
             cols += '<input type="hidden" class="line" name="line[]" id="line" />';
             cols += '</td>';
 

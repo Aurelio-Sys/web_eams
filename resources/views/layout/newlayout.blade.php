@@ -232,6 +232,7 @@ to get the desired effect
                 </a>
                 </li>
                 @endif -->
+                {{--  Ditutup karena tidak digunakan lagi, bisa menggunakan create WO
                 @if(str_contains( Session::get('menu_access'), 'WO06'))
                 <li class="nav-item ">
                   <a href="/wocreatedirectmenu" class="nav-link ">
@@ -239,7 +240,7 @@ to get the desired effect
                       <p>WO Create Without Approval</p>
                   </a>
                 </li>
-                @endif
+                @endif  --}}
                 @if(str_contains( Session::get('menu_access'), 'WO01'))
                 <li class="nav-item ">
                   <a href="/womaint" class="nav-link ">
@@ -248,14 +249,15 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
+                {{-- Browse menggunakan WO Maintenance, diatur hak aksesnya
                 @if(str_contains( Session::get('menu_access'), 'WO05'))
                 <li class="nav-item ">
                   <a href="/wobrowse" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Work Order Browse</p>
                   </a>
-                </li>
-                @endif
+                </li>  
+                @endif--}}
                 @if(str_contains( Session::get('menu_access'), 'WO09'))
                 <li class="nav-item ">
                   <a href="/worelease" class="nav-link ">
@@ -290,9 +292,17 @@ to get the desired effect
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'WO08'))
                 <li class="nav-item">
-                  <a href="{{route('woQCIndex')}}" class="nav-link ">
+                  <a href="/woqc" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>WO QC Approval</p>
+                  </a>
+                </li>
+                @endif
+                @if(str_contains( Session::get('menu_access'), 'WO04'))
+                <li class="nav-item">
+                  <a href="/returnbacksp" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>WO Return SP</p>
                   </a>
                 </li>
                 @endif
@@ -350,7 +360,14 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
-                
+                @if(str_contains( Session::get('menu_access'), 'US04'))
+                <li class="nav-item has-treeview">
+                  <a href="{{route('usbrowse')}}" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>Usage Browse</p>
+                  </a>
+                </li>
+                @endif
               </ul>
             </li>
             @endif
@@ -679,6 +696,13 @@ to get the desired effect
                   <li class="nav-item">
                     <a href="/pmeng" class="nav-link">
                       <p>Engineer For PM</p>
+                    </a>
+                  </li>
+                  @endif
+                  @if(str_contains( Session::get('menu_access'), 'MT37'))
+                  <li class="nav-item">
+                    <a href="/asfn" class="nav-link">
+                      <p>Mapping Asset - Failure</p>
                     </a>
                   </li>
                   @endif

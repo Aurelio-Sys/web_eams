@@ -21,6 +21,7 @@
         data-prc_date="{{$show->asset_prc_date}}" data-daya="{{$show->asset_daya}}" data-prc_price="{{$show->asset_prc_price}}" 
         data-type="{{$show->asset_type}}" data-group="{{$show->asset_group}}" data-failure="{{$show->asset_failure}}" 
         data-measure="{{$show->asset_measure}}" data-supp="{{$show->asset_supp}}" data-meter="{{$show->asset_meter}}" 
+        data-meaum="{{$show->asset_mea_um}}" 
         data-cal="{{$show->asset_cal}}" data-start_mea="{{$show->asset_start_mea}}" data-note="{{$show->asset_note}}" 
         data-active="{{$show->asset_active}}"
         data-repair_type="{{$show->asset_repair_type}}" data-repair="{{$show->asset_repair}}" data-upload="{{$show->asset_upload}}"
