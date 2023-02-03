@@ -282,7 +282,7 @@
 
         <div class="modal-footer">
             <a class="btn btn-danger" href="/whsconfirm" id="btnback">Back</a>
-            <button type="submit" class="btn btn-success bt-action" id="btnconf">Confirm</button>
+            <button type="submit" class="btn btn-success bt-action" id="btnconf" disabled>Confirm</button>
             <button type="button" class="btn bt-action" id="btnloading" style="display:none">
                 <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
             </button>
@@ -300,6 +300,29 @@
     }
 
     $(document).ready(function() {
+
+        const checkboxes = document.querySelectorAll('.qaddel');
+        const submitButton = document.querySelector('#btnconf');
+
+        function checkButton() {
+            let checked = false;
+            for (const checkbox of checkboxes) {
+            if (checkbox.checked) {
+                checked = true;
+                break;
+            }
+            }
+
+            if (checked) {
+            submitButton.removeAttribute('disabled');
+            } else {
+            submitButton.setAttribute('disabled', 'disabled');
+            }
+        }
+
+        for (const checkbox of checkboxes) {
+            checkbox.addEventListener('click', checkButton);
+        }
 
         $("table.order-list").on("click", ".ibtnDel", function(event) {
             var row = $(this).closest("tr");

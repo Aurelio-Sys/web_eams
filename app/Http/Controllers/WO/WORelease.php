@@ -268,8 +268,6 @@ class WORelease extends Controller
 
     public function submitrelease(Request $req)
     {
-        // dd($req->all());
-
         DB::beginTransaction();
 
         try {
@@ -277,7 +275,7 @@ class WORelease extends Controller
                 /* Mencaari line terakhir */
                 if($req->line[$a] == "") {
                     $cekline = DB::table('wo_dets')
-                    ->where('Wo_dets_nbr', '=', $req->hide_wonum)
+                    ->where('wo_dets_nbr', '=', $req->hide_wonum)
                     ->max('wo_dets_line');
 
                     $dline = $cekline + 1;
@@ -286,7 +284,7 @@ class WORelease extends Controller
                 }
                 
                 $cek = DB::table('wo_dets')
-                    ->where('Wo_dets_nbr', '=', $req->hide_wonum)
+                    ->where('wo_dets_nbr', '=', $req->hide_wonum)
                     ->where('wo_dets_line', '=', $dline)
                     ->count();
 

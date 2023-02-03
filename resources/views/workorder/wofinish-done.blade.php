@@ -344,13 +344,13 @@
             <div class="form-group row col-md-12">
                 <label for="c_finishdate" class="col-md-4 col-form-label text-md-left">Finish Date <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                 <div class="col-md-3">
-                    <input id="c_finishdate" type="date" class="form-control c_finishdate" name="c_finishdate" autofocus required>
+                    <input id="c_finishdate" type="date" class="form-control c_finishdate" name="c_finishdate" value="{{($data->first()->wo_finish_date != null) ? $data->first()->wo_finish_date : \Carbon\Carbon::now()->format('Y-m-d')}}" autofocus required>
                 </div>
             </div>
             <div class="form-group row col-md-12">
                 <label for="c_finishtime" class="col-md-4 col-form-label text-md-left">Finish Time <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                 <div class="col-md-3">
-                    <input type="time" class="form-control" name="c_finishtime" autofocus required/>
+                    <input type="time" class="form-control" name="c_finishtime" value="{{($data->first()->wo_finish_time != null) ? $data->first()->wo_finish_time : \Carbon\Carbon::now()->format('H:i')}}" autofocus required/>
                 </div>
             </div>
 
@@ -375,7 +375,7 @@
             <div class="form-group row col-md-12">
                 <label for="c_note" class="col-md-4 col-form-label text-md-left">Reporting Note <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                 <div class="col-md-6">
-                    <textarea id="c_note" class="form-control c_note" name="c_note" maxlength="250" autofocus></textarea>
+                    <textarea id="c_note" class="form-control c_note" name="c_note" maxlength="250" autofocus>{{($data->first()->wo_approval_note != null) ? $data->first()->wo_approval_note : ''}}</textarea>
                 </div>
             </div>
             <div class="form-group row col-md-12">
