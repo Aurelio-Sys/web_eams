@@ -25,16 +25,22 @@ class UsageController extends Controller
 
             if($asset == ''){
                 $data = DB::table('asset_mstr')
+                            ->leftJoin('asset_site','assite_code','=','asset_site')
+                            ->leftJoin('asset_loc','asloc_code','=','asset_loc')
                             ->where('asset_measure','=','M')
                             ->selectRaw('*, asset_mstr.asset_code as "assetcode"')
+                            ->where('asset_active','=','Yes')
                             ->orderby($sort_by, $sort_type)
                             ->paginate(10);
                             
             }else{
                 $data = DB::table('asset_mstr')
+                            ->leftJoin('asset_site','assite_code','=','asset_site')
+                            ->leftJoin('asset_loc','asloc_code','=','asset_loc')
                             ->where('asset_measure','=','M')
                             ->where('asset_mstr.asset_code','=',$asset)
                             ->selectRaw('*, asset_mstr.asset_code as "assetcode"')
+                            ->where('asset_active','=','Yes')
                             ->orderby($sort_by, $sort_type)
                             ->paginate(10);
             }
@@ -43,11 +49,20 @@ class UsageController extends Controller
         }else{
             $data = DB::table('asset_mstr')
                         ->where('asset_measure','=','M')
+                        ->leftJoin('asset_site','assite_code','=','asset_site')
+                        ->leftJoin('asset_loc','asloc_code','=','asset_loc')
                         ->selectRaw('*, asset_mstr.asset_code as "assetcode"')
+                        ->where('asset_active','=','Yes')
+                        ->orderBy('asset_code')
                         ->paginate(10);
 
             $asset = DB::table('asset_mstr')
-                            ->get();
+                        ->leftJoin('asset_site','assite_code','=','asset_site')
+                        ->leftJoin('asset_loc','asloc_code','=','asset_loc')
+                        ->where('asset_measure','=','M')
+                        ->where('asset_active','=','Yes')
+                        ->orderBy('asset_code')
+                        ->get();
         
             return view('schedule.usage',['data' => $data, 'asset' => $asset]);
         }

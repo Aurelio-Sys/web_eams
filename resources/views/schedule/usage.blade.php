@@ -27,7 +27,7 @@
     <select name="asset" id="asset" class="form-control">
             <option value="">-- Select Data --</option>
         @foreach($asset as $asset)
-            <option value="{{$asset->asset_code}}">{{$asset->asset_code}} - {{$asset->asset_desc}}</option>
+            <option value="{{$asset->asset_code}}">{{$asset->asset_code}} - {{$asset->asset_desc}} - {{$asset->asloc_desc}}</option>
         @endforeach
     </select>
   </div>
@@ -46,11 +46,13 @@
     <thead>
       <tr style="text-align: center;">
         <th class="sorting" width="10%">Asset Code</th>
-        <th class="sorting" width="25%">Asset Description</th>
-        <th class="sorting" width="10%">(satuan)</th>
-        <th class="sorting" width="15%">Last Maintenance</th>
-        <th class="sorting" width="15%">Next Maintenance</th>
-        <th class="sorting" width="15%">Last Measurement</th>
+        <th class="sorting" width="20%">Asset Description</th>
+        <th class="sorting" width="20%">Location</th>
+        <th class="sorting" width="5%">Mea</th>
+        <th class="sorting" width="5%">UM</th>
+        <th class="sorting" width="10%">Last Maint</th>
+        <th class="sorting" width="10%">Next Maint</th>
+        <th class="sorting" width="10%">Last Measurement</th>
         <th width="10%">Action</th>
       </tr>
     </thead>

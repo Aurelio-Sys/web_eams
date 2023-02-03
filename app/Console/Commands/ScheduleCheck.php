@@ -277,13 +277,23 @@ class ScheduleCheck extends Command
                     'year' => $newyear
                 ]);
 
-
                 DB::table('asset_mstr')
                 ->where('asset_code',$data2->asset_code)
                 ->update([
                     'asset_on_use' => $runningnbr,
+                    'asset_last_usage' => $data2->asset_last_usage_mtc,
                 ]);
                 
+                // Melakukan edit untuk histori transaksi
+                DB::table('us_hist')
+                    ->where('us_asset','=',$data2->asset_code)
+                    ->where('us_asset_site','=',$data2->asset_site)
+                    ->where('us_asset_loc','=',$data2->asset_loc)
+                    ->where('us_last_mea','=',$data2->asset_last_usage_mtc)
+                    ->update([
+                        'us_no_pm' => $data2->asset_last_usage_mtc,
+                    ]);
+
                 // Kirim Email
                 $assettable = DB::table('asset_mstr')
                                 ->where('asset_code','=',$data2->asset_code)
