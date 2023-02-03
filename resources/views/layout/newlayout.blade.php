@@ -232,6 +232,7 @@ to get the desired effect
                 </a>
                 </li>
                 @endif -->
+                {{--  Ditutup karena tidak digunakan lagi, bisa menggunakan create WO
                 @if(str_contains( Session::get('menu_access'), 'WO06'))
                 <li class="nav-item ">
                   <a href="/wocreatedirectmenu" class="nav-link ">
@@ -239,7 +240,7 @@ to get the desired effect
                       <p>WO Create Without Approval</p>
                   </a>
                 </li>
-                @endif
+                @endif  --}}
                 @if(str_contains( Session::get('menu_access'), 'WO01'))
                 <li class="nav-item ">
                   <a href="/womaint" class="nav-link ">
@@ -248,14 +249,15 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
+                {{-- Browse menggunakan WO Maintenance, diatur hak aksesnya
                 @if(str_contains( Session::get('menu_access'), 'WO05'))
                 <li class="nav-item ">
                   <a href="/wobrowse" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Work Order Browse</p>
                   </a>
-                </li>
-                @endif
+                </li>  
+                @endif--}}
                 @if(str_contains( Session::get('menu_access'), 'WO09'))
                 <li class="nav-item ">
                   <a href="/worelease" class="nav-link ">

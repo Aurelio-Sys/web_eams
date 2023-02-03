@@ -589,6 +589,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('createapmeng', [PmEngController::class, 'store']);
 	Route::post('editpmeng', [PmEngController::class, 'update']);
 	Route::post('deletepmeng', [PmEngController::class, 'destroy']);
+	Route::get('searcheng', [PmEngController::class, 'searcheng']);
 
 	// Report Schedule Asset Year
 	Route::get('assetyear', [RptAssetYearController::class, 'index']);
@@ -609,6 +610,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/editasfn', [AsfnController::class, 'update']);
 	Route::post('/deleteasfn', [AsfnController::class, 'destroy']);
 	Route::get('/cekasfn', [AsfnController::class, 'cekasfn']);
+	Route::get('/editdetailasfn', [AsfnController::class, 'editdetailasfn']);
 });
 
 Auth::routes();

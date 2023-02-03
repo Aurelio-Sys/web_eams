@@ -134,6 +134,33 @@ class AsfnController extends Controller
         //
     }
 
+    //menampilkan detail edit
+    public function editdetailasfn(Request $req)
+    {
+        if ($req->ajax()) {
+            $data = DB::table('asfn_det')
+                    ->join('fn_mstr','fn_code','=','asfn_fncode')
+                    ->where('asfn_asset','=',$req->asset)
+                    ->where('asfn_fntype','=',$req->fntype)
+                    ->orderBy('asfn_asset')
+                    ->orderBy('asfn_fntype')
+                    ->orderBy('asfn_fncode')
+                    ->get();
+
+            $output = '';
+            foreach ($data as $data) {
+                $output .= '<tr>'.
+                            '<input type="hidden" class="form-control" name="barang[]" readonly value="'.$data->fn_code.'">'.
+                            '<td>'.$data->fn_code.'--'.$data->fn_desc.'</td>'.
+                            '<td><input type="checkbox" name="cek[]" class="cek" id="cek" value="0">
+                            <input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>'.
+                            '</tr>';
+            }
+
+            return response($output);
+        }
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -141,9 +168,33 @@ class AsfnController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $req)
     {
-        //
+        // dd($req->all());
+        // delete terlebih dahulu data nya
+        DB::table('asfn_det')
+            ->where('asfn_asset','=',$req->te_asset)
+            ->where('asfn_fntype','=',$req->te_fntype)
+            ->delete();
+        
+        $flg = 0;
+        foreach($req->barang as $barang){
+            if($req->tick[$flg] == 0) {
+                DB::table('asfn_det')
+                ->insert([
+                    'asfn_asset'     => $req->te_asset,
+                    'asfn_fntype'   => $req->te_fntype,        
+                    'asfn_fncode'   => $req->barang[$flg],        
+                    'created_at'    => Carbon::now()->toDateTimeString(),
+                    'updated_at'    => Carbon::now()->toDateTimeString(),
+                    'edited_by'     => Session::get('username'),
+                ]);
+            }    
+            $flg += 1;
+        }    
+
+        toast('Mapping Asset - Failure Updated.', 'success');
+        return back();
     }
 
     /**

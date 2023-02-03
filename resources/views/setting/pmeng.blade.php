@@ -63,9 +63,9 @@
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                <th>Asset Type</th>
+                {{--  <th>Asset Type</th>  --}}
                 <th>Asset Group</th>
-                <th>Asset</th>
+                {{--  <th>Asset</th>  --}}
                 <th>Engineer 1</th>
                 <th>Engineer 2</th>
                 <th>Engineer 3</th>
@@ -97,7 +97,7 @@
             <form class="form-horizontal" method="post" action="/createapmeng">
                 {{ csrf_field() }}
                 <div class="modal-body">
-                    <div class="form-group row">
+                    {{--  <div class="form-group row">
                         <label for="t_type" class="col-md-4 col-form-label text-md-right">Asset Type</label>
                         <div class="col-md-6">
                             <select id="t_type" class="form-control" name="t_type">
@@ -107,7 +107,7 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
+                    </div>  --}}
                     <div class="form-group row">
                         <label for="t_group" class="col-md-4 col-form-label text-md-right">Asset Group</label>
                         <div class="col-md-6">
@@ -119,7 +119,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    {{--  <div class="form-group row">
                         <label for="t_asset" class="col-md-4 col-form-label text-md-right">Asset</label>
                         <div class="col-md-6">
                             <select id="t_asset" class="form-control" name="t_asset">
@@ -129,7 +129,7 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
+                    </div>  --}}
                     <div class="form-group row">
                         <label for="t_eng" class="col-md-4 col-form-label text-md-right">Engineer (Max. 5) <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-6">
@@ -154,25 +154,33 @@
     <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel">Asset Type Modify</h5>
+        <h5 class="modal-title text-center" id="exampleModalLabel">Engineer for PM Modify</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
         </div>
-        <form class="form-horizontal" method="post" action="/editassettype">
+        <form class="form-horizontal" method="post" action="/editpmeng">
             {{ csrf_field() }}
             <div class="modal-body">
                 <div class="form-group row">
                     <label for="te_code" class="col-md-4 col-form-label text-md-right">Code</label>
                     <div class="col-md-6">
-                        <input id="te_code" type="text" class="form-control" name="te_code" autocomplete="off" autofocus maxlength="10" readonly/>
+                        <input id="te_code" type="text" class="form-control" name="te_code" readonly/>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="te_desc" class="col-md-4 col-form-label text-md-right">Description 
-                        <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                    <label for="te_desc" class="col-md-4 col-form-label text-md-right">Description</label>
                     <div class="col-md-6">
-                        <input id="te_desc" type="text" class="form-control" name="te_desc" autocomplete="off" autofocus maxlength="50" required />
+                        <input id="te_desc" type="text" class="form-control" name="te_desc" required />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="te_eng" class="col-md-4 col-form-label text-md-right">Engineer Skills</label>
+                    <div class="col-md-6">
+                        <select class="form-select" multiple="multiple" size="3" id="te_eng" name="te_eng[]" >
+
+                        </select>
+                        <input type="hidden" id="te_deng" name="te_deng">
                     </div>
                 </div>
             </div>
@@ -196,7 +204,7 @@
                 <span aria-hidden="true">&times;</span>
             </button>
             </div>
-            <form class="form-horizontal" method="post" action="/deleteassettype">
+            <form class="form-horizontal" method="post" action="/deletepmeng">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <input type="hidden" id="d_code" name="d_code">
@@ -220,9 +228,14 @@
 
            var code = $(this).data('code');
            var desc = $(this).data('desc');
+           var eng = $(this).data('eng');
 
            document.getElementById('te_code').value = code;
            document.getElementById('te_desc').value = desc;
+           document.getElementById('te_deng').value = eng;
+
+           ambilenjiner();
+
        });
 
        $(document).on('click', '.deletedata', function(e){
@@ -339,31 +352,50 @@
         });
 
         function ambilenjiner(){
-        // alert('ketrigger');
+
+            var eng = $('#te_deng').val();
+            var a = eng.split(";");
+
             $.ajax({
-                url: "/engineersearch",
+                url:"/searcheng",
                 success: function(data) {
-                
-                console.log(data);
-                var jmldata = data.length;
-        
-                var eng_code = [];
-                var eng_desc = [];
-                var test = [];
-        
-                for(i = 0; i < jmldata; i++){
-                eng_code.push(data[i].eng_code);
-                    eng_desc.push(data[i].eng_desc);
-        
-                    test += '<option value=' + eng_code[i] + '>' + eng_code[i] + '--' + eng_desc[i] + '</option>';
+                    var jmldata = data.length;
+
+                    var eng_code = [];
+                    var eng_desc = [];
+                    var test = [];
+
+                    test += '<option value="">--Select Engineer--</option>';
+
+                    for(i = 0; i < jmldata; i++){
+                        eng_code.push(data[i].eng_code);
+                        eng_desc.push(data[i].eng_desc);
+
+                        if (a.includes(eng_code[i])) {
+                            test += '<option value=' + eng_code[i] + ' selected>' + eng_code[i] + '--' + eng_desc[i] + '</option>';
+                        } else {    
+                            test += '<option value=' + eng_code[i] + '>' + eng_code[i] + '--' + eng_desc[i] + '</option>';
+                        }                        
+                    }
+
+                    $('#te_eng').html('').append(test); 
                 }
-                    $('#t_eng').html('').append(test);                      
-                }
-                
             })
         }
-        
-        ambilenjiner();
+
+        $("#te_eng").select2({
+            width : '100%',
+            maximumSelectionLength : 5,
+            closeOnSelect : false,
+            allowClear : true,
+            // theme : 'bootstrap4'
+        });
+
+        $("#t_group").select2({
+            width : '100%',
+            theme : 'bootstrap4',
+            
+        });
     </script>
 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">
