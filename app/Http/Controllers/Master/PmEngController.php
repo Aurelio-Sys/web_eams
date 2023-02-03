@@ -40,6 +40,7 @@ class PmEngController extends Controller
             ->get();
 
         $dataeng = DB::table('eng_mstr')
+            ->whereEng_active('Yes')
             ->orderBy('eng_code')
             ->get();
         
@@ -80,9 +81,9 @@ class PmEngController extends Controller
             
             DB::table('pm_eng')
                 ->insert([
-                    'pm_type'      => $request->t_type,
+                    // 'pm_type'      => $request->t_type,
                     'pm_group'      => $request->t_group,
-                    'pm_asset'      => $request->t_asset,
+                    // 'pm_asset'      => $request->t_asset,
                     'pm_engcode'      => $dataeng,             
                     'created_at'    => Carbon::now()->toDateTimeString(),
                     'updated_at'    => Carbon::now()->toDateTimeString(),
@@ -112,6 +113,20 @@ class PmEngController extends Controller
         //
     }
 
+    public function searcheng(Request $req)
+    {
+        if($req->ajax()){
+            $eng = DB::table('eng_mstr')
+                ->whereEng_active('Yes')
+                ->orderBy('eng_code')
+                ->get();
+
+            $array = json_decode(json_encode($eng), true);
+
+            return response()->json($array);
+        }
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -130,9 +145,39 @@ class PmEngController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+        // dd($request->all());
+            $arrayeng = [];
+            $arrayeng = $request->te_eng;
+            $jmleng = count($arrayeng);
+
+            $dataeng = "";
+            for ($i = 0; $i < $jmleng; $i++) {
+                $dataeng = $dataeng .";". $request->te_eng[$i];
+            }
+            
+            DB::table('pm_eng')
+                ->where('pm_group','=',$request->te_code)
+                ->update([
+                    'pm_engcode'      => $dataeng,             
+                    'updated_at'    => Carbon::now()->toDateTimeString(),
+                    'edited_by'     => Session::get('username'),
+            ]);
+
+            DB::commit();
+
+            toast('Engineer for PM Updated !', 'success');
+            return redirect()->route('pmeng');
+        } catch (Exception $e) {
+            // dd($e);
+            DB::rollBack();
+            toast('Engineer for PM Failed', 'error');
+            return redirect()->route('pmeng');
+        }
     }
 
     /**
@@ -141,8 +186,13 @@ class PmEngController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        DB::table('pm_eng')
+            ->where('pm_group', '=', $request->d_code)
+            ->delete();
+
+            toast('Deleted Engineer for PM Successfully.', 'success');
+            return back();
     }
 }

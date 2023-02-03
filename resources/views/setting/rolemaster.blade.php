@@ -200,7 +200,7 @@
             <center><strong>Work Order Menu</strong></center>
             </h4>
             <hr>
-            <div class="form-group row">
+            {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO Create Without Approval') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbWoCreatedirect">
@@ -208,7 +208,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Maintenance') }}</label>
               <div class="col-6">
@@ -218,7 +218,7 @@
                 </label>
               </div>
             </div> 
-            <div class="form-group row">
+            {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Browse') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbWoBrowse">
@@ -226,7 +226,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
             <!-- <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Create') }}</label>
               <div class="col-6">
@@ -295,7 +295,7 @@
                 </label>
               </div>
             </div>
-            <div class="form-group row">
+            {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Multi Batch') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbUSmultiMT">
@@ -303,12 +303,21 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO PM Generator') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbUSGen">
                   <input type="checkbox" class="custom-control-input" id="cbUSGen" name="cbUSGen" value="US03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Usage Browse') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbUSBrowse">
+                  <input type="checkbox" class="custom-control-input" id="cbUSBrowse" name="cbUSBrowse" value="US04" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -570,6 +579,15 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('UM Maintenance ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="SetUm">
+                  <input type="checkbox" class="custom-control-input" id="SetUm" name="SetUm" value="MT36" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Maintenance ') }}</label>
               <div class="col-6">
                 <label class="switch" for="Asset">
@@ -601,6 +619,15 @@
               <div class="col-6">
                 <label class="switch" for="SetEngpm">
                   <input type="checkbox" class="custom-control-input" id="SetEngpm" name="SetEngpm" value="MT31" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Mapping Asset - Failure') }}</label>
+              <div class="col-6">
+                <label class="switch" for="SetAsfn">
+                  <input type="checkbox" class="custom-control-input" id="SetAsfn" name="SetAsfn" value="MT37" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -833,7 +860,7 @@
             <center><strong>Work Order Menu</strong></center>
             </h4>
             <hr>
-            <div class="form-group row">
+            {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO Create Without Approval') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbWoCreatedirect">
@@ -841,7 +868,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Maintenance') }}</label>
               <div class="col-6">
@@ -851,7 +878,7 @@
                 </label>
               </div>
             </div> 
-            <div class="form-group row">
+            {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Browse') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbWoBrowse">
@@ -859,7 +886,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
             <!-- <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Create') }}</label>
               <div class="col-6">
@@ -928,7 +955,7 @@
                 </label>
               </div>
             </div>
-            <div class="form-group row">
+            {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Multi Batch') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbUSmultiMT">
@@ -936,12 +963,21 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO PM Generator') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbUSGen">
                   <input type="checkbox" class="custom-control-input" id="e_cbUSGen" name="e_cbUSGen" value="US03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Usage Browse') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbUSBrowse">
+                  <input type="checkbox" class="custom-control-input" id="e_cbUSBrowse" name="e_cbUSBrowse" value="US04" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -1203,6 +1239,15 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('UM Maintenance ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_SetUm">
+                  <input type="checkbox" class="custom-control-input" id="e_SetUm" name="e_SetUm" value="MT36" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Maintenance ') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_Asset">
@@ -1234,6 +1279,15 @@
               <div class="col-6">
                 <label class="switch" for="e_SetEngpm">
                   <input type="checkbox" class="custom-control-input" id="e_SetEngpm" name="e_SetEngpm" value="MT31" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Mapping Asset - Failure') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_SetAsfn">
+                  <input type="checkbox" class="custom-control-input" id="e_SetAsfn" name="e_SetAsfn" value="MT37" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -1615,6 +1669,16 @@
         } else {
           document.getElementById('e_SetIns').checked = false;
         }
+        if (listmenu.search("MT36") >= 0) {
+          document.getElementById('e_SetUm').checked = true;
+        } else {
+          document.getElementById('e_SetUm').checked = false;
+        }
+        if (listmenu.search("MT37") >= 0) {
+          document.getElementById('e_SetAsfn').checked = true;
+        } else {
+          document.getElementById('e_SetAsfn').checked = false;
+        }
         
         {{--  if (listmenu.search("MT03") >= 0) {
           document.getElementById('e_Site').checked = true;
@@ -1654,21 +1718,21 @@
         
 
         // Work Order
-        if (listmenu.search("WO06") >= 0) {
+        {{--  if (listmenu.search("WO06") >= 0) {
           document.getElementById('e_cbWoCreatedirect').checked = true;
         } else {
           document.getElementById('e_cbWoCreatedirect').checked = false;
-        }
+        }  --}}
         if (listmenu.search("WO01") >= 0) {
           document.getElementById('e_cbWoMaint').checked = true;
         } else {
           document.getElementById('e_cbWoMaint').checked = false;
         }
-        if (listmenu.search("WO05") >= 0) {
+        {{--  if (listmenu.search("WO05") >= 0) {
           document.getElementById('e_cbWoBrowse').checked = true;
         } else {
           document.getElementById('e_cbWoBrowse').checked = false;
-        }
+        }  --}}
         {{--  if (listmenu.search("WO04") >= 0) {
            document.getElementById('e_cbWoCreate').checked = true;
         } else {
@@ -1734,15 +1798,20 @@
         } else {
           document.getElementById('e_cbUSMT').checked = false;
         }
-        if (listmenu.search("US02") >= 0) {
+        {{--  if (listmenu.search("US02") >= 0) {
           document.getElementById('e_cbUSmultiMT').checked = true;
         } else {
           document.getElementById('e_cbUSmultiMT').checked = false;
-        }
+        }  --}}
         if (listmenu.search("US03") >= 0) {
           document.getElementById('e_cbUSGen').checked = true;
         } else {
           document.getElementById('e_cbUSGen').checked = false;
+        }
+        if (listmenu.search("US04") >= 0) {
+          document.getElementById('e_cbUSBrowse').checked = true;
+        } else {
+          document.getElementById('e_cbUSBrowse').checked = false;
         }
 
         // Booking

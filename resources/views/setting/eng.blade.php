@@ -415,7 +415,7 @@
                 <div class="form-group row divesite" id="divesite" style="display: none;">
                     <label for="te_site" class="col-md-4 col-form-label text-md-right" >Site <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-6">
-                       <select id="te_site" class="form-control" name="te_site">
+                       <select id="te_site" class="form-control" name="te_site" required>
                         <option selected>--Select--</option>
                         @foreach($datasite as $di)
                             <option value="{{$di->site_code}}">{{$di->site_code}} -- {{$di->site_desc}}</option>
@@ -426,7 +426,7 @@
                 <div class="form-group row diveloc" id="diveloc" style="display: none;">
                     <label for="te_loc" class="col-md-4 col-form-label text-md-right" >Location <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-6">
-                        <select id="te_loc" class="form-control" name="te_loc">
+                        <select id="te_loc" class="form-control" name="te_loc" required>
                             
                         </select>
                     </div>

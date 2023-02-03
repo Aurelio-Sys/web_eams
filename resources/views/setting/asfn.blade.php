@@ -166,7 +166,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/editassetloc">
+            <form class="form-horizontal" method="post" action="/editasfn">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
@@ -205,7 +205,7 @@
                           <tfoot>
                             <tr>
                               <td colspan="2">
-                                <input type="button" class="btn btn-lg btn-block btn-focus" id="addrow" value="Add Item" style="background-color:#1234A5; color:white; font-size:16px" />
+                                <input type="button" class="btn btn-lg btn-block btn-focus" id="ed_addrow" value="Add Item" style="background-color:#1234A5; color:white; font-size:16px" />
                               </td>
                             </tr>
                           </tfoot>
@@ -259,6 +259,14 @@
 
         document.getElementById('te_asset').value = asset;
         document.getElementById('te_fntype').value = fntype;
+
+        $.ajax({
+            url:"editdetailasfn?asset="+asset+"&fntype="+fntype,
+            success: function(data) {
+            console.log(data);
+            $('#ed_detailapp').html('').append(data);
+          }
+        })
 
     });
 
@@ -445,6 +453,48 @@
                 }
             }) 
     });
+
+    $("table.order-list").on("click", ".ibtnDel", function(event) {
+        $(this).closest("tr").remove();
+        counter -= 1
+      });
+
+    $("#ed_addrow").on("click", function() {
+        var newRow = $("<tr>");
+        var cols = "";
+
+        cols += '<td data-label="Barang">';
+        cols += '<select id="barang" class="form-control barang selectpicker" name="barang[]" data-live-search="true" required>';
+        cols += '<option value = ""> -- Select Data -- </option>'
+        @foreach($datafncode as $df)
+        cols += '<option value="{{$df->fn_code}}"> {{$df->fn_code}} -- {{$df->fn_desc}} </option>';
+        @endforeach
+        cols += '</select>';
+        cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
+
+        cols += '<td data-title="Action"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
+        cols += '</tr>'
+        newRow.append(cols);
+        $("#ed_detailapp").append(newRow);
+        counter++;
+
+        selectPicker();
+    });
+
+    $(document).on('change','#cek',function(e){
+        var checkbox = $(this), // Selected or current checkbox
+        value = checkbox.val(); // Value of checkbox
+
+
+        if (checkbox.is(':checked'))
+        {
+            $(this).closest("tr").find('.tick').val(1);
+        } else
+        {
+            $(this).closest("tr").find('.tick').val(0);
+        }        
+    });
+
 </script>
 
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">
