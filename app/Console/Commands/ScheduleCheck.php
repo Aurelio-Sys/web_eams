@@ -134,6 +134,8 @@ class ScheduleCheck extends Command
                     'wo_repair_code2' => $repcode2,
                     'wo_repair_code3' => $repcode3,
                     'wo_asset' => $data->asset_code, 
+                    'wo_asset_site' => $data->asset_site,
+                    'wo_asset_loc' => $data->asset_loc,
 					'wo_dept' => 'ENG', // Hardcode
                     'wo_type'  => 'auto', // Hardcode
                     'wo_schedule' => Carbon::now('ASIA/JAKARTA')->toDateString(),
@@ -261,6 +263,8 @@ class ScheduleCheck extends Command
                     'wo_repair_code2' => $repcode2,
                     'wo_repair_code3' => $repcode3,
                     'wo_asset' => $data2->asset_code, 
+                    'wo_asset_site' => $data2->asset_site,
+                    'wo_asset_loc' => $data2->asset_loc,
                     'wo_dept' => 'ENG', // Hardcode
                     'wo_type'=>'auto', //Hardcode
                     'wo_schedule' => Carbon::now('ASIA/JAKARTA')->toDateString(),

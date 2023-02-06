@@ -104,7 +104,7 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_runningnbr" class="col-md-4 col-form-label text-md-right">Running Number 
+                        <label for="t_runningnbr" class="col-md-4 col-form-label text-md-right">SR Running Number 
                             <span id="alert1" style="color: red; font-weight: 200;">*</span> </label>
                         <div class="col-md-6">
                             <input id="t_runningnbr" type="text" class="form-control" name="t_runningnbr" autocomplete="off" autofocus maxlength="4" value="0001" required/>
@@ -148,7 +148,7 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="te_runningnbr" class="col-md-4 col-form-label text-md-right">Running Number 
+                    <label for="te_runningnbr" class="col-md-4 col-form-label text-md-right">SR Running Number 
                         <span id="alert1" style="color: red; font-weight: 200;">*</span> </label>
                     <div class="col-md-6">
                         <input id="te_runningnbr" type="text" class="form-control" name="te_runningnbr" autocomplete="off" autofocus maxlength="4" required/>

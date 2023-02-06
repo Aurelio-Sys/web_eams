@@ -17,16 +17,29 @@ class AsfnController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $req)
     {
+        $s_code = $req->s_code;
+        $s_desc = $req->s_desc;
+        $s_fntype = $req->s_fntype;
+
         $data = DB::table('asfn_det')
             ->select('asgroup_code','asgroup_desc','wotyp_code','wotyp_desc')
             ->join('asset_group','asgroup_code','=','asfn_asset')
-            ->join('wotyp_mstr','wotyp_code','=','asfn_fntype')
-            ->distinct()
+            ->leftjoin('wotyp_mstr','wotyp_code','=','asfn_fntype')
+            ->groupBy('asfn_asset','asfn_fntype')
             ->orderBy('asfn_asset')
-            ->orderBy('asfn_fntype')
-            ->orderBy('asfn_fncode');
+            ->orderBy('asfn_fntype');
+
+        if($s_code) {
+            $data = $data->where('asgroup_code','like','%'.$s_code.'%');
+        }
+        if($s_desc) {
+            $data = $data->where('asgroup_desc','like','%'.$s_desc.'%');
+        }
+        if($s_fntype) {
+            $data = $data->where('wotyp_code','=',$s_fntype);
+        }
 
         $data = $data->paginate(10);
 
@@ -42,7 +55,7 @@ class AsfnController extends Controller
             ->orderBy('fn_code')
             ->get();
 
-        return view('setting.asfn',compact('data','dataasgroup','datafntype','datafncode'));
+        return view('setting.asfn',compact('data','dataasgroup','datafntype','datafncode','s_code','s_desc','s_fntype'));
     }
 
     /**
@@ -93,23 +106,29 @@ class AsfnController extends Controller
             return back();
         }
 
-        $flg = 0;
-        foreach($req->barang as $barang){
-            DB::table('asfn_det')
-            ->insert([
-                'asfn_asset'     => $req->t_asset,
-                'asfn_fntype'   => $req->t_fntype,        
-                'asfn_fncode'   => $req->barang[$flg],        
-                'created_at'    => Carbon::now()->toDateTimeString(),
-                'updated_at'    => Carbon::now()->toDateTimeString(),
-                'edited_by'     => Session::get('username'),
-            ]);
+        if($req->barang) {
+            $flg = 0;
+            foreach($req->barang as $barang){
+                DB::table('asfn_det')
+                ->insert([
+                    'asfn_asset'     => $req->t_asset,
+                    'asfn_fntype'   => $req->t_fntype,        
+                    'asfn_fncode'   => $req->barang[$flg],        
+                    'created_at'    => Carbon::now()->toDateTimeString(),
+                    'updated_at'    => Carbon::now()->toDateTimeString(),
+                    'edited_by'     => Session::get('username'),
+                ]);
 
-            $flg += 1;
-        }    
+                $flg += 1;
+            }    
 
-        toast('Mapping Asset - Failure Created.', 'success');
-        return back();
+            toast('Mapping Asset - Failure Created.', 'success');
+            return back();
+        } else {
+            toast('Detail Not Found!', 'error');
+            return back();
+        }
+        
     }
 
     /**
@@ -203,8 +222,14 @@ class AsfnController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $req)
     {
-        //
+        DB::table('asfn_det')
+        ->where('asfn_asset', '=', $req->d_code1)
+        ->where('asfn_fntype', '=', $req->d_code2)
+        ->delete();
+
+        toast('Deleted Mapping Asset Group - Failure Successfully.', 'success');
+        return back();
     }
 }
