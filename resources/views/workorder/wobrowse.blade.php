@@ -551,9 +551,7 @@ div #munculgambar .gambar:hover{
             <label for="e_wottype" class="col-md-5 col-form-label text-md-left">Failure Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-7">
               <select name="e_wottype" class="form-control" id="e_wottype" required>
-                @foreach($wottype as $e_wottypeval)
-                <option value="{{trim($e_wottypeval->wotyp_code)}}">{{$e_wottypeval->wotyp_code}} - {{$e_wottypeval->wotyp_desc}}</option>
-                @endforeach
+                <option></option>
               </select>
             </div>
           </div>
@@ -562,9 +560,6 @@ div #munculgambar .gambar:hover{
             <div class="col-md-7 col-sm-12">
               <select class="form-control" id="m_failurecode" name="m_failurecode[]" multiple="multiple" required>
                 <option></option>
-                @foreach($failure as $fcshow)
-                <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}}</option>
-                @endforeach
               </select>
             </div>
           </div>
@@ -1904,7 +1899,7 @@ div #munculgambar .gambar:hover{
       success: function(vamp) {
         var tempres = JSON.stringify(vamp);
         var result = JSON.parse(tempres);
-        console.log(result);
+        // console.log(result);
         var wonbr = result[0].wo_nbr;
         var srnbr = result[0].wo_sr_nbr;
         var en1val = result[0].woen1;
@@ -1938,9 +1933,25 @@ div #munculgambar .gambar:hover{
         var eimpact = result[0].wo_impact;
         var eimpactdesc = result[0].wo_impact_desc;
         var ewottype = result[0].wo_new_type;
+        var assetgroup = result[0].asset_group;
+        // console.log(assetgroup);
         // console.log(rc1);
         // console.log(rc2);
         // console.log(rc3);
+
+        $.ajax({
+              url: "/checkfailurecodetype",
+              data: {
+                group: assetgroup,
+              },
+              success: function(data) {
+                var type = data.optionfailtype;
+                var code = data.optionfailcode;
+
+                $('#e_wottype').html(type);
+                $('#m_failurecode').html(code);
+              }
+        })
 
         var newarrimp = [];
         if (eimpact != null && eimpactdesc != null) {
