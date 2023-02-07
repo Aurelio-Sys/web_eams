@@ -109,15 +109,17 @@ class ScheduleCheck extends Command
                 $runningnbr = $tablern->wt_prefix.'-'.$newyear.'-'.$newtemprunnbr;
                 
                 /* Mencari engineer yang bertugas */
-                $dataengpm = DB::table('pm_eng')
-                    ->where('pm_group','=',$data->asset_group)
-                    ->first();
+                if($data->asset_group) {
+                    $dataengpm = DB::table('pm_eng')
+                        ->where('pm_group','=',$data->asset_group)
+                        ->first();
 
-                $arrayeng = [];
-                foreach(explode(';', $dataengpm->pm_engcode) as $info) {
-                    $arrayeng[] = $info;
+                    $arrayeng = [];
+                    foreach(explode(';', $dataengpm->pm_engcode) as $info) {
+                        $arrayeng[] = $info;
+                    }
                 }
-
+                
                 $dataarray = array(
                     'wo_nbr' => $runningnbr,
                     'wo_status' => 'plan', //-> A211025
@@ -134,6 +136,8 @@ class ScheduleCheck extends Command
                     'wo_repair_code2' => $repcode2,
                     'wo_repair_code3' => $repcode3,
                     'wo_asset' => $data->asset_code, 
+                    'wo_asset_site' => $data->asset_site,
+                    'wo_asset_loc' => $data->asset_loc,
 					'wo_dept' => 'ENG', // Hardcode
                     'wo_type'  => 'auto', // Hardcode
                     'wo_schedule' => Carbon::now('ASIA/JAKARTA')->toDateString(),
@@ -234,17 +238,16 @@ class ScheduleCheck extends Command
                 $runningnbr = $tablern->wt_prefix.'-'.$newyear.'-'.$newtemprunnbr;
 
                 /* Mencari engineer yang bertugas */
-                $dataengpm = DB::table('pm_eng')
-                    ->where('pm_group','=',$data2->asset_group)
-                    ->first();
+                if($data2->asset_group) {
+                    $dataengpm = DB::table('pm_eng')
+                        ->where('pm_group','=',$data2->asset_group)
+                        ->first();
 
-                $arrayeng = [];
-                if($dataengpm) {
+                    $arrayeng = [];
                     foreach(explode(';', $dataengpm->pm_engcode) as $info) {
                         $arrayeng[] = $info;
                     }
                 }
-                
                 
                 $dataarray = array(
                     'wo_nbr' => $runningnbr,
@@ -261,6 +264,8 @@ class ScheduleCheck extends Command
                     'wo_repair_code2' => $repcode2,
                     'wo_repair_code3' => $repcode3,
                     'wo_asset' => $data2->asset_code, 
+                    'wo_asset_site' => $data2->asset_site,
+                    'wo_asset_loc' => $data2->asset_loc,
                     'wo_dept' => 'ENG', // Hardcode
                     'wo_type'=>'auto', //Hardcode
                     'wo_schedule' => Carbon::now('ASIA/JAKARTA')->toDateString(),
@@ -291,7 +296,7 @@ class ScheduleCheck extends Command
                     ->where('us_asset_loc','=',$data2->asset_loc)
                     ->where('us_last_mea','=',$data2->asset_last_usage_mtc)
                     ->update([
-                        'us_no_pm' => $data2->asset_last_usage_mtc,
+                        'us_no_pm' => $runningnbr,
                     ]);
 
                 // Kirim Email

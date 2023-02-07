@@ -242,11 +242,14 @@ div #munculgambar .gambar:hover{
               <select id="c_asset" type="text" class="form-control c_asset" name="c_asset" autofocus required>
                 <option value="">--Select Asset--</option>
                 @foreach ($asset2 as $asset2)
-                <option value="{{$asset2->asset_code}}">{{$asset2->asset_code}} - {{$asset2->asset_desc}}</option>
+                <option value="{{$asset2->asset_code}}" data-assetsite="{{$asset2->asset_site}}" data-assetloc="{{$asset2->asset_loc}}" data-assetgroup="{{$asset2->asset_group}}">{{$asset2->asset_code}} - {{$asset2->asset_desc}}</option>
                 @endforeach
               </select>
             </div>
           </div>
+
+          <input type="hidden" id="hide_site" name="hide_site" />
+          <input type="hidden" id="hide_loc" name="hie_loc" />
 
           <div class="form-group row col-md-12" id="cdevwotype">
             <label for="cwotype" class="col-md-5 col-form-label text-md-left">WO Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
@@ -293,9 +296,6 @@ div #munculgambar .gambar:hover{
             <div class="col-md-7 col-sm-12">
               <select class="form-control" id="c_failuretype" name="c_failuretype" required>
                 <option></option>
-                @foreach($wottype as $wotypeshow)
-                <option value="{{$wotypeshow->wotyp_code}}">{{$wotypeshow->wotyp_code}} -- {{$wotypeshow->wotyp_desc}}</option>
-                @endforeach
               </select>
             </div>
           </div>
@@ -304,9 +304,6 @@ div #munculgambar .gambar:hover{
             <div class="col-md-7 col-sm-12">
               <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple" required>
                 <option></option>
-                @foreach($failure as $fcshow)
-                <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}}</option>
-                @endforeach
               </select>
             </div>
           </div>
@@ -554,9 +551,7 @@ div #munculgambar .gambar:hover{
             <label for="e_wottype" class="col-md-5 col-form-label text-md-left">Failure Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-7">
               <select name="e_wottype" class="form-control" id="e_wottype" required>
-                @foreach($wottype as $e_wottypeval)
-                <option value="{{trim($e_wottypeval->wotyp_code)}}">{{$e_wottypeval->wotyp_code}} - {{$e_wottypeval->wotyp_desc}}</option>
-                @endforeach
+                <option></option>
               </select>
             </div>
           </div>
@@ -565,9 +560,6 @@ div #munculgambar .gambar:hover{
             <div class="col-md-7 col-sm-12">
               <select class="form-control" id="m_failurecode" name="m_failurecode[]" multiple="multiple" required>
                 <option></option>
-                @foreach($failure as $fcshow)
-                <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}}</option>
-                @endforeach
               </select>
             </div>
           </div>
@@ -1907,7 +1899,7 @@ div #munculgambar .gambar:hover{
       success: function(vamp) {
         var tempres = JSON.stringify(vamp);
         var result = JSON.parse(tempres);
-        console.log(result);
+        // console.log(result);
         var wonbr = result[0].wo_nbr;
         var srnbr = result[0].wo_sr_nbr;
         var en1val = result[0].woen1;
@@ -1941,9 +1933,25 @@ div #munculgambar .gambar:hover{
         var eimpact = result[0].wo_impact;
         var eimpactdesc = result[0].wo_impact_desc;
         var ewottype = result[0].wo_new_type;
+        var assetgroup = result[0].asset_group;
+        // console.log(assetgroup);
         // console.log(rc1);
         // console.log(rc2);
         // console.log(rc3);
+
+        $.ajax({
+              url: "/checkfailurecodetype",
+              data: {
+                group: assetgroup,
+              },
+              success: function(data) {
+                var type = data.optionfailtype;
+                var code = data.optionfailcode;
+
+                $('#e_wottype').html(type);
+                $('#m_failurecode').html(code);
+              }
+        })
 
         var newarrimp = [];
         if (eimpact != null && eimpactdesc != null) {
@@ -1974,7 +1982,7 @@ div #munculgambar .gambar:hover{
           newarrfc.push(fc3);
         }
 
-        console.log(newarrfc);
+        // console.log(newarrfc);
 
         document.getElementById('statusedit').value = wostatus;
 
@@ -2246,8 +2254,8 @@ div #munculgambar .gambar:hover{
         var apprnote = result[0].wo_approval_note;
         var repairtype = result[0].wo_repair_type;
         var repairgroup = result[0].xxrepgroup_desc;
-        var loccode = result[0].loc_code;
-        var locdesc = result[0].loc_desc;
+        var loccode = result[0].asloc_code;
+        var locdesc = result[0].asloc_desc;
         var astypecode = result[0].astype_code;
         var astypedesc = result[0].astype_desc;
         var vimpact = result[0].wo_impact;
@@ -2639,61 +2647,87 @@ div #munculgambar .gambar:hover{
   //     }
   //   });
   // });
+  $(document).ready(function(){
 
-  $(document).on('change', '#c_asset', function() {
-    // document.getElementById('womanualchoose').style.display = '';
-    var assetval = document.getElementById('c_asset').value;
-    if (assetval == '') {
-      // document.getElementById('c_wottypediv').style.display = 'none';
-      document.getElementById('c_impactdiv').style.display = 'none';
-      document.getElementById('ftypediv').style.display = 'none';
-      document.getElementById('fcodediv').style.display = 'none';
-    } else {
-      // document.getElementById('c_wottypediv').style.display = '';
-      document.getElementById('c_impactdiv').style.display = '';
-      document.getElementById('ftypediv').style.display = '';
-      document.getElementById('fcodediv').style.display = '';
-    }
-    $('#c_wottype').select2({
-      placeholder: "Select Value",
-      width: '100%',
-      theme: 'bootstrap4',
-    });
+      $(document).on('change', '#c_asset', function() {
+        // document.getElementById('womanualchoose').style.display = '';
+        var assetsite = $(this).find(':selected').data('assetsite');
+        var assetloc = $(this).find(':selected').data('assetloc');
 
-    $('#c_failuretype').select2({
-      placeholder: "Select Failure Type",
-      width: '100%',
-      closeOnSelect: false,
-      allowClear: true,
-      theme: 'bootstrap4',
-    });
+        document.getElementById('hide_site').value = assetsite;
+        document.getElementById('hide_loc').value =assetloc;
 
-    $('#c_impact').select2({
-      placeholder: "Select Value",
-      width: '100%',
-      closeOnSelect: false,
-      allowClear: true,
-      theme: 'bootstrap4',
-    });
+        var selectedAsset = $(this).find("option:selected").data("assetgroup");
 
-    $("#wotype").select2({
-      width: '100%',
-      // theme : 'bootstrap4',
-      allowClear: true,
-      placeholder: 'Select Failure Type',
+        $.ajax({
+              url: "/checkfailurecodetype",
+              data: {
+                group: selectedAsset,
+              },
+              success: function(data) {
+                var type = data.optionfailtype;
+                var code = data.optionfailcode;
 
-    });
+                $('#c_failuretype').html(type);
+                $('#failurecode').html(code);
+              }
+        })
+        
+        var assetval = document.getElementById('c_asset').value;
 
-    $("#failurecode").select2({
-      width: '100%',
-      placeholder: "Select Failure Code",
-      theme: "bootstrap4",
-      allowClear: true,
-      maximumSelectionLength : 3,
-      closeOnSelect : false,
-      allowClear : true,
-      multiple : true,
-    });
+        if (assetval == '') {
+          // document.getElementById('c_wottypediv').style.display = 'none';
+          document.getElementById('c_impactdiv').style.display = 'none';
+          document.getElementById('ftypediv').style.display = 'none';
+          document.getElementById('fcodediv').style.display = 'none';
+        } else {
+          // document.getElementById('c_wottypediv').style.display = '';
+          document.getElementById('c_impactdiv').style.display = '';
+          document.getElementById('ftypediv').style.display = '';
+          document.getElementById('fcodediv').style.display = '';
+        }
+        $('#c_wottype').select2({
+          placeholder: "Select Value",
+          width: '100%',
+          theme: 'bootstrap4',
+        });
+
+        $('#c_failuretype').select2({
+          placeholder: "Select Failure Type",
+          width: '100%',
+          closeOnSelect: false,
+          allowClear: true,
+          theme: 'bootstrap4',
+        });
+
+        $('#c_impact').select2({
+          placeholder: "Select Value",
+          width: '100%',
+          closeOnSelect: false,
+          allowClear: true,
+          theme: 'bootstrap4',
+        });
+
+        $("#wotype").select2({
+          width: '100%',
+          // theme : 'bootstrap4',
+          allowClear: true,
+          placeholder: 'Select Failure Type',
+
+        });
+
+        $("#failurecode").select2({
+          width: '100%',
+          placeholder: "Select Failure Code",
+          theme: "bootstrap4",
+          allowClear: true,
+          maximumSelectionLength : 3,
+          closeOnSelect : false,
+          allowClear : true,
+          multiple : true,
+        });
+
+      });
 
   });
   $(document).on('click', '.reopen', function() {

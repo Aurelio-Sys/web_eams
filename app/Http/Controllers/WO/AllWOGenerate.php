@@ -128,7 +128,7 @@ class AllWOGenerate extends Controller
 
                 foreach ($data as $showdata) {
                     $getmaster_asset = DB::table('asset_mstr')
-                                    ->leftJoin('pm_eng', 'pm_eng.pm_asset','asset_mstr.asset_code')
+                                    ->leftJoin('pm_eng', 'pm_eng.pm_group','asset_mstr.asset_group')
                                     ->where('asset_code','=', $showdata['asset_code'])
                                     ->first();
                     
@@ -194,11 +194,11 @@ class AllWOGenerate extends Controller
                         'wo_nbr' => $runningnbr,
                         'wo_status' => 'plan', //-> A211025
                         // 'wo_status' => 'open',
-                        'wo_engineer1' => isset($array_englist[0]) ? $array_englist[0]:'', //A211025
-                        'wo_engineer2' => isset($array_englist[1]) ? $array_englist[1]:'', //A211025
-                        'wo_engineer3' => isset($array_englist[2]) ? $array_englist[2]:'',
-                        'wo_engineer4' => isset($array_englist[3]) ? $array_englist[3]:'',
-                        'wo_engineer5' => isset($array_englist[4]) ? $array_englist[4]:'',
+                        'wo_engineer1' => isset($array_englist[0]) ? $array_englist[0]:null, //A211025
+                        'wo_engineer2' => isset($array_englist[1]) ? $array_englist[1]:null, //A211025
+                        'wo_engineer3' => isset($array_englist[2]) ? $array_englist[2]:null,
+                        'wo_engineer4' => isset($array_englist[3]) ? $array_englist[3]:null,
+                        'wo_engineer5' => isset($array_englist[4]) ? $array_englist[4]:null,
                         'wo_priority' => 'high',
                         'wo_repair_type' => $getmaster_asset->asset_repair_type,
                         'wo_repair_group' => $repgroup,

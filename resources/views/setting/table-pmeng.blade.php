@@ -1,7 +1,8 @@
 @forelse($data as $show)
 <tr>
     {{--  <td>{{$show->pm_type}} -- {{$show->astype_desc}}</td>  --}}
-    <td>{{$show->pm_group}} -- {{$show->asgroup_desc}}</td>
+    <td>{{$show->pm_group}}</td>
+    <td>{{$show->asgroup_desc}}</td>
     {{--  <td>{{$show->pm_asset}} -- {{$show->asset_desc}}</td>  --}}
 
     @php($arrayeng = [])
@@ -36,6 +37,6 @@
 @endforelse
 <tr>
   <td style="border: none !important;">
-    {{ $data->links() }}
+    {{ $data->appends($_GET)->links() }}
   </td>
 </tr>

@@ -2,7 +2,7 @@
 <tr>
     <td>{{$show->fn_code}}</td>
     <td>{{$show->fn_desc}}</td>
-    <td>{{$show->fn_impact}}</td>
+    {{--  <td>{{$show->fn_impact}}</td>  --}}
 
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  

@@ -67,17 +67,17 @@
 
         <div class="modal-body">
             <div class="form-group row">
-                <div class="col-md-12">
+                <div class="table-responsive tag-container" style="overflow-x: auto; display:inline-block; white-space: nowrap; padding:0; text-align:center; position:relative">
                     <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <td style="text-align: center; width: 8% !important; font-weight: bold;">Repair Code</td>
-                                <td style="text-align: center; width: 12% !important; font-weight: bold;">Instruction Code</td>
-                                <td style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</td>
-                                <td style="text-align: center; width: 8% !important; font-weight: bold;">Qty Required</td>
-                                <td style="text-align: center; width: 15% !important; font-weight: bold;">Qty to Request</td>
-                                <td style="text-align: center; width: 11% !important; font-weight: bold;">Note</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Delete</td>
+                                <th style="text-align: center; width: 8% !important; font-weight: bold;">Repair Code</th>
+                                <th style="text-align: center; width: 12% !important; font-weight: bold;">Instruction Code</th>
+                                <th style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Qty Required</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Qty to Request</th>
+                                <th style="text-align: center; width: 20% !important; font-weight: bold;">Note</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Delete</th>
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
@@ -128,7 +128,7 @@
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$datas->ins_code}}
-                                    <input type="hidden" name="inscode[]" value="{{$datas->ins_code}}" />
+                                    <input type="hidden" name="inscode[]" value="{{$datas->ins_code}}" /> 
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$datas->insd_part}} -- {{$descpart}}
@@ -145,7 +145,7 @@
                                     <input type="hidden" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$dqtyreq}}" />
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
-                                    <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99">{{ $note_release }}</textarea>
+                                    <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 200px !important;" maxlength="99">{{ $note_release }}</textarea>
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
                                     {{date('Y-m-d', strtotime($whsdate))}}
@@ -156,7 +156,7 @@
                                     <input type="number" class="form-control" step="1" min="0" name="qtyrequest[]" value="{{$datas->insd_qty ?? $dqtyrequire}}" required />
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
-                                    <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99">{{ $note_release }}</textarea>
+                                    <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 200px !important;" maxlength="99">{{ $note_release }}</textarea>
                                 </td>
                                 @if($datas->wo_status == "plan")
                                 <!-- jika belum pernah direlease akan muncul tombol delete -->
@@ -215,7 +215,7 @@
                                 </td>
 
                                 <td style="vertical-align: middle; text-align: center;">
-                                    <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99"></textarea>
+                                    <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 200px !important;" maxlength="99"></textarea>
                                 </td>
 
                                 <td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>
@@ -318,7 +318,7 @@
             cols += '</td>';
 
             cols += '<td>';
-            cols += '<textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99" ></textarea>';
+            cols += '<textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 200px !important;" maxlength="99" ></textarea>';
             cols += '</td>';
 
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';

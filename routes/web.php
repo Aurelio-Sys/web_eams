@@ -615,6 +615,9 @@ Route::group(['middleware' => ['auth']], function() {
 
 	//Return Back Spare Part
 	Route::get('/returnbacksp', [wocontroller::class, 'returnsp']);
+
+	//cek failure code dan failure type
+	Route::get('/checkfailurecodetype',[wocontroller::class, 'checkfailurecodetype']);
 });
 
 Auth::routes();

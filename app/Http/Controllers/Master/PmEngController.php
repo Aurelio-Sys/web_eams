@@ -16,16 +16,32 @@ class PmEngController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $req)
     {
+        // dd($req->all());
+        $scode1 = $req->s_code1;
+        $sdesc1 = $req->s_desc1;
+        $scode2 = $req->s_code2;
+        
         $data = DB::table('pm_eng')
-            ->leftJoin('asset_type','astype_code','=','pm_type')
+            // ->leftJoin('asset_type','astype_code','=','pm_type')
             ->leftJoin('asset_group','asgroup_code','=','pm_group')
-            ->leftJoin('asset_mstr','asset_code','=','pm_asset')
-            ->orderBy('pm_type')
-            ->orderBy('pm_group')
-            ->orderBy('pm_asset')
-            ->paginate(10);
+            // ->leftJoin('asset_mstr','asset_code','=','pm_asset')
+            // ->orderBy('pm_type')
+            ->orderBy('pm_group');
+            // ->orderBy('pm_asset')
+
+        if(isset($scode1)) {
+            $data = $data->where('pm_group','like','%'.$scode1.'%');
+        }
+        if($sdesc1) {
+            $data = $data->where('asgroup_desc','like','%'.$sdesc1.'%');
+        }
+        if($scode2) {
+            $data = $data->where('pm_engcode','like','%'.$scode2.'%');
+        }
+
+        $data = $data->paginate(10);
 
         $datatype = DB::table('asset_type')
             ->orderBy('astype_code')
@@ -45,7 +61,8 @@ class PmEngController extends Controller
             ->get();
         
         return view('setting.pmeng', ['data' => $data, 'datatype' => $datatype, 'datagroup' => $datagroup, 
-            'dataasset' => $datasset, 'dataeng' => $dataeng]);
+            'dataasset' => $datasset, 'dataeng' => $dataeng, 'scode1' => $scode1, 'sdesc1' => $sdesc1,
+            'scode2' => $scode2]);
     }
 
     /**

@@ -3,7 +3,7 @@
       <div class="container-fluid">
         <div class="row">          
           <div class="col-sm-4">
-            <h1 class="m-0 text-dark">Hasil Pengukuran</h1>
+            <h1 class="m-0 text-dark">Usage Browse</h1>
           </div>    
         </div><!-- /.row -->
         <div class="col-md-12">
@@ -31,7 +31,7 @@
             <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
                 <option value="">--Select Asset--</option>
                 @foreach($dataasset as $assetsearch)
-                <option value="{{$assetsearch->asset_code}}" {{$assetsearch->asset_code === $sasset ? "selected" : ""}}>{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
+                <option value="{{$assetsearch->asset_code}}" {{$assetsearch->asset_code === $sasset ? "selected" : ""}}>{{$assetsearch->asset_code}} - {{$assetsearch->asset_desc}} - {{$assetsearch->asloc_desc}}</option>
                 @endforeach
             </select>
             </div>
@@ -58,13 +58,14 @@
             <tr>
                 <th width="10%">Asset</th>
                 <th width="20%">Description</th>
-                <th width="10%">Location</th>    
-                <th width="10%">Mea UM</th>    
-                <th width="10%">Tangal Pengukuran</th>    
-                <th width="10%">Waktu Pengukuran</th>    
-                <th width="10%">Hasil Pengukuran</th>    
-                <th width="10%">Created By</th>    
-                <th width="10%">Created At</th>    
+                <th width="20%">Location</th>    
+                <th width="5%">Mea</th>    
+                <th width="5%">UM</th>    
+                <th width="7%">Date</th>    
+                <th width="5%">Time</th>    
+                <th width="5%">Result</th>    
+                <th width="6%">Created By</th>    
+                <th width="7%">Created At</th>    
                 <th width="10%">Nomer PM</th>    
             </tr>
         </thead>

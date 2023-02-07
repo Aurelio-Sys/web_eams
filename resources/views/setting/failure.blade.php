@@ -76,9 +76,9 @@
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                <th width="20%">Code</th>
-                <th width="40%">Description</th>
-                <th width="30%">Note</th>
+                <th width="30%">Code</th>
+                <th width="60%">Description</th>
+                {{--  <th width="30%">Note</th>  --}}
                 <th width="10%">Action</th>  
             </tr>
         </thead>
@@ -117,12 +117,12 @@
                             <input id="t_desc" type="text" class="form-control" name="t_desc" autocomplete="off" autofocus maxlength="50" required/>
                         </div>
                     </div>                    
-                    <div class="form-group row">
+                    {{--  <div class="form-group row">
                         <label for="t_imp" class="col-md-4 col-form-label text-md-right">Note</label>
                         <div class="col-md-6">
                             <input id="t_imp" type="text" class="form-control" name="t_imp" autocomplete="off" autofocus maxlength="50"/>
                         </div>
-                    </div>
+                    </div>  --}}
                 </div>
             
                 <div class="modal-footer">
@@ -159,12 +159,12 @@
                             <input id="te_desc" type="text" class="form-control" name="te_desc" autocomplete="off" autofocus maxlength="50" required/>
                         </div>
                 </div>				
-                <div class="form-group row">
+                {{--  <div class="form-group row">
                     <label for="te_imp" class="col-md-4 col-form-label text-md-right">Note</label>
                     <div class="col-md-6">
                         <input id="te_imp" type="text" class="form-control" name="te_imp" autocomplete="off" autofocus maxlength="50"/>
                     </div>
-                </div>
+                </div>  --}}
             </div>
 
             <div class="modal-footer">
@@ -210,11 +210,11 @@
 
            var code     = $(this).data('code');
            var desc     = $(this).data('desc');
-           var imp      = $(this).data('imp');
+           {{--  var imp      = $(this).data('imp');  --}}
 
            document.getElementById('te_code').value     = code;
            document.getElementById('te_desc').value     = desc;
-           document.getElementById('te_imp').value      = imp;
+           {{--  document.getElementById('te_imp').value      = imp;  --}}
 
            $("#te_group").select2({
                 width : '100%',
@@ -257,7 +257,8 @@
 
             var code = $('#s_code').val();
             var desc = $('#s_desc').val();
-            var imp = $('#s_imp').val();
+            {{--  var imp = $('#s_imp').val();  --}}
+            var imp = "";
             var column_name = $('#hidden_column_name').val();
 			var sort_type = $('#hidden_sort_type').val();
             var page = 1;
@@ -292,7 +293,8 @@
             var page = $('#hidden_page').val();
             var code = $('#s_code').val();
             var desc = $('#s_desc').val();
-            var imp = $('#s_imp').val();
+            {{--  var imp = $('#s_imp').val();  --}}
+            var imp = "";
 			fetch_data(page, reverse_order, column_name, code, desc, imp);
      	});
        
@@ -305,7 +307,8 @@
             var sort_type = $('#hidden_sort_type').val();
             var code = $('#s_code').val();
             var desc = $('#s_desc').val();
-            var imp = $('#s_imp').val();
+            {{--  var imp = $('#s_imp').val();  --}}
+            var imp = "";
             fetch_data(page, sort_type, column_name, code, desc, imp);
        });
 

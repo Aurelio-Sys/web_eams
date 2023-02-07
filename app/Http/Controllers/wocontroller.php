@@ -250,8 +250,13 @@ class wocontroller extends Controller
                 ->where('asset_active', '=', 'Yes')
                 ->orderBy('asset_code')
                 ->get();
+
             $failure = DB::table('fn_mstr')
+                ->leftJoin('asfn_det','asfn_det.asfn_fncode','fn_mstr.fn_code')
+                ->groupBy('fn_code')
                 ->get();
+
+            
             $repaircode = DB::table('rep_master')
                 ->get();
             $repairgroup = DB::table('xxrepgroup_mstr')
@@ -261,8 +266,11 @@ class wocontroller extends Controller
             $impact = DB::table('imp_mstr')
                 ->get();
             $wottype = DB::table('wotyp_mstr')
+                ->leftJoin('asfn_det','asfn_det.asfn_fntype','wotyp_mstr.wotyp_code')
+                ->groupBy('asfn_asset','asfn_fntype')
                 ->get();
 
+            // dd($wottype);
             $ceksrfile = DB::table(('service_req_upload'))
                 ->get();
             return view('workorder.wobrowse', ['impact' => $impact, 'wottype' => $wottype, 'repairgroup' => $repairgroup, 'data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '', 'repaircode' => $repaircode, 'ceksrfile' => $ceksrfile]);
@@ -1119,7 +1127,9 @@ class wocontroller extends Controller
             'wo_creator'       => session()->get('username'),
             'wo_created_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
             'wo_updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-            'wo_type'          => $c_wotype
+            'wo_type'          => $c_wotype,
+            'wo_asset_site'    => $req->hide_site,
+            'wo_asset_loc'     => $req->hide_loc,
         );
         // dd($dataarray);
         if ($c_wotype == 'auto') {
@@ -1962,7 +1972,7 @@ class wocontroller extends Controller
     public function geteditwoold(Request $req)
     {
         //dd($req->get('nomorwo'));
-        // dd('aaa');
+        //dd('aaa');
         $nowo = $req->get('nomorwo');
         $currwo = DB::table('wo_mstr')
             ->where('wo_mstr.wo_nbr', '=', $nowo)
@@ -1979,9 +1989,9 @@ class wocontroller extends Controller
                 wo_mstr.wo_failure_code3 as wofc3, fn1.fn_desc as fd1, fn2.fn_desc as fd2, 
                 fn3.fn_desc as fd3,r1.repm_desc as r11,r2.repm_desc as r22,r3.repm_desc as r33,
                 r1.repm_code as rr11,r2.repm_code as rr22,r3.repm_code as rr33, wo_finish_date,
-                wo_finish_time,wo_repair_hour,asset_last_mtc,asset_last_usage_mtc,asset_measure,loc_code,
-                loc_desc,astype_code,astype_desc,wo_new_type,wo_impact,wo_impact_desc,wo_action,wotyp_desc,asset_daya,
-                wo_reject_reason')
+                wo_finish_time,wo_repair_hour,asset_last_mtc,asset_last_usage_mtc,asset_measure,asloc_code,
+                asloc_desc,astype_code,astype_desc,wo_new_type,wo_impact,wo_impact_desc,wo_action,wotyp_desc,asset_daya,
+                wo_reject_reason,asset_group')
             ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
             ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
             ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
@@ -1989,7 +1999,7 @@ class wocontroller extends Controller
             ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
             ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
             ->leftjoin('asset_type', 'asset_mstr.asset_type', 'asset_type.astype_code')
-            ->leftjoin('loc_mstr', 'asset_mstr.asset_loc', 'loc_mstr.loc_code')
+            ->leftjoin('asset_loc', 'asset_mstr.asset_loc', 'asset_loc.asloc_code')
             ->leftjoin('fn_mstr as fn1', 'wo_mstr.wo_failure_code1', 'fn1.fn_code')
             ->leftjoin('fn_mstr as fn2', 'wo_mstr.wo_failure_code2', 'fn2.fn_code')
             ->leftjoin('fn_mstr as fn3', 'wo_mstr.wo_failure_code3', 'fn3.fn_code')
@@ -2009,10 +2019,8 @@ class wocontroller extends Controller
 
     public function geteditwo($wo)
     {
-
-
         //dd($req->get('nomorwo'));
-        // dd('aaa');
+        //dd('aaa');
         $nowo = $wo;
         $currwo = DB::table('wo_mstr')
             ->where('wo_mstr.wo_nbr', '=', $nowo)
@@ -2029,9 +2037,9 @@ class wocontroller extends Controller
                 wo_mstr.wo_failure_code3 as wofc3, fn1.fn_desc as fd1, fn2.fn_desc as fd2, 
                 fn3.fn_desc as fd3,r1.repm_desc as r11,r2.repm_desc as r22,r3.repm_desc as r33,
                 r1.repm_code as rr11,r2.repm_code as rr22,r3.repm_code as rr33, wo_finish_date,
-                wo_finish_time,wo_repair_hour,asset_last_mtc,asset_last_usage_mtc,asset_measure,loc_code,
-                loc_desc,astype_code,astype_desc,wo_new_type,wo_impact,wo_impact_desc,wo_action,wotyp_desc,asset_daya,
-                wo_reject_reason')
+                wo_finish_time,wo_repair_hour,asset_last_mtc,asset_last_usage_mtc,asset_measure,asloc_code,
+                asloc_desc,astype_code,astype_desc,wo_new_type,wo_impact,wo_impact_desc,wo_action,wotyp_desc,asset_daya,
+                wo_reject_reason,asset_group')
             ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
             ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
             ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
@@ -2039,7 +2047,7 @@ class wocontroller extends Controller
             ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
             ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
             ->leftjoin('asset_type', 'asset_mstr.asset_type', 'asset_type.astype_code')
-            ->leftjoin('loc_mstr', 'asset_mstr.asset_loc', 'loc_mstr.loc_code')
+            ->leftjoin('asset_loc', 'asset_mstr.asset_loc', 'asset_loc.asloc_code')
             ->leftjoin('fn_mstr as fn1', 'wo_mstr.wo_failure_code1', 'fn1.fn_code')
             ->leftjoin('fn_mstr as fn2', 'wo_mstr.wo_failure_code2', 'fn2.fn_code')
             ->leftjoin('fn_mstr as fn3', 'wo_mstr.wo_failure_code3', 'fn3.fn_code')
@@ -2061,9 +2069,22 @@ class wocontroller extends Controller
             ->distinct('wo_dets_rc')
             ->get();
 
-        $fc = DB::table('fn_mstr')
-            ->orderBy('fn_code')
-            ->get();
+        $asfn_det = DB::table('asfn_det')
+            ->where('asfn_asset','=', $data->first()->asset_group)
+            ->count();
+
+        if($asfn_det > 0){
+            $fc = DB::table('fn_mstr')
+            ->leftJoin('asfn_det','asfn_det.asfn_fncode','fn_mstr.fn_code')
+            ->where('asfn_asset','=', $data->first()->asset_group)
+            ->groupBy('asfn_fncode')
+            ->get(); 
+        }else{
+            $fc = DB::table('fn_mstr')
+            ->leftJoin('asfn_det','asfn_det.asfn_fncode','fn_mstr.fn_code')
+            ->groupBy('asfn_fncode')
+            ->get();  
+        }
 
         $data2 = "";
         if ($currwo->wo_repair_type == "group") {
@@ -2555,8 +2576,6 @@ class wocontroller extends Controller
     public function reportingwo(Request $req)
     {
 
-        // dd($req->all());
-
         $domain = ModelsQxwsa::first();
 
         $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
@@ -2891,26 +2910,7 @@ class wocontroller extends Controller
 
 
                     if ($qdocResult == "success" or $qdocResult == "warning") {
-                        //simpan jika masih ada sisa qty yg tidak terpakai di loc engineernya
-
-                        // foreach($dataqxtend as $rbdata){
-                        //     if($rbdata->qtytoqx <= $rbdata->qtywh){
-                        //         DB::table('returnback_sp')
-                        //         ->insert([
-                        //             'rb_wonbr' => $rbdata->wo_dets_nbr,
-                        //             'rb_spcode' => $rbdata->wo_dets_sp,
-                        //             'rb_spdesc' => $rbdata->spm_desc,
-                        //             'rb_sp_um' => $rbdata->spm_um,
-                        //             'rb_sitefrom' => $rbdata->wo_dets_wh_site,
-                        //             'rb_locfrom' => $rbdata->wo_dets_wh_loc,
-                        //             'rb_siteto' => $rbdata->wo_dets_wh_tosite,
-                        //             'rb_locto' => $rbdata->wo_dets_wh_toloc,
-                        //             'rb_qtyeng' => $rbdata->qtywh,
-                        //             'rb_qtyactual' => $rbdata->qtytoqx,
-                        //             'rb_user' => Session::get('username')
-                        //         ]);
-                        //     }
-                        // }
+                        
 
                     } else {
                         // dd('abcd');
@@ -2951,11 +2951,21 @@ class wocontroller extends Controller
                 'wo_access'        => 0
             ];
             DB::table('wo_mstr')->where('wo_nbr', '=', $req->c_wonbr)->update($arrayy);
-
+            // dd('abcd');
             /* simpan file A211025 */
-            if ($req->hasfile('filenamewo')) {
+            if ($req->has('filenamewo')) {
                 foreach ($req->file('filenamewo') as $upload) {
                     $filename = $req->c_wonbr . '-' . $upload->getClientOriginalName();
+
+                    // Cek apakah file sudah ada di database
+                    $existingFile = DB::table('acceptance_image')
+                                    ->where('file_name', $filename)
+                                    ->where('file_wonumber','=',$req->c_wonbr)
+                                    ->count();
+                    if ($existingFile > 0) {
+                        toast('File names cannot be same.', 'error');
+                        return back();
+                    }
 
                     // Simpan File Upload pada Public
                     $savepath = public_path('uploadwofinish/');
@@ -2972,7 +2982,6 @@ class wocontroller extends Controller
                         ]);
                 }
             } /* end simpan file A211025 */
-
             /* A211025
                 $albumraw = $req->imgname;
                 $k = 0;
@@ -3027,7 +3036,7 @@ class wocontroller extends Controller
             return redirect()->route('woreport');
 
         } catch (Exception $e) {
-            // dd($e);
+            dd($e);
             DB::rollBack();
             toast('Save Error', 'error');
             return redirect()->route('woreport');
@@ -4505,6 +4514,55 @@ class wocontroller extends Controller
         }
 
         return view('workorder.wostart', ['data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset]);
+    }
+
+    public function checkfailurecodetype(Request $req){
+        $assetgroup = $req->group;
+
+        $asfn_det = DB::table('asfn_det')
+                    ->where('asfn_asset','=',$assetgroup)
+                    ->count();
+
+        if($asfn_det > 0){
+            //jika ada
+            $fntype = DB::table('wotyp_mstr')
+                ->leftJoin('asfn_det','asfn_det.asfn_fntype','wotyp_mstr.wotyp_code')
+                ->where('asfn_asset','=', $assetgroup)
+                ->groupBy('asfn_asset','asfn_fntype')
+                ->get();
+
+            $failure = DB::table('fn_mstr')
+                ->leftJoin('asfn_det','asfn_det.asfn_fncode','fn_mstr.fn_code')
+                ->where('asfn_asset','=', $assetgroup)
+                ->groupBy('asfn_fncode')
+                ->get();    
+        }else{
+            //jika tidak ada
+            $fntype = DB::table('wotyp_mstr')
+                ->get();
+
+            $failure = DB::table('fn_mstr')
+                ->leftJoin('asfn_det','asfn_det.asfn_fncode','fn_mstr.fn_code')
+                ->groupBy('asfn_fncode')
+                ->get();    
+
+        }
+
+
+        $outputtype = "";
+        foreach($fntype as $thistype ){
+            $outputtype .= '<option value="'.$thistype->wotyp_code.'"> '.$thistype->wotyp_code.' -- '.$thistype->wotyp_desc.'</option>';
+        }
+
+        $outputcode = "";
+        foreach($failure as $thiscode){
+            $outputcode .= '<option value="'.$thiscode->fn_code.'"> '.$thiscode->fn_code.' -- '.$thiscode->fn_desc.'</option>';
+        }
+
+        return response()->json([
+            'optionfailtype' => $outputtype,
+            'optionfailcode' => $outputcode,
+        ]);
     }
 }
 //tanggal betulin 24 may 2021 - 1553
