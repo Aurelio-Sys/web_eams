@@ -193,11 +193,15 @@
           </tr>
           <tr style="line-height: 2px;">
             <td style="border-top:0px;border-right:0px;border-collapse: collapse;">
-              <p style="margin-top: -2px; font-size:12px;"><b>Tanggal & Jam SR</b></p>
+              <p style="margin-top: -2px; font-size:12px;"><b>Tanggal & Jam SR / WO</b></p>
             </td>
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
               <p style="margin-top: -2px; font-size:12px">
-                : {{$srmstr->sr_date}} & {{date('H:i', strtotime($srmstr->sr_time))}}
+                @if($womstr != null)
+                : {{$srmstr->sr_date}} & {{date('H:i', strtotime($srmstr->sr_time))}} / {{date('d-m-y', strtotime($womstr->wo_created_at))}} & {{date('H:i', strtotime($womstr->wo_created_at))}}
+                @else
+                : {{$srmstr->sr_date}} & {{date('H:i', strtotime($srmstr->sr_time))}} /
+                @endif
               </p>
             </td>
           </tr>
