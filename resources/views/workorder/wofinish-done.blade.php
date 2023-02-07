@@ -96,7 +96,7 @@
     }
 </style>
 <div class="row">
-    <form class="form-horizontal" id="newedit" method="post" action="/reportingwo">
+    <form class="form-horizontal" id="newedit" method="post" action="/reportingwo" enctype="multipart/form-data">
         {{ csrf_field() }}
         <div class="modal-body">
             <input type="hidden" name="repairtype" id="repairtype" value="{{$data->first()->wo_repair_type}}">
@@ -378,11 +378,19 @@
                     <textarea id="c_note" class="form-control c_note" name="c_note" maxlength="250" autofocus>{{($data->first()->wo_approval_note != null) ? $data->first()->wo_approval_note : ''}}</textarea>
                 </div>
             </div>
+            <div class="form-group row col-md-12" id="photodiv">
+                <label class="col-md-4 col-form-label text-md-left">Uploaded File</label>
+                <div class="col-md-7">
+                <div id="munculgambar">
+
+                </div>
+                </div>
+            </div>
             <div class="form-group row col-md-12">
                 <!-- <label class="col-md-12 col-form-label text-md-center"><b>Completed</b></label> -->
                 <label class="col-md-4 col-form-label text-md-left">Upload</label>
                 <div class="col-md-5 input-file-container" style="margin-bottom: 10%;">
-                    <input type="file" class="form-control" id="imgname" name="imgname[]" multiple>
+                    <input type="file" class="form-control" id="filenamewo" name="filenamewo[]" multiple>
                 </div>
             </div>
             <input type="hidden" id="hidden_var" name="hidden_var" value="0" />
@@ -430,125 +438,74 @@
             document.getElementById('btnloading').style.display = '';
         });
 
-
-
-        uploadImage();
-
-        $('#file-input').on('change', function() { //on file input change
-            if (window.File && window.FileReader && window.FileList && window.Blob) //check File API supported browser
-            {
-
-                var data = $(this)[0].files; //this file data
-                // console.log(data);
-                $.each(data, function(index, file) { //loop though each file
-                    if (/(\.|\/)(jpe?g|png)$/i.test(file.type)) { //check supported file type
-                        var fRead = new FileReader(); //new filereader
-                        fRead.onload = (function(file) { //trigger function on successful read
-                            return function(e) {
-                                var img = $('<img/>').addClass('thumb').attr('src', e.target.result); //create image element 
-                                $('#thumb-output').append(img); //append image to output element
-                            };
-                        })(file);
-                        fRead.readAsDataURL(file); //URL representing the file's data.
-                    }
-                });
-
-                $("#thumb-output").on('click', '.thumb', function() {
-                    $(this).remove();
-                })
-
-            } else {
-                // alert("Your browser doesn't support File API!");
-                swal.fire({
-                    position: 'top-end',
-                    icon: 'error',
-                    title: "Your browser doesn't support File API!",
-                    toast: true,
-                    showConfirmButton: false,
-                    timer: 2000,
-                }) //if File API is absent
-            }
+        $('#repairgroup').select2({
+            placeholder: "Select Data",
+            width: '100%',
+            theme: 'bootstrap4',
+        });
+        $('#repaircode1').select2({
+            placeholder: "Select Data",
+            width: '100%',
+            theme: 'bootstrap4',
+        });
+        $('#repaircode2').select2({
+            placeholder: "Select Data",
+            width: '100%',
+            theme: 'bootstrap4',
+        });
+        $('#repaircode3').select2({
+            placeholder: "Select Data",
+            width: '100%',
+            theme: 'bootstrap4',
         });
 
-    });
+        var wonbr = document.getElementById('c_wonbr').value;
 
-    function uploadImage() {
-        var button = $('.images .pic')
-        var uploader = $('<input type="file" accept="image/jpeg, image/png, image/jpg" />')
-        var images = $('.images')
-        var potoArr = [];
-        var initest = $('.images .img span #imgname')
+        // console.log(wonbr);
 
-        button.on('click', function() {
-            // alert('aaa');
-            uploader.click();
+        $.ajax({
+          url: "/imageview",
+          data: {
+            wonumber: wonbr,
+          },
+          success: function(data) {
+            // console.log(data);
+
+            /* coding asli ada di backup-20211026 sblm PM attach file, coding aslinya nampilin gambar*/
+            //alert('test');
+
+            $('#munculgambar').html('').append(data);
+          }
         })
 
-        uploader.on('change', function() {
-            var reader = new FileReader();
-            i = 0;
-            reader.onload = function(event) {
-                images.prepend('<div id="img" class="img" style="background-image: url(\'' + event.target.result + '\');" rel="' + event.target.result + '"><span>remove<input type="hidden" style="display:none;" id="imgname" name="imgname[]" value=""/></span></div>')
-                // alert(JSON.stringify(uploader));
-                document.getElementById('imgname').value = uploader[0].files.item(0).name + ',' + event.target.result;
-                document.getElementById('hidden_var').value = 1;
+
+    
+    });
+
+    $(document).on('click', '.deleterow', function(e) {
+        var data = $(this).closest('tr').find('.rowval').val();
+
+        Swal.fire({
+        title: '',
+        text: "Delete File ?",
+        icon: '',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Delete'
+        }).then((result) => {
+        if (result.value) {
+            $.ajax({
+            url: "/delfilewofinish/" + data,
+            success: function(data) {
+
+                $('#munculgambar').html('').append(data);
             }
-            reader.readAsDataURL(uploader[0].files[0])
-            // potoArr.push(uploader[0].files[0]);
+            })
+        } else {
 
-            // console.log(potoArr);
+        }
         })
-
-
-        images.on('click', '.img', function() {
-            $(this).remove();
-        })
-
-        // confirmPhoto(potoArr);
-    }
-
-    $('#repairgroup').select2({
-        placeholder: "Select Data",
-        width: '100%',
-        theme: 'bootstrap4',
-    });
-    $('#repaircode1').select2({
-        placeholder: "Select Data",
-        width: '100%',
-        theme: 'bootstrap4',
-    });
-    $('#repaircode2').select2({
-        placeholder: "Select Data",
-        width: '100%',
-        theme: 'bootstrap4',
-    });
-    $('#repaircode3').select2({
-        placeholder: "Select Data",
-        width: '100%',
-        theme: 'bootstrap4',
-    });
-
-    // $(document).on('change', '#arccheck', function(e) {
-    //     // alert('aaa');
-    //     document.getElementById('divrepair').style.display = '';
-    //     document.getElementById('divgroup').style.display = 'none';
-    //     // alert('aaa');
-    //     $("#repairgroup").val(null).trigger('change');
-    //     //$("#repaircode1").val(null).trigger('change');
-    //     $("#repaircode2").val(null).trigger('change');
-    //     $("#repaircode3").val(null).trigger('change');
-
-    //     document.getElementById('repairtype').value = 'code';
-    // });
-
-    // $(document).on('change', '#argcheck', function(e) {
-    //     document.getElementById('divgroup').style.display = '';
-    //     document.getElementById('divrepair').style.display = 'none';
-    //     $("#repairgroup").val(null).trigger('change');
-    //     //$("#repaircode1").val(null).trigger('change');
-    //     $("#repaircode2").val(null).trigger('change');
-    //     $("#repaircode3").val(null).trigger('change');
-    //     document.getElementById('repairtype').value = 'group';
-    // });
+  });
 </script>
 @endsection

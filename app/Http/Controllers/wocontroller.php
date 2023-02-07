@@ -2555,8 +2555,6 @@ class wocontroller extends Controller
     public function reportingwo(Request $req)
     {
 
-        // dd($req->all());
-
         $domain = ModelsQxwsa::first();
 
         $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
@@ -2891,26 +2889,7 @@ class wocontroller extends Controller
 
 
                     if ($qdocResult == "success" or $qdocResult == "warning") {
-                        //simpan jika masih ada sisa qty yg tidak terpakai di loc engineernya
-
-                        // foreach($dataqxtend as $rbdata){
-                        //     if($rbdata->qtytoqx <= $rbdata->qtywh){
-                        //         DB::table('returnback_sp')
-                        //         ->insert([
-                        //             'rb_wonbr' => $rbdata->wo_dets_nbr,
-                        //             'rb_spcode' => $rbdata->wo_dets_sp,
-                        //             'rb_spdesc' => $rbdata->spm_desc,
-                        //             'rb_sp_um' => $rbdata->spm_um,
-                        //             'rb_sitefrom' => $rbdata->wo_dets_wh_site,
-                        //             'rb_locfrom' => $rbdata->wo_dets_wh_loc,
-                        //             'rb_siteto' => $rbdata->wo_dets_wh_tosite,
-                        //             'rb_locto' => $rbdata->wo_dets_wh_toloc,
-                        //             'rb_qtyeng' => $rbdata->qtywh,
-                        //             'rb_qtyactual' => $rbdata->qtytoqx,
-                        //             'rb_user' => Session::get('username')
-                        //         ]);
-                        //     }
-                        // }
+                        
 
                     } else {
                         // dd('abcd');
@@ -2951,11 +2930,21 @@ class wocontroller extends Controller
                 'wo_access'        => 0
             ];
             DB::table('wo_mstr')->where('wo_nbr', '=', $req->c_wonbr)->update($arrayy);
-
+            // dd('abcd');
             /* simpan file A211025 */
-            if ($req->hasfile('filenamewo')) {
+            if ($req->has('filenamewo')) {
                 foreach ($req->file('filenamewo') as $upload) {
                     $filename = $req->c_wonbr . '-' . $upload->getClientOriginalName();
+
+                    // Cek apakah file sudah ada di database
+                    $existingFile = DB::table('acceptance_image')
+                                    ->where('file_name', $filename)
+                                    ->where('file_wonumber','=',$req->c_wonbr)
+                                    ->count();
+                    if ($existingFile > 0) {
+                        toast('File names cannot be same.', 'error');
+                        return back();
+                    }
 
                     // Simpan File Upload pada Public
                     $savepath = public_path('uploadwofinish/');
@@ -2972,7 +2961,6 @@ class wocontroller extends Controller
                         ]);
                 }
             } /* end simpan file A211025 */
-
             /* A211025
                 $albumraw = $req->imgname;
                 $k = 0;
@@ -3027,7 +3015,7 @@ class wocontroller extends Controller
             return redirect()->route('woreport');
 
         } catch (Exception $e) {
-            // dd($e);
+            dd($e);
             DB::rollBack();
             toast('Save Error', 'error');
             return redirect()->route('woreport');
