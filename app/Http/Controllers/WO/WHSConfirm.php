@@ -167,60 +167,61 @@ class WHSConfirm extends Controller
             ->orderBy('repdet_step', 'asc')
             ->get();
 
+        // load stock
         $siteactive = DB::table('site_mstrs')
             ->where('site_flag','=','yes')
-            ->value('site_code');
+            ->get();
 
-        // load stock
-        $domain = ModelsQxwsa::first();
+        Schema::create('temp_stok', function ($table) {
+            $table->increments('id');
+            $table->string('stok_site');
+            $table->string('stok_loc');
+            $table->string('stok_part');
+            $table->decimal('stok_qty',13,2);
+            $table->string('stok_lot');
+            $table->string('stok_exp');
+            $table->string('stok_date');
+            $table->temporary();
+        });
 
-        $stokdata = (new WSAServices())->wsastok($domain->wsas_domain,$siteactive);
+        foreach($siteactive as $qsite) {
+            $domain = ModelsQxwsa::first();
 
-        if ($stokdata === false) {
-            toast('WSA Failed', 'error')->persistent('Dismiss');
-            return redirect()->back();
-        } else {
+            $stokdata = (new WSAServices())->wsastok($domain->wsas_domain,$qsite->site_code);
 
-            if ($stokdata[1] == "false") {
-                toast('Stok tidak ditemukan', 'error')->persistent('Dismiss');
+            if ($stokdata === false) {
+                toast('WSA Failed', 'error')->persistent('Dismiss');
                 return redirect()->back();
             } else {
 
-                Schema::create('temp_stok', function ($table) {
-                    $table->increments('id');
-                    $table->string('stok_site');
-                    $table->string('stok_loc');
-                    $table->string('stok_part');
-                    $table->decimal('stok_qty',13,2);
-                    $table->string('stok_lot');
-                    $table->string('stok_exp');
-                    $table->string('stok_date');
-                    $table->temporary();
-                });
-
-                foreach ($stokdata[0] as $datas) {
-                    DB::table('temp_stok')->insert([
-                        'stok_site' => $datas->t_site,
-                        'stok_loc' => $datas->t_loc,
-                        'stok_part' => $datas->t_part,
-                        'stok_qty' => $datas->t_qty,
-                        'stok_lot' => $datas->t_lot,
-                        'stok_exp' => $datas->t_exp,
-                        'stok_date' => $datas->t_date,
-                    ]);
+                if ($stokdata[1] == "false") {
+                    toast('Stok tidak ditemukan', 'error')->persistent('Dismiss');
+                    return redirect()->back();
+                } else {
+                    foreach ($stokdata[0] as $datas) {
+                        DB::table('temp_stok')->insert([
+                            'stok_site' => $datas->t_site,
+                            'stok_loc' => $datas->t_loc,
+                            'stok_part' => $datas->t_part,
+                            'stok_qty' => $datas->t_qty,
+                            'stok_lot' => $datas->t_lot,
+                            'stok_exp' => $datas->t_exp,
+                            'stok_date' => $datas->t_date,
+                        ]);
+                    } 
                 }
-
-                $qstok = DB::table('temp_stok')
-                    ->orderBy('stok_date')
-                    ->orderBy('stok_site')
-                    ->orderBy('stok_lot')
-                    ->orderBy('stok_loc')
-                    ->get();
-
-                Schema::dropIfExists('temp_stok');
             }
         }
 
+        $qstok = DB::table('temp_stok')
+            ->orderBy('stok_date')
+            ->orderBy('stok_site')
+            ->orderBy('stok_lot')
+            ->orderBy('stok_loc')
+            ->get();  
+
+        Schema::dropIfExists('temp_stok');
+        
         return view('workorder.whsconf-detail', compact(
             'data',
             'spdata',

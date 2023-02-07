@@ -109,15 +109,17 @@ class ScheduleCheck extends Command
                 $runningnbr = $tablern->wt_prefix.'-'.$newyear.'-'.$newtemprunnbr;
                 
                 /* Mencari engineer yang bertugas */
-                $dataengpm = DB::table('pm_eng')
-                    ->where('pm_group','=',$data->asset_group)
-                    ->first();
+                if($data->asset_group) {
+                    $dataengpm = DB::table('pm_eng')
+                        ->where('pm_group','=',$data->asset_group)
+                        ->first();
 
-                $arrayeng = [];
-                foreach(explode(';', $dataengpm->pm_engcode) as $info) {
-                    $arrayeng[] = $info;
+                    $arrayeng = [];
+                    foreach(explode(';', $dataengpm->pm_engcode) as $info) {
+                        $arrayeng[] = $info;
+                    }
                 }
-
+                
                 $dataarray = array(
                     'wo_nbr' => $runningnbr,
                     'wo_status' => 'plan', //-> A211025
@@ -236,17 +238,16 @@ class ScheduleCheck extends Command
                 $runningnbr = $tablern->wt_prefix.'-'.$newyear.'-'.$newtemprunnbr;
 
                 /* Mencari engineer yang bertugas */
-                $dataengpm = DB::table('pm_eng')
-                    ->where('pm_group','=',$data2->asset_group)
-                    ->first();
+                if($data2->asset_group) {
+                    $dataengpm = DB::table('pm_eng')
+                        ->where('pm_group','=',$data2->asset_group)
+                        ->first();
 
-                $arrayeng = [];
-                if($dataengpm) {
+                    $arrayeng = [];
                     foreach(explode(';', $dataengpm->pm_engcode) as $info) {
                         $arrayeng[] = $info;
                     }
                 }
-                
                 
                 $dataarray = array(
                     'wo_nbr' => $runningnbr,

@@ -2246,8 +2246,8 @@ div #munculgambar .gambar:hover{
         var apprnote = result[0].wo_approval_note;
         var repairtype = result[0].wo_repair_type;
         var repairgroup = result[0].xxrepgroup_desc;
-        var loccode = result[0].loc_code;
-        var locdesc = result[0].loc_desc;
+        var loccode = result[0].asloc_code;
+        var locdesc = result[0].asloc_desc;
         var astypecode = result[0].astype_code;
         var astypedesc = result[0].astype_desc;
         var vimpact = result[0].wo_impact;

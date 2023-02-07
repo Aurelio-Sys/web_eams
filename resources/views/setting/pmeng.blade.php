@@ -18,6 +18,7 @@
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
+<form action="/pmeng" method="GET">
 <!-- Bagian Searching -->
 <div class="container-fluid mb-2">
     <div class="row">
@@ -30,48 +31,50 @@
         <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
         <div class="card card-body bg-black rounded-0">
             <div class="col-12 form-group row">
-                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Code</label>
+                <label for="s_code1" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Group</label>
                 <div class="col-md-4 mb-2 input-group">
-                    <select id="s_code" class="form-control" name="s_code">
-                        <option value=""></option>
-                        {{--  @foreach($datasearch as $sdata)
-                            <option value="{{$sdata->astype_code}}">{{$sdata->astype_code}} - {{$sdata->astype_desc}}</option>
-                        @endforeach  --}}
-                    </select>
+                    <input id="s_code1" type="text" class="form-control" name="s_code1" value="{{$scode1}}" autocomplete="off"/>
                 </div>
-                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Description</label>
+                <label for="s_desc1" class="col-md-2 col-sm-2 col-form-label text-md-right">Description</label>
                 <div class="col-md-4 mb-2 input-group">
-                    <input id="s_desc" type="text" class="form-control" name="s_desc" value="" autofocus autocomplete="off"/>
+                    <input id="s_desc1" type="text" class="form-control" name="s_desc1" value="{{$sdesc1}}" autocomplete="off"/>
+                </div>
+                <label for="c_code2" class="col-md-2 col-sm-2 col-form-label text-md-right">Engineer</label>
+                <div class="col-md-4 col-sm-4 mb-2 input-group">
+                    <select id="s_code2" class="form-control" style="color:black" name="s_code2">
+                        <option value="">--Select--</option>
+                        @foreach($dataeng as $de)
+                        <option value="{{$de->eng_code}}" {{$de->eng_code === $scode2 ? "selected" : ""}}>{{$de->eng_code}} -- {{$de->eng_desc}}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
                 <div class="col-md-2 col-sm-4 mb-2 input-group">
-                    <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search"/> 
+                    <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
                 </div>
                 <div class="col-md-2 col-sm-4 mb-2 input-group">
                     <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
                 </div>
-                <input type="hidden" id="tmpcode"/>
-                <input type="hidden" id="tmpdesc"/>
             </div>
         </div>
     </div>
 </div>
-
-<div class="col-md-12"><hr></div>
+</form>
 
 <div class="table-responsive col-12">
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
                 {{--  <th>Asset Type</th>  --}}
-                <th>Asset Group</th>
+                <th width="10%">Asset Group</th>
+                <th width="30%">Desc</th>
                 {{--  <th>Asset</th>  --}}
-                <th>Engineer 1</th>
-                <th>Engineer 2</th>
-                <th>Engineer 3</th>
-                <th>Engineer 4</th>
-                <th>Engineer 5</th>
-                <th>Action</th>  
+                <th width="10%">Engineer 1</th>
+                <th width="10%">Engineer 2</th>
+                <th width="10%">Engineer 3</th>
+                <th width="10%">Engineer 4</th>
+                <th width="10%">Engineer 5</th>
+                <th width="10%">Action</th>  
             </tr>
         </thead>
         <tbody>
@@ -255,102 +258,6 @@
             $('#post_title_icon').html('');
        }
 
-       function fetch_data(page, sort_type, sort_by, code, desc){
-            $.ajax({
-                url:"assettypemaster/pagination?page="+page+"&sorttype="+sort_type+"&sortby="+sort_by+"&code="+code+"&desc="+desc,
-                success:function(data){
-                    console.log(data);
-                    $('tbody').html('');
-                    $('tbody').html(data);
-                }
-            })
-        }
-
-        $(document).on('click', '#btnsearch', function(){
-
-            var code = $('#s_code').val();
-            var desc = $('#s_desc').val();
-            var column_name = $('#hidden_column_name').val();
-			var sort_type = $('#hidden_sort_type').val();
-            var page = 1;
-            
-            document.getElementById('tmpcode').value = code;
-            document.getElementById('tmpdesc').value = desc;
-
-            fetch_data(page, sort_type, column_name, code, desc);
-        });
-
-       $(document).on('click', '.sorting', function(){
-			var column_name = $(this).data('column_name');
-			var order_type = $(this).data('sorting_type');
-			var reverse_order = '';
-			if(order_type == 'asc')
-			{
-			$(this).data('sorting_type', 'desc');
-			reverse_order = 'desc';
-			clear_icon();
-			$('#'+column_name+'_icon').html('<span class="glyphicon glyphicon-triangle-bottom"></span>');
-			}
-			if(order_type == 'desc')
-			{
-			$(this).data('sorting_type', 'asc');
-			reverse_order = 'asc';
-			clear_icon();
-			$('#'+column_name+'_icon').html('<span class="glyphicon glyphicon-triangle-top"></span>');
-			}
-			$('#hidden_column_name').val(column_name);
-			$('#hidden_sort_type').val(reverse_order);
-            var page = $('#hidden_page').val();
-            var code = $('#s_code').val();
-            var desc = $('#s_desc').val();
-			fetch_data(page, reverse_order, column_name, code, desc);
-     	});
-       
-       
-       $(document).on('click', '.pagination a', function(event){
-            event.preventDefault();
-            var page = $(this).attr('href').split('page=')[1];
-            $('#hidden_page').val(page);
-            var column_name = $('#hidden_column_name').val();
-            var sort_type = $('#hidden_sort_type').val();
-            var code = $('#s_code').val();
-            var desc = $('#s_desc').val();
-            fetch_data(page, sort_type, column_name, code, desc);
-       });
-
-       $(document).on('click', '#btnrefresh', function() {
-
-            var code  = ''; 
-            var desc = '';
-
-            var column_name = $('#hidden_column_name').val();
-            var sort_type = $('#hidden_sort_type').val();
-            var page = 1;
-
-            document.getElementById('s_code').value  = '';
-            document.getElementById('s_desc').value  = '';
-            document.getElementById('tmpcode').value  = code;
-            document.getElementById('tmpdesc').value  = desc;
-
-            fetch_data(page, sort_type, column_name, code, desc);
-
-            $("#s_code").select2({
-                width : '100%',
-                theme : 'bootstrap4',
-                
-            });
-        });
-
-        $("#t_eng").select2({
-            width : '100%',
-            placeholder : "Select Engineer",
-            maximumSelectionLength : 5,
-            closeOnSelect : false,
-            allowClear : true,
-            multiple : true,
-            // theme : 'bootstrap4'
-        });
-
         function ambilenjiner(){
 
             var eng = $('#te_deng').val();
@@ -383,6 +290,32 @@
             })
         }
 
+        function tampileng() {
+            $.ajax({
+                url: "/engineersearch",
+                success: function(data) {
+        
+                console.log(data);
+                var jmldata = data.length;
+        
+                var eng_code = [];
+                var eng_desc = [];
+                var test = [];
+        
+                for (i = 0; i < jmldata; i++) {
+                    eng_code.push(data[i].eng_code);
+                    eng_desc.push(data[i].eng_desc);
+        
+                    test += '<option value=' + eng_code[i] + '>' + eng_code[i] + '--' + eng_desc[i] + '</option>';
+                }
+    
+                $('#t_eng').html('').append(test);
+                }
+            })
+        }
+
+        tampileng();
+
         $("#te_eng").select2({
             width : '100%',
             maximumSelectionLength : 5,
@@ -396,6 +329,32 @@
             theme : 'bootstrap4',
             
         });
+
+        $("#s_code2").select2({
+            width : '100%',
+            theme : 'bootstrap4',
+            
+        });
+
+        $("#t_eng").select2({
+            width : '100%',
+            placeholder : "Select Engineer",
+            maximumSelectionLength : 5,
+            closeOnSelect : false,
+            allowClear : true,
+            multiple : true,
+            // theme : 'bootstrap4'
+        });
+
+        $(document).on('click', '#btnrefresh', function() {
+            resetSearch();
+        });    
+    
+        function resetSearch() {
+            $('#s_code1').val('');
+            $('#s_desc1').val('');
+            $('#s_code2').val('');
+        }
     </script>
 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">

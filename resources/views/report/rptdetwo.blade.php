@@ -254,18 +254,21 @@
           <div class="col-md-4">
             <input id="v_schedule" readonly type="date" class="form-control" name="v_schedule" value="{{ old('v_schedule') }}" autofocus>
           </div>
-          <label for="v_mtcby" class="col-md-2 col-form-label text-md-left">Maintenance By</label>
+          <label id="divviewcode" for="v_repaircode" class="col-md-2 col-form-label text-md-left" style="display: none;">Repair Code</label>
+          <label id="divviewgroup" for="v_repairgroup" class="col-md-2 col-form-label text-md-left" style="display: none;">Repair Group</label>
           <div class="col-md-4">
-            <input id="v_mtcby" type="text" class="form-control" name="v_mtcby" readonly>
+            <textarea id="v_repaircode" style="display: none;" readonly  class="form-control" name="v_repaircode" value="{{ old('v_repaircode') }}"   autofocus></textarea>
+            <input  id="v_repairgroup" style="display: none;" readonly  class="form-control" name="v_repairgroup" value="{{ old('v_repairgroup') }}"  autofocus>
           </div>
         </div>
         <div class="form-group row justify-content-center">
-          <label for="v_schedule" class="col-md-2 col-form-label text-md-left"></label>
-          <div class="col-md-4">
-          </div>
           <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
           <div class="col-md-4">
             <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
+          </div>
+          <label for="v_mtcby" class="col-md-2 col-form-label text-md-left">Maintenance By</label>
+          <div class="col-md-4">
+            <input id="v_mtcby" type="text" class="form-control" name="v_mtcby" readonly>
           </div>
         </div>
         <div class="form-group row" id="reportnote">
@@ -392,8 +395,8 @@
         var apprnote = result[0].wo_approval_note;
         var repairtype = result[0].wo_repair_type;
         var repairgroup = result[0].xxrepgroup_desc;
-        var loccode = result[0].loc_code;
-        var locdesc = result[0].loc_desc;
+        var loccode = result[0].asloc_code;
+        var locdesc = result[0].asloc_desc;
         var astypecode = result[0].astype_code;
         var astypedesc = result[0].astype_desc;
         var vimpact = result[0].wo_impact;
@@ -522,31 +525,25 @@
         document.getElementById('v_mtcby').value = mtcby;
         document.getElementById('v_fclist').value = fclist;
 
-        /*
+        
         if(repairtype == 'code'){
           var textareaview = document.getElementById('v_repaircode');
           textareaview.value = arrrc.join("\n");
           document.getElementById('divviewcode').style.display = '';
+          document.getElementById('v_repaircode').style.display = '';
+          document.getElementById('v_repairgroup').style.display = 'none';
           document.getElementById('divviewgroup').style.display = 'none';
-          document.getElementById('divviewmanual').style.display='none';
         }
         else if (repairtype == 'group'){
           
           var vgroup = document.getElementById('v_repairgroup').value = result[0].xxrepgroup_nbr + ' -- ' + repairgroup;
           document.getElementById('divviewcode').style.display = 'none';
-          document.getElementById('divviewmanual').style.display='none';
+          document.getElementById('v_repaircode').style.display = 'none';
           document.getElementById('divviewgroup').style.display = '';
+          document.getElementById('v_repairgroup').style.display = '';
+
         }
-        else if (repairtype == 'manual'){
-          document.getElementById('divviewcode').style.display = 'none';
-          document.getElementById('divviewgroup').style.display = 'none';
-          document.getElementById('divviewmanual').style.display='';
-        }
-        else{
-          document.getElementById('divviewcode').style.display = 'none';
-          document.getElementById('divviewgroup').style.display = 'none';
-          document.getElementById('divviewmanual').style.display='none';
-        } */
+
         if (reason != null) {
           document.getElementById('divunconf').style.display = '';
         } else if (reason == null) {
