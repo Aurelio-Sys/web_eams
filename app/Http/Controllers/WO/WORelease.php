@@ -196,8 +196,7 @@ class WORelease extends Controller
 
             // dd($rc);
 
-            if ($data->wo_repair_code1 == "" && $data->wo_repair_code2 == "" && $data->wo_repair_code3 == "") {
-                // dd('aa');
+            if ($data->wo_repair_code1 == "" && $data->wo_repair_code2 == "" && $data->wo_repair_code3 == "" && $data->wo_repair_group != "") {
                 $combineSP = DB::table('xxrepgroup_mstr')
                     ->select('repm_code as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 
                     'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status')
@@ -219,10 +218,14 @@ class WORelease extends Controller
                     ->select('repm_code', 'repm_desc')
                     ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
                     ->get();
-
-
-                // dd($rc);
             }
+
+            if($data->wo_repair_code1 == "" && $data->wo_repair_code2 == "" && $data->wo_repair_code3 == "" && $data->wo_repair_group == ""){
+                alert()->html('Error Message',"To proceed, you must first set up the <b>Repair Code / Repair Group</b> in the Work Order Maintenance -> Edit WO : ".$data->wo_nbr.".",'error')->persistent('Dismiss');
+                
+                return back();
+            }
+                        
         } /* if($data->wo_status == 'plan') */ else {
             $combineSP = DB::table('wo_mstr')
                 ->select(
