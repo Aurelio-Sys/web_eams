@@ -113,6 +113,9 @@ class WORelease extends Controller
             ->get();
 
         if ($data->wo_status == 'plan') {
+            $sparepart1 = "";
+            $sparepart2 = "";
+            $sparepart3 = "";
             if ($data->wo_repair_code1 != "") {
 
                 $sparepart1 = DB::table('wo_mstr')
