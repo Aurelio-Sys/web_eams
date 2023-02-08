@@ -4542,8 +4542,6 @@ class wocontroller extends Controller
                 ->get();
 
             $failure = DB::table('fn_mstr')
-                ->leftJoin('asfn_det','asfn_det.asfn_fncode','fn_mstr.fn_code')
-                ->groupBy('asfn_fncode')
                 ->get();    
 
         }
