@@ -1991,7 +1991,7 @@ class wocontroller extends Controller
                 r1.repm_code as rr11,r2.repm_code as rr22,r3.repm_code as rr33, wo_finish_date,
                 wo_finish_time,wo_repair_hour,asset_last_mtc,asset_last_usage_mtc,asset_measure,asloc_code,
                 asloc_desc,astype_code,astype_desc,wo_new_type,wo_impact,wo_impact_desc,wo_action,wotyp_desc,asset_daya,
-                wo_reject_reason')
+                wo_reject_reason,asset_group')
             ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
             ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
             ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
@@ -2039,7 +2039,7 @@ class wocontroller extends Controller
                 r1.repm_code as rr11,r2.repm_code as rr22,r3.repm_code as rr33, wo_finish_date,
                 wo_finish_time,wo_repair_hour,asset_last_mtc,asset_last_usage_mtc,asset_measure,asloc_code,
                 asloc_desc,astype_code,astype_desc,wo_new_type,wo_impact,wo_impact_desc,wo_action,wotyp_desc,asset_daya,
-                wo_reject_reason')
+                wo_reject_reason,asset_group')
             ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
             ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
             ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
@@ -2069,9 +2069,22 @@ class wocontroller extends Controller
             ->distinct('wo_dets_rc')
             ->get();
 
-        $fc = DB::table('fn_mstr')
-            ->orderBy('fn_code')
-            ->get();
+        $asfn_det = DB::table('asfn_det')
+            ->where('asfn_asset','=', $data->first()->asset_group)
+            ->count();
+
+        if($asfn_det > 0){
+            $fc = DB::table('fn_mstr')
+            ->leftJoin('asfn_det','asfn_det.asfn_fncode','fn_mstr.fn_code')
+            ->where('asfn_asset','=', $data->first()->asset_group)
+            ->groupBy('asfn_fncode')
+            ->get(); 
+        }else{
+            $fc = DB::table('fn_mstr')
+            ->leftJoin('asfn_det','asfn_det.asfn_fncode','fn_mstr.fn_code')
+            ->groupBy('asfn_fncode')
+            ->get();  
+        }
 
         $data2 = "";
         if ($currwo->wo_repair_type == "group") {
@@ -4529,8 +4542,6 @@ class wocontroller extends Controller
                 ->get();
 
             $failure = DB::table('fn_mstr')
-                ->leftJoin('asfn_det','asfn_det.asfn_fncode','fn_mstr.fn_code')
-                ->groupBy('asfn_fncode')
                 ->get();    
 
         }

@@ -373,7 +373,7 @@
           <div class="form-group row">
             <label for="rejectreason" class="col-md-5 col-form-label text-md-right">Reject Reason</label>
             <div class="col-md-6">
-              <textarea id="rejectreason" type="text" class="form-control" name="rejectreason" maxlength="250" autocomplete="off" autofocus required></textarea>
+              <textarea id="rejectreason" type="text" class="form-control" name="rejectreason" maxlength="250" autocomplete="off" autofocus></textarea>
               <span id="alert3" style="color: red; font-weight: 200;"></span>
             </div>
           </div>
@@ -401,7 +401,7 @@
 
           <div class="modal-footer">
             <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-danger" name="action" value="reject" id="btnreject">Reject</button>
+            <button type="submit" class="btn btn-danger" name="action" value="reject" id="btnreject" disabled>Reject</button>
             <button type="submit" class="btn btn-success" name="action" value="approve" id="btnapprove">Approve</button>
             <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
               <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
@@ -531,8 +531,10 @@
       var btnapprove = document.getElementById('btnapprove');
       // console.log(inputreject.value.length);
       if (inputreject.value.length > 0) {
+        btnreject.disabled = false;
         btnapprove.disabled = true;
       } else {
+        btnreject.disabled = true;
         btnapprove.disabled = false;
       }
     })
@@ -544,6 +546,7 @@
       var duedate = document.getElementById('duedate').value;
       // event.preventDefault();
       // $('#approval')
+      alert(1);
 
       if (rejectreason == "") {
         // alert('masuk reject');
@@ -590,7 +593,7 @@
         $("#rad_repgroup1").attr('required', true);
         // $("#repaircode").attr('required', true);
         // document.getElementById("alert3").innerHTML = 'Please fill out reason reject';
-        $("#rejectreason").attr('required', false);
+        // $("#rejectreason").attr('required', false);
       } else {
         if (pilihgrup) {
           // alert('pilihgrup');

@@ -55,49 +55,58 @@
     .select2-results__option--disabled {
       color: grey !important;
     }
+
+    /* .modal-dialog {
+      overflow-x: initial !important
+    } */
+
+    /* .modal-body {
+      height: calc(100vh - 5em);
+      overflow-x: auto;
+    } */
   }
 </style>
 <!-- Daftar Perubahan 
   A211015 : Merubah view SR 
 -->
 <div class="container-fluid mb-2">
-    <div class="row">
-      <div class="col-md-12">
-        <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
-      </div>  
+  <div class="row">
+    <div class="col-md-12">
+      <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
     </div>
-    <!-- Element div yang akan collapse atau expand -->
-    <div class="collapse" id="collapseExample">
-        <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
-        <div class="card card-body bg-black rounded-0">
-          <div class="col-12 form-group row">
-              <!--FORM Search Disini-->
-              <label for="s_servicenbr" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Service Request Number') }}</label>
-              <div class="col-md-3 col-sm-4 mb-2 input-group">
-                <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off">
-              </div>
-              <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Desc Asset') }}</label>
-              <div class="col-md-3 col-sm-4 mb-2 input-group">
-                <!-- <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
+  </div>
+  <!-- Element div yang akan collapse atau expand -->
+  <div class="collapse" id="collapseExample">
+    <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+    <div class="card card-body bg-black rounded-0">
+      <div class="col-12 form-group row">
+        <!--FORM Search Disini-->
+        <label for="s_servicenbr" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Service Request Number') }}</label>
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+          <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off">
+        </div>
+        <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Desc Asset') }}</label>
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+          <!-- <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
                   <option value="">--Select Asset--</option>
                   @foreach($asset as $show)
                   <option value="{{$show->asset_desc}}">{{$show->asset_code}} -- {{$show->asset_desc}}</option>
                   @endforeach
                 </select> -->
-                <input id="s_asset" type="text" class="form-control" name="s_asset" value="" autofocus autocomplete="off">
-              </div>
-            </div>
-            <div class="col-12 form-group row">
-              <label for="s_priority" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Priority') }}</label>
-              <div class="col-md-3 col-sm-4 mb-2 input-group">
-                <select id="s_priority" name="s_priority" class="form-control" value="" autofocus autocomplete="off">
-                  <option value="">--Select Priority--</option>
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
-              </div>
-              <!-- <label for="s_period" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('SR Period') }}</label>
+          <input id="s_asset" type="text" class="form-control" name="s_asset" value="" autofocus autocomplete="off">
+        </div>
+      </div>
+      <div class="col-12 form-group row">
+        <label for="s_priority" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Priority') }}</label>
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+          <select id="s_priority" name="s_priority" class="form-control" value="" autofocus autocomplete="off">
+            <option value="">--Select Priority--</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        <!-- <label for="s_period" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('SR Period') }}</label>
               <div class="col-md-3 col-sm-4 mb-2 input-group">
                 <select id="s_period" name="s_period" class="form-control" value="" autofocus autocomplete="off">
                   <option value="">--Select Period--</option>
@@ -106,46 +115,46 @@
                   <option value="3"> > 5 days </option>
                 </select>
               </div> -->
-              <label for="s_user" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Requested by') }}</label>
-              <div class="col-md-3 col-sm-4 mb-2 input-group">
-                <select id="s_user" name="s_user" class="form-control" value="" autofocus autocomplete="off">
-                  <option value="">--Select User--</option>
-                  @foreach($users as $usershow)
-                  <option value="{{$usershow->username}}">{{$usershow->username}} - {{$usershow->name}}</option>
-                  @endforeach
-                </select>
-              </div>
-
-            </div>
-            <div class="col-12 form-group row">
-              <label for="s_status" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Status') }}</label>
-              <div class="col-md-3 col-sm-4 mb-2 input-group">
-                <select id="s_status" name="s_status" class="form-control" value="" autofocus autocomplete="off">
-                  <option value="">--Select Status--</option>
-                  @if($fromhome == 'open')
-                  <option value="1" selected>Open</option>
-                  @else
-                  <option value="1">Open</option>
-                  @endif
-                  <option value="2">Assigned</option>
-                  <option value="3">Started</option>
-                  <option value="4">Finish</option>
-                  <option value="5">Closed</option>
-                  <option value="6">Incomplete</option>
-                  <option value="7">Completed</option>
-                  <option value="8">Reprocess</option>
-                </select>
-              </div>
-              <div class="col-md-6 col-sm-4 mb-2 input-group">
-                <input type="button" class="btn btn-primary col-md-3" id="btnsearch" value="Search" style="float:right" />
-                &nbsp;&nbsp;&nbsp;
-                <button type="button" class="btn btn-primary col-md-2" id="btnrefresh"><i class="fas fa-redo-alt"></i></button>
-                &nbsp;&nbsp;&nbsp;
-                <input type="button" class="btn btn-primary col-md-4" id="btnexcel" value="Export to Excel" style="float:right" />
-              </div>
-            </div>
+        <label for="s_user" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Requested by') }}</label>
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+          <select id="s_user" name="s_user" class="form-control" value="" autofocus autocomplete="off">
+            <option value="">--Select User--</option>
+            @foreach($users as $usershow)
+            <option value="{{$usershow->username}}">{{$usershow->username}} - {{$usershow->name}}</option>
+            @endforeach
+          </select>
         </div>
+
+      </div>
+      <div class="col-12 form-group row">
+        <label for="s_status" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Status') }}</label>
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+          <select id="s_status" name="s_status" class="form-control" value="" autofocus autocomplete="off">
+            <option value="">--Select Status--</option>
+            @if($fromhome == 'open')
+            <option value="1" selected>Open</option>
+            @else
+            <option value="1">Open</option>
+            @endif
+            <option value="2">Assigned</option>
+            <option value="3">Started</option>
+            <option value="4">Finish</option>
+            <option value="5">Closed</option>
+            <option value="6">Incomplete</option>
+            <option value="7">Completed</option>
+            <option value="8">Reprocess</option>
+          </select>
+        </div>
+        <div class="col-md-6 col-sm-4 mb-2 input-group">
+          <input type="button" class="btn btn-primary col-md-3" id="btnsearch" value="Search" style="float:right" />
+          &nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-primary col-md-2" id="btnrefresh"><i class="fas fa-redo-alt"></i></button>
+          &nbsp;&nbsp;&nbsp;
+          <input type="button" class="btn btn-primary col-md-4" id="btnexcel" value="Export to Excel" style="float:right" />
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <input type="hidden" id="tmpsrnumber" />
@@ -164,7 +173,7 @@
   <table class="table table-bordered mt-4 no-footer mini-table" id="dataTable" width="100%" cellspacing="0">
     <thead>
       <tr style="text-align: center;">
-        <th width="10%">SR Number</th>
+        <!-- <th width="10%">SR Number</th>
         <th width="10%">WO Number</th>
         <th width="10%">Aset</th>
         <th width="15%">Desc</th>
@@ -174,9 +183,22 @@
         <th width="10%">Department</th>
         <th width="7%">Req by</th>
         <th width="7%">Req Date</th>
-        <th width="7%">Req Time</th>
+        <th width="7%">Req Time</th> -->
         <!-- <th width = "5%">Aging</th> -->
-        <th width="7%">Action</th>
+        <!-- <th width="7%">Action</th> -->
+
+        <th>SR Number</th>
+        <th>WO Number</th>
+        <th>Aset</th>
+        <th>Desc</th>
+        <th>Location</th>
+        <th>Status</th>
+        <th>Priority</th>
+        <th>Department</th>
+        <th>Req by</th>
+        <th>Req Date</th>
+        <th>Req Time</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
@@ -188,6 +210,163 @@
   <input type="hidden" name="hidden_sort_type" id="hidden_sort_type" value="asc" />
 </div>
 
+<!--Modal Edit-->
+<div class="modal fade" id="editModal" role="dialog" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center" id="exampleModalLabel">Service Request Modify</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <input type="hidden" id="statusedit">
+      <form class="form-horizontal" id="newedit" method="post" action="editsr">
+        {{ csrf_field() }}
+        <input type="hidden" id="counter" value=0>
+        <input type="hidden" id="counterfail" value=0>
+        <input type="hidden" id="repairtypeedit">
+        <div class="modal-body">
+          <div class="form-group row justify-content-center">
+            <label for="e_nosr" class="col-md-5 col-form-label text-md-left">SR Number</label>
+            <div class="col-md-7">
+              <input id="e_nosr" type="text" class="form-control" name="e_nosr" readonly>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
+            <label for="e_nowo" class="col-md-5 col-form-label text-md-left">Work Order Number</label>
+            <div class="col-md-7">
+              <input id="e_nowo" type="text" class="form-control" name="e_nowo" autocomplete="off" maxlength="6" readonly>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
+            <label for="e_req" class="col-md-5 col-form-label text-md-left">Request By</label>
+            <div class="col-md-7">
+              <input id="e_req" type="text" class="form-control" name="e_req" autocomplete="off" maxlength="6" readonly>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
+            <label for="e_dept" class="col-md-5 col-form-label text-md-left">Department</label>
+            <div class="col-md-7">
+              <input id="e_dept" type="text" class="form-control" name="e_dept" autocomplete="off" maxlength="6" readonly>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
+            <label for="e_status" class="col-md-5 col-form-label text-md-left">Status</label>
+            <div class="col-md-7">
+              <input id="e_status" type="text" class="form-control" name="e_status" autocomplete="off" maxlength="6" readonly>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
+            <label for="e_rnote" class="col-md-5 col-form-label text-md-left">Reject Note</label>
+            <div class="col-md-7">
+              <!-- <input id="e_note" type="text" class="form-control" name="e_note" autocomplete="off" maxlength="6"> -->
+              <textarea id="e_rnote" class="form-control e_rnote" name="e_rnote" autofocus readonly></textarea>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
+            <label for="e_asset" class="col-md-5 col-form-label text-md-left">Asset</label>
+            <div class="col-md-7">
+              <!-- <input id="e_asset" type="text" class="form-control e_asset"> -->
+              <input id="e_assethid" type="hidden" class="form-control e_asset" name="e_asset" readonly>
+              <select id="e_asset" name="e_asset" class="form-control" required>
+                <option value="">-- Select Asset Code --</option>
+                @foreach($asset as $show)
+                <option value="{{$show->asset_code}}">{{$show->asset_code.' -- '.$show->asset_desc}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center e_wottypediv" id="e_wottypediv">
+            <label for="e_wottype" class="col-md-5 col-form-label text-md-left">Failure Type</label>
+            <div class="col-md-7">
+              <select id="e_wottype" name="e_wottype" class="form-control" required>
+                <option value="">-- Select Failure Type --</option>
+                @foreach($wotype as $show)
+                <option value="{{$show->wotyp_code}}">{{$show->wotyp_code}} -- {{$show->wotyp_desc}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
+            <label for="e_failurecode" class="col-md-5 col-form-label text-md-left">Failure Code</label>
+            <div class="col-md-7 col-sm-12">
+              <select class="form-control" id="e_failurecode" name="e_failurecode[]" multiple="multiple" required>
+                <option></option>
+                @foreach($fcode as $fcshow)
+                <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}} -- {{$fcshow->fn_impact}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center e_impactdiv" id="e_impactdiv">
+            <label for="e_impact" class="col-md-5 col-form-label text-md-left">Impact</label>
+            <div class="col-md-7">
+              <select id="e_impact" class="form-control e_impact" name="e_impact[]" multiple="multiple" required autofocus>
+                @foreach($impact as $impactshow)
+                <option value="{{$impactshow->imp_code}}">{{$impactshow->imp_code}} -- {{$impactshow->imp_desc}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
+            <label for="e_priority" class="col-md-5 col-form-label text-md-left">Priority</label>
+            <div class="col-md-7">
+              <select id="e_priority" class="form-control" name="e_priority" autofocus required>
+                <option value='low'>Low</option>
+                <option value='medium'>Medium</option>
+                <option value='high'>High</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
+            <label for="e_note" class="col-md-5 col-form-label text-md-left">SR Note</label>
+            <div class="col-md-7">
+              <!-- <input id="e_note" type="text" class="form-control" name="e_note" autocomplete="off" maxlength="6"> -->
+              <textarea id="e_note" class="form-control e_note" name="e_note" autofocus></textarea>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
+            <label for="e_date" class="col-md-5 col-form-label text-md-left">Request Date</label>
+            <div class="col-md-7">
+              <input type="date" class="form-control" id="e_date" name="e_date" value="<?php echo date("Y-m-d"); ?>">
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
+            <label for="e_time" class="col-md-5 col-form-label text-md-left">Request Time</label>
+            <div class="col-md-7">
+              <input type="time" class="form-control" id="e_time" name="e_time" value="<?php echo date("H:i"); ?>">
+            </div>
+          </div>
+          <!-- <div class="form-group row justify-content-center">
+            <label for="e_department" class="col-md-5 col-form-label text-md-left">Department</label>
+            <div class="col-md-7">
+              <select id="e_department"  class="form-control e_department" name="e_department"  autofocus required>
+              <option value="" disabled selected>Select Department</option>
+                
+              </select>
+            </div>
+          </div> -->
+
+
+
+        </div>
+        <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-danger bt-action mr-auto e_btnadd" id="e_addeng">Add Engineer</button>
+          <button type="button" class="btn btn-warning bt-action mr-auto e_btnaddfai" id="e_addfai" style="display:none"><b>Add Failure Code</b></button> -->
+          <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success bt-action" id="e_btnconf">Save</button>
+          <button type="button" class="btn btn-block btn-info" id="e_btnloading" style="display:none">
+            <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+          </button>
+        </div>
+    </div>
+    </form>
+  </div>
+</div>
+</div>
+
+<!-- Modal SR View -->
 <div class="modal fade" id="viewModal" role="dialog" aria-hidden="true" data-backdrop="static">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -210,7 +389,7 @@
           </div>
         </div>
         <div class="form-group row">
-        <label for="reqbyname" class="col-md-2 col-form-label">Requested by</label>
+          <label for="reqbyname" class="col-md-2 col-form-label">Requested by</label>
           <div class="col-md-4">
             <input id="reqbyname" name="reqbyname" type="text" class="form-control" readonly />
           </div>
@@ -220,7 +399,7 @@
           </div>
         </div>
         <div class="form-group row">
-        <label for="approver" class="col-md-2 col-form-label">Approver</label>
+          <label for="approver" class="col-md-2 col-form-label">Approver</label>
           <div class="col-md-4">
             <input id="approver" type="text" class="form-control" name="approver" readonly />
           </div>
@@ -230,7 +409,7 @@
           </div>
         </div>
         <div class="form-group row">
-        <label for="assetcode" class="col-md-2 col-form-label">Asset Code</label>
+          <label for="assetcode" class="col-md-2 col-form-label">Asset Code</label>
           <div class="col-md-4">
             <input id="assetcode" type="text" class="form-control" name="assetcode" readonly />
           </div>
@@ -240,7 +419,7 @@
           </div>
         </div>
         <div class="form-group row">
-        <label for="failtype" class="col-md-2 col-form-label">Failure Type</label>
+          <label for="failtype" class="col-md-2 col-form-label">Failure Type</label>
           <div class="col-md-4">
             <input id="failtype" type="text" class="form-control" name="failtype" readonly />
           </div>
@@ -250,7 +429,7 @@
           </div>
         </div>
         <div class="form-group row">
-        <label for="srnote" class="col-md-2 col-form-label">Note</label>
+          <label for="srnote" class="col-md-2 col-form-label">Note</label>
           <div class="col-md-4">
             <textarea id="srnote" type="text" class="form-control" name="srnote" readonly></textarea>
           </div>
@@ -260,7 +439,7 @@
           </div>
         </div>
         <div class="form-group row">
-        <label for="wonumber" class="col-md-2 col-form-label">WO Number</label>
+          <label for="wonumber" class="col-md-2 col-form-label">WO Number</label>
           <div class="col-md-4">
             <input id="wonumber" type="text" class="form-control" name="wonumber" readonly />
           </div>
@@ -270,7 +449,7 @@
           </div>
         </div>
         <div class="form-group row">
-        <label for="startwo" class="col-md-2 col-form-label">Start Date</label>
+          <label for="startwo" class="col-md-2 col-form-label">Start Date</label>
           <div class="col-md-4">
             <input id="startwo" readonly type="text" class="form-control" name="startwo">
           </div>
@@ -280,7 +459,7 @@
           </div>
         </div>
         <div class="form-group row">
-        <label for="englist" class="col-md-2 col-form-label">Engineer List</label>
+          <label for="englist" class="col-md-2 col-form-label">Engineer List</label>
           <div class="col-md-4">
             <textarea id="englist" type="text" class="form-control" name="englist" rows="3" readonly></textarea>
           </div>
@@ -290,7 +469,7 @@
           </div>
         </div>
         <div class="form-group row">
-        <label for="file" class="col-md-2 col-form-label">Current File</label>
+          <label for="file" class="col-md-2 col-form-label">Current File</label>
           <div class="col-md-4">
             <table class="table table-bordered">
               <thead>
@@ -485,7 +664,7 @@
         document.getElementById('tmpuser').value = requestby;
 
         fetch_data(page, srnumber, asset, priority /*period*/ , status, requestby);
-        
+
       });
 
 
@@ -676,12 +855,12 @@
         })
 
         $.ajax({
-                url:"/listupload/" + srnumber,
-                success: function(data) {
-                
-                    $('#listupload').html('').append(data); 
-                }
-            })
+          url: "/listupload/" + srnumber,
+          success: function(data) {
+
+            $('#listupload').html('').append(data);
+          }
+        })
 
         $.ajax({
           url: "/searchfailtype",
@@ -709,7 +888,178 @@
         document.getElementById('assetloc').value = assetloc;
         document.getElementById('assettype').value = astype;
         document.getElementById('wotype').value = wotype;
-        
+
+
+
+        document.getElementById('hiddenreq').value = reqby;
+        document.getElementById('priority').value = priority;
+
+
+
+      });
+
+      $(document).on('click', '.editsr', function() {
+
+        $('#editModal').modal('show');
+
+        var srnumber = $(this).data('srnumber');
+        var assetcode = $(this).data('assetcode');
+        var assetdesc = $(this).data('assetdesc');
+        var dept = $(this).data('dept');
+        var assetloc = $(this).data('assetloc');
+        var astype = $(this).data('astypedesc');
+        var srnote = $(this).data('srnote');
+        var reqby = $(this).data('reqby');
+        var priority = $(this).data('priority');
+        var rejectnote = $(this).data('rejectnote');
+        var reqbyname = $(this).data('reqbyname');
+        var wotype = $(this).data('wotypedesc');
+        var impact = $(this).data('impactcode');
+        var wonumber = $(this).data('wonumber');
+        var startwo = $(this).data('startwo');
+        var endwo = $(this).data('endwo');
+        var action = $(this).data('action');
+        var wostatus = $(this).data('wostatus');
+        var failtype = $(this).data('failtype');
+        var approver = $(this).data('approver');
+
+        var srdate = $(this).data('srdate');
+        document.getElementById('srdate').value = srdate;
+        var srtime = $(this).data('srtime');
+        document.getElementById('srtime').value = srtime;
+
+
+        var eng1 = $(this).data('eng1');
+        var eng2 = $(this).data('eng2');
+        var eng3 = $(this).data('eng3');
+        var eng4 = $(this).data('eng4');
+        var eng5 = $(this).data('eng5');
+
+        var englist = eng1 + '\n' + eng2 + '\n' + eng3 + '\n' + eng4 + '\n' + eng5;
+
+        var fail1 = $(this).data('faildesc1');
+        var fail2 = $(this).data('faildesc2');
+        var fail3 = $(this).data('faildesc3');
+
+        var faildesclist = fail1 + '\n' + fail2 + '\n' + fail3;
+
+        // console.log(englist);
+
+        document.getElementById('englist').value = englist;
+        document.getElementById('e_req').value = reqbyname;
+        document.getElementById('e_note').value = srnote;
+        document.getElementById('rejectnote').value = rejectnote;
+        document.getElementById('e_nowo').value = wonumber;
+        if (startwo != '01-01-1970') {
+          document.getElementById('startwo').value = startwo;
+        } else {
+          document.getElementById('startwo').value = '';
+        }
+        if (endwo != '01-01-1970') {
+          document.getElementById('endwo').value = endwo;
+        } else {
+          document.getElementById('endwo').value = '';
+        }
+        document.getElementById('action').value = action;
+        document.getElementById('e_status').value = wostatus;
+        document.getElementById('failcode').value = faildesclist;
+        document.getElementById('approver').value = approver;
+
+        // if(eng1 != ''){
+        //   document.getElementById('engineer1').value = eng1;
+        // }else{
+        //   document.getElementById('engineer1').value = '-';
+        // }
+
+        // if(eng2 != ''){
+        //   // alert('inul');
+        //   document.getElementById('engineer2').value = eng2;
+        // }else{
+        //   // alert('kosong')
+        //   document.getElementById('engineer2').value = '-';
+        // }
+
+        // if(eng3 != ''){
+        //   document.getElementById('engineer3').value = eng3;
+        // }else{
+        //   document.getElementById('engineer3').value = '-';
+        // }
+
+
+        // if(eng4 != ''){
+        //   document.getElementById('engineer4').value = eng4;
+        // }else{
+        //   document.getElementById('engineer4').value = '-';
+        // }
+
+        // if(eng5 != ''){
+        //   document.getElementById('engineer5').value = eng5;
+        // }else{
+        //   document.getElementById('engineer5').value = '-';
+        // }
+
+        // alert(assetdesc);
+
+        $.ajax({
+          url: "/searchimpactdesc",
+          data: {
+            impact: impact,
+          },
+          success: function(data) {
+            console.log(data);
+
+            var imp_desc = data;
+
+            var desc = imp_desc.replaceAll(",", "\n");
+
+            // console.log(desc);
+
+            document.getElementById('impact').value = desc;
+            // }
+
+          },
+          statusCode: {
+            500: function() {
+              document.getElementById('impact').value = "";
+            }
+          }
+        })
+
+        $.ajax({
+          url: "/listupload/" + srnumber,
+          success: function(data) {
+
+            $('#listupload').html('').append(data);
+          }
+        })
+
+        $.ajax({
+          url: "/searchfailtype",
+          data: {
+            failtype: failtype,
+          },
+          success: function(data) {
+
+            document.getElementById('failtype').value = data;
+            // }
+
+          },
+          statusCode: {
+            500: function() {
+              document.getElementById('failtype').value = "";
+            }
+          }
+        })
+
+
+        document.getElementById('e_nosr').value = srnumber;
+        document.getElementById('assetcode').value = assetcode;
+        document.getElementById('assetdesc').value = assetdesc;
+        document.getElementById('e_dept').value = dept;
+        document.getElementById('assetloc').value = assetloc;
+        document.getElementById('assettype').value = astype;
+        document.getElementById('wotype').value = wotype;
+
 
 
         document.getElementById('hiddenreq').value = reqby;
