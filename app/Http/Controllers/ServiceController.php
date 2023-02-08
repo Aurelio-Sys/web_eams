@@ -354,6 +354,46 @@ class ServiceController extends Controller
         }
     }
 
+    /*MR - 060223*/
+    public function editsr(Request $req)
+    {
+        $asset = DB::table('asset_mstr')
+            ->leftJoin('asset_loc', 'asloc_code', '=', 'asset_loc')
+            ->where('asset_active', '=', 'Yes')
+            // ->where('asset_loc','=',session::get('department'))
+            ->orderBy('asset_code')
+            ->get();
+
+        $datadepart = DB::table('dept_mstr')
+            ->get();
+
+        $wotype = DB::table('wotyp_mstr')
+            ->orderBy('wotyp_code')
+            ->get();
+
+        $impact = DB::table('imp_mstr')
+            ->orderBy('imp_code')
+            ->get();
+
+        $fcode = DB::table('fn_mstr')
+            ->orderBy('fn_code')
+            ->get();
+
+        $dataapp = DB::table('eng_mstr')
+            ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'eng_mstr.eng_dept')
+            ->selectRaw('dept_mstr.*,eng_mstr.*')
+            ->where('eng_active', '=', 'Yes')
+            ->where('approver', '=', 1)
+            ->groupBy('eng_dept')
+            ->orderBy('eng_code')
+            ->get();
+
+        return view('service.servicereqbrowse', [
+            'showasset' => $asset, 'dept' => $datadepart,
+            'wotype' => $wotype, 'impact' => $impact, 'fc' => $fcode, 'dataapp' => $dataapp
+        ]);
+    }
+
     public function approval(Request $req)
     { /* blade : service.servicereq-approval */
         // dump($req->all());
@@ -474,22 +514,22 @@ class ServiceController extends Controller
 
                     $arrayarray = [];
 
-                    if ($req->fclist[0] == '-') {
-                        $fail1 = null;
-                    } else {
-                        $fail1 = $req->fclist[0];
-                    }
-
-                    if ($req->fclist[1] == '-') {
-                        $fail2 = null;
-                    } else {
-                        $fail2 = $req->fclist[1];
-                    }
-
-                    if ($req->fclist[2] == '-') {
-                        $fail3 = null;
-                    } else {
-                        $fail3 = $req->fclist[2];
+                    $fcodes = $req->fclist;
+                    $f = 0;
+                    for ($f = 0; $f < count($fcodes); $f++) {
+                        if (count($fcodes) == 1) {
+                            $fail1 = $fcodes[0];
+                            $fail2 = null;
+                            $fail3 = null;
+                        } else if (count($fcodes) == 2) {
+                            $fail1 = $fcodes[0];
+                            $fail2 = $fcodes[1];
+                            $fail3 = null;
+                        } else {
+                            $fail1 = $fcodes[0];
+                            $fail2 = $fcodes[1];
+                            $fail3 = $fcodes[2];
+                        }
                     }
 
                     if ($req->rad_repgroup == "group") {
@@ -590,22 +630,22 @@ class ServiceController extends Controller
 
                     $arrayarray = [];
 
-                    if ($req->fclist[0] == '-') {
-                        $fail1 = null;
-                    } else {
-                        $fail1 = $req->fclist[0];
-                    }
-
-                    if ($req->fclist[1] == '-') {
-                        $fail2 = null;
-                    } else {
-                        $fail2 = $req->fclist[1];
-                    }
-
-                    if ($req->fclist[2] == '-') {
-                        $fail3 = null;
-                    } else {
-                        $fail3 = $req->fclist[2];
+                    $fcodes = $req->fclist;
+                    $f = 0;
+                    for ($f = 0; $f < count($fcodes); $f++) {
+                        if (count($fcodes) == 1) {
+                            $fail1 = $fcodes[0];
+                            $fail2 = null;
+                            $fail3 = null;
+                        } else if (count($fcodes) == 2) {
+                            $fail1 = $fcodes[0];
+                            $fail2 = $fcodes[1];
+                            $fail3 = null;
+                        } else {
+                            $fail1 = $fcodes[0];
+                            $fail2 = $fcodes[1];
+                            $fail3 = $fcodes[2];
+                        }
                     }
 
                     $ambildata = DB::table('service_req_mstr')
@@ -828,6 +868,28 @@ class ServiceController extends Controller
             // ->get();
             ->paginate(10);
 
+        // $asset = DB::table('asset_mstr')
+        //     ->leftJoin('asset_loc', 'asloc_code', '=', 'asset_loc')
+        //     ->where('asset_active', '=', 'Yes')
+        //     // ->where('asset_loc','=',session::get('department'))
+        //     ->orderBy('asset_code')
+        //     ->get();
+        // dd($asset);
+        $datadepart = DB::table('dept_mstr')
+            ->get();
+
+        $wotype = DB::table('wotyp_mstr')
+            ->orderBy('wotyp_code')
+            ->get();
+
+        $impact = DB::table('imp_mstr')
+            ->orderBy('imp_code')
+            ->get();
+
+        $fcode = DB::table('fn_mstr')
+            ->orderBy('fn_code')
+            ->get();
+
         $datasset = DB::table('asset_mstr')
             ->get();
 
@@ -840,7 +902,8 @@ class ServiceController extends Controller
 
         return view('service.servicereqbrowse', [
             'datas' => $data, 'asset' => $datasset, 'fromhome' => '',
-            'users' => $datauser, 'ceksrfile' => $ceksrfile
+            'users' => $datauser, 'ceksrfile' => $ceksrfile, 'fcode' => $fcode, 
+            'wotype' => $wotype, 'impact' => $impact
         ]);
     }
 
@@ -1640,7 +1703,7 @@ class ServiceController extends Controller
         //     ->join('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')
         //     ->where('wo_dets_nbr', '=', $sr)
         //     ->get();
-        // dd($engineerlist);
+        // dd($engineerlist);4
         // $data = DB::table('wo_mstr')
         //     ->selectRaw('wo_nbr,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status,
         //         wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,wo_engineer2 as woen2, 
