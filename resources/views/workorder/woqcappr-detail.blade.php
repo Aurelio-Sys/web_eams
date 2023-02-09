@@ -18,39 +18,78 @@
         box-sizing: border-box;
     }
 </style>
+
 <form method="post" action="{{route('woQCUpdate')}}" id='submit'>
     @method('POST')
     @csrf
     <input type="hidden" name="woid" value="{{$dataDetail->wo_id}}"/>
     
     <div class="form-group row">
-        <label for="wonumber" class="col-form-label col-md-3 text-md-right">{{ __('Work Order Number') }}</label>
-        <div class="col-md-3">
+        <label for="wonumber" class="col-form-label col-md-2 text-md-right">{{ __('WO Number') }}</label>
+        <div class="col-md-4">
             <input id="wonumber" type="text" class="form-control" name="wonumber" value="{{$dataDetail->wo_nbr}}" readonly>
         </div>
+        <label for="reqby" class="col-form-label col-md-1 text-md-right">{{ __('Request By') }}</label>
+        <div class="col-md-4">
+            <input id="reqby" type="text" class="form-control" name="reqby" value="{{$dataDetail->wo_creator}}" readonly>
+        </div>
     </div>
     <div class="form-group row">
-        <label for="srnumber" class="col-form-label col-md-3 text-md-right">{{ __('Service Request Number') }}</label>
-        <div class="col-md-3">
+        <label for="srnumber" class="col-form-label col-md-2 text-md-right">{{ __('SR Number') }}</label>
+        <div class="col-md-4">
             <input id="srnumber" type="text" class="form-control" name="srnumber" value="{{$dataDetail->wo_sr_nbr !== null ? $dataDetail->wo_sr_nbr:'-'}}" readonly>
         </div>
+        <label for="reqby" class="col-form-label col-md-1 text-md-right">{{ __('Departement') }}</label>
+        <div class="col-md-4">
+            <input id="reqby" type="text" class="form-control" name="reqby" value="{{$dataDetail->wo_dept}}" readonly>
+        </div>
     </div>
     <div class="form-group row">
-        <label for="assetcode" class="col-form-label col-md-3 text-md-right">{{ __('Asset Code') }}</label>
-        <div class="col-md-3">
+        <label for="dtcreate" class="col-form-label col-md-2 text-md-right">{{ __('Create Date') }}</label>
+        <div class="col-md-4">
+            <input id="dtcreate" type="text" class="form-control" name="dtcreate" value="{{date('d-m-Y',strtotime($dataDetail->wo_created_at))}}" readonly>
+        </div>
+        <label for="dtfinish" class="col-form-label col-md-1 text-md-right">{{ __('Finish Date') }}</label>
+        <div class="col-md-4">
+            <input id="dtfinish" type="text" class="form-control" name="dtfinish" value="{{date('d-m-Y',strtotime($dataDetail->wo_finish_date))}}" readonly>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="assetcode" class="col-form-label col-md-2 text-md-right">{{ __('Asset Code') }}</label>
+        <div class="col-md-4">
             <input id="assetcode" type="text" class="form-control" name="assetcode" value="{{$dataDetail->wo_asset}}" readonly>
         </div>
-    </div>
-    <div class="form-group row">
-        <label for="assetdesc" class="col-form-label col-md-3 text-md-right">{{ __('Asset Desc') }}</label>
-        <div class="col-md-5">
-            <input id="assetdesc" type="text" class="form-control" name="assetdesc" value="{{$dataDetail->asset_desc}}" readonly>
+        <label for="assetdesc" class="col-form-label col-md-1 text-md-right">{{ __('Location') }}</label>
+        <div class="col-md-4">
+            <input id="assetloc" type="text" class="form-control" name="assetloc" value="{{$dataDetail->asloc_desc}}" readonly>
         </div>
     </div>
-
     <div class="form-group row">
-        <label for="assetdesc" class="col-form-label col-md-3 text-md-right">{{ __('Engineer List') }}</label>
-        <div class="col-md-5">
+        <label for="assetdesc" class="col-form-label col-md-2 text-md-right">{{ __('Asset Desc') }}</label>
+        <div class="col-md-4">
+            <input id="assetdesc" type="text" class="form-control" name="assetdesc" value="{{$dataDetail->asset_desc}}" readonly>
+        </div>
+        <label class="col-form-label col-md-1 text-md-right">{{ __('Failure Type') }}</label>
+        <div class="col-md-4">
+            <input type="text" class="form-control" value="{{$dataDetail->wo_new_type}} -- {{$dataDetail->wotyp_desc}}" readonly/>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-form-label col-md-2 text-md-right">{{ __('Note') }}</label>
+        <div class="col-md-4">
+            <textarea class="form-control" rows="4" readonly>{{$dataDetail->wo_note}}</textarea>
+        </div>
+        <label class="col-form-label col-md-1 text-md-right">{{ __('Failure Code') }}</label>
+        <div class="col-md-4">
+            <textarea id="englist" class="form-control" rows="6" style="white-space: pre-wrap !important; line-height: 0.75;" readonly>{{$dataDetail->wofc1 !== null ? $dataDetail->wofc1 .'--'. $dataDetail->fd1:""}} 
+                {{$dataDetail->wofc2 !== null ? "\n".$dataDetail->wofc2 .'--'. $dataDetail->fd2:""}} 
+                {{$dataDetail->wofc3 !== null ? "\n".$dataDetail->wofc3 .'--'. $dataDetail->fd3:""}} 
+            </textarea>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="assetdesc" class="col-form-label col-md-2 text-md-right">{{ __('Engineer List') }}</label>
+        <div class="col-md-4">
             <textarea id="englist" class="form-control" rows="10" style="white-space: pre-wrap !important; line-height: 0.75;" readonly>{{$dataDetail->u1 !== null ? $dataDetail->u1:""}} 
                 {{$dataDetail->u2 !== null ? "\n".$dataDetail->u2:""}} 
                 {{$dataDetail->u3 !== null ? "\n".$dataDetail->u3:""}} 
@@ -58,49 +97,24 @@
                 {{$dataDetail->u5 !== null ? "\n".$dataDetail->u5:""}}
             </textarea>
         </div>
-    </div>
-
-    <div class="form-group row">
-        <label class="col-form-label col-md-3 text-md-right">{{ __('Failure Type') }}</label>
-        <div class="col-md-5">
-            <input type="text" class="form-control" value="{{$dataDetail->wo_new_type}} -- {{$dataDetail->wotyp_desc}}" readonly/>
-        </div>
-    </div>
-
-    <div class="form-group row">
-        <label class="col-form-label col-md-3 text-md-right">{{ __('Failure List') }}</label>
-        <div class="col-md-5">
-            <textarea id="englist" class="form-control" rows="6" style="white-space: pre-wrap !important; line-height: 0.75;" readonly>{{$dataDetail->wofc1 !== null ? $dataDetail->wofc1 .'--'. $dataDetail->fd1:""}} 
-                {{$dataDetail->wofc2 !== null ? "\n".$dataDetail->wofc2 .'--'. $dataDetail->fd2:""}} 
-                {{$dataDetail->wofc3 !== null ? "\n".$dataDetail->wofc3 .'--'. $dataDetail->fd3:""}} 
-            </textarea>
-        </div>
-    </div>
-
-    <div class="form-group row">
-        <label class="col-form-label col-md-3 text-md-right">{{ __('Repair List') }}</label>
-        <div class="col-md-5">
+        <label class="col-form-label col-md-1 text-md-right">{{ __('Repair List') }}</label>
+        <div class="col-md-4">
             <textarea id="englist" class="form-control" rows="6" style="white-space: pre-wrap !important; line-height: 0.75;" readonly>{{$dataDetail->rr11 !== null ? $dataDetail->wo_repair_code1 .'--'. $dataDetail->r11:""}} 
                 {{$dataDetail->rr22 !== null ? "\n".$dataDetail->wo_repair_code2 .'--'. $dataDetail->r22:""}} 
                 {{$dataDetail->rr33 !== null ? "\n".$dataDetail->wo_repair_code3 .'--'. $dataDetail->r33:""}} 
             </textarea>
         </div>
     </div>
-
     <div class="form-group row">
-        <label class="col-form-label col-md-3 text-md-right">{{ __('WO Note') }}</label>
-        <div class="col-md-5">
-            <textarea class="form-control" rows="4" readonly>{{$dataDetail->wo_note}}</textarea>
+        <label class="col-form-label col-md-2 text-md-right">{{ __('Finish Action') }}</label>
+        <div class="col-md-4">
+            <textarea class="form-control" rows="4" readonly>{{$dataDetail->wo_approval_note}}</textarea>
         </div>
-    </div>
-
-    <div class="form-group row">
-        <label class="col-form-label col-md-3 text-md-right">{{ __('Qc Note') }}</label>
-        <div class="col-md-5">
+        <label class="col-form-label col-md-1 text-md-right">{{ __('Qc Note') }}</label>
+        <div class="col-md-4">
             <textarea id="qcnote" class="form-control" name="qcnote" rows="3" maxlength="100"></textarea>
         </div>
     </div>
-    
 
     <!-- <div class="form-group row md-form">
         <div class="col-md-12" style="text-align: center;">
@@ -116,7 +130,7 @@
             <a id="back_btn" class="btn btn-danger" style="width: 100%;" href="{{ route('woQCIndex') }}">Cancel</a>
         </div>
         <div class="col-md-2">
-            <input type="submit" name="submit" id='s_btnconf' value='approve' class="btn btn-info" style="width: 100%;">
+            <input type="submit" name="submit" id='s_btnconf' value='Approve' class="btn btn-info" style="width: 100%;">
             <button type="button" class="btn btn-info float-right" id="s_btnloading" style="display:none;">
                 <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
             </button>

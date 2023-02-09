@@ -65,9 +65,10 @@
         <thead>
             <tr style="text-align: center;">
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="15%">WO Number<span id="name_icon"></span></th>
-                <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="35%">Asset<span id="username_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="30%">Asset<span id="username_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="20%">Location<span id="username_icon"></span></th>
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="10%">Status<span id="username_icon"></span></th>
-                <th width="7%">Priority</th>
+                <th width="10%">Priority</th>
                 <th width="15%">Action</th>
             </tr>
         </thead>

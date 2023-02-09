@@ -237,7 +237,7 @@ class WHSConfirm extends Controller
     }
 
     public function whssubmit(Request $req){
-        // dump($req->all());
+        // dd($req->all());
         DB::beginTransaction();
 
         try{
@@ -251,11 +251,44 @@ class WHSConfirm extends Controller
                 }
             }
 
-            $cekstatus = "";
+            $cekstatus = "";  //digunakan untuk melakukan cek apakah semua line sudah dikonfirm atau belum
+            $cekqty = ""; //digunakan untuk melakukan cek apakah qty yang diconfirm setiap line sudah sesuai dengan qty request
             foreach($req->partneed as $a => $key){
                 if ($req->tick[$a] == 1) {
 
                     $vlot = explode(",", $req->t_lot[$a]);
+
+                    /* Input histori transfer, agar bisa menyimpan qty confirm jika partial */
+                    if ($req->whsconf[$a] == 0) {
+                        DB::table('wowh_det')
+                        ->insert([
+                            'wowh_wonbr' => $req->hide_wonum,
+                            'wowh_line' => $req->line[$a],
+                            'wowh_spcode' => $req->partneed[$a],
+                            'wowh_spdesc' => $req->partdesc[$a],
+                            'wowh_sitefrom' => $req->t_site[$a],
+                            'wowh_locfrom' => $req->t_loc[$a],
+                            'wowh_siteto' => $req->rlssite[$a],
+                            'wowh_locto' => $req->rlsloc[$a],
+                            'wowh_lot' => $vlot[0],
+                            'wowh_qty_req' => $req->qtyrequest[$a],
+                            'wowh_qty_conf' => $req->qtyconf[$a],
+                            'wowh_qx' => 'no',
+                            'wowh_user' => $req->session()->get('username'),
+                            'wowh_created_at' => Carbon::now()->toDateTimeString(),
+                            'wowh_updated_at' => Carbon::now()->toDateTimeString(),
+                        ]);
+                    }
+
+                    /* Jika qty yang diconfirm hanya sebagian, maka belum ada tanggal dan qty conf di tabel wo_dets */
+                    if($req->qtyrequest[$a] == $req->qtyconf[$a] + $req->qtymove[$a]) {
+                        $vconf = 1;
+                        $vdate = Carbon::now()->toDateTimeString();
+                    } else {
+                        $vconf = 0;
+                        $vdate = "";
+                        $cekqty = "nol"; 
+                    }
 
                     DB::table('wo_dets')
                         ->where('wo_dets_nbr', $req->hide_wonum)
@@ -267,20 +300,21 @@ class WHSConfirm extends Controller
                         'wo_dets_wh_site' => $req->t_site[$a],
                         'wo_dets_wh_loc' => $req->t_loc[$a],
                         'wo_dets_wh_lot' => $vlot[0],
-                        'wo_dets_wh_qty' => $req->qtyconf[$a],
-                        'wo_dets_wh_conf' => $req->tick[$a],
+                        'wo_dets_wh_qty' => $req->qtyconf[$a] + $req->qtymove[$a],
+                        'wo_dets_wh_conf' => $vconf,
                         'wo_dets_wh_tosite' => $req->rlssite[$a],
                         'wo_dets_wh_toloc' => $req->rlsloc[$a],
-                        'wo_dets_wh_date' => Carbon::now()->toDateTimeString(),
+                        'wo_dets_wh_date' =>$vdate,
                         'wo_dets_wh_user' => $req->session()->get('username'),
-                    ]);
+                    ]); 
+
                 } else {
                     $cekstatus = "nol";
                 }
                 
             }    
             
-            if ($cekstatus == "") {
+            if ($cekstatus == "" && $cekqty == "") {
                 DB::table('wo_mstr')
                     ->where('wo_nbr',$req->hide_wonum)
                     ->update([
@@ -289,11 +323,14 @@ class WHSConfirm extends Controller
             }
             
             /* cek apakah semua qty 0 atau tidak, jika semua qty 0, maka tetap bisa di confirm. mungkin tidak ada item numbernya */
-            $qx = DB::table('wo_dets')
+            /* $qx = DB::table('wo_dets')
                 ->where('wo_dets_nbr','=',$req->hide_wonum)
                 ->where('wo_dets_wh_conf','=',1)
                 ->where('wo_dets_wh_qx','=','no')
-                ->where('wo_dets_wh_qty','<>',0);
+                ->where('wo_dets_wh_qty','<>',0); */
+            $qx = DB::table('wowh_det')
+                ->where('wowh_wonbr','=',$req->hide_wonum)
+                ->where('wowh_qx','=','no');
 
             // dd($qx);
 
@@ -391,7 +428,7 @@ class WHSConfirm extends Controller
                 /* bisa foreach per item dari sini */
                 
                 foreach($qx->get() as $dqx) {
-                    $qdocBody .= '<item>
+                    /* $qdocBody .= '<item>
                                     <part>'.$dqx->wo_dets_sp.'</part>
                                     <itemDetail>
                                         <lotserialQty>'.$dqx->wo_dets_wh_qty.'</lotserialQty>
@@ -402,7 +439,19 @@ class WHSConfirm extends Controller
                                         <siteTo>'.$dqx->wo_dets_wh_tosite.'</siteTo>
                                         <locTo>'.$dqx->wo_dets_wh_toloc.'</locTo>
                                     </itemDetail>
-                                </item>';
+                                </item>'; */
+                    $qdocBody .= '<item>
+                                <part>'.$dqx->wowh_spcode.'</part>
+                                <itemDetail>
+                                    <lotserialQty>'.$dqx->wowh_qty_conf.'</lotserialQty>
+                                    <nbr>'.$dqx->wowh_wonbr.'</nbr>
+                                    <siteFrom>'.$dqx->wowh_sitefrom.'</siteFrom>
+                                    <locFrom>'.$dqx->wowh_locfrom.'</locFrom>
+                                    <lotserFrom>'.$dqx->wowh_lot.'</lotserFrom>
+                                    <siteTo>'.$dqx->wowh_siteto.'</siteTo>
+                                    <locTo>'.$dqx->wowh_locto.'</locTo>
+                                </itemDetail>
+                            </item>';
                 }
                 // <rmks>'.$dqx->wo_dets_nbr.'</rmks>
                 /* endforeach disini */
@@ -482,8 +531,20 @@ class WHSConfirm extends Controller
 
 
                 if ($qdocResult == "success" or $qdocResult == "warning") {
-                    /* jika response sukses atau warning */
-                    
+                    /* jika response sukses atau warning maka menyimpan data jika sudah di transferr ke qad*/
+                    /* DB::table('wo_dets')
+                        ->where('wo_dets_nbr',$req->hide_wonum)
+                        ->where('wo_dets_wh_conf','=',1)
+                        ->where('wo_dets_wh_qx','=','no')
+                        ->update([
+                            'wo_dets_wh_qx' => 'yes',
+                    ]); */
+                    DB::table('wowh_det')
+                        ->where('wowh_wonbr','=',$req->hide_wonum)
+                        ->where('wowh_qx','=','no')
+                        ->update([
+                            'wowh_qx' => 'yes'
+                        ]);
                 } else {
 
                     DB::rollBack();
@@ -512,14 +573,6 @@ class WHSConfirm extends Controller
                     /* jika qxtend response error */
                 }
             } /* endif($qx->count()) */ 
-            
-            DB::table('wo_dets')
-                ->where('wo_dets_nbr',$req->hide_wonum)
-                ->where('wo_dets_wh_conf','=',1)
-                ->where('wo_dets_wh_qx','=','no')
-                ->update([
-                    'wo_dets_wh_qx' => 'yes',
-            ]);
 
             DB::commit();
 

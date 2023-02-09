@@ -81,7 +81,8 @@
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Loc From</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Loc To</td>
                                 <td style="text-align: center; width: 5% !important; font-weight: bold;">Stock</td>
-                                <td style="text-align: center; width: 7% !important; font-weight: bold;">Qty Confirm</td>
+                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Qty Confirm</td>
+                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Qty To Confirm</td>
                                 <td style="text-align: center; width: 19% !important; font-weight: bold;">Release Note</td>
                                 <td style="text-align: center; width: 8% !important; font-weight: bold;">Confirm</td>
                             </tr>
@@ -117,12 +118,14 @@
                                     @php($whsconf = "")
                                     @php($whsdate = "")
                                     @php($note_release = "")
+                                    @php($dqtymove = 0)
                                 @else
                                     @php($sqtyreq = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->first())
                                     @php($dqtyreq = $sqtyreq->wo_dets_sp_qty)
                                     @php($whsconf = $sqtyreq->wo_dets_wh_conf)
                                     @php($whsdate = $sqtyreq->wo_dets_wh_date)
                                     @php($note_release = $sqtyreq->wo_dets_worelease_note)
+                                    @php($dqtymove = $sqtyreq->wo_dets_wh_qty)
                                 @endif
 
                                 <!-- default lokasi -->
@@ -153,10 +156,14 @@
                                 @endif
 
                                 <!-- Qty Confirm -->
-                                @if($dqtyreq > $dstok)
-                                    @php($dconf = $dstok)
+                                @if($whsconf == 0)
+                                    @if($dqtyreq > $dstok)
+                                        @php($dconf = $dstok)
+                                    @else
+                                        @php($dconf = $dqtyreq - $dqtymove)
+                                    @endif
                                 @else
-                                    @php($dconf = $dqtyreq)
+                                    @php($dconf = 0)
                                 @endif
 
                             <tr>
@@ -172,6 +179,7 @@
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$datas->insd_part}} -- {{$descpart}}
                                     <input type="hidden" class="partneed" name="partneed[]" value="{{$datas->insd_part}}" />
+                                    <input type="hidden" class="partdesc" name="partdesc[]" value="{{$descpart}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     {{ number_format($cqty ?? $dqtyreq,2) }}
@@ -225,14 +233,19 @@
                                     <p class="qtystok" >{{ number_format($dstok,2) }}</p>
                                     <input type="hidden" name="qtystok[]" value="{{$dstok}}" class="qtystok"/>
                                 </td>
+                                <td style="vertical-align:middle;text-align:right;">
+                                    <p>{{ number_format($dqtymove,2) }}</p>
+                                    <input type="hidden" name="qtymove[]" value="{{$dqtymove}}">
+                                </td>
                                 <!-- <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"> -->
+                                <input type="hidden" class="forn-control" name="whsconf[]" value="{{$whsconf}}" />
                                 @if($whsconf == 1)
                                     <td style="vertical-align:middle;text-align:right;">
                                         {{ number_format($dconf,2) }}
                                         <input type="hidden" class="form-control qtyconf" name="qtyconf[]" value="{{$dconf}}" />
                                     </td>
                                     <td style="vertical-align: middle; text-align: center;">
-                                        <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99" readonly >{{ $note_release }}</textarea>
+                                        <textarea rows="1" class="form-control" name="note_release[]" id="note_release[]" readonly >{{ $note_release }}</textarea>
                                     </td>
                                     <td style="vertical-align:middle;text-align:center;">    
                                         {{date('Y-m-d', strtotime($whsdate))}}
@@ -244,7 +257,7 @@
                                             <input type="number" class="form-control qtyconf" step="1" min="0" name="qtyconf[]" value="{{$dconf}}" required />
                                         </td>
                                         <td style="vertical-align: middle; text-align: center;">
-                                            <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99" >{{ $note_release }}</textarea>
+                                            <textarea rows="1" class="form-control" name="note_release[]" id="note_release[]" readonly >{{ $note_release }}</textarea>
                                         </td>
                                         <td style="vertical-align:middle;text-align:center;">    
                                             <input type="checkbox" class="qaddel" name="qaddel[]" value="" checked>
@@ -255,7 +268,7 @@
                                             <input type="number" class="form-control qtyconf" step="1" min="0" name="qtyconf[]" value="{{$dconf}}" required />
                                         </td>
                                         <td style="vertical-align: middle; text-align: center;">
-                                            <textarea class="form-control" name="note_release[]" id="note_release[]" style="width: 100%;" maxlength="99" readonly >{{ $note_release }}</textarea>
+                                            <textarea rows="1" class="form-control" name="note_release[]" id="note_release[]" readonly >{{ $note_release }}</textarea>
                                         </td>
                                         <td style="vertical-align:middle;text-align:center;">
                                             <input type="checkbox" class="qaddel" name="qaddel[]" value="">

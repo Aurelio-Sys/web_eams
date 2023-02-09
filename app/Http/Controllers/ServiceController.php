@@ -59,13 +59,22 @@ class ServiceController extends Controller
 
     public function servicerequest() /* route : servicerequest  blade : servicerequest_create */
     {
-        $asset = DB::table('asset_mstr')
+        /* Jika admin, data asset akan muncul semua, jika bukan akan muncul asset sesuai dengan departemen. kode lokasi = kode depatemen */
+        if (Session::get('role') == 'ADMIN') {
+            $asset = DB::table('asset_mstr')
             ->leftJoin('asset_loc', 'asloc_code', '=', 'asset_loc')
             ->where('asset_active', '=', 'Yes')
-            // ->where('asset_loc','=',session::get('department'))
             ->orderBy('asset_code')
             ->get();
-        // dd($asset);
+        } else {
+            $asset = DB::table('asset_mstr')
+            ->leftJoin('asset_loc', 'asloc_code', '=', 'asset_loc')
+            ->where('asset_active', '=', 'Yes')
+            ->where('asset_loc','=',session::get('department'))
+            ->orderBy('asset_code')
+            ->get();
+        }
+
         $datadepart = DB::table('dept_mstr')
             ->get();
 
@@ -89,7 +98,7 @@ class ServiceController extends Controller
             ->groupBy('eng_dept')
             ->orderBy('eng_code')
             ->get();
-        // dd($dataapp);
+        
         return view('service.servicerequest_create', [
             'showasset' => $asset, 'dept' => $datadepart,
             'wotype' => $wotype, 'impact' => $impact, 'fc' => $fcode, 'dataapp' => $dataapp
@@ -132,9 +141,7 @@ class ServiceController extends Controller
 
     public function inputsr(Request $req) /* blade : servicerequest_create.php */
     {
-
         DB::beginTransaction();
-
         try {
             if (isset($req->impact)) {
                 $counterimpact = count($req->impact);
@@ -142,13 +149,10 @@ class ServiceController extends Controller
                 $counterimpact = 0;
             }
 
-
             $newimpact = "";
-
             for ($i = 0; $i < $counterimpact; $i++) {
                 $newimpact .= $req->impact[$i] . ',';
             }
-
             $newimpact = substr($newimpact, 0, strlen($newimpact) - 1);
 
             $running = DB::table('running_mstr')
@@ -157,16 +161,14 @@ class ServiceController extends Controller
             $runnumber = DB::table('dept_mstr')
                 ->where('dept_code', '=', session::get('department'))
                 ->first();
-            // dd(session::get('department'));            
+           
             $newyear = Carbon::now()->format('y');
 
-            // dd($runnumber);
             if ($runnumber->dept_running_nbr == null) {
                 DB::rollBack();
                 toast('Please set running number for department code ' . session::get('department') . ' first.', 'error');
                 return back();
             }
-
 
             if ($running->year == $newyear) {
                 $tempnewrunnbr = strval(intval($runnumber->dept_running_nbr) + 1);
@@ -180,10 +182,17 @@ class ServiceController extends Controller
             }
 
             $runningnbr = $running->sr_prefix . '-' . session::get('department') . '-' . $newyear . '-' . $newtemprunnbr;
+
             $cekData = DB::table('service_req_mstr')
                 ->where('sr_number', '=', $runningnbr)
                 ->get();
 
+            /* Notif erro jika ada nomor SR yang sama di database */
+            if ($cekData->count() > 0) {
+                DB::rollBack();
+                toast('SR Number is already in use!!', 'error');
+                return back();
+            }
 
             if ($cekData->count() == 0) {
 
@@ -268,7 +277,8 @@ class ServiceController extends Controller
             ->first();
 
 
-        if ($kepalaengineer || Session::get('role') == 'ADMIN') {
+        // if ($kepalaengineer || Session::get('role') == 'ADMIN') {
+        if ($kepalaengineer) {
             $wotype = DB::table('wotyp_mstr')
                 ->orderBy('wotyp_code')
                 ->get();
@@ -285,7 +295,7 @@ class ServiceController extends Controller
             $data = DB::table('service_req_mstr')
                 ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_assetcode')
                 ->leftJoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
-                ->leftJoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
+                ->leftJoin('asset_loc', 'asset_loc.asloc_code', 'asset_mstr.asset_loc')
                 ->leftJoin('wotyp_mstr', 'wotyp_mstr.wotyp_code', 'service_req_mstr.sr_wotype')
                 // ->join('users', 'users.name', 'service_req_mstr.req_by')                  --> B211014
                 ->join('users', 'users.username', 'service_req_mstr.req_username')
@@ -293,15 +303,18 @@ class ServiceController extends Controller
                 ->leftJoin('fn_mstr as k1', 'service_req_mstr.sr_failurecode1', 'k1.fn_code')
                 ->leftJoin('fn_mstr as k2', 'service_req_mstr.sr_failurecode2', 'k2.fn_code')
                 ->leftJoin('fn_mstr as k3', 'service_req_mstr.sr_failurecode3', 'k3.fn_code')
-                ->selectRaw('service_req_mstr.*,asset_mstr.*,asset_type.*,loc_mstr.*,wotyp_mstr.*,users.*,dept_mstr.*,
+                ->selectRaw('service_req_mstr.*,asset_mstr.*,asset_type.*,asset_loc.*,wotyp_mstr.*,users.*,dept_mstr.*,
                             k1.fn_desc as k11, k2.fn_desc as k22, k3.fn_desc as k33')
                 ->where('sr_status', '=', '1')
                 ->orderBy('sr_date', 'DESC')
                 ->orderBy('sr_number', 'DESC');
 
+            // dd($data->get());
+
             /* Jika bukan admin, maka yang muncul adalah approver sesuai login */
             if (Session::get('role') <> 'ADMIN') {
-                $data = $data->where('sr_approver', '=', Session::get('username'));
+                // $data = $data->where('sr_approver', '=', Session::get('username'));
+                $data = $data->where('sr_approver', '=', $kepalaengineer->eng_dept);
             }
 
 
@@ -429,7 +442,7 @@ class ServiceController extends Controller
 
     public function approval(Request $req)
     { /* blade : service.servicereq-approval */
-        // dump($req->all());
+        // dd($req->all());
 
         $wotype = $req->wotype;
         $imcode = $req->impactcode1;
@@ -604,6 +617,8 @@ class ServiceController extends Controller
                         'wo_nbr' => $runningnbr,
                         'wo_sr_nbr' => $req->srnumber,
                         'wo_asset' => $req->assetcode,
+                        'wo_asset_site' => $req->h_assetsite,
+                        'wo_asset_loc' => $req->h_assetloc,
                         'wo_failure_code1' => $fail1,
                         'wo_failure_code2' => $fail2,
                         'wo_failure_code3' => $fail3,
@@ -726,6 +741,8 @@ class ServiceController extends Controller
                         'wo_nbr' => $runningnbr,
                         'wo_sr_nbr' => $req->srnumber,
                         'wo_asset' => $req->assetcode,
+                        'wo_asset_site' => $req->h_assetsite,
+                        'wo_asset_loc' => $req->h_assetloc,
                         'wo_failure_code1' => $fail1,
                         'wo_failure_code2' => $fail2,
                         'wo_failure_code3' => $fail3,

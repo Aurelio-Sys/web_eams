@@ -21,6 +21,7 @@ class WoQcController extends Controller
         //
         $dataApproval = DB::table('wo_mstr')
             ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset')
+            ->leftJoin('asset_loc','asloc_code','asset_loc')
             ->where('wo_status', '=', 'QC Approval')
             ->orderBy('wo_updated_at');
 
@@ -78,7 +79,8 @@ class WoQcController extends Controller
         //
 
         $dataDetail = DB::table('wo_mstr')
-            ->selectRaw('asset_mstr.asset_desc,u1.eng_desc as u1,u2.eng_desc as u2, u3.eng_desc as u3, u4.eng_desc as u4, u5.eng_desc as u5, wo_mstr.*,
+            ->selectRaw('asset_mstr.asset_desc,u1.eng_desc as u1,u2.eng_desc as u2, u3.eng_desc as u3, u4.eng_desc as u4,
+                        u5.eng_desc as u5, wo_mstr.*, asset_loc.*,
                         wo_mstr.wo_failure_code1 as wofc1, wo_mstr.wo_failure_code2 as wofc2, 
                         wo_mstr.wo_failure_code3 as wofc3, fn1.fn_desc as fd1, fn2.fn_desc as fd2, 
                         fn3.fn_desc as fd3,r1.repm_desc as r11,r2.repm_desc as r22,r3.repm_desc as r33,
@@ -90,7 +92,7 @@ class WoQcController extends Controller
             ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
             ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
             ->leftjoin('asset_type', 'asset_mstr.asset_type', 'asset_type.astype_code')
-            ->leftjoin('loc_mstr', 'asset_mstr.asset_loc', 'loc_mstr.loc_code')
+            ->leftjoin('asset_loc', 'asset_mstr.asset_loc', 'asset_loc.asloc_code')
             ->leftjoin('fn_mstr as fn1', 'wo_mstr.wo_failure_code1', 'fn1.fn_code')
             ->leftjoin('fn_mstr as fn2', 'wo_mstr.wo_failure_code2', 'fn2.fn_code')
             ->leftjoin('fn_mstr as fn3', 'wo_mstr.wo_failure_code3', 'fn3.fn_code')

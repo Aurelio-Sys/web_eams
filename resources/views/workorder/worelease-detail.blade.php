@@ -365,7 +365,8 @@
             }
 
         });
-
+        
+        var originalOptions;
         $(document).on('change', 'select.repcode', function() {
 
             // console. log(jQuery(). jquery);
@@ -373,15 +374,25 @@
             var a = $(this).closest("tr").find('div').find('.insclass option');
             // console.log(a);
 
-            a.each(function(e) {
+            if (!originalOptions) {
+                originalOptions = $(this).closest("tr").find('div').find('.insclass option').clone();
+            }
 
+            if (a.length > 0) {
+                a.each(function(e) {
                 if ($(this).data('repcode2') != rc) {
                     $(this).remove();
-                    // $(this).prop('disabled', false);
                 }
+                });
 
-            })
-            $(this).closest("tr").find('.insclass').selectpicker('refresh');
+                $(this).closest("tr").find('.insclass').selectpicker('refresh');
+            } else {
+                $(this).closest("tr").find('select.insclass').empty();    
+                $(this).closest("tr").find('select.insclass').append(originalOptions.filter(function(index, option) {
+                    return $(option).data("repcode2") === rc || !$(option).data("repcode2");
+                }));
+                $(this).closest("tr").find('.insclass').selectpicker('refresh');
+            }
 
         });
 

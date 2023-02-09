@@ -75,6 +75,8 @@ class RptDetWOController extends Controller
             $table->string('temp_type')->nullable();
             $table->string('temp_asset')->charset('utf8mb4')->collation('utf8mb4_general_ci');
             $table->string('temp_asset_desc')->nullable();
+            $table->string('temp_asset_loc')->nullable();
+            $table->string('temp_asset_site')->nullable();
             $table->string('temp_creator')->nullable()->charset('utf8mb4')->collation('utf8mb4_general_ci'); /* Untuk PM Creator nya kosong */
             $table->date('temp_create_date');
             $table->date('temp_sch_date');
@@ -110,6 +112,8 @@ class RptDetWOController extends Controller
                 'temp_sr' => $da->wo_sr_nbr,
                 'temp_asset' => $da->wo_asset,
                 'temp_asset_desc' => DB::table('asset_mstr')->where('asset_code','=',$da->wo_asset)->value('asset_desc'),
+                'temp_asset_site' => $da->wo_asset_site,
+                'temp_asset_loc' => $da->wo_asset_loc,
                 'temp_creator' => $da->wo_creator,
                 'temp_create_date' => $da->wo_created_at,
                 'temp_sch_date' => $da->wo_schedule,
@@ -131,11 +135,13 @@ class RptDetWOController extends Controller
         }
 
         /* Mencari data sparepart yang belum ada wo detail nya */
-        $datawo = DB::table('wo_mstr')->whereNotIn('wo_nbr', function($q){
+        $datawo = DB::table('wo_mstr')
+            // ->where('wo_nbr','=','PM-23-004839')
+            ->whereNotIn('wo_nbr', function($q){
                 $q->select('wo_dets_nbr')->from('wo_dets');
             })
             ->get();
-
+        // dd($datawo);
         foreach($datawo as $do) {
             if ($do->wo_repair_code1 != "") {
 
@@ -144,7 +150,8 @@ class RptDetWOController extends Controller
                     'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule',
                     'wo_sr_nbr', 'wo_creator', 'wo_created_at', 'wo_new_type', 'wo_failure_code1',
                     'wo_failure_code2', 'wo_failure_code3', 'wo_asset', 'wo_note', 'repm_desc', 'wo_type',
-                    'wo_engineer1','wo_engineer2','wo_engineer3','wo_engineer4','wo_engineer5')
+                    'wo_engineer1','wo_engineer2','wo_engineer3','wo_engineer4','wo_engineer5',
+                    'wo_asset_site','wo_asset_loc')
                     ->leftJoin('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
                     ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                     ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -160,7 +167,7 @@ class RptDetWOController extends Controller
                     ->join('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
                     ->where('wo_id', '=', $do->wo_id)
                     ->get();
-
+                // dd($sparepart1);
                 $combineSP = $sparepart1;
                 $rc = $rc1;
             }
@@ -171,7 +178,8 @@ class RptDetWOController extends Controller
                     'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule',
                     'wo_sr_nbr', 'wo_creator', 'wo_created_at', 'wo_new_type', 'wo_failure_code1',
                     'wo_failure_code2', 'wo_failure_code3', 'wo_asset', 'wo_note', 'repm_desc', 'wo_type',
-                    'wo_engineer1','wo_engineer2','wo_engineer3','wo_engineer4','wo_engineer5')
+                    'wo_engineer1','wo_engineer2','wo_engineer3','wo_engineer4','wo_engineer5',
+                    'wo_asset_site','wo_asset_loc')
                     ->leftJoin('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
                     ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                     ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -198,7 +206,8 @@ class RptDetWOController extends Controller
                     'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule',
                     'wo_sr_nbr', 'wo_creator', 'wo_created_at', 'wo_new_type', 'wo_failure_code1',
                     'wo_failure_code2', 'wo_failure_code3', 'wo_asset', 'wo_note', 'repm_desc', 'wo_type',
-                    'wo_engineer1','wo_engineer2','wo_engineer3','wo_engineer4','wo_engineer5')
+                    'wo_engineer1','wo_engineer2','wo_engineer3','wo_engineer4','wo_engineer5',
+                    'wo_asset_site','wo_asset_loc')
                     ->leftJoin('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
                     ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                     ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -225,7 +234,8 @@ class RptDetWOController extends Controller
                     'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule',
                     'wo_sr_nbr', 'wo_creator', 'wo_created_at', 'wo_new_type', 'wo_failure_code1',
                     'wo_failure_code2', 'wo_failure_code3', 'wo_asset', 'wo_note', 'repm_desc', 'wo_type',
-                    'wo_engineer1','wo_engineer2','wo_engineer3','wo_engineer4','wo_engineer5')
+                    'wo_engineer1','wo_engineer2','wo_engineer3','wo_engineer4','wo_engineer5',
+                    'wo_asset_site','wo_asset_loc')
                     ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code',)
                     ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
                     ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
@@ -245,7 +255,7 @@ class RptDetWOController extends Controller
                     ->get();
             }
         }
-        
+        // dd($combineSP);
         foreach($combineSP as $dc){
             DB::table('temp_wo')->insert([
                 'temp_wo' => $dc->wo_nbr,
@@ -253,6 +263,8 @@ class RptDetWOController extends Controller
                 'temp_sr' => $dc->wo_sr_nbr,
                 'temp_asset' => $dc->wo_asset,
                 'temp_asset_desc' => DB::table('asset_mstr')->where('asset_code','=',$dc->wo_asset)->value('asset_desc'),
+                'temp_asset_site' => $dc->wo_asset_site,
+                'temp_asset_loc' => $dc->wo_asset_loc,
                 'temp_creator' => $dc->wo_creator,
                 'temp_create_date' => $dc->wo_created_at,
                 'temp_sch_date' => $dc->wo_schedule,
@@ -274,12 +286,14 @@ class RptDetWOController extends Controller
         }
 
         $datatemp = DB::table('temp_wo')
+        // ->where('temp_wo','=','PM-23-004839')
         ->orderBy('temp_create_date','desc')
         ->orderBy('temp_wo','desc');
         // dd($datatemp->get());
 
         if($request->s_nomorwo) {
             $datatemp = $datatemp->where('temp_wo','like','%'.$request->s_nomorwo.'%');
+            // dd($datatemp);
         }
         if($request->s_asset) {
             $datatemp = $datatemp->where('temp_asset','=',$request->s_asset);
@@ -299,12 +313,13 @@ class RptDetWOController extends Controller
         }
         if($request->s_loc) {
             $a = $request->s_loc;
-            $datatemp = $datatemp->whereIn('temp_asset', function($query) use ($a)
-            {
-                $query->select('asset_code')
-                      ->from('asset_mstr')
-                      ->where('asset_loc','=',$a);
-            });
+            $datatemp = $datatemp->where('temp_asset_loc','=',$a);
+            // $datatemp = $datatemp->whereIn('temp_asset_loc', function($query) use ($a)
+            // {
+            //     $query->select('asset_code')
+            //           ->from('asset_mstr')
+            //           ->where('asset_loc','=',$a);
+            // });
         }
         if($request->s_eng) {
             $datatemp = $datatemp->where('temp_eng1','=',$request->s_eng)

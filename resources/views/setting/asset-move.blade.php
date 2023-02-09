@@ -143,7 +143,7 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_tosite" class="col-md-4 col-form-label text-md-right">Site From<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                        <label for="t_tosite" class="col-md-4 col-form-label text-md-right">Site To<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-6">
                             <select id="t_tosite" class="form-control" name="t_tosite" required>
                                 <option value="">--Select Data--</option>
@@ -154,7 +154,7 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_toloc" class="col-md-4 col-form-label text-md-right">Location From<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                        <label for="t_toloc" class="col-md-4 col-form-label text-md-right">Location To<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-6">
                             <select id="t_toloc" class="form-control" name="t_toloc" required>
                                 
