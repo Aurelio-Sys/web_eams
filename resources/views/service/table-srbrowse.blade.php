@@ -28,6 +28,8 @@
     <td>Waiting QC</td>
     @elseif($show->sr_status == 8)
     <td>Reprocess</td>
+    @elseif($show->sr_status == 9)
+    <td>Rejected</td>
     @endif
     <td>{{$show->sr_priority}}</td>
     <td>{{$show->dept_desc}}</td>
@@ -49,7 +51,7 @@
     data-startwo="{{date('d-m-Y', strtotime($show->wo_start_date))}}" 
     data-endwo="{{date('d-m-Y', strtotime($show->wo_finish_date))}}" 
     data-action="{{$show->wo_action}}" data-approver="{{$show->sr_approver}} -- {{$show->dept_desc}}"
-    data-wostatus="{{$show->wo_status}}"
+    data-wostatus="{{$show->wo_status}}" data-srstatus="{{$show->sr_status}}"
     data-failtype="{{$show->sr_wotype}}"
     data-faildesc1="{{$show->k11}}" data-faildesc2="{{$show->k22}}" data-faildesc3="{{$show->k33}}">
     <i class="icon-table far fa-eye fa-lg"></i></a>
@@ -64,19 +66,21 @@
     <a href="{{url('srprint/'.$show->sr_number)}}" data-toggle="tooltip"  title="Print SR" target="_blank" ><i class="icon-table fa fa-print fa-lg"></i></a>
 
     {{--  Edit SR  --}}
+    @if($show->sr_status == 1 || $show->sr_status == 9)
     <a href="javascript:void(0)" class="editsr" data-toggle="tooltip"  title="Edit SR"  data-target="#editModal" data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_assetcode}}" data-assetdesc="{{$show->asset_desc}}"
     data-reqby="{{$show->username}}" data-srnote="{{$show->sr_note}}" data-priority="{{$show->sr_priority}}" 
     data-rejectnote="{{$show->rejectnote}}" data-eng1="{{$show->u11}}" data-eng2="{{$show->u22}}" 
     data-eng3="{{$show->u33}}" data-eng4="{{$show->u44}}" data-eng5="{{$show->u55}}"
     data-reqbyname="{{$show->req_by}}" data-dept="{{$show->dept_desc}}" data-assetloc="{{$show->loc_desc}}" 
-    data-astypedesc="{{$show->astype_desc}}" data-wotypedesc="{{$show->wotyp_desc}}" data-impactcode="{{$show->sr_impact}}"
-    data-srdate="{{date('d-m-Y', strtotime($show->sr_date))}}" data-srtime="{{date('H:i', strtotime($show->sr_time))}}" data-wonumber="{{$show->wo_number}}" 
+    data-astypedesc="{{$show->astype_desc}}" data-wotypecode="{{$show->wotyp_code}}" data-wotypedesc="{{$show->wotyp_desc}}" data-impactcode="{{$show->sr_impact}}"
+    data-srdate="{{date('Y-m-d', strtotime($show->sr_date))}}" data-srtime="{{date('H:i', strtotime($show->sr_time))}}" data-wonumber="{{$show->wo_number}}" 
     data-startwo="{{date('d-m-Y', strtotime($show->wo_start_date))}}" 
     data-endwo="{{date('d-m-Y', strtotime($show->wo_finish_date))}}" 
-    data-action="{{$show->wo_action}}" data-approver="{{$show->sr_approver}} -- {{$show->dept_desc}}"
-    data-wostatus="{{$show->wo_status}}"
-    data-failtype="{{$show->sr_wotype}}"
+    data-action="{{$show->wo_action}}" data-approver="{{$show->sr_approver}}" data-rejectnote="{{$show->rejectnote}}"
+    data-wostatus="{{$show->wo_status}}" data-srstatus="{{$show->sr_status}}"
+    data-failtype="{{$show->sr_wotype}}" data-fc1="{{$show->sr_failurecode1}}" data-fc2="{{$show->sr_failurecode2}}" data-fc3="{{$show->sr_failurecode3}}"
     data-faildesc1="{{$show->k11}}" data-faildesc2="{{$show->k22}}" data-faildesc3="{{$show->k33}}"><i class="icon-table fa fa-edit fa-lg"></i></a>
+    @endif
     
     </td>
 </tr>

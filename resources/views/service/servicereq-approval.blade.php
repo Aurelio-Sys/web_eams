@@ -546,7 +546,7 @@
       var duedate = document.getElementById('duedate').value;
       // event.preventDefault();
       // $('#approval')
-      alert(1);
+      // alert(1);
 
       if (rejectreason == "") {
         // alert('masuk reject');
@@ -796,7 +796,7 @@
       $('#wotype').select2({
         theme: 'bootstrap4',
         width: '100%',
-        wotype,
+        // wotype,
       });
 
       $('#fclist').select2({

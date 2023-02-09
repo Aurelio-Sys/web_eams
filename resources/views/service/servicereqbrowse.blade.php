@@ -221,7 +221,7 @@
         </button>
       </div>
       <input type="hidden" id="statusedit">
-      <form class="form-horizontal" id="newedit" method="post" action="editsr">
+      <form class="form-horizontal" id="newedit" method="post" action="editsr" enctype="multipart/form-data">
         {{ csrf_field() }}
         <input type="hidden" id="counter" value=0>
         <input type="hidden" id="counterfail" value=0>
@@ -233,7 +233,7 @@
               <input id="e_nosr" type="text" class="form-control" name="e_nosr" readonly>
             </div>
           </div>
-          <div class="form-group row justify-content-center">
+          <div class="form-group row justify-content-center" style="display: none;">
             <label for="e_nowo" class="col-md-5 col-form-label text-md-left">Work Order Number</label>
             <div class="col-md-7">
               <input id="e_nowo" type="text" class="form-control" name="e_nowo" autocomplete="off" maxlength="6" readonly>
@@ -254,14 +254,14 @@
           <div class="form-group row justify-content-center">
             <label for="e_status" class="col-md-5 col-form-label text-md-left">Status</label>
             <div class="col-md-7">
-              <input id="e_status" type="text" class="form-control" name="e_status" autocomplete="off" maxlength="6" readonly>
+              <input id="e_status" type="text" class="form-control" name="e_status" autocomplete="off" maxlength="6" readonly style="color:green;font-weight:bold">
             </div>
           </div>
-          <div class="form-group row justify-content-center">
+          <div class="form-group row justify-content-center" id="e_rnote">
             <label for="e_rnote" class="col-md-5 col-form-label text-md-left">Reject Note</label>
             <div class="col-md-7">
-              <!-- <input id="e_note" type="text" class="form-control" name="e_note" autocomplete="off" maxlength="6"> -->
-              <textarea id="e_rnote" class="form-control e_rnote" name="e_rnote" autofocus readonly></textarea>
+              <input id="e_renote" type="text" class="form-control" name="e_renote" autocomplete="off" maxlength="6" readonly>
+              <!-- <textarea id="e_rnote" class="form-control e_rnote" name="e_rnote" autofocus readonly></textarea> -->
             </div>
           </div>
           <div class="form-group row justify-content-center">
@@ -269,18 +269,14 @@
             <div class="col-md-7">
               <!-- <input id="e_asset" type="text" class="form-control e_asset"> -->
               <input id="e_assethid" type="hidden" class="form-control e_asset" name="e_asset" readonly>
-              <select id="e_asset" name="e_asset" class="form-control" required>
-                <option value="">-- Select Asset Code --</option>
-                @foreach($asset as $show)
-                <option value="{{$show->asset_code}}">{{$show->asset_code.' -- '.$show->asset_desc}}</option>
-                @endforeach
-              </select>
+              <input id="e_asset" type="text" class="form-control" name="e_asset" autocomplete="off" maxlength="6" readonly>
             </div>
           </div>
-          <div class="form-group row justify-content-center e_wottypediv" id="e_wottypediv">
+          <div class="form-group row justify-content-center">
             <label for="e_wottype" class="col-md-5 col-form-label text-md-left">Failure Type</label>
             <div class="col-md-7">
-              <select id="e_wottype" name="e_wottype" class="form-control" required>
+              <!-- <input id="e_wottype" type="text" class="form-control" name="e_wottype" autocomplete="off" maxlength="6" readonly> -->
+              <select id="e_wottype" name="e_wottype" class="form-control e_wottype">
                 <option value="">-- Select Failure Type --</option>
                 @foreach($wotype as $show)
                 <option value="{{$show->wotyp_code}}">{{$show->wotyp_code}} -- {{$show->wotyp_desc}}</option>
@@ -329,7 +325,7 @@
           <div class="form-group row justify-content-center">
             <label for="e_date" class="col-md-5 col-form-label text-md-left">Request Date</label>
             <div class="col-md-7">
-              <input type="date" class="form-control" id="e_date" name="e_date" value="<?php echo date("Y-m-d"); ?>">
+              <input type="date" class="form-control" id="e_date" name="e_date" value="{{ old('e_date') }}">
             </div>
           </div>
           <div class="form-group row justify-content-center">
@@ -338,17 +334,39 @@
               <input type="time" class="form-control" id="e_time" name="e_time" value="<?php echo date("H:i"); ?>">
             </div>
           </div>
-          <!-- <div class="form-group row justify-content-center">
-            <label for="e_department" class="col-md-5 col-form-label text-md-left">Department</label>
+          <div class="form-group row">
+            <label for="file" class="col-md-5 col-form-label text-md-left">Current File</label>
             <div class="col-md-7">
-              <select id="e_department"  class="form-control e_department" name="e_department"  autofocus required>
-              <option value="" disabled selected>Select Department</option>
-                
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>File Name</th>
+                  </tr>
+                </thead>
+                <tbody id="listupload">
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="file" class="col-md-5 col-form-label text-md-left">Upload New File</label>
+            <div class="col-md-7 input-file-container">
+              <input type="file" class="form-control" id="filename" name="filename[]" multiple>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="e_approver" class="col-md-5 col-form-label text-md-left">Approver</label>
+            <div class="col-md-7">
+              <select id="e_approver" name="e_approver" class="form-control" required>
+                <option value="">-- Select Approver --</option>
+                @foreach($dataapp as $da)
+                <!-- <option value="{{$da->eng_code}}">{{$da->eng_code.' -- '.$da->eng_desc}}</option> -->
+                <option value="{{$da->dept_code}}">{{$da->dept_code.' -- '.$da->dept_desc}}</option>
+                @endforeach
               </select>
             </div>
-          </div> -->
-
-
+          </div>
 
         </div>
         <div class="modal-footer">
@@ -475,6 +493,7 @@
               <thead>
                 <tr>
                   <th>File Name</th>
+                  <th style="display: none;"></th>
                 </tr>
               </thead>
               <tbody id="listupload">
@@ -630,6 +649,41 @@
         closeOnSelect: false,
         allowClear: true,
         // theme : 'bootstrap4'
+      });
+
+      $("#e_wottype").select2({
+        width: '100%',
+        // theme : 'bootstrap4',
+        allowClear: true,
+        placeholder: 'Select Failure Type',
+
+      });
+
+      $("#e_approver").select2({
+        width: '100%',
+        // theme : 'bootstrap4',
+        allowClear: true,
+        placeholder: 'Select Approver',
+
+      });
+
+      $("#e_failurecode").select2({
+        width: '100%',
+        placeholder: "Select Failure Code",
+        theme: "bootstrap4",
+        allowClear: true,
+        maximumSelectionLength: 3,
+        closeOnSelect: false,
+        allowClear: true,
+        multiple: true,
+      });
+
+      $('#e_impact').select2({
+        placeholder: "Select Value",
+        width: '100%',
+        closeOnSelect: false,
+        allowClear: true,
+        theme: 'bootstrap4',
       });
 
       function fetch_data(page, srnumber, asset, priority /*period*/ , status, requestby) {
@@ -829,6 +883,8 @@
 
         // alert(assetdesc);
 
+
+
         $.ajax({
           url: "/searchimpactdesc",
           data: {
@@ -911,23 +967,43 @@
         var srnote = $(this).data('srnote');
         var reqby = $(this).data('reqby');
         var priority = $(this).data('priority');
-        var rejectnote = $(this).data('rejectnote');
         var reqbyname = $(this).data('reqbyname');
-        var wotype = $(this).data('wotypedesc');
+        var wotype = $(this).data('wotypecode');
         var impact = $(this).data('impactcode');
         var wonumber = $(this).data('wonumber');
         var startwo = $(this).data('startwo');
         var endwo = $(this).data('endwo');
         var action = $(this).data('action');
         var wostatus = $(this).data('wostatus');
+        var srstatus = $(this).data('srstatus');
         var failtype = $(this).data('failtype');
         var approver = $(this).data('approver');
+        var rejectnote = $(this).data('rejectnote');
+
+        document.getElementById('e_renote').value = rejectnote;
+
+        if (srstatus == 1) {
+          var srstat = 'Open';
+          document.getElementById("e_status").style.color = 'green';
+        } else {
+          var srstat = 'Rejected';
+          document.getElementById("e_status").style.color = 'red';
+        }
+
+        if (rejectnote == '') {
+          document.getElementById("e_rnote").style.display = 'none';
+        } else {
+          document.getElementById("e_rnote").style.display = '';
+        }
 
         var srdate = $(this).data('srdate');
-        document.getElementById('srdate').value = srdate;
-        var srtime = $(this).data('srtime');
-        document.getElementById('srtime').value = srtime;
+        // var srdt = new Date(srdate).toISOString().slice(0, 10);
+        document.getElementById('e_date').value = srdate;
+        // console.log(rejectnote);
+        // console.log(document.getElementById('e_rnote').value);
 
+        var srtime = $(this).data('srtime');
+        document.getElementById('e_time').value = srtime;
 
         var eng1 = $(this).data('eng1');
         var eng2 = $(this).data('eng2');
@@ -937,18 +1013,55 @@
 
         var englist = eng1 + '\n' + eng2 + '\n' + eng3 + '\n' + eng4 + '\n' + eng5;
 
-        var fail1 = $(this).data('faildesc1');
-        var fail2 = $(this).data('faildesc2');
-        var fail3 = $(this).data('faildesc3');
+        // var fail1 = $(this).data('faildesc1');
+        // var fail2 = $(this).data('faildesc2');
+        // var fail3 = $(this).data('faildesc3');
 
-        var faildesclist = fail1 + '\n' + fail2 + '\n' + fail3;
+        // var faildesclist = fail1 + '\n' + fail2 + '\n' + fail3;
+
+        var failcode1 = $(this).data('fc1');
+        var failcode2 = $(this).data('fc2');
+        var failcode3 = $(this).data('fc3');
+
+        // array failure code
+        var newarrfc = [];
+        if (failcode1 != '') {
+          newarrfc.push(failcode1);
+        }
+        if (failcode2 != '') {
+          newarrfc.push(failcode2);
+        }
+        if (failcode3 != '') {
+          newarrfc.push(failcode3);
+        }
+
+        //value multiple failurecode
+        document.getElementById('e_failurecode').selectedIndex = newarrfc;
+        $('#e_failurecode').val(newarrfc);
+        $('#e_failurecode').trigger('change');
+
+
+        // array impact
+        var newarrimp = [];
+        var desc = impact.split(",");
+        if (desc != null) {
+          for (var i = 0; i <= (desc.length - 1); i++) {
+            if (desc[i] != '') {
+              newarrimp.push(desc[i]);
+            }
+          }
+        }
+
+        //value multiple impact
+        document.getElementById('e_impact').selectedIndex = newarrimp;
+        $('#e_impact').val(newarrimp);
+        $('#e_impact').trigger('change');
 
         // console.log(englist);
 
         document.getElementById('englist').value = englist;
         document.getElementById('e_req').value = reqbyname;
         document.getElementById('e_note').value = srnote;
-        document.getElementById('rejectnote').value = rejectnote;
         document.getElementById('e_nowo').value = wonumber;
         if (startwo != '01-01-1970') {
           document.getElementById('startwo').value = startwo;
@@ -961,9 +1074,12 @@
           document.getElementById('endwo').value = '';
         }
         document.getElementById('action').value = action;
-        document.getElementById('e_status').value = wostatus;
-        document.getElementById('failcode').value = faildesclist;
-        document.getElementById('approver').value = approver;
+        document.getElementById('e_status').value = srstat;
+        // document.getElementById('failcode').value = faildesclist;
+        document.getElementById('e_approver').value = approver;
+
+        // console.log(approver);
+        // console.log(document.getElementById('e_approver').value);
 
         // if(eng1 != ''){
         //   document.getElementById('engineer1').value = eng1;
@@ -1053,19 +1169,35 @@
 
 
         document.getElementById('e_nosr').value = srnumber;
-        document.getElementById('assetcode').value = assetcode;
+        document.getElementById('e_asset').value = assetcode + ' - ' + assetdesc;
         document.getElementById('assetdesc').value = assetdesc;
         document.getElementById('e_dept').value = dept;
         document.getElementById('assetloc').value = assetloc;
-        document.getElementById('assettype').value = astype;
-        document.getElementById('wotype').value = wotype;
+        // document.getElementById('assettype').value = astype;
+        document.getElementById('e_wottype').value = wotype;
 
-
+        // console.log(document.getElementById('e_wottype'));
 
         document.getElementById('hiddenreq').value = reqby;
-        document.getElementById('priority').value = priority;
+        document.getElementById('e_priority').value = priority;
 
+        $('#e_wottype').select2({
+          theme: 'bootstrap4',
+          width: '100%',
+        });
 
+        $('#e_approver').select2({
+          theme: 'bootstrap4',
+          width: '100%',
+        });
+
+        $('#e_failurecode').select2({
+          placeholder: "Select Failure Code",
+          width: '100%',
+          closeOnSelect: false,
+          allowClear: true,
+          maximumSelectionLength: 3,
+        });
 
       });
 

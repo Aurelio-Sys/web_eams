@@ -1937,7 +1937,7 @@ div #munculgambar .gambar:hover{
         // console.log(assetgroup);
         // console.log(rc1);
         // console.log(rc2);
-        // console.log(rc3);
+        console.log(duedate);
 
         $.ajax({
               url: "/checkfailurecodetype",

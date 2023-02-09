@@ -188,6 +188,7 @@ class ServiceController extends Controller
             if ($cekData->count() == 0) {
 
                 if ($req->hasFile('filename')) {
+                    // dd($req->hasFile('filename'));
 
                     foreach ($req->file('filename') as $upload) {
                         $dataTime = date('Ymd_His');
@@ -357,41 +358,73 @@ class ServiceController extends Controller
     /*MR - 060223*/
     public function editsr(Request $req)
     {
-        $asset = DB::table('asset_mstr')
-            ->leftJoin('asset_loc', 'asloc_code', '=', 'asset_loc')
-            ->where('asset_active', '=', 'Yes')
-            // ->where('asset_loc','=',session::get('department'))
-            ->orderBy('asset_code')
-            ->get();
+        $srnbr = $req->e_nosr;
+        $status = $req->e_status;
+        $wotype = $req->e_wottype;
+        $failcode = $req->e_failurecode;
+        $impact = $req->e_impact;
+        $priority = $req->e_priority;
+        $note = $req->e_note;
+        $reqdate = $req->e_date;
+        $reqtime = $req->e_time;
+        $uploadfile = $req->hasFile('filename');
+        $approver = $req->e_approver;
+        // dd($srnbr, $wotype, $failcode, $impact, $priority, $note, $reqdate, $reqtime, $uploadfile);
+        // dd($approver);
+        if ($req->hasFile('filename')) {
 
-        $datadepart = DB::table('dept_mstr')
-            ->get();
+            foreach ($req->file('filename') as $upload) {
+                $dataTime = date('Ymd_His');
+                $filename = $dataTime . '-' . $upload->getClientOriginalName();
 
-        $wotype = DB::table('wotyp_mstr')
-            ->orderBy('wotyp_code')
-            ->get();
+                // Simpan File Upload pada Public
+                $savepath = public_path('uploadasset/');
+                $upload->move($savepath, $filename);
 
-        $impact = DB::table('imp_mstr')
-            ->orderBy('imp_code')
-            ->get();
+                // Simpan ke DB Upload
+                DB::table('service_req_upload')
+                    ->insert([
+                        'filepath' => $savepath . $filename,
+                        'sr_number' => $srnbr,
+                        'created_at' => Carbon::now()->toDateTimeString(),
+                        'updated_at' => Carbon::now()->toDateTimeString(),
+                    ]);
+            }
+        }
 
-        $fcode = DB::table('fn_mstr')
-            ->orderBy('fn_code')
-            ->get();
+        $eimpactlist = '';
+        $eimpactdesclist = '';
+        foreach ($impact as $eimpact) {
+            if ($eimpact != '') {
+                $testimp = DB::table('imp_mstr')
+                    ->where('imp_code', '=', $eimpact)
+                    ->first();
+                $eimpactdesclist .= $testimp->imp_desc . ',';
+            }
+            $eimpactlist .= $eimpact . ',';
+        }
 
-        $dataapp = DB::table('eng_mstr')
-            ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'eng_mstr.eng_dept')
-            ->selectRaw('dept_mstr.*,eng_mstr.*')
-            ->where('eng_active', '=', 'Yes')
-            ->where('approver', '=', 1)
-            ->groupBy('eng_dept')
-            ->orderBy('eng_code')
-            ->get();
 
-        return view('service.servicereqbrowse', [
-            'showasset' => $asset, 'dept' => $datadepart,
-            'wotype' => $wotype, 'impact' => $impact, 'fc' => $fcode, 'dataapp' => $dataapp
-        ]);
+        DB::table('service_req_mstr')
+            ->where('sr_number', '=', $srnbr)
+            ->update([
+                'sr_wotype'       => $wotype,
+                'sr_failurecode1' => isset($failcode[0]) ? $failcode[0] : null,
+                'sr_failurecode2' => isset($failcode[1]) ? $failcode[1] : null,
+                'sr_failurecode3' => isset($failcode[2]) ? $failcode[2] : null,
+                'sr_impact'       => $eimpactlist,
+                'sr_priority'     => $priority,
+                'sr_note'         => $note,
+                'sr_date'         => $reqdate,
+                'sr_time'         => $reqtime,
+                'sr_status'       => 1,
+                'sr_approver'     => $approver,
+                'sr_updated_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                'sr_access'       => 0
+            ]);
+
+        toast('Service Request ' . $srnbr . ' successfully updated', 'success');
+        return back();
     }
 
     public function approval(Request $req)
@@ -445,7 +478,8 @@ class ServiceController extends Controller
                 DB::table('service_req_mstr')
                     ->where('sr_number', '=', $srnumber)
                     ->update([
-                        'sr_status' => '4',
+                        // 'sr_status' => '4',
+                        'sr_status' => '9',
                         'rejectnote' => $req->rejectreason,
                         'sr_access' => 0,
                     ]);
@@ -900,10 +934,19 @@ class ServiceController extends Controller
         $ceksrfile = DB::table(('service_req_upload'))
             ->get();
 
+        $dataapp = DB::table('eng_mstr')
+            ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'eng_mstr.eng_dept')
+            ->selectRaw('dept_mstr.*,eng_mstr.*')
+            ->where('eng_active', '=', 'Yes')
+            ->where('approver', '=', 1)
+            ->groupBy('eng_dept')
+            ->orderBy('eng_code')
+            ->get();
+
         return view('service.servicereqbrowse', [
             'datas' => $data, 'asset' => $datasset, 'fromhome' => '',
-            'users' => $datauser, 'ceksrfile' => $ceksrfile, 'fcode' => $fcode, 
-            'wotype' => $wotype, 'impact' => $impact
+            'users' => $datauser, 'ceksrfile' => $ceksrfile, 'fcode' => $fcode,
+            'wotype' => $wotype, 'impact' => $impact, 'dataapp' => $dataapp
         ]);
     }
 
