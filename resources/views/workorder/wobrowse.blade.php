@@ -947,12 +947,16 @@ div #munculgambar .gambar:hover{
           </div>
         </div>
         <div class="form-group row">
-
-            <label for="v_reportnote" class="col-md-2 col-form-label text-md-left">Reporting Note</label>
-            <div class="col-md-4">
-              <textarea id="v_reportnote" class="form-control v_reportnote" name="v_reportnote" autofocus readonly></textarea>
-            </div>
-
+          <label for="v_reportnote" class="col-md-2 col-form-label text-md-left">Reporting Note</label>
+          <div class="col-md-4">
+            <textarea id="v_reportnote" class="form-control v_reportnote" name="v_reportnote" autofocus readonly></textarea>
+          </div>
+          <label for="v_qcnote" class="col-md-2 col-form-label text-md-left">QC Note</label>
+          <div class="col-md-4">
+            <textarea id="v_qcnote" readonly class="form-control" name="v_qcnote"></textarea>
+          </div>
+        </div>
+        <div class="form-group row">
           <div id="divunconf" style="display: none;">
             <label for="v_unconfirm" class="col-md-2 col-form-label text-md-left">Uncomplete reason</label>
             <div class="col-md-4">
@@ -2262,6 +2266,7 @@ div #munculgambar .gambar:hover{
         var vimpactdesc = result[0].wo_impact_desc;
         var vwottype = result[0].wo_new_type + ' -- ' + result[0].wotyp_desc;
         var mtcby = result[0].asset_daya;
+        var qcnote = result[0].wo_qc_appnote;
 
         var fclist = "";
 
@@ -2420,6 +2425,7 @@ div #munculgambar .gambar:hover{
           document.getElementById('divunconf').style.display = 'none';
         }
         document.getElementById('v_reportnote').value = apprnote;
+        document.getElementById('v_qcnote').value = qcnote;
       },
 
       complete: function(vamp) {

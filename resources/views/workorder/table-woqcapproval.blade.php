@@ -2,6 +2,7 @@
 <tr>
     <td>{{ $datas->wo_nbr }}</td>
     <td style="text-align: left;">{{ $datas->asset_code }} -- {{ $datas->asset_desc }}</td>
+    <td style="text-align: left;">{{ $datas->asset_loc }} -- {{ $datas->asloc_desc }}</td>
     <td style="text-align: center;">{{ $datas->wo_status }}</td>
     <td style="text-align: center;">{{ $datas->wo_priority }}</td>
     <td style="text-align: center;">

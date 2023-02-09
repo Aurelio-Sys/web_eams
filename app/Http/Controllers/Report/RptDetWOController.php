@@ -135,11 +135,13 @@ class RptDetWOController extends Controller
         }
 
         /* Mencari data sparepart yang belum ada wo detail nya */
-        $datawo = DB::table('wo_mstr')->whereNotIn('wo_nbr', function($q){
+        $datawo = DB::table('wo_mstr')
+            // ->where('wo_nbr','=','PM-23-004839')
+            ->whereNotIn('wo_nbr', function($q){
                 $q->select('wo_dets_nbr')->from('wo_dets');
             })
             ->get();
-
+        // dd($datawo);
         foreach($datawo as $do) {
             if ($do->wo_repair_code1 != "") {
 
@@ -165,7 +167,7 @@ class RptDetWOController extends Controller
                     ->join('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
                     ->where('wo_id', '=', $do->wo_id)
                     ->get();
-
+                // dd($sparepart1);
                 $combineSP = $sparepart1;
                 $rc = $rc1;
             }
@@ -253,7 +255,7 @@ class RptDetWOController extends Controller
                     ->get();
             }
         }
-        
+        // dd($combineSP);
         foreach($combineSP as $dc){
             DB::table('temp_wo')->insert([
                 'temp_wo' => $dc->wo_nbr,
@@ -284,12 +286,14 @@ class RptDetWOController extends Controller
         }
 
         $datatemp = DB::table('temp_wo')
+        // ->where('temp_wo','=','PM-23-004839')
         ->orderBy('temp_create_date','desc')
         ->orderBy('temp_wo','desc');
         // dd($datatemp->get());
 
         if($request->s_nomorwo) {
             $datatemp = $datatemp->where('temp_wo','like','%'.$request->s_nomorwo.'%');
+            // dd($datatemp);
         }
         if($request->s_asset) {
             $datatemp = $datatemp->where('temp_asset','=',$request->s_asset);

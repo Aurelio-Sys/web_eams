@@ -121,12 +121,12 @@
     <thead>
       <tr style="text-align: center;">
         <th width="10%">SR Number</th>
-        <th width="7%">SR Date</th>
         <th width="25%">Asset</th>
         <th width="10%">Location</th>
-        <th width="10%">Requested by</th>
-        <th width="15%">Note</th>
         <th width="7%">Priority</th>
+        <th width="10%">Req by</th>
+        <th width="7%">Req Date</th>
+        <th width="15%">Note</th>
         <th width="7%">Action</th>
       </tr>
     </thead>
@@ -192,6 +192,8 @@
             <label for="assetloc" class="col-md-5 col-form-label text-md-right">Location</label>
             <div class="col-md-6">
               <input id="assetloc" type="text" class="form-control" name="assetloc" autocomplete="off" autofocus readonly />
+              <input id="h_assetsite" type="hidden" name="h_assetsite"/>
+              <input id="h_assetloc" type="hidden" name="h_assetloc"/>
             </div>
           </div>
           <!-- <div class="form-group row">
@@ -704,6 +706,8 @@
       var impact = $(this).data('impactcode');
       // alert(impact);
       var assetloc = $(this).data('assetloc');
+      var hassetsite = $(this).data('hassetsite');
+      var hassetloc = $(this).data('hassetloc');
       var astype = $(this).data('astypedesc');
       var impactcode1 = $(this).data('impactcode');
 
@@ -767,6 +771,8 @@
       document.getElementById('wotype').value = wotype;
       document.getElementById('impactcode1').value = impactcode1;
       document.getElementById('assetloc').value = assetloc;
+      document.getElementById('h_assetsite').value = hassetsite;
+      document.getElementById('h_assetloc').value = hassetloc;
 
       // document.getElementById('failurecode1').value = failurecode1;
       // document.getElementById('failurecode2').value = failurecode2;
