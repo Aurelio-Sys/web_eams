@@ -250,6 +250,7 @@ div #munculgambar .gambar:hover{
 
           <input type="hidden" id="hide_site" name="hide_site" />
           <input type="hidden" id="hide_loc" name="hie_loc" />
+          <input type="hidden" id="hide_assetgroup" />
 
           <div class="form-group row col-md-12" id="cdevwotype">
             <label for="cwotype" class="col-md-5 col-form-label text-md-left">WO Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
@@ -296,6 +297,10 @@ div #munculgambar .gambar:hover{
             <div class="col-md-7 col-sm-12">
               <select class="form-control" id="c_failuretype" name="c_failuretype" required>
                 <option></option>
+                @foreach($wottype as $wotypeshow)
+                  <option value="{{$wotypeshow->wotyp_code}}">{{$wotypeshow->wotyp_code}} -- {{$wotypeshow->wotyp_desc}}</option>
+                @endforeach
+              </select>
               </select>
             </div>
           </div>
@@ -552,6 +557,9 @@ div #munculgambar .gambar:hover{
             <div class="col-md-7">
               <select name="e_wottype" class="form-control" id="e_wottype" required>
                 <option></option>
+                @foreach($wottype as $wotypeshow)
+                  <option value="{{$wotypeshow->wotyp_code}}">{{$wotypeshow->wotyp_code}} -- {{$wotypeshow->wotyp_desc}}</option>
+                @endforeach
               </select>
             </div>
           </div>
@@ -560,9 +568,14 @@ div #munculgambar .gambar:hover{
             <div class="col-md-7 col-sm-12">
               <select class="form-control" id="m_failurecode" name="m_failurecode[]" multiple="multiple" required>
                 <option></option>
+                @foreach($failure as $fcshow)
+                <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}}</option>
+                @endforeach
               </select>
             </div>
           </div>
+
+          <input type="hidden" id="hide_editassetgroup"/>
           <div class="form-group row justify-content-center e_impactdiv" id="e_impactdiv">
             <label for="e_impact" class="col-md-5 col-form-label text-md-left">Impact <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-7">
@@ -1886,330 +1899,27 @@ div #munculgambar .gambar:hover{
     }
   });
 
+  $(document).on('change', '#e_wottype', function(){
+      // console.log('masuk');
+      var getAssetG = document.getElementById('hide_editassetgroup').value;
+      var getType = $(this).val();
 
-  $(document).on('click', '.editwo2', function() {
-    $('#loadingtable').modal('show');
-    // alert('aaa');
-    var wonbr = $(this).data('wonbr');
-    var btnendel1 = document.getElementById("btndeleteen1");
-    var btnendel2 = document.getElementById("btndeleteen2");
-    var btnendel3 = document.getElementById("btndeleteen3");
-    var btnendel4 = document.getElementById("btndeleteen4");
-    var btnendel5 = document.getElementById("btndeleteen5");
-    var counter = document.getElementById('counter').value;
-    var counterfail = document.getElementById('counterfail').value;
-    $.ajax({
-      url: '/womaint/getnowo?nomorwo=' + wonbr,
-      success: function(vamp) {
-        var tempres = JSON.stringify(vamp);
-        var result = JSON.parse(tempres);
-        // console.log(result);
-        var wonbr = result[0].wo_nbr;
-        var srnbr = result[0].wo_sr_nbr;
-        var en1val = result[0].woen1;
-        var en2val = result[0].woen2;
-        var en3val = result[0].woen3;
-        var en4val = result[0].woen4;
-        var en5val = result[0].woen5;
-        var asset = result[0].wo_asset;
-        var assdesc = result[0].asset_desc;
-        var schedule = result[0].wo_schedule;
-        var duedate = result[0].wo_duedate;
-        var fc1 = result[0].wofc1;
-        var fc2 = result[0].wofc2;
-        var fc3 = result[0].wofc3;
-        var fn1 = result[0].fd1;
-        var fn2 = result[0].fd2;
-        var fn3 = result[0].fd3;
-        var prio = result[0].wo_priority;
-        var wodept = result[0].wo_dept;
-        var note = result[0].wo_note;
-        var rc1 = result[0].rr11;
-        var rc2 = result[0].rr22;
-        var rc3 = result[0].rr33;
-        var wostatus = result[0].wo_status;
-        var rprstatus = result[0].wo_repair_type;
-        var rprgroup = result[0].wo_repair_group;
-        var loccode = result[0].loc_code;
-        var locdesc = result[0].loc_desc;
-        var astypecode = result[0].astype_code;
-        var astypedesc = result[0].astype_desc;
-        var eimpact = result[0].wo_impact;
-        var eimpactdesc = result[0].wo_impact_desc;
-        var ewottype = result[0].wo_new_type;
-        var assetgroup = result[0].asset_group;
-        // console.log(assetgroup);
-        // console.log(rc1);
-        // console.log(rc2);
-        console.log(duedate);
+      // console.log(getAssetG);
+      // console.log(getType);
+      $.ajax({
+            url: "/checkfailurecodetype",
+            data: {
+              group: getAssetG,
+              type: getType,
 
-        $.ajax({
-              url: "/checkfailurecodetype",
-              data: {
-                group: assetgroup,
-              },
-              success: function(data) {
-                var type = data.optionfailtype;
-                var code = data.optionfailcode;
+            },
+            success: function(data) {
+              var code = data.optionfailcode;
 
-                $('#e_wottype').html(type);
-                $('#m_failurecode').html(code);
-              }
-        })
-
-        var newarrimp = [];
-        if (eimpact != null && eimpactdesc != null) {
-          var arrimpact = eimpact.split(';');
-          var arrimpactdesc = eimpactdesc.split(';');
-          for (var r = 0; r <= (arrimpact.length - 1); r++) {
-            if (arrimpact[r] != '') {
-              newarrimp.push(arrimpact[r]);
+              $('#m_failurecode').html('');
+              $('#m_failurecode').html(code);
             }
-          }
-        }
-
-        // console.log(newarrimp);
-
-        
-
-        var newarrfc = [];
-
-        if(fc1 != null){
-          newarrfc.push(fc1);
-        }
-
-        if(fc2 != null){
-          newarrfc.push(fc2);
-        }
-
-        if(fc3 != null){
-          newarrfc.push(fc3);
-        }
-
-        // console.log(newarrfc);
-
-        document.getElementById('statusedit').value = wostatus;
-
-        if (en1val == null || en1val == '') {
-          en1val = '';
-        } else {
-          document.getElementById('diven1').style.display = '';
-          counter = 1;
-        }
-
-        if (en2val == null || en2val == '') {
-          en2val = '';
-          document.getElementById('diven2').style.display = 'none';
-        } else {
-          document.getElementById('diven2').style.display = '';
-          counter = 2;
-        }
-        if (en3val == null || en3val == '') {
-          en3val = '';
-          document.getElementById('diven3').style.display = 'none';
-        } else {
-          document.getElementById('diven3').style.display = '';
-          counter = 3;
-        }
-
-        if (en4val == null || en4val == '') {
-          en4val = '';
-          document.getElementById('diven4').style.display = 'none';
-        } else {
-          document.getElementById('diven4').style.display = '';
-          counter = 4;
-        }
-
-        if (en5val == null || en5val == '') {
-          en5val = '';
-          document.getElementById('diven5').style.display = 'none';
-        } else {
-          document.getElementById('diven5').style.display = '';
-          counter = 5;
-        }
-        var arrrc = [];
-        if (rc1 != null) {
-          arrrc.push(rc1);
-        }
-        if (rc2 != null) {
-          arrrc.push(rc2);
-        }
-        if (rc3 != null) {
-          arrrc.push(rc3);
-        }
-
-        document.getElementById('counter').value = counter;
-        document.getElementById('e_nowo').value = wonbr;
-        document.getElementById('e_nosr').value = srnbr;
-        document.getElementById('e_schedule').value = schedule;
-        document.getElementById('e_duedate').value = duedate;
-        document.getElementById('e_engineer1').value = en1val;
-        document.getElementById('e_engineer2').value = en2val;
-        document.getElementById('e_engineer3').value = en3val;
-        document.getElementById('e_engineer4').value = en4val;
-        document.getElementById('e_engineer5').value = en5val;
-        document.getElementById('e_impact').selectedIndex = newarrimp;
-        $('#e_impact').val(newarrimp);
-        $('#e_impact').trigger('change');
-        document.getElementById('e_wottype').value = ewottype;
-        //$('#e_wottype').val(ewottype);
-        // $('#e_wottype').trigger('change');
-
-        document.getElementById('m_failurecode').selectedIndex = newarrfc;
-        $('#m_failurecode').val(newarrfc);
-        $('#m_failurecode').trigger('change');
-
-
-        document.getElementById('e_asset').value = asset + ' -- ' + assdesc;
-        document.getElementById('e_assethid').value = asset;
-        document.getElementById('e_note').value = note;
-        document.getElementById('counterfail').value = counterfail;
-        document.getElementById('e_priority').value = prio;
-        // document.getElementById('e_department').value = wodept;
-        // console.log(arrrc);
-        if (rprstatus == 'code') {
-          document.getElementById('eargcheck').checked = false;
-          document.getElementById('earccheck').checked = true;
-          // console.log(arrrc); 
-          document.getElementById('erepaircodediv').style.display = '';
-          document.getElementById('erepairgroupdiv').style.display = 'none';
-          document.getElementById('erepairgroup').value = null;
-          $("#erepairgroup").val(null).trigger('change');
-          $("#erepaircode").val(arrrc).trigger('change');
-          document.getElementById('repairtypeedit').value = 'code';
-        } else if (rprstatus == 'group') {
-          document.getElementById('eargcheck').checked = true;
-          document.getElementById('earccheck').checked = false;
-          document.getElementById('erepaircodediv').style.display = 'none';
-          document.getElementById('erepairgroupdiv').style.display = '';
-          $("#erepaircode").val(null).trigger('change');
-          $("#erepairgroup").val(rprgroup).trigger('change');
-          document.getElementById('repairtypeedit').value = 'group';
-
-        }
-        if (counter == 5) {
-          document.getElementById('e_addeng').style.display = 'none';
-        } else {
-          document.getElementById('e_addeng').style.display = '';
-        }
-
-        for (var f = 1; f <= counter; f++) {
-          $('#e_engineer' + f).attr('required', true);
-        }
-        var sisaeng = 5 - counterfail;
-        if (sisaeng != 0) {
-          for (var s = counter + 1; s <= 5; s++) {
-            $('#e_engineer' + s).attr('required', false);
-          }
-        }
-
-        if (wostatus == 'plan') {
-          
-          if (counterfail == 0) {
-            // document.getElementById('divfail1').style.display = '';
-            counterfail = 1
-          }
-          if (counter == 0) {
-            counter = 1;
-            document.getElementById('diven1').style.display = '';
-          }
-
-        } else if (wostatus == 'open') {
-          document.getElementById('edevrepairtype').style.display = '';
-        }
-
-        if (counter > 1) {
-          var deletecount = 'btndeleteen' + counter;
-          document.getElementById(deletecount).style.display = '';
-        }
-        // alert(arrrc);
-        $("#erepaircode").select2({
-          width: '100%',
-          placeholder: "Select Repair Code",
-          maximumSelectionLength: 3,
-          closeOnSelect: false,
-          allowClear: true,
-          arrrc,
-        });
-        // $('#e_repaircode').val(arrrc).trigger('change');
-
-        $('#e_wottype').select2({
-          width: '100%',
-          theme: 'bootstrap4',
-          ewottype,
-        });
-
-        $('#e_impact').select2({
-          placeholder: "Select Value",
-          width: '100%',
-          closeOnSelect: false,
-          allowClear: true,
-          newarrimp,
-        });
-
-        $('#m_failurecode').select2({
-          placeholder: "Select Failure Code",
-          width : '100%',
-          closeOnSelect: false,
-          allowClear: true,
-          maximumSelectionLength : 3,
-        });
-
-        $('#erepairgroup').select2({
-          placeholder: '--Select Repair Group--',
-          width: '100%',
-          closeOnSelect: true,
-          repairgroup
-        })
-
-        $('#e_engineer1').select2({
-          theme: 'bootstrap4',
-          width: '100%',
-          en1val,
-        });
-        $('#e_engineer2').select2({
-          theme: 'bootstrap4',
-          width: '100%',
-          en2val,
-        });
-
-        $('#e_engineer3').select2({
-          theme: 'bootstrap4',
-          width: '100%',
-          en3val,
-        });
-        $('#e_engineer4').select2({
-          theme: 'bootstrap4',
-          width: '100%',
-          en4val,
-        });
-        $('#e_engineer5').select2({
-          theme: 'bootstrap4',
-          width: '100%',
-          en5val,
-        });
-
-        // $('#e_department').select2({
-        //   theme: 'bootstrap4',
-        //   width:'100%',
-        //   wodept,
-        // });
-      },
-      complete: function(vamp) {
-        //  $('.modal-backdrop').modal('hide');
-        // alert($('.modal-backdrop').hasClass('in'));
-
-        setTimeout(function() {
-          $('#loadingtable').modal('hide');
-        }, 500);
-
-
-        setTimeout(function() {
-          $('#editModal').modal('show');
-        }, 1000);
-
-      }
-    })
+      })
   });
 
   $(document).on('click', '.viewwo', function() {
@@ -2654,6 +2364,29 @@ div #munculgambar .gambar:hover{
   //   });
   // });
   $(document).ready(function(){
+      $(document).on('change', '#c_failuretype', function(){
+        var getAssetG = document.getElementById('hide_assetgroup').value;
+        var getType = $(this).val();
+
+        // console.log(getAssetG);
+        // console.log(getType);
+        $.ajax({
+              url: "/checkfailurecodetype",
+              data: {
+                group: getAssetG,
+                type: getType,
+
+              },
+              success: function(data) {
+                // var type = data.optionfailtype;
+                var code = data.optionfailcode;
+
+                // $('#c_failuretype').html(type);
+                $('#failurecode').html('');
+                $('#failurecode').html(code);
+              }
+        })
+      });
 
       $(document).on('change', '#c_asset', function() {
         // document.getElementById('womanualchoose').style.display = '';
@@ -2665,19 +2398,9 @@ div #munculgambar .gambar:hover{
 
         var selectedAsset = $(this).find("option:selected").data("assetgroup");
 
-        $.ajax({
-              url: "/checkfailurecodetype",
-              data: {
-                group: selectedAsset,
-              },
-              success: function(data) {
-                var type = data.optionfailtype;
-                var code = data.optionfailcode;
-
-                $('#c_failuretype').html(type);
-                $('#failurecode').html(code);
-              }
-        })
+        document.getElementById('hide_assetgroup').value = selectedAsset;
+        $('#failurecode').html('');
+        document.getElementById('c_failuretype').value = '';
         
         var assetval = document.getElementById('c_asset').value;
 
@@ -2733,6 +2456,330 @@ div #munculgambar .gambar:hover{
           multiple : true,
         });
 
+      });
+
+      $(document).on('click', '.editwo2', function() {
+        $('#loadingtable').modal('show');
+        // alert('aaa');
+        var wonbr = $(this).data('wonbr');
+        var btnendel1 = document.getElementById("btndeleteen1");
+        var btnendel2 = document.getElementById("btndeleteen2");
+        var btnendel3 = document.getElementById("btndeleteen3");
+        var btnendel4 = document.getElementById("btndeleteen4");
+        var btnendel5 = document.getElementById("btndeleteen5");
+        var counter = document.getElementById('counter').value;
+        var counterfail = document.getElementById('counterfail').value;
+
+        $.ajax({
+          url: '/womaint/getnowo?nomorwo=' + wonbr,
+          success: function(vamp) {
+            var tempres = JSON.stringify(vamp);
+            var result = JSON.parse(tempres);
+            // console.log(result);
+            var wonbr = result[0].wo_nbr;
+            var srnbr = result[0].wo_sr_nbr;
+            var en1val = result[0].woen1;
+            var en2val = result[0].woen2;
+            var en3val = result[0].woen3;
+            var en4val = result[0].woen4;
+            var en5val = result[0].woen5;
+            var asset = result[0].wo_asset;
+            var assdesc = result[0].asset_desc;
+            var schedule = result[0].wo_schedule;
+            var duedate = result[0].wo_duedate;
+            var fc1 = result[0].wofc1;
+            var fc2 = result[0].wofc2;
+            var fc3 = result[0].wofc3;
+            var fn1 = result[0].fd1;
+            var fn2 = result[0].fd2;
+            var fn3 = result[0].fd3;
+            var prio = result[0].wo_priority;
+            var wodept = result[0].wo_dept;
+            var note = result[0].wo_note;
+            var rc1 = result[0].rr11;
+            var rc2 = result[0].rr22;
+            var rc3 = result[0].rr33;
+            var wostatus = result[0].wo_status;
+            var rprstatus = result[0].wo_repair_type;
+            var rprgroup = result[0].wo_repair_group;
+            var loccode = result[0].loc_code;
+            var locdesc = result[0].loc_desc;
+            var astypecode = result[0].astype_code;
+            var astypedesc = result[0].astype_desc;
+            var eimpact = result[0].wo_impact;
+            var eimpactdesc = result[0].wo_impact_desc;
+            var ewottype = result[0].wo_new_type;
+            var assetgroup = result[0].asset_group;
+
+            document.getElementById('e_wottype').value = ewottype;
+
+            document.getElementById('hide_editassetgroup').value = assetgroup;
+            $.ajax({
+                  url: "/checkfailurecodetype",
+                  data: {
+                    group: assetgroup,
+                    type: ewottype,
+                  },
+                  success: function(data) {
+                    var code = data.optionfailcode;
+                    // console.log(code);
+                    // $('#m_failurecode').html('');
+                    $('#m_failurecode').html(code);
+
+                  }
+            })
+
+            var newarrimp = [];
+            if (eimpact != null && eimpactdesc != null) {
+              var arrimpact = eimpact.split(';');
+              var arrimpactdesc = eimpactdesc.split(';');
+              for (var r = 0; r <= (arrimpact.length - 1); r++) {
+                if (arrimpact[r] != '') {
+                  newarrimp.push(arrimpact[r]);
+                }
+              }
+            }
+
+            // console.log(newarrimp);
+
+            var newarrfc = [];
+
+            if(fc1 != null){
+              newarrfc.push(fc1);
+            }
+
+            if(fc2 != null){
+              newarrfc.push(fc2);
+            }
+
+            if(fc3 != null){
+              newarrfc.push(fc3);
+            }
+
+            document.getElementById('m_failurecode').selectedIndex = newarrfc;
+            // console.log(newarrfc);
+            $('#m_failurecode').val(newarrfc);
+            $('#m_failurecode').trigger('change');
+
+            
+
+            // console.log(newarrfc);
+
+            document.getElementById('statusedit').value = wostatus;
+
+            if (en1val == null || en1val == '') {
+              en1val = '';
+            } else {
+              document.getElementById('diven1').style.display = '';
+              counter = 1;
+            }
+
+            if (en2val == null || en2val == '') {
+              en2val = '';
+              document.getElementById('diven2').style.display = 'none';
+            } else {
+              document.getElementById('diven2').style.display = '';
+              counter = 2;
+            }
+            if (en3val == null || en3val == '') {
+              en3val = '';
+              document.getElementById('diven3').style.display = 'none';
+            } else {
+              document.getElementById('diven3').style.display = '';
+              counter = 3;
+            }
+
+            if (en4val == null || en4val == '') {
+              en4val = '';
+              document.getElementById('diven4').style.display = 'none';
+            } else {
+              document.getElementById('diven4').style.display = '';
+              counter = 4;
+            }
+
+            if (en5val == null || en5val == '') {
+              en5val = '';
+              document.getElementById('diven5').style.display = 'none';
+            } else {
+              document.getElementById('diven5').style.display = '';
+              counter = 5;
+            }
+            var arrrc = [];
+            if (rc1 != null) {
+              arrrc.push(rc1);
+            }
+            if (rc2 != null) {
+              arrrc.push(rc2);
+            }
+            if (rc3 != null) {
+              arrrc.push(rc3);
+            }
+
+            document.getElementById('counter').value = counter;
+            document.getElementById('e_nowo').value = wonbr;
+            document.getElementById('e_nosr').value = srnbr;
+            document.getElementById('e_schedule').value = schedule;
+            document.getElementById('e_duedate').value = duedate;
+            document.getElementById('e_engineer1').value = en1val;
+            document.getElementById('e_engineer2').value = en2val;
+            document.getElementById('e_engineer3').value = en3val;
+            document.getElementById('e_engineer4').value = en4val;
+            document.getElementById('e_engineer5').value = en5val;
+            document.getElementById('e_impact').selectedIndex = newarrimp;
+            $('#e_impact').val(newarrimp);
+            $('#e_impact').trigger('change');
+
+            document.getElementById('e_asset').value = asset + ' -- ' + assdesc;
+            document.getElementById('e_assethid').value = asset;
+            document.getElementById('e_note').value = note;
+            document.getElementById('counterfail').value = counterfail;
+            document.getElementById('e_priority').value = prio;
+            // document.getElementById('e_department').value = wodept;
+            // console.log(arrrc);
+            if (rprstatus == 'code') {
+              document.getElementById('eargcheck').checked = false;
+              document.getElementById('earccheck').checked = true;
+              // console.log(arrrc); 
+              document.getElementById('erepaircodediv').style.display = '';
+              document.getElementById('erepairgroupdiv').style.display = 'none';
+              document.getElementById('erepairgroup').value = null;
+              $("#erepairgroup").val(null).trigger('change');
+              $("#erepaircode").val(arrrc).trigger('change');
+              document.getElementById('repairtypeedit').value = 'code';
+            } else if (rprstatus == 'group') {
+              document.getElementById('eargcheck').checked = true;
+              document.getElementById('earccheck').checked = false;
+              document.getElementById('erepaircodediv').style.display = 'none';
+              document.getElementById('erepairgroupdiv').style.display = '';
+              $("#erepaircode").val(null).trigger('change');
+              $("#erepairgroup").val(rprgroup).trigger('change');
+              document.getElementById('repairtypeedit').value = 'group';
+
+            }
+            if (counter == 5) {
+              document.getElementById('e_addeng').style.display = 'none';
+            } else {
+              document.getElementById('e_addeng').style.display = '';
+            }
+
+            for (var f = 1; f <= counter; f++) {
+              $('#e_engineer' + f).attr('required', true);
+            }
+            var sisaeng = 5 - counterfail;
+            if (sisaeng != 0) {
+              for (var s = counter + 1; s <= 5; s++) {
+                $('#e_engineer' + s).attr('required', false);
+              }
+            }
+
+            if (wostatus == 'plan') {
+              
+              if (counterfail == 0) {
+                // document.getElementById('divfail1').style.display = '';
+                counterfail = 1
+              }
+              if (counter == 0) {
+                counter = 1;
+                document.getElementById('diven1').style.display = '';
+              }
+
+            } else if (wostatus == 'open') {
+              document.getElementById('edevrepairtype').style.display = '';
+            }
+
+            if (counter > 1) {
+              var deletecount = 'btndeleteen' + counter;
+              document.getElementById(deletecount).style.display = '';
+            }
+            // alert(arrrc);
+            $("#erepaircode").select2({
+              width: '100%',
+              placeholder: "Select Repair Code",
+              maximumSelectionLength: 3,
+              closeOnSelect: false,
+              allowClear: true,
+              arrrc,
+            });
+            // $('#e_repaircode').val(arrrc).trigger('change');
+
+            $('#e_wottype').select2({
+              width: '100%',
+              theme: 'bootstrap4',
+              ewottype,
+            });
+
+            $('#e_impact').select2({
+              placeholder: "Select Value",
+              width: '100%',
+              closeOnSelect: false,
+              allowClear: true,
+              newarrimp,
+            });
+
+            $('#m_failurecode').select2({
+              placeholder: "Select Failure Code",
+              width : '100%',
+              closeOnSelect: false,
+              allowClear: true,
+              maximumSelectionLength : 3,
+              newarrfc
+            });
+
+            $('#erepairgroup').select2({
+              placeholder: '--Select Repair Group--',
+              width: '100%',
+              closeOnSelect: true,
+              repairgroup
+            })
+
+            $('#e_engineer1').select2({
+              theme: 'bootstrap4',
+              width: '100%',
+              en1val,
+            });
+            $('#e_engineer2').select2({
+              theme: 'bootstrap4',
+              width: '100%',
+              en2val,
+            });
+
+            $('#e_engineer3').select2({
+              theme: 'bootstrap4',
+              width: '100%',
+              en3val,
+            });
+            $('#e_engineer4').select2({
+              theme: 'bootstrap4',
+              width: '100%',
+              en4val,
+            });
+            $('#e_engineer5').select2({
+              theme: 'bootstrap4',
+              width: '100%',
+              en5val,
+            });
+
+            // $('#e_department').select2({
+            //   theme: 'bootstrap4',
+            //   width:'100%',
+            //   wodept,
+            // });
+          },
+          complete: function(vamp) {
+            //  $('.modal-backdrop').modal('hide');
+            // alert($('.modal-backdrop').hasClass('in'));
+
+            setTimeout(function() {
+              $('#loadingtable').modal('hide');
+            }, 500);
+
+
+            setTimeout(function() {
+              $('#editModal').modal('show');
+            }, 1000);
+
+          }
+        })
       });
 
   });

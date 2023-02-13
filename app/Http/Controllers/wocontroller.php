@@ -266,8 +266,8 @@ class wocontroller extends Controller
             $impact = DB::table('imp_mstr')
                 ->get();
             $wottype = DB::table('wotyp_mstr')
-                ->leftJoin('asfn_det','asfn_det.asfn_fntype','wotyp_mstr.wotyp_code')
-                ->groupBy('asfn_asset','asfn_fntype')
+                // ->leftJoin('asfn_det','asfn_det.asfn_fntype','wotyp_mstr.wotyp_code')
+                // ->groupBy('asfn_asset','asfn_fntype')
                 ->get();
 
             // dd($wottype);
@@ -2060,7 +2060,7 @@ class wocontroller extends Controller
             ->where('wo_mstr.wo_nbr', '=', $nowo)
             ->get();
         
-        // dd($data);
+        // dd($data->first()->asset_group,$data->first()->wo_new_type);
 
         $data_alldets = DB::table('wo_dets')
             ->select('wo_dets_nbr', 'wo_dets_rc', 'repm_desc','wo_dets_do_flag','wo_dets_flag')
@@ -2071,18 +2071,18 @@ class wocontroller extends Controller
 
         $asfn_det = DB::table('asfn_det')
             ->where('asfn_asset','=', $data->first()->asset_group)
+            ->where('asfn_fntype','=', $data->first()->wo_new_type)
             ->count();
 
         if($asfn_det > 0){
             $fc = DB::table('fn_mstr')
             ->leftJoin('asfn_det','asfn_det.asfn_fncode','fn_mstr.fn_code')
             ->where('asfn_asset','=', $data->first()->asset_group)
+            ->where('asfn_fntype','=', $data->first()->wo_new_type)
             ->groupBy('asfn_fncode')
             ->get(); 
         }else{
             $fc = DB::table('fn_mstr')
-            ->leftJoin('asfn_det','asfn_det.asfn_fncode','fn_mstr.fn_code')
-            ->groupBy('asfn_fncode')
             ->get();  
         }
 
@@ -4518,28 +4518,31 @@ class wocontroller extends Controller
 
     public function checkfailurecodetype(Request $req){
         $assetgroup = $req->group;
+        $getType = $req->type;
 
         $asfn_det = DB::table('asfn_det')
                     ->where('asfn_asset','=',$assetgroup)
+                    ->where('asfn_fntype','=',$getType)
                     ->count();
 
         if($asfn_det > 0){
             //jika ada
-            $fntype = DB::table('wotyp_mstr')
-                ->leftJoin('asfn_det','asfn_det.asfn_fntype','wotyp_mstr.wotyp_code')
-                ->where('asfn_asset','=', $assetgroup)
-                ->groupBy('asfn_asset','asfn_fntype')
-                ->get();
+            // $fntype = DB::table('wotyp_mstr')
+            //     ->leftJoin('asfn_det','asfn_det.asfn_fntype','wotyp_mstr.wotyp_code')
+            //     ->where('asfn_asset','=', $assetgroup)
+            //     ->groupBy('asfn_asset','asfn_fntype')
+            //     ->get();
 
             $failure = DB::table('fn_mstr')
                 ->leftJoin('asfn_det','asfn_det.asfn_fncode','fn_mstr.fn_code')
                 ->where('asfn_asset','=', $assetgroup)
+                ->where('asfn_fntype','=',$getType)
                 ->groupBy('asfn_fncode')
                 ->get();    
         }else{
             //jika tidak ada
-            $fntype = DB::table('wotyp_mstr')
-                ->get();
+            // $fntype = DB::table('wotyp_mstr')
+            //     ->get();
 
             $failure = DB::table('fn_mstr')
                 ->get();    
@@ -4547,10 +4550,10 @@ class wocontroller extends Controller
         }
 
 
-        $outputtype = "";
-        foreach($fntype as $thistype ){
-            $outputtype .= '<option value="'.$thistype->wotyp_code.'"> '.$thistype->wotyp_code.' -- '.$thistype->wotyp_desc.'</option>';
-        }
+        // $outputtype = "";
+        // foreach($fntype as $thistype ){
+        //     $outputtype .= '<option value="'.$thistype->wotyp_code.'"> '.$thistype->wotyp_code.' -- '.$thistype->wotyp_desc.'</option>';
+        // }
 
         $outputcode = "";
         foreach($failure as $thiscode){
@@ -4558,7 +4561,7 @@ class wocontroller extends Controller
         }
 
         return response()->json([
-            'optionfailtype' => $outputtype,
+            // 'optionfailtype' => $outputtype,
             'optionfailcode' => $outputcode,
         ]);
     }
