@@ -22,7 +22,7 @@
         <select id="assetcode" name="assetcode" class="form-control" required>
           <option value="">-- Select Asset Code --</option>
           @foreach($showasset as $show)
-          <option value="{{$show->asset_code}}">{{$show->asset_code.' -- '.$show->asset_desc." -- ".$show->asloc_desc}}</option>
+          <option value="{{$show->asset_code}}" data-assetgroup="{{$show->asset_group}}">{{$show->asset_code.' -- '.$show->asset_desc." -- ".$show->asloc_desc}}</option>
           @endforeach
         </select>
       </div>
@@ -44,9 +44,6 @@
       <div class="col-md-5 col-sm-12">
         <select class="form-control" id="wotype" name="wotype" required>
           <option></option>
-          @foreach($wotype as $wotypeshow)
-          <option value="{{$wotypeshow->wotyp_code}}">{{$wotypeshow->wotyp_code}} -- {{$wotypeshow->wotyp_desc}}</option>
-          @endforeach
         </select>
       </div>
     </div>
@@ -55,9 +52,6 @@
       <div class="col-md-5 col-sm-12">
         <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple" required>
           <option></option>
-          @foreach($fc as $fcshow)
-          <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}} -- {{$fcshow->fn_impact}}</option>
-          @endforeach
         </select>
       </div>
     </div>
@@ -243,6 +237,24 @@
       closeOnSelect: false,
       allowClear: true,
       multiple: true,
+    });
+  });
+
+  $("#assetcode").change(function() {
+    var selectedAsset = $(this).find("option:selected").data("assetgroup");
+    // alert(selectedasset);
+    $.ajax({
+      url: "/servicerequest",
+      data: {
+        group: selectedAsset
+      },
+      success: function(data) {
+        var type = data.optionfailtype;
+        var code = data.optionfailcode;
+
+        $('#wotype').html(type);
+        $('#failurecode').html(code);
+      }
     });
   });
 

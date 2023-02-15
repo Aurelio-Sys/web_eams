@@ -57,37 +57,29 @@ class ServiceController extends Controller
     }
 
 
-    public function servicerequest() /* route : servicerequest  blade : servicerequest_create */
+    public function servicerequest(Request $req) /* route : servicerequest  blade : servicerequest_create */
     {
         /* Jika admin, data asset akan muncul semua, jika bukan akan muncul asset sesuai dengan departemen. kode lokasi = kode depatemen */
         if (Session::get('role') == 'ADMIN') {
             $asset = DB::table('asset_mstr')
-            ->leftJoin('asset_loc', 'asloc_code', '=', 'asset_loc')
-            ->where('asset_active', '=', 'Yes')
-            ->orderBy('asset_code')
-            ->get();
+                ->leftJoin('asset_loc', 'asloc_code', '=', 'asset_loc')
+                ->where('asset_active', '=', 'Yes')
+                ->orderBy('asset_code')
+                ->get();
         } else {
             $asset = DB::table('asset_mstr')
-            ->leftJoin('asset_loc', 'asloc_code', '=', 'asset_loc')
-            ->where('asset_active', '=', 'Yes')
-            ->where('asset_loc','=',session::get('department'))
-            ->orderBy('asset_code')
-            ->get();
+                ->leftJoin('asset_loc', 'asloc_code', '=', 'asset_loc')
+                ->where('asset_active', '=', 'Yes')
+                ->where('asset_loc', '=', session::get('department'))
+                ->orderBy('asset_code')
+                ->get();
         }
 
         $datadepart = DB::table('dept_mstr')
             ->get();
 
-        $wotype = DB::table('wotyp_mstr')
-            ->orderBy('wotyp_code')
-            ->get();
-
         $impact = DB::table('imp_mstr')
             ->orderBy('imp_code')
-            ->get();
-
-        $fcode = DB::table('fn_mstr')
-            ->orderBy('fn_code')
             ->get();
 
         $dataapp = DB::table('eng_mstr')
@@ -98,12 +90,61 @@ class ServiceController extends Controller
             ->groupBy('eng_dept')
             ->orderBy('eng_code')
             ->get();
-        
+
+        // Default Value Failure Type dan Code
+        if ($req->ajax()) {
+            $assetgroup = $req->get('group');
+
+            $asfn_det = DB::table('asfn_det')
+                ->where('asfn_asset', '=', $assetgroup)
+                ->count();
+
+            if ($asfn_det > 0) {
+                //jika ada failure type dan code yang sudah didaftarkan di menu Mapping Asset - Failure Maintenance
+                $wotype = DB::table('wotyp_mstr')
+                    ->leftJoin('asfn_det', 'asfn_det.asfn_fntype', 'wotyp_mstr.wotyp_code')
+                    ->where('asfn_asset', '=', $assetgroup)
+                    ->groupBy('asfn_asset', 'asfn_fntype')
+                    ->get();
+
+                $fcode = DB::table('fn_mstr')
+                    ->leftJoin('asfn_det', 'asfn_det.asfn_fncode', 'fn_mstr.fn_code')
+                    ->where('asfn_asset', '=', $assetgroup)
+                    ->groupBy('asfn_fncode')
+                    ->get();
+            } else {
+                //jika tidak ada
+                $wotype = DB::table('wotyp_mstr')
+                    ->get();
+
+                $fcode = DB::table('fn_mstr')
+                    ->get();
+            }
+
+            $outputtype = "";
+            $outputtype .= '<option value="">test</option>';
+            foreach ($wotype as $thistype) {
+                $outputtype .= '<option value="' . $thistype->wotyp_code . '"> ' . $thistype->wotyp_code . ' -- ' . $thistype->wotyp_desc . '</option>';
+            }
+
+            $outputcode = "";
+            foreach ($fcode as $thiscode) {
+                $outputcode .= '<option value="' . $thiscode->fn_code . '"> ' . $thiscode->fn_code . ' -- ' . $thiscode->fn_desc . '</option>';
+            }
+
+            return response()->json([
+                'optionfailtype' => $outputtype,
+                'optionfailcode' => $outputcode,
+            ]);
+        }
+
+
         return view('service.servicerequest_create', [
             'showasset' => $asset, 'dept' => $datadepart,
-            'wotype' => $wotype, 'impact' => $impact, 'fc' => $fcode, 'dataapp' => $dataapp
+            'impact' => $impact, 'dataapp' => $dataapp
         ]);
     }
+
 
     public function failuresearch(Request $req)
     {
@@ -161,7 +202,7 @@ class ServiceController extends Controller
             $runnumber = DB::table('dept_mstr')
                 ->where('dept_code', '=', session::get('department'))
                 ->first();
-           
+
             $newyear = Carbon::now()->format('y');
 
             if ($runnumber->dept_running_nbr == null) {
