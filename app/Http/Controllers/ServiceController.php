@@ -82,6 +82,9 @@ class ServiceController extends Controller
             ->orderBy('imp_code')
             ->get();
 
+        $wotype = DB::table('wotyp_mstr')
+            ->get();
+
         $dataapp = DB::table('eng_mstr')
             ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'eng_mstr.eng_dept')
             ->selectRaw('dept_mstr.*,eng_mstr.*')
@@ -94,6 +97,7 @@ class ServiceController extends Controller
         // Default Value Failure Type dan Code
         if ($req->ajax()) {
             $assetgroup = $req->get('group');
+            $failtype = $req->get('type');
 
             $asfn_det = DB::table('asfn_det')
                 ->where('asfn_asset', '=', $assetgroup)
@@ -101,31 +105,32 @@ class ServiceController extends Controller
 
             if ($asfn_det > 0) {
                 //jika ada failure type dan code yang sudah didaftarkan di menu Mapping Asset - Failure Maintenance
-                $wotype = DB::table('wotyp_mstr')
-                    ->leftJoin('asfn_det', 'asfn_det.asfn_fntype', 'wotyp_mstr.wotyp_code')
-                    ->where('asfn_asset', '=', $assetgroup)
-                    ->groupBy('asfn_asset', 'asfn_fntype')
-                    ->get();
+                // $wotype = DB::table('wotyp_mstr')
+                //     ->leftJoin('asfn_det', 'asfn_det.asfn_fntype', 'wotyp_mstr.wotyp_code')
+                //     ->where('asfn_asset', '=', $assetgroup)
+                //     ->groupBy('asfn_asset', 'asfn_fntype')
+                //     ->get();
 
                 $fcode = DB::table('fn_mstr')
                     ->leftJoin('asfn_det', 'asfn_det.asfn_fncode', 'fn_mstr.fn_code')
                     ->where('asfn_asset', '=', $assetgroup)
+                    ->where('asfn_fntype', '=', $failtype)
                     ->groupBy('asfn_fncode')
                     ->get();
             } else {
                 //jika tidak ada
-                $wotype = DB::table('wotyp_mstr')
-                    ->get();
+                // $wotype = DB::table('wotyp_mstr')
+                //     ->get();
 
                 $fcode = DB::table('fn_mstr')
                     ->get();
             }
 
             $outputtype = "";
-            $outputtype .= '<option value="">test</option>';
-            foreach ($wotype as $thistype) {
-                $outputtype .= '<option value="' . $thistype->wotyp_code . '"> ' . $thistype->wotyp_code . ' -- ' . $thistype->wotyp_desc . '</option>';
-            }
+            // $outputtype .= '<option value="">test</option>';
+            // foreach ($wotype as $thistype) {
+            //     $outputtype .= '<option value="' . $thistype->wotyp_code . '"> ' . $thistype->wotyp_code . ' -- ' . $thistype->wotyp_desc . '</option>';
+            // }
 
             $outputcode = "";
             foreach ($fcode as $thiscode) {
@@ -133,14 +138,14 @@ class ServiceController extends Controller
             }
 
             return response()->json([
-                'optionfailtype' => $outputtype,
+                // 'optionfailtype' => $outputtype,
                 'optionfailcode' => $outputcode,
             ]);
         }
 
 
         return view('service.servicerequest_create', [
-            'showasset' => $asset, 'dept' => $datadepart,
+            'showasset' => $asset, 'dept' => $datadepart,  'wotype' => $wotype,
             'impact' => $impact, 'dataapp' => $dataapp
         ]);
     }

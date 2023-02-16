@@ -27,6 +27,7 @@
         </select>
       </div>
     </div>
+    <input type="hidden" id="hide_assetgroup" />
     <div class="form-group row">
       <label for="t_date" class="col-md-2 col-lg-3 col-form-label my-auto">Request Date<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
       <div class="col-md-2 col-sm-12">
@@ -44,6 +45,9 @@
       <div class="col-md-5 col-sm-12">
         <select class="form-control" id="wotype" name="wotype" required>
           <option></option>
+          @foreach($wotype as $wotypeshow)
+          <option value="{{$wotypeshow->wotyp_code}}">{{$wotypeshow->wotyp_code}} -- {{$wotypeshow->wotyp_desc}}</option>
+          @endforeach
         </select>
       </div>
     </div>
@@ -242,20 +246,36 @@
 
   $("#assetcode").change(function() {
     var selectedAsset = $(this).find("option:selected").data("assetgroup");
+
+    document.getElementById('hide_assetgroup').value = selectedAsset;
+    $('#failurecode').html('');
+    document.getElementById('wotype').value = '';
     // alert(selectedasset);
+
+    var assetval = document.getElementById('assetcode').value;
+
+
+  });
+
+  $(document).on('change', '#wotype', function() {
+    var assetGroup = document.getElementById('hide_assetgroup').value;
+    var failType = $(this).val();
     $.ajax({
       url: "/servicerequest",
       data: {
-        group: selectedAsset
+        group: assetGroup,
+        type: failType
       },
       success: function(data) {
-        var type = data.optionfailtype;
+        // var type = data.optionfailtype;
         var code = data.optionfailcode;
 
-        $('#wotype').html(type);
+        // $('#wotype').html(type);
+        $('#failurecode').html('');
         $('#failurecode').html(code);
       }
     });
+
   });
 
   // $('input').on('input', function(){
