@@ -22,11 +22,12 @@
         <select id="assetcode" name="assetcode" class="form-control" required>
           <option value="">-- Select Asset Code --</option>
           @foreach($showasset as $show)
-          <option value="{{$show->asset_code}}">{{$show->asset_code.' -- '.$show->asset_desc." -- ".$show->asloc_desc}}</option>
+          <option value="{{$show->asset_code}}" data-assetgroup="{{$show->asset_group}}">{{$show->asset_code.' -- '.$show->asset_desc." -- ".$show->asloc_desc}}</option>
           @endforeach
         </select>
       </div>
     </div>
+    <input type="hidden" id="hide_assetgroup" />
     <div class="form-group row">
       <label for="t_date" class="col-md-2 col-lg-3 col-form-label my-auto">Request Date<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
       <div class="col-md-2 col-sm-12">
@@ -55,9 +56,6 @@
       <div class="col-md-5 col-sm-12">
         <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple" required>
           <option></option>
-          @foreach($fc as $fcshow)
-          <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}} -- {{$fcshow->fn_impact}}</option>
-          @endforeach
         </select>
       </div>
     </div>
@@ -244,6 +242,40 @@
       allowClear: true,
       multiple: true,
     });
+  });
+
+  $("#assetcode").change(function() {
+    var selectedAsset = $(this).find("option:selected").data("assetgroup");
+
+    document.getElementById('hide_assetgroup').value = selectedAsset;
+    $('#failurecode').html('');
+    document.getElementById('wotype').value = '';
+    // alert(selectedasset);
+
+    var assetval = document.getElementById('assetcode').value;
+
+
+  });
+
+  $(document).on('change', '#wotype', function() {
+    var assetGroup = document.getElementById('hide_assetgroup').value;
+    var failType = $(this).val();
+    $.ajax({
+      url: "/servicerequest",
+      data: {
+        group: assetGroup,
+        type: failType
+      },
+      success: function(data) {
+        // var type = data.optionfailtype;
+        var code = data.optionfailcode;
+
+        // $('#wotype').html(type);
+        $('#failurecode').html('');
+        $('#failurecode').html(code);
+      }
+    });
+
   });
 
   // $('input').on('input', function(){

@@ -55,58 +55,59 @@
     .select2-results__option--disabled {
       color: grey !important;
     }
+
   }
 </style>
 <div class="container-fluid mb-2">
   <div class="row">
     <div class="col-md-12">
       <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
-    </div>  
+    </div>
   </div>
   <!-- Element div yang akan collapse atau expand -->
   <div class="collapse" id="collapseExample">
-      <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
-      <div class="card card-body bg-black rounded-0">
-        <div class="col-12 form-group row">
-          <!--FORM Search Disini-->
-          <label for="s_servicenbr" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Service Request Number') }}</label>
-          <div class="col-md-3 col-sm-4 mb-2 input-group">
-            <!-- <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off"> -->
-            <select id="s_servicenbr" name="s_servicenbr" class="form-control" value="" autofocus autocomplete="off">
-              <option value="">--Select SR Number--</option>
-              @foreach($datasrnbr as $srnbr)
-              <option value="{{$srnbr->sr_number}}">{{$srnbr->sr_number}}</option>
-              @endforeach
-            </select>
-          </div>
-          <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Asset Code') }}</label>
-          <div class="col-md-3 col-sm-4 mb-2 input-group">
-            <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
-              <option value="">--Select Asset--</option>
-              @foreach($asset as $show)
-              <option value="{{$show->asset_desc}}">{{$show->asset_desc}}</option>
-              @endforeach
-            </select>
-          </div>
+    <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+    <div class="card card-body bg-black rounded-0">
+      <div class="col-12 form-group row">
+        <!--FORM Search Disini-->
+        <label for="s_servicenbr" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Service Request Number') }}</label>
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+          <!-- <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off"> -->
+          <select id="s_servicenbr" name="s_servicenbr" class="form-control" value="" autofocus autocomplete="off">
+            <option value="">--Select SR Number--</option>
+            @foreach($datasrnbr as $srnbr)
+            <option value="{{$srnbr->sr_number}}">{{$srnbr->sr_number}}</option>
+            @endforeach
+          </select>
         </div>
-        <div class="col-12 form-group row">
-          <!--FORM Search Disini-->
-          <label for="s_priority" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Priority') }}</label>
-          <div class="col-md-3 col-sm-4 mb-2 input-group">
-            <select id="s_priority" name="s_priority" class="form-control" value="" autofocus autocomplete="off">
-              <option value="">--Select Priority--</option>
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </div>
-          <label for="s_period" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('') }}</label>
-          <div class="col-md-3 col-sm-4 mb-2 input-group">
-            <input type="button" class="btn btn-primary" id="btnsearch" value="Search" style="float:right" />
-            <button type="button" class="btn btn-primary ml-2" id="btnrefresh"><i class="fas fa-redo-alt"></i></button>
-          </div>
-        </div>          
+        <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Asset Code') }}</label>
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+          <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
+            <option value="">--Select Asset--</option>
+            @foreach($asset as $show)
+            <option value="{{$show->asset_desc}}">{{$show->asset_desc}}</option>
+            @endforeach
+          </select>
+        </div>
       </div>
+      <div class="col-12 form-group row">
+        <!--FORM Search Disini-->
+        <label for="s_priority" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Priority') }}</label>
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+          <select id="s_priority" name="s_priority" class="form-control" value="" autofocus autocomplete="off">
+            <option value="">--Select Priority--</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        <label for="s_period" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('') }}</label>
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+          <input type="button" class="btn btn-primary" id="btnsearch" value="Search" style="float:right" />
+          <button type="button" class="btn btn-primary ml-2" id="btnrefresh"><i class="fas fa-redo-alt"></i></button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -192,8 +193,8 @@
             <label for="assetloc" class="col-md-5 col-form-label text-md-right">Location</label>
             <div class="col-md-6">
               <input id="assetloc" type="text" class="form-control" name="assetloc" autocomplete="off" autofocus readonly />
-              <input id="h_assetsite" type="hidden" name="h_assetsite"/>
-              <input id="h_assetloc" type="hidden" name="h_assetloc"/>
+              <input id="h_assetsite" type="hidden" name="h_assetsite" />
+              <input id="h_assetloc" type="hidden" name="h_assetloc" />
             </div>
           </div>
           <!-- <div class="form-group row">
@@ -754,7 +755,7 @@
       })
 
       // alert(assetdesc);
-    
+
 
 
       // alert(impactcode1);
