@@ -2683,7 +2683,6 @@ class wocontroller extends Controller
                 }
 
                 $testarray = $collection->toArray();
-
                 // dd(gettype($collection));
                 // dd('stop');
 
@@ -2698,19 +2697,20 @@ class wocontroller extends Controller
                             'wo_dets_flag' => $testarray[$k_all]['result'],
                             'wo_dets_do_flag' => $testarray[$k_all]['do'],
                             'wo_dets_fu_note' => $testarray[$k_all]['note'],
-                            'wo_dets_qty_used' => $testarray[$k_all]['qtyused'],
+                            'wo_dets_qty_used' => DB::raw('CASE WHEN wo_dets_qty_used IS NULL THEN '.$testarray[$k_all]['qtyused'].' ELSE wo_dets_qty_used + '.$testarray[$k_all]['qtyused'].' END'),
                             'wo_dets_sp_price' => $testarray[$k_all]['cost'] ? $testarray[$k_all]['cost']:0,
+                            'wo_dets_used_tmp' => $testarray[$k_all]['qtyused'],
                         ]);
                 }
                 
 
                 /* get data buat qxtend issue unplanned */
                 $dataqxtend = DB::table('wo_dets')
-                    ->select('wo_dets_nbr', 'wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc','wo_dets_wh_tosite','wo_dets_wh_toloc','spm_desc','spm_um','wo_dets_wh_qty', DB::raw('SUM(wo_dets_qty_used) as qtytoqx', DB::raw('SUM(wo_dets_wh_qty) as qtywh')))
-                    ->join('sp_mstr','wo_dets.wo_dets_sp','sp_mstr.spm_code')
-                    ->where('wo_dets_nbr', '=', $req->c_wonbr)
-                    ->groupBy('wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc')
-                    ->get();
+                            ->select('wo_dets_nbr', 'wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc','wo_dets_wh_tosite','wo_dets_wh_toloc','spm_desc','spm_um','wo_dets_wh_qty', DB::raw('SUM(wo_dets_qty_used) as qtytoqx'), DB::raw('SUM(wo_dets_wh_qty) as qtywh'), DB::raw('SUM(wo_dets_used_tmp) as qtynow'))
+                            ->join('sp_mstr','wo_dets.wo_dets_sp','sp_mstr.spm_code')
+                            ->where('wo_dets_nbr', '=', $req->c_wonbr)
+                            ->groupBy('wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc')
+                            ->get();
 
                 // dd($dataqxtend);
 
@@ -2822,18 +2822,63 @@ class wocontroller extends Controller
 
                     $qdocBody = '';
                     foreach ($dataqxtend as $dtqx) {
-                        // dump($dtqx);
 
-                        if($dtqx->qtytoqx > 0 ){
+                        if($dtqx->qtynow > 0 ){
                             $qdocBody .= ' <inventoryIssue>
                                 <ptPart>' . $dtqx->wo_dets_sp . '</ptPart>
-                                <lotserialQty>' . $dtqx->qtytoqx . '</lotserialQty>
+                                <lotserialQty>' . $dtqx->qtynow . '</lotserialQty>
                                 <site>' . $dtqx->wo_dets_wh_tosite . '</site>
                                 <location>' . $dtqx->wo_dets_wh_toloc . '</location>
                                 <ordernbr>' . $dtqx->wo_dets_nbr . '</ordernbr>
                             </inventoryIssue>';
+
+                            //cek apakah masih ada sisa ?
+                            $sisaqty = $dtqx->qtywh - $dtqx->qtytoqx;
+
+                            if($sisaqty > 0 ){
+                                $cek_returnbacksp = DB::table('returnback_sp')
+                                                ->where('rb_wonbr','=', $dtqx->wo_dets_nbr)
+                                                ->where('rb_spcode','=', $dtqx->wo_dets_sp)
+                                                ->exists();
+
+                                $getuserinput = DB::table('wo_mstr')
+                                                ->select('wo_user_input')
+                                                ->where('wo_nbr','=', $dtqx->wo_dets_nbr)
+                                                ->first();
+
+                                if($cek_returnbacksp){ //kalau sudah ada
+                                    
+                                    DB::table('returnback_sp')
+                                        ->where('rb_wonbr','=', $dtqx->wo_dets_nbr)
+                                        ->where('rb_spcode','=', $dtqx->wo_dets_sp)
+                                        ->update([
+                                            'rb_qtyeng' => $dtqx->qtywh,
+                                            'rb_qtyactual' =>$dtqx->qtytoqx,
+                                            'rb_qtyreturnback' => $sisaqty,
+                                        ]);
+                                    
+                                }else{
+                                    // dd('inser data baru ke returnback sp');
+                                    DB::table('returnback_sp')
+                                        ->insert([
+                                            'rb_wonbr' => $dtqx->wo_dets_nbr,
+                                            'rb_spcode' => $dtqx->wo_dets_sp,
+                                            'rb_spdesc' => $dtqx->spm_desc,
+                                            'rb_sp_um' => $dtqx->spm_um,
+                                            'rb_sitefrom' => $dtqx->wo_dets_wh_site,
+                                            'rb_locfrom' => $dtqx->wo_dets_wh_loc,
+                                            'rb_siteto' => $dtqx->wo_dets_wh_tosite,
+                                            'rb_locto' => $dtqx->wo_dets_wh_tosite,
+                                            'rb_qtyeng' => $dtqx->qtywh,
+                                            'rb_qtyactual' => $dtqx->qtytoqx,
+                                            'rb_qtyreturnback' => $sisaqty,
+                                            'rb_user' => $getuserinput->wo_user_input,
+                                        ]);
+                                }
+                            }
                         }
                     }
+
                     $qdocfooter =   '</dsInventoryIssue>
                                 </issueInventory>
                             </soapenv:Body>
@@ -4452,12 +4497,24 @@ class wocontroller extends Controller
 
     public function returnsp (Request $req){
         if(Session::get('role') == 'ADMIN'){
+            // $data = DB::table('wo_mstr')
+            //     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+            //     ->where('wo_status','=','closed')
+            //     ->orderby('wo_created_at', 'desc')
+            //     ->orderBy('wo_mstr.wo_id', 'desc')
+            //     ->paginate(10);
+
             $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-                ->where('wo_status','=','closed')
-                ->orderby('wo_created_at', 'desc')
-                ->orderBy('wo_mstr.wo_id', 'desc')
-                ->paginate(10);
+                ->join('returnback_sp', 'wo_mstr.wo_nbr', '=', 'returnback_sp.rb_wonbr')
+                ->where('wo_mstr.wo_status','=','closed')
+                ->where('returnback_sp.rb_qtyreturnback', '>', 0)
+                ->select('wo_mstr.*', 'returnback_sp.*');
+
+            $data = $data->groupBy('wo_nbr');
+
+            $data = $data->orderBy('wo_nbr','desc')->paginate(10);
+
+            // dd($data);
 
             $engineer = DB::table('users')
                 ->join('roles', 'users.role_user', 'roles.role_code')
@@ -4474,19 +4531,24 @@ class wocontroller extends Controller
                 ->orderBy('asset_code')
                 ->get();
         }else{
+            // $data = DB::table('wo_mstr')
+            //     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+            //     ->where('wo_status','=','closed')
+            //     ->where('wo_user_input','=', Session::get('username'))
+            //     ->orderby('wo_created_at', 'desc')
+            //     ->orderBy('wo_mstr.wo_id', 'desc')
+            //     ->paginate(10);
+
             $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-                ->where('wo_status','=','closed')
-                ->where(function ($query) {
-                    $query->where('wo_engineer1', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer5', '=', Session()->get('username'));
-                })
-                ->orderby('wo_created_at', 'desc')
-                ->orderBy('wo_mstr.wo_id', 'desc')
-                ->paginate(10);
+                ->join('returnback_sp', 'wo_mstr.wo_nbr', '=', 'returnback_sp.rb_wonbr')
+                ->where('wo_mstr.wo_status','=','closed')
+                ->where('returnback_sp.rb_qtyreturnback', '>', 0)
+                ->where('wo_user_input','=', Session::get('username'))
+                ->select('wo_mstr.*', 'returnback_sp.*');
+
+            $data = $data->groupBy('wo_nbr');
+
+            $data = $data->orderBy('wo_nbr','desc')->paginate(10);
             // dd($data);
             // }
             // dd($data);
@@ -4513,7 +4575,7 @@ class wocontroller extends Controller
                 ->get();
         }
 
-        return view('workorder.wostart', ['data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset]);
+        return view('workorder.returnbacksp-browse', ['data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset]);
     }
 
     public function checkfailurecodetype(Request $req){

@@ -249,7 +249,7 @@ div #munculgambar .gambar:hover{
           </div>
 
           <input type="hidden" id="hide_site" name="hide_site" />
-          <input type="hidden" id="hide_loc" name="hie_loc" />
+          <input type="hidden" id="hide_loc" name="hide_loc" />
           <input type="hidden" id="hide_assetgroup" />
 
           <div class="form-group row col-md-12" id="cdevwotype">

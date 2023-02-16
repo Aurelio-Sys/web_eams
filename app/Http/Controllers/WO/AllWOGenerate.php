@@ -208,6 +208,8 @@ class AllWOGenerate extends Controller
                         'wo_asset' => $getmaster_asset->asset_code,
                         'wo_dept' => 'ENG', // Hardcode
                         'wo_type'  => 'auto', // Hardcode
+                        'wo_asset_site' => $getmaster_asset->asset_site,
+                        'wo_asset_loc' => $getmaster_asset->asset_loc,
                         'wo_schedule' => $showdata['next_woschedule'],
                         'wo_duedate' => $showdata['next_woschedule'],
                         'wo_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
