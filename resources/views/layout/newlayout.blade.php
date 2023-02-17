@@ -302,7 +302,7 @@ to get the desired effect
                 <li class="nav-item">
                   <a href="/returnbacksp" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>WO Return SP</p>
+                      <p>Return Spare Part</p>
                   </a>
                 </li>
                 @endif

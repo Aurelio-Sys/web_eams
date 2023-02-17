@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-9">
-            <h1 class="m-0 text-dark">Return Back Spare Part Browse</h1>
+            <h1 class="m-0 text-dark">Return Spare Part Browse</h1>
         </div><!-- /.col -->
     </div><!-- /.row -->
 </div><!-- /.container-fluid -->
@@ -20,7 +20,7 @@
             <tr style="text-align: center;">
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="10%">WO Number<span id="name_icon"></span></th>
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="40%">Asset<span id="username_icon"></span></th>
-                <th class="sorting" data-sorting_type="asc" data-column_name="wo_schedule" width="10%">Finish Date<span id="name_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_schedule" width="20%">Finish Date<span id="name_icon"></span></th>
                 <th width="10%">Action</th>
             </tr>
         </thead>
