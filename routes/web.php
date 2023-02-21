@@ -614,7 +614,9 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/editdetailasfn', [AsfnController::class, 'editdetailasfn']);
 
 	//Return Back Spare Part
-	Route::get('/returnbacksp', [wocontroller::class, 'returnsp']);
+	Route::get('/returnbacksp', [wocontroller::class, 'returnsp'])->name('returnSPBrowse');
+	Route::get('/retrunbacksp/detail/{wonbr}', [wocontroller::class, 'returnsp_detail'])->name('RBDetail');
+	Route::post('/returnbacksp/submitdata', [wocontroller::class, 'submit_returnback']);
 
 	//cek failure code dan failure type
 	Route::get('/checkfailurecodetype',[wocontroller::class, 'checkfailurecodetype']);

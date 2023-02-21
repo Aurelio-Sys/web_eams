@@ -239,7 +239,7 @@
                                     <th style="border:2px solid;width:10%">
                                         <p style="height:100%">Spare Part</p>
                                     </th>
-                                    <th style="border:2px solid;width:20%">
+                                    <th style="border:2px solid;width:30%">
                                         <p style="height:100%">Description</p>
                                     </th>
                                     <th style="border:2px solid;width:5%">
@@ -253,6 +253,9 @@
                                     </th>
                                     <th style="border:2px solid; width: 10%;">
                                         <p style="height:100%">Qty Confirmed</p>
+                                    </th>
+                                    <th style="border:2px solid; width: 10%;">
+                                        <p style="height:100%">Qty Already Issued</p>
                                     </th>
                                 </tr>
                             </thead>
@@ -291,6 +294,10 @@
                                     </td>
                                     <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
                                         {{($spdet->wo_dets_wh_qty != null) ? $spdet->wo_dets_wh_qty : '0' }}
+                                    </td>
+                                    <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
+                                        {{($spdet->wo_dets_qty_used != null) ? $spdet->wo_dets_qty_used : '0' }}
+                                        <input type="hidden" name="qtyalreadyused[]" value"{{($spdet->wo_dets_qty_used != null) ? $spdet->wo_dets_qty_used : '0'}}"/>
                                     </td>
                                 </tr>
                                 @endif

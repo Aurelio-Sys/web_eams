@@ -574,8 +574,6 @@ class WHSConfirm extends Controller
                 }
             } /* endif($qx->count()) */ 
 
-            DB::commit();
-
             $cekpartial = DB::table('wo_dets')
                         ->where('wo_dets_nbr', $req->hide_wonum)
                         ->where('wo_dets_wh_qx', 'no')
@@ -588,6 +586,8 @@ class WHSConfirm extends Controller
             }else{
                 $thisstatus = "Complete";
             }
+
+            DB::commit();
 
             toast('Confirm '.$thisstatus.' Successfuly !', 'success');
             return redirect()->route('browseWhconfirm');

@@ -336,6 +336,7 @@ class WORelease extends Controller
                 ->where('wo_nbr', '=', $req->hide_wonum)
                 ->update([
                     'wo_status' => 'Released',
+                    'wo_user_input' => Session::get('username'),
                     'wo_updated_at' => Carbon::now()->toDateTimeString(),
                 ]);
 
@@ -359,6 +360,7 @@ class WORelease extends Controller
                 ->where('wo_nbr', '=', $req->hide_wonum)
                 ->update([
                     'wo_status' => 'open',
+                    'wo_user_input' => Session::get('username'),
                     'wo_updated_at' => Carbon::now()->toDateTimeString(),
                 ]);
             }
