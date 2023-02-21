@@ -176,7 +176,7 @@ class EmailScheduleJobs implements ShouldQueue
             $emails = substr($emails, 0, strlen($emails) - 1);
     
             $array_email = explode(',', $emails);
-// dd($emailto);
+
             if($emailto->count())
             //kirim email ke kepala engineer
             Mail::send('emailwo',
@@ -263,6 +263,8 @@ class EmailScheduleJobs implements ShouldQueue
 					$i++;
 				}
 
+                dd($listto);
+
 				// Kirim Email
 				Mail::send('emailwo', 
 					['pesan' => 'Notifikasi New Work Order',
@@ -292,57 +294,57 @@ class EmailScheduleJobs implements ShouldQueue
                 }
 					
 			}
-		}
-        else if($a == 5){
-			$wo = $this->wo;
-			$asset = $this->asset;
-			$flag = $this->a;
+		
+        }else if($a == 5){
+                $wo = $this->wo;
+                $asset = $this->asset;
+                $flag = $this->a;
 
-            $data = DB::table('eng_mstr')
-                        ->join('users','eng_mstr.eng_code','=','users.username')
-                        ->where('approver','=','1')
-                        ->get();
+                $data = DB::table('eng_mstr')
+                            ->join('users','eng_mstr.eng_code','=','users.username')
+                            ->where('approver','=','1')
+                            ->get();
 
-			
-			$listto = [];
-			$i = 0;
-			if($data->count() > 0){
-			
-				foreach($data as $data1){
-					$listto[$i] = $data1->eng_email;
-					$i++;
-				}
-
-				// Kirim Email
-				Mail::send('emailwo', 
-					['pesan' => 'Notifikasi New Work Order Direct',
-					'note1' => $wo,
-					'note2' => $asset,
-					'header1' => 'Work Order'],
-					function ($message) use ($wo,$listto)
-					{
-						$message->subject('eAMS - New Work Order Direct');
-						// $message->from('andrew@ptimi.co.id'); // Email Admin Fix
-						$message->to(array_filter($listto));
-					});
-					
-
-                foreach($data as $data){
-                    $user = App\User::where('id','=', $data->id)->first(); 
-                    $details = [
-                                'body' => 'There is new WO that created directly',
-                                'url' => 'wobrowse',
-                                'nbr' => $wo,
-                                'note' => 'Please check'
-            
-                    ]; // isi data yang dioper
                 
+                $listto = [];
+                $i = 0;
+                if($data->count() > 0){
                 
-                    $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
+                    foreach($data as $data1){
+                        $listto[$i] = $data1->eng_email;
+                        $i++;
+                    }
+
+                    // Kirim Email
+                    Mail::send('emailwo', 
+                        ['pesan' => 'Notifikasi New Work Order Direct',
+                        'note1' => $wo,
+                        'note2' => $asset,
+                        'header1' => 'Work Order'],
+                        function ($message) use ($wo,$listto)
+                        {
+                            $message->subject('eAMS - New Work Order Direct');
+                            // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
+                            $message->to(array_filter($listto));
+                        });
+                        
+
+                    foreach($data as $data){
+                        $user = App\User::where('id','=', $data->id)->first(); 
+                        $details = [
+                                    'body' => 'There is new WO that created directly',
+                                    'url' => 'wobrowse',
+                                    'nbr' => $wo,
+                                    'note' => 'Please check'
+                
+                        ]; // isi data yang dioper
+                    
+                    
+                        $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
+                    }
+                        
                 }
-					
-			}
-		} else if($a == 6) { //kirim email ke user ketika reviewer WO diapprove atau reject
+        }else if($a == 6){ //kirim email ke user ketika reviewer WO diapprove atau reject
             $nomorwo = $this->wo;
             $srnumber =  $this->srnumber;
 
@@ -362,7 +364,7 @@ class EmailScheduleJobs implements ShouldQueue
                         // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
                         $message->to($emailuser->email_user);
                     });
-//dd('tyas');
+
             $user = App\User::where('id','=', $emailuser->id)->first(); 
             $details = [
                         'body' => 'Service Request Rejected',
