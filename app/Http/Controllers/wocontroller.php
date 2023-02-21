@@ -4074,6 +4074,14 @@ class wocontroller extends Controller
 
         // }
 
+        $womstr = DB::table('wo_mstr')
+            ->where('wo_nbr', '=', $wo)
+            ->leftjoin('users', 'wo_mstr.wo_creator', 'users.username')
+            ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
+            ->leftJoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+            ->leftJoin('wotyp_mstr', 'wo_mstr.wo_new_type', 'wotyp_mstr.wotyp_code')
+            ->first();
+
         $datasr = DB::table('service_req_mstr')
             ->whereWo_number($wo)
             ->selectRaw('fn1.fn_desc as fn1, fn2.fn_desc as fn2, fn3.fn_desc as fn3, dept_desc, eng_desc, sr_number, sr_wotype, sr_dept,
@@ -4102,10 +4110,10 @@ class wocontroller extends Controller
 
         if ($statusrepair->wo_repair_type == 'manual') {
             // $pdf = PDF::loadview('workorder.pdfprint2-template', ['wotype' => $wotype, 'data' => $data, 'datamanual' => $datamanual, 'counter' => 0, 'countdb' => $countdb, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
-            $pdf = PDF::loadview('workorder.pdfprint-template', ['datasr' => $datasr, 'impact' => $impact, 'dept' => $dept, 'wotype' => $wotype, 'data' => $data, 'datamanual' => $datamanual, 'counter' => 0, 'countdb' => $countdb, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
+            $pdf = PDF::loadview('workorder.pdfprint-template', ['womstr' => $womstr, 'datasr' => $datasr, 'impact' => $impact, 'dept' => $dept, 'wotype' => $wotype, 'data' => $data, 'datamanual' => $datamanual, 'counter' => 0, 'countdb' => $countdb, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
         } else {
             // $pdf = PDF::loadview('workorder.pdfprint2-template', ['wotype' => $wotype, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb, 'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printname' => $printname, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
-            $pdf = PDF::loadview('workorder.pdfprint-template', ['datasr' => $datasr, 'impact' => $impact, 'dept' => $dept, 'wotype' => $wotype, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb, 'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printname' => $printname, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
+            $pdf = PDF::loadview('workorder.pdfprint-template', ['womstr' => $womstr, 'datasr' => $datasr, 'impact' => $impact, 'dept' => $dept, 'wotype' => $wotype, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb, 'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printname' => $printname, 'printdate' => $printdate, 'engineerlist' => $engineerlist])->setPaper('A4', 'portrait');
         }
 
 

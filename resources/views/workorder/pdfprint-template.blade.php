@@ -149,16 +149,15 @@
                 $impc = $impact->where('imp_code', '=', $imp[0]);
                 $impc1 = $impact->where('imp_code', '=', $imp[1]);
                 $impc2 = $impact->where('imp_code', '=', $imp[2]);
-                // dd($womstr->wo_impact);
                 ?>
                 @foreach($impc as $impct)
-                {{$impct->wo_impact_desc}},
+                {{$impct->imp_desc}},
                 @endforeach
                 @foreach($impc1 as $impct)
-                {{$impct->wo_impact_desc}},
+                {{$impct->imp_desc}},
                 @endforeach
                 @foreach($impc2 as $impct)
-                {{$impct->wo_impact_desc}}
+                {{$impct->imp_desc}}
                 @endforeach
                 @elseif (strlen($womstr->wo_impact) >= 6)
                 <?php
@@ -167,10 +166,10 @@
                 $impc1 = $impact->where('imp_code', '=', $imp[1]);
                 ?>
                 @foreach($impc as $impct)
-                {{$impct->wo_impact_desc}},
+                {{$impct->imp_desc}},
                 @endforeach
                 @foreach($impc1 as $impct)
-                {{$impct->wo_impact_desc}},
+                {{$impct->imp_desc}}
                 @endforeach
                 @else
                 {{$womstr->wo_impact_desc}}
