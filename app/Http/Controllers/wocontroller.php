@@ -1168,7 +1168,7 @@ class wocontroller extends Controller
 
         $asset = $req->c_asset . ' - ' . $assettable->asset_desc;
 
-        //EmailScheduleJobs::dispatch($runningnbr, $asset, '1', '', '', '', '');
+        EmailScheduleJobs::dispatch($runningnbr, $asset, '1', '', '', '', '');
 
         toast($runningnbr . ' Successfuly Created !', 'success');
         return back();
