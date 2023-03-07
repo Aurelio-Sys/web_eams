@@ -248,7 +248,7 @@
           @if($womstr->wo_sr_nbr != null)
           {{$datasr->req_by}}
           @else
-          &nbsp;
+          {{$womstr->wo_creator}}
           @endif
         </p>
       </td>
@@ -258,7 +258,7 @@
           @if($womstr->wo_sr_nbr != null)
           {{$datasr->sr_approver}}
           @else
-          &nbsp;
+          {{$womstr->wo_reviewer}}
           @endif
         </p>
       </td>
@@ -285,13 +285,13 @@
                 $dept_appr = $dept->where('dept_code', '=', $womstr->dept_user);
                 ?>
                 @foreach($dept_appr as $dept)
-                {{$dept->dept_desc}} --
+                {{$dept->dept_desc}}
                 @endforeach
-                @if($womstr->wo_sr_nbr != null)
+                <!-- @if($womstr->wo_sr_nbr != null)
                 {{$datasr->sr_approver}}
                 @else
                 &nbsp;
-                @endif
+                @endif -->
               </p>
             </td>
           </tr>
@@ -341,12 +341,18 @@
         <p style=" margin-bottom:0px; margin-top:0px; margin-left: 5px; font-size:12px">
           <span style="padding-bottom: 0px;border-bottom:1px solid black;">Uraian Pemeriksaan</span>:
           <br>
+          @if($womstr != null)
           {{$womstr->wo_note}}
+          @else
+          &nbsp;
+          @endif
         </p>
       </td>
       <td colspan="1" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
         <p style=" margin-bottom:5px; margin-left: 100px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Petugas yang melakukan pemeriksaan,</span></p>
-        <p style=" margin-bottom:5px; margin-left: 100px; margin-top:30px;font-size:12px"></p>
+        <p style=" margin-bottom:5px; margin-left: 100px; margin-top:30px;font-size:12px">
+          {{$womstr->wo_user_input}}
+        </p>
       </td>
     </tr>
     <tr>
@@ -458,11 +464,15 @@
     <tr>
       <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0px; border-top:0.5px solid; border-bottom:2px solid; width:350px">
         <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diselesaikan oleh,</span></p>
-        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px"></p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">
+          {{$womstr->wo_user_input}}
+        </p>
       </td>
       <td colspan="2" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
         <p style=" margin-bottom:5px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Penanggung Jawab,</span></p>
-        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$womstr->wo_approver}}</p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">
+          {{$womstr->wo_reviewer}}
+        </p>
       </td>
     </tr>
     <!-- SERAH TERIMA -->
@@ -481,7 +491,13 @@
               <p style="margin:0;padding:0;font-size:12px"><b>Tanggal & Jam Serah Terima</b></p>
             </td>
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
-              <p style="margin-top: 0px; font-size:12px;">:</p>
+              <p style="margin-top: 0px; font-size:12px;">:
+                @if($womstr->wo_qc_appdate != null)
+                {{date('d/m/Y', strtotime($womstr->wo_qc_appdate))}} & {{date('H:i', strtotime($womstr->wo_qc_appdate))}}
+                @else
+                &nbsp;
+                @endif
+              </p>
             </td>
           </tr>
         </table>
@@ -492,18 +508,34 @@
         <p style=" margin-bottom:0px; margin-top:0px; margin-left: 5px; font-size:12px">
           <b><span style="padding-bottom: 0px;border-bottom:1px solid black;">Uraian</span>:</b>
           <br>
-
+          @if($womstr->wo_qc_appnote != null)
+          {{$womstr->wo_qc_appnote}}
+          @else
+          &nbsp;
+          @endif
         </p>
       </td>
     </tr>
     <tr>
       <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0px; border-top:0.5px solid; border-bottom:2px solid; width:350px">
         <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diserahkan oleh,</span></p>
-        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px"></p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">
+          @if($womstr->wo_qc_approver != null)
+          {{$womstr->wo_qc_approver}}
+          @else
+          &nbsp;
+          @endif
+        </p>
       </td>
       <td colspan="2" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
         <p style=" margin-bottom:5px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Diterima oleh,</span></p>
-        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px"></p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">
+          @if($womstr->wo_sr_nbr != null)
+          {{$datasr->req_by}}
+          @else
+          {{$womstr->wo_creator}}
+          @endif
+        </p>
       </td>
     </tr>
 
