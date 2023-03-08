@@ -377,6 +377,56 @@ class EmailScheduleJobs implements ShouldQueue
         
             $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
 
+        }else if($a == 7){ //kirim email ke engineer yang ditunjuk saat create wo
+            $tampungarray = $this->tampungarray;
+			// dd($tampungarray);
+			$countarray1 = count($tampungarray);
+
+            $list7 = [];
+            
+
+            for($i = 0 ; $i < $countarray1; $i++){
+                $email7 = DB::table('eng_mstr')
+                        ->where('eng_code', '=', $tampungarray[$i])
+                        ->first();
+                $list7[$i] = $email7->eng_email;
+
+            }
+
+            Mail::send('emailwo', 
+                    ['pesan' => 'Notifikasi New Work Order',
+                    'note1' => $wo,
+                    'note2' => $asset,
+                    'header1' => 'WO Number'],
+                    function ($message) use ($wo,$list7)
+                    {
+                        $message->subject('eAMS - New work order');
+                        // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
+                        $message->to(array_filter($list7));
+                    });
+
+                
+            for($x = 0 ; $x < $countarray1; $x++){
+                $email2 = DB::table('eng_mstr')
+                        ->join('users','eng_mstr.eng_code','=','users.username')
+                        ->where('eng_code', '=', $tampungarray[$x])
+                        ->first();
+                                    
+                $user = App\User::where('id','=', $email2->id)->first(); 
+
+                // dd($user);
+                $details = [
+                            'body' => 'There is New WO for you',
+                            'url' => 'wojoblist',
+                            'nbr' => $wo,
+                            'note' => 'Please Check'
+        
+                ]; // isi data yang dioper
+
+                $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
+
+            }
+
         }
 
     }

@@ -1040,28 +1040,36 @@ class wocontroller extends Controller
         }
         // dd($cimpactlist);        
         //dd($req->get('c_engineer')[0]);
+        $listeng = [];
+        
+
         if (array_key_exists(0, $req->get('c_engineer'))) {
             $eng1 = $req->get('c_engineer')[0];
+            array_push($listeng, $eng1);
         } else {
             $eng1 = null;
         }
         if (array_key_exists(1, $req->get('c_engineer'))) {
             $eng2 = $req->get('c_engineer')[1];
+            array_push($listeng, $eng2);
         } else {
             $eng2 = null;
         }
         if (array_key_exists(2, $req->get('c_engineer'))) {
             $eng3 = $req->get('c_engineer')[2];
+            array_push($listeng, $eng3);
         } else {
             $eng3 = null;
         }
         if (array_key_exists(3, $req->get('c_engineer'))) {
             $eng4 = $req->get('c_engineer')[3];
+            array_push($listeng, $eng4);
         } else {
             $eng4 = null;
         }
         if (array_key_exists(4, $req->get('c_engineer'))) {
             $eng5 = $req->get('c_engineer')[4];
+            array_push($listeng, $eng5);
         } else {
             $eng5 = null;
         }
@@ -1098,7 +1106,7 @@ class wocontroller extends Controller
 
 
         $runningnbr = $tablern->wo_prefix . '-' . $newyear . '-' . $newtemprunnbr;
-
+        // dd($eng1,$eng2,$eng3,$eng4,$eng5);
         $dataarray = array(
             'wo_nbr'           => $runningnbr,
             'wo_dept'          => Session::get('department'),
@@ -1168,7 +1176,9 @@ class wocontroller extends Controller
 
         $asset = $req->c_asset . ' - ' . $assettable->asset_desc;
 
-        EmailScheduleJobs::dispatch($runningnbr, $asset, '1', '', '', '', '');
+        // dd($listeng);
+
+        EmailScheduleJobs::dispatch($runningnbr, $asset, '7', $listeng, '', '', '');
 
         toast($runningnbr . ' Successfuly Created !', 'success');
         return back();
