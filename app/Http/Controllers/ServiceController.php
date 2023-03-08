@@ -101,6 +101,7 @@ class ServiceController extends Controller
 
             $asfn_det = DB::table('asfn_det')
                 ->where('asfn_asset', '=', $assetgroup)
+                ->where('asfn_fntype', '=', $failtype)
                 ->count();
 
             if ($asfn_det > 0) {
