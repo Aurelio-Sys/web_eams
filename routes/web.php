@@ -6,6 +6,9 @@ use App\Http\Controllers\Master\AssetMoveController;
 use App\Http\Controllers\Master\PmEngController;
 use App\Http\Controllers\Master\UMController;
 use App\Http\Controllers\Master\AsfnController;
+use App\Http\Controllers\Master\EngGroupContoller;
+use App\Http\Controllers\Master\PMCodeContoller;
+use App\Http\Controllers\Master\QCSpecController;
 use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\Report\RemainSpController;
@@ -620,6 +623,20 @@ Route::group(['middleware' => ['auth']], function() {
 
 	//cek failure code dan failure type
 	Route::get('/checkfailurecodetype',[wocontroller::class, 'checkfailurecodetype']);
+
+	// Engineer Group
+	Route::get('/enggroup',[EngGroupContoller::class, 'index']);
+	Route::post('/createegr', [EngGroupContoller::class, 'store']);
+	Route::get('/editdetegr', [EngGroupContoller::class, 'editdetegr']);
+	Route::post('/editegr', [EngGroupContoller::class, 'update']);
+	Route::post('/deleteegr', [EngGroupContoller::class, 'destroy']);
+
+	// PM Code Maintenance
+	Route::get('/pmcode',[PMCodeContoller::class, 'index']);
+
+	// QC Spec
+	Route::get('/qcspec',[QCSpecController::class, 'index']);
+	Route::get('/qcspeccreate',[QCSpecController::class, 'create'])->name('qcspeccreate');
 });
 
 Auth::routes();

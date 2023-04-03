@@ -488,6 +488,15 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Engineer Group Maintenance ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="EngGroup">
+                  <input type="checkbox" class="custom-control-input" id="EngGroup" name="EngGroup" value="MT38" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Running Number Maintenance ') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbRunning">
@@ -709,6 +718,15 @@
               <div class="col-6">
                 <label class="switch" for="SetIns">
                   <input type="checkbox" class="custom-control-input" id="SetIns" name="SetIns" value="MT35" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('QC Specification') }}</label>
+              <div class="col-6">
+                <label class="switch" for="qcspec">
+                  <input type="checkbox" class="custom-control-input" id="qcspec" name="qcspec" value="MT40" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -1148,6 +1166,15 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Engineer Group Maintenance ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_EngGroup">
+                  <input type="checkbox" class="custom-control-input" id="e_EngGroup" name="e_EngGroup" value="MT38" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Running Number Maintenance ') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbRunning">
@@ -1373,6 +1400,15 @@
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('QC Specification') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_qcspec">
+                  <input type="checkbox" class="custom-control-input" id="e_qcspec" name="e_qcspec" value="MT40" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
             {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Instruction Details Maintenance') }}</label>
               <div class="col-6">
@@ -1549,6 +1585,11 @@
         } else {
           document.getElementById('e_RoleMaint').checked = false;
         }
+        if (listmenu.search("MT38") >= 0) {
+          document.getElementById('e_EngGroup').checked = true;
+        } else {
+          document.getElementById('e_EngGroup').checked = false;
+        }
         if (listmenu.search("MT99") >= 0) {
           document.getElementById('e_cbRunning').checked = true;
         } else {
@@ -1668,6 +1709,11 @@
           document.getElementById('e_SetIns').checked = true;
         } else {
           document.getElementById('e_SetIns').checked = false;
+        }
+        if (listmenu.search("MT40") >= 0) {
+          document.getElementById('e_qcspec').checked = true;
+        } else {
+          document.getElementById('e_qcspec').checked = false;
         }
         if (listmenu.search("MT36") >= 0) {
           document.getElementById('e_SetUm').checked = true;

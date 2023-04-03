@@ -536,6 +536,13 @@ to get the desired effect
                       </a>
                     </li>
                     @endif
+                    @if(str_contains( Session::get('menu_access'), 'MT38'))
+                    <li class="nav-item">
+                      <a href="/enggroup" class="nav-link ">
+                        <p>Engineer Group</p>
+                      </a>
+                    </li>
+                    @endif
 
                     <!-- @if(str_contains( Session::get('menu_access'), 'MT01'))
                     <li class="nav-item">
@@ -692,17 +699,24 @@ to get the desired effect
                     </a>
                   </li>
                   @endif
-                  @if(str_contains( Session::get('menu_access'), 'MT31'))
+                  <!-- @if(str_contains( Session::get('menu_access'), 'MT31'))
                   <li class="nav-item">
                     <a href="/pmeng" class="nav-link">
                       <p>Engineer For PM</p>
                     </a>
                   </li>
-                  @endif
+                  @endif  -->
                   @if(str_contains( Session::get('menu_access'), 'MT37'))
                   <li class="nav-item">
                     <a href="/asfn" class="nav-link">
                       <p>Mapping Asset - Failure</p>
+                    </a>
+                  </li>
+                  @endif
+                  @if(str_contains( Session::get('menu_access'), 'MT39'))
+                  <li class="nav-item">
+                    <a href="/pmcode" class="nav-link">
+                      <p>PM Code Maintenance</p>
                     </a>
                   </li>
                   @endif
@@ -773,7 +787,7 @@ to get the desired effect
                     </li>
                   @endif -->
                     @if(str_contains( Session::get('menu_access'), 'MT34'))
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                       <!-- <a href="/repmasterb" class="nav-link"> -->
                       <!-- <a href="/repdet" class="nav-link"> -->
                       <a href="/repcode" class="nav-link ">
@@ -787,7 +801,8 @@ to get the desired effect
                         <p>Repair Group</p>
                       </a>
                     </li>
-                    @endif
+                    @endif -->
+
                     @if(str_contains( Session::get('menu_access'), 'MT35'))
                     <li class="nav-item">
                       <a href="/insmaster" class="nav-link ">
@@ -795,6 +810,14 @@ to get the desired effect
                       </a>
                     </li>
                     @endif
+                    @if(str_contains( Session::get('menu_access'), 'MT40'))
+                    <li class="nav-item">
+                      <a href="/qcspec" class="nav-link ">
+                        <p>QC Spesification</p>
+                      </a>
+                    </li>
+                    @endif
+
                     <!-- @if(str_contains( Session::get('menu_access'), 'MT24'))
                     <li class="nav-item">
                       <a href="/insgroup" class="nav-link">

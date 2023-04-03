@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateInsMstrTable extends Migration
+class CreateEgrMstrTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateInsMstrTable extends Migration
      */
     public function up()
     {
-        Schema::create('ins_mstr', function (Blueprint $table) {
+        Schema::create('egr_mstr', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('ins_code',24);
-            $table->string('ins_desc');
-            $table->string('ins_editedby');
+            $table->string('egr_code',24);
+            $table->string('egr_desc');
+            $table->string('egr_eng',24);
+            $table->string('egr_editedby',24);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
         });
@@ -30,6 +31,6 @@ class CreateInsMstrTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ins_mstr');
+        Schema::dropIfExists('egr_mstr');
     }
 }
