@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class DropSpGroupTable extends Migration
+class DropInsDetTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class DropSpGroupTable extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('sp_group');
+        Schema::dropIfExists('ins_det');
     }
 
     /**

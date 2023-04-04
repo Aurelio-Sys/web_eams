@@ -13,7 +13,7 @@ class DropSpTypeTable extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('table');
+        Schema::dropIfExists('sp_type');
     }
 
     /**
