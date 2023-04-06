@@ -83,9 +83,9 @@
         <!--FORM Search Disini-->
         <label for="s_servicenbr" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Service Request Number') }}</label>
         <div class="col-md-3 col-sm-4 mb-2 input-group">
-          <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off">
+          <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off" placeholder="Search SR Number">
         </div>
-        <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Desc Asset') }}</label>
+        <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Asset Description') }}</label>
         <div class="col-md-3 col-sm-4 mb-2 input-group">
           <!-- <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
                   <option value="">--Select Asset--</option>
@@ -93,11 +93,25 @@
                   <option value="{{$show->asset_desc}}">{{$show->asset_code}} -- {{$show->asset_desc}}</option>
                   @endforeach
                 </select> -->
-          <input id="s_asset" type="text" class="form-control" name="s_asset" value="" autofocus autocomplete="off">
+          <input id="s_asset" type="text" class="form-control" name="s_asset" value="" autofocus autocomplete="off" placeholder="Search Asset Desc">
         </div>
       </div>
       <div class="col-12 form-group row">
-        <label for="s_priority" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Priority') }}</label>
+        <label for="s_status" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Status') }}</label>
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+          <select id="s_status" name="s_status" class="form-control" value="" autofocus autocomplete="off">
+            <option value="">--Select Status--</option>
+            @if($fromhome == 'open')
+            <option value="Open" selected>Open</option>
+            @else
+            <option value="open">Open</option>
+            @endif
+            <option value="Cancel">Cancel</option>
+            <option value="Closed">Closed</option>
+            <!-- <option value="Completed">Completed</option> -->
+          </select>
+        </div>
+        <!-- <label for="s_priority" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Priority') }}</label>
         <div class="col-md-3 col-sm-4 mb-2 input-group">
           <select id="s_priority" name="s_priority" class="form-control" value="" autofocus autocomplete="off">
             <option value="">--Select Priority--</option>
@@ -105,7 +119,7 @@
             <option value="medium">Medium</option>
             <option value="high">High</option>
           </select>
-        </div>
+        </div> -->
         <!-- <label for="s_period" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('SR Period') }}</label>
               <div class="col-md-3 col-sm-4 mb-2 input-group">
                 <select id="s_period" name="s_period" class="form-control" value="" autofocus autocomplete="off">
@@ -124,10 +138,37 @@
             @endforeach
           </select>
         </div>
-
       </div>
       <div class="col-12 form-group row">
-        <label for="s_status" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Status') }}</label>
+        <label for="s_datefrom" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Date from') }}</label>
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+          <input type="text" id="s_datefrom" class="form-control" name='s_datefrom' placeholder="YYYY-MM-DD" required autofocus autocomplete="off">
+        </div>
+        <!-- <label for="s_priority" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Priority') }}</label>
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+          <select id="s_priority" name="s_priority" class="form-control" value="" autofocus autocomplete="off">
+            <option value="">--Select Priority--</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div> -->
+        <!-- <label for="s_period" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('SR Period') }}</label>
+              <div class="col-md-3 col-sm-4 mb-2 input-group">
+                <select id="s_period" name="s_period" class="form-control" value="" autofocus autocomplete="off">
+                  <option value="">--Select Period--</option>
+                  <option value="1"> < 3 days </option>
+                  <option value="2"> 3-5 days </option>
+                  <option value="3"> > 5 days </option>
+                </select>
+              </div> -->
+        <label for="s_dateto" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Date to') }}</label>
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+          <input type="text" id="s_dateto" class="form-control" name='s_dateto' placeholder="YYYY-MM-DD" required autofocus autocomplete="off">
+        </div>
+      </div>
+      <div class="col-12 form-group row">
+        <!-- <label for="s_status" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Status') }}</label>
         <div class="col-md-3 col-sm-4 mb-2 input-group">
           <select id="s_status" name="s_status" class="form-control" value="" autofocus autocomplete="off">
             <option value="">--Select Status--</option>
@@ -144,7 +185,7 @@
             <option value="7">Completed</option>
             <option value="8">Reprocess</option>
           </select>
-        </div>
+        </div> -->
         <div class="col-md-6 col-sm-4 mb-2 input-group">
           <input type="button" class="btn btn-primary col-md-3" id="btnsearch" value="Search" style="float:right" />
           &nbsp;&nbsp;&nbsp;
@@ -162,8 +203,10 @@
 <input type="hidden" id="tmppriority" />
 <input type="hidden" id="tmpperiod" />
 <input type="hidden" id="tmpuser" />
+<input type="hidden" id="tmpdatefrom" />
+<input type="hidden" id="tmpdateto" />
 @if($fromhome == 'open')
-<input type="hidden" id="tmpstatus" value="1" />
+<input type="hidden" id="tmpstatus" value="Open" />
 @else
 <input type="hidden" id="tmpstatus" />
 @endif
@@ -257,13 +300,13 @@
               <input id="e_status" type="text" class="form-control" name="e_status" autocomplete="off" maxlength="6" readonly style="color:green;font-weight:bold">
             </div>
           </div>
-          <div class="form-group row justify-content-center" id="e_rnote">
+          <!-- <div class="form-group row justify-content-center" id="e_rnote">
             <label for="e_rnote" class="col-md-5 col-form-label text-md-left">Reject Note</label>
             <div class="col-md-7">
               <input id="e_renote" type="text" class="form-control" name="e_renote" autocomplete="off" maxlength="6" readonly>
-              <!-- <textarea id="e_rnote" class="form-control e_rnote" name="e_rnote" autofocus readonly></textarea> -->
+              <textarea id="e_rnote" class="form-control e_rnote" name="e_rnote" autofocus readonly></textarea>
             </div>
-          </div>
+          </div> -->
           <div class="form-group row justify-content-center">
             <label for="e_asset" class="col-md-5 col-form-label text-md-left">Asset</label>
             <div class="col-md-7">
@@ -309,6 +352,7 @@
             <label for="e_priority" class="col-md-5 col-form-label text-md-left">Priority</label>
             <div class="col-md-7">
               <select id="e_priority" class="form-control" name="e_priority" autofocus required>
+                <option value="">-- Select Priority --</option>
                 <option value='low'>Low</option>
                 <option value='medium'>Medium</option>
                 <option value='high'>High</option>
@@ -325,7 +369,7 @@
           <div class="form-group row justify-content-center">
             <label for="e_date" class="col-md-5 col-form-label text-md-left">Request Date</label>
             <div class="col-md-7">
-              <input type="date" class="form-control" id="e_date" name="e_date" value="{{ old('e_date') }}">
+              <input type="date" class="form-control" id="e_date" name="e_date">
             </div>
           </div>
           <div class="form-group row justify-content-center">
@@ -343,7 +387,7 @@
                     <th>File Name</th>
                   </tr>
                 </thead>
-                <tbody id="listupload">
+                <tbody id="elistupload">
 
                 </tbody>
               </table>
@@ -356,10 +400,10 @@
             </div>
           </div>
           <div class="form-group row">
-            <label for="e_approver" class="col-md-5 col-form-label text-md-left">Approver</label>
+            <label for="e_approver" class="col-md-5 col-form-label text-md-left">Eng Approver</label>
             <div class="col-md-7">
               <select id="e_approver" name="e_approver" class="form-control" required>
-                <option value="">-- Select Approver --</option>
+                <option value="">-- Select Eng Approver --</option>
                 @foreach($dataapp as $da)
                 <!-- <option value="{{$da->eng_code}}">{{$da->eng_code.' -- '.$da->eng_desc}}</option> -->
                 <option value="{{$da->dept_code}}">{{$da->dept_code.' -- '.$da->dept_desc}}</option>
@@ -401,59 +445,9 @@
           <div class="col-md-4">
             <input id="srnumber" type="text" class="form-control" name="srnumber" readonly />
           </div>
-          <label for="srdate" class="col-md-2 col-form-label">SR Date</label>
-          <div class="col-md-4">
-            <input id="srdate" type="text" class="form-control" name="srdate" autocomplete="off" readonly />
-          </div>
-        </div>
-        <div class="form-group row">
-          <label for="reqbyname" class="col-md-2 col-form-label">Requested by</label>
-          <div class="col-md-4">
-            <input id="reqbyname" name="reqbyname" type="text" class="form-control" readonly />
-          </div>
-          <label for="srtime" class="col-md-2 col-form-label">SR Time</label>
-          <div class="col-md-4">
-            <input id="srtime" type="text" class="form-control" name="srtime" autocomplete="off" readonly />
-          </div>
-        </div>
-        <div class="form-group row">
-          <label for="approver" class="col-md-2 col-form-label">Approver</label>
-          <div class="col-md-4">
-            <input id="approver" type="text" class="form-control" name="approver" readonly />
-          </div>
-          <label for="dept" class="col-md-2 col-form-label">Department</label>
-          <div class="col-md-4">
-            <input id="dept" type="text" class="form-control" name="dept" readonly />
-          </div>
-        </div>
-        <div class="form-group row">
           <label for="assetcode" class="col-md-2 col-form-label">Asset Code</label>
           <div class="col-md-4">
             <input id="assetcode" type="text" class="form-control" name="assetcode" readonly />
-          </div>
-          <label for="assetloc" class="col-md-2 col-form-label">Asset Location</label>
-          <div class="col-md-4">
-            <input id="assetloc" type="text" class="form-control" name="assetloc" readonly />
-          </div>
-        </div>
-        <div class="form-group row">
-          <label for="failtype" class="col-md-2 col-form-label">Failure Type</label>
-          <div class="col-md-4">
-            <input id="failtype" type="text" class="form-control" name="failtype" readonly />
-          </div>
-          <label for="assetdesc" class="col-md-2 col-form-label">Asset Desc</label>
-          <div class="col-md-4">
-            <input id="assetdesc" type="text" class="form-control" name="assetdesc" readonly />
-          </div>
-        </div>
-        <div class="form-group row">
-          <label for="srnote" class="col-md-2 col-form-label">Note</label>
-          <div class="col-md-4">
-            <textarea id="srnote" type="text" class="form-control" name="srnote" readonly></textarea>
-          </div>
-          <label for="failcode" class="col-md-2 col-form-label">Failure Code</label>
-          <div class="col-md-4">
-            <textarea id="failcode" type="text" class="form-control" name="failcode" rows="3" readonly></textarea>
           </div>
         </div>
         <div class="form-group row">
@@ -461,49 +455,103 @@
           <div class="col-md-4">
             <input id="wonumber" type="text" class="form-control" name="wonumber" readonly />
           </div>
-          <label for="rejectnote" class="col-md-2 col-form-label">Reject Note</label>
+          <label for="assetdesc" class="col-md-2 col-form-label">Asset Desc</label>
           <div class="col-md-4">
-            <textarea id="rejectnote" type="text" class="form-control" name="rejectnote" readonly></textarea>
+            <input id="assetdesc" type="text" class="form-control" name="assetdesc" readonly />
           </div>
         </div>
         <div class="form-group row">
-          <label for="startwo" class="col-md-2 col-form-label">Start Date</label>
+          <label for="dept" class="col-md-2 col-form-label">Department</label>
           <div class="col-md-4">
-            <input id="startwo" readonly type="text" class="form-control" name="startwo">
+            <input id="dept" type="text" class="form-control" name="dept" readonly />
           </div>
-          <label for="wostatus" class="col-md-2 col-form-label">Status</label>
+          <label for="assetloc" class="col-md-2 col-form-label">Asset Location</label>
+          <div class="col-md-4">
+            <input id="assetloc" type="text" class="form-control" name="assetloc" readonly />
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="reqbyname" class="col-md-2 col-form-label">Requested by</label>
+          <div class="col-md-4">
+            <input id="reqbyname" name="reqbyname" type="text" class="form-control" readonly />
+          </div>
+          <label for="failtype" class="col-md-2 col-form-label">Failure Type</label>
+          <div class="col-md-4">
+            <input id="failtype" type="text" class="form-control" name="failtype" readonly />
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="srnote" class="col-md-2 col-form-label">SR Note</label>
+          <div class="col-md-4">
+            <textarea id="srnote" type="text" class="form-control" name="srnote" rows="3" readonly></textarea>
+          </div>
+          <label for="sr_failcode" class="col-md-2 col-form-label">Failure Code</label>
+          <div class="col-md-4">
+            <textarea id="sr_failcode" type="text" class="form-control" name="sr_failcode" rows="3" readonly></textarea>
+          </div>
+
+        </div>
+        <div class="form-group row">
+          <label for="wostatus" class="col-md-2 col-form-label">SR Status</label>
           <div class="col-md-4">
             <input id="wostatus" type="text" class="form-control" name="wostatus" readonly />
           </div>
-        </div>
-        <div class="form-group row">
-          <label for="englist" class="col-md-2 col-form-label">Engineer List</label>
+          <label for="sr_impact" class="col-md-2 col-form-label">Impact</label>
           <div class="col-md-4">
-            <textarea id="englist" type="text" class="form-control" name="englist" rows="3" readonly></textarea>
-          </div>
-          <label for="endwo" class="col-md-2 col-form-label">End Date</label>
-          <div class="col-md-4">
-            <input id="endwo" type="text" class="form-control" name="endwo" readonly>
+            <textarea id="sr_impact" type="text" class="form-control" name="sr_impact" autocomplete="off" rows="3" autofocus readonly></textarea>
           </div>
         </div>
         <div class="form-group row">
+          <label for="statusapproval" class="col-md-2 col-form-label">SR Status Approval</label>
+          <div class="col-md-4">
+            <input id="statusapproval" type="text" class="form-control" name="statusapproval" readonly>
+          </div>
+          <label for="priority" class="col-md-2 col-form-label">Priority</label>
+          <div class="col-md-4">
+            <input id="priority" type="text" class="form-control" name="priority" readonly>
+          </div>
+
+        </div>
+        <div class="form-group row">
+          <label for="approver" class="col-md-2 col-form-label">Eng Approver</label>
+          <div class="col-md-4">
+            <input id="approver" type="text" class="form-control" name="approver" readonly />
+          </div>
           <label for="file" class="col-md-2 col-form-label">Current File</label>
           <div class="col-md-4">
             <table class="table table-bordered">
               <thead>
                 <tr>
                   <th>File Name</th>
-                  <th style="display: none;"></th>
                 </tr>
               </thead>
-              <tbody id="listupload">
+              <tbody id="srlistupload">
 
               </tbody>
             </table>
           </div>
-          <label for="action" class="col-md-2 col-form-label">Action</label>
+
+
+        </div>
+        <div class="form-group row">
+          <label for="startwo" class="col-md-2 col-form-label">WO Start Date</label>
           <div class="col-md-4">
-            <textarea id="action" type="text" class="form-control" name="action" rows="3" readonly></textarea>
+            <input id="startwo" readonly type="text" class="form-control" name="startwo">
+          </div>
+          <label for="srdate" class="col-md-2 col-form-label">Request Date</label>
+          <div class="col-md-4">
+            <input id="srdate" type="text" class="form-control" name="srdate" autocomplete="off" readonly />
+          </div>
+
+        </div>
+        <div class="form-group row">
+          <label for="endwo" class="col-md-2 col-form-label">WO Finish Date</label>
+          <div class="col-md-4">
+            <input id="endwo" type="text" class="form-control" name="endwo" readonly>
+          </div>
+          <label for="srtime" class="col-md-2 col-form-label">Request Time</label>
+          <div class="col-md-4">
+            <input id="srtime" type="text" class="form-control" name="srtime" autocomplete="off" readonly />
           </div>
         </div>
         <div class="form-group row">
@@ -520,10 +568,15 @@
               </tbody>
             </table>
           </div> -->
-          <label for="impact" class="col-md-2 col-form-label">Impact</label>
+
+          <label for="englist" class="col-md-2 col-form-label">Engineer List</label>
           <div class="col-md-4">
-            <textarea id="impact" type="text" class="form-control" name="impact" autocomplete="off" rows="5" autofocus readonly></textarea>
+            <textarea id="englist" type="text" class="form-control" name="englist" rows="3" readonly></textarea>
           </div>
+          <!-- <label for="rejectnote" class="col-md-2 col-form-label">Reject Note</label>
+          <div class="col-md-4">
+            <textarea id="rejectnote" type="text" class="form-control" name="rejectnote" readonly></textarea>
+          </div> -->
         </div>
         <!--  A211015                   <div class="form-group row">
                         <label for="srnumber" class="col-md-5 col-form-label text-md-right">Service Request Number</label>
@@ -630,6 +683,14 @@
         theme: 'bootstrap4',
       }); */
 
+      $('#s_datefrom').datepicker({
+        dateFormat: 'yy-mm-dd'
+      });
+
+      $('#s_dateto').datepicker({
+        dateFormat: 'yy-mm-dd'
+      });
+
       $("#s_user").select2({
         width: '100%',
         // placeholder : "Select User",
@@ -679,18 +740,18 @@
       });
 
       $('#e_impact').select2({
-        placeholder: "Select Value",
+        placeholder: "Select Failure Code",
         width: '100%',
         closeOnSelect: false,
         allowClear: true,
         theme: 'bootstrap4',
       });
 
-      function fetch_data(page, srnumber, asset, priority /*period*/ , status, requestby) {
+      function fetch_data(page, srnumber, asset, /*priority /*period*/ status, requestby, datefrom, dateto) {
         $.ajax({
-          url: "/srbrowse/searchsr?page=" + page + "&srnumber=" + srnumber + "&asset=" + asset + "&priority=" + priority + /* "&period=" + period + */ "&status=" + status + "&requestby=" + requestby,
+          url: "/srbrowse/searchsr?page=" + page + "&srnumber=" + srnumber + "&asset=" + asset + /*"&priority=" + priority + /* "&period=" + period + */ "&status=" + status + "&requestby=" + requestby + "&datefrom=" + datefrom + "&dateto=" + dateto,
           success: function(data) {
-            console.log(data);
+            // console.log(data);
             $('tbody').html('');
             $('tbody').html(data);
           }
@@ -705,19 +766,25 @@
         /*  var period = $('#s_period').val(); */
         var status = $('#s_status').val();
         var requestby = $('#s_user').val();
+        var datefrom = $('#s_datefrom').val();
+        var dateto = $('#s_dateto').val();
         // alert(1);
         // var column_name = $('#hidden_column_name').val();
         // var sort_type = $('#hidden_sort_type').val();
         var page = 1;
 
+        console.log(srnumber, asset);
+
         document.getElementById('tmpsrnumber').value = srnumber;
         document.getElementById('tmpasset').value = asset;
-        document.getElementById('tmppriority').value = priority;
+        // document.getElementById('tmppriority').value = priority;
         /*document.getElementById('tmpperiod').value = period; */
         document.getElementById('tmpstatus').value = status;
         document.getElementById('tmpuser').value = requestby;
+        document.getElementById('tmpdatefrom').value = datefrom;
+        document.getElementById('tmpdateto').value = dateto;
 
-        fetch_data(page, srnumber, asset, priority /*period*/ , status, requestby);
+        fetch_data(page, srnumber, asset, /*priority*/ /*period*/ status, requestby, datefrom, dateto);
 
       });
 
@@ -731,12 +798,14 @@
 
         var srnumber = $('#tmpsrnumber').val();
         var asset = $('#tmpasset').val();
-        var priority = $('#tmppriority').val();
+        // var priority = $('#tmppriority').val();
         /*var period = $('#tmpperiod').val();*/
         var status = $('#tmpstatus').val();
         var requestby = $('#tmpuser').val();
+        var datefrom = $('#s_datefrom').val();
+        var dateto = $('#s_dateto').val();
 
-        fetch_data(page, srnumber, asset, priority /*period*/ , status, requestby);
+        fetch_data(page, srnumber, asset, /*priority*/ /*period*/ status, requestby, datefrom, dateto);
       });
 
       $(document).on('click', '#btnrefresh', function() {
@@ -746,23 +815,29 @@
         /*var period = ''; */
         var status = '';
         var requestby = '';
+        var datefrom = '';
+        var dateto = '';
         var page = 1;
 
         // alert(1);
         document.getElementById('s_servicenbr').value = '';
         document.getElementById('s_asset').value = '';
-        document.getElementById('s_priority').value = '';
+        // document.getElementById('s_priority').value = '';
         /*document.getElementById('s_period').value = '';*/
         document.getElementById('s_status').value = '';
         document.getElementById('s_user').value = '';
+        document.getElementById('s_datefrom').value = '';
+        document.getElementById('s_dateto').value = '';
         document.getElementById('tmpsrnumber').value = srnumber;
         document.getElementById('tmpasset').value = asset;
         document.getElementById('tmppriority').value = priority;
         /*document.getElementById('tmpperiod').value = period;*/
         document.getElementById('tmpstatus').value = status;
-        document.getElementById('tmpuser').value = requestby
+        document.getElementById('tmpuser').value = requestby;
+        document.getElementById('tmpdatefrom').value = datefrom;
+        document.getElementById('tmpdateto').value = dateto;
 
-        fetch_data(page, srnumber, asset, priority /*period*/ , status, requestby);
+        fetch_data(page, srnumber, asset /*priority*/ /*period*/ , status, requestby, datefrom, dateto);
 
         // $("#s_asset").select2({
         //   width: '100%',
@@ -803,14 +878,15 @@
         var endwo = $(this).data('endwo');
         var action = $(this).data('action');
         var wostatus = $(this).data('wostatus');
+        var statusapproval = $(this).data('statusapproval');
         var failtype = $(this).data('failtype');
+        var failcode = $(this).data('failcode');
         var approver = $(this).data('approver');
 
         var srdate = $(this).data('srdate');
         document.getElementById('srdate').value = srdate;
         var srtime = $(this).data('srtime');
         document.getElementById('srtime').value = srtime;
-
 
         var eng1 = $(this).data('eng1');
         var eng2 = $(this).data('eng2');
@@ -826,12 +902,12 @@
 
         var faildesclist = fail1 + '\n' + fail2 + '\n' + fail3;
 
-        console.log(englist);
+        // console.log(englist);
 
         document.getElementById('englist').value = englist;
         document.getElementById('reqbyname').value = reqbyname;
         document.getElementById('srnote').value = srnote;
-        document.getElementById('rejectnote').value = rejectnote;
+        // document.getElementById('rejectnote').value = rejectnote;
         document.getElementById('wonumber').value = wonumber;
         if (startwo != '01-01-1970') {
           document.getElementById('startwo').value = startwo;
@@ -843,9 +919,9 @@
         } else {
           document.getElementById('endwo').value = '';
         }
-        document.getElementById('action').value = action;
+        // document.getElementById('action').value = action;
         document.getElementById('wostatus').value = wostatus;
-        document.getElementById('failcode').value = faildesclist;
+        document.getElementById('statusapproval').value = statusapproval;
         document.getElementById('approver').value = approver;
 
         // if(eng1 != ''){
@@ -883,15 +959,13 @@
 
         // alert(assetdesc);
 
-
-
         $.ajax({
           url: "/searchimpactdesc",
           data: {
             impact: impact,
           },
           success: function(data) {
-            console.log(data);
+            // console.log(data);
 
             var imp_desc = data;
 
@@ -899,13 +973,38 @@
 
             // console.log(desc);
 
-            document.getElementById('impact').value = desc;
+            document.getElementById('sr_impact').value = desc;
             // }
 
           },
           statusCode: {
             500: function() {
-              document.getElementById('impact').value = "";
+              document.getElementById('sr_impact').value = "";
+            }
+          }
+        })
+
+        $.ajax({
+          url: "/searchfailcode",
+          data: {
+            failcode: failcode,
+          },
+          success: function(data) {
+            // console.log(data);
+
+            var fail_desc = data;
+
+            var desc = fail_desc.replaceAll(",", "\n");
+
+            console.log(desc);
+
+            document.getElementById('sr_failcode').value = desc;
+            // }
+
+          },
+          statusCode: {
+            500: function() {
+              document.getElementById('sr_failcode').value = "";
             }
           }
         })
@@ -913,8 +1012,8 @@
         $.ajax({
           url: "/listupload/" + srnumber,
           success: function(data) {
-
-            $('#listupload').html('').append(data);
+            // console.log(data);
+            $('#srlistupload').html('').append(data);
           }
         })
 
@@ -942,15 +1041,9 @@
         document.getElementById('assetdesc').value = assetdesc;
         document.getElementById('dept').value = dept;
         document.getElementById('assetloc').value = assetloc;
-        document.getElementById('assettype').value = astype;
-        document.getElementById('wotype').value = wotype;
-
-
 
         document.getElementById('hiddenreq').value = reqby;
         document.getElementById('priority').value = priority;
-
-
 
       });
 
@@ -975,14 +1068,17 @@
         var endwo = $(this).data('endwo');
         var action = $(this).data('action');
         var wostatus = $(this).data('wostatus');
-        var srstatus = $(this).data('srstatus');
+        var statusapproval = $(this).data('statusapproval');
         var failtype = $(this).data('failtype');
+        var failcode = $(this).data('failcode');
         var approver = $(this).data('approver');
         var rejectnote = $(this).data('rejectnote');
 
-        document.getElementById('e_renote').value = rejectnote;
+        // console.log(statusapproval);
 
-        if (srstatus == 1) {
+        // document.getElementById('e_renote').value = rejectnote;
+
+        if (wostatus == 'Open') {
           var srstat = 'Open';
           document.getElementById("e_status").style.color = 'green';
         } else {
@@ -990,11 +1086,11 @@
           document.getElementById("e_status").style.color = 'red';
         }
 
-        if (rejectnote == '') {
-          document.getElementById("e_rnote").style.display = 'none';
-        } else {
-          document.getElementById("e_rnote").style.display = '';
-        }
+        // if (rejectnote == '') {
+        //   document.getElementById("e_rnote").style.display = 'none';
+        // } else {
+        //   document.getElementById("e_rnote").style.display = '';
+        // }
 
         var srdate = $(this).data('srdate');
         // var srdt = new Date(srdate).toISOString().slice(0, 10);
@@ -1023,19 +1119,35 @@
         var failcode2 = $(this).data('fc2');
         var failcode3 = $(this).data('fc3');
 
-        // array failure code
+        // // array failure code
+        // var newarrfc = [];
+        // if (failcode1 != '') {
+        //   newarrfc.push(failcode1);
+        // }
+        // if (failcode2 != '') {
+        //   newarrfc.push(failcode2);
+        // }
+        // if (failcode3 != '') {
+        //   newarrfc.push(failcode3);
+        // }
+
+        // //value multiple failurecode
+        // document.getElementById('e_failurecode').selectedIndex = newarrfc;
+        // $('#e_failurecode').val(newarrfc);
+        // $('#e_failurecode').trigger('change');
+
+        // array failurecode
         var newarrfc = [];
-        if (failcode1 != '') {
-          newarrfc.push(failcode1);
-        }
-        if (failcode2 != '') {
-          newarrfc.push(failcode2);
-        }
-        if (failcode3 != '') {
-          newarrfc.push(failcode3);
+        var desc = failcode.split(",");
+        if (desc != null) {
+          for (var i = 0; i <= (desc.length - 1); i++) {
+            if (desc[i] != '') {
+              newarrfc.push(desc[i]);
+            }
+          }
         }
 
-        //value multiple failurecode
+        //value multiple failcode
         document.getElementById('e_failurecode').selectedIndex = newarrfc;
         $('#e_failurecode').val(newarrfc);
         $('#e_failurecode').trigger('change');
@@ -1073,7 +1185,7 @@
         } else {
           document.getElementById('endwo').value = '';
         }
-        document.getElementById('action').value = action;
+        // document.getElementById('action').value = action;
         document.getElementById('e_status').value = srstat;
         // document.getElementById('failcode').value = faildesclist;
         document.getElementById('e_approver').value = approver;
@@ -1122,7 +1234,7 @@
             impact: impact,
           },
           success: function(data) {
-            console.log(data);
+            // console.log(data);
 
             var imp_desc = data;
 
@@ -1130,13 +1242,13 @@
 
             // console.log(desc);
 
-            document.getElementById('impact').value = desc;
+            document.getElementById('e_impact').value = desc;
             // }
 
           },
           statusCode: {
             500: function() {
-              document.getElementById('impact').value = "";
+              document.getElementById('e_impact').value = "";
             }
           }
         })
@@ -1144,28 +1256,28 @@
         $.ajax({
           url: "/listupload/" + srnumber,
           success: function(data) {
-
-            $('#listupload').html('').append(data);
+            // console.log(data);
+            $('#elistupload').html('').append(data);
           }
         })
 
-        $.ajax({
-          url: "/searchfailtype",
-          data: {
-            failtype: failtype,
-          },
-          success: function(data) {
+        // $.ajax({
+        //   url: "/searchfailtype",
+        //   data: {
+        //     failtype: failtype,
+        //   },
+        //   success: function(data) {
+        //     console.log(data);
+        //     document.getElementById('e_wottype').value = data;
+        //     // }
 
-            document.getElementById('failtype').value = data;
-            // }
-
-          },
-          statusCode: {
-            500: function() {
-              document.getElementById('failtype').value = "";
-            }
-          }
-        })
+        //   },
+        //   statusCode: {
+        //     500: function() {
+        //       document.getElementById('e_wottype').value = "";
+        //     }
+        //   }
+        // })
 
 
         document.getElementById('e_nosr').value = srnumber;
@@ -1174,7 +1286,7 @@
         document.getElementById('e_dept').value = dept;
         document.getElementById('assetloc').value = assetloc;
         // document.getElementById('assettype').value = astype;
-        document.getElementById('e_wottype').value = wotype;
+        document.getElementById('e_wottype').value = failtype;
 
         // console.log(document.getElementById('e_wottype'));
 
@@ -1199,6 +1311,14 @@
           maximumSelectionLength: 3,
         });
 
+        $('#e_impact').select2({
+          placeholder: "Select Impact",
+          width: '100%',
+          closeOnSelect: false,
+          allowClear: true,
+          maximumSelectionLength: 3,
+        });
+
       });
 
       $(document).on('click', '#btnexcel', function() {
@@ -1206,10 +1326,14 @@
         var srasset = $('#tmpasset').val();
         var srstatus = $('#tmpstatus').val();
         var srpriority = $('#tmppriority').val();
-        var srperiod = $('#tmpperiod').val();
+        // var srperiod = $('#tmpperiod').val();
         var srreq = $('#tmpuser').val();
+        var srdatefrom = $('#tmpdatefrom').val();
+        var srdateto = $('#tmpdateto').val();
 
-        window.open("/donlodsr?srnumber=" + srnumber + "&asset=" + srasset + "&status=" + srstatus + "&priority=" + srpriority + "&period=" + srperiod + "&reqby=" + srreq, '_blank');
+        console.log(srnumber, srasset, srstatus, /*srpriority, srperiod,*/ srreq, srdatefrom, srdateto);
+
+        window.open("/donlodsr?srnumber=" + srnumber + "&asset=" + srasset + "&status=" + srstatus + /*"&priority=" + srpriority + "&period=" + srperiod +*/ "&reqby=" + srreq + "&datefrom=" + srdatefrom + "&dateto=" + srdateto, '_blank');
       });
     });
   </script>
