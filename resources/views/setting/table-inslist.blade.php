@@ -16,7 +16,8 @@
     <td>{{$stepdesc}}</td>
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal"
-        data-code="{{$show->ins_code}}" data-desc="{{$show->ins_desc}}">
+        data-code="{{$show->ins_code}}" data-desc="{{$show->ins_desc}}" data-duration="{{$show->ins_duration}}"
+        data-durum="{{$show->ins_durationum}}" data-manpower="{{$show->ins_manpower}}">
         <i class="icon-table fa fa-edit fa-lg"></i></a>
         &ensp;
         <a href="javascript:void(0)" class="deletedata" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal" 

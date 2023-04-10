@@ -642,6 +642,8 @@ Route::group(['middleware' => ['auth']], function() {
 	// Instruction List
 	Route::get('/inslist',[InsListController::class, 'index']);
 	Route::post('/createinslist',[InsListController::class, 'store']);
+	Route::get('/editdetins',[InsListController::class, 'editdetins']);
+	Route::post('/editinslist',[InsListController::class, 'update']);
 });
 
 Auth::routes();

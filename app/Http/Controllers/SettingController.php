@@ -1775,7 +1775,6 @@ class SettingController extends Controller
                 $table->temporary();
             });
 
-            /* tutup sementara, nanti dibuka lagi
             $domain = ModelsQxwsa::first();
             $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
 
@@ -1789,7 +1788,7 @@ class SettingController extends Controller
                         'temp_desc' => $datas->t_desc,
                     ]);
                 }
-            } */
+            }
 
             $dataassetqad = DB::table('temp_asset')
                 ->orderBy('temp_code')
@@ -1826,6 +1825,7 @@ class SettingController extends Controller
     //untuk create asset master
     public function createasset(Request $req)
     {
+        // dd($req->all());
         if ($req->t_mea == "C") {
             if ($req->t_cal == "") {
                 toast('Calendar Cannot Be Empty!!', 'error');
@@ -1906,31 +1906,19 @@ class SettingController extends Controller
                 'asset_loc'         => $req->t_loc,
                 'asset_um'          => $req->t_um,
                 'asset_sn'          => $req->t_sn,
-                'asset_daya'        => $req->t_daya,
-                'asset_prc_date'    => $req->t_prc_date,
-                'asset_prc_price'   => $req->t_prc_price,
+                'asset_prcdate'    => $req->t_prc_date,
+                'asset_prcprice'   => $req->t_prc_price,
                 'asset_type'        => $req->t_type,
                 'asset_group'       => $req->t_group,
-                'asset_measure'     => $req->t_mea,
                 'asset_supp'        => $req->t_supp,
-                'asset_meter'       => $req->t_meter,
-                'asset_cal'         => $req->t_cal,
-                'asset_tolerance'   => $req->t_tolerance,
-                'asset_mea_um'      => $req->t_meaum,
-                'asset_start_mea'   => $req->t_mea_date,
                 'asset_note'        => $req->t_note,  
-                'asset_active'      => $req->t_active,  
-                'asset_repair_type' => $req->crepairtype,  
-                'asset_repair'      => $repair,  
+                'asset_active'      => $req->t_active,    
                 'asset_image'       => $imagename,  
-                'asset_image_path'  => $imagepath,  
-                'asset_last_usage'  => 0,
-                'asset_last_usage_mtc' => 0,
-                'asset_qad'         => $req->t_qad,
-                'asset_last_mtc'    => Carbon::now()->toDateTimeString(),      
+                'asset_imagepath'  => $imagepath,  
+                'asset_accounting'         => $req->t_qad,   
                 'created_at'        => Carbon::now()->toDateTimeString(),
                 'updated_at'        => Carbon::now()->toDateTimeString(),
-                'edited_by'         => Session::get('username'),
+                'asset_editedby'         => Session::get('username'),
                 // 'asset_upload'      => $savepath.$filename
             ]);
 
@@ -1962,7 +1950,7 @@ class SettingController extends Controller
 
 
     public function listupload($id){
-        // dd($id);
+        dd($id);
 
         $data = DB::table('asset_upload')
                         ->where('asset_code',$id)
@@ -2070,41 +2058,6 @@ class SettingController extends Controller
             }
         }
 
-        /* Jika ganti measurement */
-        if ($req->te_mea == "C") {
-            $meter  = 0;
-            $cal    = $req->te_cal;
-            $meaum = "";
-        } else if ($req->te_mea == "M") {
-            $meter  = $req->te_meter;
-            $cal    = 0;
-            $meaum = $req->te_meaum;
-        } else {
-            $meter  = 0;
-            $cal    = 0;
-            $meaum = "";
-        }
-
-
-        $repair = "";
-        if ($req->repairtype == "group") {
-            $repair = $req->repairgroup;
-        } elseif ($req->repairtype == "code") {
-            if(!is_null($req->repaircode)) {
-                $flg = 0;
-                foreach ($req->repaircode as $ds) {
-                    if ($flg == 0) {
-                        $repair =  $req->repaircode[$flg];
-                    } else {
-                        $repair = $repair . "," . $req->repaircode[$flg] ;
-                    }
-                    $flg += 1;
-                }
-            }
-        } else {
-            $repair = "";
-        }
-
         if($req->hasFile('te_image')){
             $file = $req->file('te_image');
             $imagename  = $req->te_code . '-' .$file->getClientOriginalName();
@@ -2115,11 +2068,9 @@ class SettingController extends Controller
             ->where('asset_code','=',$req->te_code)
             ->update([ 
                 'asset_image'       => $imagename,  
-                'asset_image_path'  => $imagepath,   
+                'asset_imagepath'  => $imagepath,   
             ]);
         }
-
-        // dd($req->file('filename'));
 
         if (!is_null($req->file('filename'))) {
             foreach($req->file('filename') as $upload){
@@ -2141,19 +2092,6 @@ class SettingController extends Controller
             }
         }
 
-        /* Jika baru mendaftarkan measurement, last usage = tanggal edit */
-        $cekasset = DB::table('asset_mstr')
-            ->where('asset_code','=',$req->te_code)
-            ->value('asset_measure');
-
-        if (!$cekasset && $req->te_mea) {
-            $tglpm = Carbon::now()->toDateTimeString();
-        } else {
-            $tglpm = DB::table('asset_mstr')
-            ->where('asset_code','=',$req->te_code)
-            ->value('asset_last_mtc');
-        }
-
         DB::table('asset_mstr')
         ->where('asset_code','=',$req->te_code)
         ->update([
@@ -2162,26 +2100,16 @@ class SettingController extends Controller
             'asset_loc'         => $req->te_loc,
             'asset_um'          => $req->te_um,
             'asset_sn'          => $req->te_sn,
-            'asset_daya'        => $req->te_daya,
-            'asset_prc_date'    => $req->te_prc_date,
-            'asset_prc_price'   => $req->te_prc_price,
+            'asset_prcdate'    => $req->te_prc_date,
+            'asset_prcprice'   => $req->te_prc_price,
             'asset_type'        => $req->te_type,
             'asset_group'       => $req->te_group,
-            'asset_measure'     => $req->te_mea,
             'asset_supp'        => $req->te_supp,
-            'asset_meter'       => $meter,
-            'asset_mea_um'       => $meaum,
-            'asset_cal'         => $cal,
-            'asset_tolerance'   => $req->te_tolerance,
-            'asset_start_mea'   => $req->te_mea_date,
             'asset_note'        => $req->te_note,        
-            'asset_active'      => $req->te_active,  
-            'asset_repair'      => $repair,  
-            'asset_repair_type' => $req->repairtype, 
-            'asset_qad'         => $req->te_qad,  
-            'asset_last_mtc'    => $tglpm,
+            'asset_active'      => $req->te_active, 
+            'asset_accounting'         => $req->te_qad,  
             'updated_at'        => Carbon::now()->toDateTimeString(),
-            'edited_by'         => Session::get('username'),
+            'asset_editedby'         => Session::get('username'),
         ]); 
 
         toast('Asset Updated.', 'success');

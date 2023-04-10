@@ -22,7 +22,7 @@ class InsListController extends Controller
         $s_desc = $req->s_desc;
 
         $data = DB::table('ins_list')
-            ->select('ins_code','ins_desc')
+            ->select('ins_code','ins_desc','ins_duration','ins_durationum','ins_manpower')
             ->orderby('ins_code')
             ->groupBy('ins_code');
 
@@ -110,6 +110,30 @@ class InsListController extends Controller
         //
     }
 
+    //menampilkan detail edit
+    public function editdetins(Request $req)
+    {
+        if ($req->ajax()) {
+            $data = DB::table('ins_list')
+                    ->whereIns_code($req->code)
+                    ->orderBy('ins_step')
+                    ->get();
+
+            $output = '';
+            foreach ($data as $data) {
+                $output .= '<tr>'.
+                            '<td><input type="text" class="form-control" name="te_step[]" value="'.$data->ins_step.'"></td>'.
+                            '<td><input type="text" class="form-control" name="te_stepdesc[]" value="'.$data->ins_stepdesc.'"></td>'.
+                            '<td><input type="text" class="form-control" name="te_ref[]" value="'.$data->ins_ref.'"></td>'.
+                            '<td><input type="checkbox" name="cek[]" class="cek" id="cek" value="0">
+                            <input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>'.
+                            '</tr>';
+            }
+
+            return response($output);
+        }
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -117,9 +141,42 @@ class InsListController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $req)
     {
-        //
+        // dd($req->all());
+        // cari tanggal create
+        $dcreate = DB::table('ins_list')
+            ->whereIns_code($req->te_code)
+            ->value('created_at');
+
+        // delete terlebih dahulu data nya
+        DB::table('ins_list')
+            ->whereIns_code($req->te_code)
+            ->delete();
+        
+        $flg = 0;
+        foreach($req->te_step as $te_step){
+            if($req->tick[$flg] == 0) {
+                DB::table('ins_list')
+                ->insert([
+                    'ins_code' => $req->te_code,
+                    'ins_desc' => $req->te_desc,
+                    'ins_duration' => $req->te_dur,
+                    'ins_durationum' => $req->te_durum,
+                    'ins_manpower' => $req->te_mp,
+                    'ins_step' => $req->te_step[$flg],
+                    'ins_stepdesc' => $req->te_stepdesc[$flg],
+                    'ins_ref' => $req->te_ref[$flg],
+                    'ins_editedby'  => Session::get('username'),
+                    'created_at'    => $dcreate,
+                    'updated_at'    => Carbon::now()->toDateTimeString(),
+                ]);
+            }
+            $flg += 1;  
+        }
+
+        toast('Instruction List Updated.', 'success');
+        return back();
     }
 
     /**
