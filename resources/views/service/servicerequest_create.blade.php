@@ -17,10 +17,10 @@
   <form method="post" id="srform" action="/inputsr" style="background-color: white; padding: 2%;" enctype="multipart/form-data">
     {{csrf_field()}}
     <div class="form-group row">
-      <label for="assetcode" class="col-md-2 col-lg-3 col-form-label my-auto">Asset Code<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+      <label for="assetcode" class="col-md-2 col-lg-3 col-form-label my-auto">Asset <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
       <div class="col-md-5 col-sm-12">
         <select id="assetcode" name="assetcode" class="form-control" required>
-          <option value="">-- Select Asset Code --</option>
+          <option value="">-- Select Asset --</option>
           @foreach($showasset as $show)
           <option value="{{$show->asset_code}}" data-assetgroup="{{$show->asset_group}}">{{$show->asset_code.' -- '.$show->asset_desc." -- ".$show->asloc_desc}}</option>
           @endforeach
@@ -29,21 +29,21 @@
     </div>
     <input type="hidden" id="hide_assetgroup" />
     <div class="form-group row">
-      <label for="t_date" class="col-md-2 col-lg-3 col-form-label my-auto">Request Date<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+      <label for="t_date" class="col-md-2 col-lg-3 col-form-label my-auto">Request Date</label>
       <div class="col-md-2 col-sm-12">
         <input type="date" class="form-control" id="t_date" name="t_date" value="<?php echo date("Y-m-d"); ?>">
       </div>
     </div>
     <div class="form-group row">
-      <label for="t_time" class="col-md-2 col-lg-3 col-form-label my-auto">Request Time<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+      <label for="t_time" class="col-md-2 col-lg-3 col-form-label my-auto">Request Time</label>
       <div class="col-md-2 col-sm-12">
         <input type="time" class="form-control" id="t_time" name="t_time" value="<?php echo date("H:i"); ?>">
       </div>
     </div>
     <div class="form-group row">
-      <label for="wotype" class="col-md-2 col-lg-3 col-form-label my-auto">Failure Type<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+      <label for="wotype" class="col-md-2 col-lg-3 col-form-label my-auto">Failure Type</label>
       <div class="col-md-5 col-sm-12">
-        <select class="form-control" id="wotype" name="wotype" required>
+        <select class="form-control" id="wotype" name="wotype">
           <option></option>
           @foreach($wotype as $wotypeshow)
           <option value="{{$wotypeshow->wotyp_code}}">{{$wotypeshow->wotyp_code}} -- {{$wotypeshow->wotyp_desc}}</option>
@@ -52,9 +52,9 @@
       </div>
     </div>
     <div class="form-group row">
-      <label for="failurecode" class="col-md-2 col-lg-3 col-form-label my-auto">Failure Code<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+      <label for="failurecode" class="col-md-2 col-lg-3 col-form-label my-auto">Failure Code</label>
       <div class="col-md-5 col-sm-12">
-        <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple" required>
+        <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple">
           <option></option>
         </select>
       </div>
@@ -71,9 +71,9 @@
       </div>
     </div> -->
     <div class="form-group row">
-      <label for="impact" class="col-md-2 col-lg-3 col-form-label my-auto">Impact<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+      <label for="impact" class="col-md-2 col-lg-3 col-form-label my-auto">Impact</label>
       <div class="col-md-5 col-sm-12">
-        <select id="impact" class="form-control impact" name="impact[]" multiple="multiple" required>
+        <select id="impact" class="form-control impact" name="impact[]" multiple="multiple">
           @foreach($impact as $impactshow)
           <option value="{{$impactshow->imp_code}}">{{$impactshow->imp_code}} -- {{$impactshow->imp_desc}}</option>
           @endforeach
@@ -89,15 +89,15 @@
           </div>
         </div> -->
     <div class="form-group row">
-      <label class="col-sm-12 col-lg-3 col-form-label">Note</label>
+      <label class="col-sm-12 col-lg-3 col-form-label">Note <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
       <div class="col-sm-12 col-md-5">
-        <textarea type="text" class="form-control" id="notesr" name="notesr" maxlength="250" autocomplete="off"></textarea>
+        <textarea type="text" class="form-control" id="notesr" name="notesr" maxlength="250" autocomplete="off" required></textarea>
       </div>
     </div>
     <div class="form-group row">
-      <label class="col-sm-12 col-lg-3 col-form-label">Priority<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+      <label class="col-sm-12 col-lg-3 col-form-label">Priority</label>
       <div class="col-sm-12 col-md-5">
-        <select class="form-control" id="priority" name="priority" required>
+        <select class="form-control" id="priority" name="priority">
           <option value="">--Select Data--</option>
           <option value="low">Low</optio>
           <option value="medium">Medium</optio>
@@ -129,10 +129,10 @@
           </div>
         </div> -->
     <div class="form-group row">
-      <label for="t_app" class="col-md-2 col-lg-3 col-form-label my-auto">Approver<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+      <label for="t_app" class="col-md-2 col-lg-3 col-form-label my-auto">Engineer Approver <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
       <div class="col-md-5 col-sm-12">
         <select id="t_app" name="t_app" class="form-control" required>
-          <option value="">-- Select Approver --</option>
+          <option value="">-- Select Engineer Approver --</option>
           @foreach($dataapp as $da)
           <!-- <option value="{{$da->eng_code}}">{{$da->eng_code.' -- '.$da->eng_desc}}</option> -->
           <option value="{{$da->dept_code}}">{{$da->dept_code.' -- '.$da->dept_desc}}</option>
