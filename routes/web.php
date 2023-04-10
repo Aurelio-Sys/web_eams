@@ -9,6 +9,7 @@ use App\Http\Controllers\Master\AsfnController;
 use App\Http\Controllers\Master\EngGroupContoller;
 use App\Http\Controllers\Master\PMCodeContoller;
 use App\Http\Controllers\Master\QCSpecController;
+use App\Http\Controllers\Master\InsListController;
 use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\Report\RemainSpController;
@@ -637,6 +638,10 @@ Route::group(['middleware' => ['auth']], function() {
 	// QC Spec
 	Route::get('/qcspec',[QCSpecController::class, 'index']);
 	Route::get('/qcspeccreate',[QCSpecController::class, 'create'])->name('qcspeccreate');
+
+	// Instruction List
+	Route::get('/inslist',[InsListController::class, 'index']);
+	Route::post('/createinslist',[InsListController::class, 'store']);
 });
 
 Auth::routes();
