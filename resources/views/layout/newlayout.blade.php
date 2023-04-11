@@ -787,6 +787,14 @@ to get the desired effect
                       </a>
                     </li>
                     @endif
+                    @if(str_contains( Session::get('menu_access'), 'MT41'))
+                    <li class="nav-item">
+                      {{--  <a href="/insmaster" class="nav-link ">  --}}
+                      <a href="/splist" class="nav-link ">
+                        <p>Sparepart List</p>
+                      </a>
+                    </li>
+                    @endif
                     @if(str_contains( Session::get('menu_access'), 'MT40'))
                     <li class="nav-item">
                       <a href="/qcspec" class="nav-link ">
