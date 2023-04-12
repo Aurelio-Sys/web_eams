@@ -740,6 +740,15 @@
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('PM Code Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="SetPmcode">
+                  <input type="checkbox" class="custom-control-input" id="SetPmcode" name="SetPmcode" value="MT39" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
             {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Instruction Details Maintenance') }}</label>
               <div class="col-6">
@@ -1427,6 +1436,15 @@
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('PM Code Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_SetPmcode">
+                  <input type="checkbox" class="custom-control-input" id="e_SetPmcode" name="e_SetPmcode" value="MT39" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
             {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Instruction Details Maintenance') }}</label>
               <div class="col-6">
@@ -1747,6 +1765,11 @@
           document.getElementById('e_SetAsfn').checked = true;
         } else {
           document.getElementById('e_SetAsfn').checked = false;
+        }
+        if (listmenu.search("MT39") >= 0) {
+          document.getElementById('e_SetPmcode').checked = true;
+        } else {
+          document.getElementById('e_SetPmcode').checked = false;
         }
         
         {{--  if (listmenu.search("MT03") >= 0) {

@@ -713,13 +713,7 @@ to get the desired effect
                     </a>
                   </li>
                   @endif
-                  @if(str_contains( Session::get('menu_access'), 'MT39'))
-                  <li class="nav-item">
-                    <a href="/pmcode" class="nav-link">
-                      <p>PM Code Maintenance</p>
-                    </a>
-                  </li>
-                  @endif
+                  
                   
                   
                 </ul><!-- ul asset -->
@@ -801,6 +795,13 @@ to get the desired effect
                         <p>QC Spesification</p>
                       </a>
                     </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MT39'))
+                      <li class="nav-item">
+                        <a href="/pmcode" class="nav-link">
+                          <p>PM Code Maintenance</p>
+                        </a>
+                      </li>
                     @endif
                   </ul><!-- ul repair -->
                 </li> <!-- li repair -->
