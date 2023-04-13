@@ -642,6 +642,15 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Preventive Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="pmasset">
+                  <input type="checkbox" class="custom-control-input" id="pmasset" name="pmasset" value="MT42" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Type ') }}</label>
               <div class="col-6">
                 <label class="switch" for="Spt">
@@ -1338,6 +1347,15 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Preventive Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_pmasset">
+                  <input type="checkbox" class="custom-control-input" id="e_pmasset" name="e_pmasset" value="MT42" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Type ') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_Spt">
@@ -1765,6 +1783,11 @@
           document.getElementById('e_SetAsfn').checked = true;
         } else {
           document.getElementById('e_SetAsfn').checked = false;
+        }
+        if (listmenu.search("MT42") >= 0) {
+          document.getElementById('e_pmasset').checked = true;
+        } else {
+          document.getElementById('e_pmasset').checked = false;
         }
         if (listmenu.search("MT39") >= 0) {
           document.getElementById('e_SetPmcode').checked = true;

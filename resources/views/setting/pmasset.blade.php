@@ -3,7 +3,7 @@
       <div class="container-fluid">
         <div class="row">          
           <div class="col-sm-4">
-            <h1 class="m-0 text-dark">PM Code Maintenance</h1>
+            <h1 class="m-0 text-dark">Preventive Maintenance</h1>
           </div>    
         </div><!-- /.row -->
         <div class="col-md-12">
@@ -11,7 +11,7 @@
         </div>
         <div class="row">                 
           <div class="col-sm-2">    
-            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">PM Code Create</button>
+            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Preventive Create</button>
           </div><!-- /.col -->  
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
@@ -30,12 +30,12 @@
         <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
         <div class="card card-body bg-black rounded-0">
             <div class="col-12 form-group row">
-                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">PM Code Code</label>
+                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Preventive Code</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_code" type="text" class="form-control" name="s_code"
                     value="" autofocus autocomplete="off"/>
                 </div>
-                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">PM Code Desc</label>
+                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Preventive Desc</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_desc" type="text" class="form-control" name="s_desc"
                     value="" autofocus autocomplete="off"/>
@@ -57,7 +57,7 @@
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                <th width="15%">PM Code</th>
+                <th width="15%">Preventive</th>
                 <th width="20%">PM Desc</th>
                 <th width="10%">Type</th>
                 <th width="15%">Instruction</th>
@@ -68,7 +68,7 @@
         </thead>
         <tbody>
             <!-- untuk isi table -->
-            @include('setting.table-pmcode')
+            {{--  @include('setting.table-pmcode')  --}}
         </tbody>
     </table>
 </div>
@@ -78,69 +78,88 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">PM Code Create</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Preventive Create</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/createpmcode">
+            <form class="form-horizontal" method="post" action="/creatpmasset">
                 {{ csrf_field() }}
                 <div class="modal-body">
-                    <div class="form-group row">
-                        <label for="t_code" class="col-md-3 col-form-label text-md-right">PM Code Code</label>
-                        <div class="col-md-4">
-                            <input type="text" class="form-control" id="t_code" name="t_code" autocomplete="off" maxlength="24" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="t_desc" class="col-md-3 col-form-label text-md-right">PM Code Desc</label>
-                        <div class="col-md-8">
-                            <input type="text" class="form-control" id="t_desc" name="t_desc" autocomplete="off" maxlength="255" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="t_type" class="col-md-3 col-form-label text-md-right">PM Type</label>
-                        <div class="col-md-4">
-                        <select class="form-control " id="t_type" name="t_type" required>
-                           <option value="">--</option>
-                           <option value="CM">CM -- Corrective Maintenace</option>
-                           <option value="PM">PM -- Preventive Maintenace</option>
+                  <div class="form-group row">
+                     <label for="t_asset" class="col-md-3 col-form-label text-md-right">Asset</label>
+                     <div class="col-md-8">
+                        <select class="form-control " id="t_asset" name="t_asset">
+                        <option value="">--</option>
+                        @foreach($dataasset as $da)
+                        <option value="{{$da->asset_code}}">{{$da->asset_code}} -- {{$da->asset_desc}}</option>
+                        @endforeach
                         </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="t_ins" class="col-md-3 col-form-label text-md-right">Instruction List</label>
-                        <div class="col-md-8">
-                           <select class="form-control " id="t_ins" name="t_ins">
-                           <option value="">--</option>
-                           @foreach($datains as $di)
-                           <option value="{{$di->ins_code}}">{{$di->ins_code}} -- {{$di->ins_desc}}</option>
-                           @endforeach
-                           </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="t_spg" class="col-md-3 col-form-label text-md-right">Sparepart List</label>
-                        <div class="col-md-8">
-                           <select class="form-control " id="t_spg" name="t_spg">
-                           <option value="">--</option>
-                           @foreach($dataspg as $ds)
-                           <option value="{{$ds->spg_code}}">{{$ds->spg_code}} -- {{$ds->spg_desc}}</option>
-                           @endforeach
-                           </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="t_qcs" class="col-md-3 col-form-label text-md-right">QC Spesification</label>
-                        <div class="col-md-8">
-                           <select class="form-control " id="t_qcs" name="t_qcs">
-                           <option value="">--</option>
-                           @foreach($dataqcs as $dq)
-                           <option value="{{$dq->qcs_code}}">{{$dq->qcs_code}} -- {{$dq->qcs_desc}}</option>
-                           @endforeach
-                           </select>
-                        </div>
-                    </div>
+                     </div>
+                 </div>
+                 <div class="form-group row">
+                     <label for="t_pmcode" class="col-md-3 col-form-label text-md-right">PM Code</label>
+                     <div class="col-md-8">
+                        <select class="form-control " id="t_pmcode" name="t_pmcode">
+                        <option value="">--</option>
+                        @foreach($datapm as $dp)
+                        <option value="{{$dp->pmc_code}}">{{$dp->pmc_code}} -- {{$dp->pmc_desc}}</option>
+                        @endforeach
+                        </select>
+                     </div>
+                  </div>
+                  <div class="form-group row">
+                     <label for="t_time" class="col-md-3 col-form-label text-md-right">Lead Time</label>
+                     <div class="col-md-4">
+                           <input type="text" class="form-control" id="t_time" name="t_time" autocomplete="off" maxlength="24" required>
+                     </div>
+                  </div>
+                  <div class="form-group row">
+                     <label for="t_mea" class="col-md-3 col-form-label text-md-right">Measurement</label>
+                     <div class="col-md-4">
+                     <select class="form-control " id="t_mea" name="t_mea" required>
+                        <option value="">--</option>
+                        <option value="C">Caledar</option>
+                        <option value="M">Meter</option>
+                        <option value="B">Both</option>
+                     </select>
+                     </div>
+                  </div>
+                  <div class="form-group row">
+                     <label for="t_cal" class="col-md-3 col-form-label text-md-right">Calendar</label>
+                     <div class="col-md-8">
+                           <input type="text" class="form-control" id="t_cal" name="t_cal" autocomplete="off" maxlength="255" required>
+                     </div>
+                  </div>
+                  <div class="form-group row">
+                     <label for="t_meter" class="col-md-3 col-form-label text-md-right">Meter</label>
+                     <div class="col-md-8">
+                           <input type="text" class="form-control" id="t_meter" name="t_meter" autocomplete="off" maxlength="255" required>
+                     </div>
+                  </div>
+                  <div class="form-group row">
+                     <label for="t_tol" class="col-md-3 col-form-label text-md-right">Tolerance</label>
+                     <div class="col-md-8">
+                           <input type="text" class="form-control" id="t_tol" name="t_tol" autocomplete="off" maxlength="255" required>
+                     </div>
+                  </div>
+                  <div class="form-group row">
+                     <label for="t_start" class="col-md-3 col-form-label text-md-right">Start Date</label>
+                     <div class="col-md-8">
+                           <input type="text" class="form-control" id="t_start" name="t_start" autocomplete="off" maxlength="255" required>
+                     </div>
+                  </div>
+                  <div class="form-group row">
+                     <label for="t_eng" class="col-md-3 col-form-label text-md-right">Engineer</label>
+                     <div class="col-md-8">
+                        <select class="form-control " id="t_eng" name="t_eng">
+                        <option value="">--</option>
+                        @foreach($dataeng as $de)
+                        <option value="{{$de->eng_code}}">{{$de->eng_code}} -- {{$de->eng_desc}}</option>
+                        @endforeach
+                        </select>
+                     </div>
+                  </div>
                 </div>
             
                 <div class="modal-footer">
@@ -157,7 +176,7 @@
     <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel">PM Code Modify</h5>
+        <h5 class="modal-title text-center" id="exampleModalLabel">Preventive Modify</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -165,61 +184,7 @@
         <form class="form-horizontal" method="post" action="/editpmcode">
             {{ csrf_field() }}
             <div class="modal-body">
-                <div class="form-group row">
-                    <label for="te_code" class="col-md-3 col-form-label text-md-right">PM Code Code</label>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" id="te_code" name="te_code" readonly>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="te_desc" class="col-md-3 col-form-label text-md-right">PM Code Desc</label>
-                    <div class="col-md-8">
-                        <input type="text" class="form-control" id="te_desc" name="te_desc">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="te_type" class="col-md-3 col-form-label text-md-right">PM Type</label>
-                    <div class="col-md-4">
-                    <select class="form-control " id="te_type" name="te_type" required>
-                       <option value="">--</option>
-                       <option value="CM">CM -- Corrective Maintenace</option>
-                       <option value="PM">PM -- Preventive Maintenace</option>
-                    </select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="te_ins" class="col-md-3 col-form-label text-md-right">Instruction List</label>
-                    <div class="col-md-8">
-                       <select class="form-control " id="te_ins" name="te_ins">
-                       <option value="">--</option>
-                       @foreach($datains as $di)
-                       <option value="{{$di->ins_code}}">{{$di->ins_code}} -- {{$di->ins_desc}}</option>
-                       @endforeach
-                       </select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="te_spg" class="col-md-3 col-form-label text-md-right">Sparepart List</label>
-                    <div class="col-md-8">
-                       <select class="form-control " id="te_spg" name="te_spg">
-                       <option value="">--</option>
-                       @foreach($dataspg as $ds)
-                       <option value="{{$ds->spg_code}}">{{$ds->spg_code}} -- {{$ds->spg_desc}}</option>
-                       @endforeach
-                       </select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="te_qcs" class="col-md-3 col-form-label text-md-right">QC Spesification</label>
-                    <div class="col-md-8">
-                       <select class="form-control " id="te_qcs" name="te_qcs">
-                       <option value="">--</option>
-                       @foreach($dataqcs as $dq)
-                       <option value="{{$dq->qcs_code}}">{{$dq->qcs_code}} -- {{$dq->qcs_desc}}</option>
-                       @endforeach
-                       </select>
-                    </div>
-                </div>
+                
             </div>
 
             <div class="modal-footer">
@@ -236,7 +201,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title text-center" id="exampleModalLabel">PM Code Delete</h5>
+            <h5 class="modal-title text-center" id="exampleModalLabel">Preventive Delete</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -245,7 +210,7 @@
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <input type="hidden" id="d_code" name="d_code">
-                    Delete PM Code <b><span id="td_code"></span> -- <span id="td_desc"></span></b> ?
+                    Delete Preventive <b><span id="td_code"></span> -- <span id="td_desc"></span></b> ?
                 </div>
 
                 <div class="modal-footer">

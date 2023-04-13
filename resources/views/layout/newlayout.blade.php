@@ -368,6 +368,13 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
+                @if(str_contains( Session::get('menu_access'), 'MT30'))
+                  <li class="nav-item">
+                    <a href="/assetmove" class="nav-link">
+                      <p>Asset Movement</p>
+                    </a>
+                  </li>
+                @endif
               </ul>
             </li>
             @endif
@@ -692,13 +699,7 @@ to get the desired effect
                     </a>
                   </li>
                   @endif
-                  @if(str_contains( Session::get('menu_access'), 'MT30'))
-                  <li class="nav-item">
-                    <a href="/assetmove" class="nav-link">
-                      <p>Asset Movement</p>
-                    </a>
-                  </li>
-                  @endif
+                  
                   <!-- @if(str_contains( Session::get('menu_access'), 'MT31'))
                   <li class="nav-item">
                     <a href="/pmeng" class="nav-link">
@@ -713,8 +714,13 @@ to get the desired effect
                     </a>
                   </li>
                   @endif
-                  
-                  
+                  @if(str_contains( Session::get('menu_access'), 'MT42'))
+                  <li class="nav-item">
+                    <a href="/pmasset" class="nav-link">
+                      <p>Preventive Maintenance</p>
+                    </a>
+                  </li>
+                  @endif
                   
                 </ul><!-- ul asset -->
               </li> <!-- li asset -->

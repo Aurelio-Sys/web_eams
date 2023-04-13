@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\master;
+namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Carbon\Carbon;
 
-class PMCodeController extends Controller
+class PmassetController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,16 +21,17 @@ class PMCodeController extends Controller
         $s_code = $req->s_code;
         $s_desc = $req->s_desc;
 
-        $data = DB::table('pmc_mstr')
-            ->orderby('pmc_code');
-
+        $data = DB::table('pma_asset')
+            ->orderby('pma_asset')
+            ->orderby('pma_pmcode');
+/*
         if($s_code) {
             $data = $data->where('pmc_code','like','%'.$s_code.'%');
         }
         if($s_desc) {
             $data = $data->where('pmc_desc','like','%'.$s_desc.'%');
         }
-
+*/
         $data = $data->paginate(10);
 
         $datains = DB::table('ins_list')
@@ -51,7 +52,21 @@ class PMCodeController extends Controller
             ->groupBy('spg_code')
             ->get();
 
-        return view('setting.pmcode', compact('data','datains','dataqcs','dataspg'));
+        $dataasset = Db::table('asset_mstr')
+            ->whereAsset_active('Yes')
+            ->orderBy('asset_code')
+            ->get();
+
+        $datapm = DB::table('pmc_mstr')
+            ->orderby('pmc_code')
+            ->get();
+
+        $dataeng = DB::table('eng_mstr')
+            ->whereEng_active('Yes')
+            ->orderBy('eng_code')
+            ->get();
+
+        return view('setting.pmasset', compact('data','dataasset','datapm','dataeng'));
     }
 
     /**
@@ -72,20 +87,22 @@ class PMCodeController extends Controller
      */
     public function store(Request $req)
     {
-        DB::table('pmc_mstr')
+        DB::table('pma_asset')
             ->insert([
-                'pmc_code' => $req->t_code,
-                'pmc_desc' => $req->t_desc,
-                'pmc_type' => $req->t_type,
-                'pmc_ins' => $req->t_ins,
-                'pmc_spg' => $req->t_spg,
-                'pmc_qcs' => $req->t_qcs,
-                'pmc_editedby'  => Session::get('username'),
+                'pma_asset' => $req->t_asset,
+                'pma_pmcode' => $req->t_pmasset,
+                'pma_leadtime' => $req->t_time,
+                'pma_mea' => $req->t_mea,
+                'pma_cal' => $req->t_cal,
+                'pma_meter' => $req->t_meter,
+                'pma_meterum' => $req->t_meterum,
+                'pma_eng' => $req->t_eng,
+                'pma_editedby'  => Session::get('username'),
                 'created_at'    => Carbon::now()->toDateTimeString(),
                 'updated_at'    => Carbon::now()->toDateTimeString(),
             ]);
 
-        toast('Preventive Code Created.', 'success');
+        toast('Preventive Maintenance Created.', 'success');
         return back();
     }
 
@@ -118,22 +135,9 @@ class PMCodeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $req)
+    public function update(Request $request, $id)
     {
-        DB::table('pmc_mstr')
-            ->wherePmc_code($req->te_code)
-            ->update([
-                'pmc_desc' => $req->te_desc,
-                'pmc_type' => $req->te_type,
-                'pmc_ins' => $req->te_ins,
-                'pmc_spg' => $req->te_spg,
-                'pmc_qcs' => $req->te_qcs,
-                'pmc_editedby'  => Session::get('username'),
-                'updated_at'    => Carbon::now()->toDateTimeString(),
-            ]);
-
-        toast('Preventive Code Updated.', 'success');
-        return back();
+        //
     }
 
     /**
@@ -142,13 +146,8 @@ class PMCodeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $req)
+    public function destroy($id)
     {
-        $data = DB::table('pmc_mstr')
-            ->wherePmc_code($req->d_code)
-            ->delete();
-
-        toast('Preventive Code Deleted.', 'success');
-        return back();
+        //
     }
 }
