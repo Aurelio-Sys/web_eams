@@ -26,12 +26,12 @@ class InsListController extends Controller
             ->orderby('ins_code')
             ->groupBy('ins_code');
 
-        /* if($s_code) {
-            $data = $data->where('egr_code','like','%'.$s_code.'%');
+        if($s_code) {
+            $data = $data->where('ins_code','like','%'.$s_code.'%');
         }
         if($s_desc) {
-            $data = $data->where('egr_desc','like','%'.$s_desc.'%');
-        } */
+            $data = $data->where('ins_desc','like','%'.$s_desc.'%');
+        }
 
         $data = $data->paginate(10);
 
@@ -185,8 +185,13 @@ class InsListController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $req)
     {
-        //
+        DB::table('ins_list')
+        ->whereIns_code($req->d_code)
+        ->delete();
+
+        toast('Deleted Instruction List Successfully.', 'success');
+        return back();
     }
 }

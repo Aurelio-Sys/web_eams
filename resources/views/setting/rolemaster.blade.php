@@ -694,7 +694,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>  --}}
+            </div>  
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Repair Code ') }}</label>
               <div class="col-6">
@@ -712,12 +712,21 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div> --}}
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Instruction Code ') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Instruction List ') }}</label>
               <div class="col-6">
                 <label class="switch" for="SetIns">
                   <input type="checkbox" class="custom-control-input" id="SetIns" name="SetIns" value="MT35" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Sparepart List ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="SetSplist">
+                  <input type="checkbox" class="custom-control-input" id="SetSplist" name="SetSplist" value="MT41" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -727,6 +736,15 @@
               <div class="col-6">
                 <label class="switch" for="qcspec">
                   <input type="checkbox" class="custom-control-input" id="qcspec" name="qcspec" value="MT40" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('PM Code Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="SetPmcode">
+                  <input type="checkbox" class="custom-control-input" id="SetPmcode" name="SetPmcode" value="MT39" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -1372,7 +1390,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>  --}}
+            </div>  
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Repair Code ') }}</label>
               <div class="col-6">
@@ -1390,12 +1408,21 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div> --}}
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Instruction Code ') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Instruction List ') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_SetIns">
                   <input type="checkbox" class="custom-control-input" id="e_SetIns" name="e_SetIns" value="MT35" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Sparepart List') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_SetSplist">
+                  <input type="checkbox" class="custom-control-input" id="e_SetSplist" name="e_SetSplist" value="MT41" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -1405,6 +1432,15 @@
               <div class="col-6">
                 <label class="switch" for="e_qcspec">
                   <input type="checkbox" class="custom-control-input" id="e_qcspec" name="e_qcspec" value="MT40" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('PM Code Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_SetPmcode">
+                  <input type="checkbox" class="custom-control-input" id="e_SetPmcode" name="e_SetPmcode" value="MT39" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -1694,7 +1730,7 @@
           document.getElementById('e_Rep').checked = true;
         } else {
           document.getElementById('e_Rep').checked = false;
-        }  --}}
+        }  
         if (listmenu.search("MT34") >= 0) {
           document.getElementById('e_Rep').checked = true;
         } else {
@@ -1704,11 +1740,16 @@
           document.getElementById('e_SetRepgroup').checked = true;
         } else {
           document.getElementById('e_SetRepgroup').checked = false;
-        }
+        } --}}
         if (listmenu.search("MT35") >= 0) {
           document.getElementById('e_SetIns').checked = true;
         } else {
           document.getElementById('e_SetIns').checked = false;
+        }
+        if (listmenu.search("MT41") >= 0) {
+          document.getElementById('e_SetSplist').checked = true;
+        } else {
+          document.getElementById('e_SetSplist').checked = false;
         }
         if (listmenu.search("MT40") >= 0) {
           document.getElementById('e_qcspec').checked = true;
@@ -1724,6 +1765,11 @@
           document.getElementById('e_SetAsfn').checked = true;
         } else {
           document.getElementById('e_SetAsfn').checked = false;
+        }
+        if (listmenu.search("MT39") >= 0) {
+          document.getElementById('e_SetPmcode').checked = true;
+        } else {
+          document.getElementById('e_SetPmcode').checked = false;
         }
         
         {{--  if (listmenu.search("MT03") >= 0) {

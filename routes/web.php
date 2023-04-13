@@ -7,9 +7,10 @@ use App\Http\Controllers\Master\PmEngController;
 use App\Http\Controllers\Master\UMController;
 use App\Http\Controllers\Master\AsfnController;
 use App\Http\Controllers\Master\EngGroupContoller;
-use App\Http\Controllers\Master\PMCodeContoller;
+use App\Http\Controllers\Master\PMCodeController;
 use App\Http\Controllers\Master\QCSpecController;
 use App\Http\Controllers\Master\InsListController;
+use App\Http\Controllers\Master\SplistController;
 use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\Report\RemainSpController;
@@ -633,18 +634,31 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/editegr', [EngGroupContoller::class, 'update']);
 	Route::post('/deleteegr', [EngGroupContoller::class, 'destroy']);
 
-	// PM Code Maintenance
-	Route::get('/pmcode',[PMCodeContoller::class, 'index']);
-
-	// QC Spec
-	Route::get('/qcspec',[QCSpecController::class, 'index']);
-	Route::get('/qcspeccreate',[QCSpecController::class, 'create'])->name('qcspeccreate');
-
 	// Instruction List
 	Route::get('/inslist',[InsListController::class, 'index']);
 	Route::post('/createinslist',[InsListController::class, 'store']);
 	Route::get('/editdetins',[InsListController::class, 'editdetins']);
 	Route::post('/editinslist',[InsListController::class, 'update']);
+	Route::post('/delinslist', [InsListController::class, 'destroy']);
+	
+	// Sparepart List
+	Route::get('/splist',[SplistController::class, 'index']);
+	Route::get('/getspmstr',[SplistController::class, 'getspmstr'])->name('getspmstr');
+	Route::post('/createsplist',[SplistController::class, 'store']);
+	Route::get('/editdetsplist',[SplistController::class, 'editdetsplist']);
+	Route::post('/editsplist',[SplistController::class, 'update']);
+	Route::post('/delsplist', [SplistController::class, 'destroy']);
+
+	// PM Code Maintenance
+	Route::get('/pmcode',[PMCodeController::class, 'index']);
+	Route::post('/createpmcode',[PMCodeController::class, 'store']);
+
+	// QC Spec
+	Route::get('/qcspec',[QCSpecController::class, 'index']);
+	Route::post('/createqcs',[QCSpecController::class, 'store']);
+	Route::get('/editdetqcs', [QCSpecController::class, 'editdetqcs']);
+	Route::post('/editqcs',[QCSpecController::class, 'update']);
+	Route::post('/delqcs', [QCSpecController::class, 'destroy']);
 });
 
 Auth::routes();
