@@ -16,8 +16,9 @@ class CreateWoMstrTable extends Migration
         Schema::create('wo_mstr', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('wo_number', 24);
-            $table->string('wo_sr_number',24);
+            $table->string('wo_sr_number',24)->nullable();
             $table->string('wo_asset_code', 24);
+            $table->string('wo_type',24);
             $table->string('wo_status',14);
             $table->string('wo_failure_code')->nullable();
             $table->string('wo_failure_type')->nullable();
@@ -38,6 +39,7 @@ class CreateWoMstrTable extends Migration
             $table->string('wo_downtime_um')->nullable();
             $table->dateTime('wo_actual_start');
             $table->dateTime('wo_actual_finish');
+            $table->string('wo_createdby',24);
             $table->timestamp('wo_system_create')->useCurrent();
             $table->timestamp('wo_system_update')->useCurrent();
         });

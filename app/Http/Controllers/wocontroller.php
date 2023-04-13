@@ -42,7 +42,7 @@ use ZipArchive;
 use Response;
 use App\Models\Qxwsa as ModelsQxwsa;
 use App\Services\CreateTempTable;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 
 class wocontroller extends Controller
 {
@@ -219,26 +219,38 @@ class wocontroller extends Controller
     }
 
     // WO maint
-    public function wobrowse()
+    public function wobrowse(Request $req)
     {         // route : womaint  blade : workorder.wobrowse
         if (strpos(Session::get('menu_access'), 'WO01') !== false) {
             // dd(Session::all());
             $usernow = DB::table('users')
                 ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
-                // ->select('approver')
                 ->where('username', '=', session()->get('username'))
                 ->get();
             
             $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-                ->orderby('wo_created_at', 'desc')
-                ->orderBy('wo_mstr.wo_nbr', 'desc');
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code');
 
             // if (Session::get('role') <> 'ADMIN') {
             //     $data = $data->where('wo_dept','=',session::get('department'));
             // }
+            if ($req->s_nomorwo) {
+                $data->where('wo_number','like', '%'.$req->s_nomorwo.'%');
+            }
+            if ($req->s_asset) {
+                $data->where('asset_code', $req->s_asset);
+            }
+            if ($req->s_status) {
+                $data->where('wo_status', $req->s_status);
+            }
+            if ($req->s_wotype) {
+                $data->where('wo_type', $req->s_wotype);
+            }
+            if($req->s_engineer){
+                $data->where('wo_list_engineer','like', '%'.$req->s_engineer.'%');
+            }
                 
-            $data = $data->paginate(10);
+            $data = $data->orderby('wo_system_create', 'desc')->orderBy('wo_number', 'desc')->paginate(10);
             
             $depart = DB::table('dept_mstr')
                 ->get();
@@ -257,12 +269,14 @@ class wocontroller extends Controller
                 ->get();
 
             
-            $repaircode = DB::table('rep_master')
-                ->get();
-            $repairgroup = DB::table('xxrepgroup_mstr')
-                ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
-                ->distinct('xxrepgroup_nbr')
-                ->get();
+            $maintenance = DB::table('pmc_mstr')->get();
+
+            $inslist = DB::table('ins_list')->get();
+
+            $splist = DB::table('spg_list')->get();
+
+            $qclist = DB::table('qcs_list')->get();
+
             $impact = DB::table('imp_mstr')
                 ->get();
             $wottype = DB::table('wotyp_mstr')
@@ -273,7 +287,11 @@ class wocontroller extends Controller
             // dd($wottype);
             $ceksrfile = DB::table(('service_req_upload'))
                 ->get();
-            return view('workorder.wobrowse', ['impact' => $impact, 'wottype' => $wottype, 'repairgroup' => $repairgroup, 'data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '', 'repaircode' => $repaircode, 'ceksrfile' => $ceksrfile]);
+            return view('workorder.wobrowse', ['impact' => $impact, 'wottype' => $wottype, 'data' => $data, 
+                        'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 
+                        'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '', 
+                        'maintenancelist' => $maintenance, 'ceksrfile' => $ceksrfile, 'inslist' => $inslist, 'splist' => $splist,
+                        'qclist' => $qclist]);
         } else {
             toast('Anda tidak memiliki akses menu, Silahkan kontak admin', 'error');
             return back();
@@ -922,6 +940,14 @@ class wocontroller extends Controller
         return back();
     }
 
+    public function searchic(Request $req){
+        $searchic = DB::table('pmc_mstr')
+                    ->where('pmc_code','=',$req->pmc_code)
+                    ->first();
+
+        return response()->json($searchic);
+    }
+
     public function createenwo(Request $req)
     {
         //  dd($req->all());
@@ -1008,76 +1034,33 @@ class wocontroller extends Controller
     public function createwo(Request $req)
     {
         // dd($req->all());
+        
+        $thisFailCode = "";
 
-        $eng1 = '';
-        $eng2 = '';
-        $eng3 = '';
-        $eng4 = '';
-        $eng5 = '';
-        $rc1 = '';
-        $rc2 = '';
-        $rc3 = '';
-        $rg1 = '';
-        $cimpactlist = '';
-        $cimpactdesclist = '';
-        $c_wotype = null;
-        if ($req->cwotype == 'preventive') {
-            $c_wotype = 'auto';
-        } else {
-            $c_wotype = 'other';
+        if($req->has('failurecode')){
+            $thisFailCode = implode(';',array_map('strval', $req->failurecode));
+        }else{
+            $thisFailCode = null;
         }
 
-        foreach ($req->c_impact as $cimpact) {
-            if ($cimpact != '') {
+        $thisImpact = "";
 
-                $testimp = DB::table('imp_mstr')
-                    ->where('imp_code', '=', $cimpact)
-                    ->first();
-                $cimpactdesclist .= $testimp->imp_desc . ';';
-                //    dd($cimpact,$testimp); 
-            }
-            $cimpactlist .= $cimpact . ';';
-        }
-        // dd($cimpactlist);        
-        //dd($req->get('c_engineer')[0]);
-        if (array_key_exists(0, $req->get('c_engineer'))) {
-            $eng1 = $req->get('c_engineer')[0];
-        } else {
-            $eng1 = null;
-        }
-        if (array_key_exists(1, $req->get('c_engineer'))) {
-            $eng2 = $req->get('c_engineer')[1];
-        } else {
-            $eng2 = null;
-        }
-        if (array_key_exists(2, $req->get('c_engineer'))) {
-            $eng3 = $req->get('c_engineer')[2];
-        } else {
-            $eng3 = null;
-        }
-        if (array_key_exists(3, $req->get('c_engineer'))) {
-            $eng4 = $req->get('c_engineer')[3];
-        } else {
-            $eng4 = null;
-        }
-        if (array_key_exists(4, $req->get('c_engineer'))) {
-            $eng5 = $req->get('c_engineer')[4];
-        } else {
-            $eng5 = null;
+        if($req->has('c_impact')){
+            $thisImpact = implode(';',array_map('strval', $req->c_impact));
+        }else{
+            $thisImpact = null;
         }
 
-        if (isset($req->crepaircode[0])) {
-            $rc1 = $req->crepaircode[0];
+        $thisListEng = "";
+
+        if($req->has('c_listengineer')){
+                $thisListEng = implode(';', array_map('strval', $req->c_listengineer));
+        }else{
+            $thisListEng = null;
         }
-        if (isset($req->crepaircode[1])) {
-            $rc2 = $req->crepaircode[1];
-        }
-        if (isset($req->crepaircode[2])) {
-            $rc3 = $req->crepaircode[2];
-        }
-        if (isset($req->crepairgroup)) {
-            $rg1 = $req->crepairgroup;
-        }
+
+        // dd($thisFailCode,$thisImpact,$thisListEng);
+        
 
         //dd($req->get('c_engineer')[4]);
         $tablern = DB::table('running_mstr')
@@ -1100,61 +1083,30 @@ class wocontroller extends Controller
         $runningnbr = $tablern->wo_prefix . '-' . $newyear . '-' . $newtemprunnbr;
 
         $dataarray = array(
-            'wo_nbr'           => $runningnbr,
-            'wo_dept'          => Session::get('department'),
-            'wo_engineer1'     => $eng1,
-            'wo_engineer2'     => $eng2,
-            'wo_engineer3'     => $eng3,
-            'wo_engineer4'     => $eng4,
-            'wo_engineer5'     => $eng5,
-            'wo_repair_code1'  => $rc1,
-            'wo_repair_code2'  => $rc2,
-            'wo_repair_code3'  => $rc3,
-            'wo_repair_group'  => $rg1,
-            'wo_failure_code1'  => isset($req->failurecode[0]) ? $req->failurecode[0] : null,
-            'wo_failure_code2'  => isset($req->failurecode[1]) ? $req->failurecode[1] : null,
-            'wo_failure_code3'  => isset($req->failurecode[2]) ? $req->failurecode[2] : null,
-            'wo_new_type'      => $req->c_failuretype,
-            'wo_impact'        => $cimpactlist,
-            'wo_impact_desc'   => $cimpactdesclist,
-            'wo_repair_type'   => $req->crepairtype,
-            'wo_asset'         => $req->c_asset,
-            'wo_priority'      => $req->c_priority,
-            'wo_status'        => 'plan',
-            'wo_schedule'      => $req->c_schedule,
-            'wo_duedate'       => $req->c_duedate,
-            'wo_note'          => $req->c_note,
-            'wo_creator'       => session()->get('username'),
-            'wo_created_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-            'wo_updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-            'wo_type'          => $c_wotype,
-            'wo_asset_site'    => $req->hide_site,
-            'wo_asset_loc'     => $req->hide_loc,
+            'wo_number'           => $runningnbr,
+            'wo_sr_number'	      => '',
+            'wo_asset_code'	      => $req->c_asset,
+            'wo_type'	          => $req->cwotype,
+            'wo_status'	          => 'firm',
+            'wo_priority'	      => $req->c_priority,
+            'wo_failure_code'	  => $thisFailCode,
+            'wo_failure_type'	  => $req->c_failuretype,
+            'wo_list_engineer'    => $thisListEng,
+            'wo_impact_code'      => $thisImpact,	
+            'wo_start_date'       => $req->c_startdate,	
+            'wo_due_date'	      => $req->c_duedate,
+            'wo_mt_code'          => $req->has('c_mtcode') ? $req->c_mtcode : null,
+            'wo_ins_code'	      => $req->has('c_inslist') ? $req->c_inslist : null,
+            'wo_sp_code'	      => $req->has('c_splist') ? $req->c_splist : null,
+            'wo_qcspec_code'	  => $req->has('c_qclist') ? $req->c_qclist : null,
+            'wo_note'	          => $req->c_note,	
+            'wo_createdby'	      => session()->get('username'),
+            'wo_department'       => session()->get('department'),
+            'wo_system_create'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),	
+            'wo_system_update'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
         );
-        // dd($dataarray);
-        if ($c_wotype == 'auto') {
-            /* jika asset dalam kondidi PM, WO tetap masih bisa terbentuk
-            $checkasset = DB::table('asset_mstr')
-                            ->where('asset_code','=',$req->c_asset)
-                            ->first();
-            if($checkasset->asset_on_use == null){
 
-                DB::table('wo_mstr')->insert($dataarray);
-
-                DB::table('asset_mstr')
-                ->where('asset_code','=',$req->c_asset)
-                ->update(['asset_on_use' => $runningnbr]);
-                
-            }
-            else{
-                toast('Asset '.$req->c_asset.' has been used for PM','error');
-                return back();
-            }*/
-
-            DB::table('wo_mstr')->insert($dataarray);
-        } else {
-            DB::table('wo_mstr')->insert($dataarray);
-        }
+        DB::table('wo_mstr')->insert($dataarray);
 
         DB::table('running_mstr')
             ->where('wo_nbr', '=', $tablern->wo_nbr)
@@ -1168,7 +1120,7 @@ class wocontroller extends Controller
 
         $asset = $req->c_asset . ' - ' . $assettable->asset_desc;
 
-        //EmailScheduleJobs::dispatch($runningnbr, $asset, '1', '', '', '', '');
+        EmailScheduleJobs::dispatch($runningnbr, $asset, '1', '', '', '', '');
 
         toast($runningnbr . ' Successfuly Created !', 'success');
         return back();
@@ -1267,95 +1219,44 @@ class wocontroller extends Controller
 
     public function editwo(Request $req)
     {
-        // dd($req->all());
-        $dataaccess = DB::table('wo_mstr')
-            ->where('wo_nbr', '=', $req->e_nowo)
-            ->first();
-        // if($dataaccess->wo_access == 0){
-        //     DB::table('wo_mstr')
-        //         ->where('wo_nbr','=', $req->e_nowo)
-        //         ->update(['wo_access' => 1]);   
-        // }
-        // else{
-        //     toast('WO '.$req->e_nowo.' is being used right now', 'error');
-        //     return redirect()->route('womaint');
-        // }
-        // if($dataaccess->wo_status != 'open'){
-        //     toast('WO '.$req->e_nowo.' status has changed, please recheck', 'error');
-        //     return redirect()->route('womaint');
-        // }
-        // dd($req->all());
-        $wonbr       = $req->e_nowo;
-        $wosr        = $req->e_nosr;
-        $woengineer1 = $req->e_engineer1;
-        $woengineer2 = $req->e_engineer2;
-        $woengineer3 = $req->e_engineer3;
-        $woengineer4 = $req->e_engineer4;
-        $woengineer5 = $req->e_engineer5;
-        $woasset     = $req->e_asset;
-        $woschedule  = $req->e_schedule;
-        $woduedate   = $req->e_duedate;
-        $wopriority  = $req->e_priority;
-        $department  = $req->e_department;
-        $repairtype  = $req->erepairtype;
-        $repairgroup = $req->erepairgroup;
-        $note        = $req->e_note;
-        $rc1 = null;
-        $rc2 = null;
-        $rc3 = null;
-        $fl1 = null;
-        $fl2 = null;
-        $fl3 = null;
-        $eimpactlist = '';
-        $eimpactdesclist = '';
-        // dd($repairgroup,$repairtype);
-        if (isset($req->erepaircode[0])) {
-            $rc1 = $req->erepaircode[0];
-        }
-        if (isset($req->erepaircode[1])) {
-            $rc2 = $req->erepaircode[1];
-        }
-        if (isset($req->erepaircode[2])) {
-            $rc3 = $req->erepaircode[2];
-        }
-        foreach ($req->e_impact as $eimpact) {
-            if ($eimpact != '') {
-                $testimp = DB::table('imp_mstr')
-                    ->where('imp_code', '=', $eimpact)
-                    ->first();
-                $eimpactdesclist .= $testimp->imp_desc . ';';
-            }
-            $eimpactlist .= $eimpact . ';';
+        dd($req->all());
+
+        $thisFailCode = "";
+
+        if($req->has('m_failurecode')){
+            $thisFailCode = implode(';',array_map('strval', $req->m_failurecode));
         }
 
+        $thisImpact = "";
+
+        if($req->has('e_impact')){
+            $thisImpact = implode(';',array_map('strval', $req->e_impact));
+        }
+
+        $thisListEng = "";
+
+        if($req->has('e_engineerlist')){
+            
+                $thisListEng = implode(';', array_map('strval', $req->e_engineerlist));
+        }
+        
+
         DB::table('wo_mstr')
-            ->where('wo_nbr', '=', $wonbr)
+            ->where('wo_number', '=', $req->e_nowo)
             ->update([
-                'wo_engineer1'    => $woengineer1,
-                'wo_engineer2'    => $woengineer2,
-                'wo_engineer3'    => $woengineer3,
-                'wo_engineer4'    => $woengineer4,
-                'wo_engineer5'    => $woengineer5,
-                'wo_priority'     => $wopriority,
-                'wo_asset'        => $woasset,
-                'wo_schedule'     => $woschedule,
-                'wo_duedate'      => $woduedate,
-                // 'wo_dept'         => $department,
-                'wo_note'         => $req->e_note,
-                'wo_repair_code1' => $rc1,
-                'wo_repair_code2' => $rc2,
-                'wo_repair_code3' => $rc3,
-                'wo_repair_group' => $repairgroup,
-                'wo_repair_type'  => $repairtype,
-                'wo_new_type'     => $req->e_wottype,
-                'wo_failure_code1' => isset($req->m_failurecode[0]) ? $req->m_failurecode[0] : null,
-                'wo_failure_code2' => isset($req->m_failurecode[1]) ? $req->m_failurecode[1] : null,
-                'wo_failure_code3' => isset($req->m_failurecode[2]) ? $req->m_failurecode[2] : null,
-                'wo_impact'       => $eimpactlist,
-                'wo_impact_desc'  => $eimpactdesclist,
-                'wo_note'         => $note,
-                'wo_updated_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                'wo_access'       => 0
+                'wo_list_engineer' => $thisListEng,
+                'wo_failure_type' => $req->e_wottype,
+                'wo_failure_code' => $thisFailCode,
+                'wo_impact_code' => $thisImpact,
+                'wo_start_date' => $req->e_startdate,
+                'wo_due_date' => $req->e_duedate,
+                'wo_note' => $req->e_note,
+                'wo_mt_code' => $req->e_mtcode,
+                'wo_ins_code' => $req->e_inslist,
+                'wo_sp_code' => $req->e_splist,
+                'wo_qcspec_code' => $req->e_qclist,
+                'wo_priority' => $req->e_priority,
+                'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
             ]);
 
         toast('WO ' . $req->e_nowo . ' successfully updated', 'success');
@@ -1972,196 +1873,154 @@ class wocontroller extends Controller
     public function geteditwoold(Request $req)
     {
         //dd($req->get('nomorwo'));
-        //dd('aaa');
+        // dd('aaa');
         $nowo = $req->get('nomorwo');
-        $currwo = DB::table('wo_mstr')
-            ->where('wo_mstr.wo_nbr', '=', $nowo)
-            ->first();
+        // $currwo = DB::table('wo_mstr')
+        //     ->where('wo_mstr.wo_nbr', '=', $nowo)
+        //     ->first();
 
         $data = DB::table('wo_mstr')
-            ->selectRaw('wo_type,wo_nbr,wo_reviewer_appdate,wo_approver_appdate,wo_repair_type,
-                wo_repair_group,xxrepgroup_nbr,xxrepgroup_desc,wo_status,asset_desc,wo_approval_note,
-                wo_creator,wo_reject_reason,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status,
-                wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,wo_engineer2 as woen2, 
-                wo_engineer3 as woen3,wo_engineer4 as woen4,wo_engineer5 as woen5,u1.eng_desc as u11,
-                u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, 
-                wo_mstr.wo_failure_code1 as wofc1, wo_mstr.wo_failure_code2 as wofc2, 
-                wo_mstr.wo_failure_code3 as wofc3, fn1.fn_desc as fd1, fn2.fn_desc as fd2, 
-                fn3.fn_desc as fd3,r1.repm_desc as r11,r2.repm_desc as r22,r3.repm_desc as r33,
-                r1.repm_code as rr11,r2.repm_code as rr22,r3.repm_code as rr33, wo_finish_date,
-                wo_finish_time,wo_repair_hour,asset_last_mtc,asset_last_usage_mtc,asset_measure,asloc_code,
-                asloc_desc,astype_code,astype_desc,wo_new_type,wo_impact,wo_impact_desc,wo_action,wotyp_desc,asset_daya,
-                wo_reject_reason,asset_group,wo_qc_appnote')
-            ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
-            ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
-            ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
-            ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
-            ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
-            ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-            ->leftjoin('asset_type', 'asset_mstr.asset_type', 'asset_type.astype_code')
-            ->leftjoin('asset_loc', 'asset_mstr.asset_loc', 'asset_loc.asloc_code')
-            ->leftjoin('fn_mstr as fn1', 'wo_mstr.wo_failure_code1', 'fn1.fn_code')
-            ->leftjoin('fn_mstr as fn2', 'wo_mstr.wo_failure_code2', 'fn2.fn_code')
-            ->leftjoin('fn_mstr as fn3', 'wo_mstr.wo_failure_code3', 'fn3.fn_code')
-            ->leftjoin('rep_master as r1', 'wo_mstr.wo_repair_code1', 'r1.repm_code')
-            ->leftjoin('rep_master as r2', 'wo_mstr.wo_repair_code2', 'r2.repm_code')
-            ->leftjoin('rep_master as r3', 'wo_mstr.wo_repair_code3', 'r3.repm_code')
-            ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
-            ->leftJoin('wotyp_mstr', 'wo_mstr.wo_new_type', 'wotyp_mstr.wotyp_code')
-            ->leftjoin('xxrepgroup_mstr', 'xxrepgroup_mstr.xxrepgroup_nbr', 'wo_mstr.wo_repair_group')
-            ->where('wo_mstr.wo_nbr', '=', $nowo)
-            ->get();
+                ->leftJoin('asset_mstr','asset_mstr.asset_code','wo_mstr.wo_asset_code')
+                ->leftJoin('wotyp_mstr','wotyp_mstr.wotyp_code','wo_mstr.wo_failure_type')
+                ->leftJoin('pmc_mstr','pmc_mstr.pmc_code','wo_mstr.wo_mt_code')
+                ->leftJoin('ins_list','ins_list.ins_code','wo_mstr.wo_ins_code')
+                ->leftJoin('spg_list','spg_list.spg_code','wo_mstr.wo_sp_code')
+                ->leftJoin('qcs_list','qcs_list.qcs_code','wo_mstr.wo_qcspec_code')
+                ->where('wo_mstr.wo_number', '=', $nowo)
+                ->first();
 
-        // dd($data);
+        $kodeEngineers = explode(';', $data->wo_list_engineer);
+        $listDescEng = [];
+        foreach($kodeEngineers as $cEng){
+            $deskripsiEng = DB::table('eng_mstr')->where('eng_code','=', $cEng)->first()->eng_desc;
+            array_push($listDescEng,$deskripsiEng);
+        }
+
+        $kodeFailure = explode(';', $data->wo_failure_code);
+        $listFailure = [];
+        foreach($kodeFailure as $cFail){
+            $deskripsiFail = DB::table('fn_mstr')->where('fn_code','=', $cFail)->first()->fn_desc;
+            array_push($listFailure,$deskripsiFail);
+        }
 
         return $data;
     }
 
-    public function geteditwo($wo)
+    public function geteditwo(Request $req)
     {
-        //dd($req->get('nomorwo'));
-        //dd('aaa');
-        $nowo = $wo;
+        // dd($req->get('wonumber'));
+        $nowo = $req->get('wonumber');
         $currwo = DB::table('wo_mstr')
-            ->where('wo_mstr.wo_nbr', '=', $nowo)
+            ->where('wo_mstr.wo_number', '=', $nowo)
             ->first();
 
-        $data = DB::table('wo_mstr')
-            ->selectRaw('wo_type,wo_nbr,wo_reviewer_appdate,wo_approver_appdate,wo_repair_type,
-                wo_repair_group,xxrepgroup_nbr,xxrepgroup_desc,xxrepgroup_rep_code,wo_status,asset_desc,wo_approval_note,
-                wo_creator,wo_reject_reason,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status,
-                wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,wo_engineer2 as woen2, 
-                wo_engineer3 as woen3,wo_engineer4 as woen4,wo_engineer5 as woen5,u1.eng_desc as u11,
-                u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, 
-                wo_mstr.wo_failure_code1 as wofc1, wo_mstr.wo_failure_code2 as wofc2, 
-                wo_mstr.wo_failure_code3 as wofc3, fn1.fn_desc as fd1, fn2.fn_desc as fd2, 
-                fn3.fn_desc as fd3,r1.repm_desc as r11,r2.repm_desc as r22,r3.repm_desc as r33,
-                r1.repm_code as rr11,r2.repm_code as rr22,r3.repm_code as rr33, wo_finish_date,
-                wo_finish_time,wo_repair_hour,asset_last_mtc,asset_last_usage_mtc,asset_measure,asloc_code,
-                asloc_desc,astype_code,astype_desc,wo_new_type,wo_impact,wo_impact_desc,wo_action,wotyp_desc,asset_daya,
-                wo_reject_reason,asset_group,wo_qc_appnote')
-            ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
-            ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
-            ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
-            ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
-            ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
-            ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-            ->leftjoin('asset_type', 'asset_mstr.asset_type', 'asset_type.astype_code')
-            ->leftjoin('asset_loc', 'asset_mstr.asset_loc', 'asset_loc.asloc_code')
-            ->leftjoin('fn_mstr as fn1', 'wo_mstr.wo_failure_code1', 'fn1.fn_code')
-            ->leftjoin('fn_mstr as fn2', 'wo_mstr.wo_failure_code2', 'fn2.fn_code')
-            ->leftjoin('fn_mstr as fn3', 'wo_mstr.wo_failure_code3', 'fn3.fn_code')
-            ->leftjoin('rep_master as r1', 'wo_mstr.wo_repair_code1', 'r1.repm_code')
-            ->leftjoin('rep_master as r2', 'wo_mstr.wo_repair_code2', 'r2.repm_code')
-            ->leftjoin('rep_master as r3', 'wo_mstr.wo_repair_code3', 'r3.repm_code')
-            ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
-            ->leftJoin('wotyp_mstr', 'wo_mstr.wo_new_type', 'wotyp_mstr.wotyp_code')
-            ->leftjoin('xxrepgroup_mstr', 'xxrepgroup_mstr.xxrepgroup_nbr', 'wo_mstr.wo_repair_group')
-            ->where('wo_mstr.wo_nbr', '=', $nowo)
-            ->get();
-        
-        // dd($data->first()->asset_group,$data->first()->wo_new_type);
-
-        $data_alldets = DB::table('wo_dets')
-            ->select('wo_dets_nbr', 'wo_dets_rc', 'repm_desc','wo_dets_do_flag','wo_dets_flag')
-            ->join('rep_master', 'wo_dets.wo_dets_rc', 'rep_master.repm_code')
-            ->where('wo_dets.wo_dets_nbr', '=', $nowo)
-            ->distinct('wo_dets_rc')
-            ->get();
-
-        $asfn_det = DB::table('asfn_det')
-            ->where('asfn_asset','=', $data->first()->asset_group)
-            ->where('asfn_fntype','=', $data->first()->wo_new_type)
-            ->count();
-
-        if($asfn_det > 0){
-            $fc = DB::table('fn_mstr')
-            ->leftJoin('asfn_det','asfn_det.asfn_fncode','fn_mstr.fn_code')
-            ->where('asfn_asset','=', $data->first()->asset_group)
-            ->where('asfn_fntype','=', $data->first()->wo_new_type)
-            ->groupBy('asfn_fncode')
-            ->get(); 
+        if($currwo->wo_failure_type !== null){
+            $getFailTypeDesc = DB::table('wotyp_mstr')
+                        ->select('wotyp_desc')
+                        ->where('wotyp_code','=', $currwo->wo_failure_type)
+                        ->first();
         }else{
-            $fc = DB::table('fn_mstr')
-            ->get();  
+            $getFailTypeDesc = '';
         }
 
-        $data2 = "";
-        if ($currwo->wo_repair_type == "group") {
-            $data2 = DB::table('wo_mstr')
-                ->select(
-                    'wo_nbr',
-                    'wo_repair_type',
-                    'wo_repair_group',
-                    'xxrepgroup_nbr',
-                    'xxrepgroup_desc',
-                    'xxrepgroup_rep_code',
-                    'repm_code',
-                    'repm_desc'
-                )
-                ->leftJoin('xxrepgroup_mstr', 'xxrepgroup_mstr.xxrepgroup_nbr', 'wo_mstr.wo_repair_group')
-                ->leftJoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
-                ->where('wo_mstr.wo_nbr', '=', $nowo)
-                ->get();
 
-            // dd($data2);
+        if($currwo->wo_asset_code !== null){
+            $getAssetDesc = DB::table('asset_mstr')
+                        ->select('asset_desc','asset_loc','asset_group')
+                        ->where('asset_code','=', $currwo->wo_asset_code)
+                        ->first();
+        }else{
+            $getAssetDesc = '';
         }
 
-        $datadetail = DB::table('wo_dets')
-            ->leftJoin('ins_mstr', 'wo_dets.wo_dets_ins', 'ins_mstr.ins_code')
-            ->where('wo_dets_nbr', '=', $nowo)
-            ->groupBy('wo_dets_rc', 'wo_dets_ins')
-            ->get();
+        
+        
+        $listFailDesc = [];
 
-        // dd($datadetail);
+        if($currwo->wo_failure_code !== null){
+            $listFailCode = explode(';', $currwo->wo_failure_code);
 
-        $detailsp = DB::table('wo_dets')
-            ->leftJoin('ins_mstr', 'wo_dets.wo_dets_ins', 'ins_mstr.ins_code')
-            ->leftjoin('insd_det', function ($join) {
-                $join->on('wo_dets.wo_dets_ins', '=', 'insd_det.insd_code');
-                $join->on('wo_dets.wo_dets_sp', '=', 'insd_det.insd_part');
-            })
-            ->leftJoin('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')
-            ->where('wo_dets_nbr', '=', $nowo)
-            ->get();
+            
 
-        // dd($data);
-        // return $data;
+            foreach($listFailCode as $failcode){
+                $getFailDesc = DB::table('fn_mstr')
+                            ->select('fn_desc')
+                            ->where('fn_code','=', $failcode)
+                            ->first();
 
-        $engineer = DB::table('users')
-            ->join('roles', 'users.role_user', 'roles.role_code')
-            ->where('role_desc', '=', 'Engineer')
-            ->get();
-        $asset = DB::table('wo_mstr')
-            ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
-            ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-            ->where(function ($status) {
-                $status->where('wo_status', '=', 'started')
-                    ->orwhere('wo_status', '=', 'finish');
-            })
-            ->where(function ($query) {
-                $query->where('wo_engineer1', '=', Session()->get('username'))
-                    ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                    ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                    ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                    ->orwhere('wo_engineer5', '=', Session()->get('username'));
-            })
-            ->groupBy('asset_code')
-            ->orderBy('asset_code')
-            ->get();
-        $repaircode = DB::table('rep_master')
-            ->get();
+                $failure = array('fn_code'=>$failcode, 'fn_desc'=>$getFailDesc->fn_desc);
 
-        $sparepart = DB::table('sp_mstr')
-            ->get();
-        $repairgroup = DB::table('xxrepgroup_mstr')
-            ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
-            ->distinct('xxrepgroup_nbr')
-            ->get();
-        $instruction = DB::table('ins_mstr')
-            ->get();
+                array_push($listFailDesc, $failure);
+            }
+        }
 
-        return view('workorder.wofinish-done', compact('data', 'data_alldets', 'data2', 'engineer', 'asset', 'repaircode', 'sparepart', 'repairgroup', 'instruction', 'datadetail', 'detailsp','fc'));
+        $listEngDesc = [];
+
+        if($currwo->wo_list_engineer !== null){
+            $listEngCode = explode(';', $currwo->wo_list_engineer);
+
+            foreach($listEngCode as $engcode){
+                $getEngDesc = DB::table('eng_mstr')
+                            ->select('eng_desc')
+                            ->where('eng_code','=', $engcode)
+                            ->first();
+
+                $eng = array('eng_code'=>$engcode,'eng_desc'=>$getEngDesc->eng_desc);
+
+                array_push($listEngDesc, $eng);
+            }
+        }
+
+        $listImpactDesc = [];
+
+        if($currwo->wo_impact_code !== null){
+            $listImpactCode = explode(';', $currwo->wo_impact_code);
+
+            foreach($listImpactCode as $impactcode){
+                $getImpactDesc = DB::table('imp_mstr')
+                            ->select('imp_desc')
+                            ->where('imp_code','=', $impactcode)
+                            ->first();
+
+                $impact = array('imp_code'=>$impactcode, 'imp_desc'=> $getImpactDesc->imp_desc);
+
+                array_push($listImpactDesc,$impact);
+            }
+        }
+
+        $getMtDesc = DB::table('pmc_mstr')
+                    ->select('pmc_code')
+                    ->where('pmc_code','=', $currwo->wo_mt_code)
+                    ->first();
+
+
+        $getInslistDesc = DB::table('ins_list')
+                        ->select('ins_code')
+                        ->where('ins_code','=', $currwo->wo_ins_code)
+                        ->first();
+
+        $getSPlistDesc = DB::table('spg_list')
+                        ->select('spg_code')
+                        ->where('spg_code','=', $currwo->wo_sp_code)
+                        ->first();
+
+        $getQClistDesc = DB::table('qcs_list')
+                        ->select('qcs_code')
+                        ->where('qcs_code','=', $currwo->wo_qcspec_code)
+                        ->first();
+        
+        return response()->json([
+            'wo_master' => $currwo,
+            'asset' => $getAssetDesc,
+            'failure_type' => $getFailTypeDesc,
+            'failurecode' => $listFailDesc,
+            'engineer' => $listEngDesc,
+            'impact' => $listImpactDesc,
+            'mtcode' => $getMtDesc,
+            'inslist' => $getInslistDesc,
+            'splist' => $getSPlistDesc,
+            'qcslist' => $getQClistDesc,
+        ]);
     }
 
     public function approvewo(Request $req)
@@ -4888,9 +4747,12 @@ class wocontroller extends Controller
         //     $outputtype .= '<option value="'.$thistype->wotyp_code.'"> '.$thistype->wotyp_code.' -- '.$thistype->wotyp_desc.'</option>';
         // }
 
-        $outputcode = "";
+        $outputcode = [];
         foreach($failure as $thiscode){
-            $outputcode .= '<option value="'.$thiscode->fn_code.'"> '.$thiscode->fn_code.' -- '.$thiscode->fn_desc.'</option>';
+
+            $failurecode = array('fn_code'=>$thiscode->fn_code,'fn_desc'=>$thiscode->fn_desc);
+            
+            array_push($outputcode, $failurecode);
         }
 
         return response()->json([
