@@ -399,14 +399,15 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/needsp', 'UserChartController@needsp');
 
 	//work order maintenance
-	route::get('/womaint', 'wocontroller@wobrowse')->name('womaint');
-	route::post('/createwo', 'wocontroller@createwo');
+	Route::get('/womaint', [wocontroller::class, 'wobrowse'])->name('womaint');
+	Route::post('/createwo', [wocontroller::class, 'createwo']);
+	Route::get('/searchic', [wocontroller::class, 'searchic']);
 	route::get('/womaint/pagination', 'wocontroller@wopaging');
-	route::post('/editwo','wocontroller@editwo'); 
+	route::post('/editwo', [wocontroller::class, 'editwo']); 
 	route::post('/editwoeng','wocontroller@editwoeng'); 
 	route::post('/closewo','wocontroller@closewo'); 
 	route::get('/womaint/getnowo','wocontroller@geteditwoold');
-	route::get('/womaint/getnowo/{wo}',[wocontroller::class, 'geteditwo'])->name('editWO');
+	route::get('/womaint/getwoinfo',[wocontroller::class, 'geteditwo'])->name('editWO');
 	route::get('/womaint/getfailure','wocontroller@getfailure');
 	route::post('/approvewo','wocontroller@approvewo'); 
 	route::get('/openprint/{wo}','wocontroller@openprint');
