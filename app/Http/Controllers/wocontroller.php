@@ -1039,19 +1039,24 @@ class wocontroller extends Controller
 
         if($req->has('failurecode')){
             $thisFailCode = implode(';',array_map('strval', $req->failurecode));
+        }else{
+            $thisFailCode = null;
         }
 
         $thisImpact = "";
 
         if($req->has('c_impact')){
             $thisImpact = implode(';',array_map('strval', $req->c_impact));
+        }else{
+            $thisImpact = null;
         }
 
         $thisListEng = "";
 
         if($req->has('c_listengineer')){
-            
                 $thisListEng = implode(';', array_map('strval', $req->c_listengineer));
+        }else{
+            $thisListEng = null;
         }
 
         // dd($thisFailCode,$thisImpact,$thisListEng);
@@ -1090,12 +1095,13 @@ class wocontroller extends Controller
             'wo_impact_code'      => $thisImpact,	
             'wo_start_date'       => $req->c_startdate,	
             'wo_due_date'	      => $req->c_duedate,
-            'wo_mt_code'          => $req->c_mtcode,
-            'wo_ins_code'	      => $req->c_inslist,
-            'wo_sp_code'	      => $req->c_splist,
-            'wo_qcspec_code'	  => $req->c_qclist,
+            'wo_mt_code'          => $req->has('c_mtcode') ? $req->c_mtcode : null,
+            'wo_ins_code'	      => $req->has('c_inslist') ? $req->c_inslist : null,
+            'wo_sp_code'	      => $req->has('c_splist') ? $req->c_splist : null,
+            'wo_qcspec_code'	  => $req->has('c_qclist') ? $req->c_qclist : null,
             'wo_note'	          => $req->c_note,	
             'wo_createdby'	      => session()->get('username'),
+            'wo_department'       => session()->get('department'),
             'wo_system_create'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),	
             'wo_system_update'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
         );
@@ -1213,7 +1219,7 @@ class wocontroller extends Controller
 
     public function editwo(Request $req)
     {
-        // dd($req->all());
+        dd($req->all());
 
         $thisFailCode = "";
 
@@ -1236,7 +1242,7 @@ class wocontroller extends Controller
         
 
         DB::table('wo_mstr')
-            ->where('wo_nbr', '=', $req->e_nowo)
+            ->where('wo_number', '=', $req->e_nowo)
             ->update([
                 'wo_list_engineer' => $thisListEng,
                 'wo_failure_type' => $req->e_wottype,
@@ -1249,6 +1255,8 @@ class wocontroller extends Controller
                 'wo_ins_code' => $req->e_inslist,
                 'wo_sp_code' => $req->e_splist,
                 'wo_qcspec_code' => $req->e_qclist,
+                'wo_priority' => $req->e_priority,
+                'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
             ]);
 
         toast('WO ' . $req->e_nowo . ' successfully updated', 'success');
@@ -1906,66 +1914,79 @@ class wocontroller extends Controller
             ->where('wo_mstr.wo_number', '=', $nowo)
             ->first();
 
-        // dd($currwo);
-        $getFailTypeDesc = DB::table('wotyp_mstr')
+        if($currwo->wo_failure_type !== null){
+            $getFailTypeDesc = DB::table('wotyp_mstr')
                         ->select('wotyp_desc')
                         ->where('wotyp_code','=', $currwo->wo_failure_type)
                         ->first();
+        }else{
+            $getFailTypeDesc = '';
+        }
 
 
-        $getAssetDesc = DB::table('asset_mstr')
+        if($currwo->wo_asset_code !== null){
+            $getAssetDesc = DB::table('asset_mstr')
                         ->select('asset_desc','asset_loc','asset_group')
                         ->where('asset_code','=', $currwo->wo_asset_code)
                         ->first();
-
-
-        $listFailCode = explode(';', $currwo->wo_failure_code);
-
-        $listFailDesc = [];
-
-        foreach($listFailCode as $failcode){
-            $getFailDesc = DB::table('fn_mstr')
-                        ->select('fn_desc')
-                        ->where('fn_code','=', $failcode)
-                        ->first();
-
-            $failure = array('fn_code'=>$failcode, 'fn_desc'=>$getFailDesc->fn_desc);
-
-            array_push($listFailDesc, $failure);
+        }else{
+            $getAssetDesc = '';
         }
 
+        
+        
+        $listFailDesc = [];
 
-        $listEngCode = explode(';', $currwo->wo_list_engineer);
+        if($currwo->wo_failure_code !== null){
+            $listFailCode = explode(';', $currwo->wo_failure_code);
+
+            
+
+            foreach($listFailCode as $failcode){
+                $getFailDesc = DB::table('fn_mstr')
+                            ->select('fn_desc')
+                            ->where('fn_code','=', $failcode)
+                            ->first();
+
+                $failure = array('fn_code'=>$failcode, 'fn_desc'=>$getFailDesc->fn_desc);
+
+                array_push($listFailDesc, $failure);
+            }
+        }
 
         $listEngDesc = [];
 
-        foreach($listEngCode as $engcode){
-            $getEngDesc = DB::table('eng_mstr')
-                        ->select('eng_desc')
-                        ->where('eng_code','=', $engcode)
-                        ->first();
+        if($currwo->wo_list_engineer !== null){
+            $listEngCode = explode(';', $currwo->wo_list_engineer);
 
-            $eng = array('eng_code'=>$engcode,'eng_desc'=>$getEngDesc->eng_desc);
+            foreach($listEngCode as $engcode){
+                $getEngDesc = DB::table('eng_mstr')
+                            ->select('eng_desc')
+                            ->where('eng_code','=', $engcode)
+                            ->first();
 
-            array_push($listEngDesc, $eng);
+                $eng = array('eng_code'=>$engcode,'eng_desc'=>$getEngDesc->eng_desc);
+
+                array_push($listEngDesc, $eng);
+            }
         }
-
-
-        $listImpactCode = explode(';', $currwo->wo_impact_code);
 
         $listImpactDesc = [];
 
-        foreach($listImpactCode as $impactcode){
-            $getImpactDesc = DB::table('imp_mstr')
-                        ->select('imp_desc')
-                        ->where('imp_code','=', $impactcode)
-                        ->first();
+        if($currwo->wo_impact_code !== null){
+            $listImpactCode = explode(';', $currwo->wo_impact_code);
 
-            $impact = array('imp_code'=>$impactcode, 'imp_desc'=> $getImpactDesc->imp_desc);
+            foreach($listImpactCode as $impactcode){
+                $getImpactDesc = DB::table('imp_mstr')
+                            ->select('imp_desc')
+                            ->where('imp_code','=', $impactcode)
+                            ->first();
 
-            array_push($listImpactDesc,$impact);
+                $impact = array('imp_code'=>$impactcode, 'imp_desc'=> $getImpactDesc->imp_desc);
+
+                array_push($listImpactDesc,$impact);
+            }
         }
-
 
         $getMtDesc = DB::table('pmc_mstr')
                     ->select('pmc_code')

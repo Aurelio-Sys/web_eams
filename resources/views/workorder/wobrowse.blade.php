@@ -94,6 +94,20 @@ div #munculgambar .gambar:hover{
     font-size: 12px;
     cursor: pointer;
   }
+
+  select[readonly].select2-hidden-accessible + .select2-container {
+      pointer-events: none;
+      touch-action: none;
+  }
+
+  select[readonly].select2-hidden-accessible + .select2-container .select2-selection {
+      background: #eee;
+      box-shadow: none;
+  }
+
+  select[readonly].select2-hidden-accessible + .select2-container .select2-selection__arrow, select[readonly].select2-hidden-accessible + .select2-container .select2-selection__clear {
+      display: none;
+  }
 </style>
 <!--Table Menu-->
 
@@ -254,9 +268,9 @@ div #munculgambar .gambar:hover{
             </div>
           </div>
           <div class="form-group row col-md-12 ftypediv" id="ftypediv">
-            <label for="c_failuretype" class="col-md-5 col-form-label text-md-left">Failure Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+            <label for="c_failuretype" class="col-md-5 col-form-label text-md-left">Failure Type</label>
             <div class="col-md-7 col-sm-12">
-              <select class="form-control" id="c_failuretype" name="c_failuretype" required>
+              <select class="form-control" id="c_failuretype" name="c_failuretype">
                 <option></option>
                 @foreach($wottype as $wotypeshow)
                   <option value="{{$wotypeshow->wotyp_code}}">{{$wotypeshow->wotyp_code}} -- {{$wotypeshow->wotyp_desc}}</option>
@@ -266,17 +280,17 @@ div #munculgambar .gambar:hover{
             </div>
           </div>
           <div class="form-group row col-md-12 fcodediv" id="fcodediv">
-            <label for="failurecode" class="col-md-5 col-form-label text-md-left">Failure Code <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+            <label for="failurecode" class="col-md-5 col-form-label text-md-left">Failure Code</label>
             <div class="col-md-7 col-sm-12">
-              <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple" required>
+              <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple">
                 <option></option>
               </select>
             </div>
           </div>
           <div class="form-group row col-md-12 c_impactdiv" id="c_impactdiv">
-            <label for="c_impact" class="col-md-5 col-form-label text-md-left">Impact <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+            <label for="c_impact" class="col-md-5 col-form-label text-md-left">Impact</label>
             <div class="col-md-7">
-              <select id="c_impact" class="form-control c_impact" name="c_impact[]" multiple="multiple" required autofocus>
+              <select id="c_impact" class="form-control c_impact" name="c_impact[]" multiple="multiple" autofocus>
                 <!-- <option value="" selected>Select Impact</option> -->
                 @foreach($impact as $c_impact)
                 <option value="{{$c_impact->imp_code}}">{{$c_impact->imp_desc}}</option>
@@ -286,7 +300,7 @@ div #munculgambar .gambar:hover{
           </div>
           <input type="hidden" id="crepairtypeedit" name="crepairtypeedit" value=''>
           <div class="form-group row col-md-12 c_engineerdiv">
-            <label for="c_listengineer" class="col-md-5 col-form-label text-md-left">Engineer List</label>
+            <label for="c_listengineer" class="col-md-5 col-form-label text-md-left">Engineer List <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-7">
               <select id="c_listengineer" type="text" class="form-control c_listengineer" name="c_listengineer[]" autofocus required multiple="multiple">
                 @foreach($user as $user2)
@@ -325,7 +339,7 @@ div #munculgambar .gambar:hover{
           <div class="form-group row col-md-12">
             <label for="c_priority" class="col-md-5 col-form-label text-md-left">Priority</label>
             <div class="col-md-7">
-              <select id="c_priority" class="form-control" name="c_priority" autocomplete="off" autofocus required>
+              <select id="c_priority" class="form-control" name="c_priority" autocomplete="off" autofocus>
                 <option value='' disabled selected>--select priority--</option>
                 <option value='low'>Low</option>
                 <option value='medium'>Medium</option>
@@ -446,9 +460,9 @@ div #munculgambar .gambar:hover{
             </div>
           </div>
           <div class="form-group row justify-content-center e_wottypediv" id="e_wottypediv">
-            <label for="e_wottype" class="col-md-5 col-form-label text-md-left">Failure Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+            <label for="e_wottype" class="col-md-5 col-form-label text-md-left">Failure Type</label>
             <div class="col-md-7">
-              <select name="e_wottype" class="form-control" id="e_wottype" required>
+              <select name="e_wottype" class="form-control" id="e_wottype" autofocus>
                 <option></option>
                 @foreach($wottype as $wotypeshow)
                   <option value="{{$wotypeshow->wotyp_code}}">{{$wotypeshow->wotyp_code}} -- {{$wotypeshow->wotyp_desc}}</option>
@@ -457,18 +471,18 @@ div #munculgambar .gambar:hover{
             </div>
           </div>
           <div class="form-group row justify-content-center">
-            <label for="m_failurecode" class="col-md-5 col-form-label text-md-left">Failure Code <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+            <label for="m_failurecode" class="col-md-5 col-form-label text-md-left">Failure Code</label>
             <div class="col-md-7 col-sm-12">
-              <select class="form-control m_failurecode" id="m_failurecode" name="m_failurecode[]" multiple required>
+              <select class="form-control m_failurecode" id="m_failurecode" name="m_failurecode[]" multiple autofocus>
               </select>
             </div>
           </div>
 
           <input type="hidden" id="hide_editassetgroup"/>
           <div class="form-group row justify-content-center e_impactdiv" id="e_impactdiv">
-            <label for="e_impact" class="col-md-5 col-form-label text-md-left">Impact <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+            <label for="e_impact" class="col-md-5 col-form-label text-md-left">Impact</label>
             <div class="col-md-7">
-              <select id="e_impact" class="form-control e_impact" name="e_impact[]" multiple="multiple" required autofocus>
+              <select id="e_impact" class="form-control e_impact" name="e_impact[]" multiple="multiple" autofocus>
                 <option></option>
                 @foreach($impact as $e_impact)
                 <option value="{{$e_impact->imp_code}}">{{$e_impact->imp_desc}}</option>
@@ -1592,16 +1606,17 @@ div #munculgambar .gambar:hover{
 
         // console.log(vamp);
         
-        var wonumber = vamp.wo_master.wo_number;
+        var wonumber = wonbr;
         var srnumber = vamp.wo_master.wo_sr_number;
         var assetcode = vamp.wo_master.wo_asset_code;
         var assetdesc = vamp.asset.asset_desc;
         var assetloc = vamp.asset.asset_loc;
-        var failuretype_code = vamp.wo_master.wo_failure_type;
-        var failuretype_desc = vamp.failure_type.wotyp_desc;
+        var failuretype_code = vamp.wo_master.wo_failure_type !== null ? vamp.wo_master.wo_failure_type : '';
+        var failuretype_desc = vamp.failure_type.wotyp_desc ? vamp.failure_type.wotyp_desc : '';
         var note = vamp.wo_master.wo_note;
         var startdate = vamp.wo_master.wo_start_date;
         var duedate = vamp.wo_master.wo_due_date;
+        var createdby = vamp.wo_master.wo_createdby;
 
         
         let combineFailure = [];
@@ -1635,6 +1650,7 @@ div #munculgambar .gambar:hover{
         document.getElementById('v_nosr').value = srnumber;
         document.getElementById('v_startdate').value = startdate;
         document.getElementById('v_duedate').value = duedate;
+        document.getElementById('v_creator').value = createdby;
 
 
         
@@ -1774,6 +1790,20 @@ div #munculgambar .gambar:hover{
           }
       });
 
+      $('#e_wottype').select2({
+        placeholder: 'Select Failure Type',
+        width: '100%',
+        theme: 'bootstrap4',
+        allowClear: true,
+        closeOnSelect: false,
+          templateSelection: function (data, container) {
+            // Memotong teks opsi menjadi 20 karakter
+            var text = data.text.slice(0, 20);
+            // Mengembalikan teks opsi yang sudah dipotong dan menambahkan tanda elipsis
+            return text + (data.text.length > 20 ? '...' : '');
+          },
+      });
+
       $('#e_impact').select2({
         placeholder: 'Select Impact',
         width: '100%',
@@ -1890,19 +1920,6 @@ div #munculgambar .gambar:hover{
         
         var assetval = document.getElementById('c_asset').value;
 
-        // if (assetval == '') {
-        //   // document.getElementById('c_wottypediv').style.display = 'none';
-        //   document.getElementById('c_impactdiv').style.display = 'none';
-        //   document.getElementById('ftypediv').style.display = 'none';
-        //   document.getElementById('fcodediv').style.display = 'none';
-        // } else {
-        //   // document.getElementById('c_wottypediv').style.display = '';
-        //   document.getElementById('c_impactdiv').style.display = '';
-        //   document.getElementById('ftypediv').style.display = '';
-        //   document.getElementById('fcodediv').style.display = '';
-        // }
-        
-
       });
 
       $(document).on('click', '.editwo2', function() {
@@ -1910,6 +1927,18 @@ div #munculgambar .gambar:hover{
         // alert('aaa');
 
         var wonbr = $(this).data('wonumber');
+        var status = $(this).data('status');
+
+        if(status == "released" || status == "started"){
+          document.getElementById('e_engineerlist').setAttribute('readonly', true);
+          document.getElementById('e_mtcode').setAttribute('readonly', true);
+          document.getElementById('e_inslist').setAttribute('readonly', true);
+          document.getElementById('e_splist').setAttribute('readonly', true);
+          document.getElementById('e_qclist').setAttribute('readonly', true);
+          document.getElementById('e_startdate').setAttribute('readonly', true);
+          document.getElementById('e_duedate').setAttribute('readonly', true);
+        }
+
         var btnendel1 = document.getElementById("btndeleteen1");
         var btnendel2 = document.getElementById("btndeleteen2");
         var btnendel3 = document.getElementById("btndeleteen3");
@@ -1939,10 +1968,12 @@ div #munculgambar .gambar:hover{
             var duedate = vamp.wo_master.wo_due_date;
             var priority = vamp.wo_master.wo_priority;
             var wonote = vamp.wo_master.wo_note;
-            var mtcode = vamp.mtcode.pmc_code;
-            var inslist = vamp.inslist.ins_code;
-            var splist = vamp.splist.spg_code;
-            var qcslist = vamp.qcslist.qcs_code;
+            var mtcode = vamp.mtcode ? vamp.mtcode.pmc_code : '';
+            var inslist = vamp.inslist ? vamp.inslist.ins_code : '';
+            var splist = vamp.splist ? vamp.splist.spg_code : '';
+            var qcslist = vamp.qcslist ? vamp.qcslist.qcs_code : '';
+            var wostatus = vamp.wo_master.wo_status;
+
 
             let selectOptions = document.getElementById("e_engineerlist").options;
 
@@ -1977,6 +2008,8 @@ div #munculgambar .gambar:hover{
             $('#e_qclist').val(qcslist).trigger('change');
 
             $('#e_startdate').val(startdate).trigger('change');
+
+            $("#e_wottype").trigger("change");
 
 
             $.ajax({
@@ -2029,13 +2062,6 @@ div #munculgambar .gambar:hover{
             }
 
             $("#e_impact").trigger("change");
-
-            $('#e_wottype').select2({
-              width: '100%',
-              theme: 'bootstrap4',
-              ewottype,
-            });
-
             
           },
           complete: function(vamp) {
@@ -2470,228 +2496,6 @@ div #munculgambar .gambar:hover{
     }
   });
 
-  // $(document).on('change','#repaircode1',function(event){
-  //   var rc1 = document.getElementById('repaircode1').value;
-  //   $.ajax({
-  //     url: "/getrepair1/" + rc1,
-  //     success: function(data) {
-  //       var tempres    = JSON.stringify(data);
-  //       var result     = JSON.parse(tempres);
-  //       var len = result.length;
-  //       var col = '';
-  //       var currenttype;
-  //       var currentnum = 1;
-  //       if(len >0){
-  //       col +='<div class="form-group row col-md-12 divrepcode" >';
-  //       col +='<label class="col-md-5 col-form-label text-md-left">Instruction :</label>';
-  //       col +='</div>';
-  //       col+='<div class="table-responsive col-12">';
-  //       col+='<table class="table table-borderless mt-4" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">';
-  //       col+='<thead>';
-  //       col+='<tr style="text-align: center;style="border:2px solid"">';
-  //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Part</p></th>';
-  //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Deskripsi</p></th>';
-  //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Standard</p></th>';
-  //       col+='<th colspan="2" style="border:2px solid"><p style="height:100%">kondisi</p></th>';
-  //       col+='</tr>';
-  //       col+='<tr style="text-align: center;">';
-  //       col+='<th style="border:2px solid">Baik</th>';
-  //       col+='<th style="border:2px solid">Tidak</th>';
-  //       col+='</tr>';
-  //       col+='</thead>';
-  //       col+='<tbody style="border:2px solid" >';
-  //       for(i =0; i<len;i++){
-  //         if(currenttype !== result[i].spt_code){
-  //           if(result[i].spt_code == null){
-  //             col+='<tr >';
-
-  //             col+='<td style="height: 20px;border:2px solid"><p style="margin:0px"><b>'+currentnum+'Lain-lain</b></p></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>'; 
-  //             col+='</tr>';
-  //             currenttype = result[i].spt_code;
-  //             currentnum +=1;
-  //           }
-  //           else{
-  //             col+='<tr>';  
-  //             col+='<td style="height: 20px;border:2px solid"><p style="margin:0px"><b>'+currentnum+'.'+result[0].spt_desc+'</b></p></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='</tr>';
-  //             currenttype = result[i].spt_code;
-  //             currentnum +=1;
-  //           }
-  //         }
-  //         col+='<tr>';
-  //         col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].spm_desc+'</b></p></td>';
-  //         col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].ins_desc+'</b></p></td>'
-  //         col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].repdet_std+'</b></p></td>';
-  //         col+='<td style="text-align:center;margin-top:0;border:2px solid"><input type="checkbox" name="group1[group'+i+']" id="item'+i+'" value="y'+i+'" readonly></td>';
-  //         col+='<td style="text-align:center;margin-top:0;border:2px solid"><input type="checkbox" name="group1[group'+i+']" id="item'+i+'" value="n'+i+'" readonly></td>';
-  //         col+='</tr>';
-  //       }
-  //       col+='</tbody>';
-  //       col+='</table>';
-  //       col+='</div>';
-  //       $("#testdiv").append(col);
-  //       col='';
-
-  //       }  
-  //     }
-  //   })
-  // })
-  // $(document).on('change','#repaircode2',function(event){
-  //   var rc2 = document.getElementById('repaircode2').value;
-  //   $.ajax({
-  //     url: "/getrepair1/" + rc2,
-  //     success: function(data) {
-  //       var tempres    = JSON.stringify(data);
-  //       var result     = JSON.parse(tempres);
-  //       var len = result.length;
-  //       var col = '';
-  //       var currenttype;
-  //       var currentnum = 1;
-  //       if(len >0){
-  //       col +='<div class="form-group row col-md-12 divrepcode" >';
-  //       col +='<label class="col-md-5 col-form-label text-md-left">Instruction :</label>';
-  //       col +='</div>';
-  //       col+='<div class="table-responsive col-12">';
-  //       col+='<table class="table table-borderless mt-4" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">';
-  //       col+='<thead>';
-  //       col+='<tr style="text-align: center;style="border:2px solid"">';
-  //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Part</p></th>';
-  //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Deskripsi</p></th>';
-  //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Standard</p></th>';
-  //       col+='<th colspan="2" style="border:2px solid"><p style="height:100%">kondisi</p></th>';
-  //       col+='</tr>';
-  //       col+='<tr style="text-align: center;">';
-  //       col+='<th style="border:2px solid">Baik</th>';
-  //       col+='<th style="border:2px solid">Tidak</th>';
-  //       col+='</tr>';
-  //       col+='</thead>';
-  //       col+='<tbody style="border:2px solid" >';
-  //       for(i =0; i<len;i++){
-  //         if(currenttype !== result[i].spt_code){
-  //           if(result[i].spt_code == null){
-  //             col+='<tr >';
-
-  //             col+='<td style="height: 20px;border:2px solid"><p style="margin:0px"><b>'+currentnum+'Lain-lain</b></p></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>'; 
-  //             col+='</tr>';
-  //             currenttype = result[i].spt_code;
-  //             currentnum +=1;
-  //           }
-  //           else{
-  //             col+='<tr>';  
-  //             col+='<td style="height: 20px;border:2px solid"><p style="margin:0px"><b>'+currentnum+'.'+result[0].spt_desc+'</b></p></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='</tr>';
-  //             currenttype = result[i].spt_code;
-  //             currentnum +=1;
-  //           }
-  //         }
-  //         col+='<tr>';
-  //         col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].spm_desc+'</b></p></td>';
-  //         col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].ins_desc+'</b></p></td>'
-  //         col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].repdet_std+'</b></p></td>';
-  //         col+='<td style="text-align:center;margin-top:0;border:2px solid"><input type="checkbox" name="group2[group'+i+']" id="item'+i+'" value="y'+i+'" readonly></td>';
-  //         col+='<td style="text-align:center;margin-top:0;border:2px solid"><input type="checkbox" name="group2[group'+i+']" id="item'+i+'" value="n'+i+'" readonly></td>';
-  //         col+='</tr>';
-  //       }
-  //       col+='</tbody>';
-  //       col+='</table>';
-  //       col+='</div>';
-  //       $("#testdiv2").append(col);
-  //       col='';
-
-  //       }  
-  //     }
-  //   })
-  // })
-  // $(document).on('change','#repaircode3',function(event){
-  //   var rc3 = document.getElementById('repaircode3').value;
-  //   $.ajax({
-  //     url: "/getrepair1/" + rc3,
-  //     success: function(data) {
-  //       var tempres    = JSON.stringify(data);
-  //       var result     = JSON.parse(tempres);
-  //       var len = result.length;
-  //       var col = '';
-  //       var currenttype;
-  //       var currentnum = 1;
-  //       if(len >0){
-  //       col +='<div class="form-group row col-md-12 divrepcode" >';
-  //       col +='<label class="col-md-5 col-form-label text-md-left">Instruction :</label>';
-  //       col +='</div>';
-  //       col+='<div class="table-responsive col-12">';
-  //       col+='<table class="table table-borderless mt-4" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">';
-  //       col+='<thead>';
-  //       col+='<tr style="text-align: center;style="border:2px solid"">';
-  //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Part</p></th>';
-  //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Deskripsi</p></th>';
-  //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Standard</p></th>';
-  //       col+='<th colspan="2" style="border:2px solid"><p style="height:100%">kondisi</p></th>';
-  //       col+='</tr>';
-  //       col+='<tr style="text-align: center;">';
-  //       col+='<th style="border:2px solid">Baik</th>';
-  //       col+='<th style="border:2px solid">Tidak</th>';
-  //       col+='</tr>';
-  //       col+='</thead>';
-  //       col+='<tbody style="border:2px solid" >';
-  //       for(i =0; i<len;i++){
-  //         if(currenttype !== result[i].spt_code){
-  //           if(result[i].spt_code == null){
-  //             col+='<tr >';
-
-  //             col+='<td style="height: 20px;border:2px solid"><p style="margin:0px"><b>'+currentnum+'Lain-lain</b></p></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>'; 
-  //             col+='</tr>';
-  //             currenttype = result[i].spt_code;
-  //             currentnum +=1;
-  //           }
-  //           else{
-  //             col+='<tr>';  
-  //             col+='<td style="height: 20px;border:2px solid"><p style="margin:0px"><b>'+currentnum+'.'+result[0].spt_desc+'</b></p></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='<td style="height: 20px;border:2px solid"></td>';
-  //             col+='</tr>';
-  //             currenttype = result[i].spt_code;
-  //             currentnum +=1;
-  //           }
-  //         }
-  //         col+='<tr>';
-  //         col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].spm_desc+'</b></p></td>';
-  //         col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].ins_desc+'</b></p></td>'
-  //         col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].repdet_std+'</b></p></td>';
-  //         col+='<td style="text-align:center;margin-top:0;border:2px solid"><input type="checkbox" name="group3[group'+i+']" id="item'+i+'" value="y'+i+'" readonly></td>';
-  //         col+='<td style="text-align:center;margin-top:0;border:2px solid"><input type="checkbox" name="group3[group'+i+']" id="item'+i+'" value="n'+i+'" readonly></td>';
-  //         col+='</tr>';
-  //       }
-  //       col+='</tbody>';
-  //       col+='</table>';
-  //       col+='</div>';
-  //       $("#testdiv3").append(col);
-  //       col='';
-
-  //       }  
-  //     }
-  //   })
-  // })
   $(document).on('click', '#aprint', function(event) {
     var wonbr = document.getElementById('ac_wonbr2').value;
     var url = "{{url('openprint2','id')}}";
@@ -2707,81 +2511,6 @@ div #munculgambar .gambar:hover{
     document.getElementById('btnapprove').style.display = 'none';
     document.getElementById('btnloading').style.display = '';
   });
-
-  // function uploadImage() {
-  //   var button = $('.images .pic')
-  //   var uploader = $('<input type="file" accept="image/jpeg, image/png, image/jpg" />')
-  //   var images = $('.images')
-  //   var potoArr = [];
-  //   var initest = $('.images .img span #imgname')
-
-  //   button.on('click', function () {
-  //     uploader.click();
-  //   })
-
-  //   uploader.on('change', function () {
-  //     var reader = new FileReader();
-  //     i = 0;
-  //     reader.onload = function(event) {
-  //     images.prepend('<div id="img" class="img" style="background-image: url(\'' + event.target.result + '\');" rel="'+ event.target.result  +'"><span>remove<input type="hidden" style="display:none;" id="imgname" name="imgname[]" value=""/></span></div>')
-  //     // alert(JSON.stringify(uploader));
-  //       document.getElementById('imgname').value = uploader[0].files.item(0).name+','+event.target.result; 
-  //       document.getElementById('hidden_var').value = 1;
-  //     }
-  //     reader.readAsDataURL(uploader[0].files[0])
-  //           // potoArr.push(uploader[0].files[0]);
-
-  //           // console.log(potoArr);
-  //       })
-
-
-  //       images.on('click', '.img', function () {        
-  //         $(this).remove();
-  //       })
-
-  //       // confirmPhoto(potoArr);
-  // }
-
-
-
-  // $(document).ready(function(){
-  //   // submit();
-  //  $('#file-input').on('change', function(){ //on file input change
-  //     if (window.File && window.FileReader && window.FileList && window.Blob) //check File API supported browser
-  //     {
-
-  //         var data = $(this)[0].files; //this file data
-  //         console.log(data);
-  //         $.each(data, function(index, file){ //loop though each file
-  //             if(/(\.|\/)(jpe?g|png)$/i.test(file.type)){ //check supported file type
-  //                 var fRead = new FileReader(); //new filereader
-  //                 fRead.onload = (function(file){ //trigger function on successful read
-  //                 return function(e) {
-  //                     var img = $('<img/>').addClass('thumb').attr('src', e.target.result); //create image element 
-  //                     $('#thumb-output').append(img); //append image to output element
-  //                 };
-  //                 })(file);
-  //                 fRead.readAsDataURL(file); //URL representing the file's data.
-  //             }
-  //         });
-
-  //         $("#thumb-output").on('click', '.thumb', function () {
-  //           $(this).remove();
-  //         })
-
-  //     }else{
-  //         // alert("Your browser doesn't support File API!");
-  //         swal.fire({
-  //                       position: 'top-end',
-  //                       icon: 'error',
-  //                       title: "Your browser doesn't support File API!",
-  //                       toast: true,
-  //                       showConfirmButton: false,
-  //                       timer: 2000,
-  //         }) //if File API is absent
-  //     }
-  //  });
-  // });
 
   $(document).on('click', '#ac_btnuncom', function(event) {
     document.getElementById('switch2').value = 'reject';
@@ -2808,14 +2537,6 @@ div #munculgambar .gambar:hover{
     $("#uncompletenote").attr('required', false);
     $('#acceptance').submit();
   })
-
-  // $(document).on('change','#cwomanual',function(){
-  //   document.getElementById('preventiveonly').style.display = 'none';
-  // });
-  // $(document).on('change','#cpreventive',function(){
-
-  //   // document.getElementById('preventiveonly').style.display = '';
-  // });
 
   $(document).on('click', '.deleterow', function(e) {
     var data = $(this).closest('tr').find('.rowval').val();
