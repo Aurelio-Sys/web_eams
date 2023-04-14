@@ -1053,7 +1053,7 @@ div #munculgambar .gambar:hover{
   <div class="modal-dialog modal-md" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel">Work Order Close</h5>
+        <h5 class="modal-title text-center" id="exampleModalLabel">Work Order Cancel</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -1063,8 +1063,13 @@ div #munculgambar .gambar:hover{
         {{ csrf_field() }}
 
         <div class="modal-body">
-          <input type="hidden" name="tmp_wonbr" id="tmp_wonbr">
-          Are you sure want to close this <i>Work Order</i> <b> <span id="d_wonbr"></span></b> ?
+          <input type="hidden" name="tmp_wonbr" id="tmp_wonbr"/>
+          <input type="hidden" name="tmp_wostatus" id="tmp_wostatus"/>
+          Are you sure want to cancel this <i>Work Order</i> <b> <span id="d_wonbr"></span></b> ?
+          <div class="form-group row" id="divnotecancel" style="display: none;">
+            <label class="col-md-12 col-form-label">Note for Service Request maker : </label>
+            <textarea class="form-control" id="notecancel" name="notecancel" autofocus maxlength="150"></textarea>
+          </div>
         </div>
 
         <div class="modal-footer">
@@ -1617,6 +1622,7 @@ div #munculgambar .gambar:hover{
         var startdate = vamp.wo_master.wo_start_date;
         var duedate = vamp.wo_master.wo_due_date;
         var createdby = vamp.wo_master.wo_createdby;
+        var department = vamp.wo_master.wo_department ? vamp.wo_master.wo_department : '';
 
         
         let combineFailure = [];
@@ -1651,6 +1657,7 @@ div #munculgambar .gambar:hover{
         document.getElementById('v_startdate').value = startdate;
         document.getElementById('v_duedate').value = duedate;
         document.getElementById('v_creator').value = createdby;
+        document.getElementById('v_dept').value = department;
 
 
         
@@ -1676,9 +1683,18 @@ div #munculgambar .gambar:hover{
 
   $(document).on('click', '.deletewo', function() {
 
-    var wonbr = $(this).data('wonbr');
+    var wonbr = $(this).data('wonumber');
+    var status = $(this).data('wostatus');
+    var srnbr = $(this).data('srnumber');
     document.getElementById('d_wonbr').innerHTML = wonbr;
     document.getElementById('tmp_wonbr').value = wonbr;
+    document.getElementById('tmp_wostatus').value = status;
+
+    if(srnbr !== ''){
+      document.getElementById('divnotecancel').style.display = "";
+    }else{
+      document.getElementById('divnotecancel').style.display = "none";
+    }
 
   });
 

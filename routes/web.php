@@ -59,7 +59,7 @@ Route::group(['middleware' => ['auth']], function() {
     route::get('/planwo', 'dashController@planwo');
     route::get('/startwo', 'dashController@startwo');
     route::get('/finishwo', 'dashController@finishwo');
-    route::get('/closewo', 'dashController@closewo');
+    // route::get('/closewo', 'dashController@closewo');
     route::get('/itemrfqset', 'dashController@itemrfqset');
 	route::get('/problemwo/{asset}', 'dashController@problemwo');
 	route::get('/problemwo/{asset}/pagination', 'dashController@problemwopaging');
@@ -407,7 +407,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/womaint/pagination', 'wocontroller@wopaging');
 	route::post('/editwo', [wocontroller::class, 'editwo']); 
 	route::post('/editwoeng','wocontroller@editwoeng'); 
-	route::post('/closewo','wocontroller@closewo'); 
+	route::post('/closewo',[wocontroller::class, 'closewo']); 
 	route::get('/womaint/getnowo','wocontroller@geteditwoold');
 	route::get('/womaint/getwoinfo',[wocontroller::class, 'geteditwo'])->name('editWO');
 	route::get('/womaint/getfailure','wocontroller@getfailure');

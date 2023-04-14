@@ -23,10 +23,14 @@
     <a href="javascript:void(0)" class="viewwo" data-toggle="tooltip"  title="View WO" data-wonumber="{{$show->wo_number}}">
       <i class="icon-table fa fa-eye fa-lg"></i>
     </a>
-    @if ( $show->wo_status != 'closed' || $show->wo_status != 'canceled' )
+    @if ( $show->wo_status !== 'closed' && $show->wo_status !== 'canceled' )
     <a href="javascript:void(0)" class="editwo2" data-toggle="tooltip"  title="Edit WO"  data-target="#editModal" data-wonumber="{{$show->wo_number}}" data-status="{{$show->wo_status}}">
       <i class="icon-table fa fa-edit fa-lg"></i>
     </a>
+    @endif
+
+    @if($show->wo_status == 'firm' || $show->wo_status == 'released')
+    <a href="" class="deletewo" data-toggle="modal" data-toggle="tooltip" title="Cancel WO" data-target="#deleteModal" data-wonumber="{{$show->wo_number}}" data-wostatus="{{$show->wo_status}}" data-srnumber="{{$show->wo_sr_number}}"><i class="fas fa-window-close fa-lg"></i></a>
     @endif
 
   </td>
