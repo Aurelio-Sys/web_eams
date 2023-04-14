@@ -34,6 +34,7 @@ use Svg\Tag\Rect;
 use App\Jobs\EmailScheduleJobs;
 use App;
 use App\Exports\ViewExport2;
+use App\Jobs\SendWorkOrderCanceledNotification;
 use App\Models\Qxwsa;
 use App\Services\WSAServices;
 use Exception;
@@ -43,6 +44,7 @@ use Response;
 use App\Models\Qxwsa as ModelsQxwsa;
 use App\Services\CreateTempTable;
 use Illuminate\Support\Arr;
+use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Exp;
 
 class wocontroller extends Controller
 {
@@ -1034,96 +1036,115 @@ class wocontroller extends Controller
     public function createwo(Request $req)
     {
         // dd($req->all());
-        
-        $thisFailCode = "";
 
-        if($req->has('failurecode')){
-            $thisFailCode = implode(';',array_map('strval', $req->failurecode));
-        }else{
-            $thisFailCode = null;
-        }
+        DB::beginTransaction();
 
-        $thisImpact = "";
+        try {
 
-        if($req->has('c_impact')){
-            $thisImpact = implode(';',array_map('strval', $req->c_impact));
-        }else{
-            $thisImpact = null;
-        }
+            $thisFailCode = "";
 
-        $thisListEng = "";
-
-        if($req->has('c_listengineer')){
-                $thisListEng = implode(';', array_map('strval', $req->c_listengineer));
-        }else{
-            $thisListEng = null;
-        }
-
-        // dd($thisFailCode,$thisImpact,$thisListEng);
-        
-
-        //dd($req->get('c_engineer')[4]);
-        $tablern = DB::table('running_mstr')
-            ->first();
-        $newyear = Carbon::now()->format('y');
-
-        if ($tablern->year == $newyear) {
-            $tempnewrunnbr = strval(intval($tablern->wo_nbr) + 1);
-            $newtemprunnbr = '';
-
-            if (strlen($tempnewrunnbr) < 6) {
-                $newtemprunnbr = str_pad($tempnewrunnbr, 6, '0', STR_PAD_LEFT);
+            if($req->has('failurecode')){
+                $thisFailCode = implode(';',array_map('strval', $req->failurecode));
+            }else{
+                $thisFailCode = null;
             }
-        } else {
-            $newtemprunnbr = "0001";
+
+            $thisImpact = "";
+
+            if($req->has('c_impact')){
+                $thisImpact = implode(';',array_map('strval', $req->c_impact));
+            }else{
+                $thisImpact = null;
+            }
+
+            $thisListEng = "";
+
+            if($req->has('c_listengineer')){
+                    $thisListEng = implode(';', array_map('strval', $req->c_listengineer));
+            }else{
+                $thisListEng = null;
+            }
+
+            // dd($thisFailCode,$thisImpact,$thisListEng);
+            
+
+            //dd($req->get('c_engineer')[4]);
+            $tablern = DB::table('running_mstr')
+                ->first();
+            $newyear = Carbon::now()->format('y');
+
+            if ($tablern->year == $newyear) {
+                $tempnewrunnbr = strval(intval($tablern->wo_nbr) + 1);
+                $newtemprunnbr = '';
+
+                if (strlen($tempnewrunnbr) < 6) {
+                    $newtemprunnbr = str_pad($tempnewrunnbr, 6, '0', STR_PAD_LEFT);
+                }
+            } else {
+                $newtemprunnbr = "0001";
+            }
+
+
+
+            $runningnbr = $tablern->wo_prefix . '-' . $newyear . '-' . $newtemprunnbr;
+
+            $dataarray = array(
+                'wo_number'           => $runningnbr,
+                'wo_sr_number'	      => '',
+                'wo_asset_code'	      => $req->c_asset,
+                'wo_type'	          => $req->cwotype,
+                'wo_status'	          => 'firm',
+                'wo_priority'	      => $req->c_priority,
+                'wo_failure_code'	  => $thisFailCode,
+                'wo_failure_type'	  => $req->c_failuretype,
+                'wo_list_engineer'    => $thisListEng,
+                'wo_impact_code'      => $thisImpact,	
+                'wo_start_date'       => $req->c_startdate,	
+                'wo_due_date'	      => $req->c_duedate,
+                'wo_mt_code'          => $req->has('c_mtcode') ? $req->c_mtcode : null,
+                'wo_ins_code'	      => $req->has('c_inslist') ? $req->c_inslist : null,
+                'wo_sp_code'	      => $req->has('c_splist') ? $req->c_splist : null,
+                'wo_qcspec_code'	  => $req->has('c_qclist') ? $req->c_qclist : null,
+                'wo_note'	          => $req->c_note,	
+                'wo_createdby'	      => session()->get('username'),
+                'wo_department'       => session()->get('department'),
+                'wo_system_create'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),	
+                'wo_system_update'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+            );
+
+            DB::table('wo_mstr')->insert($dataarray);
+
+            DB::table('wo_trans_history')
+                    ->insert([
+                        'wo_number' => $runningnbr,
+                        'wo_action' => 'firm',
+                    ]);
+
+            DB::table('running_mstr')
+                ->where('wo_nbr', '=', $tablern->wo_nbr)
+                ->update([
+                    'year' => $newyear,
+                    'wo_nbr' => $newtemprunnbr
+                ]);
+            $assettable = DB::table('asset_mstr')
+                ->where('asset_code', '=', $req->c_asset)
+                ->first();
+
+            $asset = $req->c_asset . ' - ' . $assettable->asset_desc;
+
+            EmailScheduleJobs::dispatch($runningnbr, $asset, '1', '', '', '', '');
+
+            DB::commit();
+            toast($runningnbr . ' Successfuly Created !', 'success');
+            return back();
+
+        } catch (Exception $e){
+            DB::rollBack();
+            toast("The data couldn't be saved due to an error.", 'error');
+            return back();
         }
-
-
-
-        $runningnbr = $tablern->wo_prefix . '-' . $newyear . '-' . $newtemprunnbr;
-
-        $dataarray = array(
-            'wo_number'           => $runningnbr,
-            'wo_sr_number'	      => '',
-            'wo_asset_code'	      => $req->c_asset,
-            'wo_type'	          => $req->cwotype,
-            'wo_status'	          => 'firm',
-            'wo_priority'	      => $req->c_priority,
-            'wo_failure_code'	  => $thisFailCode,
-            'wo_failure_type'	  => $req->c_failuretype,
-            'wo_list_engineer'    => $thisListEng,
-            'wo_impact_code'      => $thisImpact,	
-            'wo_start_date'       => $req->c_startdate,	
-            'wo_due_date'	      => $req->c_duedate,
-            'wo_mt_code'          => $req->has('c_mtcode') ? $req->c_mtcode : null,
-            'wo_ins_code'	      => $req->has('c_inslist') ? $req->c_inslist : null,
-            'wo_sp_code'	      => $req->has('c_splist') ? $req->c_splist : null,
-            'wo_qcspec_code'	  => $req->has('c_qclist') ? $req->c_qclist : null,
-            'wo_note'	          => $req->c_note,	
-            'wo_createdby'	      => session()->get('username'),
-            'wo_department'       => session()->get('department'),
-            'wo_system_create'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),	
-            'wo_system_update'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-        );
-
-        DB::table('wo_mstr')->insert($dataarray);
-
-        DB::table('running_mstr')
-            ->where('wo_nbr', '=', $tablern->wo_nbr)
-            ->update([
-                'year' => $newyear,
-                'wo_nbr' => $newtemprunnbr
-            ]);
-        $assettable = DB::table('asset_mstr')
-            ->where('asset_code', '=', $req->c_asset)
-            ->first();
-
-        $asset = $req->c_asset . ' - ' . $assettable->asset_desc;
-
-        EmailScheduleJobs::dispatch($runningnbr, $asset, '1', '', '', '', '');
-
-        toast($runningnbr . ' Successfuly Created !', 'success');
-        return back();
+        
+        
     }
 
     public function editwodirect(Request $req)
@@ -1219,70 +1240,179 @@ class wocontroller extends Controller
 
     public function editwo(Request $req)
     {
-        dd($req->all());
 
-        $thisFailCode = "";
+        // dd($req->all());
+        DB::beginTransaction();
 
-        if($req->has('m_failurecode')){
-            $thisFailCode = implode(';',array_map('strval', $req->m_failurecode));
+        try {
+
+            $thisFailCode = "";
+
+            if($req->has('m_failurecode')){
+                $thisFailCode = implode(';',array_map('strval', $req->m_failurecode));
+            }
+
+            $thisImpact = "";
+
+            if($req->has('e_impact')){
+                $thisImpact = implode(';',array_map('strval', $req->e_impact));
+            }
+
+            $thisListEng = "";
+
+            if($req->has('e_engineerlist')){
+                
+                    $thisListEng = implode(';', array_map('strval', $req->e_engineerlist));
+            }            
+
+            DB::table('wo_mstr')
+                ->where('wo_number', '=', $req->e_nowo)
+                ->update([
+                    'wo_list_engineer' => $thisListEng,
+                    'wo_failure_type' => $req->e_wottype,
+                    'wo_failure_code' => $thisFailCode,
+                    'wo_impact_code' => $thisImpact,
+                    'wo_start_date' => $req->e_startdate,
+                    'wo_due_date' => $req->e_duedate,
+                    'wo_note' => $req->e_note,
+                    'wo_mt_code' => $req->e_mtcode,
+                    'wo_ins_code' => $req->e_inslist,
+                    'wo_sp_code' => $req->e_splist,
+                    'wo_qcspec_code' => $req->e_qclist,
+                    'wo_priority' => $req->e_priority,
+                    'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                ]);
+
+            DB::commit();
+            toast('WO ' . $req->e_nowo . ' successfully updated', 'success');
+            return redirect()->route('womaint');
+
+        } catch(Exception $e) {
+            DB::rollBack();
+            toast("The data couldn't be saved due to an error.", 'error');
+            return redirect()->route('womaint');
         }
-
-        $thisImpact = "";
-
-        if($req->has('e_impact')){
-            $thisImpact = implode(';',array_map('strval', $req->e_impact));
-        }
-
-        $thisListEng = "";
-
-        if($req->has('e_engineerlist')){
-            
-                $thisListEng = implode(';', array_map('strval', $req->e_engineerlist));
-        }
-        
-
-        DB::table('wo_mstr')
-            ->where('wo_number', '=', $req->e_nowo)
-            ->update([
-                'wo_list_engineer' => $thisListEng,
-                'wo_failure_type' => $req->e_wottype,
-                'wo_failure_code' => $thisFailCode,
-                'wo_impact_code' => $thisImpact,
-                'wo_start_date' => $req->e_startdate,
-                'wo_due_date' => $req->e_duedate,
-                'wo_note' => $req->e_note,
-                'wo_mt_code' => $req->e_mtcode,
-                'wo_ins_code' => $req->e_inslist,
-                'wo_sp_code' => $req->e_splist,
-                'wo_qcspec_code' => $req->e_qclist,
-                'wo_priority' => $req->e_priority,
-                'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-            ]);
-
-        toast('WO ' . $req->e_nowo . ' successfully updated', 'success');
-        return redirect()->route('womaint');
     }
 
 
     public function closewo(Request $req)
     {
-        //dd($req->all());
-        DB::table("wo_mstr")
-            ->where('wo_nbr', '=', $req->tmp_wonbr)
-            ->update([
-                'wo_status' => 'delete',
-                'wo_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-            ]);
-        DB::table("service_req_mstr")
-            ->where('wo_number', '=', $req->tmp_wonbr)
-            ->update([
-                'sr_status' => 4,
-                'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-            ]);
 
-        //session()->flash('updated', 'User berhasil dihapus');
-        toast('Work Order ' . $req->tmp_wonbr . ' Successfuly deleted!', 'success');
-        return back();
+        DB::beginTransaction();
+
+        try{
+
+            //dd($req->all());
+            //lakukan pengecekan apakah dia status firm atau released
+            if($req->tmp_wostatus == 'firm'){
+
+                DB::table('wo_mstr')
+                    ->where('wo_number','=', $req->tmp_wonbr)
+                    ->where('wo_status','=', 'firm')
+                    ->update([
+                        'wo_status' => 'canceled',
+                        'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    ]);
+
+                DB::table('wo_trans_history')
+                    ->insert([
+                        'wo_number' => $req->tmp_wonbr,
+                        'wo_action' => 'canceled',
+                    ]);
+
+                //check apakah wo berasal dari sr ? jika ya, ubah status sr jadi open
+                $checksr = DB::table('wo_mstr')
+                        ->where('wo_number','=', $req->tmp_wonbr)
+                        ->first();
+
+                if($checksr->wo_sr_number !== ""){
+                    //ubah status sr
+                    DB::table('service_req_mstr')
+                        ->where('sr_number','=', $checksr->wo_sr_number)
+                        ->update([
+                            'sr_status' => 'Open',
+                            'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
+
+                    //kirim notifikasi ke pembuat sr
+                    $thiswonumber = $checksr->wo_number;
+                    $thissrnumber = $checksr->wo_sr_number;
+                    $thisnotecancel = $req->notecancel;
+                    SendWorkOrderCanceledNotification::dispatch($thiswonumber,$thissrnumber,$thisnotecancel);
+                }
+
+                
+
+            }elseif($req->tmp_wostatus == 'released'){
+                //jika status wo sudah released
+
+                $checktransfer = DB::table('wo_dets_sp')
+                            ->where('wd_sp_wonumber','=', $req->tmp_wonbr)
+                            ->where('wd_sp_issued', '>', 0)
+                            ->count();
+
+                if($checktransfer > 0){
+                    //jika status wo sudah released dan sudah ada transaksi spare part di table wo_dets_sp
+                    toast('The Work Order cannot be cancelled as there are already transactions associated with it.', 'error');
+                    return back();
+                }else{
+                    //jika status wo sudah released dan belum ada transaksi maka status wo bisa diubah menjadi cancel
+                    DB::table('wo_mstr')
+                        ->where('wo_number', '=', $req->tmp_wonbr)
+                        ->where('wo_status','=', 'released')
+                        ->update([
+                            'wo_status' => 'canceled',
+                            'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
+
+                    DB::table('wo_trans_history')
+                        ->insert([
+                            'wo_number' => $req->tmp_wonbr,
+                            'wo_action' => 'canceled',
+                        ]);
+
+                //check apakah wo berasal dari sr ? jika ya, ubah status sr jadi open
+                    $checksr = DB::table('wo_mstr')
+                            ->where('wo_number','=', $req->tmp_wonbr)
+                            ->first();
+
+                    if($checksr->wo_sr_number !== ""){
+                        DB::table('service_req_mstr')
+                            ->where('sr_number','=', $checksr->wo_sr_number)
+                            ->update([
+                                'sr_status' => 'Open',
+                                'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+
+                        
+                        //kirim notifikasi ke pembuat sr
+                        $thiswonumber = $checksr->wo_number;
+                        $thissrnumber = $checksr->wo_sr_number;
+                        $thisnotecancel = $req->notecancel;
+                        SendWorkOrderCanceledNotification::dispatch($thiswonumber,$thissrnumber,$thisnotecancel);
+                    }
+
+                }
+
+            }else{
+                DB::rollBack();
+                toast('work order cannot be cancelled because its status is not firm or released.', 'error');
+                return back();
+            }
+
+
+            DB::commit();
+            toast('Work Order ' . $req->tmp_wonbr . ' Successfuly Canceled!', 'success');
+            return back();
+
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            dd($e);
+            toast('Work Order ' . $req->tmp_wonbr . ' Cancel Process Error!', 'error');
+            return back();
+        }
+        
     }
 
     public function wopaging(Request $req)

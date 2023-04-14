@@ -176,7 +176,7 @@ class EmailScheduleJobs implements ShouldQueue
             $emails = substr($emails, 0, strlen($emails) - 1);
     
             $array_email = explode(',', $emails);
-// dd($emailto);
+            // dd($emailto);
             if($emailto->count())
             //kirim email ke kepala engineer
             Mail::send('emailwo',
@@ -280,7 +280,7 @@ class EmailScheduleJobs implements ShouldQueue
                 foreach($data as $data){
                     $user = App\User::where('id','=', $data->id)->first(); 
                     $details = [
-                                'body' => 'There is new WO that you need to approve',
+                                'body' => 'There is new WO for you',
                                 'url' => 'wobrowse',
                                 'nbr' => $wo,
                                 'note' => 'Please check'
@@ -362,7 +362,7 @@ class EmailScheduleJobs implements ShouldQueue
                         // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
                         $message->to($emailuser->email_user);
                     });
-//dd('tyas');
+            //dd('tyas');
             $user = App\User::where('id','=', $emailuser->id)->first(); 
             $details = [
                         'body' => 'Service Request Rejected',
