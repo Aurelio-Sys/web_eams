@@ -1775,6 +1775,7 @@ class SettingController extends Controller
                 $table->temporary();
             });
 
+            /* ini ditutup dulu, nanti dibuka lagi
             $domain = ModelsQxwsa::first();
             $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
 
@@ -1788,7 +1789,7 @@ class SettingController extends Controller
                         'temp_desc' => $datas->t_desc,
                     ]);
                 }
-            }
+            } */
 
             $dataassetqad = DB::table('temp_asset')
                 ->orderBy('temp_code')
@@ -5405,7 +5406,6 @@ class SettingController extends Controller
     //untuk cari skill berdasar eng code
     public function engskill(Request $req)
     {
-
         if($req->ajax()){
             $eng = DB::table('skill_mstr')
                 ->get();
@@ -5414,27 +5414,6 @@ class SettingController extends Controller
 
             return response()->json($array);
         }
-
-        //  if ($req->ajax()) {
-        //      $skill = $req->get('skill');
-
-        //      $a = explode(",", $skill);
-     
-        //      $data = DB::table('skill_mstr')
-        //             ->orderby('skill_desc')
-        //             ->get();
-
-        //      $output = "";
-        //      foreach($data as $data){
-        //         if (in_array($data->skill_code, $a)) {
-        //             $output .= '<option value="'.$data->skill_code.'" selected>'.$data->skill_desc.'</option>';
-        //         } else {
-        //             $output .= '<option value="'.$data->skill_code.'">'.$data->skill_desc.'</option>';
-        //         }
-        //      }
-             
-        //      return response($output);
-        //  }
     }
 
     //untuk search role by access

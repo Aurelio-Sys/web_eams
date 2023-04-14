@@ -57,18 +57,18 @@
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                <th width="15%">Preventive</th>
-                <th width="20%">PM Desc</th>
-                <th width="10%">Type</th>
-                <th width="15%">Instruction</th>
-                <th width="15%">Sparepart</th>
-                <th width="15%">QC Spec</th>
+                <th width="10%">Asset</th>
+                <th width="25%">Asset Desc</th>
+                <th width="10%">PM Code</th>
+                <th width="25%">PM Desc</th>
+                <th width="10%">Mea</th>
+                <th width="10%">Value</th>
                 <th width="10%">Action</th>  
             </tr>
         </thead>
         <tbody>
             <!-- untuk isi table -->
-            {{--  @include('setting.table-pmcode')  --}}
+            @include('setting.table-pmasset')
         </tbody>
     </table>
 </div>
@@ -89,7 +89,7 @@
                   <div class="form-group row">
                      <label for="t_asset" class="col-md-3 col-form-label text-md-right">Asset</label>
                      <div class="col-md-8">
-                        <select class="form-control " id="t_asset" name="t_asset">
+                        <select class="form-control " id="t_asset" name="t_asset" required>
                         <option value="">--</option>
                         @foreach($dataasset as $da)
                         <option value="{{$da->asset_code}}">{{$da->asset_code}} -- {{$da->asset_desc}}</option>
@@ -100,7 +100,7 @@
                  <div class="form-group row">
                      <label for="t_pmcode" class="col-md-3 col-form-label text-md-right">PM Code</label>
                      <div class="col-md-8">
-                        <select class="form-control " id="t_pmcode" name="t_pmcode">
+                        <select class="form-control " id="t_pmcode" name="t_pmcode" required>
                         <option value="">--</option>
                         @foreach($datapm as $dp)
                         <option value="{{$dp->pmc_code}}">{{$dp->pmc_code}} -- {{$dp->pmc_desc}}</option>
@@ -110,9 +110,10 @@
                   </div>
                   <div class="form-group row">
                      <label for="t_time" class="col-md-3 col-form-label text-md-right">Lead Time</label>
-                     <div class="col-md-4">
-                           <input type="text" class="form-control" id="t_time" name="t_time" autocomplete="off" maxlength="24" required>
+                     <div class="col-md-3">
+                           <input type="number" class="form-control" id="t_time" name="t_time" autocomplete="off" min="0">
                      </div>
+                     <label for="t_time" class="col-md-2 col-form-label text-md-left">Days</label>
                   </div>
                   <div class="form-group row">
                      <label for="t_mea" class="col-md-3 col-form-label text-md-right">Measurement</label>
@@ -127,33 +128,41 @@
                   </div>
                   <div class="form-group row">
                      <label for="t_cal" class="col-md-3 col-form-label text-md-right">Calendar</label>
-                     <div class="col-md-8">
-                           <input type="text" class="form-control" id="t_cal" name="t_cal" autocomplete="off" maxlength="255" required>
+                     <div class="col-md-3">
+                           <input type="number" class="form-control" id="t_cal" name="t_cal" autocomplete="off" min="0">
                      </div>
+                     <label for="t_cal" class="col-md-2 col-form-label text-md-left">Days</label>
                   </div>
                   <div class="form-group row">
                      <label for="t_meter" class="col-md-3 col-form-label text-md-right">Meter</label>
-                     <div class="col-md-8">
-                           <input type="text" class="form-control" id="t_meter" name="t_meter" autocomplete="off" maxlength="255" required>
+                     <div class="col-md-3">
+                           <input type="number" class="form-control" id="t_meter" name="t_meter" autocomplete="off" min="0" step="0.1">
+                     </div>
+                     <div class="col-md-2">
+                        <select class="form-control" id="t_durum" name="t_durum">
+                           <option value=""></option>
+                           @foreach($dataum as $du)
+                           <option value="{{$du->um_code}}">{{$du->um_code}} -- {{$du->um_desc}}</option>
+                           @endforeach
+                        </select>
                      </div>
                   </div>
                   <div class="form-group row">
                      <label for="t_tol" class="col-md-3 col-form-label text-md-right">Tolerance</label>
-                     <div class="col-md-8">
-                           <input type="text" class="form-control" id="t_tol" name="t_tol" autocomplete="off" maxlength="255" required>
+                     <div class="col-md-3">
+                           <input type="number" class="form-control" id="t_tol" name="t_tol" autocomplete="off">
                      </div>
                   </div>
                   <div class="form-group row">
                      <label for="t_start" class="col-md-3 col-form-label text-md-right">Start Date</label>
-                     <div class="col-md-8">
-                           <input type="text" class="form-control" id="t_start" name="t_start" autocomplete="off" maxlength="255" required>
+                     <div class="col-md-3">
+                           <input type="date" class="form-control" id="t_start" name="t_start" autocomplete="off">
                      </div>
                   </div>
                   <div class="form-group row">
                      <label for="t_eng" class="col-md-3 col-form-label text-md-right">Engineer</label>
                      <div class="col-md-8">
-                        <select class="form-control " id="t_eng" name="t_eng">
-                        <option value="">--</option>
+                        <select class="form-control" multiple size="3" id="t_eng" name="t_eng[]">
                         @foreach($dataeng as $de)
                         <option value="{{$de->eng_code}}">{{$de->eng_code}} -- {{$de->eng_desc}}</option>
                         @endforeach
@@ -181,10 +190,90 @@
             <span aria-hidden="true">&times;</span>
         </button>
         </div>
-        <form class="form-horizontal" method="post" action="/editpmcode">
+        <form class="form-horizontal" method="post" action="/editpmasset">
             {{ csrf_field() }}
             <div class="modal-body">
-                
+                <div class="form-group row">
+                    <label for="te_asset" class="col-md-3 col-form-label text-md-right">Asset</label>
+                    <div class="col-md-8">
+                       <select class="form-control " id="te_asset" name="te_asset" readonly>
+                       <option value="">--</option>
+                       @foreach($dataasset as $da)
+                       <option value="{{$da->asset_code}}">{{$da->asset_code}} -- {{$da->asset_desc}}</option>
+                       @endforeach
+                       </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="te_pmcode" class="col-md-3 col-form-label text-md-right">PM Code</label>
+                    <div class="col-md-8">
+                       <select class="form-control " id="te_pmcode" name="te_pmcode" readonly>
+                       <option value="">--</option>
+                       @foreach($datapm as $dp)
+                       <option value="{{$dp->pmc_code}}">{{$dp->pmc_code}} -- {{$dp->pmc_desc}}</option>
+                       @endforeach
+                       </select>
+                    </div>
+                 </div>
+                 <div class="form-group row">
+                    <label for="te_time" class="col-md-3 col-form-label text-md-right">Lead Time</label>
+                    <div class="col-md-3">
+                          <input type="number" class="form-control" id="te_time" name="te_time" autocomplete="off" min="0">
+                    </div>
+                    <label for="t_time" class="col-md-2 col-form-label text-md-left">Days</label>
+                 </div>
+                 <div class="form-group row">
+                    <label for="te_mea" class="col-md-3 col-form-label text-md-right">Measurement</label>
+                    <div class="col-md-4">
+                    <select class="form-control " id="te_mea" name="te_mea" required>
+                       <option value="">--</option>
+                       <option value="C">Caledar</option>
+                       <option value="M">Meter</option>
+                       <option value="B">Both</option>
+                    </select>
+                    </div>
+                 </div>
+                 <div class="form-group row">
+                    <label for="te_cal" class="col-md-3 col-form-label text-md-right">Calendar</label>
+                    <div class="col-md-3">
+                          <input type="number" class="form-control" id="te_cal" name="te_cal" autocomplete="off" min="0">
+                    </div>
+                    <label for="t_cal" class="col-md-2 col-form-label text-md-left">Days</label>
+                 </div>
+                 <div class="form-group row">
+                    <label for="te_meter" class="col-md-3 col-form-label text-md-right">Meter</label>
+                    <div class="col-md-3">
+                          <input type="number" class="form-control" id="te_meter" name="te_meter" autocomplete="off" min="0" step="0.1">
+                    </div>
+                    <div class="col-md-2">
+                       <select class="form-control" id="te_durum" name="te_durum">
+                        <option value="">--</option>
+                          @foreach($dataum as $du)
+                          <option value="{{$du->um_code}}">{{$du->um_code}} -- {{$du->um_desc}}</option>
+                          @endforeach
+                       </select>
+                    </div>
+                 </div>
+                 <div class="form-group row">
+                    <label for="te_tol" class="col-md-3 col-form-label text-md-right">Tolerance</label>
+                    <div class="col-md-3">
+                          <input type="number" class="form-control" id="te_tol" name="te_tol" autocomplete="off">
+                    </div>
+                 </div>
+                 <div class="form-group row">
+                    <label for="te_start" class="col-md-3 col-form-label text-md-right">Start Date</label>
+                    <div class="col-md-3">
+                          <input type="date" class="form-control" id="te_start" name="te_start" autocomplete="off">
+                    </div>
+                 </div>
+                 <div class="form-group row">
+                    <label for="te_eng" class="col-md-3 col-form-label text-md-right">Engineer</label>
+                    <div class="col-md-8">
+                       <select class="form-control" multiple size="3" id="te_eng" name="te_eng[]">
+                       </select>
+                       <input type="hidden" id="te_pickeng" name="te_pickeng">
+                    </div>
+                 </div>
             </div>
 
             <div class="modal-footer">
@@ -206,11 +295,12 @@
                 <span aria-hidden="true">&times;</span>
             </button>
             </div>
-            <form class="form-horizontal" method="post" action="/delpmcode">
+            <form class="form-horizontal" method="post" action="/delpmasset">
                 {{ csrf_field() }}
                 <div class="modal-body">
-                    <input type="hidden" id="d_code" name="d_code">
-                    Delete Preventive <b><span id="td_code"></span> -- <span id="td_desc"></span></b> ?
+                    <input type="hidden" id="d_asset" name="d_asset">
+                    <input type="hidden" id="d_pmcode" name="d_pmcode">
+                    Delete Preventive <b><span id="td_asset"></span> -- <span id="td_pmcode"></span></b> ?
                 </div>
 
                 <div class="modal-footer">
@@ -234,105 +324,134 @@
        $(document).on('click', '#editdata', function(e){
            $('#editModal').modal('show');
 
-           var code = $(this).data('code');
-           var desc = $(this).data('desc');
-           var type = $(this).data('type');
-           var ins = $(this).data('ins');
-           var spg = $(this).data('spg');
-           var qcs = $(this).data('qcs');
+           var asset = $(this).data('asset');
+           var pmcode = $(this).data('pmcode');
+           var time = $(this).data('time');
+           var mea = $(this).data('mea');
+           var cal = $(this).data('cal');
+           var meter = $(this).data('meter');
+           var meterum = $(this).data('meterum');
+           var tolerance = $(this).data('tolerance');
+           var start = $(this).data('start');
+           var eng = $(this).data('eng');
 
-           document.getElementById('te_code').value = code;
-           document.getElementById('te_desc').value = desc;
-           document.getElementById('te_type').value = type;
-           document.getElementById('te_ins').value = ins;
-           document.getElementById('te_spg').value = spg;
-           document.getElementById('te_qcs').value = qcs;
+           document.getElementById('te_asset').value = asset;
+           document.getElementById('te_pmcode').value = pmcode;
+           document.getElementById('te_time').value = time;
+           document.getElementById('te_mea').value = mea;
+           document.getElementById('te_cal').value = cal;
+           document.getElementById('te_meter').value = meter;
+           document.getElementById('te_durum').value = meterum;
+           document.getElementById('te_tol').value = tolerance;
+           document.getElementById('te_start').value = start;
+           document.getElementById('te_pickeng').value = eng;
+           
+           editpickeng();
        });
 
        $(document).on('click', '.deletedata', function(e){
             $('#deleteModal').modal('show');
 
-            var code = $(this).data('code');
-            var desc = $(this).data('desc');
+            var asset = $(this).data('asset');
+            var pmcode = $(this).data('pmcode');
+            var assetdesc = $(this).data('assetdesc');
+            var pmcodedesc = $(this).data('pmcodedesc');
 
-            document.getElementById('d_code').value          = code;
-            document.getElementById('td_code').innerHTML = code;
-            document.getElementById('td_desc').innerHTML = desc;
+            document.getElementById('d_asset').value          = asset;
+            document.getElementById('d_pmcode').value          = pmcode;
+            document.getElementById('td_asset').innerHTML = assetdesc + "(" + asset + ")" ;
+            document.getElementById('td_pmcode').innerHTML = pmcodedesc;
        });
-
-        $("#addrow").on("click", function() {
-
-          var newRow = $("<tr>");
-          var cols = "";
-
-          cols += '<td width="15%"><input type="number" class="form-control" name="t_step[]" min="1"></td>'
-          cols += '<td width="40%"><input type="text" class="form-control" name="t_stepdesc[]" maxlenght="255" autocomplete="off"></td>'
-          cols += '<td width="30%"><input type="text" class="form-control" name="t_ref[]" maxlenght="255" autocomplete="off"></td>'
-          cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
-          cols += '</tr>'
-          newRow.append(cols);
-          $("#detailapp").append(newRow);
-          counter++;
-
-          selectPicker();
-        });
-
-        $("table.order-list").on("click", ".ibtnDel", function(event) {
-          $(this).closest("tr").remove();
-          counter -= 1
-        });
-
-        $("#ed_addrow").on("click", function() {
-
-          var newRow = $("<tr>");
-          var cols = "";
-
-          cols += '<td width="15%"><input type="number" class="form-control" name="te_step[]" min="1"></td>'
-          cols += '<td width="40%"><input type="text" class="form-control" name="te_stepdesc[]" maxlenght="255" autocomplete="off"></td>'
-          cols += '<td width="30%"><input type="text" class="form-control" name="te_ref[]" maxlenght="255" autocomplete="off"></td>'
-          cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
-          cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
-          cols += '</tr>'
-          newRow.append(cols);
-          $("#ed_detailapp").append(newRow);
-          counter++;
-
-          selectPicker();
-        });
-
-        $(document).on('change','#cek',function(e){
-            var checkbox = $(this), // Selected or current checkbox
-            value = checkbox.val(); // Value of checkbox
-
-
-            if (checkbox.is(':checked'))
-            {
-                $(this).closest("tr").find('.tick').val(1);
-            } else
-            {
-                $(this).closest("tr").find('.tick').val(0);
-            }        
-        });
 
         $(document).on('click', '#btnrefresh', function() {
             $('#s_code').val('');
             $('#s_desc').val('');
         });   
 
-         $("#t_ins").select2({
+         $("#t_asset").select2({
             width : '100%',
             theme : 'bootstrap4',
          });
 
-         $("#t_spg").select2({
+         $("#t_pmcode").select2({
             width : '100%',
             theme : 'bootstrap4',
          });
 
-         $("#t_qcs").select2({
+         function pickeng(){
+
+            $.ajax({
+                url:"/pickeng",
+                success: function(data) {
+                    var jmldata = data.length;
+
+                    var eng_code = [];
+                    var eng_desc = [];
+                    var test = [];
+
+                    test += '<option value="">--Select Engineer--</option>';
+
+                    for(i = 0; i < jmldata; i++){
+                        eng_code.push(data[i].eng_code);
+                        eng_desc.push(data[i].eng_desc);
+ 
+                        test += '<option value=' + eng_code[i] + '>' + eng_code[i] + '--' + eng_desc[i] + '</option>';                   
+                    }
+                   
+                    $('#t_eng').html('').append(test); 
+                }
+            })
+        }
+
+        pickeng();
+
+         $("#t_eng").select2({
             width : '100%',
-            theme : 'bootstrap4',
-         });
+            placeholder : 'Select Skill',
+            maximumSelectionLength : 5,
+            closeOnSelect : false,
+            allowClear : true,
+            // theme : 'bootstrap4'
+        });
+
+        function editpickeng(){
+            var eng = $('#te_pickeng').val();
+            var a = eng.split(",");
+
+            $.ajax({
+                url:"/pickeng",
+                success: function(data) {
+                    var jmldata = data.length;
+
+                    var eng_code = [];
+                    var eng_desc = [];
+                    var test = [];
+
+                    test += '<option value="">--Select Engineer--</option>';
+
+                    for(i = 0; i < jmldata; i++){
+                        eng_code.push(data[i].eng_code);
+                        eng_desc.push(data[i].eng_desc);
+
+                        if (a.includes(eng_code[i])) {
+                            test += '<option value=' + eng_code[i] + ' selected>' + eng_code[i] + '--' + eng_desc[i] + '</option>';
+                        } else {    
+                            test += '<option value=' + eng_code[i] + '>' + eng_code[i] + '--' + eng_desc[i] + '</option>';
+                        }                        
+                    }
+
+                    $('#te_eng').html('').append(test); 
+                }
+            })
+        }
+
+        $("#te_eng").select2({
+            width : '100%',
+            maximumSelectionLength : 5,
+            closeOnSelect : false,
+            allowClear : true,
+            // theme : 'bootstrap4'
+        });
 
     </script>
 

@@ -169,7 +169,7 @@
                 <div class="form-group row">
                     <label for="te_desc" class="col-md-4 col-form-label text-md-right">Instruction List Desc</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control" id="te_desc" name="te_desc" readonly>
+                        <input type="text" class="form-control" id="te_desc" name="te_desc">
                     </div>
                 </div>
                 <div class="form-group row">

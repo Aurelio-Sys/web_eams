@@ -22,6 +22,8 @@ class PmassetController extends Controller
         $s_desc = $req->s_desc;
 
         $data = DB::table('pma_asset')
+            ->leftJoin('asset_mstr','asset_code','pma_asset')
+            ->leftJoin('pmc_mstr','pmc_code','pma_pmcode')
             ->orderby('pma_asset')
             ->orderby('pma_pmcode');
 /*
@@ -33,24 +35,6 @@ class PmassetController extends Controller
         }
 */
         $data = $data->paginate(10);
-
-        $datains = DB::table('ins_list')
-            ->select('ins_code','ins_desc')
-            ->orderBy('ins_code')
-            ->groupBy('ins_code')
-            ->get();
-
-        $dataqcs = DB::table('qcs_list')
-            ->select('qcs_code','qcs_desc')
-            ->orderBy('qcs_code')
-            ->groupBy('qcs_code')
-            ->get();
-        
-        $dataspg = DB::table('spg_list')
-            ->select('spg_code','spg_desc')
-            ->orderBy('spg_code')
-            ->groupBy('spg_code')
-            ->get();
 
         $dataasset = Db::table('asset_mstr')
             ->whereAsset_active('Yes')
@@ -66,7 +50,11 @@ class PmassetController extends Controller
             ->orderBy('eng_code')
             ->get();
 
-        return view('setting.pmasset', compact('data','dataasset','datapm','dataeng'));
+        $dataum = DB::table('um_mstr')
+            ->orderBy('um_code')
+            ->get();
+
+        return view('setting.pmasset', compact('data','dataasset','datapm','dataeng','dataum'));
     }
 
     /**
@@ -79,6 +67,21 @@ class PmassetController extends Controller
         //
     }
 
+    //untuk menampilkan select engineer
+    public function pickeng(Request $req)
+    {
+        if($req->ajax()){
+            $eng = DB::table('eng_mstr')
+                ->whereEng_active('Yes')
+                ->orderBy('eng_code')
+                ->get();
+
+            $array = json_decode(json_encode($eng), true);
+
+            return response()->json($array);
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -87,16 +90,27 @@ class PmassetController extends Controller
      */
     public function store(Request $req)
     {
+        $eng = "";
+        if(!is_null($req->t_eng)) {
+            $flg = 0;
+            foreach ($req->t_eng as $ds) {
+                $eng = $eng . $req->t_eng[$flg] . "," ;
+                $flg += 1;
+            }
+        } 
+        
         DB::table('pma_asset')
             ->insert([
                 'pma_asset' => $req->t_asset,
-                'pma_pmcode' => $req->t_pmasset,
+                'pma_pmcode' => $req->t_pmcode,
                 'pma_leadtime' => $req->t_time,
                 'pma_mea' => $req->t_mea,
                 'pma_cal' => $req->t_cal,
                 'pma_meter' => $req->t_meter,
-                'pma_meterum' => $req->t_meterum,
-                'pma_eng' => $req->t_eng,
+                'pma_meterum' => $req->t_durum,
+                'pma_tolerance' => $req->t_tol,
+                'pma_start' => $req-> t_start,
+                'pma_eng' => $eng,
                 'pma_editedby'  => Session::get('username'),
                 'created_at'    => Carbon::now()->toDateTimeString(),
                 'updated_at'    => Carbon::now()->toDateTimeString(),
@@ -135,9 +149,35 @@ class PmassetController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $req)
     {
-        //
+        $eng = "";
+        if(!is_null($req->te_eng)) {
+            $flg = 0;
+            foreach ($req->te_eng as $ds) {
+                $eng = $eng . $req->te_eng[$flg] . "," ;
+                $flg += 1;
+            }
+        } 
+        
+        DB::table('pma_asset')
+            ->wherePma_asset($req->te_asset)
+            ->wherePma_pmcode($req->te_pmcode)
+            ->update([
+                'pma_leadtime' => $req->te_time,
+                'pma_mea' => $req->te_mea,
+                'pma_cal' => $req->te_cal,
+                'pma_meter' => $req->te_meter,
+                'pma_meterum' => $req->te_durum,
+                'pma_tolerance' => $req->te_tol,
+                'pma_start' => $req-> te_start,
+                'pma_eng' => $eng,
+                'pma_editedby'  => Session::get('username'),
+                'created_at'    => Carbon::now()->toDateTimeString(),
+            ]);
+
+        toast('Preventive Maintenance Updated.', 'success');
+        return back();
     }
 
     /**
@@ -146,8 +186,14 @@ class PmassetController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $req)
     {
-        //
+        $data = DB::table('pma_asset')
+            ->wherePma_asset($req->d_asset)
+            ->wherePma_pmcode($req->d_pmcode)
+            ->delete();
+
+        toast('Preventive Maintenance Deleted.', 'success');
+        return back();
     }
 }
