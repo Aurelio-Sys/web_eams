@@ -1945,7 +1945,10 @@ div #munculgambar .gambar:hover{
         var wonbr = $(this).data('wonumber');
         var status = $(this).data('status');
 
+        console.log(status)
+
         if(status == "released" || status == "started"){
+          console.log('aaaa');
           document.getElementById('e_engineerlist').setAttribute('readonly', true);
           document.getElementById('e_mtcode').setAttribute('readonly', true);
           document.getElementById('e_inslist').setAttribute('readonly', true);
@@ -1953,6 +1956,17 @@ div #munculgambar .gambar:hover{
           document.getElementById('e_qclist').setAttribute('readonly', true);
           document.getElementById('e_startdate').setAttribute('readonly', true);
           document.getElementById('e_duedate').setAttribute('readonly', true);
+        }
+
+        if(status == "firm"){
+          console.log('aaabs');
+          document.getElementById('e_engineerlist').removeAttribute('readonly');
+          document.getElementById('e_mtcode').removeAttribute('readonly');
+          document.getElementById('e_inslist').removeAttribute('readonly');
+          document.getElementById('e_splist').removeAttribute('readonly');
+          document.getElementById('e_qclist').removeAttribute('readonly');
+          document.getElementById('e_startdate').removeAttribute('readonly');
+          document.getElementById('e_duedate').removeAttribute('readonly');
         }
 
         var btnendel1 = document.getElementById("btndeleteen1");
@@ -2121,8 +2135,9 @@ div #munculgambar .gambar:hover{
               data: { pmc_code: selectedValue },
               success: function(response) {
                   // Manipulasi data di sini
-                  console.log(response);
+                  // console.log(response);
 
+                  //jika response tidak kosong
                   if (response && Object.keys(response).length) {
                       let inslistval = response.pmc_ins;
                       let spglistval = response.pmc_spg;
@@ -2158,7 +2173,7 @@ div #munculgambar .gambar:hover{
                       allowClear: false,
                     });
 
-                  } else {
+                  } else { //jika response kosong karena user click tanda "x" di field select maintenance code
                     $('#c_inslist option[value!=""]').prop('disabled',false);
                     $('#c_inslist').val('').trigger('change');
 
@@ -2207,6 +2222,89 @@ div #munculgambar .gambar:hover{
         if (start_date > due_date) {
           $("#e_duedate").val($("#e_startdate").val());
         }
+      });
+
+      $('#e_mtcode').on('change', function() {
+          // alert('ganti');
+          let selectedValue = $(this).val();
+          $.ajax({
+              url: '/searchic',
+              method: 'GET',
+              data: { pmc_code: selectedValue },
+              success: function(response) {
+                  // Manipulasi data di sini
+                  // console.log(response);
+
+                  //jika response tidak kosong
+                  if (response && Object.keys(response).length) {
+                      let inslistval = response.pmc_ins;
+                      let spglistval = response.pmc_spg;
+                      let qcslistval = response.pmc_qcs;
+                    
+                    $('#e_inslist option[value !="'+inslistval+'"]').prop('disabled',true);
+                    $('#e_inslist option[value="'+inslistval+'"]').prop('disabled',false);
+                    $('#e_inslist').val(inslistval).trigger('change');
+
+                    $('#e_splist option[value !="'+spglistval+'"]').prop('disabled',true);
+                    $('#e_splist option[value="'+spglistval+'"]').prop('disabled',false);
+                    $('#e_splist').val(spglistval).trigger('change');
+
+                    $('#e_qclist option[value !="'+qcslistval+'"]').prop('disabled',true);
+                    $('#e_qclist option[value="'+qcslistval+'"]').prop('disabled',false);
+                    $('#e_qclist').val(qcslistval).trigger('change');
+
+                    $("#e_inslist").select2({
+                      width: '100%',
+                      placeholder: "Select Instruction List Code",
+                      allowClear: false,
+                    });
+
+                    $("#e_splist").select2({
+                      width: '100%',
+                      placeholder: "Select Spare Part List Code",
+                      allowClear: false,
+                    });
+
+                    $("#e_qclist").select2({
+                      width: '100%',
+                      placeholder: "Select QC List Code",
+                      allowClear: false,
+                    });
+
+                  } else { //jika response kosong karena user click tanda "x" di field select maintenance code
+                    $('#e_inslist option[value!=""]').prop('disabled',false);
+                    $('#e_inslist').val('').trigger('change');
+
+                    $('#e_splist option').prop('disabled',false);
+                    $('#e_splist').val('').trigger('change');
+
+                    $('#e_qclist option').prop('disabled',false);
+                    $('#e_qclist').val('').trigger('change');
+                    
+                    $("#e_inslist").select2({
+                      width: '100%',
+                      placeholder: "Select Instruction List Code",
+                      allowClear: true,
+                    });
+
+                    $("#e_splist").select2({
+                      width: '100%',
+                      placeholder: "Select Spare Part List Code",
+                      allowClear: true,
+                    });
+
+                    $("#e_qclist").select2({
+                      width: '100%',
+                      placeholder: "Select QC List Code",
+                      allowClear: true,
+                    });
+                  }
+
+              },
+              error: function(xhr, status, error) {
+                  console.error(error);
+              }
+          });
       });
 
 
