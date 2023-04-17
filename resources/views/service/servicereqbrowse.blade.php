@@ -104,10 +104,11 @@
             @if($fromhome == 'open')
             <option value="Open" selected>Open</option>
             @else
-            <option value="open">Open</option>
+            <option value="Open">Open</option>
             @endif
-            <option value="Cancel">Cancel</option>
-            <option value="Closed">Closed</option>
+            <option value="Revise">Revise</option>
+            <option value="Canceled">Canceled</option>
+            <!-- <option value="Closed">Closed</option> -->
             <!-- <option value="Completed">Completed</option> -->
           </select>
         </div>
@@ -242,6 +243,7 @@
         <th>Req Date</th>
         <th>Req Time</th>
         <th>Action</th>
+        <th>Cancel</th>
       </tr>
     </thead>
     <tbody>
@@ -300,6 +302,18 @@
               <input id="e_status" type="text" class="form-control" name="e_status" autocomplete="off" maxlength="6" readonly style="color:green;font-weight:bold">
             </div>
           </div>
+          <div class="form-group row justify-content-center">
+            <label for="e_status" class="col-md-5 col-form-label text-md-left">Status Approval</label>
+            <div class="col-md-7">
+              <input id="e_statusappr" type="text" class="form-control" name="e_statusappr" autocomplete="off" maxlength="6" readonly style="font-weight:bold">
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
+            <label for="e_reason" class="col-md-5 col-form-label text-md-left">Reason Approval</label>
+            <div class="col-md-7">
+              <textarea id="e_reason" type="text" class="form-control" name="e_reason" autocomplete="off" maxlength="6" readonly style="font-weight:bold"></textarea>
+            </div>
+          </div>
           <!-- <div class="form-group row justify-content-center" id="e_rnote">
             <label for="e_rnote" class="col-md-5 col-form-label text-md-left">Reject Note</label>
             <div class="col-md-7">
@@ -330,7 +344,7 @@
           <div class="form-group row justify-content-center">
             <label for="e_failurecode" class="col-md-5 col-form-label text-md-left">Failure Code</label>
             <div class="col-md-7 col-sm-12">
-              <select class="form-control" id="e_failurecode" name="e_failurecode[]" multiple="multiple" required>
+              <select class="form-control" id="e_failurecode" name="e_failurecode[]" multiple="multiple">
                 <option></option>
                 @foreach($fcode as $fcshow)
                 <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}} -- {{$fcshow->fn_impact}}</option>
@@ -341,7 +355,7 @@
           <div class="form-group row justify-content-center e_impactdiv" id="e_impactdiv">
             <label for="e_impact" class="col-md-5 col-form-label text-md-left">Impact</label>
             <div class="col-md-7">
-              <select id="e_impact" class="form-control e_impact" name="e_impact[]" multiple="multiple" required autofocus>
+              <select id="e_impact" class="form-control e_impact" name="e_impact[]" multiple="multiple">
                 @foreach($impact as $impactshow)
                 <option value="{{$impactshow->imp_code}}">{{$impactshow->imp_code}} -- {{$impactshow->imp_desc}}</option>
                 @endforeach
@@ -351,7 +365,7 @@
           <div class="form-group row justify-content-center">
             <label for="e_priority" class="col-md-5 col-form-label text-md-left">Priority</label>
             <div class="col-md-7">
-              <select id="e_priority" class="form-control" name="e_priority" autofocus required>
+              <select id="e_priority" class="form-control" name="e_priority" autofocus>
                 <option value="">-- Select Priority --</option>
                 <option value='low'>Low</option>
                 <option value='medium'>Medium</option>
@@ -400,13 +414,14 @@
             </div>
           </div>
           <div class="form-group row">
-            <label for="e_approver" class="col-md-5 col-form-label text-md-left">Eng Approver</label>
+            <label for="e_approver" class="col-md-5 col-form-label text-md-left">Engineer Approver</label>
             <div class="col-md-7">
               <select id="e_approver" name="e_approver" class="form-control" required>
                 <option value="">-- Select Eng Approver --</option>
                 @foreach($dataapp as $da)
-                <!-- <option value="{{$da->eng_code}}">{{$da->eng_code.' -- '.$da->eng_desc}}</option> -->
-                <option value="{{$da->dept_code}}">{{$da->dept_code.' -- '.$da->dept_desc}}</option>
+                <!-- <option value="{{$da->eng_dept}}">{{$da->eng_dept}}</option> -->
+                <!-- <option value="{{$da->eng_dept}}">{{$da->eng_dept.' -- '.$da->eng_desc}}</option> -->
+                <option value="{{$da->eng_dept}}">{{$da->eng_dept.' -- '.$da->dept_desc}}</option>
                 @endforeach
               </select>
             </div>
@@ -427,6 +442,47 @@
   </div>
 </div>
 </div>
+
+<!-- Modal Cancel -->
+<div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center" id="exampleModalLabel">Service Request Cancel</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <!-- <form id="close" class="form-horizontal" method="POST" action="#"> -->
+      <input type="hidden" id="statuscancel">
+      <form class="form-horizontal" id="newcancel" method="post" action="cancelsr" enctype="multipart/form-data">
+        {{csrf_field()}}
+
+        <div style="display: none;">
+          <label for="c_srnumber" class="col-md-4 col-form-label text-md-right">{{ __('SR Number') }}</label>
+          <div class="col-md-7">
+            <input id="c_srnumber" type="text" class="form-control" name="c_srnumber" value="" readonly autofocus>
+          </div>
+        </div>
+
+        <div class="modal-body">
+          <span class="col-md-12"><b>Are you sure want to cancel <span id="srnbr"><b></b></span>
+              ?</b></span>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-info bt-action" id="c_btnclose" data-dismiss="modal">No</button>
+          <button type="submit" class="btn btn-success bt-action" id="c_btnconf">Yes</button>
+          <button type="button" class="btn bt-action" id="c_btnloading" style="display: none;">
+            <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp;Loading
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 
 <!-- Modal SR View -->
 <div class="modal fade" id="viewModal" role="dialog" aria-hidden="true" data-backdrop="static">
@@ -513,9 +569,9 @@
 
         </div>
         <div class="form-group row">
-          <label for="approver" class="col-md-2 col-form-label">Eng Approver</label>
+          <label for="reason" class="col-md-2 col-form-label">Reason Approval</label>
           <div class="col-md-4">
-            <input id="approver" type="text" class="form-control" name="approver" readonly />
+            <input id="reason" type="text" class="form-control" name="reason" readonly />
           </div>
           <label for="file" class="col-md-2 col-form-label">Current File</label>
           <div class="col-md-4">
@@ -572,6 +628,10 @@
           <label for="englist" class="col-md-2 col-form-label">Engineer List</label>
           <div class="col-md-4">
             <textarea id="englist" type="text" class="form-control" name="englist" rows="3" readonly></textarea>
+          </div>
+          <label for="approver" class="col-md-2 col-form-label">Engineer Approver</label>
+          <div class="col-md-4">
+            <input id="approver" type="text" class="form-control" name="approver" readonly />
           </div>
           <!-- <label for="rejectnote" class="col-md-2 col-form-label">Reject Note</label>
           <div class="col-md-4">
@@ -740,7 +800,7 @@
       });
 
       $('#e_impact').select2({
-        placeholder: "Select Failure Code",
+        placeholder: "Select Impact",
         width: '100%',
         closeOnSelect: false,
         allowClear: true,
@@ -882,6 +942,7 @@
         var failtype = $(this).data('failtype');
         var failcode = $(this).data('failcode');
         var approver = $(this).data('approver');
+        var reason = $(this).data('reason');
 
         var srdate = $(this).data('srdate');
         document.getElementById('srdate').value = srdate;
@@ -905,7 +966,7 @@
         // console.log(englist);
 
         document.getElementById('englist').value = englist;
-        document.getElementById('reqbyname').value = reqbyname;
+        document.getElementById('reqbyname').value = reqby;
         document.getElementById('srnote').value = srnote;
         // document.getElementById('rejectnote').value = rejectnote;
         document.getElementById('wonumber').value = wonumber;
@@ -923,6 +984,7 @@
         document.getElementById('wostatus').value = wostatus;
         document.getElementById('statusapproval').value = statusapproval;
         document.getElementById('approver').value = approver;
+        document.getElementById('reason').value = reason;
 
         // if(eng1 != ''){
         //   document.getElementById('engineer1').value = eng1;
@@ -996,7 +1058,7 @@
 
             var desc = fail_desc.replaceAll(",", "\n");
 
-            console.log(desc);
+            // console.log(desc);
 
             document.getElementById('sr_failcode').value = desc;
             // }
@@ -1073,8 +1135,7 @@
         var failcode = $(this).data('failcode');
         var approver = $(this).data('approver');
         var rejectnote = $(this).data('rejectnote');
-
-        // console.log(statusapproval);
+        var reason = $(this).data('reason');
 
         // document.getElementById('e_renote').value = rejectnote;
 
@@ -1082,10 +1143,11 @@
           var srstat = 'Open';
           document.getElementById("e_status").style.color = 'green';
         } else {
-          var srstat = 'Rejected';
+          var srstat = 'Revise';
           document.getElementById("e_status").style.color = 'red';
         }
 
+        document.getElementById("e_statusappr").value = statusapproval;
         // if (rejectnote == '') {
         //   document.getElementById("e_rnote").style.display = 'none';
         // } else {
@@ -1153,9 +1215,11 @@
         $('#e_failurecode').trigger('change');
 
 
+
         // array impact
         var newarrimp = [];
         var desc = impact.split(",");
+        // console.log(desc);
         if (desc != null) {
           for (var i = 0; i <= (desc.length - 1); i++) {
             if (desc[i] != '') {
@@ -1169,10 +1233,10 @@
         $('#e_impact').val(newarrimp);
         $('#e_impact').trigger('change');
 
-        // console.log(englist);
+        // console.log(document.getElementById('e_impact').value);
 
         document.getElementById('englist').value = englist;
-        document.getElementById('e_req').value = reqbyname;
+        document.getElementById('e_req').value = reqby;
         document.getElementById('e_note').value = srnote;
         document.getElementById('e_nowo').value = wonumber;
         if (startwo != '01-01-1970') {
@@ -1188,10 +1252,7 @@
         // document.getElementById('action').value = action;
         document.getElementById('e_status').value = srstat;
         // document.getElementById('failcode').value = faildesclist;
-        document.getElementById('e_approver').value = approver;
 
-        // console.log(approver);
-        // console.log(document.getElementById('e_approver').value);
 
         // if(eng1 != ''){
         //   document.getElementById('engineer1').value = eng1;
@@ -1228,30 +1289,30 @@
 
         // alert(assetdesc);
 
-        $.ajax({
-          url: "/searchimpactdesc",
-          data: {
-            impact: impact,
-          },
-          success: function(data) {
-            // console.log(data);
+        // $.ajax({
+        //   url: "/searchimpactdesc",
+        //   data: {
+        //     impact: impact,
+        //   },
+        //   success: function(data) {
+        //     // console.log(data);
 
-            var imp_desc = data;
+        //     var imp_desc = data;
 
-            var desc = imp_desc.replaceAll(",", "\n");
+        //     var desc = imp_desc.replaceAll(",", "\n");
 
-            // console.log(desc);
+        //     // console.log(desc);
 
-            document.getElementById('e_impact').value = desc;
-            // }
+        //     document.getElementById('e_impact').value = desc;
+        //     // }
 
-          },
-          statusCode: {
-            500: function() {
-              document.getElementById('e_impact').value = "";
-            }
-          }
-        })
+        //   },
+        //   statusCode: {
+        //     500: function() {
+        //       document.getElementById('e_impact').value = "";
+        //     }
+        //   }
+        // })
 
         $.ajax({
           url: "/listupload/" + srnumber,
@@ -1287,6 +1348,10 @@
         document.getElementById('assetloc').value = assetloc;
         // document.getElementById('assettype').value = astype;
         document.getElementById('e_wottype').value = failtype;
+        document.getElementById('e_approver').value = approver;
+        document.getElementById('e_reason').value = reason;
+        // console.log(approver);
+        // console.log(document.getElementById('e_approver').value);
 
         // console.log(document.getElementById('e_wottype'));
 
@@ -1318,6 +1383,19 @@
           allowClear: true,
           maximumSelectionLength: 3,
         });
+
+      });
+
+      $(document).on('click', '.cancelsr', function() {
+
+        $('#cancelModal').modal('show');
+
+        var srnumber = $(this).data('srnumber');
+        var assetcode = $(this).data('assetcode');
+
+        document.getElementById('srnbr').innerHTML = srnumber;
+        document.getElementById('c_srnumber').value = srnumber;
+
 
       });
 

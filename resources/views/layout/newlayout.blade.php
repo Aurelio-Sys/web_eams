@@ -198,6 +198,14 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
+                @if(str_contains( Session::get('menu_access'), 'SR05'))
+                <li class="nav-item has-treeview">
+                  <a href="/srapprovaleng" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>Service Request Approval Engineer</p>
+                  </a>
+                </li>
+                @endif
                 {{--  Dua Kelinci tidak menggunakan user acceptance
                   @if(str_contains( Session::get('menu_access'), 'SR04'))
                 <li class="nav-item">

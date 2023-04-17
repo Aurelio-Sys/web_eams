@@ -242,13 +242,13 @@ class SettingController extends Controller
     {
         // $access = $req->cbRoleMaint . $req->cbSite . $req->cbLoc . $req->cbSupp . $req->cbAstype . $req->cbAsgroup . $req->cbFn . $req->cbAsset . $req->cbAspar . $req->cbSpt . $req->cbSpg . $req->cbSpm . $req->cbTool . $req->cbRep . $req->cbIns . /*$req->cbRepdet .*/  $req->cbRepins . $req->cbReppart . $req->cbEng . $req->cbInv . $req->cbDept . $req->cbSkill . $req->cbWoBrowse . $req->cbWoCreatedirect . $req->cbWoStart . $req->cbWoReport . $req->cbWoCreate . $req->cbWoMaint . $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbUA . $req->cbUSMT . $req->cbUser . $req->cbRunning;
 
-        $access = $req->cbRoleMaint . $req->cbSite . $req->cbLoc . $req->cbSupp . $req->cbAstype . $req->cbAsgroup . $req->cbFn . $req->cbAsset . $req->cbAspar . $req->cbSpt . $req->cbSpg . $req->cbSpm . $req->cbTool . $req->cbRep . $req->cbIns . /*$req->cbRepdet .*/  $req->cbRepins . $req->cbReppart . $req->cbEng . $req->cbInv . $req->cbDept . $req->cbSkill . $req->cbWoBrowse . $req->cbWoCreatedirect . $req->cbWoStart . $req->cbWoReport . $req->cbWoMaint . $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbUA . $req->cbUSMT . $req->cbUSmultiMT . $req->cbUser . $req->cbRunning . $req->cbBoas . $req->cbEngSchedule . $req->cbBookSchedule . $req->cbAssetSchedule . $req->cbEngReport . $req->cbAssetReport;
+        $access = $req->cbRoleMaint . $req->cbSite . $req->cbLoc . $req->cbSupp . $req->cbAstype . $req->cbAsgroup . $req->cbFn . $req->cbAsset . $req->cbAspar . $req->cbSpt . $req->cbSpg . $req->cbSpm . $req->cbTool . $req->cbRep . $req->cbIns . /*$req->cbRepdet .*/  $req->cbRepins . $req->cbReppart . $req->cbEng . $req->cbInv . $req->cbDept . $req->cbSkill . $req->cbWoBrowse . $req->cbWoCreatedirect . $req->cbWoStart . $req->cbWoReport . $req->cbWoMaint . $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbSRapprovaleng . $req->cbUA . $req->cbUSMT . $req->cbUSmultiMT . $req->cbUser . $req->cbRunning . $req->cbBoas . $req->cbEngSchedule . $req->cbBookSchedule . $req->cbAssetSchedule . $req->cbEngReport . $req->cbAssetReport;
 
         $access = $req->dept . $req->Skill . $req->Eng . $req->RoleMaint . $req->EngGroup . $req->cbRunning . $req->SetWsa . $req->SetFntype . $req->Fn . $req->SetImp . 
             $req->Astype . $req->Asgroup . $req->Supp . $req->SetAssetsite . $req->SetAssetloc . $req->Asset . $req->Aspar . $req->SetMove . $req->SetEngpm . $req->SetUm . $req->SetAsfn .
             $req->Spt . $req->Spg . $req->SetSpsite . $req->SetSploc . $req->Spm . $req->Rep . $req->SetRepgroup . $req->SetIns . $req->qcspec .
             $req->cbWoCreatedirect . $req->cbWoMaint . $req->cbWoBrowse . $req->cbWoRelease . $req->cbWoWhsConf . $req->cbWoStart . $req->cbWoReport . $req->cbWoQc . 
-            $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . 
+            $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbSRapprovaleng .
             $req->cbUSMT . $req->cbUSmultiMT . $req->cbUSGen . $req->cbUSBrowse .
             $req->cbBoas . 
             $req->cbRptDet . $req->cbRptCost . $req->cbAssetReport . $req->cbEngReport . $req->cbRptRemsp . 
@@ -313,7 +313,7 @@ class SettingController extends Controller
             $req->e_Astype . $req->e_Asgroup . $req->e_Supp . $req->e_SetAssetsite . $req->e_SetAssetloc . $req->e_Asset . $req->e_Aspar . $req->e_SetMove . $req->e_SetEngpm . $req->e_SetUm . $req->e_SetAsfn .
             $req->e_Spt . $req->e_Spg . $req->e_SetSpsite . $req->e_SetSploc . $req->e_Spm . $req->e_Rep . $req->e_SetRepgroup . $req->e_SetIns . $req->e_qcspec .
             $req->e_cbWoCreatedirect . $req->e_cbWoMaint . $req->e_cbWoBrowse . $req->e_cbWoRelease . $req->e_cbWoWhsConf . $req->e_cbWoStart . $req->e_cbWoReport . $req->e_cbWoQc . 
-            $req->e_cbSRcreate . $req->e_cbSRapprove . $req->e_cbSRbrowse . 
+            $req->e_cbSRcreate . $req->e_cbSRapprove . $req->e_cbSRbrowse . $req->e_cbSRapprovaleng .
             $req->e_cbUSMT . $req->e_cbUSmultiMT . $req->e_cbUSGen . $req->e_cbUSBrowse .
             $req->e_cbBoas . 
             $req->e_cbRptDet . $req->e_cbRptCost . $req->e_cbAssetReport . $req->e_cbEngReport . $req->e_cbRptRemsp . 
