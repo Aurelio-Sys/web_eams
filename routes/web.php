@@ -474,12 +474,16 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('/inputsr', 'ServiceController@inputsr');
 	route::get('/failuresearch','ServiceController@failuresearch');
 	route::get('/srapproval', 'ServiceController@srapproval');
+	route::get('/srapprovaleng', 'ServiceController@srapprovaleng');
 	route::get('/engineersearch','ServiceController@engajax');
 	route::post('/approval', 'ServiceController@approval');
+	route::post('/approvaleng', 'ServiceController@approvaleng');
 	route::get('/srapproval/searchapproval', 'ServiceController@searchapproval');
 	route::get('/searchimpactdesc', 'ServiceController@searchimpact');
 	route::get('/searchfailtype','ServiceController@searchfailtype');
 	route::get('/searchfailcode','ServiceController@searchfailcode');
+	route::get('/routesr','ServiceController@routesr');
+	route::post('/cancelsr','ServiceController@cancelsr');
 
 
 	//bagian tommy sr browse
