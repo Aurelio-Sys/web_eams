@@ -134,8 +134,9 @@
         <select id="t_app" name="t_app" class="form-control" required>
           <option value="">-- Select Engineer Approver --</option>
           @foreach($dataapp as $da)
-          <!-- <option value="{{$da->eng_code}}">{{$da->eng_code.' -- '.$da->eng_desc}}</option> -->
-          <option value="{{$da->dept_code}}">{{$da->dept_code.' -- '.$da->dept_desc}}</option>
+          <option value="{{$da->eng_dept}}">{{$da->eng_dept.' -- '.$da->dept_desc}}</option>
+          <!-- <option value="{{$da->eng_dept}}">{{$da->eng_dept.' -- '.$da->eng_desc}}</option> -->
+          <!-- <option value="{{$da->dept_code}}">{{$da->dept_code.' -- '.$da->dept_desc}}</option> -->
           @endforeach
         </select>
       </div>

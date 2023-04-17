@@ -12,6 +12,7 @@ use App\Http\Controllers\Master\QCSpecController;
 use App\Http\Controllers\Master\InsListController;
 use App\Http\Controllers\Master\SplistController;
 use App\Http\Controllers\Master\PmassetController;
+use App\Http\Controllers\Master\RcmMstrController;
 use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\Report\RemainSpController;
@@ -473,12 +474,16 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('/inputsr', 'ServiceController@inputsr');
 	route::get('/failuresearch','ServiceController@failuresearch');
 	route::get('/srapproval', 'ServiceController@srapproval');
+	route::get('/srapprovaleng', 'ServiceController@srapprovaleng');
 	route::get('/engineersearch','ServiceController@engajax');
 	route::post('/approval', 'ServiceController@approval');
+	route::post('/approvaleng', 'ServiceController@approvaleng');
 	route::get('/srapproval/searchapproval', 'ServiceController@searchapproval');
 	route::get('/searchimpactdesc', 'ServiceController@searchimpact');
 	route::get('/searchfailtype','ServiceController@searchfailtype');
 	route::get('/searchfailcode','ServiceController@searchfailcode');
+	route::get('/routesr','ServiceController@routesr');
+	route::post('/cancelsr','ServiceController@cancelsr');
 
 
 	//bagian tommy sr browse
@@ -669,6 +674,12 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/creatpmasset',[PmassetController::class, 'store']);
 	Route::post('/editpmasset',[PmassetController::class, 'update']);
 	Route::post('/delpmasset', [PmassetController::class, 'destroy']);
+
+	//Routine Check Maintenance
+	Route::get('/rcmmstr',[RcmMstrController::class, 'index']);
+	Route::post('/creatrcmmstr',[RcmMstrController::class, 'store']);
+	Route::post('/editrcmmstr',[RcmMstrController::class, 'update']);
+	Route::post('/delrcmmstr', [RcmMstrController::class, 'destroy']);
 });
 
 Auth::routes();

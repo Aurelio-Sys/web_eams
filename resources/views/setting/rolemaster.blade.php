@@ -185,6 +185,15 @@
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Service Request Approval Engineer') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbSRapprovaleng">
+                  <input type="checkbox" class="custom-control-input" id="cbSRapprovaleng" name="cbSRapprovaleng" value="SR05" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
             {{--  Dua Kelinci status akhir di QC Approval
               <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('User Acceptance') }}</label>
@@ -758,6 +767,15 @@
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Routine Check Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="rcmmstr">
+                  <input type="checkbox" class="custom-control-input" id="rcmmstr" name="rcmmstr" value="MT43" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
             {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Instruction Details Maintenance') }}</label>
               <div class="col-6">
@@ -886,6 +904,15 @@
               <div class="col-6">
                 <label class="switch" for="e_cbSRbrowse">
                   <input type="checkbox" class="custom-control-input" id="e_cbSRbrowse" name="e_cbSRbrowse" value="SR03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Service Request Approval Engineer') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbSRapprovaleng">
+                  <input type="checkbox" class="custom-control-input" id="e_cbSRapprovaleng" name="e_cbSRapprovaleng" value="SR05" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -1463,6 +1490,15 @@
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Routine Check Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_rcmmstr">
+                  <input type="checkbox" class="custom-control-input" id="e_rcmmstr" name="e_rcmmstr" value="MT43" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
             {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Instruction Details Maintenance') }}</label>
               <div class="col-6">
@@ -1794,6 +1830,11 @@
         } else {
           document.getElementById('e_SetPmcode').checked = false;
         }
+        if (listmenu.search("MT43") >= 0) {
+          document.getElementById('e_rcmmstr').checked = true;
+        } else {
+          document.getElementById('e_rcmmstr').checked = false;
+        }
         
         {{--  if (listmenu.search("MT03") >= 0) {
           document.getElementById('e_Site').checked = true;
@@ -1898,6 +1939,12 @@
           document.getElementById('e_cbSRbrowse').checked = true;
         } else {
           document.getElementById('e_cbSRbrowse').checked = false;
+        }
+
+        if (listmenu.search("SR05") >= 0) {
+          document.getElementById('e_cbSRapprovaleng').checked = true;
+        } else {
+          document.getElementById('e_cbSRapprovaleng').checked = false;
         }
 
         {{--  if (listmenu.search("SR04") >= 0) {

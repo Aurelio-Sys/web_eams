@@ -1,6 +1,6 @@
 @forelse($data as $show)
 
-@php($qeng = $dataeng->where('egr_code','=',$show->egr_code))
+@php($qeng = $datadet->where('egr_code','=',$show->egr_code))
 @php($eng = "")
 @foreach($qeng as $qeng)
   @if($eng == "")

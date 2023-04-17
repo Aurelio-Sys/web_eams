@@ -4,7 +4,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-4">
-            <h1 class="m-0 text-dark">Spare Part Location Maintenance</h1>
+            <h1 class="m-0 text-dark">Sparepart Location Maintenance</h1>
         </div>
     </div><!-- /.row -->
     <div class="col-md-12">
@@ -86,6 +86,7 @@
                 <th>Code</th>
                 <th>Description</th>
                 <th>Site</th>
+                <th>Active</th>
                 <!--
                 <th style="width: 15%;">Action</th>
                 -->

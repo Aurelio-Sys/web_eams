@@ -121,14 +121,26 @@
   <table class="table table-bordered mt-4 no-footer mini-table" id="dataTable" width="100%" cellspacing="0">
     <thead>
       <tr style="text-align: center;">
-        <th width="10%">SR Number</th>
+        <!-- <th width="10%">SR Number</th>
         <th width="25%">Asset</th>
         <th width="10%">Location</th>
         <th width="7%">Priority</th>
         <th width="10%">Req by</th>
         <th width="7%">Req Date</th>
         <th width="15%">Note</th>
-        <th width="7%">Action</th>
+        <th width="7%">Action</th> -->
+        <th>SR Number</th>
+        <th>WO Number</th>
+        <th>Aset</th>
+        <th>Desc</th>
+        <th>Location</th>
+        <th>Status</th>
+        <th>Priority</th>
+        <th>Department</th>
+        <th>Req by</th>
+        <th>Req Date</th>
+        <th>Req Time</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
@@ -140,7 +152,7 @@
   <input type="hidden" name="hidden_sort_type" id="hidden_sort_type" value="asc" />
 </div>
 
-<div class="modal fade" id="viewModal" role="dialog" aria-hidden="true" data-backdrop="static">
+<div class="modal fade" id="approvalModal" role="dialog" aria-hidden="true" data-backdrop="static">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -153,6 +165,7 @@
         {{ csrf_field() }}
         <div class="modal-body">
           <input type="hidden" id="hiddenreq" name="hiddenreq" />
+          <input type="hidden" id="idsr" name="idsr" />
           <div class="form-group row">
             <label for="srnumber" class="col-md-5 col-form-label text-md-right">Service Request Number</label>
             <div class="col-md-6">
@@ -212,171 +225,54 @@
           <div class="form-group row">
             <label for="wotype" class="col-md-5 col-form-label text-md-right">Failure Type</label>
             <div class="col-md-6">
-              <!-- <input id="wotype" type="text" class="form-control" name="wotype" autocomplete="off" /> -->
-              <select class="form-control wotype" name="wotype" id="wotype">
+              <input id="wotype" type="text" class="form-control" name="wotype" autocomplete="off" readonly />
+              <!-- <select class="form-control wotype" name="wotype" id="wotype">
                 <option value="">Select Failure Type</option>
                 @foreach($wotypes as $wotype)
                 <option value="{{$wotype->wotyp_code}}">{{$wotype->wotyp_code}} - {{$wotype->wotyp_desc}}</option>
                 @endforeach
-              </select>
+              </select> -->
             </div>
           </div>
           <div class="form-group row">
-            <label for="fclist" class="col-md-5 col-form-label text-md-right">Failure Code</label>
+            <label for="failcode" class="col-md-5 col-form-label text-md-right">Failure Code</label>
             <div class="col-md-6">
-              <!-- <textarea id="fclist" type="text" class="form-control" name="fclist" rows="3"></textarea> -->
-              <select class="form-control fclist" name="fclist[]" id="fclist" multiple="multiple">
+              <textarea id="failcode" type="text" class="form-control" name="failcode" rows="3" readonly></textarea>
+              <!-- <select class="form-control fclist" name="fclist[]" id="fclist" multiple="multiple">
                 <option value=""></option>
                 @foreach($fcodes as $fcode)
                 <option value="{{$fcode->fn_code}}">{{$fcode->fn_code}} - {{$fcode->fn_desc}}</option>
                 @endforeach
-              </select>
+              </select> -->
             </div>
           </div>
           <div class="form-group row">
             <label for="impact" class="col-md-5 col-form-label text-md-right">Impact</label>
             <div class="col-md-6">
-              <!-- <textarea id="impact" type="text" class="form-control" name="impact" autocomplete="off" rows="3"></textarea> -->
-              <select class="form-control impact" name="impact[]" id="impact" multiple="multiple">
+              <textarea id="impact" type="text" class="form-control" name="impact" autocomplete="off" rows="3" readonly></textarea>
+              <!-- <select class="form-control impact" name="impact[]" id="impact" multiple="multiple">
                 <option value=""></option>
                 @foreach($impacts as $impact)
                 <option value="{{$impact->imp_code}}">{{$impact->imp_code}} - {{$impact->imp_desc}}</option>
                 @endforeach
-              </select>
+              </select> -->
             </div>
           </div>
           <div class="form-group row">
             <label for="priority" class="col-md-5 col-form-label text-md-right">Priority</label>
             <div class="col-md-6">
-              <!-- <input id="priority" type="text" name="priority" class="form-control"> -->
-              <select class="form-control priority" name="priority" id="priority">
+              <input id="priority" type="text" name="priority" class="form-control" readonly>
+              <!-- <select class="form-control priority" name="priority" id="priority">
                 <option value='low'>Low</option>
                 <option value='medium'>Medium</option>
                 <option value='high'>High</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- <div class="form-group row">
-                        <label for="numberengineer" class="col-md-5 col-form-label text-md-right">Number of Engineer</label>
-                        <div class="col-md-6">
-                            <select id="numberengineer" class="form-control" name="numberengineer" required value="{{ old('numberengineer') }}">
-                                <option value="">--Select Number of Engineer--</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    
-                    <div class="form-group row" id="eng1" style="display: none;">
-                        <label for="enjiner1" class="col-md-5 col-form-label text-md-right">Engineer 1</label>
-                        <div class="col-md-6">
-                            <select id="enjiner1" class="form-control inicheck" name="enjiner1"  >
-                                <option value="">--Select Engineer--</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row" id="eng2" style="display: none;">
-                        <label for="enjiner2" class="col-md-5 col-form-label text-md-right">Engineer 2</label>
-                        <div class="col-md-6">
-                            <select id="enjiner2" class="form-control inicheck" name="enjiner2"  >
-                                <option value="">--Select Engineer--</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row" id="eng3" style="display: none;">
-                        <label for="enjiner3" class="col-md-5 col-form-label text-md-right">Engineer 3</label>
-                        <div class="col-md-6">
-                            <select id="enjiner3" class="form-control inicheck" name="enjiner3"  >
-                                <option value="">--Select Engineer--</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row" id="eng4" style="display: none;">
-                        <label for="enjiner4" class="col-md-5 col-form-label text-md-right">Engineer 4</label>
-                        <div class="col-md-6">
-                            <select id="enjiner4" class="form-control inicheck" name="enjiner4"  >
-                                <option value="">--Select Engineer--</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row" id="eng5" style="display: none;">
-                        <label for="enjiner5" class="col-md-5 col-form-label text-md-right">Engineer 5</label>
-                        <div class="col-md-6">
-                            <select id="enjiner5" class="form-control inicheck" name="enjiner5" >
-                                <option value="">--Select Engineer--</option>
-                            </select>
-                        </div>
-                    </div> -->
-          <div class="form-group row">
-            <label for="enjiners" class="col-md-5 col-form-label text-md-right">Engineer (Max. 5) <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-            <div class="col-md-6">
-              <select id="enjiners" name="enjiners[]" class="form-control" multiple="multiple" required>
-                <option value="">--Select Engineer--</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group row justify-content-center">
-            <label for="selectrep" class="col-md-5 col-form-label text-md-right">Repair Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-            <div class="col-md-7 my-auto">
-              <input type="radio" id="rad_repgroup1" class="d-inline" name="rad_repgroup" value="group" required>
-              <label for="rad_repgroup1" class="form-check-label">Repair Group</label>
-
-              <input type="radio" id="rad_repgroup2" class="d-inline ml-2" name="rad_repgroup" value="code">
-              <label for="rad_repgroup2" class="form-check-label">Repair Code</label>
-            </div>
-          </div>
-
-          <div class="form-group row" id="tampilanrepgroup" style="display: none;">
-            <label for="repaircode" class="col-md-5 col-form-label text-md-right">Repair Group <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-            <div class="col-md-6">
-              <select id="repgroup" name="repgroup" class="form-control">
-                <option>--Select Repair Group--</option>
-                @foreach($repgroup as $repgroupshow)
-                <option value="{{$repgroupshow->xxrepgroup_nbr}}">{{$repgroupshow->xxrepgroup_nbr}} -- {{$repgroupshow->xxrepgroup_desc}}</option>
-                @endforeach
-              </select>
-            </div>
-          </div>
-          <div class="form-group row" id="tampilanrepcode" style="display: none;">
-            <label for="repaircode" class="col-md-5 col-form-label text-md-right">Repair Code (Max. 3) <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-            <div class="col-md-6">
-              <select id="repaircode" name="repaircode[]" class="form-control" multiple="multiple">
-                <!-- <option>--Select Repair Code--</option> -->
-                @foreach($repaircode as $repairshow)
-                <option value="{{$repairshow->repm_code}}">{{$repairshow->repm_code}} -- {{$repairshow->repm_desc}}</option>
-                @endforeach
-              </select>
-            </div>
-          </div>
-          <!-- Engineer ENDDDDD -->
-          <!-- <div class="row" id="inialert1" style="display: none; margin-bottom: 1rem;">
-                        <label class="col-md-4"></label>
-                        <span id="alert1" style="font-weight: 400; color: red;"></span>
-                    </div> -->
-          <div class="form-group row">
-            <label for="scheduledate" class="col-md-5 col-form-label text-md-right">Schedule Date <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-            <div class="col-md-6">
-              {{-- <input id="scheduledate" type="date" class="form-control" name="scheduledate" placeholder="yy-mm-dd"  autocomplete="off" min="{{Carbon\Carbon::now()->format("Y-m-d")}}" autofocus required value="{{ old('scheduledate') }}"> --}}
-              <input id="scheduledate" type="date" class="form-control" name="scheduledate" placeholder="yy-mm-dd" autocomplete="off" autofocus required value="{{ old('scheduledate') }}">
+              </select> -->
             </div>
           </div>
           <div class="form-group row">
-            <label for="duedate" class="col-md-5 col-form-label text-md-right">Due Date <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+            <label for="reason" class="col-md-5 col-form-label text-md-right">Reason</label>
             <div class="col-md-6">
-              {{-- <input id="duedate" type="date" class="form-control" name="duedate" placeholder="yy-mm-dd"  autocomplete="off" min="{{Carbon\Carbon::now()->format("Y-m-d")}}" autofocus required value="{{ old('duedate') }}"> --}}
-              <input id="duedate" type="date" class="form-control" name="duedate" placeholder="yy-mm-dd" autocomplete="off" autofocus required value="{{ old('duedate') }}">
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="rejectreason" class="col-md-5 col-form-label text-md-right">Reject Reason</label>
-            <div class="col-md-6">
-              <textarea id="rejectreason" type="text" class="form-control" name="rejectreason" maxlength="250" autocomplete="off" autofocus></textarea>
+              <textarea id="reason" type="text" class="form-control" name="reason" maxlength="250" autocomplete="off" autofocus></textarea>
               <span id="alert3" style="color: red; font-weight: 200;"></span>
             </div>
           </div>
@@ -404,7 +300,8 @@
 
           <div class="modal-footer">
             <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-danger" name="action" value="reject" id="btnreject" disabled>Reject</button>
+            <button type="submit" class="btn btn-danger" name="action" value="reject" id="btnreject">Reject</button>
+            <!-- <button type="submit" class="btn btn-warning" name="action" value="revise" id="btnrevise">Revisi</button> -->
             <button type="submit" class="btn btn-success" name="action" value="approve" id="btnapprove">Approve</button>
             <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
               <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
@@ -414,6 +311,238 @@
     </div>
   </div>
 </div>
+</div>
+
+<div class="modal fade" id="viewModal" role="dialog" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center" id="exampleModalLabel">Service Request View</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="form-horizontal" id="view" method="post" action="/approval" enctype="multipart/form-data">
+        {{ csrf_field() }}
+        <div class="modal-body">
+          <input type="hidden" id="v_hiddenreq" name="v_hiddenreq" />
+          <input type="hidden" id="v_idsr" name="v_idsr" />
+          <div class="form-group row">
+            <label for="v_srnumber" class="col-md-5 col-form-label text-md-right">Service Request Number</label>
+            <div class="col-md-6">
+              <input id="v_srnumber" type="text" class="form-control" name="v_srnumber" readonly />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="v_srdate" class="col-md-5 col-form-label text-md-right">Service Request Date</label>
+            <div class="col-md-6">
+              <input id="v_srdate" type="text" class="form-control" name="v_srdate" readonly />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="v_reqbyname" class="col-md-5 col-form-label text-md-right">Requested by</label>
+            <div class="col-md-6">
+              <input id="v_reqbyname" type="text" class="form-control" autocomplete="off" autofocus readonly />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="v_dept" class="col-md-5 col-form-label text-md-right">Department</label>
+            <div class="col-md-6">
+              <input id="v_dept" type="text" class="form-control" name="v_dept" autocomplete="off" autofocus readonly />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="v_assetcode" class="col-md-5 col-form-label text-md-right">Asset Code</label>
+            <div class="col-md-6">
+              <input id="v_assetcode" type="text" class="form-control" name="v_assetcode" autocomplete="off" autofocus readonly />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="v_assetdesc" class="col-md-5 col-form-label text-md-right">Asset Description</label>
+            <div class="col-md-6">
+              <input id="v_assetdesc" type="text" class="form-control" name="v_assetdesc" autocomplete="off" autofocus readonly />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="v_assetloc" class="col-md-5 col-form-label text-md-right">Location</label>
+            <div class="col-md-6">
+              <input id="v_assetloc" type="text" class="form-control" name="v_assetloc" autocomplete="off" autofocus readonly />
+              <input id="v_h_assetsite" type="hidden" name="v_h_assetsite" />
+              <input id="v_h_assetloc" type="hidden" name="v_h_assetloc" />
+            </div>
+          </div>
+          <!-- <div class="form-group row">
+                        <label for="assettype" class="col-md-5 col-form-label text-md-right">Process / Technology</label>
+                        <div class="col-md-6">
+                            <input id="assettype" type="text" class="form-control" name="assettype" autocomplete="off" autofocus readonly/>
+                        </div>
+                    </div> -->
+          <div class="form-group row">
+            <label for="v_srnote" class="col-md-5 col-form-label text-md-right">Note</label>
+            <div class="col-md-6">
+              <textarea id="v_srnote" type="text" class="form-control" name="v_srnote" maxlength="250" autocomplete="off" autofocus readonly></textarea>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="v_wotype" class="col-md-5 col-form-label text-md-right">Failure Type</label>
+            <div class="col-md-6">
+              <input id="v_wotype" type="text" class="form-control" name="v_wotype" autocomplete="off" readonly />
+              <!-- <select class="form-control wotype" name="wotype" id="wotype">
+                <option value="">Select Failure Type</option>
+                @foreach($wotypes as $wotype)
+                <option value="{{$wotype->wotyp_code}}">{{$wotype->wotyp_code}} - {{$wotype->wotyp_desc}}</option>
+                @endforeach
+              </select> -->
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="v_failcode" class="col-md-5 col-form-label text-md-right">Failure Code</label>
+            <div class="col-md-6">
+              <textarea id="v_failcode" type="text" class="form-control" name="v_failcode" rows="3" readonly></textarea>
+              <!-- <select class="form-control fclist" name="fclist[]" id="fclist" multiple="multiple">
+                <option value=""></option>
+                @foreach($fcodes as $fcode)
+                <option value="{{$fcode->fn_code}}">{{$fcode->fn_code}} - {{$fcode->fn_desc}}</option>
+                @endforeach
+              </select> -->
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="v_impact" class="col-md-5 col-form-label text-md-right">Impact</label>
+            <div class="col-md-6">
+              <textarea id="v_impact" type="text" class="form-control" name="v_impact" autocomplete="off" rows="3" readonly></textarea>
+              <!-- <select class="form-control impact" name="impact[]" id="impact" multiple="multiple">
+                <option value=""></option>
+                @foreach($impacts as $impact)
+                <option value="{{$impact->imp_code}}">{{$impact->imp_code}} - {{$impact->imp_desc}}</option>
+                @endforeach
+              </select> -->
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="v_priority" class="col-md-5 col-form-label text-md-right">Priority</label>
+            <div class="col-md-6">
+              <input id="v_priority" type="text" name="v_priority" class="form-control" readonly>
+              <!-- <select class="form-control priority" name="priority" id="priority">
+                <option value='low'>Low</option>
+                <option value='medium'>Medium</option>
+                <option value='high'>High</option>
+              </select> -->
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="v_reason" class="col-md-5 col-form-label text-md-right">Reason</label>
+            <div class="col-md-6">
+              <textarea id="v_reason" type="text" class="form-control" name="v_reason" maxlength="250" autocomplete="off" readonly></textarea>
+              <!-- <span id="alert3" style="color: red; font-weight: 200;"></span> -->
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="file" class="col-md-5 col-form-label text-md-right">Current File</label>
+            <div class="col-md-6">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>File Name</th>
+                  </tr>
+                </thead>
+                <tbody id="listupload">
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <input type="hidden" id="tmpfail1" name="tmpfail1" value="">
+          <input type="hidden" id="v_impactcode1" name="v_impactcode1" value="">
+          <input type="hidden" id="tmpfail2" name="tmpfail2" value="">
+          <input type="hidden" id="tmpfail3" name="tmpfail3" value="">
+          <input type="hidden" id="v_hiddendeptcode" name="v_hiddendeptcode" />
+          <!-- <input type="hidden" id="hiddenreqby" name="hiddenreqby" /> -->
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
+            <!-- <button type="submit" class="btn btn-danger" name="action" value="reject" id="btnreject">Reject</button>
+            <button type="submit" class="btn btn-warning" name="action" value="revise" id="btnrevise">Revisi</button>
+            <button type="submit" class="btn btn-success" name="action" value="approve" id="btnapprove">Approve</button> -->
+            <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
+              <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+            </button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal fade" id="routeModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center" id="exampleModalLabel">Route to Action</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="col-md-12">
+          <div class="form-group row">
+            <label for="ppnumber" class="col-2 col-sm-2 col-md-2 col-lg-2 col-form-label text-sm-center">{{
+                            __('SR No.')
+                            }}</label>
+            <div class="col-4 col-sm-4 col-md-4 col-lg-4">
+              <input type="text" class="form-control" id="m_route_ppnumber" readonly>
+            </div>
+            <label for="requestedBy" class="col-2 col-sm-2 col-md-2 col-lg-2 col-form-label text-sm-center">{{
+                            __('Requested By')
+                            }}</label>
+            <div class="col-4 col-sm-4 col-md-4 col-lg-3">
+              <input type="text" class="form-control" id="m_route_requested_by" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-group row">
+            <label for="site" class="col-2 col-sm-2 col-md-2 col-lg-2 col-form-label text-sm-center">{{
+                            __('Asset')
+                            }}</label>
+            <div class="col-4 col-sm-4 col-md-4 col-lg-4">
+              <input type="text" class="form-control" id="m_route_asset" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row" style="margin-bottom: 0px;">
+          <div class="col-lg-12 col-md-12" style="overflow-x: auto; display: block;white-space: nowrap;">
+            <table id='routetable' class='table route-list' style="margin-bottom: 0px;">
+              <thead>
+                <tr>
+                  <th style="width:10%">No.</th>
+                  <th style="width:10%">Department</th>
+                  <th style="width:10%">Role</th>
+                  <th style="width:15%">Reason</th>
+                  <th style="width:10%">Status</th>
+                  <th style="width:10%">Approved By</th>
+                  <th style="width:15%">Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id='bodyroute'>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-info btn-outline-success" id="e_btnclose" data-dismiss="modal"><i
+                        class="fas fa-undo"></i>&nbsp;Cancel</button> -->
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
 
 @endsection
 
@@ -425,6 +554,7 @@
     document.getElementById('btnreject').style.display = 'none';
     document.getElementById('btnapprove').style.display = 'none';
     document.getElementById('btnloading').style.display = '';
+
   });
 
   $(document).ready(function() {
@@ -487,32 +617,32 @@
       // theme : 'bootstrap4',
     });
 
-    $('#impact').select2({
-      placeholder: "Select Value",
-      width: '100%',
-      closeOnSelect: false,
-      allowClear: true,
-      theme: 'bootstrap4',
-    });
+    // $('#impact').select2({
+    //   placeholder: "Select Value",
+    //   width: '100%',
+    //   closeOnSelect: false,
+    //   allowClear: true,
+    //   theme: 'bootstrap4',
+    // });
 
-    $("#fclist").select2({
-      width: '100%',
-      placeholder: "Select Failure Code",
-      theme: "bootstrap4",
-      allowClear: true,
-      maximumSelectionLength: 3,
-      closeOnSelect: false,
-      allowClear: true,
-      multiple: true,
-    });
+    // $("#fclist").select2({
+    //   width: '100%',
+    //   placeholder: "Select Failure Code",
+    //   theme: "bootstrap4",
+    //   allowClear: true,
+    //   maximumSelectionLength: 3,
+    //   closeOnSelect: false,
+    //   allowClear: true,
+    //   multiple: true,
+    // });
 
-    $("#wotype").select2({
-      width: '100%',
-      // theme : 'bootstrap4',
-      allowClear: true,
-      placeholder: 'Select Failure Type',
+    // $("#wotype").select2({
+    //   width: '100%',
+    //   // theme : 'bootstrap4',
+    //   allowClear: true,
+    //   placeholder: 'Select Failure Type',
 
-    });
+    // });
 
     $(document).on('change', '#rad_repgroup1', function(e) {
       document.getElementById('tampilanrepgroup').style.display = '';
@@ -528,22 +658,22 @@
     });
 
     // DISABLE BUTTON APPROVE
-    $(document).on('keyup', '#rejectreason', function(e) {
-      var inputreject = document.getElementById('rejectreason');
-      var btnreject = document.getElementById('btnreject');
-      var btnapprove = document.getElementById('btnapprove');
-      // console.log(inputreject.value.length);
-      if (inputreject.value.length > 0) {
-        btnreject.disabled = false;
-        btnapprove.disabled = true;
-      } else {
-        btnreject.disabled = true;
-        btnapprove.disabled = false;
-      }
-    })
+    // $(document).on('keyup', '#reason', function(e) {
+    //   var inputreject = document.getElementById('reason');
+    //   var btnreject = document.getElementById('btnreject');
+    //   var btnapprove = document.getElementById('btnapprove');
+    //   // console.log(inputreject.value.length);
+    //   if (inputreject.value.length > 0) {
+    //     btnreject.disabled = false;
+    //     btnapprove.disabled = true;
+    //   } else {
+    //     btnreject.disabled = true;
+    //     btnapprove.disabled = false;
+    //   }
+    // })  
 
     $(document).on('click', '#btnreject', function(event) {
-      var rejectreason = document.getElementById('rejectreason').value;
+      var reason = document.getElementById('reason').value;
       var enjiners = document.getElementById('enjiners').value;
       var scheduledate = document.getElementById('scheduledate').value;
       var duedate = document.getElementById('duedate').value;
@@ -551,7 +681,7 @@
       // $('#approval')
       // alert(1);
 
-      if (rejectreason == "") {
+      if (reason == "") {
         // alert('masuk reject');
         $("#enjiners").attr('required', false);
         $("#scheduledate").attr('required', false);
@@ -559,7 +689,7 @@
         $("#repaircode").attr('required', false);
         $("#rad_repgroup1").attr('required', false);
         // document.getElementById("alert3").innerHTML = 'Please fill out reason reject';
-        $("#rejectreason").attr('required', true);
+        $("#reason").attr('required', true);
       } else {
         // alert('masuk sini');
         $("#enjiners").attr('required', false);
@@ -568,7 +698,7 @@
         $("#repaircode").attr('required', false);
         $("#rad_repgroup1").attr('required', false);
         // document.getElementById("alert3").innerHTML = 'Please fill out reason reject';
-        // $("#rejectreason").attr('required', true);
+        // $("#reason").attr('required', true);
 
         $('#approval').submit();
 
@@ -577,7 +707,7 @@
     });
 
     $(document).on('click', '#btnapprove', function(event) {
-      var rejectreason = document.getElementById('rejectreason').value;
+      var reason = document.getElementById('reason').value;
       var enjiners = document.getElementById('enjiners').value;
       var scheduledate = document.getElementById('scheduledate').value;
       var duedate = document.getElementById('duedate').value;
@@ -596,7 +726,7 @@
         $("#rad_repgroup1").attr('required', true);
         // $("#repaircode").attr('required', true);
         // document.getElementById("alert3").innerHTML = 'Please fill out reason reject';
-        // $("#rejectreason").attr('required', false);
+        // $("#reason").attr('required', false);
       } else {
         if (pilihgrup) {
           // alert('pilihgrup');
@@ -622,7 +752,7 @@
       $.ajax({
         url: "/srapproval/searchapproval?page=" + page + "&srnumber=" + srnumber + "&asset=" + asset + "&priority=" + priority,
         success: function(data) {
-          console.log(data);
+          // console.log(data);
           $('tbody').html('');
           $('tbody').html(data);
         }
@@ -691,7 +821,7 @@
     });
 
     $(document).on('click', '.approval', function() {
-      $('#viewModal').modal('show');
+      $('#approvalModal').modal('show');
 
       var srnumber = $(this).data('srnumber');
       var srdate = $(this).data('srdate');
@@ -711,10 +841,13 @@
       var hassetloc = $(this).data('hassetloc');
       var astype = $(this).data('astypedesc');
       var impactcode1 = $(this).data('impactcode');
+      var failcode = $(this).data('failcode');
+      var id = $(this).data('id');
 
       // var fail1 = $(this).data('failcode1');
       // var fail2 = $(this).data('failcode2');
       // var fail3 = $(this).data('failcode3');
+      // console.log(reqby);
 
       var failcode1 = $(this).data('fc1');
       var failcode2 = $(this).data('fc2');
@@ -754,15 +887,65 @@
         }
       })
 
-      // alert(assetdesc);
+      $.ajax({
+        url: "/searchimpactdesc",
+        data: {
+          impact: impact,
+        },
+        success: function(data) {
+          // console.log(data);
 
+          var imp_desc = data;
+
+          var desc = imp_desc.replaceAll(",", "\n");
+
+          // console.log(desc);
+
+          document.getElementById('impact').value = desc;
+          // }
+
+        },
+        statusCode: {
+          500: function() {
+            document.getElementById('impact').value = "";
+          }
+        }
+      })
+
+      $.ajax({
+        url: "/searchfailcode",
+        data: {
+          failcode: failcode,
+        },
+        success: function(data) {
+          // console.log(data);
+
+          var fail_desc = data;
+
+          var desc = fail_desc.replaceAll(",", "\n");
+
+          // console.log(desc);
+
+          document.getElementById('failcode').value = desc;
+          // }
+
+        },
+        statusCode: {
+          500: function() {
+            document.getElementById('failcode').value = "";
+          }
+        }
+      })
 
 
       // alert(impactcode1);
       document.getElementById('srnumber').value = srnumber;
+      document.getElementById('idsr').value = id;
       document.getElementById('srdate').value = srdate;
       document.getElementById('assetcode').value = assetcode;
       document.getElementById('assetdesc').value = assetdesc;
+      document.getElementById('reqbyname').value = reqby;
+      // console.log(document.getElementById('reqbyname').value);
       {
         {
           // --document.getElementById('assettype').value = astype;
@@ -783,42 +966,359 @@
       document.getElementById('priority').value = priority;
       document.getElementById('dept').value = dept;
       document.getElementById('hiddendeptcode').value = deptcode;
-      document.getElementById('reqbyname').value = reqbyname;
+      // document.getElementById('reqbyname').value = reqbyname;
       // document.getElementById('fclist').value = fail_list;
 
       //value multiple failurecode
-      document.getElementById('fclist').selectedIndex = newarrfc;
-      $('#fclist').val(newarrfc);
-      $('#fclist').trigger('change');
+      // document.getElementById('fclist').selectedIndex = newarrfc;
+      // $('#fclist').val(newarrfc);
+      // $('#fclist').trigger('change');
 
       //value multiple impact
-      document.getElementById('impact').selectedIndex = newarrimp;
-      $('#impact').val(newarrimp);
-      $('#impact').trigger('change');
+      // document.getElementById('impact').selectedIndex = newarrimp;
+      // $('#impact').val(newarrimp);
+      // $('#impact').trigger('change');
 
       document.getElementById('tmpfail1').value = failcode1;
       document.getElementById('tmpfail2').value = failcode2;
       document.getElementById('tmpfail3').value = failcode3;
 
-      $('#wotype').select2({
-        theme: 'bootstrap4',
-        width: '100%',
-        // wotype,
-      });
+      // $('#wotype').select2({
+      //   theme: 'bootstrap4',
+      //   width: '100%',
+      //   // wotype,
+      // });
 
-      $('#fclist').select2({
-        placeholder: "Select Failure Code",
-        width: '100%',
-        closeOnSelect: false,
-        allowClear: true,
-        maximumSelectionLength: 3,
-      });
+      // $('#fclist').select2({
+      //   placeholder: "Select Failure Code",
+      //   width: '100%',
+      //   closeOnSelect: false,
+      //   allowClear: true,
+      //   maximumSelectionLength: 3,
+      // });
 
-      $('#impact').select2({
-        placeholder: "Select Value",
-        width: '100%',
-        closeOnSelect: false,
-        allowClear: true,
+      // $('#impact').select2({
+      //   placeholder: "Select Value",
+      //   width: '100%',
+      //   closeOnSelect: false,
+      //   allowClear: true,
+      // });
+
+    });
+
+    $(document).on('click', '.view', function() {
+      $('#viewModal').modal('show');
+
+      var srnumber = $(this).data('srnumber');
+      var srdate = $(this).data('srdate');
+      var assetcode = $(this).data('assetcode');
+      var assetdesc = $(this).data('assetdesc');
+      var srnote = $(this).data('srnote');
+      var reqby = $(this).data('reqby');
+      var priority = $(this).data('priority');
+      var dept = $(this).data('deptdesc');
+      var deptcode = $(this).data('deptcode');
+      var reqbyname = $(this).data('reqbyname');
+      var wotype = $(this).data('wotypedescx');
+      var impact = $(this).data('impactcode');
+      // alert(impact);
+      var assetloc = $(this).data('assetloc');
+      var hassetsite = $(this).data('hassetsite');
+      var hassetloc = $(this).data('hassetloc');
+      var astype = $(this).data('astypedesc');
+      var impactcode1 = $(this).data('impactcode');
+      var failcode = $(this).data('failcode');
+      var id = $(this).data('id');
+      var reason = $(this).data('reason');
+
+      var failcode1 = $(this).data('fc1');
+      var failcode2 = $(this).data('fc2');
+      var failcode3 = $(this).data('fc3');
+
+      // var fail_list = fail1 + '\n' + fail2 + '\n' + fail3;
+
+      // array failure code
+      var newarrfc = [];
+      if (failcode1 != '') {
+        newarrfc.push(failcode1);
+      }
+      if (failcode2 != '') {
+        newarrfc.push(failcode2);
+      }
+      if (failcode3 != '') {
+        newarrfc.push(failcode3);
+      }
+
+
+      // array impact
+      var newarrimp = [];
+      var desc = impact.split(",");
+      if (desc != null) {
+        for (var i = 0; i <= (desc.length - 1); i++) {
+          if (desc[i] != '') {
+            newarrimp.push(desc[i]);
+          }
+        }
+      }
+
+      $.ajax({
+        url: "/listupload/" + srnumber,
+        success: function(data) {
+          // console.log(data);
+          $('#listupload').html('').append(data);
+        }
+      })
+
+      $.ajax({
+        url: "/searchimpactdesc",
+        data: {
+          impact: impact,
+        },
+        success: function(data) {
+          // console.log(data);
+
+          var imp_desc = data;
+
+          var desc = imp_desc.replaceAll(",", "\n");
+
+          // console.log(desc);
+
+          document.getElementById('impact').value = desc;
+          // }
+
+        },
+        statusCode: {
+          500: function() {
+            document.getElementById('impact').value = "";
+          }
+        }
+      })
+
+      $.ajax({
+        url: "/searchfailcode",
+        data: {
+          failcode: failcode,
+        },
+        success: function(data) {
+          // console.log(data);
+
+          var fail_desc = data;
+
+          var desc = fail_desc.replaceAll(",", "\n");
+
+          // console.log(desc);
+
+          document.getElementById('failcode').value = desc;
+          // }
+
+        },
+        statusCode: {
+          500: function() {
+            document.getElementById('failcode').value = "";
+          }
+        }
+      })
+
+
+      // alert(impactcode1);
+      document.getElementById('v_srnumber').value = srnumber;
+      document.getElementById('idsr').value = id;
+      document.getElementById('v_srdate').value = srdate;
+      document.getElementById('v_assetcode').value = assetcode;
+      document.getElementById('v_assetdesc').value = assetdesc;
+      document.getElementById('v_reason').value = reason;
+      document.getElementById('v_reqbyname').value = reqby;
+      // console.log(document.getElementById('idsr').value);
+      {
+        {
+          // --document.getElementById('assettype').value = astype;
+          // --
+        }
+      }
+      document.getElementById('v_wotype').value = wotype;
+      document.getElementById('v_impactcode1').value = impactcode1;
+      document.getElementById('v_assetloc').value = assetloc;
+      document.getElementById('v_h_assetsite').value = hassetsite;
+      document.getElementById('v_h_assetloc').value = hassetloc;
+
+      // document.getElementById('failurecode1').value = failurecode1;
+      // document.getElementById('failurecode2').value = failurecode2;
+      // document.getElementById('failurecode3').value = failurecode3;
+      document.getElementById('v_srnote').value = srnote;
+      document.getElementById('v_hiddenreq').value = reqby;
+      document.getElementById('v_priority').value = priority;
+      document.getElementById('v_dept').value = dept;
+      document.getElementById('v_hiddendeptcode').value = deptcode;
+      // document.getElementById('v_reqbyname').value = reqbyname;
+      document.getElementById('v_reason').value = reason;
+      // document.getElementById('fclist').value = fail_list;
+      // console.log(reqbyname);
+
+      //value multiple failurecode
+      // document.getElementById('fclist').selectedIndex = newarrfc;
+      // $('#fclist').val(newarrfc);
+      // $('#fclist').trigger('change');
+
+      //value multiple impact
+      // document.getElementById('impact').selectedIndex = newarrimp;
+      // $('#impact').val(newarrimp);
+      // $('#impact').trigger('change');
+
+      document.getElementById('tmpfail1').value = failcode1;
+      document.getElementById('tmpfail2').value = failcode2;
+      document.getElementById('tmpfail3').value = failcode3;
+
+      // $('#wotype').select2({
+      //   theme: 'bootstrap4',
+      //   width: '100%',
+      //   // wotype,
+      // });
+
+      // $('#fclist').select2({
+      //   placeholder: "Select Failure Code",
+      //   width: '100%',
+      //   closeOnSelect: false,
+      //   allowClear: true,
+      //   maximumSelectionLength: 3,
+      // });
+
+      // $('#impact').select2({
+      //   placeholder: "Select Value",
+      //   width: '100%',
+      //   closeOnSelect: false,
+      //   allowClear: true,
+      // });
+
+    });
+
+    $(document).on('click', '.route', function() {
+      $('#routeModal').modal('show');
+
+      var srnumber = $(this).data('srnumber');
+      var srdate = $(this).data('srdate');
+      var assetcode = $(this).data('assetcode');
+      var assetdesc = $(this).data('assetdesc');
+      var srnote = $(this).data('srnote');
+      var reqby = $(this).data('reqby');
+      var priority = $(this).data('priority');
+      var dept = $(this).data('deptdesc');
+      var deptcode = $(this).data('deptcode');
+      var reqbyname = $(this).data('reqbyname');
+      var wotype = $(this).data('wotypedescx');
+      var impact = $(this).data('impactcode');
+      // alert(impact);
+      var assetloc = $(this).data('assetloc');
+      var hassetsite = $(this).data('hassetsite');
+      var hassetloc = $(this).data('hassetloc');
+      var astype = $(this).data('astypedesc');
+      var impactcode1 = $(this).data('impactcode');
+      var failcode = $(this).data('failcode');
+      var id = $(this).data('id');
+      var reason = $(this).data('reason');
+
+      var failcode1 = $(this).data('fc1');
+      var failcode2 = $(this).data('fc2');
+      var failcode3 = $(this).data('fc3');
+
+      // var fail_list = fail1 + '\n' + fail2 + '\n' + fail3;
+
+      // array failure code
+      var newarrfc = [];
+      if (failcode1 != '') {
+        newarrfc.push(failcode1);
+      }
+      if (failcode2 != '') {
+        newarrfc.push(failcode2);
+      }
+      if (failcode3 != '') {
+        newarrfc.push(failcode3);
+      }
+
+
+      // array impact
+      var newarrimp = [];
+      var desc = impact.split(",");
+      if (desc != null) {
+        for (var i = 0; i <= (desc.length - 1); i++) {
+          if (desc[i] != '') {
+            newarrimp.push(desc[i]);
+          }
+        }
+      }
+
+      $.ajax({
+        url: "/listupload/" + srnumber,
+        success: function(data) {
+          // console.log(data);
+          $('#listupload').html('').append(data);
+        }
+      })
+
+      $.ajax({
+        url: "/searchimpactdesc",
+        data: {
+          impact: impact,
+        },
+        success: function(data) {
+          // console.log(data);
+
+          var imp_desc = data;
+
+          var desc = imp_desc.replaceAll(",", "\n");
+
+          // console.log(desc);
+
+          document.getElementById('impact').value = desc;
+          // }
+
+        },
+        statusCode: {
+          500: function() {
+            document.getElementById('impact').value = "";
+          }
+        }
+      })
+
+      $.ajax({
+        url: "/searchfailcode",
+        data: {
+          failcode: failcode,
+        },
+        success: function(data) {
+          // console.log(data);
+
+          var fail_desc = data;
+
+          var desc = fail_desc.replaceAll(",", "\n");
+
+          // console.log(desc);
+
+          document.getElementById('failcode').value = desc;
+          // }
+
+        },
+        statusCode: {
+          500: function() {
+            document.getElementById('failcode').value = "";
+          }
+        }
+      })
+
+
+      // alert(impactcode1);
+      document.getElementById('m_route_ppnumber').value = srnumber;
+      document.getElementById('m_route_requested_by').value = reqbyname;
+      document.getElementById('m_route_asset').value = assetcode;
+
+      $.ajax({
+        type: "GET",
+        url: "/routesr",
+        data: {
+          sr_number: srnumber
+        },
+        success: function(data) {
+          $('#bodyroute').html(data);
+        }
       });
 
     });

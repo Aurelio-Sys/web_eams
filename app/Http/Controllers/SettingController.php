@@ -242,13 +242,13 @@ class SettingController extends Controller
     {
         // $access = $req->cbRoleMaint . $req->cbSite . $req->cbLoc . $req->cbSupp . $req->cbAstype . $req->cbAsgroup . $req->cbFn . $req->cbAsset . $req->cbAspar . $req->cbSpt . $req->cbSpg . $req->cbSpm . $req->cbTool . $req->cbRep . $req->cbIns . /*$req->cbRepdet .*/  $req->cbRepins . $req->cbReppart . $req->cbEng . $req->cbInv . $req->cbDept . $req->cbSkill . $req->cbWoBrowse . $req->cbWoCreatedirect . $req->cbWoStart . $req->cbWoReport . $req->cbWoCreate . $req->cbWoMaint . $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbUA . $req->cbUSMT . $req->cbUser . $req->cbRunning;
 
-        $access = $req->cbRoleMaint . $req->cbSite . $req->cbLoc . $req->cbSupp . $req->cbAstype . $req->cbAsgroup . $req->cbFn . $req->cbAsset . $req->cbAspar . $req->cbSpt . $req->cbSpg . $req->cbSpm . $req->cbTool . $req->cbRep . $req->cbIns . /*$req->cbRepdet .*/  $req->cbRepins . $req->cbReppart . $req->cbEng . $req->cbInv . $req->cbDept . $req->cbSkill . $req->cbWoBrowse . $req->cbWoCreatedirect . $req->cbWoStart . $req->cbWoReport . $req->cbWoMaint . $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbUA . $req->cbUSMT . $req->cbUSmultiMT . $req->cbUser . $req->cbRunning . $req->cbBoas . $req->cbEngSchedule . $req->cbBookSchedule . $req->cbAssetSchedule . $req->cbEngReport . $req->cbAssetReport;
+        $access = $req->cbRoleMaint . $req->cbSite . $req->cbLoc . $req->cbSupp . $req->cbAstype . $req->cbAsgroup . $req->cbFn . $req->cbAsset . $req->cbAspar . $req->cbSpt . $req->cbSpg . $req->cbSpm . $req->cbTool . $req->cbRep . $req->cbIns . /*$req->cbRepdet .*/  $req->cbRepins . $req->cbReppart . $req->cbEng . $req->cbInv . $req->cbDept . $req->cbSkill . $req->cbWoBrowse . $req->cbWoCreatedirect . $req->cbWoStart . $req->cbWoReport . $req->cbWoMaint . $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbSRapprovaleng . $req->cbUA . $req->cbUSMT . $req->cbUSmultiMT . $req->cbUser . $req->cbRunning . $req->cbBoas . $req->cbEngSchedule . $req->cbBookSchedule . $req->cbAssetSchedule . $req->cbEngReport . $req->cbAssetReport;
 
         $access = $req->dept . $req->Skill . $req->Eng . $req->RoleMaint . $req->EngGroup . $req->cbRunning . $req->SetWsa . $req->SetFntype . $req->Fn . $req->SetImp . 
             $req->Astype . $req->Asgroup . $req->Supp . $req->SetAssetsite . $req->SetAssetloc . $req->Asset . $req->Aspar . $req->SetMove . $req->SetEngpm . $req->SetUm . $req->SetAsfn . $req->pmasset . 
-            $req->Spt . $req->Spg . $req->SetSpsite . $req->SetSploc . $req->Spm . $req->Rep . $req->SetRepgroup . $req->SetIns . $req->SetSplist . $req->qcspec . $req->SetPmcode .
+            $req->Spt . $req->Spg . $req->SetSpsite . $req->SetSploc . $req->Spm . $req->Rep . $req->SetRepgroup . $req->SetIns . $req->SetSplist . $req->qcspec . $req->SetPmcode . $req->rcmmstr .
             $req->cbWoCreatedirect . $req->cbWoMaint . $req->cbWoBrowse . $req->cbWoRelease . $req->cbWoWhsConf . $req->cbWoStart . $req->cbWoReport . $req->cbWoQc . 
-            $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . 
+            $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbSRapprovaleng .
             $req->cbUSMT . $req->cbUSmultiMT . $req->cbUSGen . $req->cbUSBrowse .
             $req->cbBoas . 
             $req->cbRptDet . $req->cbRptCost . $req->cbAssetReport . $req->cbEngReport . $req->cbRptRemsp . 
@@ -311,9 +311,9 @@ class SettingController extends Controller
     {
         $access = $req->e_dept . $req->e_Skill . $req->e_Eng . $req->e_RoleMaint . $req->e_EngGroup . $req->e_cbRunning . $req->e_SetWsa . $req->e_SetFntype . $req->e_Fn . $req->e_SetImp . 
             $req->e_Astype . $req->e_Asgroup . $req->e_Supp . $req->e_SetAssetsite . $req->e_SetAssetloc . $req->e_Asset . $req->e_Aspar . $req->e_SetMove . $req->e_SetEngpm . $req->e_SetUm . $req->e_SetAsfn . $req->e_pmasset . 
-            $req->e_Spt . $req->e_Spg . $req->e_SetSpsite . $req->e_SetSploc . $req->e_Spm . $req->e_Rep . $req->e_SetRepgroup . $req->e_SetIns . $req->e_SetSplist . $req->e_qcspec . $req->e_SetPmcode .
+            $req->e_Spt . $req->e_Spg . $req->e_SetSpsite . $req->e_SetSploc . $req->e_Spm . $req->e_Rep . $req->e_SetRepgroup . $req->e_SetIns . $req->e_SetSplist . $req->e_qcspec . $req->e_SetPmcode . $req->e_rcmmstr .
             $req->e_cbWoCreatedirect . $req->e_cbWoMaint . $req->e_cbWoBrowse . $req->e_cbWoRelease . $req->e_cbWoWhsConf . $req->e_cbWoStart . $req->e_cbWoReport . $req->e_cbWoQc . 
-            $req->e_cbSRcreate . $req->e_cbSRapprove . $req->e_cbSRbrowse . 
+            $req->e_cbSRcreate . $req->e_cbSRapprove . $req->e_cbSRbrowse . $req->e_cbSRapprovaleng .
             $req->e_cbUSMT . $req->e_cbUSmultiMT . $req->e_cbUSGen . $req->e_cbUSBrowse .
             $req->e_cbBoas . 
             $req->e_cbRptDet . $req->e_cbRptCost . $req->e_cbAssetReport . $req->e_cbEngReport . $req->e_cbRptRemsp . 
@@ -538,7 +538,6 @@ class SettingController extends Controller
             ->where('site_code', '=', $req->te_sitecode)
             ->update([
                 // 'site_desc'     => $req->te_sitedesc,
-                'site_flag'     => $flag,
                 'updated_at'    => Carbon::now()->toDateTimeString(),
                 'edited_by'     => Session::get('username'),
             ]);
@@ -614,6 +613,19 @@ class SettingController extends Controller
 
     //untuk load site dari QAD dengan WSA
     public function loadsite(){
+        //update active semua location menjadi No, agar dapat tau data site yang update di QAD
+        DB::table('site_mstrs')
+            ->update([
+                'site_flag' => 'No',
+            ]);
+
+        // delete site yang tersimpan kecuali yang sudah digunakan dalam transaksi
+        $ceksite = DB::table('site_mstrs')
+            ->whereNotIn('site_code',function($query) {
+                $query->select('ir_site')->from('inv_required')->groupBy('ir_site');
+            })
+            ->delete();
+
         $domain = ModelsQxwsa::first();
 
         $sitedata = (new WSAServices())->wsagetsite($domain->wsas_domain);
@@ -627,14 +639,15 @@ class SettingController extends Controller
                 toast('Data Site tidak ditemukan', 'error')->persistent('Dismiss');
                 return redirect()->back();
             } else {
-                
                 foreach ($sitedata[0] as $datas) {
                     $sites = SiteMstr::firstOrNew(['site_code'=>$datas->t_site,
                                                     'site_desc'=> $datas->t_site_desc]);
                         $sites->site_code = $datas->t_site;
                         $sites->site_desc = $datas->t_site_desc;
+                        $sites->site_flag = 'Yes';
                         $sites->created_at = Carbon::now()->toDateTimeString();
                         $sites->updated_at = Carbon::now()->toDateTimeString();
+                        $sites->edited_by = Session::get('username');
                         $sites->save();
                 }
             }
@@ -1044,14 +1057,20 @@ class SettingController extends Controller
 
     //untuk load location dari QAD dengan WSA
     public function loadloc(){
-        /* datasite harusnya nanti dibetulin lagi, karena bisa saja tidak hanya 1 site yang aktif */
-        $datasite = DB::table('site_mstrs')
-            ->where('site_flag','=','yes')
-            ->first();
+
+        //update status active menjadi no terlebih dahulu, agar mengetahui lokasi yang paling update dari qad
+        DB::table("loc_mstr")
+            ->update([
+                'loc_active' => 'No'
+            ]);
+        
+        //hapus data lokasi kecuali lokasi yang sudah ada transaksi
+        DB::table('loc_mstr')
+            ->delete();
 
         $domain = ModelsQxwsa::first();
 
-        $locdata = (new WSAServices())->wsagetloc($domain->wsas_domain, $datasite->site_code);
+        $locdata = (new WSAServices())->wsagetloc($domain->wsas_domain, "");
 
         if ($locdata === false) {
             toast('WSA Failed', 'error')->persistent('Dismiss');
@@ -1071,6 +1090,7 @@ class SettingController extends Controller
                     $rsloc->loc_site = $datas->t_site;
                     $rsloc->loc_code = $datas->t_loc;
                     $rsloc->loc_desc = $datas->t_loc_desc;
+                    $rsloc->loc_active = "Yes";
                     $rsloc->created_at = Carbon::now()->toDateTimeString();
                     $rsloc->updated_at = Carbon::now()->toDateTimeString();
                     $rsloc->edited_by = Session::get('username');
@@ -3031,16 +3051,10 @@ class SettingController extends Controller
     {   
         if (strpos(Session::get('menu_access'), 'MT12') !== false) {
             $data = DB::table('sp_mstr')
+                ->leftJoin('site_mstrs','site_code','=','spm_site')
+                ->leftJoin('loc_mstr','loc_code','=','spm_loc')
                 ->orderby('spm_code')
                 ->paginate(10);
-
-            $datatype = DB::table('sp_type')
-                ->orderby('spt_code')
-                ->get();
-
-            $datagroup = DB::table('sp_group')
-                ->orderby('spg_code')
-                ->get();
 
             $datasupp = DB::table('supp_mstr')
                 ->orderby('supp_code')
@@ -3057,7 +3071,8 @@ class SettingController extends Controller
                 ->orderby('spm_code')
                 ->get();
 
-            return view('setting.sp-mstr', ['data' => $data, 'datatype' => $datatype, 'datagroup' => $datagroup, 'datasupp' => $datasupp, 'dataSite' => $dataSite, 'dataLoc' => $dataLoc, 'datasearch' => $datasearch]);
+            return view('setting.sp-mstr', ['data' => $data, 'datasupp' => $datasupp, 'dataSite' => $dataSite, 
+                'dataLoc' => $dataLoc, 'datasearch' => $datasearch]);
         } else {
             toast('You do not have menu access, please contact admin.', 'error');
             return back();
@@ -3230,41 +3245,49 @@ class SettingController extends Controller
     public function loadsparepart(Request $req){
         $domain = ModelsQxwsa::first();
 
+        DB::table('sp_mstr')
+            ->delete();
+
         $datasite = DB::table('site_mstrs')
-            ->where('site_flag','=','yes')
-            ->first();
+            ->whereSite_flag('Yes')
+            ->orderBy('site_code')
+            ->get();
 
-        $spdata = (new WSAServices())->wsagetsp($domain->wsas_domain,$datasite->site_code);
+        foreach($datasite as $da) {
+            $spdata = (new WSAServices())->wsagetsp($domain->wsas_domain,$da->site_code);
 
-        if ($spdata === false) {
-            toast('WSA Failed', 'error')->persistent('Dismiss');
-            return redirect()->back();
-        } else {
-
-            if ($spdata[1] == "false") {
-                toast('Data Spare Part tidak ditemukan', 'error')->persistent('Dismiss');
+            if ($spdata === false) {
+                toast('WSA Failed', 'error')->persistent('Dismiss');
                 return redirect()->back();
             } else {
-                
-                foreach ($spdata[0] as $datas) {
-                    $sp = SPMstr::firstOrNew(['spm_code'=>$datas->t_spcode,
-                                              'spm_desc'=> $datas->t_spname,
-                                              ]);
-                        $sp->spm_dom = $datas->t_dom;
-                        $sp->spm_site = $datas->t_site;
-                        $sp->spm_code = $datas->t_spcode;
-                        $sp->spm_desc = $datas->t_spname;
-                        $sp->spm_um = $datas->t_spum;
-                        $sp->spm_loc = $datas->t_loc;
-                        $sp->spm_lot = $datas->t_lotser;
-                        $sp->spm_group = $datas->t_group;
-                        $sp->spm_type = $datas->t_sptype;
-                        $sp->created_at = Carbon::now()->toDateTimeString();
-                        $sp->updated_at = Carbon::now()->toDateTimeString();
-                        $sp->save();
+
+                if ($spdata[1] == "false") {
+                    toast('Data Sparepart pada Site ' . $da->site_code . ' tidak ditemukan', 'error')->persistent('Dismiss');
+                    return redirect()->back();
+                } else {
+                    
+                    foreach ($spdata[0] as $datas) {
+                        $sp = SPMstr::firstOrNew(['spm_code'=>$datas->t_spcode,
+                                                'spm_desc'=> $datas->t_spname,
+                                                ]);
+                            $sp->spm_dom = $datas->t_dom;
+                            $sp->spm_site = $datas->t_site;
+                            $sp->spm_code = $datas->t_spcode;
+                            $sp->spm_desc = $datas->t_spname;
+                            $sp->spm_um = $datas->t_spum;
+                            $sp->spm_loc = $datas->t_loc;
+                            $sp->spm_lot = $datas->t_lotser;
+                            $sp->spm_group = $datas->t_group;
+                            $sp->spm_type = $datas->t_sptype;
+                            $sp->spm_active = 'Yes';
+                            $sp->created_at = Carbon::now()->toDateTimeString();
+                            $sp->updated_at = Carbon::now()->toDateTimeString();
+                            $sp->edited_by = Session::get('username');
+                            $sp->save();
+                    }
                 }
-            }
-        }
+            } /** else ($spdata === false) { */
+        } /* foreach($datasite as $da) { */
 
         toast('Spare Part Loaded.', 'success');
         return back();
@@ -5223,13 +5246,11 @@ class SettingController extends Controller
                 ->paginate(10);
 
             $datasite = DB::table('site_mstrs')
-                ->where('site_flag','=','yes')
                 ->orderBy('site_code')
                 ->get();
 
             $dataloc = DB::table('loc_mstr')
                 ->join('site_mstrs','site_code','=','loc_site')
-                ->where('site_flag','=','yes')
                 ->whereNotNull('loc_code')
                 ->where('loc_code','<>','')
                 ->orderBy('loc_site')

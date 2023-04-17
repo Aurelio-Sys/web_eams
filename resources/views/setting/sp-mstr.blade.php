@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-4">
-            <h1 class="m-0 text-dark">Spare Part Maintenance</h1>
+            <h1 class="m-0 text-dark">Sparepart Maintenance</h1>
         </div>
     </div><!-- /.row -->
     <div class="col-md-12">
@@ -12,7 +12,7 @@
     <!--
         <div class="row">                 
           <div class="col-sm-2">    
-            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Spare Part Create</button>
+            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Sparepart Create</button>
           </div>
         </div>
         -->
@@ -53,24 +53,6 @@
                 <div class="col-md-4 mb-2 input-group">
                     <input id="s_desc" type="text" class="form-control" name="s_desc" value="" autocomplete="off" />
                 </div>
-                <label for="s_type" class="col-md-2 col-sm-2 col-form-label text-md-right">Spare Part Type</label>
-                <div class="col-md-4 mb-2 input-group">
-                    <select id="s_type" class="form-control" name="s_type">
-                        <option value="">--Select Data--</option>
-                        @foreach($datatype as $dt)
-                        <option value="{{$dt->spt_code}}">{{$dt->spt_code}} -- {{$dt->spt_desc}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <label for="s_group" class="col-md-2 col-sm-2 col-form-label text-md-right">Spart Part Group</label>
-                <div class="col-md-4 mb-2 input-group">
-                    <select id="s_group" class="form-control" name="s_group">
-                        <option value="">--Select Data--</option>
-                        @foreach($datagroup as $dg)
-                        <option value="{{$dg->spg_code}}">{{$dg->spg_code}} -- {{$dg->spg_desc}}</option>
-                        @endforeach
-                    </select>
-                </div>
                 <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
                 <div class="col-md-2 col-sm-4 mb-2 input-group">
                     <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" />
@@ -98,8 +80,9 @@
                 <th width="15%">Code</th>
                 <th width="30%">Description</th>
                 <th width="5%">UM</th>
-                <th width="20%">Type</th>
-                <th width="20%">Group</th>
+                <th width="20%">Site</th>
+                <th width="20%">Location</th>
+                <th width="10%">Active</th>
                 <!--
                 <th width="10%">Action</th>
                 -->
@@ -120,7 +103,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">Spare Part Create</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Sparepart Create</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -177,28 +160,6 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_type" class="col-md-4 col-form-label text-md-right">Type</label>
-                        <div class="col-md-6">
-                            <select id="t_type" class="form-control" name="t_type">
-                                <option value="">--Select Data--</option>
-                                @foreach($datatype as $data)
-                                <option value="{{$data->spt_code}}">{{$data->spt_code}} -- {{$data->spt_desc}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="t_group" class="col-md-4 col-form-label text-md-right">Group</label>
-                        <div class="col-md-6">
-                            <select id="t_group" class="form-control" name="t_group">
-                                <option value="">--Select Data--</option>
-                                @foreach($datagroup as $data)
-                                <option value="{{$data->spg_code}}">{{$data->spg_code}} -- {{$data->spg_desc}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
                         <label for="t_supp" class="col-md-4 col-form-label text-md-right">Supplier</label>
                         <div class="col-md-6">
                             <select id="t_supp" class="form-control" name="t_supp">
@@ -237,7 +198,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">Spare Part Modify</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Sparepart Modify</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -293,26 +254,6 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="te_type" class="col-md-4 col-form-label text-md-right">Type</label>
-                        <div class="col-md-6">
-                            <select id="te_type" class="form-control" name="te_type">
-                                @foreach($datatype as $data)
-                                <option value="{{$data->spt_code}}">{{$data->spt_code}} -- {{$data->spt_desc}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="te_group" class="col-md-4 col-form-label text-md-right">Group</label>
-                        <div class="col-md-6">
-                            <select id="te_group" class="form-control" name="te_group">
-                                @foreach($datagroup as $data)
-                                <option value="{{$data->spg_code}}">{{$data->spg_code}} -- {{$data->spg_desc}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
                         <label for="te_supp" class="col-md-4 col-form-label text-md-right">Supplier</label>
                         <div class="col-md-6">
                             <select id="te_supp" class="form-control" name="te_supp">
@@ -350,7 +291,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">Spare Part Delete</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Sparepart Delete</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -359,7 +300,7 @@
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <input type="hidden" id="d_code" name="d_code">
-                    Delete Spare Part <b><span id="td_code"></span> -- <span id="td_desc"></span></b> ?
+                    Delete Sparepart <b><span id="td_code"></span> -- <span id="td_desc"></span></b> ?
                 </div>
 
                 <div class="modal-footer">
@@ -572,7 +513,7 @@
             success: function(data) {
 
                 if (data == "ada") {
-                    alert("Spare Part Already Regitered!!");
+                    alert("Sparepart Already Regitered!!");
                     document.getElementById('t_code').value = '';
                     document.getElementById('t_code').focus();
                 }
