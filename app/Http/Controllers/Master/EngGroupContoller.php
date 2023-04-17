@@ -34,13 +34,18 @@ class EngGroupContoller extends Controller
 
         $data = $data->paginate(10);
 
-        $dataeng = DB::table('egr_mstr')
+        $datadet = DB::table('egr_mstr')
             ->leftJoin('eng_mstr','eng_code','egr_eng')
             ->whereEng_active('Yes')
             ->orderBy('eng_code')
             ->get();
 
-        return view('setting.eng-group', compact('data','dataeng'));
+        $dataeng = DB::table('eng_mstr')
+            ->whereEng_active('Yes')
+            ->orderBy('eng_code')
+            ->get();
+
+        return view('setting.eng-group', compact('data','dataeng','datadet'));
     }
 
     /**

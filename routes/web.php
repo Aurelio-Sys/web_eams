@@ -12,6 +12,7 @@ use App\Http\Controllers\Master\QCSpecController;
 use App\Http\Controllers\Master\InsListController;
 use App\Http\Controllers\Master\SplistController;
 use App\Http\Controllers\Master\PmassetController;
+use App\Http\Controllers\Master\RcmMstrController;
 use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\Report\RemainSpController;
@@ -669,6 +670,12 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/creatpmasset',[PmassetController::class, 'store']);
 	Route::post('/editpmasset',[PmassetController::class, 'update']);
 	Route::post('/delpmasset', [PmassetController::class, 'destroy']);
+
+	//Routine Check Maintenance
+	Route::get('/rcmmstr',[RcmMstrController::class, 'index']);
+	Route::post('/creatrcmmstr',[RcmMstrController::class, 'store']);
+	Route::post('/editrcmmstr',[RcmMstrController::class, 'update']);
+	Route::post('/delrcmmstr', [RcmMstrController::class, 'destroy']);
 });
 
 Auth::routes();

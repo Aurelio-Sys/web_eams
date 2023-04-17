@@ -302,7 +302,7 @@ to get the desired effect
                 <li class="nav-item">
                   <a href="/returnbacksp" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>Return Spare Part</p>
+                      <p>Return Sparepart</p>
                   </a>
                 </li>
                 @endif
@@ -349,7 +349,7 @@ to get the desired effect
                 {{--  <li class="nav-item has-treeview">
                   <a href="{{url('/kebutuhansp')}}" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>Spare Part Usage</p>
+                      <p>Sparepart Usage</p>
                   </a>
                 </li>  --}}
                 @if(str_contains( Session::get('menu_access'), 'US03'))
@@ -728,48 +728,48 @@ to get the desired effect
                 <a href="javascript:void(0)" class="nav-link">
                   <i class="nav-icon far fa-circle"></i>
                   <p>
-                    Spare Part
+                    Sparepart
                     <i class="right fas fa-angle-left"></i>
                   </p>
                 </a>
                 <ul class="nav nav-treeview">
-                  @if(str_contains( Session::get('menu_access'), 'MT10'))
+                  {{--  @if(str_contains( Session::get('menu_access'), 'MT10'))
                     <li class="nav-item">
                       <a href="/sptmaster" class="nav-link ">
-                        <p>Spare Part Type</p>
+                        <p>Sparepart Type</p>
                       </a>
                     </li>
                     @endif
                     @if(str_contains( Session::get('menu_access'), 'MT11'))
                     <li class="nav-item">
                       <a href="/spgmaster" class="nav-link ">
-                        <p>Spare Part Group</p>
+                        <p>Sparepart Group</p>
                       </a>
                     </li>
-                    @endif
+                    @endif  --}}
                     @if(str_contains( Session::get('menu_access'), 'MT27'))
                     <li class="nav-item">
                       <a href="/sitemaster" class="nav-link ">
-                        <p>Spare Part Site</p>
+                        <p>Sparepart Site</p>
                       </a>
                     </li>
                     @endif
                     @if(str_contains( Session::get('menu_access'), 'MT29'))
                     <li class="nav-item">
                       <a href="/areamaster" class="nav-link ">
-                        <p>Spare Part Location</p>
+                        <p>Sparepart Location</p>
                       </a>
                     </li>
                     @endif
                     @if(str_contains( Session::get('menu_access'), 'MT12'))
                     <li class="nav-item">
                       <a href="/spmmaster" class="nav-link ">
-                        <p>Spare Part Maintenance</p>
+                        <p>Sparepart Maintenance</p>
                       </a>
                     </li>
                     @endif
-                  </ul><!-- ul spare part -->
-                </li> <!-- li spare part -->
+                  </ul><!-- ul sparepart -->
+                </li> <!-- li sparepart -->
                 <li class="nav-item has-treeview">
                   <a href="javascript:void(0)" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
@@ -806,6 +806,13 @@ to get the desired effect
                       <li class="nav-item">
                         <a href="/pmcode" class="nav-link">
                           <p>PM Code Maintenance</p>
+                        </a>
+                      </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MT43'))
+                      <li class="nav-item">
+                        <a href="/rcmmstr" class="nav-link">
+                          <p>Routine Check Maintenance</p>
                         </a>
                       </li>
                     @endif

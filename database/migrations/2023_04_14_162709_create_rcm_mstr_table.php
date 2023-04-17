@@ -15,7 +15,16 @@ class CreateRcmMstrTable extends Migration
     {
         Schema::create('rcm_mstr', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->timestamps();
+            $table->string('rcm_asset',24)->index();
+            $table->string('rcm_qcs',24)->index();
+            $table->time('rcm_start');
+            $table->time('rcm_end');
+            $table->integer('rcm_interval');
+            $table->string('rcm_eng',24);
+            $table->string('rcm_email')->nullable();
+            $table->string('rcm_editedby',24);
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 
