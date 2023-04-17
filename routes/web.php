@@ -665,7 +665,10 @@ Route::group(['middleware' => ['auth']], function() {
 
 	//Preventive Maintenance
 	Route::get('/pmasset',[PmassetController::class, 'index']);
+	Route::get('/pickeng',[PmassetController::class, 'pickeng']);
 	Route::post('/creatpmasset',[PmassetController::class, 'store']);
+	Route::post('/editpmasset',[PmassetController::class, 'update']);
+	Route::post('/delpmasset', [PmassetController::class, 'destroy']);
 });
 
 Auth::routes();
