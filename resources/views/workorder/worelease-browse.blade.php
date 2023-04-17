@@ -60,8 +60,8 @@
 </form>
 
 
-<div class="table-responsive col-12 mt-0 pt-0">
-    <table class="table table-bordered mt-0" id="dataTable" width="100%" cellspacing="0" style="width:100%;padding: .2rem !important;">
+<div class="table-responsive col-12 mt-0 pt-0" style="overflow-x: auto;overflow-y: hidden ;display: inline-block;white-space: nowrap; position:relative;">
+    <table class="table table-bordered mt-0" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr style="text-align: center;">
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="10%">WO Number<span id="name_icon"></span></th>

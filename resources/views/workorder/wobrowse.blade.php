@@ -1945,10 +1945,7 @@ div #munculgambar .gambar:hover{
         var wonbr = $(this).data('wonumber');
         var status = $(this).data('status');
 
-        console.log(status)
-
         if(status == "released" || status == "started"){
-          console.log('aaaa');
           document.getElementById('e_engineerlist').setAttribute('readonly', true);
           document.getElementById('e_mtcode').setAttribute('readonly', true);
           document.getElementById('e_inslist').setAttribute('readonly', true);
@@ -1959,7 +1956,6 @@ div #munculgambar .gambar:hover{
         }
 
         if(status == "firm"){
-          console.log('aaabs');
           document.getElementById('e_engineerlist').removeAttribute('readonly');
           document.getElementById('e_mtcode').removeAttribute('readonly');
           document.getElementById('e_inslist').removeAttribute('readonly');
@@ -2004,7 +2000,6 @@ div #munculgambar .gambar:hover{
             var qcslist = vamp.qcslist ? vamp.qcslist.qcs_code : '';
             var wostatus = vamp.wo_master.wo_status;
 
-
             let selectOptions = document.getElementById("e_engineerlist").options;
 
             for (let i = 0; i < selectOptions.length; i++) {
@@ -2032,7 +2027,14 @@ div #munculgambar .gambar:hover{
             document.getElementById('e_qclist').value = qcslist;
             document.getElementById('e_assetcode').value = assetcode;
 
-            $('#e_mtcode').val(mtcode).trigger('change');
+            // console.log(mtcode);
+
+            //jika mtcode tidak kosong
+            if(mtcode !== ""){
+              $('#e_mtcode').val(mtcode).trigger('change');
+            }
+
+          
             $('#e_inslist').val(inslist).trigger('change');
             $('#e_splist').val(splist).trigger('change');
             $('#e_qclist').val(qcslist).trigger('change');
