@@ -376,6 +376,13 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
+                @if(str_contains( Session::get('menu_access'), 'MT30'))
+                  <li class="nav-item">
+                    <a href="/assetmove" class="nav-link">
+                      <p>Asset Movement</p>
+                    </a>
+                  </li>
+                @endif
               </ul>
             </li>
             @endif
@@ -700,13 +707,7 @@ to get the desired effect
                     </a>
                   </li>
                   @endif
-                  @if(str_contains( Session::get('menu_access'), 'MT30'))
-                  <li class="nav-item">
-                    <a href="/assetmove" class="nav-link">
-                      <p>Asset Movement</p>
-                    </a>
-                  </li>
-                  @endif
+                  
                   <!-- @if(str_contains( Session::get('menu_access'), 'MT31'))
                   <li class="nav-item">
                     <a href="/pmeng" class="nav-link">
@@ -721,14 +722,13 @@ to get the desired effect
                     </a>
                   </li>
                   @endif
-                  @if(str_contains( Session::get('menu_access'), 'MT39'))
+                  @if(str_contains( Session::get('menu_access'), 'MT42'))
                   <li class="nav-item">
-                    <a href="/pmcode" class="nav-link">
-                      <p>PM Code Maintenance</p>
+                    <a href="/pmasset" class="nav-link">
+                      <p>Preventive Maintenance</p>
                     </a>
                   </li>
                   @endif
-                  
                   
                 </ul><!-- ul asset -->
               </li> <!-- li asset -->
@@ -782,39 +782,24 @@ to get the desired effect
                   <a href="javascript:void(0)" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                     <p>
-                      Repair
+                      Instruction
                       <i class="right fas fa-angle-left"></i>
                     </p>
                   </a>
                   <ul class="nav nav-treeview">
-                    <!-- @if(str_contains( Session::get('menu_access'), 'MT34'))
+                    @if(str_contains( Session::get('menu_access'), 'MT35'))
                     <li class="nav-item">
-                      <a href="/repmaster" class="nav-link">
-                        <p>Repair Code</p>
-                      </a>
-                    </li>
-                  @endif -->
-                    @if(str_contains( Session::get('menu_access'), 'MT34'))
-                    <!-- <li class="nav-item">
-                      <!-- <a href="/repmasterb" class="nav-link"> -->
-                      <!-- <a href="/repdet" class="nav-link"> -->
-                      <a href="/repcode" class="nav-link ">
-                        <p>Repair Code</p>
+                      {{--  <a href="/insmaster" class="nav-link ">  --}}
+                      <a href="/inslist" class="nav-link ">
+                        <p>Instruction List</p>
                       </a>
                     </li>
                     @endif
-                    @if(str_contains( Session::get('menu_access'), 'MT15'))
+                    @if(str_contains( Session::get('menu_access'), 'MT41'))
                     <li class="nav-item">
-                      <a href="/repgroup" class="nav-link ">
-                        <p>Repair Group</p>
-                      </a>
-                    </li>
-                    @endif -->
-
-                    @if(str_contains( Session::get('menu_access'), 'MT35'))
-                    <li class="nav-item">
-                      <a href="/insmaster" class="nav-link ">
-                        <p>Instruction Code</p>
+                      {{--  <a href="/insmaster" class="nav-link ">  --}}
+                      <a href="/splist" class="nav-link ">
+                        <p>Sparepart List</p>
                       </a>
                     </li>
                     @endif
@@ -825,57 +810,13 @@ to get the desired effect
                       </a>
                     </li>
                     @endif
-
-                    <!-- @if(str_contains( Session::get('menu_access'), 'MT24'))
-                    <li class="nav-item">
-                      <a href="/insgroup" class="nav-link">
-                        <p>Instruction Group</p>
-                      </a>
-                    </li>
-                  @endif -->
-                    <!-- @if(str_contains( Session::get('menu_access'), 'MT17'))
-                    <li class="nav-item">
-                      <a href="/reppart" class="nav-link">
-                        <p>Repair Part</p>
-                      </a>
-                    </li>
-                  @endif
-                  @if(str_contains( Session::get('menu_access'), 'MT25'))
-                    <li class="nav-item">
-                      <a href="/reppartgroup" class="nav-link">
-                        <p>Repair Part Group</p>
-                      </a>
-                    </li>
-                  @endif
-                  @if(str_contains( Session::get('menu_access'), 'MT18'))
-                    <li class="nav-item">
-                      <a href="/repins" class="nav-link">
-                        <p>Repair Instruction</p>
-                      </a>
-                    </li>
-                  @endif	 -->
-                    <!-- @if(str_contains( Session::get('menu_access'), 'MT27'))
-                    <li class="nav-item">
-                      <a href="/toolmaster" class="nav-link">
-                        <p>Tools</p>
-                      </a>
-                    </li>
-                  @endif	-->
-                    <!-- @if(str_contains( Session::get('menu_access'), 'MT17'))
-                    <li class="nav-item">
-                      <a href="/reppart" class="nav-link">
-                        <p>Repair Part</p>
-                      </a>
-                    </li>
-                  @endif  -->
-
-                    <!-- @if(str_contains( Session::get('menu_access'), 'MT23'))
-                    <li class="nav-item">
-                      <a href="/repdet" class="nav-link">
-                        <p>Repair Detail</p>
-                      </a>
-                    </li>
-                  @endif -->
+                    @if(str_contains( Session::get('menu_access'), 'MT39'))
+                      <li class="nav-item">
+                        <a href="/pmcode" class="nav-link">
+                          <p>PM Code Maintenance</p>
+                        </a>
+                      </li>
+                    @endif
                   </ul><!-- ul repair -->
                 </li> <!-- li repair -->
 

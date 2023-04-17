@@ -3,7 +3,7 @@
       <div class="container-fluid">
         <div class="row">          
           <div class="col-sm-4">
-            <h1 class="m-0 text-dark">QC Specification Maintenance</h1>
+            <h1 class="m-0 text-dark">Instruction List Maintenance</h1>
           </div>    
         </div><!-- /.row -->
         <div class="col-md-12">
@@ -11,13 +11,13 @@
         </div>
         <div class="row">                 
           <div class="col-sm-2">    
-            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">QC Specification Create</button>
+            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Instruction List Create</button>
           </div><!-- /.col -->  
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-<form action="/enggroup" method="GET">
+<form action="/inslist" method="GET">
 <!-- Bagian Searching -->
 <div class="container-fluid mb-2">
     <div class="row">
@@ -30,12 +30,12 @@
         <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
         <div class="card card-body bg-black rounded-0">
             <div class="col-12 form-group row">
-                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">QC Specification Code</label>
+                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Instruction List Code</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_code" type="text" class="form-control" name="s_code"
                     value="" autofocus autocomplete="off"/>
                 </div>
-                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">QC Specification Description</label>
+                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Instruction List Desc</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_desc" type="text" class="form-control" name="s_desc"
                     value="" autofocus autocomplete="off"/>
@@ -57,14 +57,15 @@
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                <th width="35%">QC Spec Code</th>
-                <th width="50%">QC Spec Desc</th>
+                <th width="15%">Instruction List Code</th>
+                <th width="20%">Instruction List Desc</th>
+                <th width="50%">Step Desc</th>
                 <th width="15%">Action</th>  
             </tr>
         </thead>
         <tbody>
             <!-- untuk isi table -->
-            @include('setting.table-qcspec')
+            @include('setting.table-inslist')
         </tbody>
     </table>
 </div>
@@ -74,37 +75,53 @@
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">QC Specification Create</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Instruction List Create</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/createqcs">
+            <form class="form-horizontal" method="post" action="/createinslist">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label for="t_code" class="col-md-4 col-form-label text-md-right">QC Spec Code</label>
+                        <label for="t_code" class="col-md-4 col-form-label text-md-right">Instruction List Code</label>
                         <div class="col-md-2">
                             <input type="text" class="form-control" id="t_code" name="t_code" autocomplete="off" maxlength="24" required>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_code" class="col-md-4 col-form-label text-md-right">QC Spec Desc</label>
+                        <label for="t_desc" class="col-md-4 col-form-label text-md-right">Instruction List Desc</label>
                         <div class="col-md-6">
                             <input type="text" class="form-control" id="t_desc" name="t_desc" autocomplete="off" maxlength="255" required>
                         </div>
                     </div>
-                    <div class="col-md-12">
+                    <div class="form-group row">
+                     <label for="t_dur" class="col-md-4 col-form-label text-md-right">Duration</label>
+                     <div class="col-md-2">
+                         <input type="number" class="form-control" id="t_dur" name="t_dur" autocomplete="off" min="0" step="0.1">
+                     </div>
+                     <div class="col-md-2">
+                        <select class="form-control" id="t_durum" name="t_durum">
+                           @foreach($dataum as $du)
+                           <option value="{{$du->um_code}}">{{$du->um_code}} -- {{$du->um_desc}}</option>
+                           @endforeach
+                        </select>
+                     </div>
+                    </div>
+                    <div class="form-group row">
+                     <label for="t_mp" class="col-md-4 col-form-label text-md-right">Man Power</label>
+                     <div class="col-md-2">
+                         <input type="number" class="form-control" id="t_mp" name="t_mp" autocomplete="off" min="0">
+                     </div>
+                    </div>
+                    <div class="col-md-10 offset-md-1">
                         <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
                           <thead>
                             <tr id='full'>
-                              <th width="25%">QC Spec Parameter</th>
-                              <th width="15%">Tools</th>
-                              <th width="15%">Operator</th>
-                              <th width="15%">Value 1</th>
-                              <th width="15%">Value 2</th>
-                              <th width="5%">Um</th>
-                              <th width="10%">Delete</th>
+                              <th width="15%">Step</th>
+                              <th width="40%">Description</th>
+                              <th width="30%">Reference</th>
+                              <th width="15%">Delete</th>
                             </tr>
                           </thead>
                           <tbody id='detailapp'>
@@ -112,7 +129,7 @@
                           </tbody>
                           <tfoot>
                             <tr>
-                              <td colspan="7">
+                              <td colspan="4">
                                 <input type="button" class="btn btn-lg btn-block btn-focus" id="addrow" value="Add Item" style="background-color:#1234A5; color:white; font-size:16px" />
                               </td>
                             </tr>
@@ -135,42 +152,58 @@
     <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
         <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel">QC Specification Modify</h5>
+        <h5 class="modal-title text-center" id="exampleModalLabel">Instruction List Modify</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
         </div>
-        <form class="form-horizontal" method="post" action="/editqcs">
+        <form class="form-horizontal" method="post" action="/editinslist">
             {{ csrf_field() }}
             <div class="modal-body">
                 <div class="form-group row">
-                    <label for="te_code" class="col-md-4 col-form-label text-md-right">QC Spec Code</label>
+                    <label for="te_code" class="col-md-4 col-form-label text-md-right">Instruction List Code</label>
                     <div class="col-md-2">
                         <input type="text" class="form-control" id="te_code" name="te_code" readonly>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="te_desc" class="col-md-4 col-form-label text-md-right">QC Spec Desc</label>
+                    <label for="te_desc" class="col-md-4 col-form-label text-md-right">Instruction List Desc</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control" id="te_desc" name="te_desc" readonly>
+                        <input type="text" class="form-control" id="te_desc" name="te_desc">
                     </div>
                 </div>
-                
-                <div class="col-md-12">
+                <div class="form-group row">
+                    <label for="te_dur" class="col-md-4 col-form-label text-md-right">Duration</label>
+                    <div class="col-md-2">
+                        <input type="number" class="form-control" id="te_dur" name="te_dur" autocomplete="off" min="0" step="0.1">
+                    </div>
+                    <div class="col-md-2">
+                       <select class="form-control" id="te_durum" name="te_durum">
+                          <option value=""></option>
+                          @foreach($dataum as $du)
+                          <option value="{{$du->um_code}}">{{$du->um_code}} -- {{$du->um_desc}}</option>
+                          @endforeach
+                       </select>
+                    </div>
+                   </div>
+                   <div class="form-group row">
+                    <label for="te_mp" class="col-md-4 col-form-label text-md-right">Man Power</label>
+                    <div class="col-md-2">
+                        <input type="number" class="form-control" id="te_mp" name="te_mp" autocomplete="off" min="0">
+                    </div>
+                   </div>
+                <div class="col-md-10 offset-md-1">
                 <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
                     <thead>
-                        <th width="25%">QC Spec Parameter</th>
-                        <th width="15%">Tools</th>
-                        <th width="15%">Operator</th>
-                        <th width="15%">Value 1</th>
-                        <th width="15%">Value 2</th>
-                        <th width="5%">Um</th>
-                        <th>Delete</th>
+                        <th width="15%">Step</th>
+                        <th width="40%">Description</th>
+                        <th width="30%">Reference</th>
+                        <th width="15%">Delete</th>
                     </thead>
                     <tbody id='ed_detailapp'></tbody>
                     <tfoot>
                       <tr>
-                        <td colspan="7">
+                        <td colspan="4">
                           <input type="button" class="btn btn-lg btn-block btn-focus" id="ed_addrow" value="Add Item" style="background-color:#1234A5; color:white; font-size:16px" />
                         </td>
                       </tr>
@@ -193,16 +226,16 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title text-center" id="exampleModalLabel">QC Specification Delete</h5>
+            <h5 class="modal-title text-center" id="exampleModalLabel">Instruction List Delete</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
             </div>
-            <form class="form-horizontal" method="post" action="/delqcs">
+            <form class="form-horizontal" method="post" action="/delinslist">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <input type="hidden" id="d_code" name="d_code">
-                    Delete QC Specification <b><span id="td_code"></span> -- <span id="td_desc"></span></b> ?
+                    Delete Instruction List <b><span id="td_code"></span> -- <span id="td_desc"></span></b> ?
                 </div>
 
                 <div class="modal-footer">
@@ -228,12 +261,19 @@
 
            var code = $(this).data('code');
            var desc = $(this).data('desc');
+           var duration = $(this).data('duration');
+           var durum = $(this).data('durum');
+           var manpower = $(this).data('manpower');
 
            document.getElementById('te_code').value = code;
            document.getElementById('te_desc').value = desc;
+           document.getElementById('te_dur').value = duration;
+           document.getElementById('te_durum').value = durum;
+           document.getElementById('te_mp').value = manpower;
+           {{--  document.getElementById('h_code').value = code;  --}}
 
             $.ajax({
-                url:"editdetqcs?code="+code,
+                url:"editdetins?code="+code,
                 success: function(data) {
                 console.log(data);
                 $('#ed_detailapp').html('').append(data);
@@ -258,13 +298,10 @@
           var newRow = $("<tr>");
           var cols = "";
 
-          cols += '<td><input type="text" class="form-control" name="t_spec[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="t_tools[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="t_op[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="t_val1[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="t_val2[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="t_um[]" autocomple="off"></td>';
-          cols += '<td data-title="Action"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
+          cols += '<td width="15%"><input type="number" class="form-control" name="t_step[]" min="1"></td>'
+          cols += '<td width="40%"><input type="text" class="form-control" name="t_stepdesc[]" maxlenght="255" autocomplete="off"></td>'
+          cols += '<td width="30%"><input type="text" class="form-control" name="t_ref[]" maxlenght="255" autocomplete="off"></td>'
+          cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
           cols += '</tr>'
           newRow.append(cols);
           $("#detailapp").append(newRow);
@@ -283,15 +320,11 @@
           var newRow = $("<tr>");
           var cols = "";
 
-          cols += '<td><input type="text" class="form-control" name="te_spec[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="te_tools[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="te_op[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="te_val1[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="te_val2[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="te_um[]" autocomple="off"></td>';
+          cols += '<td width="15%"><input type="number" class="form-control" name="te_step[]" min="1"></td>'
+          cols += '<td width="40%"><input type="text" class="form-control" name="te_stepdesc[]" maxlenght="255" autocomplete="off"></td>'
+          cols += '<td width="30%"><input type="text" class="form-control" name="te_ref[]" maxlenght="255" autocomplete="off"></td>'
+          cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
           cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
-
-          cols += '<td data-title="Action"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
           cols += '</tr>'
           newRow.append(cols);
           $("#ed_detailapp").append(newRow);
@@ -318,6 +351,11 @@
             $('#s_code').val('');
             $('#s_desc').val('');
         });   
+
+        $("#t_durum").select2({
+         width : '100%',
+         theme : 'bootstrap4',
+     });
 
     </script>
 

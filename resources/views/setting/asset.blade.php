@@ -18,14 +18,6 @@
 @endsection
 @section('content')
 
-<!-- 
-    Daftar Perubahan :
-    
-    A210929 : penambahan start date untuk measurement
-    A211102 : calender dirubah dari hari ke bulan
-    A230126 : menambahkan field UM untuk measurement
- -->
-
 <!-- Bagian Searching -->
 <div class="container-fluid mb-2">
     <div class="row">
@@ -103,7 +95,6 @@
                 <th width="25%">Description</th>
                 <th width="15%">Type</th>
                 <th width="15%">Group</th>
-                <th width="5%">Mea</th>
                 <th width="20%">Location</th>
                 <th width="10%">Action</th>  
             </tr>
@@ -197,13 +188,7 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_daya" class="col-md-4 col-form-label text-md-right">Maintenance By</label>
-                        <div class="col-md-6">
-                            <input id="t_daya" type="text" class="form-control" name="t_daya" autocomplete="off" autofocus maxlength="50" />
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="t_qad" class="col-md-4 col-form-label text-md-right">Asset QAD</label>
+                        <label for="t_qad" class="col-md-4 col-form-label text-md-right">Asset Accounting</label>
                         <div class="col-md-6">
                             <select id="t_qad" class="form-control" name="t_qad" >
                                 <option value="">--Select Data--</option>
@@ -237,48 +222,6 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_mea" class="col-md-4 col-form-label text-md-right">Measurement</label>
-                        <div class="col-md-6">
-                            <select id="t_mea" class="form-control" name="t_mea" >
-                                <option value="">--Select Data--</option>
-                                <option value="C">Calendar</option>
-                                <option value="M">Meter</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row divmeter" id="divmeter" style="display: none;">
-                        <label for="t_meter" class="col-md-4 col-form-label text-md-right">Meter</label>
-                        <div class="col-md-3">
-                            <input id="t_meter" type="number" step="0.01" placeholder="0.00" class="form-control" name="t_meter" autocomplete="off" autofocus max="999999" />
-                        </div>
-                        <div class="col-md-3"> {{--  A20230126  --}}
-                            <select id="t_meaum" class="form-control" name="t_meaum" >
-                                <option value="">--Select Data--</option>
-                                @foreach($datameaum as $du)
-                                    <option value="{{$du->um_code}}">{{$du->um_code}} -- {{$du->um_desc}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row divcal" id="divcal" style="display: none;">
-                        <label for="t_cal" class="col-md-4 col-form-label text-md-right">Calendar (Day)</label>
-                        <div class="col-md-6">
-                            <input id="t_cal" type="number" class="form-control" name="t_cal" autocomplete="off" autofocus placeholder="0" />
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="t_tolerance" class="col-md-4 col-form-label text-md-right">Measurement Tolerance</label>
-                        <div class="col-md-6">
-                            <input id="t_tolerance" type="number" placeholder="0.00" class="form-control" name="t_tolerance" autocomplete="off" autofocus max="999999" />
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="t_mea_date" class="col-md-4 col-form-label text-md-right">Measurement Start Date</label>
-                        <div class="col-md-6">
-                            <input id="t_mea_date" type="date" class="form-control" name="t_mea_date" placeholder="yy-mm-dd" autocomplete="off" autofocus >
-                        </div>
-                    </div>
-                    <div class="form-group row">
                         <label for="t_note" class="col-md-4 col-form-label text-md-right">Note</label>
                         <div class="col-md-6">
                             <textarea id="t_note" type="text" class="form-control" name="t_note" autocomplete="off" autofocus maxlength="200" rows="5" /></textarea>
@@ -293,52 +236,12 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group row " id="cdevrepairtype">
-                        <label for="crepaircode" class="col-md-4 col-form-label text-md-right">Repair Type</label>
-                        <div class="col-md-6">
-                            <input class=" d-inline" type="radio" name="crepairtype" id="cargcheck" value="group">
-                            <label class="form-check-label" for="cargcheck">
-                              Repair Group
-                            </label>
-
-                            <input class="d-inline ml-5" type="radio"  name="crepairtype" id="carccheck" value="code">
-                            <label class="form-check-label" for="carccheck">
-                              Repair Code
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-group row " id="crepaircodediv" style="display: none;">
-                        <label for="crepaircode" class="col-md-4 col-form-label text-md-right">Repair Code(Max 3) 
-                            <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-                        <div class="col-md-6">
-                            <select id="crepaircode" name="crepaircode[]" class="form-control" multiple="multiple">
-                            @foreach($repaircode as $rc)
-                                <option value="{{$rc->repm_code}}">{{$rc->repm_code}} -- {{$rc->repm_desc}}</option>
-                            @endforeach
-                            </select>             
-                        </div>
-                    </div>
-                    <div class="form-group row " id="crepairgroupdiv" style="display: none;">
-                        <label for="crepairgroup" class="col-md-4 col-form-label text-md-right">Repair Group 
-                            <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-                        <div class="col-md-6">
-                            <select id="crepairgroup" name="crepairgroup" class="form-control">
-                            @foreach($repairgroup as $rp)
-                                <option value="{{$rp->xxrepgroup_nbr}}">{{$rp->xxrepgroup_nbr}} -- {{$rp->xxrepgroup_desc}}</option>
-                            @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- 7-16-2021 AC -->
                     <div class="form-group row">
 			            <label for="file" class="col-md-4 col-form-label text-md-right">{{ __('Upload') }}</label>
 			            <div class="col-md-6 input-file-container">  
 			                <input type="file" class="form-control" name="filename[]" multiple>
 			            </div>
 			        </div>
-
-                    <!-- 7-29-2021 -->
                     <div class="form-group row">
                         <label for="file" class="col-md-4 col-form-label text-md-right">{{ __('Image') }}</label>
                         <div class="col-md-6 input-file-container">  
@@ -435,13 +338,7 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="te_daya" class="col-md-4 col-form-label text-md-right">Maintenance By</label>
-                    <div class="col-md-6">
-                        <input id="te_daya" type="text" class="form-control" name="te_daya" autocomplete="off" autofocus maxlength="50" />
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="te_qad" class="col-md-4 col-form-label text-md-right">Asset QAD</label>
+                    <label for="te_qad" class="col-md-4 col-form-label text-md-right">Asset Accounting</label>
                     <div class="col-md-6">
                         <select id="te_qad" class="form-control" name="te_qad" >
                             <option value="">--Select Data--</option>
@@ -475,48 +372,6 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="te_mea" class="col-md-4 col-form-label text-md-right">Measurement</label>
-                    <div class="col-md-6">
-                        <select id="te_mea" class="form-control" name="te_mea" >
-                            <option value="">--Select Data--</option>
-                            <option value="C">Calendar</option>
-                            <option value="M">Meter</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group row divemeter" id="divemeter" style="display: none;">
-                    <label for="te_meter" class="col-md-4 col-form-label text-md-right">Meter</label>
-                    <div class="col-md-3">
-                        <input id="te_meter" type="number" step="0.01" placeholder="0.00" class="form-control" name="te_meter" autocomplete="off" autofocus max="999999" />
-                    </div>
-                    <div class="col-md-3"> {{--  A20230126  --}}
-                        <select id="te_meaum" class="form-control" name="te_meaum" >
-                            <option value="">--Select Data--</option>
-                            @foreach($datameaum as $du)
-                                <option value="{{$du->um_code}}">{{$du->um_code}} -- {{$du->um_desc}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group row divecal" id="divecal" style="display: none;">
-                    <label for="te_cal" class="col-md-4 col-form-label text-md-right">Calendar (day)</label>
-                    <div class="col-md-6">
-                        <input id="te_cal" type="number" class="form-control" name="te_cal" autocomplete="off" placeholder="0"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="te_tolerance" class="col-md-4 col-form-label text-md-right">Measurement Tolerance</label>
-                    <div class="col-md-6">
-                        <input id="te_tolerance" type="number" placeholder="0.00" class="form-control" name="te_tolerance" autocomplete="off" autofocus max="999999" />
-                    </div>
-                </div>
-                <div class="form-group row">
-                        <label for="te_mea_date" class="col-md-4 col-form-label text-md-right">Measurement Start Date</label>
-                        <div class="col-md-6">
-                            <input id="te_mea_date" type="date" class="form-control" name="te_mea_date" placeholder="yy-mm-dd" autocomplete="off" autofocus >
-                        </div>
-                    </div>
-                <div class="form-group row">
                     <label for="te_note" class="col-md-4 col-form-label text-md-right">Note</label>
                     <div class="col-md-6">
                         <textarea id="te_note" type="text" class="form-control" name="te_note" autocomplete="off" autofocus maxlength="200" />
@@ -532,44 +387,6 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="repaircode" class="col-md-4 col-form-label text-md-right">Repair Type</label>
-                    <div class="col-md-6" style="vertical-align:middle;">
-                        <input class=" d-inline" type="radio" name="repairtype" id="argcheck" value="group">
-                        <label class="form-check-label" for="argcheck">
-                            Repair Group
-                        </label>
-
-                        <input class="d-inline ml-5" type="radio"  name="repairtype" id="arccheck" value="code">
-                        <label class="form-check-label" for="arccheck">
-                            Repair Code
-                        </label>
-                    </div>
-                </div>
-                <input type="hidden" name="te_repair" id="te_repair">
-                <div class="form-group row" id="repaircodediv" style="display: none;">
-                    <label for="repaircodeselect" class="col-md-4 col-form-label text-md-right">Repair Code(Max 3) 
-                        <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-                    <div class="col-md-6">
-                        <select id="repaircodeselect" name="repaircode[]" class="form-control repaircodeselect" multiple="multiple">
-                            
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group row" id="repairgroupdiv" style="display: none;">
-                    <label for="repairgroup" class="col-md-4 col-form-label text-md-right">Repair Group 
-                        <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-                    <div class="col-md-6">
-                        <select id="repairgroup" name="repairgroup" class="form-control">
-                            @foreach($repairgroup as $rp)
-                                <option value="{{$rp->xxrepgroup_nbr}}">{{$rp->xxrepgroup_nbr}} -- {{$rp->xxrepgroup_desc}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-
-                <!-- 7-16-2021 AC -->
                 <div class="form-group row">
                     <label for="te_file" class="col-md-4 col-form-label text-md-right">Current File</label>
                     <div class="col-md-6">
@@ -592,8 +409,6 @@
 		                <input type="file" class="form-control" name="filename[]" multiple>
 		            </div>
 		        </div>
-
-                <!-- 7-27-2021 Asset Image -->
                 <div class="form-group row divefoto">
                     <label for="te_image" class="col-md-4 col-form-label text-md-right">Image</label>
                     <div class="col-md-6">
@@ -606,35 +421,6 @@
                         <img src="" class="rounded" width="150px" id="foto1">
                     </div>
                 </div>
-
-                <div class="form-group row">
-                    <label for="te_prev" class="col-md-4 col-form-label text-md-right">Data Preventive : </label>
-                </div>
-                <div class="form-group row">
-                    <label for="te_lastusage" class="col-md-4 col-form-label text-md-right">Last Usage</label>
-                    <div class="col-md-6">
-                        <input id="te_lastusage" type="text" class="form-control" name="te_lastusage" readonly/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="te_lastusagemtc" class="col-md-4 col-form-label text-md-right">Last Usage maintenance</label>
-                    <div class="col-md-6">
-                        <input id="te_lastusagemtc" type="text" class="form-control" name="te_lastusagemtc" readonly/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="te_lastmtc" class="col-md-4 col-form-label text-md-right">Last Maintenance</label>
-                    <div class="col-md-6">
-                        <input id="te_lastmtc" type="text" class="form-control" name="te_lastmtc" readonly/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="te_onuse" class="col-md-4 col-form-label text-md-right">WO on Use</label>
-                    <div class="col-md-6">
-                        <input id="te_onuse" type="text" class="form-control" name="te_onuse" readonly/>
-                    </div>
-                </div>
-
             </div>
 
             <div class="modal-footer">
@@ -704,27 +490,13 @@
            var prc_price    = $(this).data('prc_price');
            var type         = $(this).data('type');
            var group        = $(this).data('group');
-           var measure      = $(this).data('measure');
            var supp         = $(this).data('supp');
-           var meter        = $(this).data('meter');
-           var meaum        = $(this).data('meaum');
-           var cal          = $(this).data('cal');
-           var start_mea    = $(this).data('start_mea');
            var note         = $(this).data('note');
-           var daya         = $(this).data('daya');
            var active       = $(this).data('active');
-           var repair_type  = $(this).data('repair_type');
-           var repair       = $(this).data('repair');
            var upload 		= $(this).data('upload');
-           var lastusage    = $(this).data('lastusage');
-           var lastusagemtc = $(this).data('lastusagemtc');
-           var lastmtc      = $(this).data('lastmtc');
-           var onuse        = $(this).data('onuse');
-           var tolerance    = $(this).data('tolerance');
+           var qad 		= $(this).data('qad');
            var assetimg    = '/uploadassetimage/' +$(this).data('assetimg');
-           var qad          = $(this).data('qad');
-
-           
+          
            var uploadname = upload.substring(upload.lastIndexOf('/') + 1,upload.length);
             //   console.log(uploadname);
 
@@ -737,50 +509,11 @@
            document.getElementById('te_prc_price').value    = prc_price;
            document.getElementById('te_type').value         = type;
            document.getElementById('te_group').value        = group;
-           document.getElementById('te_mea').value          = measure;
            document.getElementById('te_supp').value         = supp;
-           document.getElementById('te_meter').value        = meter;
-           document.getElementById('te_meaum').value        = meaum;
-           document.getElementById('te_cal').value          = cal;
-           document.getElementById('te_mea_date').value     = start_mea;
            document.getElementById('te_note').value         = note;
-           document.getElementById('te_daya').value         = daya;
            document.getElementById('te_active').value       = active;
-           document.getElementById('te_repair').value       = repair;
-           document.getElementById('te_lastusage').value       = lastusage;
-           document.getElementById('te_lastusagemtc').value       = lastusagemtc;
-           document.getElementById('te_lastmtc').value       = lastmtc;
-           document.getElementById('te_onuse').value       = onuse;
-           document.getElementById('te_tolerance').value       = tolerance;
            document.getElementById('foto1').src       = assetimg;
            document.getElementById('te_qad').value          = qad;
-
-           
-            if (repair_type == "group") {
-                document.getElementById('argcheck').checked = true;
-                document.getElementById('arccheck').checked = false;
-                document.getElementById('repairgroup').value = repair;
-                document.getElementById('repairgroupdiv').style.display='';
-                document.getElementById('repaircodediv').style.display='none';
-            } else if (repair_type == "code") {
-                document.getElementById('argcheck').checked = false;
-                document.getElementById('arccheck').checked = true;
-                document.getElementById('repairgroupdiv').style.display='none';
-                document.getElementById('repaircodediv').style.display='';
-            }
-
-            if (measure == "C") {
-                document.getElementById('divecal').style.display='';
-                document.getElementById('divemeter').style.display='none';
-                document.getElementById('te_cal').focus();
-            } else if (measure == "M") {
-                document.getElementById('divemeter').style.display='';
-                document.getElementById('divecal').style.display='none';
-                document.getElementById('te_meter').focus();
-            } else {
-                document.getElementById('divemeter').style.display='none';
-                document.getElementById('divecal').style.display='none';
-            }
 
             $.ajax({
                 url:"/locasset2?site=" + site + "&&loc=" + loc ,
@@ -793,13 +526,24 @@
             $("#te_loc").select2({
                 width : '100%',
                 theme : 'bootstrap4',
-                
+            });
+
+            $("#te_site").select2({
+                width : '100%',
+                theme : 'bootstrap4',
+                site
             });
 
             $("#te_supp").select2({
                 width : '100%',
                 theme : 'bootstrap4',
                 supp
+            });
+
+            $("#te_qad").select2({
+                width : '100%',
+                theme : 'bootstrap4',
+                qad
             });
 
             $("#te_type").select2({
@@ -814,20 +558,10 @@
                 group
             });
 
-            $("#repaircodeselect").select2({
-                width : '100%',
-                placeholder : "Select Repair Code",
-                maximumSelectionLength : 3,
-                closeOnSelect : false,
-                allowClear : true,
-            });
-
-            ambilrepair();
-
             $.ajax({
                 url:"/listupload/" + code,
                 success: function(data) {
-                
+                    console.log(data);
                     $('#listupload').html('').append(data); 
                 }
             })

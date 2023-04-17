@@ -139,6 +139,11 @@ class EngGroupContoller extends Controller
     public function update(Request $req)
     {
         // dd($req->all());
+        // cari tanggal create
+        $dcreate = DB::table('egr_mstr')
+            ->whereEgr_code($req->te_code)
+            ->value('created_at');
+
         // delete terlebih dahulu data nya
         DB::table('egr_mstr')
             ->whereEgr_code($req->te_code)
@@ -154,7 +159,7 @@ class EngGroupContoller extends Controller
                         'egr_desc'      => $req->te_desc,
                         'egr_eng'       => $req->dcode[$flg], 
                         'egr_editedby'  => Session::get('username'),
-                        'created_at'    => Carbon::now()->toDateTimeString(),
+                        'created_at'    => $dcreate,
                         'updated_at'    => Carbon::now()->toDateTimeString(),
                     ]);
             }

@@ -6,86 +6,44 @@
 -->
 @forelse ($data as $show)
 <tr>
-  <td>{{ $show->wo_nbr }}</td>
-  <td style="text-align: left;">{{ $show->asset_code }}</td>
-  <td style="text-align: left;">{{ $show->asset_desc }}</td>
-  <td>{{ date('d-m-Y',strtotime($show->wo_schedule)) }}</td>
-  <td>{{ date('d-m-Y',strtotime($show->wo_duedate)) }}</td>
+  <td>{{ $show->wo_number }}</td>
+  <td style="text-align: left; width: 300px !important;">{{ $show->asset_code }}</td>
+  <td style="text-align: left; width: 50% !important;">{{ $show->asset_desc }}</td>
+  <td>{{ $show->wo_start_date }}</td>
+  <td>{{ $show->wo_due_date }}</td>
   <td>{{ $show->wo_status }}</td>
-  <!-- <td>{{$show->wo_priority}}</td> -->
-  @if($show->wo_type == 'auto')
+  @if($show->wo_type == 'PM')
     <td>PM</td>
   @else
-    <td>WO</td>
+    <td>CM</td>
   @endif
-  <td>{{date('d-m-Y',strtotime($show->wo_created_at))}}</td>
-  <td>{{$show->wo_creator}}</td>
+  <td>{{ $show->wo_system_create }}</td>
+  <td>{{$show->wo_createdby}}</td>
   <td>
-    <input type="hidden" name='wonbrr' value="{{$show->wo_nbr}}">
-    <a href="javascript:void(0)" class="viewwo" data-toggle="tooltip"  title="View WO"  data-wonbr="{{$show->wo_nbr}}" data-srnbr="{{$show->wo_sr_nbr}}" data-woengineer="{{$show->wo_engineer1}}" data-woasset="{{$show->wo_asset}}" data-schedule="{{$show->wo_schedule}}" data-duedate="{{$show->wo_duedate}}"><i class="icon-table fa fa-eye fa-lg"></i></a>
-
-    @if($show->wo_status == 'plan')
-    &nbsp;
-    <a href="javascript:void(0)" class="editwo2" data-toggle="tooltip"  title="Edit WO"  data-target="#editModal" data-wonbr="{{$show->wo_nbr}}" data-srnbr="{{$show->wo_sr_nbr}}" data-woengineer="{{$show->wo_engineer1}}" data-woasset="{{$show->wo_asset}}" data-schedule="{{$show->wo_schedule}}" data-duedate="{{$show->wo_duedate}}"><i class="icon-table fa fa-edit fa-lg"></i></a>
-    
-    @endif
-    <!-- ditutup karena PM langsung ada datanya
-    @if($show->wo_status =='plan' && $usernow[0]->approver == 1)
-    &nbsp;
-    <a href="javascript:void(0)" class="approvewo" data-toggle="tooltip"  title="Approve WO"  data-target="#approveModal" data-wonbr="{{$show->wo_nbr}}"  data-woengineer="{{$show->wo_engineer1}}" data-woasset="{{$show->wo_asset}}" data-schedule="{{$show->wo_schedule}}" data-duedate="{{$show->wo_duedate}}"><i class="icon-table fa fa-thumbs-up fa-lg"></i></a>
-  
-    @endif -->
-    <!-- @if ($show->wo_status == 'closed')
-    <a href="javascript:void(0)" class="reopen"  data-wonbr="{{$show->wo_nbr}}"  data-woengineer="{{$show->wo_engineer1}}" data-woasset="{{$show->wo_asset}}" data-schedule="{{$show->wo_schedule}}" data-duedate="{{$show->wo_duedate}}"><i class="icon-table fa fa-redo fa-lg"></i></a>      
-    &ensp;
-    @endif -->
-    @if (($show->wo_status == 'finish' && $show->wo_reviewer == null && $usernow[0]->approver == 1) || ($show->wo_status == 'finish' && $show->wo_reviewer == $usernow[0]->username && $show->wo_reviewer_appdate == null) || ($show->wo_status == 'finish' && $show->wo_reviewer_appdate != null && $show->wo_approver == null && $usernow[0]->approver == 1) || ($show->wo_status == 'finish' && $show->wo_reviewer_appdate != null && $show->wo_approver == $usernow[0]->username && $show->wo_approver_appdate == null) 
-    || ($show->wo_status == 'reprocess') {{-- A211019 A211101 --}} )
-      &nbsp;
-      <a href="javascript:void(0)" class="accepting" data-toggle="tooltip"  title="Confirm WO" data-wonbr="{{$show->wo_nbr}}"  data-woengineer="{{$show->wo_engineer1}}" data-woasset="{{$show->wo_asset}}" data-schedule="{{$show->wo_schedule}}" data-duedate="{{$show->wo_duedate}}"><i class="icon-table fas fa-check-double fa-lg"></i></a>      
-    
+    <a href="javascript:void(0)" class="viewwo" data-toggle="tooltip"  title="View WO" data-wonumber="{{$show->wo_number}}">
+      <i class="icon-table fa fa-eye fa-lg"></i>
+    </a>
+    @if ( $show->wo_status !== 'closed' && $show->wo_status !== 'canceled' )
+    <a href="javascript:void(0)" class="editwo2" data-toggle="tooltip"  title="Edit WO"  data-target="#editModal" data-wonumber="{{$show->wo_number}}" data-status="{{$show->wo_status}}">
+      <i class="icon-table fa fa-edit fa-lg"></i>
+    </a>
     @endif
 
-    {{-- @if($show->wo_type != 'auto' && $show->wo_status != 'open' && $show->wo_status != 'plan' ) --}}
-    @if($show->wo_type != 'auto' && $show->wo_status != 'open' )
-    &nbsp;
-    <a href="{{url('openprint/'.$show->wo_nbr)}}" data-toggle="tooltip"  title="Print WO" target="_blank" ><i class="icon-table fa fa-print fa-lg"></i></a>
+    @if($show->wo_status == 'firm' || $show->wo_status == 'released')
+    <a href="" class="deletewo" data-toggle="modal" data-toggle="tooltip" title="Cancel WO" data-target="#deleteModal" data-wonumber="{{$show->wo_number}}" data-wostatus="{{$show->wo_status}}" data-srnumber="{{$show->wo_sr_number}}"><i class="fas fa-window-close fa-lg"></i></a>
     @endif
 
-    @if($show->wo_status == 'open')
-    &nbsp;
-    <a href="" class="deletewo" data-toggle="modal" data-target="#deleteModal" data-wonbr="{{$show->wo_nbr}}"><i class="icon-table fa fa-trash fa-lg"></i></a>
-    @endif
-    
-    {{-- @if($show->wo_repair_type != null && $show->wo_type != 'auto' && $show->wo_status != 'open' && $show->wo_status != 'plan' ) --}}
-    {{--
-    @if($show->wo_repair_type != null && $show->wo_type == 'auto' && $show->wo_status != 'open')
-    &nbsp;
-      <a id="aprint2" target="_blank" href="{{url('openprint2/'.$show->wo_nbr)}}" data-toggle="tooltip"  title="Print WO" >2<i class="icon-table fas fa-print fa-lg"></i></a>  
-    @endif 
-    --}}
-    @if($show->wo_status == 'finish' || $show->wo_status == 'closed')
-      &nbsp;  
-      <a id="adownload" target="_blank" href="{{url('wodownloadfile/'.$show->wo_nbr)}}" data-toggle="tooltip"  title="Download asset document" ><i class="icon-table fas fa-download fa-lg"></i></a>  
-    @endif
-    
-    {{--  Jika tidak ada file upload, icon tidak muncul  --}}
-    @php($cfile = $ceksrfile->where('sr_number','=',$show->wo_sr_nbr)->count())
-    @if($cfile > 0)
-    &nbsp;
-      <a id="srdownload" target="_blank" href="{{url('srdownloadfile/'.$show->wo_sr_nbr)}}" data-toggle="tooltip"  title="Download document" ><i class="icon-table fas fa-file-export fa-lg"></i></a>  
-    @endif
   </td>
 </tr>
 @empty
 <tr>
-  <td colspan="9" style="color:red;">
+  <td colspan="12" style="color:red;">
     <center>No Data Available</center>
   </td>
 </tr>
 @endforelse
 <tr>
   <td style="border: none !important;" colspan="10">
-    {{ $data->links() }}
+    {{$data->appends($_GET)->onEachSide(4)->links()}}
   </td>
 </tr>

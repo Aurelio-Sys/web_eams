@@ -7,8 +7,11 @@ use App\Http\Controllers\Master\PmEngController;
 use App\Http\Controllers\Master\UMController;
 use App\Http\Controllers\Master\AsfnController;
 use App\Http\Controllers\Master\EngGroupContoller;
-use App\Http\Controllers\Master\PMCodeContoller;
+use App\Http\Controllers\Master\PMCodeController;
 use App\Http\Controllers\Master\QCSpecController;
+use App\Http\Controllers\Master\InsListController;
+use App\Http\Controllers\Master\SplistController;
+use App\Http\Controllers\Master\PmassetController;
 use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\Report\RemainSpController;
@@ -56,7 +59,7 @@ Route::group(['middleware' => ['auth']], function() {
     route::get('/planwo', 'dashController@planwo');
     route::get('/startwo', 'dashController@startwo');
     route::get('/finishwo', 'dashController@finishwo');
-    route::get('/closewo', 'dashController@closewo');
+    // route::get('/closewo', 'dashController@closewo');
     route::get('/itemrfqset', 'dashController@itemrfqset');
 	route::get('/problemwo/{asset}', 'dashController@problemwo');
 	route::get('/problemwo/{asset}/pagination', 'dashController@problemwopaging');
@@ -398,14 +401,15 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/needsp', 'UserChartController@needsp');
 
 	//work order maintenance
-	route::get('/womaint', 'wocontroller@wobrowse')->name('womaint');
-	route::post('/createwo', 'wocontroller@createwo');
+	Route::get('/womaint', [wocontroller::class, 'wobrowse'])->name('womaint');
+	Route::post('/createwo', [wocontroller::class, 'createwo']);
+	Route::get('/searchic', [wocontroller::class, 'searchic']);
 	route::get('/womaint/pagination', 'wocontroller@wopaging');
-	route::post('/editwo','wocontroller@editwo'); 
+	route::post('/editwo', [wocontroller::class, 'editwo']); 
 	route::post('/editwoeng','wocontroller@editwoeng'); 
-	route::post('/closewo','wocontroller@closewo'); 
+	route::post('/closewo',[wocontroller::class, 'closewo']); 
 	route::get('/womaint/getnowo','wocontroller@geteditwoold');
-	route::get('/womaint/getnowo/{wo}',[wocontroller::class, 'geteditwo'])->name('editWO');
+	route::get('/womaint/getwoinfo',[wocontroller::class, 'geteditwo'])->name('editWO');
 	route::get('/womaint/getfailure','wocontroller@getfailure');
 	route::post('/approvewo','wocontroller@approvewo'); 
 	route::get('/openprint/{wo}','wocontroller@openprint');
@@ -635,12 +639,40 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/editegr', [EngGroupContoller::class, 'update']);
 	Route::post('/deleteegr', [EngGroupContoller::class, 'destroy']);
 
+	// Instruction List
+	Route::get('/inslist',[InsListController::class, 'index']);
+	Route::post('/createinslist',[InsListController::class, 'store']);
+	Route::get('/editdetins',[InsListController::class, 'editdetins']);
+	Route::post('/editinslist',[InsListController::class, 'update']);
+	Route::post('/delinslist', [InsListController::class, 'destroy']);
+	
+	// Sparepart List
+	Route::get('/splist',[SplistController::class, 'index']);
+	Route::get('/getspmstr',[SplistController::class, 'getspmstr'])->name('getspmstr');
+	Route::post('/createsplist',[SplistController::class, 'store']);
+	Route::get('/editdetsplist',[SplistController::class, 'editdetsplist']);
+	Route::post('/editsplist',[SplistController::class, 'update']);
+	Route::post('/delsplist', [SplistController::class, 'destroy']);
+
 	// PM Code Maintenance
-	Route::get('/pmcode',[PMCodeContoller::class, 'index']);
+	Route::get('/pmcode',[PMCodeController::class, 'index']);
+	Route::post('/createpmcode',[PMCodeController::class, 'store']);
+	Route::post('/editpmcode',[PMCodeController::class, 'update']);
+	Route::post('/delpmcode', [PMCodeController::class, 'destroy']);
 
 	// QC Spec
 	Route::get('/qcspec',[QCSpecController::class, 'index']);
-	Route::get('/qcspeccreate',[QCSpecController::class, 'create'])->name('qcspeccreate');
+	Route::post('/createqcs',[QCSpecController::class, 'store']);
+	Route::get('/editdetqcs', [QCSpecController::class, 'editdetqcs']);
+	Route::post('/editqcs',[QCSpecController::class, 'update']);
+	Route::post('/delqcs', [QCSpecController::class, 'destroy']);
+
+	//Preventive Maintenance
+	Route::get('/pmasset',[PmassetController::class, 'index']);
+	Route::get('/pickeng',[PmassetController::class, 'pickeng']);
+	Route::post('/creatpmasset',[PmassetController::class, 'store']);
+	Route::post('/editpmasset',[PmassetController::class, 'update']);
+	Route::post('/delpmasset', [PmassetController::class, 'destroy']);
 });
 
 Auth::routes();

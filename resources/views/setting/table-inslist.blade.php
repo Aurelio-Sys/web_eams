@@ -1,15 +1,27 @@
 @forelse($data as $show)
 
+@php($qdet = $detins->where('ins_code','=',$show->ins_code))
+@php($stepdesc = "")
+@foreach($qdet as $qdet)
+  @if($stepdesc == "")
+    @php($stepdesc = $qdet->ins_stepdesc)
+  @else
+    @php($stepdesc = $stepdesc . " , " . $qdet->ins_stepdesc)
+  @endif
+@endforeach
+
 <tr>
-    <td>{{$show->qcs_code}}</td>
-    <td>{{$show->qcs_desc}}</td>
+    <td>{{$show->ins_code}}</td>
+    <td>{{$show->ins_desc}}</td>
+    <td>{{$stepdesc}}</td>
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal"
-        data-code="{{$show->qcs_code}}" data-desc="{{$show->qcs_desc}}">
+        data-code="{{$show->ins_code}}" data-desc="{{$show->ins_desc}}" data-duration="{{$show->ins_duration}}"
+        data-durum="{{$show->ins_durationum}}" data-manpower="{{$show->ins_manpower}}">
         <i class="icon-table fa fa-edit fa-lg"></i></a>
         &ensp;
         <a href="javascript:void(0)" class="deletedata" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal" 
-        data-code="{{$show->qcs_code}}" data-desc="{{$show->qcs_desc}}">
+        data-code="{{$show->ins_code}}" data-desc="{{$show->ins_desc}}">
         <i class="icon-table fa fa-trash fa-lg"></i></a>
     </td>
 </tr>

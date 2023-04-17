@@ -3,7 +3,7 @@
       <div class="container-fluid">
         <div class="row">          
           <div class="col-sm-4">
-            <h1 class="m-0 text-dark">QC Specification Maintenance</h1>
+            <h1 class="m-0 text-dark">Sparepart List Maintenance</h1>
           </div>    
         </div><!-- /.row -->
         <div class="col-md-12">
@@ -11,13 +11,13 @@
         </div>
         <div class="row">                 
           <div class="col-sm-2">    
-            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">QC Specification Create</button>
+            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Sparepart List Create</button>
           </div><!-- /.col -->  
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-<form action="/enggroup" method="GET">
+<form action="/splist" method="GET">
 <!-- Bagian Searching -->
 <div class="container-fluid mb-2">
     <div class="row">
@@ -30,14 +30,24 @@
         <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
         <div class="card card-body bg-black rounded-0">
             <div class="col-12 form-group row">
-                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">QC Specification Code</label>
+                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Sp List Code</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_code" type="text" class="form-control" name="s_code"
                     value="" autofocus autocomplete="off"/>
                 </div>
-                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">QC Specification Description</label>
+                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Sp List Desc</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_desc" type="text" class="form-control" name="s_desc"
+                    value="" autofocus autocomplete="off"/>
+                </div>
+                <label for="s_code1" class="col-md-2 col-sm-2 col-form-label text-md-right">Sparepart Code</label>
+                <div class="col-md-4 col-sm-4 mb-2 input-group">
+                    <input id="s_code1" type="text" class="form-control" name="s_code1"
+                    value="" autofocus autocomplete="off"/>
+                </div>
+                <label for="s_desc1" class="col-md-2 col-sm-2 col-form-label text-md-right">Sparepart Desc</label>
+                <div class="col-md-4 col-sm-4 mb-2 input-group">
+                    <input id="s_desc1" type="text" class="form-control" name="s_desc1"
                     value="" autofocus autocomplete="off"/>
                 </div>
                 <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
@@ -57,14 +67,16 @@
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                <th width="35%">QC Spec Code</th>
-                <th width="50%">QC Spec Desc</th>
+                <th width="15%">Sparepart List Code</th>
+                <th width="20%">Sparepart List Desc</th>
+                <th width="35%">Sparepart Code</th>
+                <th width="15%">Qty Required</th>
                 <th width="15%">Action</th>  
             </tr>
         </thead>
         <tbody>
             <!-- untuk isi table -->
-            @include('setting.table-qcspec')
+            @include('setting.table-splist')
         </tbody>
     </table>
 </div>
@@ -74,37 +86,35 @@
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">QC Specification Create</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Sparepart List Create</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/createqcs">
+            <form class="form-horizontal" method="post" action="/createsplist">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label for="t_code" class="col-md-4 col-form-label text-md-right">QC Spec Code</label>
+                        <label for="t_code" class="col-md-4 col-form-label text-md-right">Sparepart List Code</label>
                         <div class="col-md-2">
                             <input type="text" class="form-control" id="t_code" name="t_code" autocomplete="off" maxlength="24" required>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_code" class="col-md-4 col-form-label text-md-right">QC Spec Desc</label>
+                        <label for="t_desc" class="col-md-4 col-form-label text-md-right">Sparepart List Desc</label>
                         <div class="col-md-6">
                             <input type="text" class="form-control" id="t_desc" name="t_desc" autocomplete="off" maxlength="255" required>
                         </div>
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-md-10 offset-md-1">
                         <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
                           <thead>
                             <tr id='full'>
-                              <th width="25%">QC Spec Parameter</th>
-                              <th width="15%">Tools</th>
-                              <th width="15%">Operator</th>
-                              <th width="15%">Value 1</th>
-                              <th width="15%">Value 2</th>
-                              <th width="5%">Um</th>
-                              <th width="10%">Delete</th>
+                              <th width="20%">Sparepart Code</th>
+                              <th width="40%">Sparepart Desc</th>
+                              <th width="10%">UM</th>
+                              <th width="15%">Qty Required</th>
+                              <th width="15%">Delete</th>
                             </tr>
                           </thead>
                           <tbody id='detailapp'>
@@ -112,7 +122,7 @@
                           </tbody>
                           <tfoot>
                             <tr>
-                              <td colspan="7">
+                              <td colspan="5">
                                 <input type="button" class="btn btn-lg btn-block btn-focus" id="addrow" value="Add Item" style="background-color:#1234A5; color:white; font-size:16px" />
                               </td>
                             </tr>
@@ -135,42 +145,39 @@
     <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
         <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel">QC Specification Modify</h5>
+        <h5 class="modal-title text-center" id="exampleModalLabel">Sparepart List Modify</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
         </div>
-        <form class="form-horizontal" method="post" action="/editqcs">
+        <form class="form-horizontal" method="post" action="/editsplist">
             {{ csrf_field() }}
             <div class="modal-body">
                 <div class="form-group row">
-                    <label for="te_code" class="col-md-4 col-form-label text-md-right">QC Spec Code</label>
+                    <label for="te_code" class="col-md-4 col-form-label text-md-right">Sparepart List Code</label>
                     <div class="col-md-2">
                         <input type="text" class="form-control" id="te_code" name="te_code" readonly>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="te_desc" class="col-md-4 col-form-label text-md-right">QC Spec Desc</label>
+                    <label for="te_desc" class="col-md-4 col-form-label text-md-right">Sparepart List Desc</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control" id="te_desc" name="te_desc" readonly>
                     </div>
                 </div>
-                
-                <div class="col-md-12">
+                <div class="col-md-10 offset-md-1">
                 <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
                     <thead>
-                        <th width="25%">QC Spec Parameter</th>
-                        <th width="15%">Tools</th>
-                        <th width="15%">Operator</th>
-                        <th width="15%">Value 1</th>
-                        <th width="15%">Value 2</th>
-                        <th width="5%">Um</th>
-                        <th>Delete</th>
+                     <th width="20%">Sparepart Code</th>
+                     <th width="40%">Sparepart Desc</th>
+                     <th width="10%">UM</th>
+                     <th width="15%">Qty Required</th>
+                     <th width="15%">Delete</th>
                     </thead>
                     <tbody id='ed_detailapp'></tbody>
                     <tfoot>
                       <tr>
-                        <td colspan="7">
+                        <td colspan="5">
                           <input type="button" class="btn btn-lg btn-block btn-focus" id="ed_addrow" value="Add Item" style="background-color:#1234A5; color:white; font-size:16px" />
                         </td>
                       </tr>
@@ -193,16 +200,16 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title text-center" id="exampleModalLabel">QC Specification Delete</h5>
+            <h5 class="modal-title text-center" id="exampleModalLabel">Sparepart List Delete</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
             </div>
-            <form class="form-horizontal" method="post" action="/delqcs">
+            <form class="form-horizontal" method="post" action="/delsplist">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <input type="hidden" id="d_code" name="d_code">
-                    Delete QC Specification <b><span id="td_code"></span> -- <span id="td_desc"></span></b> ?
+                    Delete Sparepart List <b><span id="td_code"></span> -- <span id="td_desc"></span></b> ?
                 </div>
 
                 <div class="modal-footer">
@@ -233,7 +240,7 @@
            document.getElementById('te_desc').value = desc;
 
             $.ajax({
-                url:"editdetqcs?code="+code,
+                url:"editdetsplist?code="+code,
                 success: function(data) {
                 console.log(data);
                 $('#ed_detailapp').html('').append(data);
@@ -258,19 +265,41 @@
           var newRow = $("<tr>");
           var cols = "";
 
-          cols += '<td><input type="text" class="form-control" name="t_spec[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="t_tools[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="t_op[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="t_val1[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="t_val2[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="t_um[]" autocomple="off"></td>';
-          cols += '<td data-title="Action"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
+          cols += '<td width="20%">';
+          cols += '<select id="t_scode" class="form-control selectpicker" name="t_scode[]" data-live-search="true" required>';
+          cols += '<option value = ""> -- Select Data -- </option>'  
+          @foreach($datasp as $ds)
+          cols += '<option value="{{$ds->spm_code}}"> {{$ds->spm_code}} </option>';
+          @endforeach
+          cols += '</td>';
+          cols += '<td width="40%"><input type="text" class="form-control t_sdesc" name="t_sdesc[]" readonly></td>'
+          cols += '<td width="10%"><input type="text" class="form-control t_sum" name="t_sdesc[]" readonly></td>'
+          cols += '<td width="15%"><input type="number" class="form-control" name="t_qty[]" min="0" step="0.1"></td>'
+          cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
           cols += '</tr>'
           newRow.append(cols);
           $("#detailapp").append(newRow);
           counter++;
 
           selectPicker();
+
+          $('.selectpicker').on('change', function(e) {
+            var desc = $(this).closest('tr').find('.t_sdesc');
+            var um = $(this).closest('tr').find('.t_sum');
+            var code = $(this).val();
+
+            $.ajax({
+                url: "{{route('getspmstr')}}",
+                data: {
+                    code: code,
+                },
+                success: function(data) {
+                    console.log(data);
+                    um.val($.trim(data.spm_um));
+                    desc.val($.trim(data.spm_desc));
+                }
+            })
+          });
         });
 
         $("table.order-list").on("click", ".ibtnDel", function(event) {
@@ -283,21 +312,42 @@
           var newRow = $("<tr>");
           var cols = "";
 
-          cols += '<td><input type="text" class="form-control" name="te_spec[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="te_tools[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="te_op[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="te_val1[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="te_val2[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="te_um[]" autocomple="off"></td>';
+          cols += '<td width="20%">';
+          cols += '<select id="t_scode" class="form-control selectpicker te_scode" name="te_scode[]" data-live-search="true" required>';
+          cols += '<option value = ""> -- Select Data -- </option>'  
+          @foreach($datasp as $ds)
+          cols += '<option value="{{$ds->spm_code}}"> {{$ds->spm_code}} </option>';
+          @endforeach
+          cols += '</td>';
+          cols += '<td width="40%"><input type="text" class="form-control te_sdesc" name="te_sdesc[]" readonly></td>'
+          cols += '<td width="10%"><input type="text" class="form-control te_sum" name="te_sum[]" readonly></td>'
+          cols += '<td width="15%"><input type="number" class="form-control" name="te_qty[]" min="0" step="0.1"></td>'
+          cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
           cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
-
-          cols += '<td data-title="Action"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
           cols += '</tr>'
           newRow.append(cols);
           $("#ed_detailapp").append(newRow);
           counter++;
 
           selectPicker();
+
+          $('.selectpicker').on('change', function(e) {
+            var desc = $(this).closest('tr').find('.te_sdesc');
+            var um = $(this).closest('tr').find('.te_sum');
+            var code = $(this).val();
+
+            $.ajax({
+                url: "{{route('getspmstr')}}",
+                data: {
+                    code: code,
+                },
+                success: function(data) {
+                    console.log(data);
+                    um.val($.trim(data.spm_um));
+                    desc.val($.trim(data.spm_desc));
+                }
+            })
+          });
         });
 
         $(document).on('change','#cek',function(e){
@@ -318,6 +368,16 @@
             $('#s_code').val('');
             $('#s_desc').val('');
         });   
+
+      $("#t_durum").select2({
+         width : '100%',
+         theme : 'bootstrap4',
+      });
+
+     $("#t_scode").select2({
+      width : '100%',
+      theme : 'bootstrap4',
+     });
 
     </script>
 

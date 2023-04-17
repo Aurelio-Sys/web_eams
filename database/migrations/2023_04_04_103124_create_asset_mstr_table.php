@@ -20,6 +20,7 @@ class CreateAssetMstrTable extends Migration
             $table->string('asset_site',24);
             $table->string('asset_loc',24);
             $table->string('asset_um',24)->nullable();
+            $table->string('asset_sn',24)->nullable();
             $table->string('asset_supp',24)->nullable();
             $table->date('asset_prcdate')->nullable();
             $table->decimal('asset_prcprice',13,2)->nullable();
@@ -27,7 +28,7 @@ class CreateAssetMstrTable extends Migration
             $table->string('asset_group',24)->nullable();
             $table->string('asset_accounting',24)->nullable();
             $table->string('asset_note')->nullable();
-            $table->boolean('asset_active');
+            $table->string('asset_active',24);
             $table->string('asset_image')->nullable();
             $table->string('asset_imagepath')->nullable();
             $table->string('asset_upload')->nullable();
