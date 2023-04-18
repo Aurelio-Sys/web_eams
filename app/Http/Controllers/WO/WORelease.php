@@ -74,14 +74,15 @@ class WORelease extends Controller
 
         $sp_all = DB::table('sp_mstr')
                 ->select('spm_code','spm_desc', 'spm_um','spm_site','spm_loc','spm_lot')
-                ->where('spm_site','=', $data->wo_site)
+                //->where('spm_site','=', $data->wo_site) //ambil yng site nya sama dengan site asset
+                ->where('spm_active','=', 'Yes')
                 ->get();
 
         if ($data->wo_sp_code !== null) {
             // melakukan sesuatu jika nilai dari $data->wo_sp_code tidak null
 
             $wo_sp = DB::table('spg_list')
-                    ->join('sp_mstr','sp_mstr.spm_code','spg_list.spg_spcode')
+                    ->join('sp_mstr','sp_mstr.spm_code','sp_mstr.spm_site','spg_list.spg_spcode')
                     ->where('spg_code','=', $data->wo_sp_code)
                     ->get();
             
@@ -95,9 +96,40 @@ class WORelease extends Controller
 
     public function submitrelease(Request $req)
     {
+
+        // dd($req->all());
+        
+
         DB::beginTransaction();
 
         try {
+
+            //mengelompokan data dari request depan
+            $requestData = $req->all(); // mengambil data dari request
+            $data = [
+                "spreq" => $requestData['spreq'],
+                "qtystandard" => $requestData['qtystandard'],
+                "qtyrequired" => $requestData['qtyrequired'],
+            ];
+            
+            $groupedData = collect($data['spreq'])->map(function ($spreq, $key) use ($data) {
+                return [
+                    'spreq' => $spreq,
+                    'qtystandard' => $data['qtystandard'][$key],
+                    'qtyrequired' => $data['qtyrequired'][$key],
+                ];
+            })->groupBy('spreq')->map(function ($group) {
+                $totalQtyRequired = $group->sum('qtyrequired');
+                $totalQtyStandard = $group->sum('qtystandard');
+            
+                return [
+                    'spreq' => $group[0]['spreq'],
+                    'qtystandard' => $totalQtyStandard,
+                    'qtyrequired' => $totalQtyRequired,
+                ];
+            })->values();
+
+
             foreach ($req->partneed as $a => $key) {
                 /* Mencaari line terakhir */
                 if($req->line[$a] == "") {

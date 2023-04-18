@@ -26,7 +26,7 @@
         </div>
         <label class="col-md-1 col-form-label text-md-right">Asset</label>
         <div class="col-md-3">
-            <input type="text" class="form-control" id="asset" name="asset" value="{{$data->asset_desc}}" readonly>
+            <input type="text" class="form-control" id="asset" name="asset" value="{{$data->asset_code}} - {{$data->asset_desc}}" readonly>
         </div>
         <label class="col-md-2 col-form-label text-md-right">Start Date</label>
         <div class="col-md-2">
@@ -85,6 +85,7 @@
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$datas->spm_code}} -- {{$datas->spm_desc}}
                                     <input type="hidden" name="spreq[]" value="{{$datas->spm_code}}" />
+                                    <input type="hidden" name="site[]" value="{{$datas->spm_site}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     {{number_format($datas->spg_qtyreq,2)}}
@@ -112,11 +113,11 @@
                                 </td>
 
                                 <td>
-                                    <input type="number" class="form-control qtyreq" name="qtyreq[]" step="1" min="0" required />
+                                    <input type="number" class="form-control qtystandard" name="qtystandard[]" step="1" min="0" required />
                                 </td>
 
                                 <td>
-                                    <input type="number" class="form-control qtyrequest" name="qtyrequest[]" step="1" min="0" required />
+                                    <input type="number" class="form-control qtyrequired" name="qtyrequired[]" step="1" min="0" required />
                                 </td>
 
                                 <td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>
@@ -191,11 +192,11 @@
             cols += '</td>';
 
             cols += '<td>';
+            cols += '<input type="number" class="form-control qtystandard" name="qtystandard[]" step="1" min="0" required />';
             cols += '</td>';
 
             cols += '<td>';
-            cols += '<input type="number" class="form-control qtyrequest" name="qtyrequest[]" step="1" min="0" required />';
-            cols += '<input type="hidden" class="line" name="line[]" id="line" />';
+            cols += '<input type="number" class="form-control qtyrequired" name="qtyrequired[]" step="1" min="0" required />';
             cols += '</td>';
 
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
