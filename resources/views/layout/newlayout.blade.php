@@ -831,7 +831,61 @@ to get the desired effect
                       </li>
                     @endif
                   </ul><!-- ul repair -->
-                </li> <!-- li repair -->
+                </li> <!-- li repair --> 
+
+                <!-- start li Approval --> 
+                <li class="nav-item has-treeview">
+                  <a href="javascript:void(0)" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>
+                      Approval
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    @if(str_contains( Session::get('menu_access'), 'MT44'))
+                    <li class="nav-item">
+                      <a href="/appsr" class="nav-link ">
+                        <p>Approval SR</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MT45'))
+                    <li class="nav-item">
+                      <a href="/appwo" class="nav-link ">
+                        <p>Approval WO</p>
+                      </a>
+                    </li>
+                    @endif
+                  </ul><!-- ul Approval -->
+                </li> <!-- li Approval --> 
+
+                <!-- start li Inventory --> 
+                <li class="nav-item has-treeview">
+                  <a href="javascript:void(0)" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>
+                      Inventory
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    @if(str_contains( Session::get('menu_access'), 'MT46'))
+                    <li class="nav-item">
+                      <a href="/invso" class="nav-link ">
+                        <p>Inventory Source</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MT47'))
+                    <li class="nav-item">
+                      <a href="/invsu" class="nav-link ">
+                        <p>Inventory Supply</p>
+                      </a>
+                    </li>
+                    @endif
+                  </ul><!-- ul Inventory -->
+                </li> <!-- li Inventory --> 
 
                 {{--  Belum perlu digunakan
                   @if(str_contains( Session::get('menu_access'), 'MT19'))
