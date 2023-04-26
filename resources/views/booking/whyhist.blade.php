@@ -3,7 +3,7 @@
       <div class="container-fluid">
         <div class="row">          
           <div class="col-sm-4">
-            <h1 class="m-0 text-dark">Inventory Supply Maintenance</h1>
+            <h1 class="m-0 text-dark">5 Why Transactions</h1>
           </div>    
         </div><!-- /.row -->
         <div class="col-md-12">
@@ -11,7 +11,7 @@
         </div>
         <div class="row">                 
           <div class="col-sm-2">    
-            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Inventory Supply Create</button>
+            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Create</button>
           </div><!-- /.col -->  
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
@@ -62,76 +62,91 @@
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                <th width="20%">Asset Site</th>
-                <th width="20%">Sparepart Supply Site</th>
-                <th width="45%">Location Available</th>
+                <th width="20%">Asset</th>
+                <th width="20%">WO Number</th>
+                <th width="45%">Problem</th>
                 <th width="15%">Action</th>  
             </tr>
         </thead>
         <tbody>
             <!-- untuk isi table -->
-            @include('setting.table-invsu')
+            @include('booking.table-whyhist')
         </tbody>
     </table>
 </div>
 
 <!-- Modal Create -->
 <div class="modal fade" id="createModal" role="dialog" aria-hidden="true" data-backdrop="static">
-    <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">Inventory Supply Create</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Input 5 Why Transactions</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/createinvsu">
+            <form class="form-horizontal" method="post" action="/createwhyhist">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label for="t_code" class="col-md-3 col-form-label text-md-right">Asset Site</label>
-                        <div class="col-md-6">
-                           <select class="form-control" id="t_code" name="t_code" required>
+                        <label for="t_asset" class="col-md-2 col-form-label text-md-right">Asset</label>
+                        <div class="col-md-9">
+                           <select class="form-control" id="t_asset" name="t_asset" required>
                               <option value=""></option>
-                              @foreach($dataassite as $da)
-                              <option value="{{$da->assite_code}}">{{$da->assite_code}} -- {{$da->assite_desc}}</option>
+                              @foreach($dataasset as $da)
+                              <option value="{{$da->asset_code}}">{{$da->asset_code}} -- {{$da->asset_desc}}</option>
                               @endforeach
                            </select>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_desc" class="col-md-3 col-form-label text-md-right">Sparepart Supply Site</label>
-                        <div class="col-md-6">
-                           <select class="form-control" id="t_desc" name="t_desc" required>
+                        <label for="t_wo" class="col-md-2 col-form-label text-md-right">WO Number</label>
+                        <div class="col-md-9">
+                           <select class="form-control" id="t_wo" name="t_wo">
                               <option value=""></option>
-                              @foreach($dataspsite as $ds)
-                              <option value="{{$ds->site_code}}">{{$ds->site_code}} -- {{$ds->site_desc}}</option>
+                              @foreach($datawo as $dw)
+                              <option value="{{$dw->wo_number}}">{{$dw->wo_number}}</option>
                               @endforeach
                            </select>
                         </div>
                     </div>
-                    <div class="col-md-10 offset-md-1">
-                        <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
-                          <thead>
-                            <tr id='full'>
-                              <th width="15%">Sequence</th>
-                              <th width="55%">Location</th>
-                              <th width="15%">Available</th>
-                              <th width="15%">Delete</th>
-                            </tr>
-                          </thead>
-                          <tbody id='detailapp'>
-
-                          </tbody>
-                          <tfoot>
-                            <tr>
-                              <td colspan="4">
-                                <input type="button" class="btn btn-lg btn-block btn-focus" id="addrow" value="Add Item" style="background-color:#1234A5; color:white; font-size:16px" />
-                              </td>
-                            </tr>
-                          </tfoot>
-                        </table>
+                    <div class="form-group row">
+                     <label for="t_problem" class="col-md-2 col-form-label text-md-right">Problem</label>
+                     <div class="col-md-9">
+                        <textarea id="t_problem" name="t_problem" rows="2" cols="50" class="form-control"></textarea>
+                     </div>
                     </div>
+                    <div class="form-group row">
+                     <label for="t_why1" class="col-md-2 col-form-label text-md-right">Why 1</label>
+                     <div class="col-md-9">
+                        <textarea id="t_why1" name="t_why1" rows="2" cols="50" class="form-control"></textarea>
+                     </div>
+                    </div>
+                    <div class="form-group row">
+                     <label for="t_why2" class="col-md-2 col-form-label text-md-right">Why 2</label>
+                     <div class="col-md-9">
+                        <textarea id="t_why2" name="t_why2" rows="2" cols="50" class="form-control"></textarea>
+                     </div>
+                    </div>
+                    <div class="form-group row">
+                     <label for="t_why3" class="col-md-2 col-form-label text-md-right">Why 3</label>
+                     <div class="col-md-9">
+                        <textarea id="t_why3" name="t_why3" rows="2" cols="50" class="form-control"></textarea>
+                     </div>
+                    </div>
+                    <div class="form-group row">
+                     <label for="t_why4" class="col-md-2 col-form-label text-md-right">Why 4</label>
+                     <div class="col-md-9">
+                        <textarea id="t_why4" name="t_why4" rows="2" cols="50" class="form-control"></textarea>
+                     </div>
+                    </div>
+                    <div class="form-group row">
+                     <label for="t_why5" class="col-md-2 col-form-label text-md-right">Why 5</label>
+                     <div class="col-md-9">
+                        <textarea id="t_why5" name="t_why5" rows="2" cols="50" class="form-control"></textarea>
+                     </div>
+                    </div>
+                    
                 </div>
             
                 <div class="modal-footer">
@@ -156,38 +171,7 @@
         <form class="form-horizontal" method="post" action="/editinvsu">
             {{ csrf_field() }}
             <div class="modal-body">
-               <div class="form-group row">
-                  <label for="te_code" class="col-md-3 col-form-label text-md-right">Asset Site</label>
-                  <div class="col-md-6">
-                    <input type="text" class="form-control" id="tv_code" name="tv_code" readonly>
-                    <input type="hidden" class="form-control" id="te_code" name="te_code" readonly>
-                  </div>
-              </div>
-              <div class="form-group row">
-                  <label for="te_desc" class="col-md-3 col-form-label text-md-right">Sparepart Supply Site</label>
-                  <div class="col-md-6">
-                    <input type="text" class="form-control" id="tv_desc" name="tv_desc" readonly>
-                    <input type="hidden" class="form-control" id="te_desc" name="te_desc" readonly>
-                  </div>
-              </div>
-                <div class="col-md-10 offset-md-1">
-                <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
-                    <thead>
-                        <th width="15%">Sequence</th>
-                        <th width="55%">Location</th>
-                        <th width="15%">Available</th>
-                        <th width="15%">Delete</th>
-                    </thead>
-                    <tbody id='ed_detailapp'></tbody>
-                    <tfoot>
-                      <tr>
-                        <td colspan="4">
-                          <input type="button" class="btn btn-lg btn-block btn-focus" id="ed_addrow" value="Add Item" style="background-color:#1234A5; color:white; font-size:16px" />
-                        </td>
-                      </tr>
-                    </tfoot>
-                </table>
-                </div>
+               
             </div>
 
             <div class="modal-footer">
@@ -272,92 +256,17 @@
             document.getElementById('td_desc').innerHTML = desc + "(" + dsource + ")" ;
        });
 
-        $("#addrow").on("click", function() {
-
-          var newRow = $("<tr>");
-          var cols = "";
-          var site = document.getElementById('t_desc').value;
-
-          cols += '<td width="25%"><input type="number" class="form-control" name="t_step[]" min="1" autofocus=”autofocus” autocomplete="off" required></td>'
-          cols += '<td width="20%">';
-          cols += '<select id="a_code" class="form-control selectpicker a_code" name="a_code[]" data-live-search="true" required>';
-          cols += '<option value = ""> -- Select Data -- </option>'  
-          @foreach($dataloc as $dl)
-          cols += '<option value="{{$dl->loc_code}}"> {{$dl->loc_code}} -- {{$dl->loc_desc}} </option>';
-          @endforeach
-          cols += '</td>';
-          cols += '<td width="20%">';
-          cols += '<select id="a_avail" class="form-control selectPicker a_avail" name="a_avail[]" required>';
-          cols += '<option value = "Yes">Yes</option>'  
-          cols += '<option value = "No">No</option>'  
-          cols += '</td>';
-          cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
-          cols += '</tr>'
-          newRow.append(cols);
-          $("#detailapp").append(newRow);
-          counter++;
-
-          selectPicker();
-        });
-
-        $("table.order-list").on("click", ".ibtnDel", function(event) {
-          $(this).closest("tr").remove();
-          counter -= 1
-        });
-
-        $("#ed_addrow").on("click", function() {
-
-          var newRow = $("<tr>");
-          var cols = "";
-
-          cols += '<td width="25%"><input type="number" class="form-control" name="te_step[]" min="1"  autocomplete="off" required></td>'
-          cols += '<td width="20%">';
-          cols += '<select id="te_loc" class="form-control selectpicker te_loc" name="te_loc[]" data-live-search="true" required>';
-          cols += '<option value = ""> -- Select Data -- </option>'  
-          @foreach($dataloc as $dl)
-          cols += '<option value="{{$dl->loc_code}}"> {{$dl->loc_code}} -- {{$dl->loc_desc}} </option>';
-          @endforeach
-          cols += '</td>';
-          cols += '<td width="20%">';
-          cols += '<select id="te_avail" class="form-control selectPicker te_avail" name="te_avail[]" required>';
-          cols += '<option value = "Yes">Yes</option>'  
-          cols += '<option value = "No">No</option>'  
-          cols += '</td>';
-          cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
-          cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
-          cols += '</tr>'
-          newRow.append(cols);
-          $("#ed_detailapp").append(newRow);
-          counter++;
-
-          selectPicker();
-        });
-
-        $(document).on('change','#cek',function(e){
-            var checkbox = $(this), // Selected or current checkbox
-            value = checkbox.val(); // Value of checkbox
-
-
-            if (checkbox.is(':checked'))
-            {
-                $(this).closest("tr").find('.tick').val(1);
-            } else
-            {
-                $(this).closest("tr").find('.tick').val(0);
-            }        
-        });
-
         $(document).on('click', '#btnrefresh', function() {
             $('#s_code').val('');
             $('#s_desc').val('');
         });   
 
-        $("#t_code").select2({
+        $("#t_asset").select2({
          width : '100%',
          theme : 'bootstrap4',
         });
 
-        $("#t_desc").select2({
+        $("#t_wo").select2({
          width : '100%',
          theme : 'bootstrap4',
         });

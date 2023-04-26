@@ -22,21 +22,27 @@ class InvSoController extends Controller
         $s_desc = $req->s_desc;
 
         $data = DB::table('inc_source')
-            ->select('inc_asset_site','inc_source_site')
+            ->leftJoin('asset_site','assite_code','=','inc_asset_site')
+            ->leftJoin('site_mstrs','site_code','=','inc_source_site')
+            ->select('inc_asset_site','inc_source_site','assite_desc','site_desc')
             ->orderby('inc_asset_site')
             ->orderBy('inc_source_site')
             ->groupBy('inc_asset_site','inc_source_site');
 
-        /*
         if($s_code) {
-            $data = $data->where('ins_code','like','%'.$s_code.'%');
+            $data = $data->where(function($query) use ($s_code) {
+                $query->where('inc_asset_site','like','%'.$s_code.'%')
+                ->orWhere('assite_desc','like','%'.$s_code.'%');
+            });
         }
         if($s_desc) {
-            $data = $data->where('ins_desc','like','%'.$s_desc.'%');
+            $data = $data->where(function($query) use ($s_desc) {
+                $query->where('inc_source_site','like','%'.$s_desc.'%')
+                ->orWhere('site_desc','like','%'.$s_desc.'%');
+            });
         }
-        */
 
-        $data = $data->paginate(10);
+        $data = $data->paginate(3);
 
         $datadet = DB::table('inc_source')
             ->orderby('inc_asset_site')
@@ -47,12 +53,14 @@ class InvSoController extends Controller
             ->orderBy('assite_code')
             ->get();
 
-        $dataspsite = DB::table('sps_site')
-            ->orderBy('sps_code')
+        $dataspsite = DB::table('site_mstrs')
+            ->whereSite_flag('Yes')
+            ->orderBy('site_code')
             ->get();
 
-        $dataloc = DB::table('spl_loc')
-            ->orderBy('spl_code')
+        $dataloc = DB::table('loc_mstr')
+            ->whereLoc_active('Yes')
+            ->orderBy('loc_code')
             ->get();
 
         return view('setting.invso', compact('data','datadet','dataassite','dataspsite','dataloc'));
@@ -76,19 +84,31 @@ class InvSoController extends Controller
      */
     public function store(Request $req)
     {
-        $flg = 0;
-        foreach($req->t_step as $t_step){
+        // cek menyimpan dengan detail atau tidak
+        if($req->t_step) {
+            $flg = 0;
+            foreach($req->t_step as $t_step){
+                DB::table('inc_source')
+                    ->insert([
+                        'inc_asset_site' => $req->t_code,
+                        'inc_source_site' => $req->t_desc,
+                        'inc_sequence' => $req->t_step[$flg],
+                        'inc_loc' => $req->a_code[$flg],
+                        'inc_editedby'  => Session::get('username'),
+                        'created_at'    => Carbon::now()->toDateTimeString(),
+                        'updated_at'    => Carbon::now()->toDateTimeString(),
+                    ]);
+                $flg += 1;
+            }
+        } else {
             DB::table('inc_source')
                 ->insert([
                     'inc_asset_site' => $req->t_code,
                     'inc_source_site' => $req->t_desc,
-                    'inc_sequence' => $req->t_step[$flg],
-                    'inc_loc' => $req->a_code[$flg],
                     'inc_editedby'  => Session::get('username'),
                     'created_at'    => Carbon::now()->toDateTimeString(),
                     'updated_at'    => Carbon::now()->toDateTimeString(),
                 ]);
-            $flg += 1;
         }
 
         toast('Inventory Source Created.', 'success');
@@ -122,16 +142,20 @@ class InvSoController extends Controller
     {
         if ($req->ajax()) {
             $data = DB::table('inc_source')
+                    ->leftJoin('loc_mstr','loc_code','=','inc_loc')
                     ->whereInc_asset_site($req->code1)
                     ->whereInc_source_site($req->code2)
+                    ->whereNotNull('inc_loc')
                     ->orderBy('inc_sequence')
                     ->get();
 
             $output = '';
             foreach ($data as $data) {
                 $output .= '<tr>'.
-                            '<td><input type="text" class="form-control" name="te_step[]" value="'.$data->inc_sequence.'" readonly></td>'.
-                            '<td><input type="text" class="form-control" name="te_loc[]" value="'.$data->inc_loc.'" readonly></td>'.
+                            '<td><input type="hidden" class="form-control" name="te_step[]" value="'.$data->inc_sequence.'" readonly>'.
+                            $data->inc_sequence.'</td>'.
+                            '<td><input type="hidden" class="form-control" name="te_loc[]" value="'.$data->inc_loc.'" readonly>'.
+                            $data->inc_loc.' -- '.$data->loc_desc.'</td>'.
                             '<td><input type="checkbox" name="cek[]" class="cek" id="cek" value="0">
                             <input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>'.
                             '</tr>';
@@ -150,38 +174,66 @@ class InvSoController extends Controller
      */
     public function update(Request $req)
     {
-        // dd($req->all());
-        // cari tanggal create
-        $dcreate = DB::table('inc_source')
-            ->whereInc_asset_site($req->te_code)
-            ->whereInc_source_site($req->te_desc)
-            ->value('created_at');
+        // dd($req->all())
+        if($req->te_step) {
+            // cari tanggal create
+            $dcreate = DB::table('inc_source')
+                ->whereInc_asset_site($req->te_code)
+                ->whereInc_source_site($req->te_desc)
+                ->value('created_at');
 
-        // delete terlebih dahulu data nya
-        DB::table('inc_source')
-            ->whereInc_asset_site($req->te_code)
-            ->whereInc_source_site($req->te_desc)
-            ->delete();
-        
-        $flg = 0;
-        foreach($req->te_step as $te_step){
-            if($req->tick[$flg] == 0) {
+            // delete terlebih dahulu data nya
+            DB::table('inc_source')
+                ->whereInc_asset_site($req->te_code)
+                ->whereInc_source_site($req->te_desc)
+                ->delete();
+
+            //cek apakah ada detail nya atau tidak, untuk membedakan cara menyimpannya
+            $flg = 0;
+            $cekdetail = 0;
+            foreach($req->te_step as $te_step){
+                if($req->tick[$flg] == 0) {
+                    $cekdetail = 1;
+                }
+                $flg += 1;  
+            }
+
+            if($cekdetail == 1) {
+                $flg = 0;
+                foreach($req->te_step as $te_step){
+                    if($req->tick[$flg] == 0) {
+                        DB::table('inc_source')
+                        ->insert([
+                            'inc_asset_site' => $req->te_code,
+                            'inc_source_site' => $req->te_desc,
+                            'inc_sequence' => $req->te_step[$flg],
+                            'inc_loc' => $req->te_loc[$flg],
+                            'inc_editedby'  => Session::get('username'),
+                            'created_at'    => $dcreate,
+                            'updated_at'    => Carbon::now()->toDateTimeString(),
+                        ]);
+                    }
+                    $flg += 1;  
+                }
+            } else {
                 DB::table('inc_source')
                 ->insert([
                     'inc_asset_site' => $req->te_code,
                     'inc_source_site' => $req->te_desc,
-                    'inc_sequence' => $req->te_step[$flg],
-                    'inc_loc' => $req->te_loc[$flg],
                     'inc_editedby'  => Session::get('username'),
                     'created_at'    => $dcreate,
                     'updated_at'    => Carbon::now()->toDateTimeString(),
                 ]);
             }
-            $flg += 1;  
+            
+            toast('Inventory Source Updated.', 'success');
+            return back();
+
+        } else {
+            toast('Detail Not Found!', 'error');
+            return back();
         }
 
-        toast('Inventory Source Updated.', 'success');
-        return back();
     }
 
     /**

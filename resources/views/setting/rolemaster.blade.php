@@ -347,6 +347,15 @@
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('5 Why Transaction') }}</label>
+              <div class="col-6">
+                <label class="switch" for="whyhist">
+                  <input type="checkbox" class="custom-control-input" id="whyhist" name="whyhist" value="BO02" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
 
             <!-- Reports -->
             <h4>
@@ -1102,6 +1111,15 @@
               <div class="col-6">
                 <label class="switch" for="e_cbBoas">
                   <input type="checkbox" class="custom-control-input" id="e_cbBoas" name="e_cbBoas" value="BO01" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('5 Why Transaction') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_whyhist">
+                  <input type="checkbox" class="custom-control-input" id="e_whyhist" name="e_whyhist" value="BO02" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -2073,6 +2091,11 @@
           document.getElementById('e_cbBoas').checked = true;
         } else {
           document.getElementById('e_cbBoas').checked = false;
+        }
+        if (listmenu.search("BO02") >= 0) {
+          document.getElementById('e_whyhist').checked = true;
+        } else {
+          document.getElementById('e_whyhist').checked = false;
         }
 
         //Report
