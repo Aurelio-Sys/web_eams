@@ -156,6 +156,17 @@ class WORelease extends Controller
                     ]);
                 }
 
+                //simpan lsit spare part yang di released ke table wo_det
+                DB::table('wo_dets_sp')
+                        ->insert([
+                            'wd_sp_wonumber' => $requestData['hide_wonum'],
+                            'wd_sp_spcode' => $loopsp['spreq'],
+                            'wd_sp_required' => $loopsp['qtyrequired'],
+                            'wd_sp_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
+
+
                 //harus ada datanya. ambil data dari table inp_supply untuk kemudian dicheck ke QAD untuk qty on hand yang ada di QAD
                 $supplydata = DB::table('inp_supply')
                             ->where('inp_asset_site','=', $req->assetsite)
@@ -238,15 +249,106 @@ class WORelease extends Controller
                 }
             }
 
-            dd(collect($output));
+
+
+
 
             //mulai membandingkan data antara data di table inv_required (web) dengan qty tersedia dari data QAD ($output)
 
             //ambil data dari table inv_required
-            $getInvRequired = DB::table('inv_required')
-                            ->where()
 
-            dd('stop here');
+            foreach($output as $qadData){
+
+                $getInvRequired = DB::table('inv_required')
+                                        ->where('ir_spare_part', '=', $qadData['part'])
+                                        ->first();
+
+
+                if($getInvRequired->inv_qty_required <= $qadData['qtyoh']){
+                    //jika qty di qad supply cukup
+
+
+                    //update status kalau wo sudah di released.
+                    DB::table('wo_mstr')
+                        ->where('wo_number','=', $requestData['hide_wonum'])
+                        ->update([
+                            'wo_status' => 'released',
+                            'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
+
+                    
+                }else{
+
+
+                    //jika qty di qad supply tidak cukup, kirim notifikasi email ke warehouse
+                    //nantinya warehouse akan melakukan transfer dari source ke supply
+                    //status tetap released walaupun tidak cukup stocknya di supply
+                    DB::table('wo_mstr')
+                        ->where('wo_number','=', $requestData['hide_wonum'])
+                        ->update([
+                            'wo_status' => 'released',
+                            'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
+
+                    //kasih flag true(1) jika stock di supply tidak cukup supaya menjadi penanda spare part yang perlu dilakukan wo transfer spare part
+                    DB::table('wo_dets_sp')
+                        ->where('wd_sp_wonumber','=', $requestData['hide_wonum'])
+                        ->where('wd_sp_spcode','=', $qadData['part'])
+                        ->update([
+                            'wd_sp_flag' => true,
+                            'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
+                    
+
+                }
+                
+            }
+
+
+            //ambil detail data kode instruction list dan kode qcspec dari table wo_mstr
+            $dataWO = DB::table('wo_mstr')
+                    ->where('wo_number','=', $requestData['hide_wonum'])
+                    ->first();
+
+
+            if($dataWO->wo_ins_code !== null){
+                $dataIns = DB::table('ins_list')
+                    ->where('ins_code','=', $dataWO->wo_ins_code)
+                    ->get();
+
+                foreach($dataIns as $ins){
+                    DB::table('wo_dets_ins')
+                        ->insert([
+                            'wd_ins_wonumber' => $requestData['hide_wonum'],
+                            'wd_ins_step' => $ins->ins_step,
+                            'wd_ins_code' => $ins->ins_code,
+                            'wd_ins_desc' => $ins->ins_stepdesc,
+                            'wd_ins_duration' => $ins->ins_duration,
+                            'wd_ins_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            'wd_ins_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
+                }
+        
+            }
+
+            if($dataWO->wo_qcspec_code !== null){
+                $dataQC = DB::table('qcs_list')
+                        ->where('qcs_code','=', $dataWO->wo_qcspec_code)
+                        ->get();
+
+            
+                foreach($dataQC as $qcspec){
+                    DB::table('wo_dets_qc')
+                        ->insert([
+                            'wd_qc_wonumber' => $requestData['hide_wonum'],
+                            'wd_qc_qcparam' => $qcspec->qcs_spec,
+                            'wd_qc_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            'wd_qc_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
+                }
+            }
+
+            // dd('stop here');
 
             DB::commit();
 
