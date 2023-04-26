@@ -481,7 +481,9 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/searchimpactdesc', 'ServiceController@searchimpact');
 	route::get('/searchfailtype','ServiceController@searchfailtype');
 	route::get('/searchfailcode','ServiceController@searchfailcode');
+	route::get('/srcheckfailurecodetype','ServiceController@srcheckfailurecodetype');
 	route::get('/routesr','ServiceController@routesr');
+	route::get('/routesreng','ServiceController@routesreng');
 	route::post('/cancelsr','ServiceController@cancelsr');
 
 

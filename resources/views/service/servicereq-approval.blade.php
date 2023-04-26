@@ -72,7 +72,21 @@
         <!--FORM Search Disini-->
         <label for="s_servicenbr" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Service Request Number') }}</label>
         <div class="col-md-3 col-sm-4 mb-2 input-group">
-          <!-- <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off"> -->
+          <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off" placeholder="Search SR Number">
+        </div>
+        <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Asset Description') }}</label>
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+          <!-- <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
+                  <option value="">--Select Asset--</option>
+                  @foreach($asset as $show)
+                  <option value="{{$show->asset_desc}}">{{$show->asset_code}} -- {{$show->asset_desc}}</option>
+                  @endforeach
+                </select> -->
+          <input id="s_asset" type="text" class="form-control" name="s_asset" value="" autofocus autocomplete="off" placeholder="Search Asset Desc">
+        </div>
+        <!-- <label for="s_servicenbr" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Service Request Number') }}</label>
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+          <input id="s_servic/enbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off">
           <select id="s_servicenbr" name="s_servicenbr" class="form-control" value="" autofocus autocomplete="off">
             <option value="">--Select SR Number--</option>
             @foreach($datasrnbr as $srnbr)
@@ -88,7 +102,7 @@
             <option value="{{$show->asset_desc}}">{{$show->asset_desc}}</option>
             @endforeach
           </select>
-        </div>
+        </div> -->
       </div>
       <div class="col-12 form-group row">
         <!--FORM Search Disini-->
@@ -573,17 +587,17 @@
       theme: 'bootstrap4',
     });
 
-    $("#s_asset").select2({
-      width: '100%',
-      // placeholder : "Select Asset",
-      theme: 'bootstrap4',
-    });
+    // $("#s_asset").select2({
+    //   width: '100%',
+    //   // placeholder : "Select Asset",
+    //   theme: 'bootstrap4',
+    // });
 
-    $("#s_servicenbr").select2({
-      width: '100%',
-      // placeholder : "Select Asset",
-      theme: 'bootstrap4',
-    });
+    // $("#s_servicenbr").select2({
+    //   width: '100%',
+    //   // placeholder : "Select Asset",
+    //   theme: 'bootstrap4',
+    // });
 
     $(".select2bs4").select2({
       width: '100%',
@@ -805,19 +819,20 @@
 
       fetch_data(page, srnumber, asset, priority);
 
-      $("#s_asset").select2({
-        width: '100%',
-        // placeholder : "Select Asset",
-        theme: 'bootstrap4',
-        asset,
-      });
+      // $("#s_asset").select2({
+      //   width: '100%',
+      //   // placeholder : "Select Asset",
+      //   theme: 'bootstrap4',
+      //   asset,
+      // });
 
-      $("#s_servicenbr").select2({
-        width: '100%',
-        // placeholder : "Select Asset",
-        theme: 'bootstrap4',
-        asset,
-      });
+      // $("#s_servicenbr").select2({
+      //   width: '100%',
+      //   // placeholder : "Select Asset",
+      //   theme: 'bootstrap4',
+      //   asset,
+      // });
+
     });
 
     $(document).on('click', '.approval', function() {

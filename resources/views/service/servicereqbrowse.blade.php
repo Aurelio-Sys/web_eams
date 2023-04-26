@@ -107,6 +107,7 @@
             <option value="Open">Open</option>
             @endif
             <option value="Revise">Revise</option>
+            <option value="Inprocess">Inprocess</option>
             <option value="Canceled">Canceled</option>
             <!-- <option value="Closed">Closed</option> -->
             <!-- <option value="Completed">Completed</option> -->
@@ -243,6 +244,7 @@
         <th>Req Date</th>
         <th>Req Time</th>
         <th>Action</th>
+        <th>Approval</th>
         <th>Cancel</th>
       </tr>
     </thead>
@@ -302,7 +304,7 @@
               <input id="e_status" type="text" class="form-control" name="e_status" autocomplete="off" maxlength="6" readonly style="color:green;font-weight:bold">
             </div>
           </div>
-          <div class="form-group row justify-content-center">
+          <!-- <div class="form-group row justify-content-center">
             <label for="e_status" class="col-md-5 col-form-label text-md-left">Status Approval</label>
             <div class="col-md-7">
               <input id="e_statusappr" type="text" class="form-control" name="e_statusappr" autocomplete="off" maxlength="6" readonly style="font-weight:bold">
@@ -313,7 +315,7 @@
             <div class="col-md-7">
               <textarea id="e_reason" type="text" class="form-control" name="e_reason" autocomplete="off" maxlength="6" readonly style="font-weight:bold"></textarea>
             </div>
-          </div>
+          </div> -->
           <!-- <div class="form-group row justify-content-center" id="e_rnote">
             <label for="e_rnote" class="col-md-5 col-form-label text-md-left">Reject Note</label>
             <div class="col-md-7">
@@ -483,6 +485,91 @@
   </div>
 </div>
 
+<div class="modal fade" id="routeModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center" id="exampleModalLabel">Approval Route Status</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="col-md-12">
+          <div class="form-group row">
+            <label for="ppnumber" class="col-2 col-sm-2 col-md-2 col-lg-2 col-form-label text-sm-center">{{
+                            __('SR No.')
+                            }}</label>
+            <div class="col-4 col-sm-4 col-md-4 col-lg-4">
+              <input type="text" class="form-control" id="m_route_ppnumber" readonly>
+            </div>
+            <label for="requestedBy" class="col-2 col-sm-2 col-md-2 col-lg-2 col-form-label text-sm-center">{{
+                            __('Requested By')
+                            }}</label>
+            <div class="col-4 col-sm-4 col-md-4 col-lg-3">
+              <input type="text" class="form-control" id="m_route_requested_by" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-group row">
+            <label for="site" class="col-2 col-sm-2 col-md-2 col-lg-2 col-form-label text-sm-center">{{
+                            __('Asset')
+                            }}</label>
+            <div class="col-4 col-sm-4 col-md-4 col-lg-4">
+              <input type="text" class="form-control" id="m_route_asset" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row" style="margin-bottom: 0px;">
+          <div class="col-lg-12 col-md-12" style="overflow-x: auto; display: block;white-space: nowrap;">
+            <h6 style="margin-top: 10px;font-size: 18px;font-weight:bold">Department approval</h6>
+            <table id='routetable' class='table table-bordered route-list' style="margin-bottom: 0px;">
+              <thead class="thead-light">
+                <tr>
+                  <th style="width:5%">No.</th>
+                  <th style="width:5%">Department</th>
+                  <th style="width:10%">Role</th>
+                  <th style="width:15%">Reason</th>
+                  <th style="width:15%">Status</th>
+                  <th style="width:10%">Approved By</th>
+                  <th style="width:15%">Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id='bodyroute'>
+
+              </tbody>
+            </table>
+            <h6 style="margin-top: 20px;font-size: 18px;font-weight:bold">Engineer approval</h6>
+            <table id='routetablex' class='table table-bordered route-list' style="margin-bottom: 0px;">
+              <thead class="thead-light">
+                <tr>
+                  <th style="width:5%">No.</th>
+                  <th style="width:5%">Department</th>
+                  <th style="width:10%">Role</th>
+                  <th style="width:15%">Reason</th>
+                  <th style="width:15%">Status</th>
+                  <th style="width:10%">Approved By</th>
+                  <th style="width:15%">Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id='bodyroutex'>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-info btn-outline-success" id="e_btnclose" data-dismiss="modal"><i
+                        class="fas fa-undo"></i>&nbsp;Cancel</button> -->
+      </div>
+
+    </div>
+  </div>
+</div>
 
 <!-- Modal SR View -->
 <div class="modal fade" id="viewModal" role="dialog" aria-hidden="true" data-backdrop="static">
@@ -513,7 +600,7 @@
           </div>
           <label for="assetdesc" class="col-md-2 col-form-label">Asset Desc</label>
           <div class="col-md-4">
-            <input id="assetdesc" type="text" class="form-control" name="assetdesc" readonly />
+            <textarea id="assetdesc" type="text" class="form-control" name="assetdesc" rows="3" readonly></textarea>
           </div>
         </div>
         <div class="form-group row">
@@ -558,9 +645,13 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="statusapproval" class="col-md-2 col-form-label">SR Status Approval</label>
+          <!-- <label for="statusapproval" class="col-md-2 col-form-label">SR Status Approval</label>
           <div class="col-md-4">
             <input id="statusapproval" type="text" class="form-control" name="statusapproval" readonly>
+          </div> -->
+          <label for="approver" class="col-md-2 col-form-label">Engineer Approver</label>
+          <div class="col-md-4">
+            <input id="approver" type="text" class="form-control" name="approver" readonly />
           </div>
           <label for="priority" class="col-md-2 col-form-label">Priority</label>
           <div class="col-md-4">
@@ -569,27 +660,11 @@
 
         </div>
         <div class="form-group row">
-          <label for="reason" class="col-md-2 col-form-label">Reason Approval</label>
+          <!-- <label for="reason" class="col-md-2 col-form-label">Reason Approval</label>
           <div class="col-md-4">
             <input id="reason" type="text" class="form-control" name="reason" readonly />
-          </div>
-          <label for="file" class="col-md-2 col-form-label">Current File</label>
-          <div class="col-md-4">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th>File Name</th>
-                </tr>
-              </thead>
-              <tbody id="srlistupload">
+          </div> -->
 
-              </tbody>
-            </table>
-          </div>
-
-
-        </div>
-        <div class="form-group row">
           <label for="startwo" class="col-md-2 col-form-label">WO Start Date</label>
           <div class="col-md-4">
             <input id="startwo" readonly type="text" class="form-control" name="startwo">
@@ -629,9 +704,18 @@
           <div class="col-md-4">
             <textarea id="englist" type="text" class="form-control" name="englist" rows="3" readonly></textarea>
           </div>
-          <label for="approver" class="col-md-2 col-form-label">Engineer Approver</label>
+          <label for="file" class="col-md-2 col-form-label">Current File</label>
           <div class="col-md-4">
-            <input id="approver" type="text" class="form-control" name="approver" readonly />
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>File Name</th>
+                </tr>
+              </thead>
+              <tbody id="srlistupload">
+
+              </tbody>
+            </table>
           </div>
           <!-- <label for="rejectnote" class="col-md-2 col-form-label">Reject Note</label>
           <div class="col-md-4">
@@ -833,7 +917,7 @@
         // var sort_type = $('#hidden_sort_type').val();
         var page = 1;
 
-        console.log(srnumber, asset);
+        // console.log(srnumber, asset);
 
         document.getElementById('tmpsrnumber').value = srnumber;
         document.getElementById('tmpasset').value = asset;
@@ -943,6 +1027,7 @@
         var failcode = $(this).data('failcode');
         var approver = $(this).data('approver');
         var reason = $(this).data('reason');
+        var engineer = $(this).data('engineer');
 
         var srdate = $(this).data('srdate');
         document.getElementById('srdate').value = srdate;
@@ -965,7 +1050,7 @@
 
         // console.log(englist);
 
-        document.getElementById('englist').value = englist;
+        document.getElementById('englist').value = engineer;
         document.getElementById('reqbyname').value = reqby;
         document.getElementById('srnote').value = srnote;
         // document.getElementById('rejectnote').value = rejectnote;
@@ -982,9 +1067,9 @@
         }
         // document.getElementById('action').value = action;
         document.getElementById('wostatus').value = wostatus;
-        document.getElementById('statusapproval').value = statusapproval;
+        // document.getElementById('statusapproval').value = statusapproval;
         document.getElementById('approver').value = approver;
-        document.getElementById('reason').value = reason;
+        // document.getElementById('reason').value = reason;
 
         // if(eng1 != ''){
         //   document.getElementById('engineer1').value = eng1;
@@ -1142,12 +1227,15 @@
         if (wostatus == 'Open') {
           var srstat = 'Open';
           document.getElementById("e_status").style.color = 'green';
+        } else if (wostatus == 'Inprocess') {
+          var srstat = 'Inprocess';
+          document.getElementById("e_status").style.color = 'green';
         } else {
           var srstat = 'Revise';
           document.getElementById("e_status").style.color = 'red';
         }
 
-        document.getElementById("e_statusappr").value = statusapproval;
+        // document.getElementById("e_statusappr").value = statusapproval;
         // if (rejectnote == '') {
         //   document.getElementById("e_rnote").style.display = 'none';
         // } else {
@@ -1349,7 +1437,7 @@
         // document.getElementById('assettype').value = astype;
         document.getElementById('e_wottype').value = failtype;
         document.getElementById('e_approver').value = approver;
-        document.getElementById('e_reason').value = reason;
+        // document.getElementById('e_reason').value = reason;
         // console.log(approver);
         // console.log(document.getElementById('e_approver').value);
 
@@ -1374,6 +1462,10 @@
           closeOnSelect: false,
           allowClear: true,
           maximumSelectionLength: 3,
+          maximumSelectionLength: 5,
+          closeOnSelect: false,
+          allowClear: true,
+          multiple: true,
         });
 
         $('#e_impact').select2({
@@ -1396,6 +1488,60 @@
         document.getElementById('srnbr').innerHTML = srnumber;
         document.getElementById('c_srnumber').value = srnumber;
 
+
+      });
+
+      $(document).on('click', '.route', function() {
+        $('#routeModal').modal('show');
+
+        var srnumber = $(this).data('srnumber');
+        var srdate = $(this).data('srdate');
+        var assetcode = $(this).data('assetcode');
+        var assetdesc = $(this).data('assetdesc');
+        var srnote = $(this).data('srnote');
+        var reqby = $(this).data('reqby');
+        var priority = $(this).data('priority');
+        var dept = $(this).data('deptdesc');
+        var deptcode = $(this).data('deptcode');
+        var reqbyname = $(this).data('reqbyname');
+        var wotype = $(this).data('wotypedescx');
+        var impact = $(this).data('impactcode');
+        // alert(impact);
+        var assetloc = $(this).data('assetloc');
+        var hassetsite = $(this).data('hassetsite');
+        var hassetloc = $(this).data('hassetloc');
+        var astype = $(this).data('astypedesc');
+        var impactcode1 = $(this).data('impactcode');
+        var failcode = $(this).data('failcode');
+        var id = $(this).data('id');
+        var reason = $(this).data('reason');
+
+        // alert(impactcode1);
+        document.getElementById('m_route_ppnumber').value = srnumber;
+        document.getElementById('m_route_requested_by').value = reqbyname;
+        document.getElementById('m_route_asset').value = assetcode;
+
+        $.ajax({
+          type: "GET",
+          url: "/routesr",
+          data: {
+            sr_number: srnumber
+          },
+          success: function(data) {
+            $('#bodyroute').html(data);
+          }
+        });
+
+        $.ajax({
+          type: "GET",
+          url: "/routesreng",
+          data: {
+            sr_number: srnumber
+          },
+          success: function(data) {
+            $('#bodyroutex').html(data);
+          }
+        });
 
       });
 
