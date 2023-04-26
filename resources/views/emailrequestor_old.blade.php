@@ -117,6 +117,7 @@
 <div class="row">
   <div class="leftcolumn">
     <div class="card" style="text-align:center;">
+      <h4>{{$header1}}</h4>
       <h4>{{$note1}}</h4>
       <h2>Asset Code</h2>
       <div style="word-wrap: break-word;">

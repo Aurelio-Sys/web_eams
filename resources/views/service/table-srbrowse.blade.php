@@ -10,9 +10,10 @@
 
     <td>{{$show->sr_asset}}</td>
     <td>{{$show->asset_desc}}</td>
-    <td>{{$show->loc_desc}}</td>
+    <td>{{$show->asset_loc}}</td>
     <!-- <td>{{$show->sr_status}}</td> -->
-    <td>{{is_null($show->wo_status) ? $show->sr_status : $show->wo_status}}</td>
+    <!-- <td>{{is_null($show->wo_status) ? $show->sr_status : $show->wo_status}}</td> -->
+    <td>{{$show->sr_status}}</td>
 
     <!-- @if($show->sr_status == 1)
     <td>Open</td>
@@ -45,13 +46,14 @@
     <a href="javascript:void(0)" class="view" type="button" data-toggle="tooltip" title="View Service Request" 
     data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_asset}}" data-assetdesc="{{$show->asset_desc}}"
     data-reqby="{{$show->name}}" data-srnote="{{$show->sr_note}}" data-priority="{{$show->sr_priority}}"
-    data-reqbyname="{{$show->sr_req_by}}" data-dept="{{$show->dept_desc}}" data-assetloc="{{$show->loc_desc}}" 
+    data-reqbyname="{{$show->sr_req_by}}" data-dept="{{$show->dept_desc}}" data-assetloc="{{$show->asset_loc}}" 
     data-astypedesc="{{$show->astype_desc}}" data-wotypedesc="{{$show->wotyp_desc}}" data-impactcode="{{$show->sr_impact}}"
     data-srdate="{{date('d-m-Y', strtotime($show->sr_req_date))}}" data-srtime="{{date('H:i', strtotime($show->sr_req_time))}}" data-wonumber="{{$show->wo_number}}" 
     data-startwo="{{date('d-m-Y', strtotime($show->wo_job_startdate))}}" 
-    data-endwo="{{date('d-m-Y', strtotime($show->wo_job_finishdate))}}" 
+    data-endwo="{{date('d-m-Y', strtotime($show->wo_job_finishdate))}}" data-engineer="{{$show->wo_list_engineer}}"
     data-approver="{{$dataapps->dept_code}} -- {{$dataapps->dept_desc}}" data-reason="{{is_null($show->srta_eng_reason) ? $show->srta_reason : $show->srta_eng_reason}}"
-    data-wostatus="{{is_null($show->wo_status) ? $show->sr_status : $show->wo_status}}" data-statusapproval="{{is_null($show->srta_eng_status) ? $show->srta_status : $show->srta_eng_status}}"
+    data-wostatus="{{$show->sr_status}}" 
+    data-statusapproval="{{is_null($show->srta_eng_status) ? $show->srta_status : $show->srta_eng_status}}"
     data-failtype="{{$show->sr_fail_type}}" data-failcode="{{$show->sr_fail_code}}">
     <i class="icon-table far fa-eye fa-lg"></i></a>
    
@@ -70,16 +72,24 @@
     <a href="javascript:void(0)" class="editsr" data-toggle="tooltip"  title="Edit SR"  data-target="#editModal" 
     data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_asset}}" data-assetdesc="{{$show->asset_desc}}"
     data-reqby="{{$show->name}}" data-srnote="{{$show->sr_note}}" data-priority="{{$show->sr_priority}}" data-impact="{{$show->sr_impact}}"
-    data-reqbyname="{{$show->sr_req_by}}" data-dept="{{$show->dept_desc}}" data-assetloc="{{$show->loc_desc}}" 
+    data-reqbyname="{{$show->sr_req_by}}" data-dept="{{$show->dept_desc}}" data-assetloc="{{$show->asset_loc}}" 
     data-astypedesc="{{$show->astype_desc}}" data-wotypedesc="{{$show->wotyp_desc}}" data-impactcode="{{$show->sr_impact}}"
     data-srdate="{{$show->sr_req_date}}" data-srtime="{{$show->sr_req_time}}" data-wonumber="{{$show->wo_number}}" 
     data-startwo="{{date('d-m-Y', strtotime($show->wo_job_startdate))}}" 
     data-endwo="{{date('d-m-Y', strtotime($show->wo_job_finishdate))}}" 
     data-approver="{{$show->sr_eng_approver}}" data-reason="{{is_null($show->srta_eng_reason) ? $show->srta_reason : $show->srta_eng_reason}}"
-    data-wostatus="{{is_null($show->wo_status) ? $show->sr_status : $show->wo_status}}" data-statusapproval="{{is_null($show->srta_eng_status) ? $show->srta_status : $show->srta_eng_status}}"
+    data-wostatus="{{$show->sr_status}}" data-statusapproval="{{is_null($show->srta_eng_status) ? $show->srta_status : $show->srta_eng_status}}"
     data-failtype="{{$show->sr_fail_type}}" data-failcode="{{$show->sr_fail_code}}">
     <i class="icon-table fa fa-edit fa-lg"></i></a>
     @endif
+    </td>
+    <td style="text-align: center;">
+    <a href="javascript:void(0)" class="route" type="button" data-toggle="tooltip" title="Route SR Approval" data-target="#routeModal" data-id="{{$show->id}}" 
+    data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_asset}}" data-assetdesc="{{$show->asset_desc}}" data-srdate="{{$show->sr_req_date}}" data-reqby="{{$show->name}}" 
+    data-srnote="{{$show->sr_note}}" data-priority="{{$show->sr_priority}}" data-deptdesc="{{$show->dept_desc}}" data-reqbyname="{{$show->sr_req_by}}" 
+    data-assetloc="{{$show->loc_desc}}" data-hassetloc="{{$show->asset_loc}}" data-astypedesc="{{$show->astype_desc}}" data-failcode="{{$show->sr_fail_code}}" 
+    data-wotypedescx="{{$show->wotyp_desc}}" data-impactcode="{{$show->sr_impact}}">
+    <i class="icon-table fa fa-info-circle fa-lg"></i>
     </td>
     <td style="text-align: center;">
     {{--  Cancel SR  --}}
@@ -88,7 +98,7 @@
     <a href="javascript:void(0)" class="cancelsr" data-toggle="tooltip"  title="Cancel SR"  data-target="#cancelModal" 
     data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_asset}}" data-assetdesc="{{$show->asset_desc}}"
     data-reqby="{{$show->name}}" data-srnote="{{$show->sr_note}}" data-priority="{{$show->sr_priority}}" data-impact="{{$show->sr_impact}}"
-    data-reqbyname="{{$show->sr_req_by}}" data-dept="{{$show->dept_desc}}" data-assetloc="{{$show->loc_desc}}" 
+    data-reqbyname="{{$show->sr_req_by}}" data-dept="{{$show->dept_desc}}" data-assetloc="{{$show->asset_loc}}" 
     data-astypedesc="{{$show->astype_desc}}" data-wotypedesc="{{$show->wotyp_desc}}" data-impactcode="{{$show->sr_impact}}"
     data-srdate="{{$show->sr_req_date}}" data-srtime="{{$show->sr_req_time}}" data-wonumber="{{$show->wo_number}}" 
     data-startwo="{{date('d-m-Y', strtotime($show->wo_job_startdate))}}" 
@@ -96,7 +106,7 @@
     data-approver="{{$show->sr_eng_approver}}"
     data-wostatus="{{is_null($show->wo_status) ? $show->sr_status : $show->wo_status}}" data-statusapproval="{{is_null($show->srta_eng_status) ? $show->srta_status : $show->srta_eng_status}}"
     data-failtype="{{$show->sr_fail_type}}" data-failcode="{{$show->sr_fail_code}}">
-    <i class="icon-table fa fa-times fa-lg"></i></a>
+    <i class="icon-table fas fa-window-close fa-lg"></i></a>
     @endif
     </td>
 </tr>

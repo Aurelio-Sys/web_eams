@@ -238,7 +238,7 @@
       placeholder: "Select Failure Code",
       theme: "bootstrap4",
       allowClear: true,
-      maximumSelectionLength: 3,
+      maximumSelectionLength: 5,
       closeOnSelect: false,
       allowClear: true,
       multiple: true,

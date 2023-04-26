@@ -15,7 +15,7 @@
     data-reqby="{{$show->username}}" data-srnote="{{$show->sr_note}}" data-priority="{{$show->sr_priority}}" 
     data-deptdesc="{{$show->dept_desc}}" data-deptcode="{{$show->dept_code}}" data-reqbyname="{{$show->sr_req_by}}" 
     data-assetloc="{{$show->asloc_desc}}" data-hassetloc="{{$show->asset_loc}}" data-hassetsite="{{$show->asset_site}}"
-    data-astypedesc="{{$show->astype_desc}}"
+    data-astypedesc="{{$show->astype_desc}}" data-failcode="{{$show->sr_fail_code}}"
     data-wotypedescx="{{$show->wotyp_code}}" data-impactcode="{{$show->sr_impact}}">
     <i class="icon-table fas fa-thumbs-up fa-lg">
     </i></a>
