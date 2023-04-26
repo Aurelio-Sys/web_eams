@@ -310,7 +310,7 @@ to get the desired effect
                 <li class="nav-item">
                   <a href="/returnbacksp" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>Return Spare Part</p>
+                      <p>Return Sparepart</p>
                   </a>
                 </li>
                 @endif
@@ -357,7 +357,7 @@ to get the desired effect
                 {{--  <li class="nav-item has-treeview">
                   <a href="{{url('/kebutuhansp')}}" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>Spare Part Usage</p>
+                      <p>Sparepart Usage</p>
                   </a>
                 </li>  --}}
                 @if(str_contains( Session::get('menu_access'), 'US03'))
@@ -537,17 +537,17 @@ to get the desired effect
                       </a>
                     </li>
                     @endif
-                    @if(str_contains( Session::get('menu_access'), 'MT01'))
-                    <li class="nav-item">
-                      <a href="/engmaster" class="nav-link ">
-                        <p>User</p>
-                      </a>
-                    </li>
-                    @endif
                     @if(str_contains( Session::get('menu_access'), 'MT02'))
                     <li class="nav-item">
                       <a href="/rolemaster" class="nav-link ">
                         <p>Role</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MT01'))
+                    <li class="nav-item">
+                      <a href="/engmaster" class="nav-link ">
+                        <p>User</p>
                       </a>
                     </li>
                     @endif
@@ -636,6 +636,57 @@ to get the desired effect
                     @endif
                   </ul>
                 </li>
+
+                <!-- start li sparepart -->
+                <li class="nav-item has-treeview">
+                  <a href="javascript:void(0)" class="nav-link">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>
+                      Sparepart
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    {{--  @if(str_contains( Session::get('menu_access'), 'MT10'))
+                      <li class="nav-item">
+                        <a href="/sptmaster" class="nav-link ">
+                          <p>Sparepart Type</p>
+                        </a>
+                      </li>
+                      @endif
+                      @if(str_contains( Session::get('menu_access'), 'MT11'))
+                      <li class="nav-item">
+                        <a href="/spgmaster" class="nav-link ">
+                          <p>Sparepart Group</p>
+                        </a>
+                      </li>
+                      @endif  --}}
+                      @if(str_contains( Session::get('menu_access'), 'MT27'))
+                      <li class="nav-item">
+                        <a href="/sitemaster" class="nav-link ">
+                          <p>Sparepart Site</p>
+                        </a>
+                      </li>
+                      @endif
+                      @if(str_contains( Session::get('menu_access'), 'MT29'))
+                      <li class="nav-item">
+                        <a href="/areamaster" class="nav-link ">
+                          <p>Sparepart Location</p>
+                        </a>
+                      </li>
+                      @endif
+                      @if(str_contains( Session::get('menu_access'), 'MT12'))
+                      <li class="nav-item">
+                        <a href="/spmmaster" class="nav-link ">
+                          <p>Sparepart Maintenance</p>
+                        </a>
+                      </li>
+                      @endif
+                  </ul><!-- ul sparepart -->
+                </li> <!-- li sparepart -->
+
+
+
                 <li class="nav-item has-treeview">
                   <a href="javascript:void(0)" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
@@ -732,52 +783,7 @@ to get the desired effect
                   
                 </ul><!-- ul asset -->
               </li> <!-- li asset -->
-              <li class="nav-item has-treeview">
-                <a href="javascript:void(0)" class="nav-link">
-                  <i class="nav-icon far fa-circle"></i>
-                  <p>
-                    Spare Part
-                    <i class="right fas fa-angle-left"></i>
-                  </p>
-                </a>
-                <ul class="nav nav-treeview">
-                  @if(str_contains( Session::get('menu_access'), 'MT10'))
-                    <li class="nav-item">
-                      <a href="/sptmaster" class="nav-link ">
-                        <p>Spare Part Type</p>
-                      </a>
-                    </li>
-                    @endif
-                    @if(str_contains( Session::get('menu_access'), 'MT11'))
-                    <li class="nav-item">
-                      <a href="/spgmaster" class="nav-link ">
-                        <p>Spare Part Group</p>
-                      </a>
-                    </li>
-                    @endif
-                    @if(str_contains( Session::get('menu_access'), 'MT27'))
-                    <li class="nav-item">
-                      <a href="/sitemaster" class="nav-link ">
-                        <p>Spare Part Site</p>
-                      </a>
-                    </li>
-                    @endif
-                    @if(str_contains( Session::get('menu_access'), 'MT29'))
-                    <li class="nav-item">
-                      <a href="/areamaster" class="nav-link ">
-                        <p>Spare Part Location</p>
-                      </a>
-                    </li>
-                    @endif
-                    @if(str_contains( Session::get('menu_access'), 'MT12'))
-                    <li class="nav-item">
-                      <a href="/spmmaster" class="nav-link ">
-                        <p>Spare Part Maintenance</p>
-                      </a>
-                    </li>
-                    @endif
-                  </ul><!-- ul spare part -->
-                </li> <!-- li spare part -->
+              
                 <li class="nav-item has-treeview">
                   <a href="javascript:void(0)" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
@@ -817,8 +823,69 @@ to get the desired effect
                         </a>
                       </li>
                     @endif
+                    @if(str_contains( Session::get('menu_access'), 'MT43'))
+                      <li class="nav-item">
+                        <a href="/rcmmstr" class="nav-link">
+                          <p>Routine Check Maintenance</p>
+                        </a>
+                      </li>
+                    @endif
                   </ul><!-- ul repair -->
-                </li> <!-- li repair -->
+                </li> <!-- li repair --> 
+
+                <!-- start li Approval --> 
+                <li class="nav-item has-treeview">
+                  <a href="javascript:void(0)" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>
+                      Approval
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    @if(str_contains( Session::get('menu_access'), 'MT44'))
+                    <li class="nav-item">
+                      <a href="/appsr" class="nav-link ">
+                        <p>Approval SR</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MT45'))
+                    <li class="nav-item">
+                      <a href="/appwo" class="nav-link ">
+                        <p>Approval WO</p>
+                      </a>
+                    </li>
+                    @endif
+                  </ul><!-- ul Approval -->
+                </li> <!-- li Approval --> 
+
+                <!-- start li Inventory --> 
+                <li class="nav-item has-treeview">
+                  <a href="javascript:void(0)" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>
+                      Inventory
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    @if(str_contains( Session::get('menu_access'), 'MT46'))
+                    <li class="nav-item">
+                      <a href="/invso" class="nav-link ">
+                        <p>Inventory Source</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MT47'))
+                    <li class="nav-item">
+                      <a href="/invsu" class="nav-link ">
+                        <p>Inventory Supply</p>
+                      </a>
+                    </li>
+                    @endif
+                  </ul><!-- ul Inventory -->
+                </li> <!-- li Inventory --> 
 
                 {{--  Belum perlu digunakan
                   @if(str_contains( Session::get('menu_access'), 'MT19'))

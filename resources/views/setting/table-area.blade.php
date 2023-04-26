@@ -3,6 +3,7 @@
     <td>{{$show->loc_code}}</td>
     <td>{{$show->loc_desc}}</td>
     <td>{{$show->loc_site}} - {{$show->site_desc}}</td>
+    <td>{{$show->loc_active}}</td>
     <!--
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editarea' data-toggle="tooltip"  title="Modify Data" data-target="#editModal" 

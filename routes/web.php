@@ -12,6 +12,11 @@ use App\Http\Controllers\Master\QCSpecController;
 use App\Http\Controllers\Master\InsListController;
 use App\Http\Controllers\Master\SplistController;
 use App\Http\Controllers\Master\PmassetController;
+use App\Http\Controllers\Master\RcmMstrController;
+use App\Http\Controllers\Master\AppSrController;
+use App\Http\Controllers\Master\AppWoController;
+use App\Http\Controllers\Master\InvSoController;
+use App\Http\Controllers\Master\InvSuController;
 use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\Report\RemainSpController;
@@ -675,6 +680,38 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/creatpmasset',[PmassetController::class, 'store']);
 	Route::post('/editpmasset',[PmassetController::class, 'update']);
 	Route::post('/delpmasset', [PmassetController::class, 'destroy']);
+
+	//Routine Check Maintenance
+	Route::get('/rcmmstr',[RcmMstrController::class, 'index']);
+	Route::post('/creatrcmmstr',[RcmMstrController::class, 'store']);
+	Route::post('/editrcmmstr',[RcmMstrController::class, 'update']);
+	Route::post('/delrcmmstr', [RcmMstrController::class, 'destroy']);
+
+	//Approval SR Maintenance
+	Route::get('/appsr',[AppSrController::class, 'index']);
+	Route::get('/editdetappsr',[AppSrController::class, 'editdetappsr']);
+	Route::post('/editappsr',[AppSrController::class, 'update']);
+	Route::post('/delappsr', [AppSrController::class, 'destroy']);
+
+	//Approval WO Maintenance
+	Route::get('/appwo',[AppWoController::class, 'index']);
+	Route::get('/getApp',[AppWoController::class, 'getApp']);
+	Route::post('/createappwo',[AppWoController::class, 'update']);
+
+	//Inventory Source Maintenance
+	Route::get('/invso',[InvSoController::class, 'index']);
+	Route::post('/createinvso',[InvSoController::class, 'store']);
+	Route::get('/editdetinvso',[InvSoController::class, 'editdetinvso']);
+	Route::post('/editinvso',[InvSoController::class, 'update']);
+	Route::post('/delinvso', [InvSoController::class, 'destroy']);
+
+	//Inventory Supply Maintenance
+	Route::get('/invsu',[InvSuController::class, 'index']);
+	Route::post('/createinvsu',[InvSuController::class, 'store']);
+	Route::get('/editdetinvsu',[InvSuController::class, 'editdetinvsu']);
+	Route::post('/editinvsu',[InvSuController::class, 'update']);
+	Route::post('/delinvsu', [InvSuController::class, 'destroy']);
+
 });
 
 Auth::routes();

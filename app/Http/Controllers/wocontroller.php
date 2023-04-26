@@ -273,11 +273,11 @@ class wocontroller extends Controller
             
             $maintenance = DB::table('pmc_mstr')->get();
 
-            $inslist = DB::table('ins_list')->get();
+            $inslist = DB::table('ins_list')->groupBy('ins_code')->get();
 
-            $splist = DB::table('spg_list')->get();
+            $splist = DB::table('spg_list')->groupBy('spg_code')->get();
 
-            $qclist = DB::table('qcs_list')->get();
+            $qclist = DB::table('qcs_list')->groupBy('qcs_code')->get();
 
             $impact = DB::table('imp_mstr')
                 ->get();
@@ -1092,6 +1092,7 @@ class wocontroller extends Controller
                 'wo_number'           => $runningnbr,
                 'wo_sr_number'	      => '',
                 'wo_asset_code'	      => $req->c_asset,
+                'wo_site'             => $req->hide_site,
                 'wo_type'	          => $req->cwotype,
                 'wo_status'	          => 'firm',
                 'wo_priority'	      => $req->c_priority,

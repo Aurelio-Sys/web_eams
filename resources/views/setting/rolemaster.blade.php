@@ -632,7 +632,7 @@
                 </label>
               </div>
             </div>
-            <div class="form-group row">
+            {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Engineer For PM') }}</label>
               <div class="col-6">
                 <label class="switch" for="SetEngpm">
@@ -640,7 +640,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Mapping Asset - Failure') }}</label>
               <div class="col-6">
@@ -659,7 +659,7 @@
                 </label>
               </div>
             </div>
-            <div class="form-group row">
+            {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Type ') }}</label>
               <div class="col-6">
                 <label class="switch" for="Spt">
@@ -676,7 +676,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Spare Part Site ') }}</label>
               <div class="col-6">
@@ -763,6 +763,51 @@
               <div class="col-6">
                 <label class="switch" for="SetPmcode">
                   <input type="checkbox" class="custom-control-input" id="SetPmcode" name="SetPmcode" value="MT39" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Routine Check Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="rcmmstr">
+                  <input type="checkbox" class="custom-control-input" id="rcmmstr" name="rcmmstr" value="MT43" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Approval SR') }}</label>
+              <div class="col-6">
+                <label class="switch" for="appsr">
+                  <input type="checkbox" class="custom-control-input" id="appsr" name="appsr" value="MT44" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Approval WO') }}</label>
+              <div class="col-6">
+                <label class="switch" for="appwo">
+                  <input type="checkbox" class="custom-control-input" id="appwo" name="appwo" value="MT45" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Inventory Source') }}</label>
+              <div class="col-6">
+                <label class="switch" for="invso">
+                  <input type="checkbox" class="custom-control-input" id="invso" name="invso" value="MT46" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Inventory Supply') }}</label>
+              <div class="col-6">
+                <label class="switch" for="invsu">
+                  <input type="checkbox" class="custom-control-input" id="invsu" name="invsu" value="MT47" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -1346,7 +1391,7 @@
                 </label>
               </div>
             </div>
-            <div class="form-group row">
+            {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Engineer For PM') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_SetEngpm">
@@ -1354,7 +1399,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Mapping Asset - Failure') }}</label>
               <div class="col-6">
@@ -1373,7 +1418,7 @@
                 </label>
               </div>
             </div>
-            <div class="form-group row">
+            {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Type ') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_Spt">
@@ -1390,7 +1435,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Spare Part Site ') }}</label>
               <div class="col-6">
@@ -1477,6 +1522,51 @@
               <div class="col-6">
                 <label class="switch" for="e_SetPmcode">
                   <input type="checkbox" class="custom-control-input" id="e_SetPmcode" name="e_SetPmcode" value="MT39" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Routine Check Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_rcmmstr">
+                  <input type="checkbox" class="custom-control-input" id="e_rcmmstr" name="e_rcmmstr" value="MT43" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Approval SR') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_appsr">
+                  <input type="checkbox" class="custom-control-input" id="e_appsr" name="e_appsr" value="MT44" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Approval WO') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_appwo">
+                  <input type="checkbox" class="custom-control-input" id="e_appwo" name="e_appwo" value="MT45" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Inventory Source') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_invso">
+                  <input type="checkbox" class="custom-control-input" id="e_invso" name="e_invso" value="MT46" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Inventory Supply') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_invsu">
+                  <input type="checkbox" class="custom-control-input" id="e_invsu" name="e_invsu" value="MT47" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -1727,11 +1817,11 @@
         } else {
           document.getElementById('e_SetMove').checked = false;
         }
-        if (listmenu.search("MT31") >= 0) {
+        {{--  if (listmenu.search("MT31") >= 0) {
           document.getElementById('e_SetEngpm').checked = true;
         } else {
           document.getElementById('e_SetEngpm').checked = false;
-        }
+        }  
         if (listmenu.search("MT10") >= 0) {
           document.getElementById('e_Spt').checked = true;
         } else {
@@ -1741,7 +1831,7 @@
           document.getElementById('e_Spg').checked = true;
         } else {
           document.getElementById('e_Spg').checked = false;
-        }
+        } --}}
         if (listmenu.search("MT27") >= 0) {
           document.getElementById('e_SetSpsite').checked = true;
         } else {
@@ -1811,6 +1901,31 @@
           document.getElementById('e_SetPmcode').checked = true;
         } else {
           document.getElementById('e_SetPmcode').checked = false;
+        }
+        if (listmenu.search("MT43") >= 0) {
+          document.getElementById('e_rcmmstr').checked = true;
+        } else {
+          document.getElementById('e_rcmmstr').checked = false;
+        }
+        if (listmenu.search("MT44") >= 0) {
+          document.getElementById('e_appsr').checked = true;
+        } else {
+          document.getElementById('e_appsr').checked = false;
+        }
+        if (listmenu.search("MT45") >= 0) {
+          document.getElementById('e_appwo').checked = true;
+        } else {
+          document.getElementById('e_appwo').checked = false;
+        }
+        if (listmenu.search("MT46") >= 0) {
+          document.getElementById('e_invso').checked = true;
+        } else {
+          document.getElementById('e_invso').checked = false;
+        }
+        if (listmenu.search("MT47") >= 0) {
+          document.getElementById('e_invsu').checked = true;
+        } else {
+          document.getElementById('e_invsu').checked = false;
         }
         
         {{--  if (listmenu.search("MT03") >= 0) {

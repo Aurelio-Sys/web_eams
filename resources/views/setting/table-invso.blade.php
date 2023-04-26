@@ -1,26 +1,26 @@
 @forelse($data as $show)
 
-@php($qeng = $datadet->where('egr_code','=',$show->egr_code))
-@php($eng = "")
-@foreach($qeng as $qeng)
-  @if($eng == "")
-    @php($eng = $qeng->egr_eng . " (" . $qeng->eng_desc . ") ")
+@php($qdet = $datadet->where('inc_asset_site','=',$show->inc_asset_site)->where('inc_source_site','=',$show->inc_source_site))
+@php($stepdesc = "")
+@foreach($qdet as $qdet)
+  @if($stepdesc == "")
+    @php($stepdesc = $qdet->inc_loc)
   @else
-    @php($eng = $eng . " , " . $qeng->egr_eng . " (" . $qeng->eng_desc . ") ")
+    @php($stepdesc = $stepdesc . " , " . $qdet->inc_loc)
   @endif
 @endforeach
 
 <tr>
-    <td>{{$show->egr_code}}</td>
-    <td>{{$show->egr_desc}}</td>
-    <td>{{$eng}}</td>
+    <td>{{$show->inc_asset_site}}</td>
+    <td>{{$show->inc_source_site}}</td>
+    <td>{{$stepdesc}}</td>
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal"
-        data-code="{{$show->egr_code}}" data-desc="{{$show->egr_desc}}">
+        data-code="{{$show->inc_asset_site}}" data-desc="{{$show->inc_source_site}}" >
         <i class="icon-table fa fa-edit fa-lg"></i></a>
         &ensp;
         <a href="javascript:void(0)" class="deletedata" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal" 
-        data-code="{{$show->egr_code}}" data-desc="{{$show->egr_desc}}">
+        data-code="{{$show->inc_asset_site}}" data-desc="{{$show->inc_source_site}}">
         <i class="icon-table fa fa-trash fa-lg"></i></a>
     </td>
 </tr>

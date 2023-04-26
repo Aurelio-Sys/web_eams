@@ -4,7 +4,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-4">
-            <h1 class="m-0 text-dark">Spare Part Site Maintenance</h1>
+            <h1 class="m-0 text-dark">Sparepart Site Maintenance</h1>
         </div>
     </div><!-- /.row -->
     <div class="col-md-12">
@@ -77,8 +77,9 @@
             <tr>
                 <th width="20%">Code<span id="location_id_icon"></span></th>
                 <th width="50%">Description</th>
-                <th width="20%">Active for eAMS</th>
-                <th width="10%">Action</th>
+                <th width="10%">Active</th>
+                {{--  <th width="20%">Active for eAMS</th>
+                <th width="10%">Action</th>  --}}
             </tr>
         </thead>
         <tbody>

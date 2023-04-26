@@ -3,6 +3,7 @@
     <td>{{$show->site_code}}</td>
     <td>{{$show->site_desc}}</td>
     <td>{{$show->site_flag}}</td>
+    {{--  <td>{{$show->site_flag}}</td>
     
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal" 
@@ -11,8 +12,8 @@
         {{--  &ensp;
         <a href="javascript:void(0)" class="deletedata" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal" 
         data-sitecode="{{$show->site_code}}" data-desc="{{$show->site_desc}}">
-            <i class="icon-table fa fa-trash fa-lg"></i></a>  --}}
-    </td>
+            <i class="icon-table fa fa-trash fa-lg"></i></a> 
+    </td>  --}}
 
 </tr>
 @empty

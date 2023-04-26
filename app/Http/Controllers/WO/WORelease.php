@@ -4,6 +4,7 @@ namespace App\Http\Controllers\WO;
 
 use App\Http\Controllers\Controller;
 use App\Services\CreateTempTable;
+use App\Services\WSAServices;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
@@ -19,41 +20,38 @@ class WORelease extends Controller
     public function browse(Request $request)
     {
 
-        // dd(Session::get('role'));
-
         $asset1 = DB::table('asset_mstr')
             ->where('asset_active', '=', 'Yes')
             ->get();
 
         if(Session::get('role') == 'ADMIN'){
             $data = DB::table('wo_mstr')
-                ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset')
-                ->whereIn('wo_status', ['open', 'Released', 'whsconfirm', 'plan', 'started'])
-                ->orderby('wo_created_at', 'desc')
-                ->orderBy('wo_mstr.wo_id', 'desc');
+                ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
+                ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+                ->whereIn('wo_status', ['firm'])
+                ->orderby('wo_system_create', 'desc');
         }else{
+
+            $username = Session::get('username');
+
+            // dd($username);
+
             $data = DB::table('wo_mstr')
-            ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset')
-            ->whereIn('wo_status', ['open', 'Released', 'whsconfirm', 'plan', 'started'])
-            ->where(function ($query) {
-                $query->where('wo_engineer1', '=', Session()->get('username'))
-                    ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                    ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                    ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                    ->orwhere('wo_engineer5', '=', Session()->get('username'));
-            })
-            ->orderby('wo_created_at', 'desc')
-            ->orderBy('wo_mstr.wo_id', 'desc');
+            ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
+            ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+            ->whereIn('wo_status', ['firm'])
+            ->where('wo_list_engineer', 'like', '%'.$username.'%')
+            ->orderby('wo_system_create', 'desc');
         }
 
         
 
         if ($request->s_nomorwo) {
-            $data->where('wo_nbr', '=', $request->s_nomorwo);
+            $data->where('wo_number', 'like', '%'.$request->s_nomorwo.'%');
         }
 
         if ($request->s_asset) {
-            $data->where('asset_code', '=', $request->s_asset);
+            $data->where('wo_asset_code', '=', $request->s_asset);
         }
 
         if ($request->s_priority) {
@@ -68,302 +66,187 @@ class WORelease extends Controller
 
     public function detailrelease($id)
     {
+
         $data = DB::table('wo_mstr')
-            ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-            ->where('wo_id', '=', $id)
+            // ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
+            ->join('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+            ->where('wo_mstr.id', '=', $id)
             ->first();
 
-        $getwonbr = DB::table('wo_mstr')
-            ->where('wo_id', '=', $id)
-            ->first();
-
-        $rpdata = DB::table('wo_mstr')
-            ->select(
-                'wo_repair_code1',
-                'wo_repair_code2',
-                'wo_repair_code3',
-                'rep1.repm_desc as rc1',
-                'rep2.repm_desc as rc2',
-                'rep3.repm_desc as rc3'
-            )
-            ->leftJoin('rep_master as rep1', 'wo_mstr.wo_repair_code1', 'rep1.repm_code')
-            ->leftJoin('rep_master as rep2', 'wo_mstr.wo_repair_code2', 'rep2.repm_code')
-            ->leftJoin('rep_master as rep3', 'wo_mstr.wo_repair_code3', 'rep3.repm_code')
-            ->where('wo_id', '=', $id)
-            ->first();
-
-        // dd($rpdata);
-
-        $insdata = DB::table('rep_det')
-            ->join('rep_master', 'repm_code', 'repdet_code')
-            ->join('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-            // ->where('repm_code','=','IT01')
-            ->select('repm_code', 'repdet_ins', 'repm_desc', 'ins_code', 'ins_desc')
-            ->orderby('repdet_code')
-            ->get();
-
-        // dd($insdata);
-
-        $spdata = DB::table('sp_mstr')
-            ->orderBy('spm_code')
-            ->get();
-
-        $wodetdata = DB::table('wo_dets')
-            ->whereWo_dets_nbr($data->wo_nbr)
-            ->get();
-
-        if ($data->wo_status == 'plan') {
-            $sparepart1 = "";
-            $sparepart2 = "";
-            $sparepart3 = "";
-            if ($data->wo_repair_code1 != "") {
-
-                $sparepart1 = DB::table('wo_mstr')
-                    ->select('wo_repair_code1 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status')
-                    ->leftJoin('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
-                    ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-                    ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-                    ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-                    ->where('wo_id', '=', $id)
-                    ->orderBy('repm_ins', 'asc')
-                    ->orderBy('repdet_step', 'asc')
-                    ->orderBy('ins_code', 'asc')
-                    ->get();
-
-                $rc1 = DB::table('wo_mstr')
-                    ->select('repm_code', 'repm_desc')
-                    ->join('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
-                    ->where('wo_id', '=', $id)
-                    ->get();
-
-                // $tempSP1 = (new CreateTempTable())->createSparePartUsed($sparepart1);
-
-                $combineSP = $sparepart1;
-                $rc = $rc1;
-
-            }
-
-            if ($data->wo_repair_code2 != "") {
-                // dump('repaircode2');
-                $sparepart2 = DB::table('wo_mstr')
-                    ->select('wo_repair_code2 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status')
-                    ->leftJoin('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
-                    ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-                    ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-                    ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-                    ->where('wo_id', '=', $id)
-                    ->orderBy('repm_ins', 'asc')
-                    ->orderBy('repdet_step', 'asc')
-                    ->orderBy('ins_code', 'asc')
-                    ->get();
-
-                $rc2 = DB::table('wo_mstr')
-                    ->select('repm_code', 'repm_desc')
-                    ->join('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
-                    ->where('wo_id', '=', $id)
-                    ->get();
-
-                // $tempSP2 = (new CreateTempTable())->createSparePartUsed($sparepart2);
-
-                $combineSP = $sparepart1->merge($sparepart2);
-                $rc = $rc1->merge($rc2);
-            }
-
-            if ($data->wo_repair_code3 != "") {
-                // dump('repaircode3');
-                $sparepart3 = DB::table('wo_mstr')
-                    ->select('wo_repair_code3 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status')
-                    ->leftJoin('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
-                    ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-                    ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-                    ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-                    ->where('wo_id', '=', $id)
-                    ->orderBy('repm_ins', 'asc')
-                    ->orderBy('repdet_step', 'asc')
-                    ->orderBy('ins_code', 'asc')
-                    ->get();
-
-                $rc3 = DB::table('wo_mstr')
-                    ->select('repm_code', 'repm_desc')
-                    ->join('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
-                    ->where('wo_id', '=', $id)
-                    ->get();
-
-                // $tempSP3 = (new CreateTempTable())->createSparePartUsed($sparepart3);
-
-                $combineSP = $sparepart1->merge($sparepart2)->merge($sparepart3);
-                $rc = $rc1->merge($rc2)->merge($rc3);
-            }
-
-            // dd($rc);
-
-            // dd($rc);
-
-            if ($data->wo_repair_code1 == "" && $data->wo_repair_code2 == "" && $data->wo_repair_code3 == "" && $data->wo_repair_group != "") {
-                $combineSP = DB::table('xxrepgroup_mstr')
-                    ->select('repm_code as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 
-                    'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status')
-                    ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
-                    ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-                    ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-                    ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-                    ->leftJoin('wo_mstr','wo_repair_group','xxrepgroup_mstr.xxrepgroup_nbr')
-                    ->where('xxrepgroup_mstr.xxrepgroup_nbr', '=', $getwonbr->wo_repair_group)
-                    ->where('wo_id', '=', $id)
-                    ->orderBy('repair_code', 'asc')
-                    ->orderBy('repm_ins', 'asc')
-                    ->orderBy('repdet_step', 'asc')
-                    ->orderBy('ins_code', 'asc')
-                    ->get();
-
-
-                $rc = DB::table('xxrepgroup_mstr')
-                    ->select('repm_code', 'repm_desc')
-                    ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
-                    ->get();
-            }
-
-            if($data->wo_repair_code1 == "" && $data->wo_repair_code2 == "" && $data->wo_repair_code3 == "" && $data->wo_repair_group == ""){
-                alert()->html('Error Message',"To proceed, you must first set up the <b>Repair Code / Repair Group</b> in the Work Order Maintenance -> Edit WO : ".$data->wo_nbr.".",'error')->persistent('Dismiss');
-                
-                return back();
-            }
-                        
-        } /* if($data->wo_status == 'plan') */ else {
-            $combineSP = DB::table('wo_mstr')
-                ->select(
-                    'wo_dets_rc as repair_code',
-                    'wo_dets_id as repdet_step',
-                    'wo_dets_ins as ins_code',
-                    'insd_part_desc',
-                    'wo_dets_sp as insd_part',
-                    'insd_det.insd_um',
-                    'insd_qty',
-                    'wo_status',
-                    'wo_dets_line'
-                )
-                ->leftJoin('wo_dets', 'wo_mstr.wo_nbr', 'wo_dets.wo_dets_nbr')
-                ->leftJoin('insd_det', function ($join) {
-                    $join->on('wo_dets.wo_dets_ins', '=', 'insd_det.insd_code');
-                    $join->on('wo_dets.wo_dets_sp', '=', 'insd_det.insd_part');
-                })
-                ->where('wo_id', '=', $id)
-                ->orderBy('wo_dets_line')
-                ->orderBy('ins_code', 'asc')
-                ->orderBy('repdet_step', 'asc')
+        $sp_all = DB::table('sp_mstr')
+                ->select('spm_code','spm_desc', 'spm_um','spm_site','spm_loc','spm_lot')
+                ->where('spm_active','=', 'Yes')
                 ->get();
 
+            // dd($data->wo_sp_code);
+
+        if ($data->wo_sp_code !== null) {
+            // melakukan sesuatu jika nilai dari $data->wo_sp_code tidak null
+
+            $wo_sp = DB::table('spg_list')
+                    ->join('sp_mstr','sp_mstr.spm_code','spg_list.spg_spcode')
+                    ->where('spg_code','=', $data->wo_sp_code)
+                    ->get();
             
-            // dd($combineSP);
+        } else {
+            // melakukan sesuatu jika nilai dari $data->wo_sp_code null
+            $wo_sp = collect([]);
+        }
 
-            $rc = DB::table('wo_mstr')
-                ->select('repm_code', 'repm_desc')
-                ->join('wo_dets', 'wo_mstr.wo_nbr', 'wo_dets.wo_dets_nbr')
-                ->join('rep_master', 'wo_dets.wo_dets_rc', 'rep_master.repm_code')
-                ->where('wo_id', '=', $id)
-                ->distinct('wo_dets_rc')
-                ->get();
-
-        } /*  else ($data->wo_status == 'open') */
-
-        // dd($combineSP);
-        // dd($insdata);
-
-        return view('workorder.worelease-detail', compact('data', 'spdata', 'combineSP', 'rpdata', 'insdata', 'rc', 'wodetdata'));
+        return view('workorder.worelease-detail', compact('data','sp_all', 'wo_sp'));
     }
 
     public function submitrelease(Request $req)
-    {
+    {        
+
         DB::beginTransaction();
 
         try {
-            foreach ($req->partneed as $a => $key) {
-                /* Mencaari line terakhir */
-                if($req->line[$a] == "") {
-                    $cekline = DB::table('wo_dets')
-                    ->where('wo_dets_nbr', '=', $req->hide_wonum)
-                    ->max('wo_dets_line');
 
-                    $dline = $cekline + 1;
+            //mengelompokan data dari request depan
+            $requestData = $req->all(); // mengambil data dari request
+            $data = [
+                "spreq" => $requestData['spreq'],
+                "qtystandard" => $requestData['qtystandard'],
+                "qtyrequired" => $requestData['qtyrequired'],
+            ];
+            
+            $groupedData = collect($data['spreq'])->map(function ($spreq, $key) use ($data) {
+                return [
+                    'spreq' => $spreq,
+                    'qtystandard' => $data['qtystandard'][$key],
+                    'qtyrequired' => $data['qtyrequired'][$key],
+                ];
+            })->groupBy('spreq')->map(function ($group) {
+                $totalQtyRequired = $group->sum('qtyrequired');
+                $totalQtyStandard = $group->sum('qtystandard');
+            
+                return [
+                    'spreq' => $group[0]['spreq'],
+                    'qtystandard' => $totalQtyStandard,
+                    'qtyrequired' => $totalQtyRequired,
+                ];
+            })->values();
+
+            $data = [];
+
+            //cari dan simpan ke dalam inv_required kemudian ambil data dari QAD berdasarkan table inp_supply yang kondisinya inp_asset_site sama dengan asset site wo yang di release
+            foreach($groupedData as $loopsp){
+                $ir = DB::table('inv_required')
+                    ->where('ir_spare_part', $loopsp['spreq'])
+                    ->where('ir_site', $req->assetsite)
+                    ->first();
+                if ($ir) {
+                    // jika data sudah ada, update record table inv_required
+                    DB::table('inv_required')
+                        ->where('ir_spare_part', $loopsp['spreq'])
+                        ->where('ir_site', $req->assetsite)
+                        ->update([
+                            'inv_qty_required' => DB::raw('inv_qty_required + '.$loopsp['qtyrequired']), //inv_qty_required yang lama + inv_qty_required dari wo yang baru di release
+                            'ir_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
                 } else {
-                    $dline = $req->line[$a];
-                }
-                
-                $cek = DB::table('wo_dets')
-                    ->where('wo_dets_nbr', '=', $req->hide_wonum)
-                    ->where('wo_dets_line', '=', $dline)
-                    ->count();
-
-                /* Insert jika line baru, update jika line sudah ada */
-                if ($cek == 0) {
-                    DB::table('wo_dets')->insert([
-                        'wo_dets_nbr' => $req->hide_wonum,
-                        'wo_dets_line' => $dline,
-                        'wo_dets_rc' => $req->repcode[$a],
-                        'wo_dets_sp' => $req->partneed[$a],
-                        'wo_dets_sp_qty' => $req->qtyrequest[$a],
-                        'wo_dets_ins' => $req->inscode[$a] ?? null,
-                        'wo_dets_worelease_note' => $req->note_release[$a],
-                        'wo_dets_rlsuser' => Session()->get('username'),
-                        'wo_dets_created_at' => Carbon::now()->toDateTimeString(),
+                    // jika data belum ada, buat data baru
+                    DB::table('inv_required')->insert([
+                        'ir_spare_part' => $loopsp['spreq'],
+                        'ir_site' => $req->assetsite,
+                        'inv_qty_required' => $loopsp['qtyrequired'],
+                        'ir_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        'ir_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                     ]);
-                } else {
-                    if ($req->tick[$a] == 0) {
-                        DB::table('wo_dets')
-                            ->where('Wo_dets_nbr', '=', $req->hide_wonum)
-                            ->where('wo_dets_line', '=', $dline)
-                            ->update(
-                                [
-                                    'wo_dets_rc' => $req->repcode[$a],
-                                    'wo_dets_sp' => $req->partneed[$a],
-                                    'wo_dets_ins' => $req->inscode[$a] ?? null,
-                                    'wo_dets_sp_qty' => $req->qtyrequest[$a],
-                                    'wo_dets_worelease_note' => $req->note_release[$a],
-                                    'wo_dets_rlsuser' => Session()->get('username'),
-                                    'wo_dets_created_at' => Carbon::now()->toDateTimeString(),
-                                ]
-                            );
+                }
+
+                //harus ada datanya. ambil data dari table inp_supply untuk kemudian dicheck ke QAD untuk qty on hand yang ada di QAD
+                $supplydata = DB::table('inp_supply')
+                            ->where('inp_asset_site','=', $req->assetsite)
+                            ->where('inp_avail','=', 'Yes')
+                            ->get();
+
+                // dd($supplydata);
+
+                //looping wsa ke qad berdasarkan dari table inventory dengan kondisi inp_asset_site adalah request dari asset wo dan inp_avail nya yes
+                foreach($supplydata as $invsupply){
+                    //wsa ambil data ke qad
+                    $qadsupplydata = (new WSAServices())->wsagetsupply($loopsp['spreq'],$invsupply->inp_supply_site,$invsupply->inp_loc);
+
+                    if ($qadsupplydata === false) {
+                        toast('WSA Connection Failed', 'error')->persistent('Dismiss');
+                        return redirect()->back();
                     } else {
-                        DB::table('wo_dets')
-                            ->where('Wo_dets_nbr', '=', $req->hide_wonum)
-                            ->where('wo_dets_line', '=', $dline)
-                            ->delete(); 
+
+                        // jika hasil WSA ke QAD tidak ditemukan
+                        if ($qadsupplydata[1] == "false") {
+                            // dd('stop there');
+                            toast('Something went wrong with the data', 'error')->persistent('Dismiss');
+                            return redirect()->back();
+                        }
+
+
+                        // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+                        
+                        $resultWSA = $qadsupplydata[0];
+                        
+                        $t_domain = (string) $resultWSA[0]->t_domain;
+                        $t_part = (string) $resultWSA[0]->t_part;
+                        $t_site = (string) $resultWSA[0]->t_site;
+                        $t_loc = (string) $resultWSA[0]->t_loc;
+                        $t_qtyoh = (string) $resultWSA[0]->t_qtyoh;
+
+                        array_push($data, [
+                            't_domain' => $t_domain,
+                            't_part' => $t_part,
+                            't_site' => $t_site,
+                            't_loc' => $t_loc,
+                            't_qtyoh' => $t_qtyoh,
+                        ]);
                     }
+
+                    //tampung didalam array
+
+
+                }
+
+            }
+
+
+            // dd($data);
+
+
+            //proses pengelompokan berdasarkan part dan site sehingga didapat total qty onhand untuk part per site nya data QAD
+            foreach ($data as $item) {
+                $part = $item['t_part'];
+                $site = $item['t_site'];
+                $qtyoh = $item['t_qtyoh'];
+            
+                if (!isset($result[$part][$site])) {
+                    $result[$part][$site] = [
+                        'part' => $part,
+                        'site' => $site,
+                        'qtyoh' => 0,
+                    ];
+                }
+            
+                $result[$part][$site]['qtyoh'] += $qtyoh;
+            }
+            
+
+            //hasil pengelompokan/grouping by part dan site data QAD kemudian ditampung dalam $output
+            $output = [];
+            foreach ($result as $part => $sites) {
+                foreach ($sites as $site => $qtyoh) {
+                    $output[] = $qtyoh;
                 }
             }
 
-            DB::table('wo_mstr')
-                ->where('wo_nbr', '=', $req->hide_wonum)
-                ->update([
-                    'wo_status' => 'Released',
-                    'wo_user_input' => Session::get('username'),
-                    'wo_updated_at' => Carbon::now()->toDateTimeString(),
-                ]);
+            dd(collect($output));
 
-            /* cek status jika terdapat item yang belum diconfirm whs*/
-            $cekstatus = DB::table('wo_dets')
-                ->where('wo_dets_nbr', '=', $req->hide_wonum)
-                ->where(function ($query) {
-                    $query->where('wo_dets_wh_conf', '', 0)
-                          ->orWhere('wo_dets_wh_conf', '=', null);
-                })
-                ->count();
-        // dd($a);  
-            /* jika WO tidak ada spare part, status akan menjadi open */
-            $ceksp = DB::table('wo_dets')
-                ->where('wo_dets_nbr','=',$req->hide_wonum)
-                ->where('wo_dets_sp','<>',null)
-                ->count();
+            //mulai membandingkan data antara data di table inv_required (web) dengan qty tersedia dari data QAD ($output)
 
-            if($cekstatus == 0 || $ceksp == 0) {
-                DB::table('wo_mstr')
-                ->where('wo_nbr', '=', $req->hide_wonum)
-                ->update([
-                    'wo_status' => 'open',
-                    'wo_user_input' => Session::get('username'),
-                    'wo_updated_at' => Carbon::now()->toDateTimeString(),
-                ]);
-            }
+            //ambil data dari table inv_required
+            $getInvRequired = DB::table('inv_required')
+                            ->where()
+
+            dd('stop here');
 
             DB::commit();
 
