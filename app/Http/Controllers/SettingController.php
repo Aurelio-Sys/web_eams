@@ -247,6 +247,7 @@ class SettingController extends Controller
         $access = $req->dept . $req->Skill . $req->Eng . $req->RoleMaint . $req->EngGroup . $req->cbRunning . $req->SetWsa . $req->SetFntype . $req->Fn . $req->SetImp . 
             $req->Astype . $req->Asgroup . $req->Supp . $req->SetAssetsite . $req->SetAssetloc . $req->Asset . $req->Aspar . $req->SetMove . $req->SetEngpm . $req->SetUm . $req->SetAsfn . $req->pmasset . 
             $req->Spt . $req->Spg . $req->SetSpsite . $req->SetSploc . $req->Spm . $req->Rep . $req->SetRepgroup . $req->SetIns . $req->SetSplist . $req->qcspec . $req->SetPmcode . $req->rcmmstr .
+            $req->appsr . $req->appwo . $req->invso . $req->invsu .
             $req->cbWoCreatedirect . $req->cbWoMaint . $req->cbWoBrowse . $req->cbWoRelease . $req->cbWoWhsConf . $req->cbWoStart . $req->cbWoReport . $req->cbWoQc . 
             $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbSRapprovaleng .
             $req->cbUSMT . $req->cbUSmultiMT . $req->cbUSGen . $req->cbUSBrowse .
@@ -312,6 +313,7 @@ class SettingController extends Controller
         $access = $req->e_dept . $req->e_Skill . $req->e_Eng . $req->e_RoleMaint . $req->e_EngGroup . $req->e_cbRunning . $req->e_SetWsa . $req->e_SetFntype . $req->e_Fn . $req->e_SetImp . 
             $req->e_Astype . $req->e_Asgroup . $req->e_Supp . $req->e_SetAssetsite . $req->e_SetAssetloc . $req->e_Asset . $req->e_Aspar . $req->e_SetMove . $req->e_SetEngpm . $req->e_SetUm . $req->e_SetAsfn . $req->e_pmasset . 
             $req->e_Spt . $req->e_Spg . $req->e_SetSpsite . $req->e_SetSploc . $req->e_Spm . $req->e_Rep . $req->e_SetRepgroup . $req->e_SetIns . $req->e_SetSplist . $req->e_qcspec . $req->e_SetPmcode . $req->e_rcmmstr .
+            $req->e_appsr . $req->e_appwo . $req->e_invso . $req->e_invsu .
             $req->e_cbWoCreatedirect . $req->e_cbWoMaint . $req->e_cbWoBrowse . $req->e_cbWoRelease . $req->e_cbWoWhsConf . $req->e_cbWoStart . $req->e_cbWoReport . $req->e_cbWoQc . 
             $req->e_cbSRcreate . $req->e_cbSRapprove . $req->e_cbSRbrowse . $req->e_cbSRapprovaleng .
             $req->e_cbUSMT . $req->e_cbUSmultiMT . $req->e_cbUSGen . $req->e_cbUSBrowse .
@@ -1081,20 +1083,33 @@ class SettingController extends Controller
                 toast('Data Location tidak ditemukan', 'error')->persistent('Dismiss');
                 return redirect()->back();
             } else {
+
+                //cek data site di web
+                $datasite = DB::table('site_mstrs')
+                    ->whereSite_flag('Yes')
+                    ->orderBy('site_code')
+                    ->get();
                
                 foreach ($locdata[0] as $datas) {
-                    $rsloc = LocMstr::firstOrNew(['loc_site'=>$datas->t_site,
-                                'loc_code'=>$datas->t_loc,
-                                'loc_desc'=> $datas->t_loc_desc]);
+                    //cek apakah data site sudah ada di tabel web
+                    $ceksite = $datasite->where('site_code','=',$datas->t_site)->count();
+                    if($ceksite > 0) {
+                        // jika kode site dan kode lokasi kosong maka tidak disimpan ke table
+                        if($datas->t_site != "" && $datas->t_loc != "") {
+                            $rsloc = LocMstr::firstOrNew(['loc_site'=>$datas->t_site,
+                                    'loc_code'=>$datas->t_loc,
+                                    'loc_desc'=> $datas->t_loc_desc]);
 
-                    $rsloc->loc_site = $datas->t_site;
-                    $rsloc->loc_code = $datas->t_loc;
-                    $rsloc->loc_desc = $datas->t_loc_desc;
-                    $rsloc->loc_active = "Yes";
-                    $rsloc->created_at = Carbon::now()->toDateTimeString();
-                    $rsloc->updated_at = Carbon::now()->toDateTimeString();
-                    $rsloc->edited_by = Session::get('username');
-                    $rsloc->save();
+                            $rsloc->loc_site = $datas->t_site;
+                            $rsloc->loc_code = $datas->t_loc;
+                            $rsloc->loc_desc = $datas->t_loc_desc;
+                            $rsloc->loc_active = "Yes";
+                            $rsloc->created_at = Carbon::now()->toDateTimeString();
+                            $rsloc->updated_at = Carbon::now()->toDateTimeString();
+                            $rsloc->edited_by = Session::get('username');
+                            $rsloc->save();
+                        }
+                    }                    
                 }
             }
         }
