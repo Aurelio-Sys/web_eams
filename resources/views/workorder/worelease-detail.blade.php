@@ -61,6 +61,7 @@
         {{ csrf_field() }}
 
         <input type="hidden" name="hide_wonum" value="{{$data->wo_number}}" />
+        <input type="hidden" name="assetsite" value="{{$data->wo_site}}">
 
         <div class="modal-header">
         </div>
@@ -85,7 +86,6 @@
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$datas->spm_code}} -- {{$datas->spm_desc}}
                                     <input type="hidden" name="spreq[]" value="{{$datas->spm_code}}" />
-                                    <input type="hidden" name="site[]" value="{{$datas->spm_site}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     {{number_format($datas->spg_qtyreq,2)}}
@@ -107,7 +107,7 @@
                                     <select name="spreq[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="200px" autofocus>
                                         <option value=""> -- Select Spare Part -- </option>
                                         @foreach($sp_all as $da)
-                                        <option value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>
+                                        <option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>
                                         @endforeach
                                     </select>
                                 </td>
@@ -186,7 +186,7 @@
             cols += '<select name="spreq[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus >';
             cols += '<option value = ""> -- Select Data -- </option>';
             @foreach($sp_all as $da)
-            cols += '<option value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
+            cols += '<option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
             @endforeach
             cols += '</select>';
             cols += '</td>';
