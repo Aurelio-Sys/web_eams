@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Session;
 
 class WHSConfirm extends Controller
 {
@@ -35,39 +36,43 @@ class WHSConfirm extends Controller
             ->where('asset_active', '=', 'Yes')
             ->get();
 
-        $data = DB::table('wo_mstr')
-            ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset')
-            ->where('wo_status', '=', 'Released')
-            /* ->where(function ($query) {
-                $query->where('wo_engineer1', '=', Session()->get('username'))
-                    ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                    ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                    ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                    ->orwhere('wo_engineer5', '=', Session()->get('username'));
-            }) */
-            ->orderby('wo_created_at', 'desc')
-            ->orderBy('wo_mstr.wo_id', 'desc');
+            if(Session::get('role') == 'ADMIN'){
+                $data = DB::table('wo_mstr')
+                    ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
+                    ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+                    ->whereIn('wo_status', ['firm'])
+                    ->orderby('wo_system_create', 'desc');
+            }else{
+    
+                $username = Session::get('username');
+    
+                // dd($username);
+    
+                $data = DB::table('wo_mstr')
+                ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
+                ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+                ->whereIn('wo_status', ['firm'])
+                ->where('wo_list_engineer', 'like', '%'.$username.'%')
+                ->orderby('wo_system_create', 'desc');
+            }
+    
+            
+    
+            if ($request->s_nomorwo) {
+                $data->where('wo_number', 'like', '%'.$request->s_nomorwo.'%');
+            }
+    
+            if ($request->s_asset) {
+                $data->where('wo_asset_code', '=', $request->s_asset);
+            }
+    
+            if ($request->s_priority) {
+                $data->where('wo_priority', '=', $request->s_priority);
+            }
+    
+            $data = $data->paginate(10);
 
-        if ($request->s_nomorwo) {
-            $data->where('wo_nbr', '=', $request->s_nomorwo);
-        }
-
-        if ($request->s_asset) {
-            $data->where('asset_code', '=', $request->s_asset);
-        }
-
-        if ($request->s_priority) {
-            $data->where('wo_priority', '=', $request->s_priority);
-        }
-
-        $data = $data->paginate(10);
-
-        $data2 = DB::table('wo_mstr')
-                        ->join('wo_dets','wo_dets.wo_dets_nbr','wo_mstr.wo_nbr')
-                        ->where('wo_status','=','Released')
-                        ->get();
-
-        return view('workorder.whsconfirm-browse', ['asset1' => $asset1, 'data' => $data, 'data2' => $data2]);
+        return view('workorder.whsconfirm-browse', ['asset1' => $asset1, 'data' => $data]);
     }
 
     public function detailwhs($id)

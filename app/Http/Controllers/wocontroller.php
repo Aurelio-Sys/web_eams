@@ -1140,6 +1140,7 @@ class wocontroller extends Controller
             return back();
 
         } catch (Exception $e){
+            dd($e);
             DB::rollBack();
             toast("The data couldn't be saved due to an error.", 'error');
             return back();
