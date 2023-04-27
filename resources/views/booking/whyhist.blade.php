@@ -17,7 +17,7 @@
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-<form action="/invsu" method="GET">
+<form action="/whyhist" method="GET">
 <!-- Bagian Searching -->
 <div class="container-fluid mb-2">
     <div class="row">
@@ -30,19 +30,19 @@
         <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
         <div class="card card-body bg-black rounded-0">
             <div class="col-12 form-group row">
-                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Site</label>
+                <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
-                    <input id="s_code" type="text" class="form-control" name="s_code"
+                    <input id="s_asset" type="text" class="form-control" name="s_asset"
                     value="" autofocus autocomplete="off"/>
                 </div>
-                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Sparepart Supply Site</label>
+                <label for="s_wo" class="col-md-2 col-sm-2 col-form-label text-md-right">WO Number</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
-                    <input id="s_desc" type="text" class="form-control" name="s_desc"
+                    <input id="s_wo" type="text" class="form-control" name="s_wo"
                     value="" autofocus autocomplete="off"/>
                 </div>
-                <label for="s_loc" class="col-md-2 col-sm-2 col-form-label text-md-right">Location</label>
+                <label for="s_problem" class="col-md-2 col-sm-2 col-form-label text-md-right">Problem</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
-                    <input id="s_loc" type="text" class="form-control" name="s_loc"
+                    <input id="s_problem" type="text" class="form-control" name="s_problem"
                     value="" autofocus autocomplete="off"/>
                 </div>
                 <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
@@ -63,9 +63,11 @@
         <thead>
             <tr>
                 <th width="20%">Asset</th>
-                <th width="20%">WO Number</th>
-                <th width="45%">Problem</th>
-                <th width="15%">Action</th>  
+                <th width="15%">WO Number</th>
+                <th width="30%">Problem</th>
+                <th width="10%">User</th>
+                <th width="10%">Date</th>
+                <th width="10%">Action</th>  
             </tr>
         </thead>
         <tbody>
@@ -85,7 +87,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/createwhyhist">
+            <form class="form-horizontal" method="post" action="/createwhyhist"  enctype="multipart/form-data">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
@@ -146,7 +148,12 @@
                         <textarea id="t_why5" name="t_why5" rows="2" cols="50" class="form-control"></textarea>
                      </div>
                     </div>
-                    
+                    <div class="form-group row">
+                        <label for="file" class="col-sm-2 col-form-label text-md-right">{{ __('Upload') }}</label>
+                        <div class="col-md-9 input-file-container">
+                          <input type="file" class="form-control" id="filename" name="filename[]" multiple>
+                        </div>
+                    </div>
                 </div>
             
                 <div class="modal-footer">
@@ -168,10 +175,63 @@
             <span aria-hidden="true">&times;</span>
         </button>
         </div>
-        <form class="form-horizontal" method="post" action="/editinvsu">
+        <form class="form-horizontal" method="post" action="/editwhyhist">
             {{ csrf_field() }}
             <div class="modal-body">
-               
+                <div class="form-group row">
+                    <label for="t_asset" class="col-md-2 col-form-label text-md-right">Asset</label>
+                    <div class="col-md-9">
+                       <input type="text" class="form-control" id="te_asset" name="te_asset" readonly>
+                       <input type="hidden" id="te_id" name="te_id">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="te_wo" class="col-md-2 col-form-label text-md-right">WO Number</label>
+                    <div class="col-md-9">
+                       <select class="form-control" id="te_wo" name="te_wo">
+                          <option value=""></option>
+                          @foreach($datawo as $dw)
+                          <option value="{{$dw->wo_number}}">{{$dw->wo_number}}</option>
+                          @endforeach
+                       </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                 <label for="te_problem" class="col-md-2 col-form-label text-md-right">Problem</label>
+                 <div class="col-md-9">
+                    <textarea id="te_problem" name="te_problem" rows="2" cols="50" class="form-control"></textarea>
+                 </div>
+                </div>
+                <div class="form-group row">
+                 <label for="te_why1" class="col-md-2 col-form-label text-md-right">Why 1</label>
+                 <div class="col-md-9">
+                    <textarea id="te_why1" name="te_why1" rows="2" cols="50" class="form-control"></textarea>
+                 </div>
+                </div>
+                <div class="form-group row">
+                 <label for="te_why2" class="col-md-2 col-form-label text-md-right">Why 2</label>
+                 <div class="col-md-9">
+                    <textarea id="te_why2" name="te_why2" rows="2" cols="50" class="form-control"></textarea>
+                 </div>
+                </div>
+                <div class="form-group row">
+                 <label for="te_why3" class="col-md-2 col-form-label text-md-right">Why 3</label>
+                 <div class="col-md-9">
+                    <textarea id="te_why3" name="te_why3" rows="2" cols="50" class="form-control"></textarea>
+                 </div>
+                </div>
+                <div class="form-group row">
+                 <label for="te_why4" class="col-md-2 col-form-label text-md-right">Why 4</label>
+                 <div class="col-md-9">
+                    <textarea id="te_why4" name="te_why4" rows="2" cols="50" class="form-control"></textarea>
+                 </div>
+                </div>
+                <div class="form-group row">
+                 <label for="te_why5" class="col-md-2 col-form-label text-md-right">Why 5</label>
+                 <div class="col-md-9">
+                    <textarea id="te_why5" name="te_why5" rows="2" cols="50" class="form-control"></textarea>
+                 </div>
+                </div>
             </div>
 
             <div class="modal-footer">
@@ -188,17 +248,16 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title text-center" id="exampleModalLabel">Inventory Supply Delete</h5>
+            <h5 class="modal-title text-center" id="exampleModalLabel">5 Why Transactions Delete</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
             </div>
-            <form class="form-horizontal" method="post" action="/delinvsu">
+            <form class="form-horizontal" method="post" action="/delwhyhist">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <input type="hidden" id="d_code" name="d_code">
-                    <input type="hidden" id="d_desc" name="d_desc">
-                    Delete Inventory Supply from <b> Asset Site : <span id="td_code"></span> , Supply Site : <span id="td_desc"></span></b> ?
+                    Delete Transaction ?
                 </div>
 
                 <div class="modal-footer">
@@ -222,38 +281,36 @@
        $(document).on('click', '#editdata', function(e){
            $('#editModal').modal('show');
 
-           var code = $(this).data('code');
-           var desc = $(this).data('desc');
-           var dasset = $(this).data('dasset')
-           var dsource = $(this).data('dsource')
+           var id = $(this).data('id');
+           var asset = $(this).data('asset');
+           var wo = $(this).data('wo');
+           var problem = $(this).data('problem');
+           var why1 = $(this).data('why1');
+           var why2 = $(this).data('why2');
+           var why3 = $(this).data('why3');
+           var why4 = $(this).data('why4');
+           var why5 = $(this).data('why5');
 
-           document.getElementById('te_code').value = code;
-           document.getElementById('te_desc').value = desc;
-           document.getElementById('tv_code').value = code + " -- " + dasset;
-           document.getElementById('tv_desc').value = desc + " -- " + dsource;
-
-            $.ajax({
-                url:"editdetinvsu?code1="+code+"&code2="+desc,
-                success: function(data) {
-                console.log(data);
-                $('#ed_detailapp').html('').append(data);
-              }
-            })
+           document.getElementById('te_id').value = id;
+           document.getElementById('te_asset').value = asset;
+           document.getElementById('te_wo').value = wo;
+           document.getElementById('te_problem').value = problem;
+           document.getElementById('te_why1').value = why1;
+           document.getElementById('te_why2').value = why2;
+           document.getElementById('te_why3').value = why3;
+           document.getElementById('te_why4').value = why4;
+           document.getElementById('te_why5').value = why5;
 
        });
 
        $(document).on('click', '.deletedata', function(e){
             $('#deleteModal').modal('show');
 
-            var code = $(this).data('code');
-            var desc = $(this).data('desc');
-            var dasset = $(this).data('dasset')
-            var dsource = $(this).data('dsource')
+            var id = $(this).data('id');
+            var asset = $(this).data('asset');
+            var problem = $(this).data('problem');
 
-            document.getElementById('d_code').value          = code;
-            document.getElementById('d_desc').value          = desc;
-            document.getElementById('td_code').innerHTML = code + "(" + dasset + ")" ;
-            document.getElementById('td_desc').innerHTML = desc + "(" + dsource + ")" ;
+            document.getElementById('d_code').value = id;
        });
 
         $(document).on('click', '#btnrefresh', function() {
