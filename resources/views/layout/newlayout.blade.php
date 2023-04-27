@@ -331,7 +331,7 @@ to get the desired effect
             @if(str_contains(Session::get('menu_access'), 'US'))
             <li class="nav-item has-treeview">
               <a href="javascript:void(0)" class="nav-link">
-                <i class="nav-icon fas fa-dolly"></i>
+                <i class="nav-icon fas fa-link"></i>
                 <p>
                   Asset Usage
                   <i class="right fas fa-angle-left"></i>
@@ -387,12 +387,32 @@ to get the desired effect
             </li>
             @endif
 
-            @if(str_contains( Session::get('menu_access'), 'BO'))
+           
+            @if(str_contains(Session::get('menu_access'), 'BO'))
             <li class="nav-item has-treeview">
-              <a href="{{url('/booking')}}" class="nav-link">
-                <i class="nav-icon fas fa-bookmark"></i>
-                  <p>Asset Booking</p>
+              <a href="javascript:void(0)" class="nav-link">
+                <i class="nav-icon fa fa-list-alt"></i>
+                <p>
+                  Another Transaction
+                  <i class="right fas fa-angle-left"></i>
+                </p>
               </a>
+              <ul class="nav nav-treeview">
+                @if(str_contains( Session::get('menu_access'), 'BO01'))
+                <li class="nav-item has-treeview">
+                  <a href="{{url('/booking')}}" class="nav-link">
+                      <p>Asset Booking</p>
+                  </a>
+                </li>
+                @endif
+                @if(str_contains( Session::get('menu_access'), 'BO02'))
+                <li class="nav-item has-treeview">
+                  <a href="{{url('/whyhist')}}" class="nav-link">
+                      <p>5 Why Transaction</p>
+                  </a>
+                </li>
+                @endif
+              </ul>
             </li>
             @endif
 

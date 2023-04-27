@@ -17,7 +17,7 @@
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-<form action="/inslist" method="GET">
+<form action="/invso" method="GET">
 <!-- Bagian Searching -->
 <div class="container-fluid mb-2">
     <div class="row">
@@ -30,14 +30,19 @@
         <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
         <div class="card card-body bg-black rounded-0">
             <div class="col-12 form-group row">
-                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Inventory Source Code</label>
+                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Site</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_code" type="text" class="form-control" name="s_code"
                     value="" autofocus autocomplete="off"/>
                 </div>
-                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Inventory Source Desc</label>
+                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Sparepart Source Site</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_desc" type="text" class="form-control" name="s_desc"
+                    value="" autofocus autocomplete="off"/>
+                </div>
+                <label for="s_loc" class="col-md-2 col-sm-2 col-form-label text-md-right">Location</label>
+                <div class="col-md-4 col-sm-4 mb-2 input-group">
+                    <input id="s_loc" type="text" class="form-control" name="s_loc"
                     value="" autofocus autocomplete="off"/>
                 </div>
                 <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
@@ -84,9 +89,9 @@
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label for="t_code" class="col-md-4 col-form-label text-md-right">Asset Site</label>
+                        <label for="t_code" class="col-md-3 col-form-label text-md-right">Asset Site</label>
                         <div class="col-md-6">
-                           <select class="form-control" id="t_code" name="t_code">
+                           <select class="form-control" id="t_code" name="t_code" required>
                               <option value=""></option>
                               @foreach($dataassite as $da)
                               <option value="{{$da->assite_code}}">{{$da->assite_code}} -- {{$da->assite_desc}}</option>
@@ -95,12 +100,12 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_desc" class="col-md-4 col-form-label text-md-right">Source Site</label>
+                        <label for="t_desc" class="col-md-3 col-form-label text-md-right">Sparepart Source Site</label>
                         <div class="col-md-6">
-                           <select class="form-control" id="t_desc" name="t_desc">
+                           <select class="form-control" id="t_desc" name="t_desc" required>
                               <option value=""></option>
                               @foreach($dataspsite as $ds)
-                              <option value="{{$ds->sps_code}}">{{$ds->sps_code}} -- {{$ds->sps_desc}}</option>
+                              <option value="{{$ds->site_code}}">{{$ds->site_code}} -- {{$ds->site_desc}}</option>
                               @endforeach
                            </select>
                         </div>
@@ -109,8 +114,8 @@
                         <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
                           <thead>
                             <tr id='full'>
-                              <th width="25%">Sequence</th>
-                              <th width="60%">Location</th>
+                              <th width="15%">Sequence</th>
+                              <th width="70%">Location</th>
                               <th width="15%">Delete</th>
                             </tr>
                           </thead>
@@ -151,22 +156,24 @@
             {{ csrf_field() }}
             <div class="modal-body">
                <div class="form-group row">
-                  <label for="te_code" class="col-md-4 col-form-label text-md-right">Asset Site</label>
+                  <label for="te_code" class="col-md-3 col-form-label text-md-right">Asset Site</label>
                   <div class="col-md-6">
-                    <input type="text" class="form-control" id="te_code" name="te_code" readonly>
+                    <input type="text" class="form-control" id="tv_code" name="tv_code" readonly>
+                    <input type="hidden" class="form-control" id="te_code" name="te_code" readonly>
                   </div>
               </div>
               <div class="form-group row">
-                  <label for="te_desc" class="col-md-4 col-form-label text-md-right">Source Site</label>
+                  <label for="te_desc" class="col-md-3 col-form-label text-md-right">Sparepart Source Site</label>
                   <div class="col-md-6">
-                    <input type="text" class="form-control" id="te_desc" name="te_desc" readonly>
+                    <input type="text" class="form-control" id="tv_desc" name="tv_desc" readonly>
+                    <input type="hidden" class="form-control" id="te_desc" name="te_desc" readonly>
                   </div>
               </div>
                 <div class="col-md-10 offset-md-1">
                 <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
                     <thead>
-                        <th width="25%">Sequence</th>
-                        <th width="60%">Location</th>
+                        <th width="15%">Sequence</th>
+                        <th width="70%">Location</th>
                         <th width="15%">Delete</th>
                     </thead>
                     <tbody id='ed_detailapp'></tbody>
@@ -231,9 +238,13 @@
 
            var code = $(this).data('code');
            var desc = $(this).data('desc');
+           var dasset = $(this).data('dasset')
+           var dsource = $(this).data('dsource')
 
            document.getElementById('te_code').value = code;
            document.getElementById('te_desc').value = desc;
+           document.getElementById('tv_code').value = code + " -- " + dasset;
+           document.getElementById('tv_desc').value = desc + " -- " + dsource;
 
             $.ajax({
                 url:"editdetinvso?code1="+code+"&code2="+desc,
@@ -261,13 +272,14 @@
 
           var newRow = $("<tr>");
           var cols = "";
-
-          cols += '<td width="25%"><input type="number" class="form-control" name="t_step[]" min="1"></td>'
+          var site = document.getElementById('t_desc').value;
+          console.log(site);
+          cols += '<td width="25%"><input type="number" class="form-control" name="t_step[]" min="1" autocomplete="off"></td>'
           cols += '<td width="20%">';
           cols += '<select id="a_code" class="form-control selectpicker a_code" name="a_code[]" data-live-search="true" required>';
           cols += '<option value = ""> -- Select Data -- </option>'  
           @foreach($dataloc as $dl)
-          cols += '<option value="{{$dl->spl_code}}"> {{$dl->spl_code}} -- {{$dl->spl_desc}} </option>';
+          cols += '<option value="{{$dl->loc_code}}"> {{$dl->loc_code}} -- {{$dl->loc_desc}} </option>';
           @endforeach
           cols += '</td>';
           cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
@@ -289,12 +301,12 @@
           var newRow = $("<tr>");
           var cols = "";
 
-          cols += '<td width="25%"><input type="number" class="form-control" name="te_step[]" min="1"></td>'
+          cols += '<td width="25%"><input type="number" class="form-control" name="te_step[]" min="1" autocomplete="off"></td>'
           cols += '<td width="20%">';
           cols += '<select id="te_loc" class="form-control selectpicker te_loc" name="te_loc[]" data-live-search="true" required>';
           cols += '<option value = ""> -- Select Data -- </option>'  
           @foreach($dataloc as $dl)
-          cols += '<option value="{{$dl->spl_code}}"> {{$dl->spl_code}} -- {{$dl->spl_desc}} </option>';
+          cols += '<option value="{{$dl->loc_code}}"> {{$dl->loc_code}} -- {{$dl->loc_desc}} </option>';
           @endforeach
           cols += '</td>';
           cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';

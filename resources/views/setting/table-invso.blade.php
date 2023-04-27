@@ -11,16 +11,18 @@
 @endforeach
 
 <tr>
-    <td>{{$show->inc_asset_site}}</td>
-    <td>{{$show->inc_source_site}}</td>
+    <td>{{$show->inc_asset_site}} -- {{$show->assite_desc}}</td>
+    <td>{{$show->inc_source_site}} -- {{$show->site_desc}}</td>
     <td>{{$stepdesc}}</td>
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal"
-        data-code="{{$show->inc_asset_site}}" data-desc="{{$show->inc_source_site}}" >
+        data-code="{{$show->inc_asset_site}}" data-desc="{{$show->inc_source_site}}" data-dasset="{{$show->assite_desc}}" 
+        data-dsource="{{$show->site_desc}}">
         <i class="icon-table fa fa-edit fa-lg"></i></a>
         &ensp;
         <a href="javascript:void(0)" class="deletedata" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal" 
-        data-code="{{$show->inc_asset_site}}" data-desc="{{$show->inc_source_site}}">
+        data-code="{{$show->inc_asset_site}}" data-desc="{{$show->inc_source_site}}" data-dasset="{{$show->assite_desc}}" 
+        data-dsource="{{$show->site_desc}}">
         <i class="icon-table fa fa-trash fa-lg"></i></a>
     </td>
 </tr>

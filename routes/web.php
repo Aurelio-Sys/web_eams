@@ -30,6 +30,7 @@ use App\Http\Controllers\WO\WHSConfirm;
 use App\Http\Controllers\WO\PMdetsController;
 use App\Http\Controllers\WO\WoQcController;
 use App\Http\Controllers\Usage\UsageBrowseController;
+use App\Http\Controllers\Other\WhyHistController;
 
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
@@ -711,6 +712,10 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/editdetinvsu',[InvSuController::class, 'editdetinvsu']);
 	Route::post('/editinvsu',[InvSuController::class, 'update']);
 	Route::post('/delinvsu', [InvSuController::class, 'destroy']);
+
+	// 5 Why Transaction
+	Route::get('/whyhist',[WhyHistController::class, 'index']); 
+	Route::post('/createwhyhist',[WhyHistController::class, 'store']);
 
 });
 

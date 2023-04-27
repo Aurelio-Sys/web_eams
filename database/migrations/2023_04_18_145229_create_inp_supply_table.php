@@ -17,9 +17,9 @@ class CreateInpSupplyTable extends Migration
             $table->bigIncrements('id');
             $table->string('inp_asset_site',24);
             $table->string('inp_supply_site',24);
-            $table->integer('inp_sequence');
-            $table->string('inp_loc',24);
-            $table->string('inp_avail',24);
+            $table->integer('inp_sequence')->nullable();
+            $table->string('inp_loc',24)->nullable();
+            $table->string('inp_avail',24)->nullable();
             $table->string('inp_editedby',24);
             $table->timestamps();
         });

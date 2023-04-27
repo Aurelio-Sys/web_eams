@@ -17,8 +17,8 @@ class CreateIncSourceTable extends Migration
             $table->bigIncrements('id');
             $table->string('inc_asset_site',24);
             $table->string('inc_source_site',24);
-            $table->integer('inc_sequence');
-            $table->string('inc_loc',24);
+            $table->integer('inc_sequence')->nullable();
+            $table->string('inc_loc',24)->nullable();
             $table->string('inc_editedby',24);
             $table->timestamps();
         });
