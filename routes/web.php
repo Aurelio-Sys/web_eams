@@ -716,6 +716,8 @@ Route::group(['middleware' => ['auth']], function() {
 	// 5 Why Transaction
 	Route::get('/whyhist',[WhyHistController::class, 'index']); 
 	Route::post('/createwhyhist',[WhyHistController::class, 'store']);
+	Route::post('/editwhyhist',[WhyHistController::class, 'update']);
+	Route::post('/delwhyhist', [WhyHistController::class, 'destroy']);
 
 });
 
