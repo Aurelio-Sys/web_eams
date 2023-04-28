@@ -36,24 +36,18 @@ class WHSConfirm extends Controller
             ->where('asset_active', '=', 'Yes')
             ->get();
 
-            if(Session::get('role') == 'ADMIN'){
+            if(Session::get('role') == 'ADMIN' || Session::get('role') == 'WHS'){
                 $data = DB::table('wo_mstr')
-                    ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
+                    ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority','wd_sp_flag')
+                    ->join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber','wo_mstr.wo_number')
                     ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
-                    ->whereIn('wo_status', ['firm'])
+                    ->where('wo_status', 'released')
+                    ->where('wd_sp_flag','=', 1)
+                    ->groupBy('wo_number')
                     ->orderby('wo_system_create', 'desc');
+                
             }else{
-    
-                $username = Session::get('username');
-    
-                // dd($username);
-    
-                $data = DB::table('wo_mstr')
-                ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
-                ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
-                ->whereIn('wo_status', ['firm'])
-                ->where('wo_list_engineer', 'like', '%'.$username.'%')
-                ->orderby('wo_system_create', 'desc');
+                return view('errors.401');
             }
     
             
@@ -72,11 +66,15 @@ class WHSConfirm extends Controller
     
             $data = $data->paginate(10);
 
+            // dd($data,Session::get('role'));
+
         return view('workorder.whsconfirm-browse', ['asset1' => $asset1, 'data' => $data]);
     }
 
     public function detailwhs($id)
     {
+
+        // dd($id);
         $data = DB::table('wo_mstr')
             ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
             ->where('wo_id', '=', $id)
