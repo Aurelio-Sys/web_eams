@@ -260,9 +260,9 @@ class ServiceController extends Controller
             }
             $newimpact = substr($newimpact, 0, strlen($newimpact) - 1);
 
-            if($newimpact == false) {
+            if ($newimpact == false) {
                 $newimpact = "";
-            }           
+            }
             // dd($newimpact);
 
             //failure code
@@ -278,9 +278,9 @@ class ServiceController extends Controller
             }
             $newfailcode = substr($newfailcode, 0, strlen($newfailcode) - 1);
 
-            if($newfailcode == false) {
+            if ($newfailcode == false) {
                 $newfailcode = "";
-            }  
+            }
 
             $running = DB::table('running_mstr')
                 ->first();
@@ -965,7 +965,6 @@ class ServiceController extends Controller
                             'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                         ]);
                 }
-                
             } elseif ($srmstr->sr_status_approval == 'Revision from department approval') {
 
                 $update->sr_status_approval = 'Waiting for department approval';
@@ -1028,7 +1027,7 @@ class ServiceController extends Controller
                 'sr_req_date'     => $srmstr->sr_req_date,
                 'sr_req_time'     => $srmstr->sr_req_time,
                 'sr_status'       => 'Canceled',
-                'sr_status_app'       => 'Canceled',
+                'sr_status_approval'       => 'Canceled',
                 'sr_eng_approver' => $srmstr->sr_eng_approver,
                 'sr_action'       => 'SR Canceled',
                 'created_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -2198,9 +2197,11 @@ class ServiceController extends Controller
                     ->leftjoin('wo_mstr', 'wo_mstr.wo_number', 'service_req_mstr.wo_number')
                     ->leftjoin('sr_trans_approval', 'sr_trans_approval.srta_mstr_id', 'service_req_mstr.id')
                     ->leftjoin('sr_trans_approval_eng', 'sr_trans_approval_eng.srta_eng_mstr_id', 'service_req_mstr.id')
+                    ->leftjoin('eng_mstr', 'eng_mstr.eng_dept', 'service_req_mstr.sr_eng_approver')
+                    ->leftjoin('dept_mstr as u1', 'eng_mstr.eng_dept', 'u1.dept_code')
                     ->selectRaw('service_req_mstr.* ,
             asset_mstr.asset_code, asset_mstr.asset_desc, asset_mstr.asset_loc, dept_mstr.dept_desc, users.username, users.name, asset_mstr.asset_loc, 
-            wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc,
+            wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.dept_desc as u11, eng_mstr.eng_dept,
             wo_mstr.wo_job_startdate, wo_mstr.wo_job_finishdate, wo_mstr.wo_status, sr_trans_approval.srta_status, wo_mstr.wo_list_engineer,
             sr_trans_approval.srta_reason, sr_trans_approval_eng.srta_eng_reason, sr_trans_approval_eng.srta_eng_status')
                     ->orderBy('sr_number', 'DESC')
@@ -2296,7 +2297,7 @@ class ServiceController extends Controller
                     ->selectRaw('service_req_mstr.* ,
                 asset_mstr.asset_code, asset_mstr.asset_desc, asset_mstr.asset_loc, dept_mstr.dept_desc, users.username, users.name,
                 wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.dept_desc as u11,
-                wo_mstr.wo_job_startdate, wo_mstr.wo_job_finishdate, wo_mstr.wo_status, wo_mstr.wo_list_engineer,
+                wo_mstr.wo_job_startdate, wo_mstr.wo_job_finishdate, wo_mstr.wo_status, wo_mstr.wo_list_engineer, eng_mstr.eng_dept,
                 sr_trans_approval.srta_reason, sr_trans_approval_eng.srta_eng_reason, sr_trans_approval.srta_status, sr_trans_approval_eng.srta_eng_status')
                     // ->where('sr_dept', '=', session::get('department'))
                     ->whereRaw($kondisi)
