@@ -156,6 +156,33 @@ class WhyHistController extends Controller
         //
     }
 
+    // menampilkan file yang pernah diinput
+    public function whyfile($id)
+    {
+        // dd($id);
+        $datas = DB::table('why_file')
+            ->where('wf_whyid', $id)
+            ->get();
+
+        $output = '';
+        foreach ($datas as $data) {
+
+            $lastindex = strrpos($data->wf_filepath, "/");
+            $filename = substr($data->wf_filepath, $lastindex + 1);
+
+            $output .=  '<tr>
+                            <td> 
+                            <a href="/upload5why/' . $filename . '" target="_blank">' . $filename . '</a> 
+                            </td>
+                            <input type="hidden" value="' . $data->id . '" class="rowval"/>
+                            <td><input type="checkbox" name="cek[]" class="cek" id="cek" value="0">
+                            <input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>
+                        </tr>';
+        }
+
+        return response($output);
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -165,23 +192,54 @@ class WhyHistController extends Controller
      */
     public function update(Request $req)
     {
-        DB::table('why_hist')
-            ->where('id','=',$req->te_id)
-            ->whereWhy_asset($req->te_asset)
-            ->update([
-                'why_wo' => $req->te_wo,
-                'why_problem' => $req->te_problem,
-                'why_why1' => $req->te_why1,
-                'why_why2' => $req->te_why2,
-                'why_why3' => $req->te_why3,
-                'why_why4' => $req->te_why4,
-                'why_why5' => $req->te_why5,
-                'why_editedby'  => Session::get('username'),
-                'updated_at'    => Carbon::now()->toDateTimeString(),
-            ]);
+        DB::beginTransaction();
+        try {
+            DB::table('why_hist')
+                ->where('id','=',$req->te_id)
+                ->whereWhy_asset($req->te_asset)
+                ->update([
+                    'why_wo' => $req->te_wo,
+                    'why_problem' => $req->te_problem,
+                    'why_why1' => $req->te_why1,
+                    'why_why2' => $req->te_why2,
+                    'why_why3' => $req->te_why3,
+                    'why_why4' => $req->te_why4,
+                    'why_why5' => $req->te_why5,
+                    'why_editedby'  => Session::get('username'),
+                    'updated_at'    => Carbon::now()->toDateTimeString(),
+                ]);
 
-        toast('Transactions Updated.', 'success');
-        return back();
+            if ($req->hasFile('te_filename')) {
+                foreach ($req->file('te_filename') as $upload) {
+                    $dataTime = date('Ymd_His');
+                    $filename = $dataTime . '-' . $upload->getClientOriginalName();
+
+                    // Simpan File Upload pada Public
+                    $savepath = public_path('upload5why/');
+                    $upload->move($savepath, $filename);
+
+                    // Simpan ke DB Upload
+                    DB::table('why_file')
+                        ->insert([
+                            'wf_filepath' => $savepath . $filename,
+                            'wf_whyid' => $req->te_id,
+                            'created_at' => Carbon::now()->toDateTimeString(),
+                            'updated_at' => Carbon::now()->toDateTimeString(),
+                        ]);
+                }
+            }
+
+        
+            DB::commit();
+
+            toast('Transactions Updated.', 'success');
+            return back();
+        } catch (Exception $e) {
+            dd($e);
+            DB::rollBack();
+            toast('Transactions Failed Created', 'error');
+            return back();
+        }
     }
 
     /**

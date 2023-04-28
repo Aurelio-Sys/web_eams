@@ -1222,6 +1222,8 @@
         var rejectnote = $(this).data('rejectnote');
         var reason = $(this).data('reason');
 
+        console.log(failcode);
+
         // document.getElementById('e_renote').value = rejectnote;
 
         if (wostatus == 'Open') {

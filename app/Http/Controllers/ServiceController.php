@@ -241,6 +241,7 @@ class ServiceController extends Controller
 
     public function inputsr(Request $req) /* blade : servicerequest_create.php */
     {
+        // dd($req->all());
         DB::beginTransaction();
         try {
 
@@ -253,10 +254,15 @@ class ServiceController extends Controller
             }
 
             $newimpact = "";
+            //  dd($newimpact);
             for ($i = 0; $i < $counterimpact; $i++) {
                 $newimpact .= $req->impact[$i] . ',';
             }
             $newimpact = substr($newimpact, 0, strlen($newimpact) - 1);
+
+            if($newimpact == false) {
+                $newimpact = "";
+            }           
             // dd($newimpact);
 
             //failure code
@@ -271,6 +277,10 @@ class ServiceController extends Controller
                 $newfailcode .= $req->failurecode[$i] . ',';
             }
             $newfailcode = substr($newfailcode, 0, strlen($newfailcode) - 1);
+
+            if($newfailcode == false) {
+                $newfailcode = "";
+            }  
 
             $running = DB::table('running_mstr')
                 ->first();
