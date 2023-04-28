@@ -1028,7 +1028,7 @@ class ServiceController extends Controller
                 'sr_req_date'     => $srmstr->sr_req_date,
                 'sr_req_time'     => $srmstr->sr_req_time,
                 'sr_status'       => 'Canceled',
-                'sr_status_app'       => 'Canceled',
+                'sr_status_approval'       => 'Canceled',
                 'sr_eng_approver' => $srmstr->sr_eng_approver,
                 'sr_action'       => 'SR Canceled',
                 'created_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
