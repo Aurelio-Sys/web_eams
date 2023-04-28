@@ -1,24 +1,17 @@
 @forelse ( $data as $datas )
 <tr>
-    <td>{{ $datas->wo_nbr }}</td>
+    <td>{{ $datas->wo_number }}</td>
     <td>{{ $datas->asset_code }} -- {{ $datas->asset_desc }}</td>
-    <td>{{ $datas->wo_schedule }}</td>
-    <td>{{ $datas->wo_duedate }}</td>
+    <td>{{ $datas->wo_start_date }}</td>
+    <td>{{ $datas->wo_due_date }}</td>
     <td>{{ $datas->wo_priority }}</td>
-    <td>
-        @if ($data2->where('wo_nbr', $datas->wo_nbr)->where('wo_dets_wh_qx','yes')->count() > 0)
-            Partial
-        @else
-            Not Yet
-        @endif
-    </td>
     <td style="text-align: center;">
-        <a class="btn btn-info" href="{{route('WhsconfDetail', $datas->wo_id)}}"><i class="fa fa-check-circle"></i> Confirm</a>
+        <a class="btn btn-info" href="{{route('WhsconfDetail', $datas->wo_number)}}"><i class="fa fa-check-circle"></i> Confirm</a>
     </td>
 </tr>
 @empty
 <tr>
-    <td colspan="6" style="color: red;" >No Data Available</td>
+    <td colspan="7" style="color: red; text-align: center;" >No Data Available</td>
 </tr>
 @endforelse
 <tr>

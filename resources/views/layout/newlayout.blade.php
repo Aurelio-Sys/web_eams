@@ -276,9 +276,9 @@ to get the desired effect
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'WO07'))
                 <li class="nav-item ">
-                  <a href="/whsconfirm" class="nav-link ">
+                  <a href="/wotransfer" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>Warehouse Confirm</p>
+                      <p>Work Order Transfer</p>
                   </a>
                 </li>
                 @endif
