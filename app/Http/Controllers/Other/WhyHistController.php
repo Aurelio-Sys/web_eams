@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Carbon\Carbon;
+use Exception;
 
 class WhyHistController extends Controller
 {
@@ -18,26 +19,29 @@ class WhyHistController extends Controller
      */
     public function index(Request $req)
     {
-        $s_code = $req->s_code;
-        $s_desc = $req->s_desc;
-        $s_loc = $req->s_loc;
+        $s_asset = $req->s_asset;
+        $s_wo = $req->s_wo;
+        $s_problem = $req->s_problem;
 
         $data = DB::table('why_hist')
+            ->selectRaw('why_hist.id as id, why_asset, why_wo, why_problem, why_why1, why_why2, why_why3, why_why4, why_why5,
+                why_inputby, why_hist.created_at as created_at, asset_desc')
             ->leftJoin('asset_mstr','asset_code','=','why_asset')
-            ->orderby('asset_code');
+            ->orderby('asset_code')
+            ->orderBy('why_hist.created_at','desc');
 
-        /* if($s_code) {
-            $data = $data->where(function($query) use ($s_code) {
-                $query->where('inp_asset_site','like','%'.$s_code.'%')
-                ->orWhere('assite_desc','like','%'.$s_code.'%');
+        if($s_asset) {
+            $data = $data->where(function($query) use ($s_asset) {
+                $query->where('why_asset','like','%'.$s_asset.'%')
+                ->orWhere('asset_desc','like','%'.$s_asset.'%');
             });
         }
-        if($s_desc) {
-            $data = $data->where(function($query) use ($s_desc) {
-                $query->where('inp_supply_site','like','%'.$s_desc.'%')
-                ->orWhere('site_desc','like','%'.$s_desc.'%');
-            });
-        } */
+        if($s_wo) {
+            $data = $data->where('why_wo','like','%'.$s_wo.'%');
+        }
+        if($s_problem) {
+            $data = $data->where('why_problem','like','%'.$s_problem.'%');
+        }
 
         $data = $data->paginate(10);
 
@@ -71,23 +75,63 @@ class WhyHistController extends Controller
      */
     public function store(Request $req)
     {
-        DB::table('why_hist')
-            ->insert([
-                'why_asset' => $req->t_asset,
-                'why_wo' => $req->t_wo,
-                'why_problem' => $req->t_problem,
-                'why_why1' => $req->t_why1,
-                'why_why2' => $req->t_why2,
-                'why_why3' => $req->t_why3,
-                'why_why4' => $req->t_why4,
-                'why_why5' => $req->t_why5,
-                'why_editedby'  => Session::get('username'),
-                'created_at'    => Carbon::now()->toDateTimeString(),
-                'updated_at'    => Carbon::now()->toDateTimeString(),
-            ]);
+        DB::beginTransaction();
+        try {
+            DB::table('why_hist')
+                ->insert([
+                    'why_asset' => $req->t_asset,
+                    'why_wo' => $req->t_wo,
+                    'why_problem' => $req->t_problem,
+                    'why_why1' => $req->t_why1,
+                    'why_why2' => $req->t_why2,
+                    'why_why3' => $req->t_why3,
+                    'why_why4' => $req->t_why4,
+                    'why_why5' => $req->t_why5,
+                    'why_inputby'  => Session::get('username'),
+                    'why_editedby'  => Session::get('username'),
+                    'created_at'    => Carbon::now()->toDateTimeString(),
+                    'updated_at'    => Carbon::now()->toDateTimeString(),
+                ]);
 
-        toast('Transactions Created.', 'success');
-        return back();
+            $getid = DB::table('why_hist')
+                ->whereWhy_asset($req->t_asset)
+                ->whereWhy_wo($req->t_wo)
+                ->whereWhy_problem($req->t_problem)
+                ->orderBy('created_at','desc')
+                ->value('id');
+
+            if ($req->hasFile('filename')) {
+
+                foreach ($req->file('filename') as $upload) {
+                    $dataTime = date('Ymd_His');
+                    $filename = $dataTime . '-' . $upload->getClientOriginalName();
+
+                    // Simpan File Upload pada Public
+                    $savepath = public_path('upload5why/');
+                    $upload->move($savepath, $filename);
+
+                    // Simpan ke DB Upload
+                    DB::table('why_file')
+                        ->insert([
+                            'wf_filepath' => $savepath . $filename,
+                            'wf_whyid' => $getid,
+                            'created_at' => Carbon::now()->toDateTimeString(),
+                            'updated_at' => Carbon::now()->toDateTimeString(),
+                        ]);
+                }
+            }
+
+        
+            DB::commit();
+
+            toast('Transactions Created.', 'success');
+            return back();
+        } catch (Exception $e) {
+            dd($e);
+            DB::rollBack();
+            toast('Transactions Failed Created', 'error');
+            return back();
+        }
     }
 
     /**
@@ -112,6 +156,33 @@ class WhyHistController extends Controller
         //
     }
 
+    // menampilkan file yang pernah diinput
+    public function whyfile($id)
+    {
+        // dd($id);
+        $datas = DB::table('why_file')
+            ->where('wf_whyid', $id)
+            ->get();
+
+        $output = '';
+        foreach ($datas as $data) {
+
+            $lastindex = strrpos($data->wf_filepath, "/");
+            $filename = substr($data->wf_filepath, $lastindex + 1);
+
+            $output .=  '<tr>
+                            <td> 
+                            <a href="/upload5why/' . $filename . '" target="_blank">' . $filename . '</a> 
+                            </td>
+                            <input type="hidden" value="' . $data->id . '" class="rowval"/>
+                            <td><input type="checkbox" name="cek[]" class="cek" id="cek" value="0">
+                            <input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>
+                        </tr>';
+        }
+
+        return response($output);
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -119,9 +190,56 @@ class WhyHistController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $req)
     {
-        //
+        DB::beginTransaction();
+        try {
+            DB::table('why_hist')
+                ->where('id','=',$req->te_id)
+                ->whereWhy_asset($req->te_asset)
+                ->update([
+                    'why_wo' => $req->te_wo,
+                    'why_problem' => $req->te_problem,
+                    'why_why1' => $req->te_why1,
+                    'why_why2' => $req->te_why2,
+                    'why_why3' => $req->te_why3,
+                    'why_why4' => $req->te_why4,
+                    'why_why5' => $req->te_why5,
+                    'why_editedby'  => Session::get('username'),
+                    'updated_at'    => Carbon::now()->toDateTimeString(),
+                ]);
+
+            if ($req->hasFile('te_filename')) {
+                foreach ($req->file('te_filename') as $upload) {
+                    $dataTime = date('Ymd_His');
+                    $filename = $dataTime . '-' . $upload->getClientOriginalName();
+
+                    // Simpan File Upload pada Public
+                    $savepath = public_path('upload5why/');
+                    $upload->move($savepath, $filename);
+
+                    // Simpan ke DB Upload
+                    DB::table('why_file')
+                        ->insert([
+                            'wf_filepath' => $savepath . $filename,
+                            'wf_whyid' => $req->te_id,
+                            'created_at' => Carbon::now()->toDateTimeString(),
+                            'updated_at' => Carbon::now()->toDateTimeString(),
+                        ]);
+                }
+            }
+
+        
+            DB::commit();
+
+            toast('Transactions Updated.', 'success');
+            return back();
+        } catch (Exception $e) {
+            dd($e);
+            DB::rollBack();
+            toast('Transactions Failed Created', 'error');
+            return back();
+        }
     }
 
     /**
@@ -130,8 +248,14 @@ class WhyHistController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $req)
     {
-        //
+        // dd($req->all());
+        DB::table('why_hist')
+            ->where('id','=',$req->te_id)
+            ->delete();
+
+        toast('Transactions Deleted.', 'success');
+        return back();
     }
 }

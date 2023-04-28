@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\WO;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendWorkOrderWarehouseNotification;
 use App\Services\CreateTempTable;
 use App\Services\WSAServices;
 use Carbon\Carbon;
@@ -302,6 +303,9 @@ class WORelease extends Controller
                                 'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
 
+                        $wonumber_email = $requestData['hide_wonum'];
+                        
+                        SendWorkOrderWarehouseNotification::dispatch($wonumber_email);
 
                         //kirim notifikasi ke warehouse bahwa ada stock yang diperlukan untuk WO namun tidak cukup di inventory supply
                         
@@ -360,6 +364,13 @@ class WORelease extends Controller
                         ]);
                 }
             }
+
+            DB::table('wo_trans_history')
+                    ->insert([
+                        'wo_number' => $requestData['hide_wonum'],
+                        'wo_action' => 'released',
+                    ]);
+
 
             // dd('stop here');
 

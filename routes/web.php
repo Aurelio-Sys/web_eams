@@ -549,8 +549,8 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/engsubmit', [ConfirmEng::class,'engsubmit'])->name('EngconfSubmit');
 
 	// WHS Confirm
-	Route::get('/whsconfirm', [WHSConfirm::class, 'browse'])->name('browseWhconfirm');
-	Route::get('/whsconfirm/detailwhs/{id}', [WHSConfirm::class, 'detailwhs'])->name('WhsconfDetail');
+	Route::get('/wotransfer', [WHSConfirm::class, 'browse'])->name('browseWhconfirm');
+	Route::get('/wotransfer/detailwhs/{id}', [WHSConfirm::class, 'detailwhs'])->name('WhsconfDetail');
 	Route::post('/whssubmit', [WHSConfirm::class,'whssubmit'])->name('WhsconfSubmit');
 	Route::get('/searchlot', [WHSConfirm::class, 'searchlot'])->name('searchlot');
 	
@@ -716,6 +716,9 @@ Route::group(['middleware' => ['auth']], function() {
 	// 5 Why Transaction
 	Route::get('/whyhist',[WhyHistController::class, 'index']); 
 	Route::post('/createwhyhist',[WhyHistController::class, 'store']);
+	route::get('/whyfile/{id}', [WhyHistController::class, 'whyfile'])->name('getspmstr');
+	Route::post('/editwhyhist',[WhyHistController::class, 'update']);
+	Route::post('/delwhyhist', [WhyHistController::class, 'destroy']);
 
 });
 

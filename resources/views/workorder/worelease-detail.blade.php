@@ -102,6 +102,9 @@
                             </tr>
                             
                             @empty
+                            {{--
+                            
+                            
                             <tr>
                                 <td>
                                     <select name="spreq[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="200px" autofocus>
@@ -123,6 +126,7 @@
                                 <td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>
                                 <input type="hidden" class="op" name="op[]" value="A" />
                             </tr>
+                            --}}
                             
                             @endforelse
                         </tbody>

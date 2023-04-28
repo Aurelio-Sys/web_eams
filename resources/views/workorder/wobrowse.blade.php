@@ -314,13 +314,13 @@ div #munculgambar .gambar:hover{
           </div> -->
 
           <div class="form-group row col-md-12">
-            <label for="c_startdate" class="col-md-5 col-form-label text-md-left">Start Date</label>
+            <label for="c_startdate" class="col-md-5 col-form-label text-md-left">Start Date <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-7">
               <input type="date" id="c_startdate" class="form-control" name="c_startdate" value="{{ old('c_startdate') }}" autocomplete="off" maxlength="24" autofocus required>
             </div>
           </div>
           <div class="form-group row col-md-12">
-            <label for="c_duedate" class="col-md-5 col-form-label text-md-left">Due Date</label>
+            <label for="c_duedate" class="col-md-5 col-form-label text-md-left">Due Date <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-7">
               <input type="date" id="c_duedate" class="form-control" name="c_duedate" value="{{ old('duedate') }}" autocomplete="off" maxlength="24" autofocus required>
             </div>
@@ -337,9 +337,9 @@ div #munculgambar .gambar:hover{
             </div>
           </div> -->
           <div class="form-group row col-md-12">
-            <label for="c_priority" class="col-md-5 col-form-label text-md-left">Priority</label>
+            <label for="c_priority" class="col-md-5 col-form-label text-md-left">Priority <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-7">
-              <select id="c_priority" class="form-control" name="c_priority" autocomplete="off" autofocus>
+              <select id="c_priority" class="form-control" name="c_priority" autocomplete="off" autofocus required>
                 <option value='' disabled selected>--select priority--</option>
                 <option value='low'>Low</option>
                 <option value='medium'>Medium</option>

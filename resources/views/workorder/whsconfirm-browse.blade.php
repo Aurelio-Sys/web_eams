@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-9">
-            <h1 class="m-0 text-dark">Warehouse Confirm Browse</h1>
+            <h1 class="m-0 text-dark">Work Order Transfer Browse</h1>
         </div><!-- /.col -->
     </div><!-- /.row -->
 </div><!-- /.container-fluid -->
@@ -60,8 +60,8 @@
 </form>
 
 
-<div class="table-responsive col-12 mt-0 pt-0 align-top">
-    <table class="table table-bordered mt-0" id="dataTable" width="100%" cellspacing="0" style="width:100%;padding: .2rem !important;">
+<div class="table-responsive col-12 mt-0 pt-0" style="overflow-x: auto;overflow-y: hidden ;display: inline-block;white-space: nowrap; position:relative;">
+    <table class="table table-bordered mt-0" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr style="text-align: center;">
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="8%">WO Number<span id="name_icon"></span></th>
@@ -69,7 +69,6 @@
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_schedule" width="8%">Schedule Date<span id="name_icon"></span></th>
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="8%">Due Date<span id="username_icon"></span></th>
                 <th width="6%">Priority</th>
-                <th width="10%">Confirm Status</th>
                 <th width="8%">Action</th>
             </tr>
         </thead>

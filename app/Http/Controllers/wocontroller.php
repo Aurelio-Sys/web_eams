@@ -1141,7 +1141,9 @@ class wocontroller extends Controller
             DB::commit();
             toast($runningnbr . ' Successfuly Created !', 'success');
             return back();
-        } catch (Exception $e) {
+
+        } catch (Exception $e){
+            dd($e);
             DB::rollBack();
             toast("The data couldn't be saved due to an error.", 'error');
             return back();
