@@ -9,7 +9,7 @@
 </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-<form action="/worelease" method="GET">
+<form action="/wotransfer" method="GET">
     <div class="container-fluid mb-2">
         <div class="row">
             <div class="col-md-12">
