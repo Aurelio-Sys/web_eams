@@ -229,7 +229,7 @@ class wocontroller extends Controller
                 ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
                 ->where('username', '=', session()->get('username'))
                 ->get();
-            
+
             $data = DB::table('wo_mstr')
                 ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code');
 
@@ -237,7 +237,7 @@ class wocontroller extends Controller
             //     $data = $data->where('wo_dept','=',session::get('department'));
             // }
             if ($req->s_nomorwo) {
-                $data->where('wo_number','like', '%'.$req->s_nomorwo.'%');
+                $data->where('wo_number', 'like', '%' . $req->s_nomorwo . '%');
             }
             if ($req->s_asset) {
                 $data->where('asset_code', $req->s_asset);
@@ -248,12 +248,12 @@ class wocontroller extends Controller
             if ($req->s_wotype) {
                 $data->where('wo_type', $req->s_wotype);
             }
-            if($req->s_engineer){
-                $data->where('wo_list_engineer','like', '%'.$req->s_engineer.'%');
+            if ($req->s_engineer) {
+                $data->where('wo_list_engineer', 'like', '%' . $req->s_engineer . '%');
             }
-                
+
             $data = $data->orderby('wo_system_create', 'desc')->orderBy('wo_number', 'desc')->paginate(10);
-            
+
             $depart = DB::table('dept_mstr')
                 ->get();
             $engineer = DB::table('eng_mstr')
@@ -266,11 +266,11 @@ class wocontroller extends Controller
                 ->get();
 
             $failure = DB::table('fn_mstr')
-                ->leftJoin('asfn_det','asfn_det.asfn_fncode','fn_mstr.fn_code')
+                ->leftJoin('asfn_det', 'asfn_det.asfn_fncode', 'fn_mstr.fn_code')
                 ->groupBy('fn_code')
                 ->get();
 
-            
+
             $maintenance = DB::table('pmc_mstr')->get();
 
             $inslist = DB::table('ins_list')->groupBy('ins_code')->get();
@@ -289,11 +289,13 @@ class wocontroller extends Controller
             // dd($wottype);
             $ceksrfile = DB::table(('service_req_upload'))
                 ->get();
-            return view('workorder.wobrowse', ['impact' => $impact, 'wottype' => $wottype, 'data' => $data, 
-                        'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 
-                        'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '', 
-                        'maintenancelist' => $maintenance, 'ceksrfile' => $ceksrfile, 'inslist' => $inslist, 'splist' => $splist,
-                        'qclist' => $qclist]);
+            return view('workorder.wobrowse', [
+                'impact' => $impact, 'wottype' => $wottype, 'data' => $data,
+                'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset,
+                'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '',
+                'maintenancelist' => $maintenance, 'ceksrfile' => $ceksrfile, 'inslist' => $inslist, 'splist' => $splist,
+                'qclist' => $qclist
+            ]);
         } else {
             toast('Anda tidak memiliki akses menu, Silahkan kontak admin', 'error');
             return back();
@@ -942,10 +944,11 @@ class wocontroller extends Controller
         return back();
     }
 
-    public function searchic(Request $req){
+    public function searchic(Request $req)
+    {
         $searchic = DB::table('pmc_mstr')
-                    ->where('pmc_code','=',$req->pmc_code)
-                    ->first();
+            ->where('pmc_code', '=', $req->pmc_code)
+            ->first();
 
         return response()->json($searchic);
     }
@@ -1043,30 +1046,30 @@ class wocontroller extends Controller
 
             $thisFailCode = "";
 
-            if($req->has('failurecode')){
-                $thisFailCode = implode(';',array_map('strval', $req->failurecode));
-            }else{
+            if ($req->has('failurecode')) {
+                $thisFailCode = implode(';', array_map('strval', $req->failurecode));
+            } else {
                 $thisFailCode = null;
             }
 
             $thisImpact = "";
 
-            if($req->has('c_impact')){
-                $thisImpact = implode(';',array_map('strval', $req->c_impact));
-            }else{
+            if ($req->has('c_impact')) {
+                $thisImpact = implode(';', array_map('strval', $req->c_impact));
+            } else {
                 $thisImpact = null;
             }
 
             $thisListEng = "";
 
-            if($req->has('c_listengineer')){
-                    $thisListEng = implode(';', array_map('strval', $req->c_listengineer));
-            }else{
+            if ($req->has('c_listengineer')) {
+                $thisListEng = implode(';', array_map('strval', $req->c_listengineer));
+            } else {
                 $thisListEng = null;
             }
 
             // dd($thisFailCode,$thisImpact,$thisListEng);
-            
+
 
             //dd($req->get('c_engineer')[4]);
             $tablern = DB::table('running_mstr')
@@ -1090,36 +1093,36 @@ class wocontroller extends Controller
 
             $dataarray = array(
                 'wo_number'           => $runningnbr,
-                'wo_sr_number'	      => '',
-                'wo_asset_code'	      => $req->c_asset,
+                'wo_sr_number'          => '',
+                'wo_asset_code'          => $req->c_asset,
                 'wo_site'             => $req->hide_site,
-                'wo_type'	          => $req->cwotype,
-                'wo_status'	          => 'firm',
-                'wo_priority'	      => $req->c_priority,
-                'wo_failure_code'	  => $thisFailCode,
-                'wo_failure_type'	  => $req->c_failuretype,
+                'wo_type'              => $req->cwotype,
+                'wo_status'              => 'firm',
+                'wo_priority'          => $req->c_priority,
+                'wo_failure_code'      => $thisFailCode,
+                'wo_failure_type'      => $req->c_failuretype,
                 'wo_list_engineer'    => $thisListEng,
-                'wo_impact_code'      => $thisImpact,	
-                'wo_start_date'       => $req->c_startdate,	
-                'wo_due_date'	      => $req->c_duedate,
+                'wo_impact_code'      => $thisImpact,
+                'wo_start_date'       => $req->c_startdate,
+                'wo_due_date'          => $req->c_duedate,
                 'wo_mt_code'          => $req->has('c_mtcode') ? $req->c_mtcode : null,
-                'wo_ins_code'	      => $req->has('c_inslist') ? $req->c_inslist : null,
-                'wo_sp_code'	      => $req->has('c_splist') ? $req->c_splist : null,
-                'wo_qcspec_code'	  => $req->has('c_qclist') ? $req->c_qclist : null,
-                'wo_note'	          => $req->c_note,	
-                'wo_createdby'	      => session()->get('username'),
+                'wo_ins_code'          => $req->has('c_inslist') ? $req->c_inslist : null,
+                'wo_sp_code'          => $req->has('c_splist') ? $req->c_splist : null,
+                'wo_qcspec_code'      => $req->has('c_qclist') ? $req->c_qclist : null,
+                'wo_note'              => $req->c_note,
+                'wo_createdby'          => session()->get('username'),
                 'wo_department'       => session()->get('department'),
-                'wo_system_create'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),	
+                'wo_system_create'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                 'wo_system_update'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
             );
 
             DB::table('wo_mstr')->insert($dataarray);
 
             DB::table('wo_trans_history')
-                    ->insert([
-                        'wo_number' => $runningnbr,
-                        'wo_action' => 'firm',
-                    ]);
+                ->insert([
+                    'wo_number' => $runningnbr,
+                    'wo_action' => 'firm',
+                ]);
 
             DB::table('running_mstr')
                 ->where('wo_nbr', '=', $tablern->wo_nbr)
@@ -1138,14 +1141,11 @@ class wocontroller extends Controller
             DB::commit();
             toast($runningnbr . ' Successfuly Created !', 'success');
             return back();
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             DB::rollBack();
             toast("The data couldn't be saved due to an error.", 'error');
             return back();
         }
-        
-        
     }
 
     public function editwodirect(Request $req)
@@ -1249,22 +1249,22 @@ class wocontroller extends Controller
 
             $thisFailCode = "";
 
-            if($req->has('m_failurecode')){
-                $thisFailCode = implode(';',array_map('strval', $req->m_failurecode));
+            if ($req->has('m_failurecode')) {
+                $thisFailCode = implode(';', array_map('strval', $req->m_failurecode));
             }
 
             $thisImpact = "";
 
-            if($req->has('e_impact')){
-                $thisImpact = implode(';',array_map('strval', $req->e_impact));
+            if ($req->has('e_impact')) {
+                $thisImpact = implode(';', array_map('strval', $req->e_impact));
             }
 
             $thisListEng = "";
 
-            if($req->has('e_engineerlist')){
-                
-                    $thisListEng = implode(';', array_map('strval', $req->e_engineerlist));
-            }            
+            if ($req->has('e_engineerlist')) {
+
+                $thisListEng = implode(';', array_map('strval', $req->e_engineerlist));
+            }
 
             DB::table('wo_mstr')
                 ->where('wo_number', '=', $req->e_nowo)
@@ -1287,8 +1287,7 @@ class wocontroller extends Controller
             DB::commit();
             toast('WO ' . $req->e_nowo . ' successfully updated', 'success');
             return redirect()->route('womaint');
-
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             toast("The data couldn't be saved due to an error.", 'error');
             return redirect()->route('womaint');
@@ -1301,15 +1300,15 @@ class wocontroller extends Controller
 
         DB::beginTransaction();
 
-        try{
+        try {
 
             //dd($req->all());
             //lakukan pengecekan apakah dia status firm atau released
-            if($req->tmp_wostatus == 'firm'){
+            if ($req->tmp_wostatus == 'firm') {
 
                 DB::table('wo_mstr')
-                    ->where('wo_number','=', $req->tmp_wonbr)
-                    ->where('wo_status','=', 'firm')
+                    ->where('wo_number', '=', $req->tmp_wonbr)
+                    ->where('wo_status', '=', 'firm')
                     ->update([
                         'wo_status' => 'canceled',
                         'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -1323,13 +1322,13 @@ class wocontroller extends Controller
 
                 //check apakah wo berasal dari sr ? jika ya, ubah status sr jadi open
                 $checksr = DB::table('wo_mstr')
-                        ->where('wo_number','=', $req->tmp_wonbr)
-                        ->first();
+                    ->where('wo_number', '=', $req->tmp_wonbr)
+                    ->first();
 
-                if($checksr->wo_sr_number !== ""){
+                if ($checksr->wo_sr_number !== "") {
                     //ubah status sr
                     DB::table('service_req_mstr')
-                        ->where('sr_number','=', $checksr->wo_sr_number)
+                        ->where('sr_number', '=', $checksr->wo_sr_number)
                         ->update([
                             'sr_status' => 'Open',
                             'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -1339,28 +1338,25 @@ class wocontroller extends Controller
                     $thiswonumber = $checksr->wo_number;
                     $thissrnumber = $checksr->wo_sr_number;
                     $thisnotecancel = $req->notecancel;
-                    SendWorkOrderCanceledNotification::dispatch($thiswonumber,$thissrnumber,$thisnotecancel);
+                    SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
                 }
-
-                
-
-            }elseif($req->tmp_wostatus == 'released'){
+            } elseif ($req->tmp_wostatus == 'released') {
                 //jika status wo sudah released
 
                 $checktransfer = DB::table('wo_dets_sp')
-                            ->where('wd_sp_wonumber','=', $req->tmp_wonbr)
-                            ->where('wd_sp_issued', '>', 0)
-                            ->count();
+                    ->where('wd_sp_wonumber', '=', $req->tmp_wonbr)
+                    ->where('wd_sp_issued', '>', 0)
+                    ->count();
 
-                if($checktransfer > 0){
+                if ($checktransfer > 0) {
                     //jika status wo sudah released dan sudah ada transaksi spare part di table wo_dets_sp
                     toast('The Work Order cannot be cancelled as there are already transactions associated with it.', 'error');
                     return back();
-                }else{
+                } else {
                     //jika status wo sudah released dan belum ada transaksi maka status wo bisa diubah menjadi cancel
                     DB::table('wo_mstr')
                         ->where('wo_number', '=', $req->tmp_wonbr)
-                        ->where('wo_status','=', 'released')
+                        ->where('wo_status', '=', 'released')
                         ->update([
                             'wo_status' => 'canceled',
                             'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -1372,30 +1368,28 @@ class wocontroller extends Controller
                             'wo_action' => 'canceled',
                         ]);
 
-                //check apakah wo berasal dari sr ? jika ya, ubah status sr jadi open
+                    //check apakah wo berasal dari sr ? jika ya, ubah status sr jadi open
                     $checksr = DB::table('wo_mstr')
-                            ->where('wo_number','=', $req->tmp_wonbr)
-                            ->first();
+                        ->where('wo_number', '=', $req->tmp_wonbr)
+                        ->first();
 
-                    if($checksr->wo_sr_number !== ""){
+                    if ($checksr->wo_sr_number !== "") {
                         DB::table('service_req_mstr')
-                            ->where('sr_number','=', $checksr->wo_sr_number)
+                            ->where('sr_number', '=', $checksr->wo_sr_number)
                             ->update([
                                 'sr_status' => 'Open',
                                 'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
 
-                        
+
                         //kirim notifikasi ke pembuat sr
                         $thiswonumber = $checksr->wo_number;
                         $thissrnumber = $checksr->wo_sr_number;
                         $thisnotecancel = $req->notecancel;
-                        SendWorkOrderCanceledNotification::dispatch($thiswonumber,$thissrnumber,$thisnotecancel);
+                        SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
                     }
-
                 }
-
-            }else{
+            } else {
                 DB::rollBack();
                 toast('work order cannot be cancelled because its status is not firm or released.', 'error');
                 return back();
@@ -1405,7 +1399,6 @@ class wocontroller extends Controller
             DB::commit();
             toast('Work Order ' . $req->tmp_wonbr . ' Successfuly Canceled!', 'success');
             return back();
-
         } catch (Exception $e) {
             DB::rollBack();
 
@@ -1413,7 +1406,6 @@ class wocontroller extends Controller
             toast('Work Order ' . $req->tmp_wonbr . ' Cancel Process Error!', 'error');
             return back();
         }
-        
     }
 
     public function wopaging(Request $req)
@@ -1765,7 +1757,7 @@ class wocontroller extends Controller
                 ->where('username', '=', session()->get('username'))
                 ->get();
 
-            if(Session::get('role') == 'ADMIN'){
+            if (Session::get('role') == 'ADMIN') {
                 //ADMIN
                 if ($wonumber == '' and $asset == '' and $status == '' and $priority == '') {
 
@@ -1778,11 +1770,11 @@ class wocontroller extends Controller
                         ->orderby('wo_created_at', 'desc')
                         ->orderBy('wo_mstr.wo_id', 'desc')
                         ->paginate(10);
-    
+
                     return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
                 } else {
                     $kondisi = "wo_mstr.wo_id > 0";
-    
+
                     if ($wonumber != '') {
                         $kondisi .= " and wo_nbr = '" . $wonumber . "'";
                     }
@@ -1797,20 +1789,19 @@ class wocontroller extends Controller
                     if ($priority != '') {
                         $kondisi .= " and wo_priority = '" . $priority . "'";
                     }
-    
+
                     $data = DB::table('wo_mstr')
                         ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
                         ->whereRaw($kondisi)
                         ->orderby('wo_created_at', 'desc')
                         ->orderBy('wo_mstr.wo_id', 'desc')
-    
+
                         ->paginate(10);
                     // dd($data);
                     // dd($_SERVER['REQUEST_URI']);                
                     return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
                 }
-
-            }else{
+            } else {
                 //engineer yang ditunjuk
                 if ($wonumber == '' and $asset == '' and $status == '' and $priority == '') {
 
@@ -1830,11 +1821,11 @@ class wocontroller extends Controller
                         ->orderby('wo_created_at', 'desc')
                         ->orderBy('wo_mstr.wo_id', 'desc')
                         ->paginate(10);
-    
+
                     return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
                 } else {
                     $kondisi = "wo_mstr.wo_id > 0";
-    
+
                     if ($wonumber != '') {
                         $kondisi .= " and wo_nbr = '" . $wonumber . "'";
                     }
@@ -1849,7 +1840,7 @@ class wocontroller extends Controller
                     if ($priority != '') {
                         $kondisi .= " and wo_priority = '" . $priority . "'";
                     }
-    
+
                     $data = DB::table('wo_mstr')
                         ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
                         ->whereRaw($kondisi)
@@ -1862,14 +1853,12 @@ class wocontroller extends Controller
                         })
                         ->orderby('wo_created_at', 'desc')
                         ->orderBy('wo_mstr.wo_id', 'desc')
-    
+
                         ->paginate(10);
                     // dd($data);
                     // dd($_SERVER['REQUEST_URI']);                
                     return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
                 }
-                
-
             }
         }
     }
@@ -1893,7 +1882,7 @@ class wocontroller extends Controller
                 ->where('username', '=', session()->get('username'))
                 ->get();
 
-            if(Session::get('role') == 'ADMIN'){
+            if (Session::get('role') == 'ADMIN') {
 
                 if ($wonumber == '' and $asset == '' and $status == '' and $priority == '') {
 
@@ -1906,11 +1895,11 @@ class wocontroller extends Controller
                         ->orderby('wo_created_at', 'desc')
                         ->orderBy('wo_mstr.wo_id', 'desc')
                         ->paginate(10);
-    
+
                     return view('workorder.table-woclose', ['data' => $data, 'usernow' => $usernow]);
                 } else {
                     $kondisi = "wo_mstr.wo_id > 0";
-    
+
                     if ($wonumber != '') {
                         $kondisi .= " and wo_nbr = '" . $wonumber . "'";
                     }
@@ -1925,7 +1914,7 @@ class wocontroller extends Controller
                     if ($priority != '') {
                         $kondisi .= " and wo_priority = '" . $priority . "'";
                     }
-                    
+
                     $data = DB::table('wo_mstr')
                         ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
                         ->whereRaw($kondisi)
@@ -1937,8 +1926,7 @@ class wocontroller extends Controller
                     // dd($_SERVER['REQUEST_URI']);                
                     return view('workorder.table-woclose', ['data' => $data, 'usernow' => $usernow]);
                 }
-
-            }else{
+            } else {
 
                 if ($wonumber == '' and $asset == '' and $status == '' and $priority == '') {
 
@@ -1958,11 +1946,11 @@ class wocontroller extends Controller
                         ->orderby('wo_created_at', 'desc')
                         ->orderBy('wo_mstr.wo_id', 'desc')
                         ->paginate(10);
-    
+
                     return view('workorder.table-woclose', ['data' => $data, 'usernow' => $usernow]);
                 } else {
                     $kondisi = "wo_mstr.wo_id > 0";
-    
+
                     if ($wonumber != '') {
                         $kondisi .= " and wo_nbr = '" . $wonumber . "'";
                     }
@@ -1977,7 +1965,7 @@ class wocontroller extends Controller
                     if ($priority != '') {
                         $kondisi .= " and wo_priority = '" . $priority . "'";
                     }
-        
+
                     $data = DB::table('wo_mstr')
                         ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
                         ->whereRaw($kondisi)
@@ -1996,7 +1984,6 @@ class wocontroller extends Controller
                     // dd($_SERVER['REQUEST_URI']);                
                     return view('workorder.table-woclose', ['data' => $data, 'usernow' => $usernow]);
                 }
-
             }
         }
     }
@@ -2011,27 +1998,27 @@ class wocontroller extends Controller
         //     ->first();
 
         $data = DB::table('wo_mstr')
-                ->leftJoin('asset_mstr','asset_mstr.asset_code','wo_mstr.wo_asset_code')
-                ->leftJoin('wotyp_mstr','wotyp_mstr.wotyp_code','wo_mstr.wo_failure_type')
-                ->leftJoin('pmc_mstr','pmc_mstr.pmc_code','wo_mstr.wo_mt_code')
-                ->leftJoin('ins_list','ins_list.ins_code','wo_mstr.wo_ins_code')
-                ->leftJoin('spg_list','spg_list.spg_code','wo_mstr.wo_sp_code')
-                ->leftJoin('qcs_list','qcs_list.qcs_code','wo_mstr.wo_qcspec_code')
-                ->where('wo_mstr.wo_number', '=', $nowo)
-                ->first();
+            ->leftJoin('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+            ->leftJoin('wotyp_mstr', 'wotyp_mstr.wotyp_code', 'wo_mstr.wo_failure_type')
+            ->leftJoin('pmc_mstr', 'pmc_mstr.pmc_code', 'wo_mstr.wo_mt_code')
+            ->leftJoin('ins_list', 'ins_list.ins_code', 'wo_mstr.wo_ins_code')
+            ->leftJoin('spg_list', 'spg_list.spg_code', 'wo_mstr.wo_sp_code')
+            ->leftJoin('qcs_list', 'qcs_list.qcs_code', 'wo_mstr.wo_qcspec_code')
+            ->where('wo_mstr.wo_number', '=', $nowo)
+            ->first();
 
         $kodeEngineers = explode(';', $data->wo_list_engineer);
         $listDescEng = [];
-        foreach($kodeEngineers as $cEng){
-            $deskripsiEng = DB::table('eng_mstr')->where('eng_code','=', $cEng)->first()->eng_desc;
-            array_push($listDescEng,$deskripsiEng);
+        foreach ($kodeEngineers as $cEng) {
+            $deskripsiEng = DB::table('eng_mstr')->where('eng_code', '=', $cEng)->first()->eng_desc;
+            array_push($listDescEng, $deskripsiEng);
         }
 
         $kodeFailure = explode(';', $data->wo_failure_code);
         $listFailure = [];
-        foreach($kodeFailure as $cFail){
-            $deskripsiFail = DB::table('fn_mstr')->where('fn_code','=', $cFail)->first()->fn_desc;
-            array_push($listFailure,$deskripsiFail);
+        foreach ($kodeFailure as $cFail) {
+            $deskripsiFail = DB::table('fn_mstr')->where('fn_code', '=', $cFail)->first()->fn_desc;
+            array_push($listFailure, $deskripsiFail);
         }
 
         return $data;
@@ -2045,41 +2032,41 @@ class wocontroller extends Controller
             ->where('wo_mstr.wo_number', '=', $nowo)
             ->first();
 
-        if($currwo->wo_failure_type !== null){
+        if ($currwo->wo_failure_type !== null) {
             $getFailTypeDesc = DB::table('wotyp_mstr')
-                        ->select('wotyp_desc')
-                        ->where('wotyp_code','=', $currwo->wo_failure_type)
-                        ->first();
-        }else{
+                ->select('wotyp_desc')
+                ->where('wotyp_code', '=', $currwo->wo_failure_type)
+                ->first();
+        } else {
             $getFailTypeDesc = '';
         }
 
 
-        if($currwo->wo_asset_code !== null){
+        if ($currwo->wo_asset_code !== null) {
             $getAssetDesc = DB::table('asset_mstr')
-                        ->select('asset_desc','asset_loc','asset_group')
-                        ->where('asset_code','=', $currwo->wo_asset_code)
-                        ->first();
-        }else{
+                ->select('asset_desc', 'asset_loc', 'asset_group')
+                ->where('asset_code', '=', $currwo->wo_asset_code)
+                ->first();
+        } else {
             $getAssetDesc = '';
         }
 
-        
-        
+
+
         $listFailDesc = [];
 
-        if($currwo->wo_failure_code !== null){
+        if ($currwo->wo_failure_code !== null) {
             $listFailCode = explode(';', $currwo->wo_failure_code);
 
-            
 
-            foreach($listFailCode as $failcode){
+
+            foreach ($listFailCode as $failcode) {
                 $getFailDesc = DB::table('fn_mstr')
-                            ->select('fn_desc')
-                            ->where('fn_code','=', $failcode)
-                            ->first();
+                    ->select('fn_desc')
+                    ->where('fn_code', '=', $failcode)
+                    ->first();
 
-                $failure = array('fn_code'=>$failcode, 'fn_desc'=>$getFailDesc->fn_desc);
+                $failure = array('fn_code' => $failcode, 'fn_desc' => $getFailDesc->fn_desc);
 
                 array_push($listFailDesc, $failure);
             }
@@ -2087,16 +2074,16 @@ class wocontroller extends Controller
 
         $listEngDesc = [];
 
-        if($currwo->wo_list_engineer !== null){
+        if ($currwo->wo_list_engineer !== null) {
             $listEngCode = explode(';', $currwo->wo_list_engineer);
 
-            foreach($listEngCode as $engcode){
+            foreach ($listEngCode as $engcode) {
                 $getEngDesc = DB::table('eng_mstr')
-                            ->select('eng_desc')
-                            ->where('eng_code','=', $engcode)
-                            ->first();
+                    ->select('eng_desc')
+                    ->where('eng_code', '=', $engcode)
+                    ->first();
 
-                $eng = array('eng_code'=>$engcode,'eng_desc'=>$getEngDesc->eng_desc);
+                $eng = array('eng_code' => $engcode, 'eng_desc' => $getEngDesc->eng_desc);
 
                 array_push($listEngDesc, $eng);
             }
@@ -2104,42 +2091,42 @@ class wocontroller extends Controller
 
         $listImpactDesc = [];
 
-        if($currwo->wo_impact_code !== null){
+        if ($currwo->wo_impact_code !== null) {
             $listImpactCode = explode(';', $currwo->wo_impact_code);
 
-            foreach($listImpactCode as $impactcode){
+            foreach ($listImpactCode as $impactcode) {
                 $getImpactDesc = DB::table('imp_mstr')
-                            ->select('imp_desc')
-                            ->where('imp_code','=', $impactcode)
-                            ->first();
+                    ->select('imp_desc')
+                    ->where('imp_code', '=', $impactcode)
+                    ->first();
 
-                $impact = array('imp_code'=>$impactcode, 'imp_desc'=> $getImpactDesc->imp_desc);
+                $impact = array('imp_code' => $impactcode, 'imp_desc' => $getImpactDesc->imp_desc);
 
-                array_push($listImpactDesc,$impact);
+                array_push($listImpactDesc, $impact);
             }
         }
 
         $getMtDesc = DB::table('pmc_mstr')
-                    ->select('pmc_code')
-                    ->where('pmc_code','=', $currwo->wo_mt_code)
-                    ->first();
+            ->select('pmc_code')
+            ->where('pmc_code', '=', $currwo->wo_mt_code)
+            ->first();
 
 
         $getInslistDesc = DB::table('ins_list')
-                        ->select('ins_code')
-                        ->where('ins_code','=', $currwo->wo_ins_code)
-                        ->first();
+            ->select('ins_code')
+            ->where('ins_code', '=', $currwo->wo_ins_code)
+            ->first();
 
         $getSPlistDesc = DB::table('spg_list')
-                        ->select('spg_code')
-                        ->where('spg_code','=', $currwo->wo_sp_code)
-                        ->first();
+            ->select('spg_code')
+            ->where('spg_code', '=', $currwo->wo_sp_code)
+            ->first();
 
         $getQClistDesc = DB::table('qcs_list')
-                        ->select('qcs_code')
-                        ->where('qcs_code','=', $currwo->wo_qcspec_code)
-                        ->first();
-        
+            ->select('qcs_code')
+            ->where('qcs_code', '=', $currwo->wo_qcspec_code)
+            ->first();
+
         return response()->json([
             'wo_master' => $currwo,
             'asset' => $getAssetDesc,
@@ -2286,21 +2273,21 @@ class wocontroller extends Controller
 
     public function wojoblist(Request $req)
     {
-        //dd(Session()->get('username'));
+
+        // dd($user);
         if (strpos(Session::get('menu_access'), 'WO02') !== false) {
             $getuser = DB::table('users')
                 ->where('username', '=', Session()->get('username'))
                 ->first();
 
-            if(Session::get('role') == 'ADMIN'){
+            if (Session::get('role') == 'ADMIN') {
                 $data = DB::table('wo_mstr')
-                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                     ->where(function ($status) {
-                        $status->where('wo_status', '=', 'open')
-                            ->orwhere('wo_status', '=', 'started');
+                        $status->where('wo_status', '=', 'released');
                     })
-                    ->orderby('wo_created_at', 'desc')
-                    ->orderBy('wo_mstr.wo_id', 'desc')
+                    ->orderby('wo_system_create', 'desc')
+                    ->orderBy('wo_mstr.id', 'desc')
                     ->paginate(10);
                 // dd($data);
                 // }
@@ -2311,52 +2298,64 @@ class wocontroller extends Controller
                     ->get();
                 $asset = DB::table('wo_mstr')
                     ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
-                    ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->join('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                     ->where(function ($status) {
-                        $status->where('wo_status', '=', 'open')
-                            ->orwhere('wo_status', '=', 'started');
+                        $status->where('wo_status', '=', 'released');
                     })
                     ->groupBy('asset_code')
                     ->orderBy('asset_code')
                     ->get();
-            }else{
-                $data = DB::table('wo_mstr')
-                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+            } else {
+                $user = Session()->get('username');
+                // dd($user);
+                $datawo = DB::table('wo_mstr')
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                     ->where(function ($status) {
-                        $status->where('wo_status', '=', 'open')
-                            ->orwhere('wo_status', '=', 'started');
+                        $status->where('wo_status', '=', 'released');
                     })
-                    ->where(function ($query) {
-                        $query->where('wo_engineer1', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer5', '=', Session()->get('username'));
-                    })
-                    ->orderby('wo_created_at', 'desc')
-                    ->orderBy('wo_mstr.wo_id', 'desc')
-                    ->paginate(10);
+                    ->get();
+
+                // $data = '';
+
+                foreach ($datawo as $value) {
+                    $dataeng = $value->wo_list_engineer;
+                    $arrayeng = explode(';', $dataeng);
+                    // dd($arrayeng);
+                    if (in_array($user, $arrayeng)) {
+
+                       $data = DB::table('wo_mstr')
+                        ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+                        ->where(function ($status) {
+                            $status->where('wo_status', '=', 'released');
+                        })
+                        ->where('wo_list_engineer', $dataeng)
+                        ->orderby('wo_system_create', 'desc')
+                        ->orderBy('wo_mstr.id', 'desc')
+                        ->paginate(10);
+
+                    } 
+                    
+                }
+
                 // dd($data);
-                // }
-                // dd($data);
+
                 $engineer = DB::table('users')
                     ->join('roles', 'users.role_user', 'roles.role_code')
                     ->where('role_desc', '=', 'Engineer')
                     ->get();
                 $asset = DB::table('wo_mstr')
                     ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
-                    ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->join('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                     ->where(function ($status) {
-                        $status->where('wo_status', '=', 'open')
-                            ->orwhere('wo_status', '=', 'started');
+                        $status->where('wo_status', '=', 'released');
                     })
-                    ->where(function ($query) {
-                        $query->where('wo_engineer1', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer5', '=', Session()->get('username'));
-                    })
+                    // ->where(function ($query) {
+                    //     $query->where('wo_engineer1', '=', Session()->get('username'))
+                    //         ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                    //         ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                    //         ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                    //         ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                    // })
                     ->groupBy('asset_code')
                     ->orderBy('asset_code')
                     ->get();
@@ -2376,16 +2375,16 @@ class wocontroller extends Controller
     {
         // dd($req->all());
         $dataaccess = DB::table('wo_mstr')
-            ->where('wo_nbr', '=', $req->v_nowo)
+            ->where('wo_number', '=', $req->v_nowo)
             ->first();
-        if ($dataaccess->wo_access == 0) {
-            DB::table('wo_mstr')
-                ->where('wo_nbr', '=', $req->v_nowo)
-                ->update(['wo_access' => 1]);
-        } else {
-            toast('WO ' . $req->v_nowo . ' is being used right now', 'error');
-            return redirect()->route('wojoblist');
-        }
+        // if ($dataaccess->wo_access == 0) {
+        //     DB::table('wo_mstr')
+        //         ->where('wo_number', '=', $req->v_nowo)
+        //         ->update(['wo_access' => 1]);
+        // } else {
+        //     toast('WO ' . $req->v_nowo . ' is being used right now', 'error');
+        //     return redirect()->route('wojoblist');
+        // }
         if ($dataaccess->wo_status != $req->statuswo) {
             toast('WO ' . $req->v_nowo . ' status has changed, please recheck', 'error');
             return redirect()->route('wojoblist');
@@ -2393,42 +2392,43 @@ class wocontroller extends Controller
         $statuswo = $req->statuswo;
         $nomorwo = $req->v_nowo;
         //dd($req->all());
-        if ($statuswo == 'ENG Confirmed' || $statuswo == 'open') {
+        if ($statuswo == 'released') {
             DB::table('wo_mstr')
-                ->where('wo_nbr', '=', $nomorwo)
+                ->where('wo_number', '=', $nomorwo)
                 ->update([
                     'wo_status' => 'started',
-                    'wo_start_date' => $req->v_startdate,
-                    'wo_start_time' => $req->v_starttime,
-                    'wo_access'     => 0
+                    'wo_job_startdate' => $req->v_startdate,
+                    'wo_job_starttime' => $req->v_starttime,
+                    'wo_actual_start' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    // 'wo_access'     => 0
                 ]);
-            if ($req->v_nosr != null || $req->v_nosr != '') {
-                DB::table('service_req_mstr')
-                    ->where('wo_number', '=', $nomorwo)
-                    ->update([
-                        'sr_status' => 3,
-                        'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                    ]);
-            }
+            // if ($req->v_nosr != null || $req->v_nosr != '') {
+            //     DB::table('service_req_mstr')
+            //         ->where('wo_number', '=', $nomorwo)
+            //         ->update([
+            //             'sr_status' => 3,
+            //             'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+            //         ]);
+            // }
             toast('Work order ' . $nomorwo . ' started successfuly', 'success');
             return redirect()->route('wojoblist');
         } else if ($statuswo == 'started') {
             DB::table('wo_mstr')
-                ->where('wo_nbr', '=', $nomorwo)
+                ->where('wo_number', '=', $nomorwo)
                 ->update([
                     'wo_status' => 'plan',
                     'wo_start_date' => null,
                     'wo_start_time' => null,
                     'wo_access'     => 0
                 ]);
-            if ($req->v_nosr != null || $req->v_nosr != '') {
-                DB::table('service_req_mstr')
-                    ->where('wo_number', '=', $nomorwo)
-                    ->update([
-                        'sr_status' => 2,
-                        'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                    ]);
-            }
+            // if ($req->v_nosr != null || $req->v_nosr != '') {
+            //     DB::table('service_req_mstr')
+            //         ->where('wo_number', '=', $nomorwo)
+            //         ->update([
+            //             'sr_status' => 2,
+            //             'sr_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+            //         ]);
+            // }
 
             $data = DB::table('eng_mstr')
                 ->join('users', 'eng_mstr.eng_code', '=', 'users.username')
@@ -2462,18 +2462,18 @@ class wocontroller extends Controller
         //dd(Session()->get('username'));
         if (strpos(Session::get('menu_access'), 'WO03') !== false) {
 
-            if(Session::get('role') == 'ADMIN'){
+            if (Session::get('role') == 'ADMIN') {
 
                 $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-                ->where(function ($status) {
-                    $status->where('wo_status', '=', 'started')
-                        ->orwhere('wo_status', '=', 'finish');
-                })
-                ->orderBy('wo_status', 'desc')
-                ->orderby('wo_created_at', 'desc')
-                ->orderBy('wo_mstr.wo_id', 'desc')
-                ->paginate(10);
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->where(function ($status) {
+                        $status->where('wo_status', '=', 'started')
+                            ->orwhere('wo_status', '=', 'finish');
+                    })
+                    ->orderBy('wo_status', 'desc')
+                    ->orderby('wo_created_at', 'desc')
+                    ->orderBy('wo_mstr.wo_id', 'desc')
+                    ->paginate(10);
 
                 $engineer = DB::table('users')
                     ->join('roles', 'users.role_user', 'roles.role_code')
@@ -2500,26 +2500,25 @@ class wocontroller extends Controller
                     ->get();
                 $instruction = DB::table('ins_mstr')
                     ->get();
+            } else {
 
-            }else{
-                
                 $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-                ->where(function ($status) {
-                    $status->where('wo_status', '=', 'started')
-                        ->orwhere('wo_status', '=', 'finish');
-                })
-                ->where(function ($query) {
-                    $query->where('wo_engineer1', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                        ->orwhere('wo_engineer5', '=', Session()->get('username'));
-                })
-                ->orderBy('wo_status', 'desc')
-                ->orderby('wo_created_at', 'desc')
-                ->orderBy('wo_mstr.wo_id', 'desc')
-                ->paginate(10);
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->where(function ($status) {
+                        $status->where('wo_status', '=', 'started')
+                            ->orwhere('wo_status', '=', 'finish');
+                    })
+                    ->where(function ($query) {
+                        $query->where('wo_engineer1', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer2', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer3', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer4', '=', Session()->get('username'))
+                            ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                    })
+                    ->orderBy('wo_status', 'desc')
+                    ->orderby('wo_created_at', 'desc')
+                    ->orderBy('wo_mstr.wo_id', 'desc')
+                    ->paginate(10);
                 $engineer = DB::table('users')
                     ->join('roles', 'users.role_user', 'roles.role_code')
                     ->where('role_desc', '=', 'Engineer')
@@ -2552,10 +2551,9 @@ class wocontroller extends Controller
                     ->get();
                 $instruction = DB::table('ins_mstr')
                     ->get();
-
             }
 
-            
+
             return view('workorder.woclose', ['data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'repaircode' => $repaircode, 'sparepart' => $sparepart, 'repairgroup' => $repairgroup, 'instruction' => $instruction]);
         } else {
             toast('you dont have access, please contact admin', 'error');
@@ -2608,8 +2606,8 @@ class wocontroller extends Controller
                 toast('WO ' . $req->c_wonbr . ' status has changed, please refresh page', 'error');
                 return redirect()->route('woreport');
             }
-        
-            if($req->has('do') && $req->has('result')){
+
+            if ($req->has('do') && $req->has('result')) {
 
                 //sudah tidak dikelompokan oleh repair type
                 foreach ($req->do[0] as $key => $value) {
@@ -2660,10 +2658,10 @@ class wocontroller extends Controller
                     foreach ($testarray as $a) {
                         if ($coscos->cost_site == $a['site'] && $coscos->cost_part == $a['sp']) {
                             $collection = collect($testarray)->map(function ($item, $key) use ($tempCost) {
-                                $item['cost'] =($tempCost[$key]->cost_cost);
+                                $item['cost'] = ($tempCost[$key]->cost_cost);
                                 return $item;
                             });
-                        }else{
+                        } else {
                             $collection = collect($testarray)->map(function ($item, $key) use ($tempCost) {
                                 $item['cost'] = 0;
                                 return $item;
@@ -2687,43 +2685,43 @@ class wocontroller extends Controller
                             'wo_dets_flag' => $testarray[$k_all]['result'],
                             'wo_dets_do_flag' => $testarray[$k_all]['do'],
                             'wo_dets_fu_note' => $testarray[$k_all]['note'],
-                            'wo_dets_qty_used' => DB::raw('CASE WHEN wo_dets_qty_used IS NULL THEN '.$testarray[$k_all]['qtyused'].' ELSE wo_dets_qty_used + '.$testarray[$k_all]['qtyused'].' END'),
-                            'wo_dets_sp_price' => $testarray[$k_all]['cost'] ? $testarray[$k_all]['cost']:0,
+                            'wo_dets_qty_used' => DB::raw('CASE WHEN wo_dets_qty_used IS NULL THEN ' . $testarray[$k_all]['qtyused'] . ' ELSE wo_dets_qty_used + ' . $testarray[$k_all]['qtyused'] . ' END'),
+                            'wo_dets_sp_price' => $testarray[$k_all]['cost'] ? $testarray[$k_all]['cost'] : 0,
                             'wo_dets_used_tmp' => $testarray[$k_all]['qtyused'],
                         ]);
                 }
-                
+
 
                 /* get data buat qxtend issue unplanned */
                 $dataqxtend = DB::table('wo_dets')
-                            ->select('wo_dets_nbr', 'wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc','wo_dets_wh_tosite','wo_dets_wh_toloc','wo_dets_wh_lot','spm_desc','spm_um','wo_dets_wh_qty', DB::raw('SUM(wo_dets_qty_used) as qtytoqx'), DB::raw('SUM(wo_dets_wh_qty) as qtywh'), DB::raw('SUM(wo_dets_used_tmp) as qtynow'))
-                            ->join('sp_mstr','wo_dets.wo_dets_sp','sp_mstr.spm_code')
-                            ->where('wo_dets_nbr', '=', $req->c_wonbr)
-                            ->groupBy('wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc')
-                            ->get();
+                    ->select('wo_dets_nbr', 'wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc', 'wo_dets_wh_tosite', 'wo_dets_wh_toloc', 'wo_dets_wh_lot', 'spm_desc', 'spm_um', 'wo_dets_wh_qty', DB::raw('SUM(wo_dets_qty_used) as qtytoqx'), DB::raw('SUM(wo_dets_wh_qty) as qtywh'), DB::raw('SUM(wo_dets_used_tmp) as qtynow'))
+                    ->join('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')
+                    ->where('wo_dets_nbr', '=', $req->c_wonbr)
+                    ->groupBy('wo_dets_sp', 'wo_dets_wh_site', 'wo_dets_wh_loc')
+                    ->get();
 
                 // dd($dataqxtend);
 
                 $cekstatus = DB::table('wo_dets')
                     ->where('wo_dets_nbr', '=', $req->c_wonbr)
                     ->where(function ($query) {
-                        $query->where('wo_dets_wh_conf','=', 0)
+                        $query->where('wo_dets_wh_conf', '=', 0)
                             ->orWhere('wo_dets_wh_conf', '=', null);
                     })
                     ->count();
-                    
+
                 /* jika WO tidak ada spare part, status akan menjadi open */
                 $ceksp = DB::table('wo_dets')
-                    ->where('wo_dets_nbr','=',$req->c_wonbr)
-                    ->where('wo_dets_sp','=',null)
+                    ->where('wo_dets_nbr', '=', $req->c_wonbr)
+                    ->where('wo_dets_sp', '=', null)
                     ->count();
 
-                    // dd($cekstatus,$ceksp);
-                    
+                // dd($cekstatus,$ceksp);
+
 
                 //jika tidak ada spare part 
-                if($cekstatus == 0 || $ceksp == 0) {
-                
+                if ($cekstatus == 0 || $ceksp == 0) {
+
                     /* start Qxtend */
 
                     $qxwsa = Qxwsa::first();
@@ -2813,7 +2811,7 @@ class wocontroller extends Controller
                     $qdocBody = '';
                     foreach ($dataqxtend as $dtqx) {
 
-                        if($dtqx->qtynow > 0 ){
+                        if ($dtqx->qtynow > 0) {
                             $qdocBody .= ' <inventoryIssue>
                                 <ptPart>' . $dtqx->wo_dets_sp . '</ptPart>
                                 <lotserialQty>' . $dtqx->qtynow . '</lotserialQty>
@@ -2825,29 +2823,28 @@ class wocontroller extends Controller
                             //cek apakah masih ada sisa ?
                             $sisaqty = $dtqx->qtywh - $dtqx->qtytoqx;
 
-                            if($sisaqty > 0 ){
+                            if ($sisaqty > 0) {
                                 $cek_returnbacksp = DB::table('returnback_sp')
-                                                ->where('rb_wonbr','=', $dtqx->wo_dets_nbr)
-                                                ->where('rb_spcode','=', $dtqx->wo_dets_sp)
-                                                ->exists();
+                                    ->where('rb_wonbr', '=', $dtqx->wo_dets_nbr)
+                                    ->where('rb_spcode', '=', $dtqx->wo_dets_sp)
+                                    ->exists();
 
                                 $getuserinput = DB::table('wo_mstr')
-                                                ->select('wo_user_input')
-                                                ->where('wo_nbr','=', $dtqx->wo_dets_nbr)
-                                                ->first();
+                                    ->select('wo_user_input')
+                                    ->where('wo_nbr', '=', $dtqx->wo_dets_nbr)
+                                    ->first();
 
-                                if($cek_returnbacksp){ //kalau sudah ada
-                                    
+                                if ($cek_returnbacksp) { //kalau sudah ada
+
                                     DB::table('returnback_sp')
-                                        ->where('rb_wonbr','=', $dtqx->wo_dets_nbr)
-                                        ->where('rb_spcode','=', $dtqx->wo_dets_sp)
+                                        ->where('rb_wonbr', '=', $dtqx->wo_dets_nbr)
+                                        ->where('rb_spcode', '=', $dtqx->wo_dets_sp)
                                         ->update([
                                             'rb_qtyeng' => $dtqx->qtywh,
-                                            'rb_qtyactual' =>$dtqx->qtytoqx,
+                                            'rb_qtyactual' => $dtqx->qtytoqx,
                                             'rb_qtyreturnback' => $sisaqty,
                                         ]);
-                                    
-                                }else{
+                                } else {
                                     // dd('inser data baru ke returnback sp');
                                     DB::table('returnback_sp')
                                         ->insert([
@@ -2930,13 +2927,13 @@ class wocontroller extends Controller
                     $qdocFault = $xmlResp->xpath('//soapenv:faultstring');
                     // dd($qdocFault);
 
-                    if(!empty($qdocFault)){
-                        
+                    if (!empty($qdocFault)) {
+
 
                         $qdocFault = (string) $xmlResp->xpath('//soapenv:faultstring')[0];
 
                         DB::rollBack();
-                        alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$qdocFault."",'error')->persistent('Dismiss');
+                        alert()->html('<u><b>Error Response Qxtend</b></u>', "<b>Detail Response Qxtend :</b><br>" . $qdocFault . "", 'error')->persistent('Dismiss');
                         return redirect()->back();
                     }
 
@@ -2946,8 +2943,6 @@ class wocontroller extends Controller
 
 
                     if ($qdocResult == "success" or $qdocResult == "warning") {
-                        
-
                     } else {
                         // dd('abcd');
                         DB::rollBack();
@@ -2957,19 +2952,17 @@ class wocontroller extends Controller
                         foreach ($xmlResp->xpath('//ns3:temp_err_msg') as $temp_err_msg) {
                             $context = $temp_err_msg->xpath('./ns3:tt_msg_context')[0];
                             $desc = $temp_err_msg->xpath('./ns3:tt_msg_desc')[0];
-                            $outputerror .= "&bull;  ".$context . " - " . $desc . "<br>";
+                            $outputerror .= "&bull;  " . $context . " - " . $desc . "<br>";
                         }
 
-                        alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$outputerror."",'error')->persistent('Dismiss');
-                        
+                        alert()->html('<u><b>Error Response Qxtend</b></u>', "<b>Detail Response Qxtend :</b><br>" . $outputerror . "", 'error')->persistent('Dismiss');
+
                         return redirect()->route('woreport');
                     }
-
                 }
-
             }
 
-            
+
 
             /* QXTEND issue - unplanned */
 
@@ -2995,9 +2988,9 @@ class wocontroller extends Controller
 
                     // Cek apakah file sudah ada di database
                     $existingFile = DB::table('acceptance_image')
-                                    ->where('file_name', $filename)
-                                    ->where('file_wonumber','=',$req->c_wonbr)
-                                    ->count();
+                        ->where('file_name', $filename)
+                        ->where('file_wonumber', '=', $req->c_wonbr)
+                        ->count();
                     if ($existingFile > 0) {
                         toast('File names cannot be same.', 'error');
                         return back();
@@ -3070,7 +3063,6 @@ class wocontroller extends Controller
             DB::commit();
             toast('data reported successfuly', 'success');
             return redirect()->route('woreport');
-
         } catch (Exception $e) {
             dd($e);
             DB::rollBack();
@@ -3116,7 +3108,7 @@ class wocontroller extends Controller
 
         try {
 
-            
+
             $qxwsa = Qxwsa::first();
 
             // Var Qxtend
@@ -3202,20 +3194,19 @@ class wocontroller extends Controller
                 <dsInventoryIssue>';
 
             $qdocBody = '';
-            foreach ($req->spcode_hidden as $spcode => $value ) {
+            foreach ($req->spcode_hidden as $spcode => $value) {
 
-                if ($req->spcode_hidden[$spcode] != "" || $req->spcode_hidden[$spcode] != null){
+                if ($req->spcode_hidden[$spcode] != "" || $req->spcode_hidden[$spcode] != null) {
                     // dump($req->spcode_hidden[$spcode]);
                     $qdocBody .= ' <inventoryIssue>
                         <ptPart>' . $req->spcode_hidden[$spcode] . '</ptPart>
-                        <lotserialQty>' . $req->qtyreissued[$spcode]. '</lotserialQty>
+                        <lotserialQty>' . $req->qtyreissued[$spcode] . '</lotserialQty>
                         <site>' . $req->site_hidden[$spcode] . '</site>
                         <location>' . $req->loc_hidden[$spcode] . '</location>
                         <lotserial>' . $req->lotserial[$spcode] . '</lotserial>
                         <ordernbr>' . $req->wonbr_hidden[$spcode] . '</ordernbr>
                     </inventoryIssue>';
                 }
-
             }
             $qdocfooter =   '</dsInventoryIssue>
                         </issueInventory>
@@ -3277,12 +3268,12 @@ class wocontroller extends Controller
             $qdocFault = $xmlResp->xpath('//soapenv:faultstring');
             // dd($qdocFault);
 
-            if(!empty($qdocFault)){
+            if (!empty($qdocFault)) {
                 DB::rollBack();
 
                 $qdocFault = (string) $xmlResp->xpath('//soapenv:faultstring')[0];
 
-                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$qdocFault."",'error')->persistent('Dismiss');
+                alert()->html('<u><b>Error Response Qxtend</b></u>', "<b>Detail Response Qxtend :</b><br>" . $qdocFault . "", 'error')->persistent('Dismiss');
                 return redirect()->back();
             }
 
@@ -3291,14 +3282,14 @@ class wocontroller extends Controller
 
             if ($qdocResult == "success" or $qdocResult == "warning") {
 
-                foreach ($req->spcode_hidden as $jmlspcode => $value ) {
+                foreach ($req->spcode_hidden as $jmlspcode => $value) {
 
                     $cekwodets = DB::table('wo_dets')
-                            ->where('wo_dets_nbr', $req->wonbr_hidden[$jmlspcode])
-                            ->where('wo_dets_rc', $req->rc_hidden[$jmlspcode])
-                            ->where('wo_dets_ins', $req->inscode_hidden[$jmlspcode])
-                            ->where('wo_dets_sp', $req->spcode_hidden[$jmlspcode])
-                            ->first();
+                        ->where('wo_dets_nbr', $req->wonbr_hidden[$jmlspcode])
+                        ->where('wo_dets_rc', $req->rc_hidden[$jmlspcode])
+                        ->where('wo_dets_ins', $req->inscode_hidden[$jmlspcode])
+                        ->where('wo_dets_sp', $req->spcode_hidden[$jmlspcode])
+                        ->first();
 
                     $new_qty_used = 0;
 
@@ -3312,13 +3303,11 @@ class wocontroller extends Controller
                         ->update([
                             'wo_dets_qty_used' => $new_qty_used
                         ]);
-    
                 }
 
                 DB::commit();
-                toast('Qty Issued updated for WO : '.$req->c_wonbr.' ', 'success');
+                toast('Qty Issued updated for WO : ' . $req->c_wonbr . ' ', 'success');
                 return redirect()->route('woreport');
-
             } else {
 
                 DB::rollBack();
@@ -3328,14 +3317,13 @@ class wocontroller extends Controller
                 foreach ($xmlResp->xpath('//ns3:temp_err_msg') as $temp_err_msg) {
                     $context = $temp_err_msg->xpath('./ns3:tt_msg_context')[0];
                     $desc = $temp_err_msg->xpath('./ns3:tt_msg_desc')[0];
-                    $outputerror .= "&bull;  ".$context . " - " . $desc . "<br>";
+                    $outputerror .= "&bull;  " . $context . " - " . $desc . "<br>";
                 }
 
-                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$outputerror."",'error')->persistent('Dismiss');
+                alert()->html('<u><b>Error Response Qxtend</b></u>', "<b>Detail Response Qxtend :</b><br>" . $outputerror . "", 'error')->persistent('Dismiss');
                 return redirect()->route('woreport');
-
             }
-            
+
 
             foreach ($req->spcode_hidden as $jmlspcode => $value) {
 
@@ -3893,7 +3881,7 @@ class wocontroller extends Controller
             'sparepart' => $sparepartarray, 'womstr' => $womstr,
             'repairlist' => $repairlist, 'data' => $data, 'repair' => $repair, 'counter' => 0, 'countdb' => $countdb,
             'check' => $checkstr, 'countrepairitre' => $countrepairitr, 'printdate' => $printdate, 'engineerlist' => $engineerlist,
-            'users' => $users, 'datasr' => $datasr, 'impact' => $impact, 'dept' => $dept 
+            'users' => $users, 'datasr' => $datasr, 'impact' => $impact, 'dept' => $dept
         ])->setPaper('A4', 'portrait');
         //return view('picklistbrowse.shipperprint-template',['printdata1' => $printdata1, 'printdata2' => $printdata2, 'runningnbr' => $runningnbr,'user' => $user,'last' =>$countprint]);
         return $pdf->stream($wo . '.pdf');
@@ -4494,8 +4482,9 @@ class wocontroller extends Controller
         return response($output);
     }
 
-    public function returnsp (Request $req){
-        if(Session::get('role') == 'ADMIN'){
+    public function returnsp(Request $req)
+    {
+        if (Session::get('role') == 'ADMIN') {
             // $data = DB::table('wo_mstr')
             //     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
             //     ->where('wo_status','=','closed')
@@ -4506,12 +4495,12 @@ class wocontroller extends Controller
             $data = DB::table('wo_mstr')
                 ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
                 ->join('returnback_sp', 'wo_mstr.wo_nbr', '=', 'returnback_sp.rb_wonbr')
-                ->where('wo_mstr.wo_status','=','closed')
+                ->where('wo_mstr.wo_status', '=', 'closed')
                 ->where('returnback_sp.rb_qtyreturnback', '>', 0);
 
             $data = $data->groupBy('wo_nbr');
 
-            $data = $data->orderBy('wo_nbr','desc')->paginate(10);
+            $data = $data->orderBy('wo_nbr', 'desc')->paginate(10);
 
             // dd($data);
 
@@ -4529,7 +4518,7 @@ class wocontroller extends Controller
                 ->groupBy('asset_code')
                 ->orderBy('asset_code')
                 ->get();
-        }else{
+        } else {
             // $data = DB::table('wo_mstr')
             //     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
             //     ->where('wo_status','=','closed')
@@ -4541,13 +4530,13 @@ class wocontroller extends Controller
             $data = DB::table('wo_mstr')
                 ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
                 ->join('returnback_sp', 'wo_mstr.wo_nbr', '=', 'returnback_sp.rb_wonbr')
-                ->where('wo_mstr.wo_status','=','closed')
+                ->where('wo_mstr.wo_status', '=', 'closed')
                 ->where('returnback_sp.rb_qtyreturnback', '>', 0)
-                ->where('wo_user_input','=', Session::get('username'));
+                ->where('wo_user_input', '=', Session::get('username'));
 
             $data = $data->groupBy('wo_nbr');
 
-            $data = $data->orderBy('wo_nbr','desc')->paginate(10);
+            $data = $data->orderBy('wo_nbr', 'desc')->paginate(10);
             // dd($data);
             // }
             // dd($data);
@@ -4577,29 +4566,31 @@ class wocontroller extends Controller
         return view('workorder.returnbacksp-browse', ['data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset]);
     }
 
-    public function returnsp_detail($wonbr){
+    public function returnsp_detail($wonbr)
+    {
         $datadetail = DB::table('returnback_sp')
-                        ->where('rb_wonbr', $wonbr)
-                        ->get();
+            ->where('rb_wonbr', $wonbr)
+            ->get();
 
         $datadetail_master = DB::table('wo_mstr')
-                        ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-                        ->where('wo_nbr','=', $wonbr)
-                        ->select('wo_nbr','wo_asset','wo_asset_site','wo_asset_loc','wo_finish_date','wo_finish_time','asset_code','asset_desc')
-                        ->first();
+            ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+            ->where('wo_nbr', '=', $wonbr)
+            ->select('wo_nbr', 'wo_asset', 'wo_asset_site', 'wo_asset_loc', 'wo_finish_date', 'wo_finish_time', 'asset_code', 'asset_desc')
+            ->first();
 
         // dd($datadetail_master);
 
-        return view('workorder.returnbacksp-detail',['datadetail' => $datadetail, 'detailmaster' => $datadetail_master]);
+        return view('workorder.returnbacksp-detail', ['datadetail' => $datadetail, 'detailmaster' => $datadetail_master]);
     }
 
-    public function submit_returnback(Request $req){
+    public function submit_returnback(Request $req)
+    {
         // dd($req->all());
 
         DB::beginTransaction();
 
-        try{
-            
+        try {
+
             /* ini qxtend transfer single item */
 
             $qxwsa = ModelsQxwsa::first();
@@ -4623,8 +4614,8 @@ class wocontroller extends Controller
             xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing">
             <soapenv:Header>
                 <wsa:Action/>
-                <wsa:To>urn:services-qad-com:'.$qxRcv.'</wsa:To>
-                <wsa:MessageID>urn:services-qad-com::'.$qxRcv.'</wsa:MessageID>
+                <wsa:To>urn:services-qad-com:' . $qxRcv . '</wsa:To>
+                <wsa:MessageID>urn:services-qad-com::' . $qxRcv . '</wsa:MessageID>
                 <wsa:ReferenceParameters>
                 <qcom:suppressResponseDetail>true</qcom:suppressResponseDetail>
                 </wsa:ReferenceParameters>
@@ -4638,7 +4629,7 @@ class wocontroller extends Controller
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                     <qcom:propertyName>domain</qcom:propertyName>
-                    <qcom:propertyValue>'.$domain.'</qcom:propertyValue>
+                    <qcom:propertyValue>' . $domain . '</qcom:propertyValue>
                     </qcom:ttContext>
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -4689,38 +4680,37 @@ class wocontroller extends Controller
                 <dsItem>';
 
             $qdocBody = '';
-            
+
             /* bisa foreach per item dari sini */
-            
-            foreach($req->tick as $thistick => $value){ //cek apakah dichecklist confirm
-                if($req->qtyreturnback[$thistick] > 0){ //cek apakah qty yang dikembalikan tidak 0
+
+            foreach ($req->tick as $thistick => $value) { //cek apakah dichecklist confirm
+                if ($req->qtyreturnback[$thistick] > 0) { //cek apakah qty yang dikembalikan tidak 0
                     $qdocBody .= '<item>
-                                <part>'.$req->spcode[$thistick].'</part>
+                                <part>' . $req->spcode[$thistick] . '</part>
                                 <itemDetail>
-                                    <lotserialQty>'.$req->qtyreturnback[$thistick].'</lotserialQty>
-                                    <nbr>'.$req->wonbr[$thistick].'</nbr>
-                                    <siteFrom>'.$req->siteto[$thistick].'</siteFrom>
-                                    <locFrom>'.$req->locto[$thistick].'</locFrom>
-                                    <lotserFrom>'.$req->lotfrom[$thistick].'</lotserFrom>
-                                    <siteTo>'.$req->siteform[$thistick].'</siteTo>
-                                    <locTo>'.$req->locform[$thistick].'</locTo>
+                                    <lotserialQty>' . $req->qtyreturnback[$thistick] . '</lotserialQty>
+                                    <nbr>' . $req->wonbr[$thistick] . '</nbr>
+                                    <siteFrom>' . $req->siteto[$thistick] . '</siteFrom>
+                                    <locFrom>' . $req->locto[$thistick] . '</locFrom>
+                                    <lotserFrom>' . $req->lotfrom[$thistick] . '</lotserFrom>
+                                    <siteTo>' . $req->siteform[$thistick] . '</siteTo>
+                                    <locTo>' . $req->locform[$thistick] . '</locTo>
                                 </itemDetail>
                             </item>';
 
                     DB::table('returnback_sp')
-                        ->where('rb_wonbr','=', $req->wonbr[$thistick])
-                        ->where('rb_spcode','=', $req->spcode[$thistick])
+                        ->where('rb_wonbr', '=', $req->wonbr[$thistick])
+                        ->where('rb_spcode', '=', $req->spcode[$thistick])
                         // ->where('rb_sitefrom','=', $req->siteform[$thistick])
                         // ->where('rb_locfrom','=', $req->locform[$thistick])
                         ->update([
-                            'rb_qtyreturnback' => DB::raw('rb_qtyreturnback - '.$req->qtyreturnback[$thistick]),
-                            'rb_qtyreturned' => DB::raw('rb_qtyreturned + ' .$req->qtyreturnback[$thistick]),
+                            'rb_qtyreturnback' => DB::raw('rb_qtyreturnback - ' . $req->qtyreturnback[$thistick]),
+                            'rb_qtyreturned' => DB::raw('rb_qtyreturned + ' . $req->qtyreturnback[$thistick]),
                             'rb_updated_at' => Carbon::now(),
                         ]);
-                    
                 }
             }
-            
+
             // dd($qdocBody);
             $qdocfooter =   '</dsItem>
                             </transferInvSingleItem>
@@ -4782,12 +4772,12 @@ class wocontroller extends Controller
             $qdocFault = $xmlResp->xpath('//soapenv:faultstring');
             // dd($qdocFault);
 
-            if(!empty($qdocFault)){
+            if (!empty($qdocFault)) {
                 DB::rollBack();
 
                 $qdocFault = (string) $xmlResp->xpath('//soapenv:faultstring')[0];
 
-                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$qdocFault."",'error')->persistent('Dismiss');
+                alert()->html('<u><b>Error Response Qxtend</b></u>', "<b>Detail Response Qxtend :</b><br>" . $qdocFault . "", 'error')->persistent('Dismiss');
                 return redirect()->back();
             }
 
@@ -4799,9 +4789,8 @@ class wocontroller extends Controller
             if ($qdocResult == "success" or $qdocResult == "warning") {
                 /* jika response sukses atau warning maka menyimpan data jika sudah di transferr ke qad*/
                 DB::commit();
-                toast('Confirm Transfer Back Spare Part from '.$req->wonbr[0].' Successfuly !', 'success');
+                toast('Confirm Transfer Back Spare Part from ' . $req->wonbr[0] . ' Successfuly !', 'success');
                 return redirect()->route('returnSPBrowse');
-
             } else {
 
                 DB::rollBack();
@@ -4810,7 +4799,7 @@ class wocontroller extends Controller
                 foreach ($xmlResp->xpath('//ns3:temp_err_msg') as $temp_err_msg) {
                     $context = $temp_err_msg->xpath('./ns3:tt_msg_context')[0];
                     $desc = $temp_err_msg->xpath('./ns3:tt_msg_desc')[0];
-                    $outputerror .= "&bull;  ".$context . " - " . $desc . "<br>";
+                    $outputerror .= "&bull;  " . $context . " - " . $desc . "<br>";
                 }
 
                 // dd('stop');
@@ -4825,13 +4814,10 @@ class wocontroller extends Controller
 
                 // $output = substr($output, 0, -6);
 
-                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$outputerror."",'error')->persistent('Dismiss');
+                alert()->html('<u><b>Error Response Qxtend</b></u>', "<b>Detail Response Qxtend :</b><br>" . $outputerror . "", 'error')->persistent('Dismiss');
                 return redirect()->route('returnSPBrowse');
-
             }
-
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             dd($e);
             DB::rollBack();
             toast('Save Error', 'error');
@@ -4839,16 +4825,17 @@ class wocontroller extends Controller
         }
     }
 
-    public function checkfailurecodetype(Request $req){
+    public function checkfailurecodetype(Request $req)
+    {
         $assetgroup = $req->group;
         $getType = $req->type;
 
         $asfn_det = DB::table('asfn_det')
-                    ->where('asfn_asset','=',$assetgroup)
-                    ->where('asfn_fntype','=',$getType)
-                    ->count();
+            ->where('asfn_asset', '=', $assetgroup)
+            ->where('asfn_fntype', '=', $getType)
+            ->count();
 
-        if($asfn_det > 0){
+        if ($asfn_det > 0) {
             //jika ada
             // $fntype = DB::table('wotyp_mstr')
             //     ->leftJoin('asfn_det','asfn_det.asfn_fntype','wotyp_mstr.wotyp_code')
@@ -4857,19 +4844,18 @@ class wocontroller extends Controller
             //     ->get();
 
             $failure = DB::table('fn_mstr')
-                ->leftJoin('asfn_det','asfn_det.asfn_fncode','fn_mstr.fn_code')
-                ->where('asfn_asset','=', $assetgroup)
-                ->where('asfn_fntype','=',$getType)
+                ->leftJoin('asfn_det', 'asfn_det.asfn_fncode', 'fn_mstr.fn_code')
+                ->where('asfn_asset', '=', $assetgroup)
+                ->where('asfn_fntype', '=', $getType)
                 ->groupBy('asfn_fncode')
-                ->get();    
-        }else{
+                ->get();
+        } else {
             //jika tidak ada
             // $fntype = DB::table('wotyp_mstr')
             //     ->get();
 
             $failure = DB::table('fn_mstr')
-                ->get();    
-
+                ->get();
         }
 
 
@@ -4879,10 +4865,10 @@ class wocontroller extends Controller
         // }
 
         $outputcode = [];
-        foreach($failure as $thiscode){
+        foreach ($failure as $thiscode) {
 
-            $failurecode = array('fn_code'=>$thiscode->fn_code,'fn_desc'=>$thiscode->fn_desc);
-            
+            $failurecode = array('fn_code' => $thiscode->fn_code, 'fn_desc' => $thiscode->fn_desc);
+
             array_push($outputcode, $failurecode);
         }
 

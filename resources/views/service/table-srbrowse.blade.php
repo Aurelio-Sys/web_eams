@@ -51,7 +51,7 @@
     data-srdate="{{date('d-m-Y', strtotime($show->sr_req_date))}}" data-srtime="{{date('H:i', strtotime($show->sr_req_time))}}" data-wonumber="{{$show->wo_number}}" 
     data-startwo="{{date('d-m-Y', strtotime($show->wo_job_startdate))}}" 
     data-endwo="{{date('d-m-Y', strtotime($show->wo_job_finishdate))}}" data-engineer="{{$show->wo_list_engineer}}"
-    data-approver="{{$dataapps->dept_code}} -- {{$dataapps->dept_desc}}" data-reason="{{is_null($show->srta_eng_reason) ? $show->srta_reason : $show->srta_eng_reason}}"
+    data-approver="{{$show->eng_dept}} -- {{$show->u11}}" data-reason="{{is_null($show->srta_eng_reason) ? $show->srta_reason : $show->srta_eng_reason}}"
     data-wostatus="{{$show->sr_status}}" 
     data-statusapproval="{{is_null($show->srta_eng_status) ? $show->srta_status : $show->srta_eng_status}}"
     data-failtype="{{$show->sr_fail_type}}" data-failcode="{{$show->sr_fail_code}}">
@@ -68,7 +68,7 @@
 
     {{--  Edit SR  --}}
     @php($session = session('username'))
-    @if($show->sr_req_by == $session && $show->sr_status != 'Canceled')
+    @if($show->sr_req_by == $session && $show->sr_status != 'Canceled' && $show->sr_status != 'Inprocess')
     <a href="javascript:void(0)" class="editsr" data-toggle="tooltip"  title="Edit SR"  data-target="#editModal" 
     data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_asset}}" data-assetdesc="{{$show->asset_desc}}"
     data-reqby="{{$show->name}}" data-srnote="{{$show->sr_note}}" data-priority="{{$show->sr_priority}}" data-impact="{{$show->sr_impact}}"
