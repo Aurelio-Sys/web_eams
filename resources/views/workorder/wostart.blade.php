@@ -18,73 +18,73 @@
 @section('content')
 <!-- Flash Menu -->
 <style>
-  .swal-popup{
+  .swal-popup {
     font-size: 2rem !important;
   }
 </style>
 <!--Table Menu-->
-<div class="container-fluid mb-2" >
-    <div class="row">
-      <div class="col-md-12">
-        <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
-      </div>  
+<div class="container-fluid mb-2">
+  <div class="row">
+    <div class="col-md-12">
+      <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
     </div>
-    <!-- Element div yang akan collapse atau expand -->
-    <div class="collapse" id="collapseExample">
-        <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
-        <div class="card card-body bg-black rounded-0">
-          <div class="col-12 form-group row">
+  </div>
+  <!-- Element div yang akan collapse atau expand -->
+  <div class="collapse" id="collapseExample">
+    <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+    <div class="card card-body bg-black rounded-0">
+      <div class="col-12 form-group row">
 
-              <!--FORM Search Disini-->
-              <label for="s_nomorwo" class="col-md-2 col-form-label text-md-left">{{ __('Work Order Number') }}</label>
-              <div class="col-md-4 col-sm-12 mb-2 input-group">
-                <input id="s_nomorwo" type="text" class="form-control"  name="s_nomorwo" value="" autofocus autocomplete="off">
-              </div>
-              <label for="s_asset" class="col-md-2 col-form-label text-md-right" >{{ __('Asset') }}</label>
-              <div class="col-md-4 col-sm-12 mb-2 input-group">
-                <select id="s_asset"  class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
-                  <option value="">--Select Asset--</option>
-                  @foreach($asset1 as $assetsearch)
-                  <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
-                  @endforeach
-                </select>
-              </div>
-              <label for="s_status" class="col-md-2 col-form-label text-md-left">{{ __('Work Order Status') }}</label>
-              <div class="col-md-3 col-sm-12 mb-2 input-group">
-                <select id="s_status" type="text" class="form-control"  name="s_status">
-                  <option value="">--Select Status--</option>
-                  <option value="open">Open</option>
-                  <option value="started">Started</option>
-                </select>
-              </div>
-              <label for="" class="col-md-1 col-form-label text-md-left">{{ __('') }}</label>
-              <label for="s_priority" class="col-md-2 col-form-label text-md-right">{{ __('Priority') }}</label>
-              <div class="col-md-4 col-sm-12 mb-2 input-group">
-                <select id="s_priority" type="text" class="form-control"  name="s_priority">
-                  <option value="">--Select Priority--</option>
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
-              </div>
-              <label for="" class="col-md-2 col-form-label text-md-right">{{ __('') }}</label>
-              <div class="col-md-2 col-sm-12 mb-2 input-group">
-                <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" style="float:right" />
-              </div>
-              <div class="col-md-2 col-sm-12 mb-2 input-group">
-                <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' ><i class="fas fa-sync-alt"></i></button>
-              </div>
-          </div>
+        <!--FORM Search Disini-->
+        <label for="s_nomorwo" class="col-md-5 col-form-label text-md-left">{{ __('Work Order Number') }}</label>
+        <div class="col-md-7 col-sm-12 mb-2 input-group">
+          <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="" autofocus autocomplete="off">
         </div>
+        <label for="s_asset" class="col-md-5 col-form-label text-md-right">{{ __('Asset') }}</label>
+        <div class="col-md-7 col-sm-12 mb-2 input-group">
+          <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
+            <option value="">--Select Asset--</option>
+            @foreach($asset1 as $assetsearch)
+            <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
+            @endforeach
+          </select>
+        </div>
+        <label for="s_status" class="col-md-5 col-form-label text-md-left">{{ __('Work Order Status') }}</label>
+        <div class="col-md-3 col-sm-12 mb-2 input-group">
+          <select id="s_status" type="text" class="form-control" name="s_status">
+            <option value="">--Select Status--</option>
+            <option value="open">Open</option>
+            <option value="started">Started</option>
+          </select>
+        </div>
+        <label for="" class="col-md-1 col-form-label text-md-left">{{ __('') }}</label>
+        <label for="s_priority" class="col-md-5 col-form-label text-md-right">{{ __('Priority') }}</label>
+        <div class="col-md-7 col-sm-12 mb-2 input-group">
+          <select id="s_priority" type="text" class="form-control" name="s_priority">
+            <option value="">--Select Priority--</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        <label for="" class="col-md-5 col-form-label text-md-right">{{ __('') }}</label>
+        <div class="col-md-5 col-sm-12 mb-2 input-group">
+          <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" style="float:right" />
+        </div>
+        <div class="col-md-5 col-sm-12 mb-2 input-group">
+          <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'><i class="fas fa-sync-alt"></i></button>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
-<input type="hidden" id="tmpwo" value=""/>
-<input type="hidden" id="tmpasset" value=""/>
-<input type="hidden" id="tmpstatus" value=""/>
-<input type="hidden" id="tmppriority" value=""/>
-<input type="hidden" id="tmpperiod" value=""/>
+<input type="hidden" id="tmpwo" value="" />
+<input type="hidden" id="tmpasset" value="" />
+<input type="hidden" id="tmpstatus" value="" />
+<input type="hidden" id="tmppriority" value="" />
+<input type="hidden" id="tmpperiod" value="" />
 
-<div class="col-md-2">
+<div class="col-md-5">
 
 </div>
 
@@ -102,7 +102,6 @@
         <tr style="text-align: center;">
           <th>Work Order Number</th>
           <th>Asset</th>
-          <th>WO type</th>
           <th>Status</th>
           <th>Priority</th>
           <th>Action</th>
@@ -132,112 +131,109 @@
         </div>
         <form class="form-horizontal" id="newedit" method="post" action="editjob">
           {{ csrf_field() }}
-          <input type="hidden"  id="v_counter">
+          <input type="hidden" id="v_counter">
           <input type="hidden" name="statuswo" id="statuswo">
           <div class="modal-body">
             <div class="form-group row justify-content-center">
               <label for="v_nowo" class="col-md-5 col-form-label text-md-left">Work Order Number</label>
               <div class="col-md-7">
-                <input id="v_nowo" type="text" class="form-control" name="v_nowo"  autocomplete="off" readonly autofocus>
+                <input id="v_nowo" type="text" class="form-control" name="v_nowo" autocomplete="off" readonly autofocus>
               </div>
             </div>
             <div class="form-group row justify-content-center">
               <label for="v_nosr" class="col-md-5 col-form-label text-md-left">SR Number</label>
               <div class="col-md-7">
-                <input id="v_nosr" type="text" class="form-control" name="v_nosr"  readonly autofocus>
-              </div>
-            </div>
-            <div class="form-group row justify-content-center" id="vien1" style="display:none">
-              <label for="v_engineer1" class="col-md-5 col-form-label text-md-left">Engineer 1</label>
-              <div class="col-md-7">
-                <input type='text' id="v_engineer1" class="form-control v_engineer1" name="v_engineer1"  autofocus readonly>
-              </div>
-            </div>
-            <div class="form-group row justify-content-center" id="vien2" style="display:none">
-              <label for="v_engineer2" class="col-md-5 col-form-label text-md-left">Engineer 2</label>
-              <div class="col-md-7">
-                <input type='text' id="v_engineer2" class="form-control v_engineer2" name="v_engineer2" autofocus readonly>
-              </div>
-            </div>
-            <div class="form-group row justify-content-center" id="vien3" style="display:none">
-              <label for="v_engineer3" class="col-md-5 col-form-label text-md-left">Engineer 3</label>
-              <div class="col-md-7">
-                <input type="text" readonly id="v_engineer3" class="form-control v_engineer3" name="v_engineer3" autofocus >
-              </div>
-            </div>
-            <div class="form-group row justify-content-center" id="vien4" style="display:none">
-              <label for="v_engineer4" class="col-md-5 col-form-label text-md-left">Engineer 4</label>
-              <div class="col-md-7">
-                <input type="text" readonly id="v_engineer4" class="form-control v_engineer4" name="v_engineer4" autofocus >
-              </div>
-            </div>
-            <div class="form-group row justify-content-center" id="vien5" style="display:none">
-              <label for="v_engineer5" class="col-md-5 col-form-label text-md-left">Engineer 5</label>
-              <div class="col-md-7">
-                <input type="text" readonly id="v_engineer5" class="form-control v_engineer5" name="v_engineer5" autofocus >
+                <input id="v_nosr" type="text" class="form-control" name="v_nosr" readonly autofocus>
               </div>
             </div>
             <div class="form-group row justify-content-center">
-              <label for="v_asset" class="col-md-5 col-form-label text-md-left">Asset</label>
+              <label for="v_creator" class="col-md-5 col-form-label text-md-left">Requested By</label>
               <div class="col-md-7">
-                <input type="text" readonly id="v_asset" type="text" class="form-control v_asset" name="v_asset" autofocus >
-              </div>
-            </div>
-            <div class="form-group row justify-content-center" id="divfail1" style="display:none">
-              <label for="e_failure1" class="col-md-5 col-form-label text-md-left">Failure Code 1</label>
-              <div class="col-md-7">
-                <input id="e_failure1" class="form-control e_failure1"  autofocus readonly>
-                <input type="hidden" name="e_failure1" id="hiddenfail1">
-              </div>
-            </div>
-            <div class="form-group row justify-content-center" id="divfail2" style="display:none">
-              <label for="e_failure2" class="col-md-5 col-form-label text-md-left">Failure Code 2</label>
-              <div class="col-md-7">
-                <input id="e_failure2" class="form-control e_failure2"  autofocus readonly >
-                <input type="hidden" name="e_failure2" id="hiddenfail2">
-              </div>
-            </div>
-            <div class="form-group row justify-content-center" id="divfail3" style="display:none">
-              <label for="e_failure3" class="col-md-5 col-form-label text-md-left">Failure Code 3</label>
-              <div class="col-md-7">
-                <input id="e_failure3" class="form-control e_failure3"  autofocus readonly>
-                <input type="hidden" name="e_failure3" id="hiddenfail3">
-              </div>
-            </div>
-            <div class="form-group row justify-content-center">
-              <label for="v_schedule" class="col-md-5 col-form-label text-md-left">Schedule Date</label>
-              <div class="col-md-7">
-                <input id="v_schedule" readonly type="date" class="form-control" name="v_schedule" value="{{ old('v_schedule') }}"   autofocus>
-              </div>
-            </div>
-            <div class="form-group row justify-content-center">
-              <label for="v_duedate" class="col-md-5 col-form-label text-md-left">Due Date</label>
-              <div class="col-md-7">
-                <input id="v_duedate" readonly type="date" class="form-control" name="v_duedate" value="{{ old('e_duedate') }}"  autofocus readonly>
+                <input id="v_creator" readonly class="form-control" name="v_creator" value="{{ old('v_creator') }}" autofocus>
               </div>
             </div>
             <div class="form-group row justify-content-center">
               <label for="v_dept" class="col-md-5 col-form-label text-md-left">Department</label>
               <div class="col-md-7">
-                <input  id="v_dept" readonly  class="form-control" name="v_note" value="{{ old('v_dept') }}"  autofocus>
+                <input id="v_dept" readonly class="form-control" name="v_note" value="{{ old('v_dept') }}" autofocus>
+              </div>
+            </div>
+            <div class="form-group row justify-content-center">
+              <label for="v_asset" class="col-md-5 col-form-label text-md-left">Asset</label>
+              <div class="col-md-7">
+                <input type="text" readonly id="v_asset" type="text" class="form-control v_asset" name="v_asset" autofocus>
+              </div>
+            </div>
+            <div class="form-group row justify-content-center">
+              <label for="v_assetdesc" class="col-md-5 col-form-label text-md-left">Asset Desc</label>
+              <div class="col-md-7">
+                <input type="text" readonly id="v_assetdesc" type="text" class="form-control v_assetdesc" name="v_assetdesc" autofocus>
+              </div>
+            </div>
+            <div class="form-group row justify-content-center">
+              <label for="v_loc" class="col-md-5 col-form-label text-md-left">Location</label>
+              <div class="col-md-7">
+                <input id="v_loc" type="text" class="form-control" name="v_loc" value="{{ old('v_loc') }}" autofocus readonly>
+              </div>
+            </div>
+            <div class="form-group row justify-content-center">
+              <label for="v_wottype" class="col-md-5 col-form-label text-md-left">Failure Type</label>
+              <div class="col-md-7">
+                <input id="v_wottype" type="text" class="form-control" name="v_wottype" value="{{ old('v_wottype') }}" autofocus readonly>
+              </div>
+            </div>
+            <div class="form-group row justify-content-center">
+              <label for="v_fclist" class="col-md-5 col-form-label text-md-left">Failure Code</label>
+              <div class="col-md-7">
+                <textarea id="v_fclist" class="form-control" name="v_fclist" value="{{ old('v_fclist') }}" style="white-space: pre-wrap;" autofocus readonly></textarea>
+              </div>
+            </div>
+            <div class="form-group row justify-content-center">
+              <label for="v_impact" class="col-md-5 col-form-label text-md-left">Impact</label>
+              <div class="col-md-7">
+                <textarea id="v_impact" class="form-control" name="v_impact" value="{{ old('v_impact') }}" style="white-space: pre-wrap;" autofocus readonly></textarea>
               </div>
             </div>
             <div class="form-group row justify-content-center">
               <label for="v_priority" class="col-md-5 col-form-label text-md-left">Priority</label>
               <div class="col-md-7">
-                <input id="v_priority" type="text" class="form-control" name="v_priority" value="{{ old('v_priority') }}"  autofocus readonly>
+                <input id="v_priority" type="text" class="form-control" name="v_priority" value="{{ old('v_priority') }}" autofocus readonly>
+              </div>
+            </div>
+            <div class="form-group row justify-content-center">
+              <label for="v_note" class="col-md-5 col-form-label text-md-left">Note</label>
+              <div class="col-md-7">
+                <textarea id="v_note" readonly class="form-control" name="v_note" value="{{ old('v_note') }}" autofocus></textarea>
+              </div>
+            </div>
+            <div class="form-group row justify-content-center">
+              <label for="v_engineerl" class="col-md-5 col-form-label text-md-left">Engineer List</label>
+              <div class="col-md-7">
+                <textarea id="v_engineerl" class="form-control v_engineerl" name="v_engineerl" autofocus readonly></textarea>
+              </div>
+            </div>
+            <div class="form-group row justify-content-center">
+              <label for="v_startdate" class="col-md-5 col-form-label text-md-left">Start Date</label>
+              <div class="col-md-7">
+                <input id="v_startdate" readonly type="date" class="form-control" name="v_startdate" value="{{ old('v_startdate') }}" autofocus>
+              </div>
+            </div>
+            <div class="form-group row justify-content-center">
+              <label for="v_duedate" class="col-md-5 col-form-label text-md-left">Due Date</label>
+              <div class="col-md-7">
+                <input id="v_duedate" readonly type="date" class="form-control" name="v_duedate" value="{{ old('e_duedate') }}" autofocus readonly>
               </div>
             </div>
             <div id="divstartdate" class="form-group row justify-content-center">
               <label for="v_startdate" class="col-md-5 col-form-label text-md-left">Start Date</label>
               <div class="col-md-7">
-                <input id="v_startdate" type="date" class="form-control" name="v_startdate" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"  autofocus>
+                <input id="v_startdate" type="date" class="form-control" name="v_startdate" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" autofocus>
               </div>
             </div>
             <div id="divstarttime" class="form-group row justify-content-center">
               <label for="v_starttime" class="col-md-5 col-form-label text-md-left">Start Time</label>
               <div class="col-md-7">
-                <input id="v_starttime" type="time" class="form-control" name="v_starttime" value="{{ \Carbon\Carbon::now()->format('H:i') }}"  autofocus>
+                <input id="v_starttime" type="time" class="form-control" name="v_starttime" value="{{ \Carbon\Carbon::now()->format('H:i') }}" autofocus>
               </div>
             </div>
             <div id="divreprocessreason" class="form-group row justify-content-center" style="display: none;">
@@ -256,12 +252,12 @@
               <div class="container">
                 <div id="divcancel" style="display: none;"> <!-- A211027 -->
                   <div class="d-flex justify-content-center mb-2">
-                    <label id="labelcheck"  style="display: none;" for="checkboxaban">Cancel this job?</label>
+                    <label id="labelcheck" style="display: none;" for="checkboxaban">Cancel this job?</label>
                     <input type="checkbox" id="checkboxaban" class="ml-2" style="display: none;">
                   </div>
                 </div>
 
-                <div class ="row">
+                <div class="row">
                   <div class="col-md-3 p-0">
                     <div id="divdonload" style="display:none">
                       <a id="adownload" target="_blank" style="float:left">
@@ -270,11 +266,11 @@
                     </div>
                   </div>
                   <div class="col-md-3">
-                    <button type="button" class="btn btn-primary bt-action ml-5 mr-2"  id="e_btnclose" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary bt-action ml-5 mr-2" id="e_btnclose" data-dismiss="modal">Close</button>
                   </div>
                   <div class="col-md-3">
                     <button type="submit" class="btn btn-success bt-action ml-2" id="e_btnchgstatus">Start</button>
-                    <button type="submit" style="display:none;"class="btn btn-danger bt-dark ml-2" id="e_btnchgstatus2" disabled>Cancel</button>
+                    <button type="submit" style="display:none;" class="btn btn-danger bt-dark ml-2" id="e_btnchgstatus2" disabled>Cancel</button>
                     <button type="button" class="btn btn-info" id="e_btnloading" style="display:none"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Loading</button>
                   </div>
                   <!-- <div class="col-md-3 p-0">
@@ -291,7 +287,7 @@
 
   <div class="modal fade" id="loadingtable" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
-      <h1 class="animate__animated animate__bounce" style="display:inline;width:100%;text-align:center;color:white;font-size:larger;text-align:center">Loading...</h1>      
+      <h1 class="animate__animated animate__bounce" style="display:inline;width:100%;text-align:center;color:white;font-size:larger;text-align:center">Loading...</h1>
     </div>
   </div>
 
@@ -299,32 +295,32 @@
 
   @section('scripts')
   <script>
-    $(document).on('change','#checkboxaban',function(){
-     var checkbox = document.getElementById('checkboxaban');
-     if (this.checked){
-      document.getElementById('e_btnchgstatus2').disabled = false;
-    } else {
-      document.getElementById('e_btnchgstatus2').disabled = true;
-    }
-  })
-    $(document).on('click','#e_btnchgstatus',function(){
-      document.getElementById('xclose').style.display='none';
-      document.getElementById('e_btnchgstatus').style.display='none';
-      document.getElementById('e_btnclose').style.display='none';
+    $(document).on('change', '#checkboxaban', function() {
+      var checkbox = document.getElementById('checkboxaban');
+      if (this.checked) {
+        document.getElementById('e_btnchgstatus2').disabled = false;
+      } else {
+        document.getElementById('e_btnchgstatus2').disabled = true;
+      }
+    })
+    $(document).on('click', '#e_btnchgstatus', function() {
+      document.getElementById('xclose').style.display = 'none';
+      document.getElementById('e_btnchgstatus').style.display = 'none';
+      document.getElementById('e_btnclose').style.display = 'none';
       //document.getElementById('aprint').style.display='none';
-      document.getElementById('adownload').style.display='none';
-      document.getElementById('e_btnloading').style.display='';
+      document.getElementById('adownload').style.display = 'none';
+      document.getElementById('e_btnloading').style.display = '';
     })
 
-    $(document).on('click','#e_btnchgstatus2',function(){
-      document.getElementById('xclose').style.display='none';
-      document.getElementById('labelcheck').style.display='none';
-      document.getElementById('checkboxaban').style.display='none';
-      document.getElementById('e_btnchgstatus2').style.display='none';
-      document.getElementById('e_btnclose').style.display='none';
+    $(document).on('click', '#e_btnchgstatus2', function() {
+      document.getElementById('xclose').style.display = 'none';
+      document.getElementById('labelcheck').style.display = 'none';
+      document.getElementById('checkboxaban').style.display = 'none';
+      document.getElementById('e_btnchgstatus2').style.display = 'none';
+      document.getElementById('e_btnclose').style.display = 'none';
       //document.getElementById('aprint').style.display='none';
-      document.getElementById('adownload').style.display='none';
-      document.getElementById('e_btnloading').style.display='';
+      document.getElementById('adownload').style.display = 'none';
+      document.getElementById('e_btnloading').style.display = '';
     })
 
     function clear_icon() {
@@ -332,9 +328,9 @@
       $('#post_title_icon').html('');
     }
 
-    function fetch_data(page, sort_type, sort_by, wonumber,woasset, wostatus,wopriority) {
+    function fetch_data(page, sort_type, sort_by, wonumber, woasset, wostatus, wopriority) {
       $.ajax({
-        url: "/wojoblist/pagination?page=" + page + "&sorttype=" + sort_type + "&sortby=" + sort_by + "&wonumber=" + wonumber + "&woasset=" + woasset+ "&wostatus=" + wostatus + "&wopriority="+wopriority,
+        url: "/wojoblist/pagination?page=" + page + "&sorttype=" + sort_type + "&sortby=" + sort_by + "&wonumber=" + wonumber + "&woasset=" + woasset + "&wostatus=" + wostatus + "&wopriority=" + wopriority,
         success: function(data) {
           console.log(data);
           $('tbody').html('');
@@ -343,280 +339,197 @@
       })
     }
     $("#s_asset").select2({
-      width : '100%',
+      width: '100%',
 
-      closeOnSelect : true,
-      theme : 'bootstrap4'
+      closeOnSelect: true,
+      theme: 'bootstrap4'
     });
     $(document).on('click', '.jobview', function() {
       var wonbr = $(this).closest('tr').find('input[name="wonbrr"]').val();
-    // $('#loadingtable').modal('hide');
-    $('#loadingtable').modal('show');
-    var counter   = document.getElementById('v_counter');
-    $.ajax({
-      url: '/womaint/getnowo?nomorwo=' +wonbr,
-      success:function(vamp){
-        var tempres    = JSON.stringify(vamp);
-        var result     = JSON.parse(tempres);
-        var wonbr      = result[0].wo_nbr;
-        var srnbr      = result[0].wo_sr_nbr;
-        var en1val     = result[0].u11;
-        var en2val     = result[0].u22;
-        var en3val     = result[0].u33;
-        var en4val     = result[0].u44;
-        var en5val     = result[0].u55;
-        var asset      = result[0].asset_desc;
-        var asscode    = result[0].wo_asset;
-        var schedule   = result[0].wo_schedule;
-        var duedate    = result[0].wo_duedate;
-        var wostatus   = result[0].wo_status;
-        var fc1        = result[0].wofc1;
-        var fc2        = result[0].wofc2;
-        var fc3        = result[0].wofc3;
-        var fn1        = result[0].fd1;
-        var fn2        = result[0].fd2;
-        var fn3        = result[0].fd3;
-        var prio       = result[0].wo_priority;
-        var note       = result[0].wo_note;
-        var wodept     = result[0].dept_desc;
-        var wotype     = result[0].wo_type;
-        var mtcby       = result[0].asset_daya;
-        var repo_reason = result[0].wo_reject_reason;
+      // $('#loadingtable').modal('hide');
+      $('#loadingtable').modal('show');
+      var counter = document.getElementById('v_counter');
+      $.ajax({
+        url: '/womaint/getwoinfo',
+        method: 'GET',
+        data: {
+          wonumber: wonbr,
+        },
+        success: function(vamp) {
+          var wonumber = wonbr;
+          var srnumber = vamp.wo_master.wo_sr_number;
+          var assetcode = vamp.wo_master.wo_asset_code;
+          var assetdesc = vamp.asset.asset_desc;
+          var assetloc = vamp.asset.asset_loc;
+          var failuretype_code = vamp.wo_master.wo_failure_type !== null ? vamp.wo_master.wo_failure_type : '';
+          var failuretype_desc = vamp.failure_type.wotyp_desc ? vamp.failure_type.wotyp_desc : '';
+          var note = vamp.wo_master.wo_note;
+          var startdate = vamp.wo_master.wo_start_date;
+          var duedate = vamp.wo_master.wo_due_date;
+          var createdby = vamp.wo_master.wo_createdby;
+          var status = vamp.wo_master.wo_status;
+          var department = vamp.wo_master.wo_department ? vamp.wo_master.wo_department : '';
 
-        var url = "{{url('openprint','id')}}";
-        url = url.replace('id', wonbr);
-        //document.getElementById('aprint').href=url;
+          let combineFailure = [];
 
-        var urldownload = "{{url('wodownloadfile','id')}}";
-        urldownload = urldownload.replace('id', wonbr);
+          vamp.failurecode.forEach(function(failure) {
+            combineFailure.push(failure.fn_code + " - " + failure.fn_desc);
+          });
+
+          let combineImpact = [];
+
+          vamp.impact.forEach(function(impact) {
+            combineImpact.push(impact.imp_code + " - " + impact.imp_desc);
+          });
+
+          let combineEngineer = [];
+
+          vamp.engineer.forEach(function(engineer) {
+            combineEngineer.push(engineer.eng_code + ' - ' + engineer.eng_desc);
+          });
+
+          var url = "{{url('openprint','id')}}";
+          url = url.replace('id', wonbr);
+          //document.getElementById('aprint').href=url;
+
+          var urldownload = "{{url('wodownloadfile','id')}}";
+          urldownload = urldownload.replace('id', wonbr);
 
 
-        document.getElementById('adownload').href=urldownload;
+          document.getElementById('adownload').href = urldownload;
 
-        if (wotype == 'auto') {
-          document.getElementById('divdonload').style.display = '';
-          document.getElementById('divcancel').style.display = 'none';      // A211027
-        } else {
-          document.getElementById('divdonload').style.display = 'none';
-          document.getElementById('divcancel').style.display = '';          // A211027
-        }
+          // if (wotype == 'auto') {
+          //   document.getElementById('divdonload').style.display = '';
+          //   document.getElementById('divcancel').style.display = 'none';      // A211027
+          // } else {
+          //   document.getElementById('divdonload').style.display = 'none';
+          //   document.getElementById('divcancel').style.display = '';          // A211027
+          // }
 
-        if(fc1 == null || fc1 == ''){
-          document.getElementById('divfail1').style.display = 'none';
-        }
-        else{
-          document.getElementById('divfail1').style.display = '';
-          document.getElementById('e_failure1').value = fn1;
-          document.getElementById('hiddenfail1').value = fc1;
-        }
 
-        if(fc2 == null || fc2 == '' ){
-          document.getElementById('divfail2').style.display = 'none';
-        }  
-        else{
-          document.getElementById('divfail2').style.display = '';
-          document.getElementById('e_failure2').value = fn2;
-          document.getElementById('hiddenfail2').value = fc2;
-        }
 
-        if(fc3 == null || fc3 == ''){
-          document.getElementById('divfail3').style.display = 'none';
-        }
-        else{
-          document.getElementById('divfail3').style.display = '';
-          document.getElementById('e_failure3').value = fn3;
-          document.getElementById('hiddenfail3').value = fc3;
-        }
-        document.getElementById('statuswo').value = wostatus;
-        if(wostatus == 'open'){
-          document.getElementById('e_btnchgstatus').style.display = '';
-          document.getElementById('divstartdate').style.display = '';
-          document.getElementById('divstarttime').style.display = '';
-          document.getElementById('e_btnchgstatus2').style.display = 'none';
-          document.getElementById('checkboxaban').style.display = 'none';
-          document.getElementById('labelcheck').style.display = 'none';
-        }
-        else{
-          document.getElementById('divstartdate').style.display = 'none';
-          document.getElementById('divstarttime').style.display = 'none';
-          document.getElementById('e_btnchgstatus').style.display = 'none';
-          document.getElementById('e_btnchgstatus2').style.display = '';
-          document.getElementById('checkboxaban').style.display = '';
-          document.getElementById('labelcheck').style.display = '';
-        }
-        if(en1val == null || en1val == ''){
-          en1val = '';
-        }
-        else{
-          document.getElementById('vien1').style.display = '';
-          counter = 1;
-        }
+          document.getElementById('v_nowo').value = wonumber;
+          document.getElementById('v_asset').value = assetcode;
+          document.getElementById('v_assetdesc').value = assetdesc;
+          document.getElementById('v_loc').value = assetloc;
+          document.getElementById('v_wottype').value = failuretype_code + ' - ' + failuretype_desc;
+          document.getElementById('v_fclist').value = combineFailure.join('\n');
+          document.getElementById('v_impact').value = combineImpact.join('\n');
+          document.getElementById('v_engineerl').value = combineEngineer.join('\n');
+          document.getElementById('v_note').value = note;
+          document.getElementById('v_nosr').value = srnumber;
+          document.getElementById('v_startdate').value = startdate;
+          document.getElementById('v_duedate').value = duedate;
+          document.getElementById('v_creator').value = createdby;
+          document.getElementById('v_dept').value = department;
+          document.getElementById('statuswo').value = status;
+          // document.getElementById('v_mtcby').value       = mtcby;
 
-        if(en2val == null || en2val ==''){
-          en2val = '';
-          document.getElementById('vien2').style.display = 'none';
-        }
-        else{
-          document.getElementById('vien2').style.display = '';
-          counter = 2;
-        }
-        if(en3val == null || en3val ==''){
-          en3val = '';
-          document.getElementById('vien3').style.display = 'none';
-        }
-        else{
-          document.getElementById('vien3').style.display = '';
-          counter = 3;
-        }
+          if ($('#loadingtable').hasClass('show')) {
 
-        if(en4val == null || en4val ==''){
-          en4val = '';
-          document.getElementById('vien4').style.display = 'none';
-        }
-        else{
-          document.getElementById('vien4').style.display = '';
-          counter = 4;
-        }
+            setTimeout(function() {
+              $('#loadingtable').modal('hide');
 
-        if(en5val == null || en5val == ''){
-          en5val = '';
-          document.getElementById('vien5').style.display = 'none';
+            }, 500);
+
+
+          }
+          setTimeout(function() {
+
+            $('#viewModal').modal('show');
+          }, 1000);
         }
-        else{
-          document.getElementById('vien5').style.display = '';
-          counter = 5;
-        }
+      })
+    });
+    $(document).on('click', '#btnsearch', function() {
+      var wonumber = $('#s_nomorwo').val();
+      var woasset = $('#s_asset').val();
+      var wostatus = $('#s_status').val();
+      var wopriority = $('#s_priority').val();
 
-        if(repo_reason == null || repo_reason == ''){
-          document.getElementById('divreprocessreason').style.display = 'none';
-          document.getElementById('v_rejectreason').value = '';
-        }else{
-          document.getElementById('divreprocessreason').style.display = '';
-          document.getElementById('v_rejectreason').value = repo_reason;
-        }
+      var column_name = $('#hidden_column_name').val();
+      var sort_type = $('#hidden_sort_type').val();
+      var page = 1;
 
-        document.getElementById('v_counter').value    = counter;
-        document.getElementById('v_nowo').value       = wonbr;
-        document.getElementById('v_nosr').value       = srnbr;
-        document.getElementById('v_schedule').value   = schedule;
-        document.getElementById('v_duedate').value    = duedate;
-        document.getElementById('v_engineer1').value  = en1val;
-        document.getElementById('v_engineer2').value  = en2val;
-        document.getElementById('v_engineer3').value  = en3val;
-        document.getElementById('v_engineer4').value  = en4val;
-        document.getElementById('v_engineer5').value  = en5val;
-        document.getElementById('v_asset').value      = asscode+' - '+asset;
-        document.getElementById('v_priority').value   = prio;
-        document.getElementById('v_dept').value       = wodept;
-        // document.getElementById('v_mtcby').value       = mtcby;
-        
-        if($('#loadingtable').hasClass('show')){
+      document.getElementById('tmpwo').value = wonumber;
+      document.getElementById('tmpasset').value = woasset;
+      document.getElementById('tmpstatus').value = wostatus;
+      document.getElementById('tmppriority').value = wopriority;
 
-          setTimeout(function(){
-            $('#loadingtable').modal('hide');
 
-          },500);
-          
-          
-        }
-        setTimeout(function(){
+      fetch_data(page, sort_type, column_name, wonumber, woasset, wostatus, wopriority);
+    });
 
-          $('#viewModal').modal('show');  
-        },1000);
+
+    $(document).on('click', '.sorting', function() {
+      var column_name = $(this).data('column_name');
+      var order_type = $(this).data('sorting_type');
+      var reverse_order = '';
+      if (order_type == 'asc') {
+        $(this).data('sorting_type', 'desc');
+        reverse_order = 'desc';
+        clear_icon();
+        $('#' + column_name + '_icon').html('<span class="glyphicon glyphicon-triangle-bottom"></span>');
       }
-    })
-});
-$(document).on('click', '#btnsearch', function() {
-  var wonumber    = $('#s_nomorwo').val(); 
-  var woasset     = $('#s_asset').val(); 
-  var wostatus    = $('#s_status').val(); 
-  var wopriority  = $('#s_priority').val(); 
+      if (order_type == 'desc') {
+        $(this).data('sorting_type', 'asc');
+        reverse_order = 'asc';
+        clear_icon();
+        $('#' + column_name + '_icon').html('<span class="glyphicon glyphicon-triangle-top"></span>');
+      }
+      $('#hidden_column_name').val(column_name);
+      $('#hidden_sort_type').val(reverse_order);
 
-  var column_name = $('#hidden_column_name').val();
-  var sort_type   = $('#hidden_sort_type').val();
-  var page        = 1;
-
-  document.getElementById('tmpwo').value        = wonumber;
-  document.getElementById('tmpasset').value     = woasset;
-  document.getElementById('tmpstatus').value    = wostatus;
-  document.getElementById('tmppriority').value  = wopriority;
-
-
-  fetch_data(page, sort_type, column_name, wonumber, woasset,wostatus,wopriority);
-});
+      var page = $('#hidden_page').val();
+      var wonumber = $('#tmpwo').val();
+      var assert = $('#tmpasset').val();
+      var status = $('#tmpstatus').val();
+      var priority = $('#tmppriority').val();
+      var period = $('#tmpperiod').val();
+      fetch_data(page, reverse_order, column_name, username, divisi);
+    });
 
 
-$(document).on('click', '.sorting', function() {
-  var column_name = $(this).data('column_name');
-  var order_type = $(this).data('sorting_type');
-  var reverse_order = '';
-  if (order_type == 'asc') {
-    $(this).data('sorting_type', 'desc');
-    reverse_order = 'desc';
-    clear_icon();
-    $('#' + column_name + '_icon').html('<span class="glyphicon glyphicon-triangle-bottom"></span>');
-  }
-  if (order_type == 'desc') {
-    $(this).data('sorting_type', 'asc');
-    reverse_order = 'asc';
-    clear_icon();
-    $('#' + column_name + '_icon').html('<span class="glyphicon glyphicon-triangle-top"></span>');
-  }
-  $('#hidden_column_name').val(column_name);
-  $('#hidden_sort_type').val(reverse_order);
+    $(document).on('click', '.pagination a', function(event) {
+      event.preventDefault();
+      var page = $(this).attr('href').split('page=')[1];
+      $('#hidden_page').val(page);
+      var column_name = $('#hidden_column_name').val();
+      var sort_type = $('#hidden_sort_type').val();
+      var wonumber = $('#tmpwo').val();
+      var asset = $('#tmpasset').val();
+      var status = $('#tmpstatus').val();
+      var priority = $('#tmppriority').val();
+      fetch_data(page, sort_type, column_name, wonumber, asset, status, priority);
+    });
 
-  var page     = $('#hidden_page').val();
-  var wonumber = $('#tmpwo').val();
-  var assert   = $('#tmpasset').val();
-  var status   = $('#tmpstatus').val();
-  var priority = $('#tmppriority').val();
-  var period   = $('#tmpperiod').val();
-  fetch_data(page, reverse_order, column_name, username, divisi);
-});
+    $(document).on('click', '#btnrefresh', function() {
+      var wonumber = '';
+      var asset = '';
+      var status = '';
 
+      var priority = '';
+      var column_name = $('#hidden_column_name').val();
+      var sort_type = $('#hidden_sort_type').val();
+      var page = 1;
 
-$(document).on('click', '.pagination a', function(event) {
-  event.preventDefault();
-  var page = $(this).attr('href').split('page=')[1];
-  $('#hidden_page').val(page);
-  var column_name = $('#hidden_column_name').val();
-  var sort_type   = $('#hidden_sort_type').val();
-  var wonumber    = $('#tmpwo').val();
-  var asset       = $('#tmpasset').val();
-  var status      = $('#tmpstatus').val();
-  var priority    = $('#tmppriority').val();
-  fetch_data(page, sort_type, column_name, wonumber, asset,status,priority);
-});
+      document.getElementById('s_nomorwo').value = '';
+      document.getElementById('s_asset').value = '';
+      document.getElementById('s_status').value = '';
 
-$(document).on('click', '#btnrefresh', function() {
-  var wonumber    = ''; 
-  var asset       = ''; 
-  var status      = '';
-
-  var priority    = '';
-  var column_name = $('#hidden_column_name').val();
-  var sort_type   = $('#hidden_sort_type').val();
-  var page        = 1;
-
-  document.getElementById('s_nomorwo').value    = '';
-  document.getElementById('s_asset').value      = '';
-  document.getElementById('s_status').value     = '';
-
-  document.getElementById('s_priority').value   = '';
-  document.getElementById('tmpwo').value        = '';
-  document.getElementById('tmpasset').value     = '';
-  document.getElementById('tmpstatus').value    = '';
-  document.getElementById('tmppriority').value  = '';
+      document.getElementById('s_priority').value = '';
+      document.getElementById('tmpwo').value = '';
+      document.getElementById('tmpasset').value = '';
+      document.getElementById('tmpstatus').value = '';
+      document.getElementById('tmppriority').value = '';
 
 
-  $('#s_asset').select2({
-    width:'100%',
-    theme:'bootstrap4',
-    asset
-  })
-  fetch_data(page, sort_type, column_name, wonumber, asset,status,priority);
-});
-
-
-</script>
-@endsection
+      $('#s_asset').select2({
+        width: '100%',
+        theme: 'bootstrap4',
+        asset
+      })
+      fetch_data(page, sort_type, column_name, wonumber, asset, status, priority);
+    });
+  </script>
+  @endsection

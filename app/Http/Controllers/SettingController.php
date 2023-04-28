@@ -3067,7 +3067,10 @@ class SettingController extends Controller
         if (strpos(Session::get('menu_access'), 'MT12') !== false) {
             $data = DB::table('sp_mstr')
                 ->leftJoin('site_mstrs','site_code','=','spm_site')
-                ->leftJoin('loc_mstr','loc_code','=','spm_loc')
+                ->leftJoin('loc_mstr', function ($join) {
+                    $join->on('loc_mstr.loc_site', '=', 'sp_mstr.spm_site')
+                         ->on('loc_mstr.loc_code', '=', 'sp_mstr.spm_loc');
+                })
                 ->orderby('spm_code')
                 ->paginate(10);
 

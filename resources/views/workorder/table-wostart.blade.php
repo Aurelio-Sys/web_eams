@@ -1,6 +1,6 @@
 @forelse ($data as $show)
 <tr class="foottr">
-  <td class="foot1" data-label="WO Number">{{ $show->wo_nbr }}</td>
+  <td class="foot1" data-label="WO Number">{{ $show->wo_number }}</td>
   <td class="foot1" data-label="Asset">{{ $show->asset_code }} -- {{ $show->asset_desc }}</td>
   @if($show->wo_type == 'auto')
   <td class="foot1" data-label="WO Type">Preventive</td>
@@ -17,7 +17,7 @@
   <td class="foot1" data-label="Status">{{ $show->wo_status }}</td>
   <td class="foot1" data-label="Priority">{{ $show->wo_priority }}</td>
   <td class="foot1" >
-  <input type="hidden" name='wonbrr' value="{{$show->wo_nbr}}"> 
+  <input type="hidden" name='wonbrr' value="{{$show->wo_number}}"> 
     <button type="button"  class="btn btn-success btn-action jobview" style="width: 100%;">View</button>
     
   </td>

@@ -702,7 +702,7 @@
 
           <label for="englist" class="col-md-2 col-form-label">Engineer List</label>
           <div class="col-md-4">
-            <textarea id="englist" type="text" class="form-control" name="englist" rows="3" readonly></textarea>
+            <textarea id="englist" type="text" class="form-control" name="englist" rows="5" readonly></textarea>
           </div>
           <label for="file" class="col-md-2 col-form-label">Current File</label>
           <div class="col-md-4">
@@ -1050,7 +1050,9 @@
 
         // console.log(englist);
 
-        document.getElementById('englist').value = engineer;
+        var eng = engineer.replaceAll(";", "\n");
+
+        document.getElementById('englist').value = eng;
         document.getElementById('reqbyname').value = reqby;
         document.getElementById('srnote').value = srnote;
         // document.getElementById('rejectnote').value = rejectnote;
@@ -1221,6 +1223,8 @@
         var approver = $(this).data('approver');
         var rejectnote = $(this).data('rejectnote');
         var reason = $(this).data('reason');
+
+        console.log(failcode);
 
         // document.getElementById('e_renote').value = rejectnote;
 

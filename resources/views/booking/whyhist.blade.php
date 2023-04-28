@@ -87,7 +87,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/createwhyhist"  enctype="multipart/form-data">
+            <form class="form-horizontal" method="post" action="/createwhyhist" enctype="multipart/form-data">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
@@ -175,7 +175,7 @@
             <span aria-hidden="true">&times;</span>
         </button>
         </div>
-        <form class="form-horizontal" method="post" action="/editwhyhist">
+        <form class="form-horizontal" method="post" action="/editwhyhist" enctype="multipart/form-data">
             {{ csrf_field() }}
             <div class="modal-body">
                 <div class="form-group row">
@@ -232,6 +232,28 @@
                     <textarea id="te_why5" name="te_why5" rows="2" cols="50" class="form-control"></textarea>
                  </div>
                 </div>
+                <div class="form-group row">
+                    <label for="file" class="col-md-2 col-form-label text-md-right">Current File</label>
+                    <div class="col-md-9">
+                      <table class="table table-bordered">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Delete</th>
+                          </tr>
+                        </thead>
+                        <tbody id="elistupload">
+        
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="file" class="col-md-2 col-form-label text-md-right">Upload New File</label>
+                    <div class="col-md-9 input-file-container">
+                      <input type="file" class="form-control" id="te_filename" name="te_filename[]" multiple>
+                    </div>
+                  </div>
             </div>
 
             <div class="modal-footer">
@@ -301,6 +323,14 @@
            document.getElementById('te_why4').value = why4;
            document.getElementById('te_why5').value = why5;
 
+           $.ajax({
+                url: "/whyfile/" + id,
+                success: function(data) {
+                console.log(data);
+                $('#elistupload').html('').append(data);
+                }
+            })
+
        });
 
        $(document).on('click', '.deletedata', function(e){
@@ -327,6 +357,8 @@
          width : '100%',
          theme : 'bootstrap4',
         });
+
+        
 
     </script>
 
