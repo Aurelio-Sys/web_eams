@@ -20,7 +20,7 @@
         data-prc_date="{{$show->asset_prcdate}}" data-prc_price="{{$show->asset_prcprice}}" data-type="{{$show->asset_type}}" 
         data-group="{{$show->asset_group}}" data-supp="{{$show->asset_supp}}" data-note="{{$show->asset_note}}" 
         data-active="{{$show->asset_active}}" data-upload="{{$show->asset_upload}}" data-assetimg="{{$show->asset_image}}" 
-        data-qad="{{$show->asset_accounting}}" >
+        data-qad="{{$show->asset_accounting}}"  data-assetid="{{$show->asset_id}}">
         <i class="icon-table fa fa-edit fa-lg"></i></a>
         &ensp;
         <a href="javascript:void(0)" class="deletedata" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal"  
@@ -31,13 +31,13 @@
 </tr>
 @empty
 <tr>
-    <td colspan="12" style="color:red">
+    <td colspan="6" style="color:red">
         <center>No Data Available</center>
     </td>
 </tr>
 @endforelse
 <tr>
-  <td style="border: none !important;" colspan="12">
-    {{ $data->links() }}
+  <td style="border: none !important;">
+    {{ $data->appends($_GET)->links() }}
   </td>
 </tr>

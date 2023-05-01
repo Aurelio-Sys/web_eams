@@ -27,8 +27,8 @@ class WhyHistController extends Controller
             ->selectRaw('why_hist.id as id, why_asset, why_wo, why_problem, why_why1, why_why2, why_why3, why_why4, why_why5,
                 why_inputby, why_hist.created_at as created_at, asset_desc')
             ->leftJoin('asset_mstr','asset_code','=','why_asset')
-            ->orderby('asset_code')
-            ->orderBy('why_hist.created_at','desc');
+            ->orderBy('why_hist.created_at','desc')
+            ->orderby('asset_code');
 
         if($s_asset) {
             $data = $data->where(function($query) use ($s_asset) {
@@ -75,6 +75,7 @@ class WhyHistController extends Controller
      */
     public function store(Request $req)
     {
+        // dd($req->all());
         DB::beginTransaction();
         try {
             DB::table('why_hist')

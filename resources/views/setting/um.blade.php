@@ -18,45 +18,41 @@
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-<!-- Bagian Searching -->
-<div class="container-fluid mb-2">
-    <div class="row">
-      <div class="col-md-12">
-        <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
-      </div>  
-    </div>
-    <!-- Element div yang akan collapse atau expand -->
-    <div class="collapse" id="collapseExample">
-        <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
-        <div class="card card-body bg-black rounded-0">
-            <div class="col-12 form-group row">
-                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Code</label>
-                <div class="col-md-4 mb-2 input-group">
-                    <select id="s_code" class="form-control" name="s_code">
-                        <option value=""></option>
-                        @foreach($data as $sdata)
-                            <option value="{{$sdata->um_code}}">{{$sdata->um_code}} - {{$sdata->um_desc}}</option>
-                        @endforeach
-                    </select>
+<form action="/um" method="GET">
+    <!-- Bagian Searching -->
+    <div class="container-fluid mb-2">
+        <div class="row">
+          <div class="col-md-12">
+            <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
+          </div>  
+        </div>
+        <!-- Element div yang akan collapse atau expand -->
+        <div class="collapse" id="collapseExample">
+            <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+            <div class="card card-body bg-black rounded-0">
+                <div class="col-12 form-group row">
+                    <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Code</label>
+                    <div class="col-md-4 col-sm-4 mb-2 input-group">
+                        <input id="s_code" type="text" class="form-control" name="s_code"
+                        value="" autofocus autocomplete="off"/>
+                    </div>
+                    <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Description</label>
+                    <div class="col-md-4 col-sm-4 mb-2 input-group">
+                        <input id="s_desc" type="text" class="form-control" name="s_desc"
+                        value="" autofocus autocomplete="off"/>
+                    </div>
+                    <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
+                    <div class="col-md-2 col-sm-4 mb-2 input-group">
+                        <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
+                    </div>
+                    <div class="col-md-2 col-sm-4 mb-2 input-group">
+                        <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
+                    </div>
                 </div>
-                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Description</label>
-                <div class="col-md-4 mb-2 input-group">
-                    <input id="s_desc" type="text" class="form-control" name="s_desc" value="" autofocus autocomplete="off"/>
-                </div>
-                <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
-                <div class="col-md-2 col-sm-4 mb-2 input-group">
-                    <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search"/> 
-                </div>
-                <div class="col-md-2 col-sm-4 mb-2 input-group">
-                    <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
-                </div>
-                <input type="hidden" id="tmpcode"/>
-                <input type="hidden" id="tmpdesc"/>
             </div>
         </div>
     </div>
-</div>
-
+    </form>
 <div class="col-md-12"><hr></div>
 
 <div class="table-responsive col-12">
@@ -165,7 +161,7 @@
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <input type="hidden" id="d_code" name="d_code">
-                    Delete Asset Type <b><span id="td_code"></span> -- <span id="td_desc"></span></b> ?
+                    Delete UM <b><span id="td_code"></span> -- <span id="td_desc"></span></b> ?
                 </div>
 
                 <div class="modal-footer">
@@ -207,92 +203,6 @@
             $('#post_title_icon').html('');
        }
 
-       function fetch_data(page, sort_type, sort_by, code, desc){
-            $.ajax({
-                url:"assettypemaster/pagination?page="+page+"&sorttype="+sort_type+"&sortby="+sort_by+"&code="+code+"&desc="+desc,
-                success:function(data){
-                    console.log(data);
-                    $('tbody').html('');
-                    $('tbody').html(data);
-                }
-            })
-        }
-
-        $(document).on('click', '#btnsearch', function(){
-
-            var code = $('#s_code').val();
-            var desc = $('#s_desc').val();
-            var column_name = $('#hidden_column_name').val();
-			var sort_type = $('#hidden_sort_type').val();
-            var page = 1;
-            
-            document.getElementById('tmpcode').value = code;
-            document.getElementById('tmpdesc').value = desc;
-
-            fetch_data(page, sort_type, column_name, code, desc);
-        });
-
-       $(document).on('click', '.sorting', function(){
-			var column_name = $(this).data('column_name');
-			var order_type = $(this).data('sorting_type');
-			var reverse_order = '';
-			if(order_type == 'asc')
-			{
-			$(this).data('sorting_type', 'desc');
-			reverse_order = 'desc';
-			clear_icon();
-			$('#'+column_name+'_icon').html('<span class="glyphicon glyphicon-triangle-bottom"></span>');
-			}
-			if(order_type == 'desc')
-			{
-			$(this).data('sorting_type', 'asc');
-			reverse_order = 'asc';
-			clear_icon();
-			$('#'+column_name+'_icon').html('<span class="glyphicon glyphicon-triangle-top"></span>');
-			}
-			$('#hidden_column_name').val(column_name);
-			$('#hidden_sort_type').val(reverse_order);
-            var page = $('#hidden_page').val();
-            var code = $('#s_code').val();
-            var desc = $('#s_desc').val();
-			fetch_data(page, reverse_order, column_name, code, desc);
-     	});
-       
-       
-       $(document).on('click', '.pagination a', function(event){
-            event.preventDefault();
-            var page = $(this).attr('href').split('page=')[1];
-            $('#hidden_page').val(page);
-            var column_name = $('#hidden_column_name').val();
-            var sort_type = $('#hidden_sort_type').val();
-            var code = $('#s_code').val();
-            var desc = $('#s_desc').val();
-            fetch_data(page, sort_type, column_name, code, desc);
-       });
-
-       $(document).on('click', '#btnrefresh', function() {
-
-            var code  = ''; 
-            var desc = '';
-
-            var column_name = $('#hidden_column_name').val();
-            var sort_type = $('#hidden_sort_type').val();
-            var page = 1;
-
-            document.getElementById('s_code').value  = '';
-            document.getElementById('s_desc').value  = '';
-            document.getElementById('tmpcode').value  = code;
-            document.getElementById('tmpdesc').value  = desc;
-
-            fetch_data(page, sort_type, column_name, code, desc);
-
-            $("#s_code").select2({
-                width : '100%',
-                theme : 'bootstrap4',
-                
-            });
-        });
-
         $(document).on('change','#t_code',function(){
 
             var code = $('#t_code').val();
@@ -331,11 +241,6 @@
             })
         });
 
-        $("#s_code").select2({
-            width : '100%',
-            theme : 'bootstrap4',
-            
-        });
     </script>
 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">

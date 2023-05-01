@@ -1749,14 +1749,49 @@ class SettingController extends Controller
 
 /* Asset Master */
     //untuk menampilkan menu asset master
-    public function assetmaster(Request $req)
+    public function assetmaster(Request $req) /** blade setting.asset */
     {   
         if (strpos(Session::get('menu_access'), 'MT08') !== false) {
+            $s_code = $req->s_code;
+            $s_loc = $req->s_loc;
+            $s_type = $req->s_type;
+            $s_group = $req->s_group;
+
             $data = DB::table('asset_mstr')
+                ->selectRaw('asset_type.*, asset_group.*, asset_loc.*, asset_mstr.id as asset_id, asset_code, asset_desc, asset_site, asset_loc, asset_um, asset_sn, 
+                asset_supp, asset_prcdate, asset_prcprice, asset_type, asset_group, asset_accounting, asset_note, asset_active, asset_image, 
+                asset_imagepath, asset_upload, asset_editedby')
                 ->leftjoin('asset_type','asset_mstr.asset_type','asset_type.astype_code')
                 ->leftjoin('asset_group','asset_mstr.asset_group','asset_group.asgroup_code')
-                ->orderby('asset_code')
-                ->paginate(10);
+                ->leftJoin('asset_loc','asloc_code','=','asset_loc')
+                ->orderby('asset_code');
+    
+            if($s_code) {
+                $data = $data->where(function($query) use ($s_code) {
+                    $query->where('asset_code','like','%'.$s_code.'%')
+                    ->orWhere('asset_desc','like','%'.$s_code.'%');
+                });
+            }
+            if($s_loc) {
+                $data = $data->where(function($query) use ($s_loc) {
+                    $query->where('asset_loc','like','%'.$s_loc.'%')
+                    ->orWhere('asloc_desc','like','%'.$s_loc.'%');
+                });
+            }
+            if($s_type) {
+                $data = $data->where(function($query) use ($s_type) {
+                    $query->where('asset_type','like','%'.$s_type.'%')
+                    ->orWhere('astype_desc','like','%'.$s_type.'%');
+                });
+            }
+            if($s_group) {
+                $data = $data->where(function($query) use ($s_group) {
+                    $query->where('asset_group','like','%'.$s_group.'%')
+                    ->orWhere('asgroup_desc','like','%'.$s_group.'%');
+                });
+            }
+            
+            $data = $data->paginate(10);
 
             $datasite = DB::table('asset_site')
                 ->orderby('assite_code')
@@ -1986,12 +2021,12 @@ class SettingController extends Controller
 
 
     public function listupload($id){
-        dd($id);
+        // dd($id);
 
         $data = DB::table('asset_upload')
                         ->where('asset_code',$id)
                         ->get();
-
+        // dd($data);
         $output = '';
         foreach($data as $data){
 
@@ -2001,7 +2036,7 @@ class SettingController extends Controller
 
             $output .=  '<tr>
                             <td> 
-                            <a href="/downloadfile/'.$data->id.'" target="_blank">'.$filename.'</a> 
+                            <a href="/uploadasset/'.$data->id.'" target="_blank">'.$filename.'</a> 
                             </td>
                             <td>
                             <a href="#" class="btn deleterow btn-danger">
@@ -2011,7 +2046,7 @@ class SettingController extends Controller
                             </td>
                         </tr>';
         }
-
+        $output = "tyas";
         return response($output);
     }
 
@@ -2079,6 +2114,7 @@ class SettingController extends Controller
     //untuk edit asset master
     public function editasset(Request $req)
     {
+        dd($req->all());
         /* Validasi inputan */
         if ($req->te_mea == "C") {
             if ($req->te_cal == "") {
@@ -2129,7 +2165,7 @@ class SettingController extends Controller
         }
 
         DB::table('asset_mstr')
-        ->where('asset_code','=',$req->te_code)
+        ->where('id','=',$req->te_asset_id)
         ->update([
             'asset_desc'        => $req->te_desc,
             'asset_site'        => $req->te_site,
@@ -5412,8 +5448,8 @@ class SettingController extends Controller
                     'eng_role'          => $req->t_role,
                     'eng_photo'         => $filename,
                     'eng_role'          => $req->t_role,
-                    'eng_site'          => $req->t_site,
-                    'eng_loc'           => $req->t_loc,
+                    // 'eng_site'          => $req->t_site,
+                    // 'eng_loc'           => $req->t_loc,
                     'created_at'        => Carbon::now()->toDateTimeString(),
                     'updated_at'        => Carbon::now()->toDateTimeString(),
                     'edited_by'         => Session::get('username'),
@@ -5524,8 +5560,8 @@ class SettingController extends Controller
                         'eng_email'         => $req->te_email,
                         'eng_role'          => $req->te_role,
                         'eng_photo'         => $filename,
-                        'eng_site'          => $req->te_site,
-                        'eng_loc'           => $req->te_loc,
+                        // 'eng_site'          => $req->te_site,
+                        // 'eng_loc'           => $req->te_loc,
                         'updated_at'        => Carbon::now()->toDateTimeString(),
                         'edited_by'         => Session::get('username'),
                     ]);
@@ -5553,8 +5589,8 @@ class SettingController extends Controller
                     'eng_skill'         => $skill,
                     'eng_email'         => $req->te_email,
                     'eng_role'          => $req->te_role,
-                    'eng_site'          => $req->te_site,
-                    'eng_loc'           => $req->te_loc,
+                    // 'eng_site'          => $req->te_site,
+                    // 'eng_loc'           => $req->te_loc,
                     'updated_at'        => Carbon::now()->toDateTimeString(),
                     'edited_by'         => Session::get('username'),
                 ]);
