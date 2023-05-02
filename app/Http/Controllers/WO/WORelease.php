@@ -41,7 +41,10 @@ class WORelease extends Controller
             ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
             ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
             ->whereIn('wo_status', ['firm'])
-            ->where('wo_list_engineer', 'like', '%'.$username.'%')
+            ->where('wo_list_engineer', '=', $username.';')
+            ->orWhere('wo_list_engineer', 'LIKE', $username.';%')
+            ->orWhere('wo_list_engineer', 'LIKE', '%;'.$username.';%')
+            ->orWhere('wo_list_engineer', 'LIKE', '%;'.$username)
             ->orderby('wo_system_create', 'desc');
         }
 

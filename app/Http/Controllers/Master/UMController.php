@@ -16,10 +16,20 @@ class UMController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $req)
     {
+        $s_code = $req->s_code;
+        $s_desc = $req->s_desc;
+        
         $data = DB::table('um_mstr')
             ->orderBy('um_code');
+
+        if($s_code) {
+            $data = $data->where('um_code','like','%'.$s_code.'%');
+        }
+        if($s_desc) {
+            $data = $data->where('um_decs','like','%'.$s_desc.'%');
+        }
 
         $data = $data->paginate(10);
 

@@ -14,7 +14,7 @@
 </tr>
 @empty
 <tr>
-    <td colspan="12" style="color:red">
+    <td colspan="3" style="color:red">
         <center>No Data Available</center>
     </td>
 </tr>

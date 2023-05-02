@@ -109,15 +109,17 @@ class AsfnController extends Controller
         if($req->barang) {
             $flg = 0;
             foreach($req->barang as $barang){
-                DB::table('asfn_det')
-                ->insert([
-                    'asfn_asset'     => $req->t_asset,
-                    'asfn_fntype'   => $req->t_fntype,        
-                    'asfn_fncode'   => $req->barang[$flg],        
-                    'created_at'    => Carbon::now()->toDateTimeString(),
-                    'updated_at'    => Carbon::now()->toDateTimeString(),
-                    'edited_by'     => Session::get('username'),
-                ]);
+                DB::table('asfn_det')->updateOrInsert(
+                    [
+                        'asfn_asset' => $req->t_asset, 
+                        'asfn_fncode'   => $req->barang[$flg]],
+                    [
+                        'asfn_fntype'   => $req->t_fntype,     
+                        'created_at'    => Carbon::now()->toDateTimeString(),
+                        'updated_at'    => Carbon::now()->toDateTimeString(),
+                        'edited_by'     => Session::get('username'),
+                    ]
+                );
 
                 $flg += 1;
             }    
@@ -190,30 +192,50 @@ class AsfnController extends Controller
     public function update(Request $req)
     {
         // dd($req->all());
-        // delete terlebih dahulu data nya
-        DB::table('asfn_det')
-            ->where('asfn_asset','=',$req->te_asset)
-            ->where('asfn_fntype','=',$req->te_fntype)
-            ->delete();
-        
+
+        // cek apakah terdapat data detail atau tidak
         $flg = 0;
+        $cekdet = 0;
         foreach($req->barang as $barang){
             if($req->tick[$flg] == 0) {
-                DB::table('asfn_det')
-                ->insert([
-                    'asfn_asset'     => $req->te_asset,
-                    'asfn_fntype'   => $req->te_fntype,        
-                    'asfn_fncode'   => $req->barang[$flg],        
-                    'created_at'    => Carbon::now()->toDateTimeString(),
-                    'updated_at'    => Carbon::now()->toDateTimeString(),
-                    'edited_by'     => Session::get('username'),
-                ]);
+                $cekdet = 1;
             }    
             $flg += 1;
         }    
 
-        toast('Mapping Asset - Failure Updated.', 'success');
-        return back();
+        if($cekdet == 1) {
+            // delete terlebih dahulu data nya
+            DB::table('asfn_det')
+            ->where('asfn_asset','=',$req->te_asset)
+            ->where('asfn_fntype','=',$req->te_fntype)
+            ->delete();
+        
+            $flg = 0;
+            foreach($req->barang as $barang){
+                if($req->tick[$flg] == 0) {
+                    DB::table('asfn_det')->updateOrInsert(
+                        [
+                            'asfn_asset' => $req->te_asset, 
+                            'asfn_fncode'   => $req->barang[$flg]],
+                        [
+                            'asfn_fntype'   => $req->te_fntype,        
+                            // 'created_at'    => Carbon::now()->toDateTimeString(),
+                            'updated_at'    => Carbon::now()->toDateTimeString(),
+                            'edited_by'     => Session::get('username'),
+                        ]
+                    );
+                }    
+                $flg += 1;
+            }    
+
+            toast('Mapping Asset - Failure Updated.', 'success');
+            return back();
+        } else {
+            toast('Detail Not Found!', 'error');
+            return back();
+        }
+        
+        
     }
 
     /**

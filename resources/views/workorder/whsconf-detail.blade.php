@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-9">
-            <h1 class="m-0 text-dark">Warehouse Confirm Detail</h1>
+            <h1 class="m-0 text-dark">Work Order Transfer Detail</h1>
         </div><!-- /.col -->
     </div><!-- /.row -->
 </div><!-- /.container-fluid -->
@@ -22,21 +22,21 @@
     <div class="form-group row col-md-12">
         <label class="col-md-2 col-form-label text-md-right">Work Order</label>
         <div class="col-md-2">
-            <input type="text" class="form-control" id="wo_num" name="wo_num" value="{{$data->wo_nbr}}" readonly>
+            <input type="text" class="form-control" id="wo_num" name="wo_num" value="{{$data->wo_number}}" readonly>
         </div>
         <label class="col-md-1 col-form-label text-md-right">Asset</label>
         <div class="col-md-3">
             <input type="text" class="form-control" id="asset" name="asset" value="{{$data->asset_desc}}" readonly>
         </div>
-        <label class="col-md-2 col-form-label text-md-right">Schedule Date</label>
+        <label class="col-md-2 col-form-label text-md-right">Start Date</label>
         <div class="col-md-2">
-            <input type="text" class="form-control" id="schedule_date" name="schedule_date" value="{{$data->wo_schedule}}" readonly>
+            <input type="text" class="form-control" id="start_date" name="start_date" value="{{$data->wo_start_date}}" readonly>
         </div>
     </div>
     <div class="form-group row col-md-12">
         <label class="col-md-2 col-form-label text-md-right">SR Number</label>
         <div class="col-md-2">
-            <input type="text" class="form-control" id="sr_num" name="sr_num" value="{{$data->wo_sr_nbr != null ? $data->wo_sr_nbr : '-'}}" readonly>
+            <input type="text" class="form-control" id="sr_num" name="sr_num" value="{{$data->wo_sr_number != null ? $data->wo_sr_number : '-'}}" readonly>
         </div>
         <label class="col-md-1 col-form-label text-md-right">Priority</label>
         <div class="col-md-3">
@@ -44,7 +44,7 @@
         </div>
         <label class="col-md-2 col-form-label text-md-right">Due Date</label>
         <div class="col-md-2">
-            <input type="text" class="form-control" id="duedate" name="duedate" value="{{$data->wo_duedate}}" readonly>
+            <input type="text" class="form-control" id="duedate" name="duedate" value="{{$data->wo_due_date}}" readonly>
         </div>
     </div>
 </div>
@@ -71,101 +71,15 @@
                     <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0" >
                         <thead>
                             <tr>
-                                <td style="text-align: center; width: 7% !important; font-weight: bold;">Repair Code</td>
-                                <td style="text-align: center; width: 7% !important; font-weight: bold;">Instruction Code</td>
-                                <td style="text-align: center; width: 20% !important; font-weight: bold;">Spare Part</td>
-                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Qty Required</td>
-                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Qty Request</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Site</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Lot</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Loc From</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Loc To</td>
-                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Stock</td>
-                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Qty Confirm</td>
-                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Qty To Confirm</td>
-                                <td style="text-align: center; width: 19% !important; font-weight: bold;">Release Note</td>
-                                <td style="text-align: center; width: 8% !important; font-weight: bold;">Confirm</td>
+                                <td style="text-align: center; width: 7% !important; font-weight: bold;">Spare Part Code</td>
+                                <td style="text-align: center; width: 7% !important; font-weight: bold;">Spare Part Desc</td>
+                                <td style="text-align: center; width: 20% !important; font-weight: bold;">Qty Required</td>
+                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Location & Lot From</td>
+                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Location To</td>
+                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty to Transfer</td>
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
-
-                            @forelse ( $combineSP as $datas )
-                                <!-- qty required -->
-                                @if($datas->insd_part == "")
-                                    @php($cqty = 0)
-                                    @php($ccek = 0)
-                                @else
-                                    @php($cqty = $datas->insd_qty)
-                                    @php($ccek = 1)
-                                @endif
-
-                                @if($datas->insd_part_desc == "")
-                                    @php($qsp = $spdata->where('spm_code','=',$datas->insd_part)->count())
-                                    @if($qsp == 0)
-                                        @php($descpart = "")
-                                    @else
-                                        @php($rssp = $spdata->where('spm_code','=',$datas->insd_part)->first())
-                                        @php($descpart = $rssp->spm_desc)
-                                    @endif
-                                @else
-                                    @php($descpart = $datas->insd_part_desc)
-                                @endif
-
-                                <!-- qty request -->
-                                @php($qqtyreq = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->count())
-                                @if($qqtyreq == 0)
-                                    @php($dqtyreq = 0)
-                                    @php($whsconf = "")
-                                    @php($whsdate = "")
-                                    @php($note_release = "")
-                                    @php($dqtymove = 0)
-                                @else
-                                    @php($sqtyreq = $wodetdata->where('wo_dets_nbr','=',$data->wo_nbr)->where('wo_dets_rc','=',$datas->repair_code)->where('wo_dets_ins','=',$datas->ins_code)->where('wo_dets_sp','=',$datas->insd_part)->first())
-                                    @php($dqtyreq = $sqtyreq->wo_dets_sp_qty)
-                                    @php($whsconf = $sqtyreq->wo_dets_wh_conf)
-                                    @php($whsdate = $sqtyreq->wo_dets_wh_date)
-                                    @php($note_release = $sqtyreq->wo_dets_worelease_note)
-                                    @php($dqtymove = $sqtyreq->wo_dets_wh_qty)
-                                @endif
-
-                                <!-- default lokasi -->
-                                <!-- @php($qsite = $spdata->where('spm_code','=',$datas->insd_part)->count())
-                                @if($qsite == 0)
-                                    @php($dsite = "")
-                                    @php($dloc = "")
-                                @else
-                                    @php($ssite = $spdata->where('spm_code','=',$datas->insd_part)->first())
-                                    @php($dsite = $ssite->spm_site)
-                                    @php($dloc = $ssite->spm_loc)
-                                @endif
-                                -->
-
-                                <!-- stok -->
-                                @php($cstok = $qstok->where('stok_site','=',$dsite)->where('stok_part','=',$datas->insd_part)->count())
-                                @if($cstok == 0)
-                                    @php($dstok = 0)
-                                    @php($dsite = "")
-                                    @php($dloc = "")
-                                    @php($dlot = "")
-                                @else
-                                    @php($rsstok = $qstok->where('stok_site','=',$dsite)->where('stok_part','=',$datas->insd_part)->first())
-                                    @php($dstok = $rsstok->stok_qty)
-                                    @php($dsite = $rsstok->stok_site)
-                                    @php($dloc = $rsstok->stok_loc)
-                                    @php($dlot = $rsstok->stok_lot)
-                                @endif
-
-                                <!-- Qty Confirm -->
-                                @if($whsconf == 0)
-                                    @if($dqtyreq > $dstok)
-                                        @php($dconf = $dstok)
-                                    @else
-                                        @php($dconf = $dqtyreq - $dqtymove)
-                                    @endif
-                                @else
-                                    @php($dconf = 0)
-                                @endif
-
                             <tr>
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$datas->repair_code}}
@@ -198,90 +112,10 @@
                                     @endforeach
                                     </select>
                                 </td>
-                                <td style="vertical-align: middle; text-align: center;">
-                                    @php($qlot = $qstok->where('stok_part','=',$datas->insd_part)
-                                                    ->where('stok_site','=',$dsite))
-                                    <select name="t_lot[]" class="form-control t_lot">
-                                        <option value="">-- Select --</option>
-                                    @foreach($qlot as $rslot)
-                                        @if($dlot == $rslot->stok_lot && $dloc == $rslot->stok_loc)
-                                            <option value="{{ $rslot->stok_lot }},{{ $rslot->stok_loc }}" selected>{{ $rslot->stok_lot }} -- Loc : {{ $rslot->stok_loc }}</option>
-                                        @else
-                                            <option value="{{ $rslot->stok_lot }},{{ $rslot->stok_loc }}" >{{ $rslot->stok_lot }} -- Loc : {{ $rslot->stok_loc }}</option>
-                                        @endif
-                                    @endforeach
-                                    </select>
-                                </td>
-
-                                <td style="vertical-align: middle; text-align: center;">
-                                    <input type="input" name="t_loc[]" class="form-control t_loc" value="{{$dloc}}" readonly>
-                                    <!-- perubahan stok berdasarkan lot
-                                        <select name="t_loc[]" class="form-control t_loc">
-                                        <option value="">-- Select --</option>
-                                    @php($rsloc = $locdata->where('loc_site','=',$dsite))
-                                    @foreach($rsloc as $rsloc)
-                                        <option value="{{ $rsloc->loc_code }}" {{$dloc == $rsloc->loc_code ? "selected" : ""}}>{{ $rsloc->loc_code }} -- {{ $rsloc->loc_desc }}</option>
-                                    @endforeach
-                                    </select> -->
-                                </td>
-                                <td style="vertical-align:middle;text-align:right;">
-                                    {{$dataloceng->eng_site}} -- {{$dataloceng->eng_loc}}
-                                    <input type="hidden" name="rlssite[]" value="{{$dataloceng->eng_site}}" />
-                                    <input type="hidden" name="rlsloc[]" value="{{$dataloceng->eng_loc}}" />
-                                </td>
-                                <td style="vertical-align:middle;text-align:right;">
-                                    <p class="qtystok" >{{ number_format($dstok,2) }}</p>
-                                    <input type="hidden" name="qtystok[]" value="{{$dstok}}" class="qtystok"/>
-                                </td>
-                                <td style="vertical-align:middle;text-align:right;">
-                                    <p>{{ number_format($dqtymove,2) }}</p>
-                                    <input type="hidden" name="qtymove[]" value="{{$dqtymove}}">
-                                </td>
-                                <!-- <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"> -->
-                                <input type="hidden" class="forn-control" name="whsconf[]" value="{{$whsconf}}" />
-                                @if($whsconf == 1)
-                                    <td style="vertical-align:middle;text-align:right;">
-                                        {{ number_format($dconf,2) }}
-                                        <input type="hidden" class="form-control qtyconf" name="qtyconf[]" value="{{$dconf}}" />
-                                    </td>
-                                    <td style="vertical-align: middle; text-align: center;">
-                                        <textarea rows="1" class="form-control" name="note_release[]" id="note_release[]" readonly >{{ $note_release }}</textarea>
-                                    </td>
-                                    <td style="vertical-align:middle;text-align:center;">    
-                                        {{date('Y-m-d', strtotime($whsdate))}}
-                                        <input type="hidden" class="tick" name="tick[]" value="1" />
-                                    </td>
-                                @else
-                                    @if($ccek == 0)
-                                        <td>
-                                            <input type="number" class="form-control qtyconf" step="1" min="0" name="qtyconf[]" value="{{$dconf}}" required />
-                                        </td>
-                                        <td style="vertical-align: middle; text-align: center;">
-                                            <textarea rows="1" class="form-control" name="note_release[]" id="note_release[]" readonly >{{ $note_release }}</textarea>
-                                        </td>
-                                        <td style="vertical-align:middle;text-align:center;">    
-                                            <input type="checkbox" class="qaddel" name="qaddel[]" value="" checked>
-                                            <input type="hidden" class="tick" name="tick[]" value="1" />
-                                        </td>
-                                    @else
-                                        <td>
-                                            <input type="number" class="form-control qtyconf" step="1" min="0" name="qtyconf[]" value="{{$dconf}}" required />
-                                        </td>
-                                        <td style="vertical-align: middle; text-align: center;">
-                                            <textarea rows="1" class="form-control" name="note_release[]" id="note_release[]" readonly >{{ $note_release }}</textarea>
-                                        </td>
-                                        <td style="vertical-align:middle;text-align:center;">
-                                            <input type="checkbox" class="qaddel" name="qaddel[]" value="">
-                                            <input type="hidden" class="tick" name="tick[]" value="0" />
-                                        </td>
-                                    @endif
-                                @endif
                             </tr>
                             @empty
 
                             @endforelse
-
-
                         </tbody>
                         <tfoot>
                             <tr>
