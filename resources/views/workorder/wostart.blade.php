@@ -398,13 +398,13 @@
 
           document.getElementById('adownload').href = urldownload;
 
-          // if (wotype == 'auto') {
-          //   document.getElementById('divdonload').style.display = '';
-          //   document.getElementById('divcancel').style.display = 'none';      // A211027
-          // } else {
-          //   document.getElementById('divdonload').style.display = 'none';
-          //   document.getElementById('divcancel').style.display = '';          // A211027
-          // }
+          if (wotype == 'auto') {
+            document.getElementById('divdonload').style.display = '';
+            document.getElementById('divcancel').style.display = 'none';      // A211027
+          } else {
+            document.getElementById('divdonload').style.display = 'none';
+            document.getElementById('divcancel').style.display = '';          // A211027
+          }
 
 
 

@@ -2314,10 +2314,11 @@ class wocontroller extends Controller
                     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                     ->where(function ($status) {
                         $status->where('wo_status', '=', 'released');
+                        $status->orWhere('wo_status', '=', 'started');
                     })
                     ->get();
 
-                // $data = '';
+                 $data = [];
 
                 foreach ($datawo as $value) {
                     $dataeng = $value->wo_list_engineer;
@@ -2329,6 +2330,7 @@ class wocontroller extends Controller
                         ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                         ->where(function ($status) {
                             $status->where('wo_status', '=', 'released');
+                            $status->orWhere('wo_status', '=', 'started');
                         })
                         ->where('wo_list_engineer', $dataeng)
                         ->orderby('wo_system_create', 'desc')
@@ -2338,8 +2340,8 @@ class wocontroller extends Controller
                     } 
                     
                 }
-
                 // dd($data);
+
 
                 $engineer = DB::table('users')
                     ->join('roles', 'users.role_user', 'roles.role_code')
