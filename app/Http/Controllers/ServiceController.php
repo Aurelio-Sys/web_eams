@@ -835,6 +835,8 @@ class ServiceController extends Controller
                         'updated_at' => Carbon::now()->toDateTimeString(),
                     ]);
             }
+            
+            toast('Service Request ' . $srnbr . ' successfully updated', 'success');
         }
 
         $eimpactlist = '';
@@ -2188,22 +2190,22 @@ class ServiceController extends Controller
                 //     ->paginate(10);
 
                 $data = DB::table('service_req_mstr')
-                    ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_asset')
-                    ->leftjoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
-                    ->leftjoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
-                    ->leftjoin('wotyp_mstr', 'wotyp_mstr.wotyp_code', 'service_req_mstr.sr_fail_type')
-                    ->join('users', 'users.username', 'service_req_mstr.sr_req_by')  //B211014
-                    ->join('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
-                    ->leftjoin('wo_mstr', 'wo_mstr.wo_number', 'service_req_mstr.wo_number')
-                    ->leftjoin('sr_trans_approval', 'sr_trans_approval.srta_mstr_id', 'service_req_mstr.id')
-                    ->leftjoin('sr_trans_approval_eng', 'sr_trans_approval_eng.srta_eng_mstr_id', 'service_req_mstr.id')
-                    ->leftjoin('eng_mstr', 'eng_mstr.eng_dept', 'service_req_mstr.sr_eng_approver')
-                    ->leftjoin('dept_mstr as u1', 'eng_mstr.eng_dept', 'u1.dept_code')
-                    ->selectRaw('service_req_mstr.* ,
-            asset_mstr.asset_code, asset_mstr.asset_desc, asset_mstr.asset_loc, dept_mstr.dept_desc, users.username, users.name, asset_mstr.asset_loc, 
-            wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.dept_desc as u11, eng_mstr.eng_dept,
-            wo_mstr.wo_job_startdate, wo_mstr.wo_job_finishdate, wo_mstr.wo_status, sr_trans_approval.srta_status, wo_mstr.wo_list_engineer,
-            sr_trans_approval.srta_reason, sr_trans_approval_eng.srta_eng_reason, sr_trans_approval_eng.srta_eng_status')
+                ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_asset')
+                ->leftjoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
+                ->leftjoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
+                ->leftjoin('wotyp_mstr', 'wotyp_mstr.wotyp_code', 'service_req_mstr.sr_fail_type')
+                ->join('users', 'users.username', 'service_req_mstr.sr_req_by')  //B211014
+                ->join('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
+                ->leftjoin('wo_mstr', 'wo_mstr.wo_number', 'service_req_mstr.wo_number')
+                ->leftjoin('sr_trans_approval', 'sr_trans_approval.srta_mstr_id', 'service_req_mstr.id')
+                ->leftjoin('sr_trans_approval_eng', 'sr_trans_approval_eng.srta_eng_mstr_id', 'service_req_mstr.id')
+                ->leftjoin('eng_mstr', 'eng_mstr.eng_dept', 'service_req_mstr.sr_eng_approver')
+                ->leftjoin('dept_mstr as u1', 'eng_mstr.eng_dept', 'u1.dept_code')
+                ->selectRaw('service_req_mstr.* ,
+            asset_mstr.asset_code, asset_mstr.asset_desc, asset_mstr.asset_loc, dept_mstr.dept_desc, users.username, users.name,
+            wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.dept_desc as u11,
+            wo_mstr.wo_job_startdate, wo_mstr.wo_job_finishdate, wo_mstr.wo_status, wo_mstr.wo_list_engineer, eng_mstr.eng_dept,
+            sr_trans_approval.srta_reason, sr_trans_approval_eng.srta_eng_reason, sr_trans_approval.srta_status, sr_trans_approval_eng.srta_eng_status')
                     ->orderBy('sr_number', 'DESC')
                     ->groupBy('sr_number')
                     ->paginate(10);
