@@ -1066,7 +1066,7 @@ class SettingController extends Controller
                 'loc_active' => 'No'
             ]);
         
-        //hapus data lokasi kecuali lokasi yang sudah ada transaksi
+        //hapus data lokasi kecuali lokasi yang sudah ada transaksi -> request transfer, wo transfer, wo finish
         DB::table('loc_mstr')
             ->delete();
 
@@ -1767,28 +1767,16 @@ class SettingController extends Controller
                 ->orderby('asset_code');
     
             if($s_code) {
-                $data = $data->where(function($query) use ($s_code) {
-                    $query->where('asset_code','like','%'.$s_code.'%')
-                    ->orWhere('asset_desc','like','%'.$s_code.'%');
-                });
+                $data = $data->where('asset_code','like','%'.$s_code.'%');
             }
             if($s_loc) {
-                $data = $data->where(function($query) use ($s_loc) {
-                    $query->where('asset_loc','like','%'.$s_loc.'%')
-                    ->orWhere('asloc_desc','like','%'.$s_loc.'%');
-                });
+                $data = $data->where('asset_loc','like','%'.$s_loc.'%');
             }
             if($s_type) {
-                $data = $data->where(function($query) use ($s_type) {
-                    $query->where('asset_type','like','%'.$s_type.'%')
-                    ->orWhere('astype_desc','like','%'.$s_type.'%');
-                });
+                $data = $data->where('asset_type','like','%'.$s_type.'%');
             }
             if($s_group) {
-                $data = $data->where(function($query) use ($s_group) {
-                    $query->where('asset_group','like','%'.$s_group.'%')
-                    ->orWhere('asgroup_desc','like','%'.$s_group.'%');
-                });
+                $data = $data->where('asset_group','like','%'.$s_group.'%');
             }
             
             $data = $data->paginate(10);
@@ -1845,7 +1833,7 @@ class SettingController extends Controller
                 $table->temporary();
             });
 
-            /* ini ditutup dulu, nanti dibuka lagi
+            /* ini ditutup dulu, nanti dibuka lagi */
             $domain = ModelsQxwsa::first();
             $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
 
@@ -1859,7 +1847,7 @@ class SettingController extends Controller
                         'temp_desc' => $datas->t_desc,
                     ]);
                 }
-            } */
+            } 
 
             $dataassetqad = DB::table('temp_asset')
                 ->orderBy('temp_code')
@@ -1882,8 +1870,8 @@ class SettingController extends Controller
     {
         $cek = DB::table('asset_mstr')
             ->where('asset_code','=',$req->input('code'))
-            ->Where('asset_loc','=',$req->input('loc'))
-            ->Where('asset_site','=',$req->input('site'))
+            // ->Where('asset_loc','=',$req->input('loc'))
+            // ->Where('asset_site','=',$req->input('site'))
             ->get();
 
         if ($cek->count() == 0) {
@@ -1947,28 +1935,6 @@ class SettingController extends Controller
                 $file->move($imagepath,$imagename);
             }
             
-            if($req->hasFile('filename')){
-
-                foreach($req->file('filename') as $upload){
-                    $dataTime = date('Ymd_His');
-                    $filename = $dataTime . '-' .$upload->getClientOriginalName();
-                    
-                    // Simpan File Upload pada Public
-                    $savepath = public_path('uploadasset/');
-                    $upload->move($savepath, $filename);
-                
-                    // Simpan ke DB Upload
-                    DB::table('asset_upload')
-                            ->insert([
-                                'filepath' => $savepath.$filename,
-                                'asset_code' => $req->t_code,
-                                'created_at' => Carbon::now()->toDateTimeString(),
-                                'updated_at' => Carbon::now()->toDateTimeString(),
-                            ]);
-                }
-
-            }
-
             DB::table('asset_mstr')
             ->insert([
                 'asset_code'        => $req->t_code,
@@ -1992,6 +1958,27 @@ class SettingController extends Controller
                 'asset_editedby'         => Session::get('username'),
                 // 'asset_upload'      => $savepath.$filename
             ]);
+
+            // Menyimpan file upload
+            if($req->hasFile('filename')){
+                foreach($req->file('filename') as $upload){
+                    $dataTime = date('Ymd_His');
+                    $filename = $dataTime . '-' .$upload->getClientOriginalName();
+                    
+                    // Simpan File Upload pada Public
+                    $savepath = public_path('uploadasset/');
+                    $upload->move($savepath, $filename);
+                
+                    // Simpan ke DB Upload
+                    DB::table('asset_upload')
+                            ->insert([
+                                'filepath' => $savepath.$filename,
+                                'asset_code' => $req->t_code,
+                                'created_at' => Carbon::now()->toDateTimeString(),
+                                'updated_at' => Carbon::now()->toDateTimeString(),
+                            ]);
+                }
+            }
 
             toast('Asset Created.', 'success');
             return back();
@@ -2022,7 +2009,6 @@ class SettingController extends Controller
 
     public function listupload($id){
         // dd($id);
-
         $data = DB::table('asset_upload')
                         ->where('asset_code',$id)
                         ->get();
@@ -2046,7 +2032,7 @@ class SettingController extends Controller
                             </td>
                         </tr>';
         }
-        $output = "tyas";
+
         return response($output);
     }
 
@@ -2114,7 +2100,7 @@ class SettingController extends Controller
     //untuk edit asset master
     public function editasset(Request $req)
     {
-        dd($req->all());
+        // dd($req->all());
         /* Validasi inputan */
         if ($req->te_mea == "C") {
             if ($req->te_cal == "") {
@@ -2165,7 +2151,7 @@ class SettingController extends Controller
         }
 
         DB::table('asset_mstr')
-        ->where('id','=',$req->te_asset_id)
+        ->where('asset_code','=',$req->te_code)
         ->update([
             'asset_desc'        => $req->te_desc,
             'asset_site'        => $req->te_site,
@@ -2196,18 +2182,23 @@ class SettingController extends Controller
                     ->where('aspar_par','=',$req->d_code)
                     ->count();
 
-        if ($cekAspar1 > 0) {
-            toast('Asset data can not be deleted, asset data is registered in the asset hierarchy!!!', 'error');
-            return back();
-        }
-
         $cekAspar2 = 0;
         $cekAspar2 = DB::table('asset_par')
                     ->where('aspar_child','=',$req->d_code)
                     ->count();
 
-        if ($cekAspar2 >0) {
-            toast('Asset data can not be deleted, asset data is registered in the asset hierarchy!!!', 'error');
+        $ceksr = 0;
+        $ceksr = DB::table('service_req_mstr')
+            ->whereSr_asset($req->d_code)
+            ->count();
+
+        $cekwo = 0;
+        $cekwo = DB::table('wo_mstr')
+            ->whereWoAssetCode($req->d_code)
+            ->count();
+
+        if ($cekAspar1 > 0 || $cekAspar2 > 0 || $cekwo > 0 || $ceksr > 0) {
+            toast('Asset data can not be deleted, asset code has been used for the transaction!!!', 'error');
             return back();
         }
 
@@ -2216,6 +2207,10 @@ class SettingController extends Controller
             ->where('asset_site', '=', $req->d_site)
             ->where('asset_loc', '=', $req->d_loc)
             ->delete();
+
+        DB::table('asset_upload')
+            ->whereAssetCode($req->d_code)
+            ->delet();
 
         toast('Deleted Asset Successfully.', 'success');
         return back();
@@ -3098,7 +3093,7 @@ class SettingController extends Controller
 
 /* Spare Part Master */
     //untuk menampilkan menu Spare Part Master
-    public function spmmaster(Request $req)
+    public function spmmaster(Request $req) /** blade : setting.sp-mstr */
     {   
         if (strpos(Session::get('menu_access'), 'MT12') !== false) {
             $data = DB::table('sp_mstr')
@@ -3316,8 +3311,8 @@ class SettingController extends Controller
             } else {
 
                 if ($spdata[1] == "false") {
-                    toast('Data Sparepart pada Site ' . $da->site_code . ' tidak ditemukan', 'error')->persistent('Dismiss');
-                    return redirect()->back();
+                    // toast('Data Sparepart pada Site ' . $da->site_code . ' tidak ditemukan', 'error')->persistent('Dismiss');
+                    // return redirect()->back();
                 } else {
                     
                     foreach ($spdata[0] as $datas) {

@@ -484,10 +484,17 @@
            var upload 		= $(this).data('upload');
            var qad 		= $(this).data('qad');
            var assetid 		= $(this).data('assetid');
-           {{--  var assetimg    = '/uploadassetimage/' +$(this).data('assetimg');  --}}
-          
+           var assetimg    = '/uploadassetimage/' +$(this).data('assetimg');
            var uploadname = upload.substring(upload.lastIndexOf('/') + 1,upload.length);
             //   console.log(uploadname);
+
+            $.ajax({
+                url:"/setlistupload/" + code,
+                success: function(data) {
+                    console.log(data);
+                    $('#listupload').html('').append(data); 
+                }
+            })
 
            document.getElementById('te_code').value         = code;
            document.getElementById('te_desc').value         = desc;
@@ -501,7 +508,7 @@
            document.getElementById('te_supp').value         = supp;
            document.getElementById('te_note').value         = note;
            document.getElementById('te_active').value       = active;
-           {{--  document.getElementById('foto1').src       = assetimg;  --}}
+           document.getElementById('foto1').src       = assetimg;
            document.getElementById('te_qad').value          = qad;
            document.getElementById('te_assetid').value          = assetid;
 
@@ -548,13 +555,7 @@
                 group
             });
 
-            $.ajax({
-                url:"/listupload/" + code,
-                success: function(data) {
-                    console.log(data);
-                    $('#listupload').html('').append(data); 
-                }
-            })
+            
        });
 
        $(document).on('click', '.deletedata', function(e){
@@ -602,7 +603,33 @@
             }) 
         });
 
-        $(document).on('change', '#t_loc', function() {
+        $(document).on('change', '#t_code', function() {
+          
+            var code = $('#t_code').val();
+            {{--  
+                var desc = $('#t_desc').val();
+                var site = $('#t_site').val();
+                var loc = $('#t_loc').val();
+            --}}
+
+              $.ajax({
+                {{--  url:"/cekasset?code="+code+"&site="+site+"&loc="+loc ,  --}}
+                url:"/cekasset?code="+code ,
+                success: function(data) {
+                  
+                  if (data == "ada") {
+                    alert("Asset Already Registered!!");
+                    document.getElementById('t_code').value = '';
+                    document.getElementById('t_code').focus();
+                  }
+                  console.log(data);
+                
+                }
+              })
+          });
+
+        {{--  kode asset tidak boleh sama meskipun beda site dan beda lokasi
+          $(document).on('change', '#t_loc', function() {
           
           var code = $('#t_code').val();
           var desc = $('#t_desc').val();
@@ -622,9 +649,9 @@
               
               }
             })
-        });
+        });  --}}
 
-        $(document).on('change', '#te_loc', function() {
+        {{--  $(document).on('change', '#te_loc', function() {
           
             var code = $('#te_code').val();
             var desc = $('#te_desc').val();
@@ -644,7 +671,7 @@
                 
                 }
               })
-          });
+          });  --}}
 
         $(document).on('change', '#t_mea', function() {
           var mea = $('#t_mea').val();
@@ -797,6 +824,10 @@
             theme : 'bootstrap4',
         });
         $("#t_um").select2({
+            width : '100%',
+            theme : 'bootstrap4',
+        });
+        $("#te_um").select2({
             width : '100%',
             theme : 'bootstrap4',
         });

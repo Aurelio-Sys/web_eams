@@ -41,7 +41,7 @@
                 </div>
             </div>
             <div class="col-12 form-group row">
-                <label for="ss_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Location Code</label>
+                <label for="ss_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Failure Type</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <select id="s_fntype" class="form-control" style="color:black" name="s_fntype">
                         <option value="">--Select--</option>
@@ -211,6 +211,7 @@
         </div>
     </div>
 </div>
+</div>
 
 <!-- Modal Delete -->
 <div class="modal fade" id="deleteModal" role="dialog" aria-hidden="true" data-backdrop="static">
@@ -268,8 +269,9 @@
     });
 
     $(document).on('click', '.deletearea', function(e) {
+        alert('test');
         $('#deleteModal').modal('show');
-        {{--  
+        
         var asset = $(this).data('asset');
         var gdesc = $(this).data('gdesc');
         var fntype = $(this).data('fntype');
@@ -278,7 +280,7 @@
         document.getElementById('d_code1').value = asset;
         document.getElementById('d_code2').value = fntype;
         document.getElementById('td_code1').innerHTML = gdesc;
-        document.getElementById('td_code2').innerHTML = fdesc;  --}}
+        document.getElementById('td_code2').innerHTML = fdesc;
     });
 
     function clear_icon() {
