@@ -18,7 +18,11 @@
   <td class="foot1" data-label="Priority">{{ $show->wo_priority }}</td>
   <td class="foot1" >
   <input type="hidden" name='wonbrr' value="{{$show->wo_number}}"> 
+  @if($show->wo_status == 'released')
     <button type="button"  class="btn btn-success btn-action jobview" style="width: 100%;">View</button>
+    @else
+    <button type="button"  class="btn btn-warning btn-action jobview" style="width: 100%;">View</button>
+  @endif
     
   </td>
 @empty
