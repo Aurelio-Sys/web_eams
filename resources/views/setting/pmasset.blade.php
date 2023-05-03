@@ -17,7 +17,7 @@
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-<form action="/pmcode" method="GET">
+<form action="/pmasset" method="GET">
 <!-- Bagian Searching -->
 <div class="container-fluid mb-2">
     <div class="row">
@@ -30,12 +30,12 @@
         <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
         <div class="card card-body bg-black rounded-0">
             <div class="col-12 form-group row">
-                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Preventive Code</label>
+                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Code</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_code" type="text" class="form-control" name="s_code"
                     value="" autofocus autocomplete="off"/>
                 </div>
-                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Preventive Desc</label>
+                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">PM Code</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_desc" type="text" class="form-control" name="s_desc"
                     value="" autofocus autocomplete="off"/>
@@ -87,10 +87,10 @@
                 {{ csrf_field() }}
                 <div class="modal-body">
                   <div class="form-group row">
-                     <label for="t_asset" class="col-md-3 col-form-label text-md-right">Asset</label>
+                     <label for="t_asset" class="col-md-3 col-form-label text-md-right">Asset <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                      <div class="col-md-8">
                         <select class="form-control " id="t_asset" name="t_asset" required>
-                        <option value="">--</option>
+                        <option value="">-- Select Data --</option>
                         @foreach($dataasset as $da)
                         <option value="{{$da->asset_code}}">{{$da->asset_code}} -- {{$da->asset_desc}}</option>
                         @endforeach
@@ -100,8 +100,8 @@
                  <div class="form-group row">
                      <label for="t_pmcode" class="col-md-3 col-form-label text-md-right">PM Code</label>
                      <div class="col-md-8">
-                        <select class="form-control " id="t_pmcode" name="t_pmcode" required>
-                        <option value="">--</option>
+                        <select class="form-control " id="t_pmcode" name="t_pmcode">
+                        <option value="">-- Select Data --</option>
                         @foreach($datapm as $dp)
                         <option value="{{$dp->pmc_code}}">{{$dp->pmc_code}} -- {{$dp->pmc_desc}}</option>
                         @endforeach
@@ -116,7 +116,7 @@
                      <label for="t_time" class="col-md-2 col-form-label text-md-left">Days</label>
                   </div>
                   <div class="form-group row">
-                     <label for="t_mea" class="col-md-3 col-form-label text-md-right">Measurement</label>
+                     <label for="t_mea" class="col-md-3 col-form-label text-md-right">Measurement <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                      <div class="col-md-4">
                      <select class="form-control " id="t_mea" name="t_mea" required>
                         <option value="">--</option>
@@ -138,7 +138,7 @@
                      <div class="col-md-3">
                            <input type="number" class="form-control" id="t_meter" name="t_meter" autocomplete="off" min="0" step="0.1">
                      </div>
-                     <div class="col-md-2">
+                     <div class="col-md-3">
                         <select class="form-control" id="t_durum" name="t_durum">
                            <option value=""></option>
                            @foreach($dataum as $du)
@@ -194,20 +194,16 @@
             {{ csrf_field() }}
             <div class="modal-body">
                 <div class="form-group row">
-                    <label for="te_asset" class="col-md-3 col-form-label text-md-right">Asset</label>
+                    <label for="te_asset" class="col-md-3 col-form-label text-md-right">Asset <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-8">
-                       <select class="form-control " id="te_asset" name="te_asset" readonly>
-                       <option value="">--</option>
-                       @foreach($dataasset as $da)
-                       <option value="{{$da->asset_code}}">{{$da->asset_code}} -- {{$da->asset_desc}}</option>
-                       @endforeach
-                       </select>
+                        <input type="text" class="form-control" id="te_asset" name="te_asset" readonly>
+                        <input type="hidden" class="form-control" id="te_pmaid" name="te_pmaid">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="te_pmcode" class="col-md-3 col-form-label text-md-right">PM Code</label>
                     <div class="col-md-8">
-                       <select class="form-control " id="te_pmcode" name="te_pmcode" readonly>
+                        <select class="form-control " id="te_pmcode" name="te_pmcode">
                        <option value="">--</option>
                        @foreach($datapm as $dp)
                        <option value="{{$dp->pmc_code}}">{{$dp->pmc_code}} -- {{$dp->pmc_desc}}</option>
@@ -223,7 +219,7 @@
                     <label for="t_time" class="col-md-2 col-form-label text-md-left">Days</label>
                  </div>
                  <div class="form-group row">
-                    <label for="te_mea" class="col-md-3 col-form-label text-md-right">Measurement</label>
+                    <label for="te_mea" class="col-md-3 col-form-label text-md-right">Measurement <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-4">
                     <select class="form-control " id="te_mea" name="te_mea" required>
                        <option value="">--</option>
@@ -245,7 +241,7 @@
                     <div class="col-md-3">
                           <input type="number" class="form-control" id="te_meter" name="te_meter" autocomplete="off" min="0" step="0.1">
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                        <select class="form-control" id="te_durum" name="te_durum">
                         <option value="">--</option>
                           @foreach($dataum as $du)
@@ -334,7 +330,8 @@
            var tolerance = $(this).data('tolerance');
            var start = $(this).data('start');
            var eng = $(this).data('eng');
-
+           var pmaid = $(this).data('pmaid');
+       
            document.getElementById('te_asset').value = asset;
            document.getElementById('te_pmcode').value = pmcode;
            document.getElementById('te_time').value = time;
@@ -345,6 +342,7 @@
            document.getElementById('te_tol').value = tolerance;
            document.getElementById('te_start').value = start;
            document.getElementById('te_pickeng').value = eng;
+           document.getElementById('te_pmaid').value = pmaid;
            
            editpickeng();
        });
@@ -452,6 +450,122 @@
             allowClear : true,
             // theme : 'bootstrap4'
         });
+
+        $(document).on('change', '#t_mea', function() {
+            var asset = $('#t_asset').val();
+            var pmcode = $('#t_pmcode').val();
+  
+              $.ajax({
+                url:"/cekpmmtc?asset="+asset+"&pmcode="+pmcode ,
+                success: function(data) {
+                  console.log(data);
+                  if (data == "ada") {
+                    alert("Asset code with PM code selected is already registered!!!");
+                    document.getElementById('t_pmcode').value = '';
+                    document.getElementById('t_pmcode').focus();
+                  }
+                  console.log(data);
+                
+                }
+              })
+
+              $("#t_pmcode").select2({
+                width : '100%',
+                theme : 'bootstrap4',
+             });
+          });
+          
+          $(document).on('change', '#t_pmcode', function() {
+            var asset = $('#t_asset').val();
+            var pmcode = $('#t_pmcode').val();
+  
+              $.ajax({
+                url:"/cekpmmtc?asset="+asset+"&pmcode="+pmcode ,
+                success: function(data) {
+                  console.log(data);
+                  if (data == "ada") {
+                    alert("Asset code with PM code selected is already registered!!!");
+                    document.getElementById('t_pmcode').selectedIndex = 0;
+                    document.getElementById('t_pmcode').focus();
+                  }
+                  console.log(data);
+                
+                }
+              })
+
+              $("#t_pmcode").select2({
+                width : '100%',
+                theme : 'bootstrap4',
+             });
+          });
+
+          $("#t_durum").select2({
+            width : '100%',
+            theme : 'bootstrap4',
+         });
+
+         $("#te_durum").select2({
+            width : '100%',
+            theme : 'bootstrap4',
+         });
+
+          $(document).on('change', '#t_mea', function() {
+            var mea = $('#t_mea').val();
+            
+            switch (mea) {
+                case "C":
+                  document.getElementById('t_cal').required = true;
+                  document.getElementById('t_meter').required = false;
+                  document.getElementById('t_durum').required = false;
+                  break;
+                case "M":
+                  document.getElementById('t_cal').required = false;
+                  document.getElementById('t_meter').required = true;
+                  document.getElementById('t_durum').required = true;
+                  break;
+                case "B":
+                  document.getElementById('t_cal').required = true;
+                  document.getElementById('t_meter').required = true;
+                  document.getElementById('t_durum').required = true;
+                  break;
+                // tambahkan case lain jika diperlukan
+                default:
+                  // tindakan yang dilakukan jika nilai mea tidak cocok dengan case di atas
+                  document.getElementById('t_cal').required = false;
+                  document.getElementById('t_meter').required = false;
+                  document.getElementById('t_durum').required = false;
+                  break;
+            }            
+          });
+
+          $(document).on('change', '#te_mea', function() {
+            var mea = $('#te_mea').val();
+ 
+            switch (mea) {
+                case "C":
+                  document.getElementById('te_cal').required = true;
+                  document.getElementById('te_meter').required = false;
+                  document.getElementById('te_durum').required = false;
+                  break;
+                case "M":
+                  document.getElementById('te_cal').required = false;
+                  document.getElementById('te_meter').required = true;
+                  document.getElementById('te_durum').required = true;
+                  break;
+                case "B":
+                  document.getElementById('te_cal').required = true;
+                  document.getElementById('te_meter').required = true;
+                  document.getElementById('te_durum').required = true;
+                  break;
+                // tambahkan case lain jika diperlukan
+                default:
+                  // tindakan yang dilakukan jika nilai mea tidak cocok dengan case di atas
+                  document.getElementById('te_cal').required = false;
+                  document.getElementById('te_meter').required = false;
+                  document.getElementById('te_durum').required = false;
+                  break;
+            }            
+          });
 
     </script>
 
