@@ -74,7 +74,7 @@
         <div class="col-md-3 col-sm-4 mb-2 input-group">
           <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off" placeholder="Search SR Number">
         </div>
-        <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Asset Description') }}</label>
+        <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('Asset Description') }}</label>
         <div class="col-md-3 col-sm-4 mb-2 input-group">
           <!-- <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
                   <option value="">--Select Asset--</option>
@@ -94,7 +94,7 @@
             @endforeach
           </select>
         </div>
-        <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Asset Code') }}</label>
+        <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('Asset Code') }}</label>
         <div class="col-md-3 col-sm-4 mb-2 input-group">
           <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
             <option value="">--Select Asset--</option>
@@ -115,7 +115,7 @@
             <option value="high">High</option>
           </select>
         </div>
-        <label for="s_period" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('') }}</label>
+        <label for="s_period" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('') }}</label>
         <div class="col-md-3 col-sm-4 mb-2 input-group">
           <input type="button" class="btn btn-primary" id="btnsearch" value="Search" style="float:right" />
           <button type="button" class="btn btn-primary ml-2" id="btnrefresh"><i class="fas fa-redo-alt"></i></button>
@@ -167,7 +167,7 @@
 </div>
 
 <div class="modal fade" id="approvalModal" role="dialog" aria-hidden="true" data-backdrop="static">
-  <div class="modal-dialog modal-lg" role="document">
+  <div class="modal-dialog modal-md" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-center" id="exampleModalLabel">Service Request Approval</h5>
@@ -180,119 +180,65 @@
         <div class="modal-body">
           <input type="hidden" id="hiddenreq" name="hiddenreq" />
           <input type="hidden" id="idsr" name="idsr" />
-          <div class="form-group row">
-            <label for="srnumber" class="col-md-5 col-form-label text-md-right">Service Request Number</label>
-            <div class="col-md-6">
+          <div class="form-group row col-md-12">
+            <label for="srnumber" class="col-md-5 col-form-label text-md-left">Service Request Number</label>
+            <div class="col-md-7">
               <input id="srnumber" type="text" class="form-control" name="srnumber" readonly />
             </div>
           </div>
-          <div class="form-group row">
-            <label for="srdate" class="col-md-5 col-form-label text-md-right">Service Request Date</label>
-            <div class="col-md-6">
+          <div class="form-group row col-md-12">
+            <label for="srdate" class="col-md-5 col-form-label text-md-left">Service Request Date</label>
+            <div class="col-md-7">
               <input id="srdate" type="text" class="form-control" name="srdate" readonly />
             </div>
           </div>
-          <div class="form-group row">
-            <label for="reqbyname" class="col-md-5 col-form-label text-md-right">Requested by</label>
-            <div class="col-md-6">
+          <div class="form-group row col-md-12">
+            <label for="reqbyname" class="col-md-5 col-form-label text-md-left">Requested by</label>
+            <div class="col-md-7">
               <input id="reqbyname" type="text" class="form-control" autocomplete="off" autofocus readonly />
             </div>
           </div>
-          <div class="form-group row">
-            <label for="dept" class="col-md-5 col-form-label text-md-right">Department</label>
-            <div class="col-md-6">
+          <div class="form-group row col-md-12">
+            <label for="dept" class="col-md-5 col-form-label text-md-left">Department</label>
+            <div class="col-md-7">
               <input id="dept" type="text" class="form-control" name="dept" autocomplete="off" autofocus readonly />
             </div>
           </div>
-          <div class="form-group row">
-            <label for="assetcode" class="col-md-5 col-form-label text-md-right">Asset Code</label>
-            <div class="col-md-6">
+          <div class="form-group row col-md-12">
+            <label for="assetcode" class="col-md-5 col-form-label text-md-left">Asset Code</label>
+            <div class="col-md-7">
               <input id="assetcode" type="text" class="form-control" name="assetcode" autocomplete="off" autofocus readonly />
             </div>
           </div>
-          <div class="form-group row">
-            <label for="assetdesc" class="col-md-5 col-form-label text-md-right">Asset Description</label>
-            <div class="col-md-6">
-              <input id="assetdesc" type="text" class="form-control" name="assetdesc" autocomplete="off" autofocus readonly />
+          <div class="form-group row col-md-12">
+            <label for="assetdesc" class="col-md-5 col-form-label text-md-left">Asset Description</label>
+            <div class="col-md-7">
+              <textarea id="assetdesc" type="text" class="form-control" name="assetdesc" autocomplete="off" rows="3" readonly></textarea>
             </div>
           </div>
-          <div class="form-group row">
-            <label for="assetloc" class="col-md-5 col-form-label text-md-right">Location</label>
-            <div class="col-md-6">
+          <div class="form-group row col-md-12">
+            <label for="assetloc" class="col-md-5 col-form-label text-md-left">Asset Location</label>
+            <div class="col-md-7">
               <input id="assetloc" type="text" class="form-control" name="assetloc" autocomplete="off" autofocus readonly />
               <input id="h_assetsite" type="hidden" name="h_assetsite" />
               <input id="h_assetloc" type="hidden" name="h_assetloc" />
             </div>
           </div>
           <!-- <div class="form-group row">
-                        <label for="assettype" class="col-md-5 col-form-label text-md-right">Process / Technology</label>
-                        <div class="col-md-6">
+                        <label for="assettype" class="col-md-5 col-form-label text-md-left">Process / Technology</label>
+                        <div class="col-md-7">
                             <input id="assettype" type="text" class="form-control" name="assettype" autocomplete="off" autofocus readonly/>
                         </div>
                     </div> -->
-          <div class="form-group row">
-            <label for="srnote" class="col-md-5 col-form-label text-md-right">Note</label>
-            <div class="col-md-6">
+          <div class="form-group row col-md-12">
+            <label for="srnote" class="col-md-5 col-form-label text-md-left">Note</label>
+            <div class="col-md-7">
               <textarea id="srnote" type="text" class="form-control" name="srnote" maxlength="250" autocomplete="off" autofocus readonly></textarea>
             </div>
           </div>
-          <div class="form-group row">
-            <label for="wotype" class="col-md-5 col-form-label text-md-right">Failure Type</label>
-            <div class="col-md-6">
-              <input id="wotype" type="text" class="form-control" name="wotype" autocomplete="off" readonly />
-              <!-- <select class="form-control wotype" name="wotype" id="wotype">
-                <option value="">Select Failure Type</option>
-                @foreach($wotypes as $wotype)
-                <option value="{{$wotype->wotyp_code}}">{{$wotype->wotyp_code}} - {{$wotype->wotyp_desc}}</option>
-                @endforeach
-              </select> -->
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="failcode" class="col-md-5 col-form-label text-md-right">Failure Code</label>
-            <div class="col-md-6">
-              <textarea id="failcode" type="text" class="form-control" name="failcode" rows="3" readonly></textarea>
-              <!-- <select class="form-control fclist" name="fclist[]" id="fclist" multiple="multiple">
-                <option value=""></option>
-                @foreach($fcodes as $fcode)
-                <option value="{{$fcode->fn_code}}">{{$fcode->fn_code}} - {{$fcode->fn_desc}}</option>
-                @endforeach
-              </select> -->
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="impact" class="col-md-5 col-form-label text-md-right">Impact</label>
-            <div class="col-md-6">
-              <textarea id="impact" type="text" class="form-control" name="impact" autocomplete="off" rows="3" readonly></textarea>
-              <!-- <select class="form-control impact" name="impact[]" id="impact" multiple="multiple">
-                <option value=""></option>
-                @foreach($impacts as $impact)
-                <option value="{{$impact->imp_code}}">{{$impact->imp_code}} - {{$impact->imp_desc}}</option>
-                @endforeach
-              </select> -->
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="priority" class="col-md-5 col-form-label text-md-right">Priority</label>
-            <div class="col-md-6">
-              <input id="priority" type="text" name="priority" class="form-control" readonly>
-              <!-- <select class="form-control priority" name="priority" id="priority">
-                <option value='low'>Low</option>
-                <option value='medium'>Medium</option>
-                <option value='high'>High</option>
-              </select> -->
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="reason" class="col-md-5 col-form-label text-md-right">Reason</label>
-            <div class="col-md-6">
-              <textarea id="reason" type="text" class="form-control" name="reason" maxlength="250" autocomplete="off" autofocus></textarea>
-              <span id="alert3" style="color: red; font-weight: 200;"></span>
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="file" class="col-md-5 col-form-label text-md-right">Current File</label>
-            <div class="col-md-6">
+          <div class="form-group row col-md-12">
+            <label for="file" class="col-md-5 col-form-label text-md-left">Current File</label>
+            <div class="col-md-7">
               <table class="table table-bordered">
                 <thead>
                   <tr>
@@ -305,6 +251,61 @@
               </table>
             </div>
           </div>
+          <div class="form-group row col-md-12">
+            <label for="wotype" class="col-md-5 col-form-label text-md-left">Failure Type</label>
+            <div class="col-md-7">
+              <input id="wotype" type="text" class="form-control" name="wotype" autocomplete="off" readonly />
+              <!-- <select class="form-control wotype" name="wotype" id="wotype">
+                <option value="">Select Failure Type</option>
+                @foreach($wotypes as $wotype)
+                <option value="{{$wotype->wotyp_code}}">{{$wotype->wotyp_code}} - {{$wotype->wotyp_desc}}</option>
+                @endforeach
+              </select> -->
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="failcode" class="col-md-5 col-form-label text-md-left">Failure Code</label>
+            <div class="col-md-7">
+              <textarea id="failcode" type="text" class="form-control" name="failcode" rows="3" readonly></textarea>
+              <!-- <select class="form-control fclist" name="fclist[]" id="fclist" multiple="multiple">
+                <option value=""></option>
+                @foreach($fcodes as $fcode)
+                <option value="{{$fcode->fn_code}}">{{$fcode->fn_code}} - {{$fcode->fn_desc}}</option>
+                @endforeach
+              </select> -->
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="impact" class="col-md-5 col-form-label text-md-left">Impact</label>
+            <div class="col-md-7">
+              <textarea id="impact" type="text" class="form-control" name="impact" autocomplete="off" rows="3" readonly></textarea>
+              <!-- <select class="form-control impact" name="impact[]" id="impact" multiple="multiple">
+                <option value=""></option>
+                @foreach($impacts as $impact)
+                <option value="{{$impact->imp_code}}">{{$impact->imp_code}} - {{$impact->imp_desc}}</option>
+                @endforeach
+              </select> -->
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="priority" class="col-md-5 col-form-label text-md-left">Priority</label>
+            <div class="col-md-7">
+              <input id="priority" type="text" name="priority" class="form-control" readonly>
+              <!-- <select class="form-control priority" name="priority" id="priority">
+                <option value='low'>Low</option>
+                <option value='medium'>Medium</option>
+                <option value='high'>High</option>
+              </select> -->
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="reason" class="col-md-5 col-form-label text-md-left">Reason</label>
+            <div class="col-md-7">
+              <textarea id="reason" type="text" class="form-control" name="reason" maxlength="250" autocomplete="off" autofocus></textarea>
+              <span id="alert3" style="color: red; font-weight: 200;"></span>
+            </div>
+          </div>
+          
           <input type="hidden" id="tmpfail1" name="tmpfail1" value="">
           <input type="hidden" id="impactcode1" name="impactcode1" value="">
           <input type="hidden" id="tmpfail2" name="tmpfail2" value="">
@@ -328,7 +329,7 @@
 </div>
 
 <div class="modal fade" id="viewModal" role="dialog" aria-hidden="true" data-backdrop="static">
-  <div class="modal-dialog modal-lg" role="document">
+  <div class="modal-dialog modal-md" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-center" id="exampleModalLabel">Service Request View</h5>
@@ -341,119 +342,65 @@
         <div class="modal-body">
           <input type="hidden" id="v_hiddenreq" name="v_hiddenreq" />
           <input type="hidden" id="v_idsr" name="v_idsr" />
-          <div class="form-group row">
-            <label for="v_srnumber" class="col-md-5 col-form-label text-md-right">Service Request Number</label>
-            <div class="col-md-6">
+          <div class="form-group row col-md-12">
+            <label for="v_srnumber" class="col-md-5 col-form-label text-md-left">Service Request Number</label>
+            <div class="col-md-7">
               <input id="v_srnumber" type="text" class="form-control" name="v_srnumber" readonly />
             </div>
           </div>
-          <div class="form-group row">
-            <label for="v_srdate" class="col-md-5 col-form-label text-md-right">Service Request Date</label>
-            <div class="col-md-6">
+          <div class="form-group row col-md-12">
+            <label for="v_srdate" class="col-md-5 col-form-label text-md-left">Service Request Date</label>
+            <div class="col-md-7">
               <input id="v_srdate" type="text" class="form-control" name="v_srdate" readonly />
             </div>
           </div>
-          <div class="form-group row">
-            <label for="v_reqbyname" class="col-md-5 col-form-label text-md-right">Requested by</label>
-            <div class="col-md-6">
+          <div class="form-group row col-md-12">
+            <label for="v_reqbyname" class="col-md-5 col-form-label text-md-left">Requested by</label>
+            <div class="col-md-7">
               <input id="v_reqbyname" type="text" class="form-control" autocomplete="off" autofocus readonly />
             </div>
           </div>
-          <div class="form-group row">
-            <label for="v_dept" class="col-md-5 col-form-label text-md-right">Department</label>
-            <div class="col-md-6">
+          <div class="form-group row col-md-12">
+            <label for="v_dept" class="col-md-5 col-form-label text-md-left">Department</label>
+            <div class="col-md-7">
               <input id="v_dept" type="text" class="form-control" name="v_dept" autocomplete="off" autofocus readonly />
             </div>
           </div>
-          <div class="form-group row">
-            <label for="v_assetcode" class="col-md-5 col-form-label text-md-right">Asset Code</label>
-            <div class="col-md-6">
+          <div class="form-group row col-md-12">
+            <label for="v_assetcode" class="col-md-5 col-form-label text-md-left">Asset Code</label>
+            <div class="col-md-7">
               <input id="v_assetcode" type="text" class="form-control" name="v_assetcode" autocomplete="off" autofocus readonly />
             </div>
           </div>
-          <div class="form-group row">
-            <label for="v_assetdesc" class="col-md-5 col-form-label text-md-right">Asset Description</label>
-            <div class="col-md-6">
-              <input id="v_assetdesc" type="text" class="form-control" name="v_assetdesc" autocomplete="off" autofocus readonly />
+          <div class="form-group row col-md-12">
+            <label for="v_assetdesc" class="col-md-5 col-form-label text-md-left">Asset Description</label>
+            <div class="col-md-7">
+              <textarea id="v_assetdesc" type="text" class="form-control" name="v_assetdesc" autocomplete="off" rows="3" readonly ></textarea>
             </div>
           </div>
-          <div class="form-group row">
-            <label for="v_assetloc" class="col-md-5 col-form-label text-md-right">Location</label>
-            <div class="col-md-6">
+          <div class="form-group row col-md-12">
+            <label for="v_assetloc" class="col-md-5 col-form-label text-md-left">Asset Location</label>
+            <div class="col-md-7">
               <input id="v_assetloc" type="text" class="form-control" name="v_assetloc" autocomplete="off" autofocus readonly />
               <input id="v_h_assetsite" type="hidden" name="v_h_assetsite" />
               <input id="v_h_assetloc" type="hidden" name="v_h_assetloc" />
             </div>
           </div>
           <!-- <div class="form-group row">
-                        <label for="assettype" class="col-md-5 col-form-label text-md-right">Process / Technology</label>
-                        <div class="col-md-6">
+                        <label for="assettype" class="col-md-5 col-form-label text-md-left">Process / Technology</label>
+                        <div class="col-md-7">
                             <input id="assettype" type="text" class="form-control" name="assettype" autocomplete="off" autofocus readonly/>
                         </div>
                     </div> -->
-          <div class="form-group row">
-            <label for="v_srnote" class="col-md-5 col-form-label text-md-right">Note</label>
-            <div class="col-md-6">
+          <div class="form-group row col-md-12">
+            <label for="v_srnote" class="col-md-5 col-form-label text-md-left">Note</label>
+            <div class="col-md-7">
               <textarea id="v_srnote" type="text" class="form-control" name="v_srnote" maxlength="250" autocomplete="off" autofocus readonly></textarea>
             </div>
           </div>
-          <div class="form-group row">
-            <label for="v_wotype" class="col-md-5 col-form-label text-md-right">Failure Type</label>
-            <div class="col-md-6">
-              <input id="v_wotype" type="text" class="form-control" name="v_wotype" autocomplete="off" readonly />
-              <!-- <select class="form-control wotype" name="wotype" id="wotype">
-                <option value="">Select Failure Type</option>
-                @foreach($wotypes as $wotype)
-                <option value="{{$wotype->wotyp_code}}">{{$wotype->wotyp_code}} - {{$wotype->wotyp_desc}}</option>
-                @endforeach
-              </select> -->
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="v_failcode" class="col-md-5 col-form-label text-md-right">Failure Code</label>
-            <div class="col-md-6">
-              <textarea id="v_failcode" type="text" class="form-control" name="v_failcode" rows="3" readonly></textarea>
-              <!-- <select class="form-control fclist" name="fclist[]" id="fclist" multiple="multiple">
-                <option value=""></option>
-                @foreach($fcodes as $fcode)
-                <option value="{{$fcode->fn_code}}">{{$fcode->fn_code}} - {{$fcode->fn_desc}}</option>
-                @endforeach
-              </select> -->
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="v_impact" class="col-md-5 col-form-label text-md-right">Impact</label>
-            <div class="col-md-6">
-              <textarea id="v_impact" type="text" class="form-control" name="v_impact" autocomplete="off" rows="3" readonly></textarea>
-              <!-- <select class="form-control impact" name="impact[]" id="impact" multiple="multiple">
-                <option value=""></option>
-                @foreach($impacts as $impact)
-                <option value="{{$impact->imp_code}}">{{$impact->imp_code}} - {{$impact->imp_desc}}</option>
-                @endforeach
-              </select> -->
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="v_priority" class="col-md-5 col-form-label text-md-right">Priority</label>
-            <div class="col-md-6">
-              <input id="v_priority" type="text" name="v_priority" class="form-control" readonly>
-              <!-- <select class="form-control priority" name="priority" id="priority">
-                <option value='low'>Low</option>
-                <option value='medium'>Medium</option>
-                <option value='high'>High</option>
-              </select> -->
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="v_reason" class="col-md-5 col-form-label text-md-right">Reason</label>
-            <div class="col-md-6">
-              <textarea id="v_reason" type="text" class="form-control" name="v_reason" maxlength="250" autocomplete="off" readonly></textarea>
-              <!-- <span id="alert3" style="color: red; font-weight: 200;"></span> -->
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="file" class="col-md-5 col-form-label text-md-right">Current File</label>
-            <div class="col-md-6">
+          <div class="form-group row col-md-12">
+            <label for="file" class="col-md-5 col-form-label text-md-left">Current File</label>
+            <div class="col-md-7">
               <table class="table table-bordered">
                 <thead>
                   <tr>
@@ -466,6 +413,61 @@
               </table>
             </div>
           </div>
+          <div class="form-group row col-md-12">
+            <label for="v_wotype" class="col-md-5 col-form-label text-md-left">Failure Type</label>
+            <div class="col-md-7">
+              <input id="v_wotype" type="text" class="form-control" name="v_wotype" autocomplete="off" readonly />
+              <!-- <select class="form-control wotype" name="wotype" id="wotype">
+                <option value="">Select Failure Type</option>
+                @foreach($wotypes as $wotype)
+                <option value="{{$wotype->wotyp_code}}">{{$wotype->wotyp_code}} - {{$wotype->wotyp_desc}}</option>
+                @endforeach
+              </select> -->
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_failcode" class="col-md-5 col-form-label text-md-left">Failure Code</label>
+            <div class="col-md-7">
+              <textarea id="v_failcode" type="text" class="form-control" name="v_failcode" rows="3" readonly></textarea>
+              <!-- <select class="form-control fclist" name="fclist[]" id="fclist" multiple="multiple">
+                <option value=""></option>
+                @foreach($fcodes as $fcode)
+                <option value="{{$fcode->fn_code}}">{{$fcode->fn_code}} - {{$fcode->fn_desc}}</option>
+                @endforeach
+              </select> -->
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_impact" class="col-md-5 col-form-label text-md-left">Impact</label>
+            <div class="col-md-7">
+              <textarea id="v_impact" type="text" class="form-control" name="v_impact" autocomplete="off" rows="3" readonly></textarea>
+              <!-- <select class="form-control impact" name="impact[]" id="impact" multiple="multiple">
+                <option value=""></option>
+                @foreach($impacts as $impact)
+                <option value="{{$impact->imp_code}}">{{$impact->imp_code}} - {{$impact->imp_desc}}</option>
+                @endforeach
+              </select> -->
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_priority" class="col-md-5 col-form-label text-md-left">Priority</label>
+            <div class="col-md-7">
+              <input id="v_priority" type="text" name="v_priority" class="form-control" readonly>
+              <!-- <select class="form-control priority" name="priority" id="priority">
+                <option value='low'>Low</option>
+                <option value='medium'>Medium</option>
+                <option value='high'>High</option>
+              </select> -->
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_reason" class="col-md-5 col-form-label text-md-left">Reason</label>
+            <div class="col-md-7">
+              <textarea id="v_reason" type="text" class="form-control" name="v_reason" maxlength="250" autocomplete="off" readonly></textarea>
+              <!-- <span id="alert3" style="color: red; font-weight: 200;"></span> -->
+            </div>
+          </div>
+          
           <input type="hidden" id="tmpfail1" name="tmpfail1" value="">
           <input type="hidden" id="v_impactcode1" name="v_impactcode1" value="">
           <input type="hidden" id="tmpfail2" name="tmpfail2" value="">

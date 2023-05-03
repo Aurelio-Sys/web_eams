@@ -484,6 +484,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('/approval', 'ServiceController@approval');
 	route::post('/approvaleng', 'ServiceController@approvaleng');
 	route::get('/srapproval/searchapproval', 'ServiceController@searchapproval');
+	route::get('/srapproval/searchapprovaleng', 'ServiceController@searchapprovaleng');
 	route::get('/searchimpactdesc', 'ServiceController@searchimpact');
 	route::get('/searchfailtype','ServiceController@searchfailtype');
 	route::get('/searchfailcode','ServiceController@searchfailcode');
