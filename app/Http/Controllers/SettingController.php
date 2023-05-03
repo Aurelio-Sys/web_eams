@@ -1920,8 +1920,8 @@ class SettingController extends Controller
 
         $cekData = DB::table('asset_mstr')
                 ->where('asset_code','=',$req->t_code)
-                ->Where('asset_loc','=',$req->t_loc)
-                ->Where('asset_site','=',$req->t_site)
+                // ->Where('asset_loc','=',$req->t_loc)
+                // ->Where('asset_site','=',$req->t_site)
                 ->get();
 
         if ($cekData->count() == 0) {

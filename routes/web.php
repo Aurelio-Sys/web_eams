@@ -702,6 +702,9 @@ Route::group(['middleware' => ['auth']], function() {
 
 	//Inventory Source Maintenance
 	Route::get('/invso',[InvSoController::class, 'index']);
+	Route::get('/locsp',[InvSoController::class, 'locsp']);
+	Route::get('/locsp2',[InvSoController::class, 'locsp2']);
+	Route::get('/cekinvso',[InvSoController::class, 'cekinvso']);
 	Route::post('/createinvso',[InvSoController::class, 'store']);
 	Route::get('/editdetinvso',[InvSoController::class, 'editdetinvso']);
 	Route::post('/editinvso',[InvSoController::class, 'update']);

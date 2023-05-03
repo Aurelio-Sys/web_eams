@@ -3,7 +3,7 @@
       <div class="container-fluid">
         <div class="row">          
           <div class="col-sm-4">
-            <h1 class="m-0 text-dark">Inventory Source Maintenance</h1>
+            <h1 class="m-0 text-dark">Inventory Supply Maintenance</h1>
           </div>    
         </div><!-- /.row -->
         <div class="col-md-12">
@@ -11,13 +11,13 @@
         </div>
         <div class="row">                 
           <div class="col-sm-2">    
-            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Inventory Source Create</button>
+            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Inventory Supply Create</button>
           </div><!-- /.col -->  
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-<form action="/invso" method="GET">
+<form action="/invsu" method="GET">
 <!-- Bagian Searching -->
 <div class="container-fluid mb-2">
     <div class="row">
@@ -35,7 +35,7 @@
                     <input id="s_code" type="text" class="form-control" name="s_code"
                     value="" autofocus autocomplete="off"/>
                 </div>
-                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Sparepart Source Site</label>
+                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Sparepart Supply Site</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_desc" type="text" class="form-control" name="s_desc"
                     value="" autofocus autocomplete="off"/>
@@ -63,34 +63,34 @@
         <thead>
             <tr>
                 <th width="20%">Asset Site</th>
-                <th width="20%">Source Site</th>
-                <th width="45%">Location</th>
+                <th width="20%">Sparepart Supply Site</th>
+                <th width="45%">Location Available</th>
                 <th width="15%">Action</th>  
             </tr>
         </thead>
         <tbody>
             <!-- untuk isi table -->
-            @include('setting.table-invso')
+            @include('setting.table-invsu')
         </tbody>
     </table>
 </div>
 
 <!-- Modal Create -->
 <div class="modal fade" id="createModal" role="dialog" aria-hidden="true" data-backdrop="static">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">Inventory Source Create</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Inventory Supply Create</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/createinvso">
+            <form class="form-horizontal" method="post" action="/createinvsu">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label for="t_code" class="col-md-3 col-form-label text-md-right">Asset Site <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-                        <div class="col-md-8">
+                        <label for="t_code" class="col-md-3 col-form-label text-md-right">Asset Site</label>
+                        <div class="col-md-6">
                            <select class="form-control" id="t_code" name="t_code" required>
                               <option value=""></option>
                               @foreach($dataassite as $da)
@@ -100,8 +100,8 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_desc" class="col-md-3 col-form-label text-md-right">Sparepart Source Site <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-                        <div class="col-md-8">
+                        <label for="t_desc" class="col-md-3 col-form-label text-md-right">Sparepart Supply Site</label>
+                        <div class="col-md-6">
                            <select class="form-control" id="t_desc" name="t_desc" required>
                               <option value=""></option>
                               @foreach($dataspsite as $ds)
@@ -110,13 +110,27 @@
                            </select>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <label for="t_loc" class="col-md-3 col-form-label text-md-right">Location <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-                        <div class="col-md-8">
-                            <select id="t_loc" class="form-control" name="t_loc" required>
-                                
-                            </select>
-                        </div>
+                    <div class="col-md-10 offset-md-1">
+                        <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
+                          <thead>
+                            <tr id='full'>
+                              <th width="15%">Sequence</th>
+                              <th width="55%">Location</th>
+                              <th width="15%">Available</th>
+                              <th width="15%">Delete</th>
+                            </tr>
+                          </thead>
+                          <tbody id='detailapp'>
+
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <td colspan="4">
+                                <input type="button" class="btn btn-lg btn-block btn-focus" id="addrow" value="Add Item" style="background-color:#1234A5; color:white; font-size:16px" />
+                              </td>
+                            </tr>
+                          </tfoot>
+                        </table>
                     </div>
                 </div>
             
@@ -131,40 +145,49 @@
 
 <!-- Modal Edit -->
 <div class="modal fade" id="editModal" role="dialog" aria-hidden="true" data-backdrop="static">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
         <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel">Inventory Source Modify</h5>
+        <h5 class="modal-title text-center" id="exampleModalLabel">Inventory Supply Modify</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
         </div>
-        <form class="form-horizontal" method="post" action="/editinvso">
+        <form class="form-horizontal" method="post" action="/editinvsu">
             {{ csrf_field() }}
             <div class="modal-body">
                <div class="form-group row">
                   <label for="te_code" class="col-md-3 col-form-label text-md-right">Asset Site</label>
-                  <div class="col-md-8">
+                  <div class="col-md-6">
                     <input type="text" class="form-control" id="tv_code" name="tv_code" readonly>
                     <input type="hidden" class="form-control" id="te_code" name="te_code" readonly>
-                    <input type="hidden" class="form-control" id="te_incid" name="te_incid" readonly>
                   </div>
               </div>
               <div class="form-group row">
-                  <label for="te_desc" class="col-md-3 col-form-label text-md-right">Sparepart Source Site</label>
-                  <div class="col-md-8">
+                  <label for="te_desc" class="col-md-3 col-form-label text-md-right">Sparepart Supply Site</label>
+                  <div class="col-md-6">
                     <input type="text" class="form-control" id="tv_desc" name="tv_desc" readonly>
                     <input type="hidden" class="form-control" id="te_desc" name="te_desc" readonly>
                   </div>
               </div>
-              <div class="form-group row">
-                <label for="te_loc" class="col-md-3 col-form-label text-md-right">Location <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-                <div class="col-md-8">
-                    <select id="te_loc" class="form-control te_loc" name="te_loc" required>
-                        
-                    </select>
+                <div class="col-md-10 offset-md-1">
+                <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
+                    <thead>
+                        <th width="15%">Sequence</th>
+                        <th width="55%">Location</th>
+                        <th width="15%">Available</th>
+                        <th width="15%">Delete</th>
+                    </thead>
+                    <tbody id='ed_detailapp'></tbody>
+                    <tfoot>
+                      <tr>
+                        <td colspan="4">
+                          <input type="button" class="btn btn-lg btn-block btn-focus" id="ed_addrow" value="Add Item" style="background-color:#1234A5; color:white; font-size:16px" />
+                        </td>
+                      </tr>
+                    </tfoot>
+                </table>
                 </div>
-              </div>
             </div>
 
             <div class="modal-footer">
@@ -181,18 +204,17 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title text-center" id="exampleModalLabel">Inventory Source Delete</h5>
+            <h5 class="modal-title text-center" id="exampleModalLabel">Inventory Supply Delete</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
             </div>
-            <form class="form-horizontal" method="post" action="/delinvso">
+            <form class="form-horizontal" method="post" action="/delinvsu">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <input type="hidden" id="d_code" name="d_code">
                     <input type="hidden" id="d_desc" name="d_desc">
-                    <input type="hidden" id="d_incid" name="d_incid">
-                    Delete Inventory Source with Asset Site <b><span id="td_code"></span></b> -- Sparepart Source Site <b><span id="td_desc"></span></b> ?
+                    Delete Inventory Supply from <b> Asset Site : <span id="td_code"></span> , Supply Site : <span id="td_desc"></span></b> ?
                 </div>
 
                 <div class="modal-footer">
@@ -218,32 +240,22 @@
 
            var code = $(this).data('code');
            var desc = $(this).data('desc');
-           var loc = $(this).data('loc');
            var dasset = $(this).data('dasset')
            var dsource = $(this).data('dsource')
-           var dloc = $(this).data('dloc');
-           var incid = $(this).data('incid');
 
            document.getElementById('te_code').value = code;
            document.getElementById('te_desc').value = desc;
-           document.getElementById('te_loc').value = loc;
-           document.getElementById('te_incid').value = incid;
            document.getElementById('tv_code').value = code + " -- " + dasset;
            document.getElementById('tv_desc').value = desc + " -- " + dsource;
 
-            // Menampilkan data lokasi saat menu edit
             $.ajax({
-                url:"/locsp2?site="+desc + "&&loc=" + loc ,
-                success:function(data){
-                    console.log(data);
-                    $('#te_loc').html('').append(data);
-                }
-            }) 
+                url:"editdetinvsu?code1="+code+"&code2="+desc,
+                success: function(data) {
+                console.log(data);
+                $('#ed_detailapp').html('').append(data);
+              }
+            })
 
-            $("#te_loc").select2({
-                width : '100%',
-                theme : 'bootstrap4',
-            });
        });
 
        $(document).on('click', '.deletedata', function(e){
@@ -251,13 +263,13 @@
 
             var code = $(this).data('code');
             var desc = $(this).data('desc');
-            var incid = $(this).data('incid');
+            var dasset = $(this).data('dasset')
+            var dsource = $(this).data('dsource')
 
             document.getElementById('d_code').value          = code;
             document.getElementById('d_desc').value          = desc;
-            document.getElementById('d_incid').value          = incid;
-            document.getElementById('td_code').innerHTML = code;
-            document.getElementById('td_desc').innerHTML = desc;
+            document.getElementById('td_code').innerHTML = code + "(" + dasset + ")" ;
+            document.getElementById('td_desc').innerHTML = desc + "(" + dsource + ")" ;
        });
 
         $("#addrow").on("click", function() {
@@ -265,14 +277,19 @@
           var newRow = $("<tr>");
           var cols = "";
           var site = document.getElementById('t_desc').value;
-          console.log(site);
-          cols += '<td width="25%"><input type="number" class="form-control" name="t_step[]" min="1" autocomplete="off"></td>'
+
+          cols += '<td width="25%"><input type="number" class="form-control" name="t_step[]" min="1" autofocus=”autofocus” autocomplete="off" required></td>'
           cols += '<td width="20%">';
           cols += '<select id="a_code" class="form-control selectpicker a_code" name="a_code[]" data-live-search="true" required>';
           cols += '<option value = ""> -- Select Data -- </option>'  
           @foreach($dataloc as $dl)
           cols += '<option value="{{$dl->loc_code}}"> {{$dl->loc_code}} -- {{$dl->loc_desc}} </option>';
           @endforeach
+          cols += '</td>';
+          cols += '<td width="20%">';
+          cols += '<select id="a_avail" class="form-control selectPicker a_avail" name="a_avail[]" required>';
+          cols += '<option value = "Yes">Yes</option>'  
+          cols += '<option value = "No">No</option>'  
           cols += '</td>';
           cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
           cols += '</tr>'
@@ -293,13 +310,18 @@
           var newRow = $("<tr>");
           var cols = "";
 
-          cols += '<td width="25%"><input type="number" class="form-control" name="te_step[]" min="1" autocomplete="off"></td>'
+          cols += '<td width="25%"><input type="number" class="form-control" name="te_step[]" min="1"  autocomplete="off" required></td>'
           cols += '<td width="20%">';
           cols += '<select id="te_loc" class="form-control selectpicker te_loc" name="te_loc[]" data-live-search="true" required>';
           cols += '<option value = ""> -- Select Data -- </option>'  
           @foreach($dataloc as $dl)
           cols += '<option value="{{$dl->loc_code}}"> {{$dl->loc_code}} -- {{$dl->loc_desc}} </option>';
           @endforeach
+          cols += '</td>';
+          cols += '<td width="20%">';
+          cols += '<select id="te_avail" class="form-control selectPicker te_avail" name="te_avail[]" required>';
+          cols += '<option value = "Yes">Yes</option>'  
+          cols += '<option value = "No">No</option>'  
           cols += '</td>';
           cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
           cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
@@ -339,46 +361,6 @@
          width : '100%',
          theme : 'bootstrap4',
         });
-
-        $("#t_loc").select2({
-            width : '100%',
-            theme : 'bootstrap4',
-        });
-
-        // Menampilkan data lokasi saat menu create
-        $(document).on('change', '#t_desc', function() {
-            var site = $('#t_desc').val();
-  
-              $.ajax({
-                  url:"/locsp?site="+site,
-                  success:function(data){
-                      console.log(data);
-                      $('#t_loc').html('').append(data);
-                  }
-              }) 
-          });
-
-          // Cek duplikasi data
-          $(document).on('change', '#t_loc', function() {
-          
-            var code = $('#t_code').val();
-            var site = $('#t_desc').val();
-            var loc = $('#t_loc').val();
-
-              $.ajax({
-                url:"/cekinvso?code="+code+"&site="+site+"&loc="+loc ,
-                success: function(data) {
-                  
-                  if (data == "ada") {
-                    alert("Inventory Source are Already Registered!!");
-                    document.getElementById('t_loc').value = '';
-                    document.getElementById('t_loc').focus();
-                  }
-                  console.log(data);
-                
-                }
-              })
-          });
 
     </script>
 
