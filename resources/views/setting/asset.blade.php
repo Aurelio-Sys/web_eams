@@ -17,74 +17,51 @@
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-
-<!-- Bagian Searching -->
-<div class="container-fluid mb-2">
-    <div class="row">
-      <div class="col-md-12">
-        <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
-      </div>  
-    </div>
-    <!-- Element div yang akan collapse atau expand -->
-    <div class="collapse" id="collapseExample">
-        <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
-        <div class="card card-body bg-black rounded-0">
-            <div class="col-12 form-group row">
-                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Code</label>
-                <div class="col-md-4 mb-2 input-group">
-                    <select id="s_code" class="form-control" name="s_code">
-                        <option value=""></option>
-                        @foreach($datasearch as $sdata)
-                            <option value="{{$sdata->asset_code}}">{{$sdata->asset_code}} - {{$sdata->asset_desc}}</option>
-                        @endforeach
-                    </select>
+<form action="/assetmaster" method="GET">
+    <!-- Bagian Searching -->
+    <div class="container-fluid mb-2">
+        <div class="row">
+          <div class="col-md-12">
+            <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
+          </div>  
+        </div>
+        <!-- Element div yang akan collapse atau expand -->
+        <div class="collapse" id="collapseExample">
+            <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+            <div class="card card-body bg-black rounded-0">
+                <div class="col-12 form-group row">
+                    <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset</label>
+                    <div class="col-md-4 col-sm-4 mb-2 input-group">
+                        <input id="s_code" type="text" class="form-control" name="s_code"
+                        value="" autofocus autocomplete="off"/>
+                    </div>
+                    <label for="s_loc" class="col-md-2 col-sm-2 col-form-label text-md-right">Location</label>
+                    <div class="col-md-4 col-sm-4 mb-2 input-group">
+                        <input id="s_loc" type="text" class="form-control" name="s_loc"
+                        value="" autofocus autocomplete="off"/>
+                    </div>
+                    <label for="s_type" class="col-md-2 col-sm-2 col-form-label text-md-right">Type</label>
+                    <div class="col-md-4 col-sm-4 mb-2 input-group">
+                        <input id="s_type" type="text" class="form-control" name="s_type"
+                        value="" autofocus autocomplete="off"/>
+                    </div>
+                    <label for="s_group" class="col-md-2 col-sm-2 col-form-label text-md-right">Group</label>
+                    <div class="col-md-4 col-sm-4 mb-2 input-group">
+                        <input id="s_group" type="text" class="form-control" name="s_group"
+                        value="" autofocus autocomplete="off"/>
+                    </div>
+                    <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
+                    <div class="col-md-2 col-sm-4 mb-2 input-group">
+                        <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
+                    </div>
+                    <div class="col-md-2 col-sm-4 mb-2 input-group">
+                        <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
+                    </div>
                 </div>
-                
-                <label for="s_loc" class="col-md-2 col-sm-2 col-form-label text-md-right">Location</label>
-                <div class="col-md-4 mb-2 input-group">
-                    <select id="s_loc" class="form-control" name="s_loc" required>
-                        <option value="">--Select Data--</option>
-                        @foreach($dataloc as $dl)
-                            <option value="{{$dl->asloc_site}}.{{$dl->asloc_code}}">{{$dl->asloc_site}} : {{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <label for="s_type" class="col-md-2 col-sm-2 col-form-label text-md-right">Type</label>
-                <div class="col-md-4 mb-2 input-group">
-                    <select id="s_type" class="form-control" name="s_type" required>
-                        <option value="">--Select Data--</option>
-                        @foreach($dataastype as $stype)
-                            <option value="{{$stype->astype_code}}">{{$stype->astype_code}} -- {{$stype->astype_desc}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <label for="s_group" class="col-md-2 col-sm-2 col-form-label text-md-right">Group</label>
-                <div class="col-md-4 mb-2 input-group">
-                    <select id="s_group" class="form-control" name="s_group" required>
-                        <option value="">--Select Data--</option>
-                        @foreach($dataasgroup as $sgroup)
-                            <option value="{{$sgroup->asgroup_code}}">{{$sgroup->asgroup_code}} -- {{$sgroup->asgroup_desc}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-2 col-sm-4 mb-2 input-group">
-                    <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search"/> 
-                </div>
-                <div class="col-md-1 col-sm-2 mb-1 input-group justify-content-md-center">
-                    <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
-                </div>
-                <div class="col-md-2 col-sm-4 mb-2 input-group">
-                    <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="Export to Excel" style="float:right" />
-                </div>
-                <input type="hidden" id="tmpcode"/>
-                <input type="hidden" id="tmploc"/>
-                <input type="hidden" id="tmptype"/>
-                <input type="hidden" id="tmpgroup"/>
             </div>
         </div>
     </div>
-</div>
-
+    </form>
 <div class="col-md-12"><hr></div>
 
 <div class="table-responsive col-12">
@@ -137,7 +114,12 @@
                     <div class="form-group row">
                         <label for="t_um" class="col-md-4 col-form-label text-md-right">UM </label>
                         <div class="col-md-6">
-                            <input id="t_um" type="text" class="form-control" name="t_um" autocomplete="off" autofocus maxlength="8" />
+                            <select id="t_um" class="form-control" name="t_um" >
+                                <option value="">--Select Data--</option>
+                                @foreach($datameaum as $du)
+                                    <option value="{{$du->um_code}}">{{$du->um_code}} -- {{$du->um_desc}}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -276,6 +258,7 @@
                     <label for="te_code" class="col-md-4 col-form-label text-md-right">Code</label>
                     <div class="col-md-6">
                         <input id="te_code" type="text" class="form-control" name="te_code" readonly/>
+                        <input id="te_assetid" type="hidden" name="te_assetid"/>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -287,7 +270,12 @@
                 <div class="form-group row">
                     <label for="te_um" class="col-md-4 col-form-label text-md-right">UM </label>
                     <div class="col-md-6">
-                        <input id="te_um" type="text" class="form-control" name="te_um" autocomplete="off" autofocus maxlength="8" />
+                        <select id="te_um" class="form-control" name="te_um" >
+                            <option value="">--Select Data--</option>
+                            @foreach($datameaum as $du)
+                                <option value="{{$du->um_code}}">{{$du->um_code}} -- {{$du->um_desc}}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -495,10 +483,18 @@
            var active       = $(this).data('active');
            var upload 		= $(this).data('upload');
            var qad 		= $(this).data('qad');
+           var assetid 		= $(this).data('assetid');
            var assetimg    = '/uploadassetimage/' +$(this).data('assetimg');
-          
            var uploadname = upload.substring(upload.lastIndexOf('/') + 1,upload.length);
             //   console.log(uploadname);
+
+            $.ajax({
+                url:"/setlistupload/" + code,
+                success: function(data) {
+                    console.log(data);
+                    $('#listupload').html('').append(data); 
+                }
+            })
 
            document.getElementById('te_code').value         = code;
            document.getElementById('te_desc').value         = desc;
@@ -514,6 +510,7 @@
            document.getElementById('te_active').value       = active;
            document.getElementById('foto1').src       = assetimg;
            document.getElementById('te_qad').value          = qad;
+           document.getElementById('te_assetid').value          = assetid;
 
             $.ajax({
                 url:"/locasset2?site=" + site + "&&loc=" + loc ,
@@ -558,13 +555,7 @@
                 group
             });
 
-            $.ajax({
-                url:"/listupload/" + code,
-                success: function(data) {
-                    console.log(data);
-                    $('#listupload').html('').append(data); 
-                }
-            })
+            
        });
 
        $(document).on('click', '.deletedata', function(e){
@@ -587,130 +578,6 @@
             $('#id_icon').html('');
             $('#post_title_icon').html('');
        }
-
-       function fetch_data(page, sort_type, sort_by, code, loc, type, group){
-            $.ajax({
-                url:"assetmaster/pagination?page="+page+"&sorttype="+sort_type+"&sortby="+sort_by+"&code="+code+"&loc="+loc+"&type="+type+"&group="+group,
-                success:function(data){
-                    console.log(data);
-
-                    $('tbody').html('');
-                    $('tbody').html(data);
-                }
-            })
-        }
-
-        $(document).on('click', '#btnsearch', function(){
-
-            var code = $('#s_code').val();
-            var loc = $('#s_loc').val();
-            var type = $('#s_type').val();
-            var group = $('#s_group').val();
-            var column_name = $('#hidden_column_name').val();
-			var sort_type = $('#hidden_sort_type').val();
-            var page = 1;
-            
-            document.getElementById('tmpcode').value = code;
-            document.getElementById('tmploc').value = loc;
-            document.getElementById('tmptype').value = type;
-            document.getElementById('tmpgroup').value = group;
-
-            fetch_data(page, sort_type, column_name, code, loc, type, group);
-        });
-
-       $(document).on('click', '.sorting', function(){
-			var column_name = $(this).data('column_name');
-			var order_type = $(this).data('sorting_type');
-			var reverse_order = '';
-			if(order_type == 'asc')
-			{
-			$(this).data('sorting_type', 'desc');
-			reverse_order = 'desc';
-			clear_icon();
-			$('#'+column_name+'_icon').html('<span class="glyphicon glyphicon-triangle-bottom"></span>');
-			}
-			if(order_type == 'desc')
-			{
-			$(this).data('sorting_type', 'asc');
-			reverse_order = 'asc';
-			clear_icon();
-			$('#'+column_name+'_icon').html('<span class="glyphicon glyphicon-triangle-top"></span>');
-			}
-			$('#hidden_column_name').val(column_name);
-			$('#hidden_sort_type').val(reverse_order);
-
-            var page = $('#hidden_page').val();
-            var code = $('#s_code').val();
-            var loc = $('#s_loc').val();
-            var type = $('#s_type').val();
-            var group = $('#s_group').val();
-
-			fetch_data(page, sort_type, column_name, code, loc, type, group);
-     	});
-       
-       
-       $(document).on('click', '.pagination a', function(event){
-            event.preventDefault();
-            var page = $(this).attr('href').split('page=')[1];
-            $('#hidden_page').val(page);
-            var column_name = $('#hidden_column_name').val();
-            var sort_type = $('#hidden_sort_type').val();
-            
-            var code = $('#s_code').val();
-            var loc = $('#s_loc').val();
-            var type = $('#s_type').val();
-            var group = $('#s_group').val();
-            
-            fetch_data(page, sort_type, column_name, code, loc, type, group);
-       });
-
-       $(document).on('click', '#btnrefresh', function() {
-
-            var code  = ''; 
-            var loc = '';
-            var type = '';
-            var group = '';
-
-            var column_name = $('#hidden_column_name').val();
-            var sort_type = $('#hidden_sort_type').val();
-            var page = 1;
-
-            document.getElementById('s_code').value  = '';
-            document.getElementById('s_loc').value  = '';
-            document.getElementById('s_type').value  = '';
-            document.getElementById('s_group').value  = '';
-
-            document.getElementById('tmpcode').value  = code;
-            document.getElementById('tmploc').value  = loc;
-            document.getElementById('tmptype').value  = type;
-            document.getElementById('tmpgroup').value  = group;
-
-            fetch_data(page, sort_type, column_name, code, loc, type, group);
-
-            $("#s_loc").select2({
-                width : '100%',
-                theme : 'bootstrap4',
-                
-            });
-
-            $("#s_code").select2({
-                width : '100%',
-                theme : 'bootstrap4',
-                
-            });
-
-            $("#s_type").select2({
-                width : '100%',
-                theme : 'bootstrap4',
-                
-            });
-
-            $("#s_group").select2({
-                width : '100%',
-                theme : 'bootstrap4',
-                
-            });
-        });
 
         $(document).on('change', '#t_site', function() {
           var site = $('#t_site').val();
@@ -736,7 +603,33 @@
             }) 
         });
 
-        $(document).on('change', '#t_loc', function() {
+        $(document).on('change', '#t_code', function() {
+          
+            var code = $('#t_code').val();
+            {{--  
+                var desc = $('#t_desc').val();
+                var site = $('#t_site').val();
+                var loc = $('#t_loc').val();
+            --}}
+
+              $.ajax({
+                {{--  url:"/cekasset?code="+code+"&site="+site+"&loc="+loc ,  --}}
+                url:"/cekasset?code="+code ,
+                success: function(data) {
+                  
+                  if (data == "ada") {
+                    alert("Asset Already Registered!!");
+                    document.getElementById('t_code').value = '';
+                    document.getElementById('t_code').focus();
+                  }
+                  console.log(data);
+                
+                }
+              })
+          });
+
+        {{--  kode asset tidak boleh sama meskipun beda site dan beda lokasi
+          $(document).on('change', '#t_loc', function() {
           
           var code = $('#t_code').val();
           var desc = $('#t_desc').val();
@@ -756,7 +649,29 @@
               
               }
             })
-        });
+        });  --}}
+
+        {{--  $(document).on('change', '#te_loc', function() {
+          
+            var code = $('#te_code').val();
+            var desc = $('#te_desc').val();
+            var site = $('#te_site').val();
+            var loc = $('#te_loc').val();
+  
+              $.ajax({
+                url:"/cekasset?code="+code+"&site="+site+"&loc="+loc ,
+                success: function(data) {
+                  
+                  if (data == "ada") {
+                    alert("Asset Already Registered!!");
+                    document.getElementById('te_loc').value = '';
+                    document.getElementById('te_loc').focus();
+                  }
+                  console.log(data);
+                
+                }
+              })
+          });  --}}
 
         $(document).on('change', '#t_mea', function() {
           var mea = $('#t_mea').val();
@@ -904,26 +819,15 @@
             window.open("/excelasset?sasset=" + sasset + "&sloc=" + loc + "&sgroup=" + group + "&stype=" + type , '_blank'); 
         });
 
-        $("#s_loc").select2({
-            width : '100%',
-            theme : 'bootstrap4',
-        });
-
-        $("#s_code").select2({
-            width : '100%',
-            theme : 'bootstrap4',
-        });
-
-        $("#s_type").select2({
-            width : '100%',
-            theme : 'bootstrap4',
-        });
-
-        $("#s_group").select2({
-            width : '100%',
-            theme : 'bootstrap4',
-        });
         $("#t_qad").select2({
+            width : '100%',
+            theme : 'bootstrap4',
+        });
+        $("#t_um").select2({
+            width : '100%',
+            theme : 'bootstrap4',
+        });
+        $("#te_um").select2({
             width : '100%',
             theme : 'bootstrap4',
         });

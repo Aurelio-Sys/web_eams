@@ -36,30 +36,33 @@
       <div class="col-12 form-group row">
 
         <!--FORM Search Disini-->
-        <label for="s_nomorwo" class="col-md-5 col-form-label text-md-left">{{ __('Work Order Number') }}</label>
-        <div class="col-md-7 col-sm-12 mb-2 input-group">
+        <label for="s_nomorwo" class="col-md-3 col-form-label text-md-left">{{ __('Work Order Number') }}</label>
+        <div class="col-md-3 col-sm-12 mb-2 input-group">
           <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="" autofocus autocomplete="off">
         </div>
-        <label for="s_asset" class="col-md-5 col-form-label text-md-right">{{ __('Asset') }}</label>
-        <div class="col-md-7 col-sm-12 mb-2 input-group">
-          <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
+        <label for="s_asset" class="col-md-3 col-form-label text-md-center">{{ __('Asset') }}</label>
+        <div class="col-md-3 col-sm-12 mb-2 input-group">
+          <!-- <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
             <option value="">--Select Asset--</option>
             @foreach($asset1 as $assetsearch)
             <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
             @endforeach
-          </select>
+          </select> -->
+          <input id="s_asset" type="text" class="form-control" name="s_asset" value="" autofocus autocomplete="off">
         </div>
-        <label for="s_status" class="col-md-5 col-form-label text-md-left">{{ __('Work Order Status') }}</label>
+      </div>
+      <div class="col-12 form-group row">
+        <label for="s_status" class="col-md-3 col-form-label text-md-left">{{ __('Work Order Status') }}</label>
         <div class="col-md-3 col-sm-12 mb-2 input-group">
           <select id="s_status" type="text" class="form-control" name="s_status">
             <option value="">--Select Status--</option>
-            <option value="open">Open</option>
+            <option value="released">Released</option>
             <option value="started">Started</option>
           </select>
         </div>
-        <label for="" class="col-md-1 col-form-label text-md-left">{{ __('') }}</label>
-        <label for="s_priority" class="col-md-5 col-form-label text-md-right">{{ __('Priority') }}</label>
-        <div class="col-md-7 col-sm-12 mb-2 input-group">
+        <!-- <label for="" class="col-md-2 col-form-label text-md-left">{{ __('') }}</label> -->
+        <label for="s_priority" class="col-md-3 col-form-label text-md-center">{{ __('Priority') }}</label>
+        <div class="col-md-3 col-sm-12 mb-2 input-group">
           <select id="s_priority" type="text" class="form-control" name="s_priority">
             <option value="">--Select Priority--</option>
             <option value="low">Low</option>
@@ -67,11 +70,11 @@
             <option value="high">High</option>
           </select>
         </div>
-        <label for="" class="col-md-5 col-form-label text-md-right">{{ __('') }}</label>
-        <div class="col-md-5 col-sm-12 mb-2 input-group">
+        <!-- <label for="" class="col-md-3 col-form-label text-md-right">{{ __('') }}</label> -->
+        <div class="col-md-2 col-sm-12 mb-2 input-group">
           <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" style="float:right" />
         </div>
-        <div class="col-md-5 col-sm-12 mb-2 input-group">
+        <div class="col-md-2 col-sm-12 mb-2 input-group">
           <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'><i class="fas fa-sync-alt"></i></button>
         </div>
       </div>
@@ -338,12 +341,12 @@
         }
       })
     }
-    $("#s_asset").select2({
-      width: '100%',
+    // $("#s_asset").select2({
+    //   width: '100%',
 
-      closeOnSelect: true,
-      theme: 'bootstrap4'
-    });
+    //   closeOnSelect: true,
+    //   theme: 'bootstrap4'
+    // });
     $(document).on('click', '.jobview', function() {
       var wonbr = $(this).closest('tr').find('input[name="wonbrr"]').val();
       // $('#loadingtable').modal('hide');
@@ -368,6 +371,7 @@
           var duedate = vamp.wo_master.wo_due_date;
           var createdby = vamp.wo_master.wo_createdby;
           var status = vamp.wo_master.wo_status;
+          var wotype = vamp.wo_master.wo_type;
           var department = vamp.wo_master.wo_department ? vamp.wo_master.wo_department : '';
 
           let combineFailure = [];
@@ -398,15 +402,29 @@
 
           document.getElementById('adownload').href = urldownload;
 
-          // if (wotype == 'auto') {
-          //   document.getElementById('divdonload').style.display = '';
-          //   document.getElementById('divcancel').style.display = 'none';      // A211027
-          // } else {
-          //   document.getElementById('divdonload').style.display = 'none';
-          //   document.getElementById('divcancel').style.display = '';          // A211027
-          // }
+          if (wotype == 'PM') {
+            document.getElementById('divdonload').style.display = '';
+            document.getElementById('divcancel').style.display = 'none'; // A211027
+          } else {
+            document.getElementById('divdonload').style.display = 'none';
+            document.getElementById('divcancel').style.display = ''; // A211027
+          }
 
-
+          if (status == 'released') {
+            document.getElementById('e_btnchgstatus').style.display = '';
+            document.getElementById('divstartdate').style.display = '';
+            document.getElementById('divstarttime').style.display = '';
+            document.getElementById('e_btnchgstatus2').style.display = 'none';
+            document.getElementById('checkboxaban').style.display = 'none';
+            document.getElementById('labelcheck').style.display = 'none';
+          } else {
+            document.getElementById('divstartdate').style.display = 'none';
+            document.getElementById('divstarttime').style.display = 'none';
+            document.getElementById('e_btnchgstatus').style.display = 'none';
+            document.getElementById('e_btnchgstatus2').style.display = '';
+            document.getElementById('checkboxaban').style.display = '';
+            document.getElementById('labelcheck').style.display = '';
+          }
 
           document.getElementById('v_nowo').value = wonumber;
           document.getElementById('v_asset').value = assetcode;
@@ -524,11 +542,11 @@
       document.getElementById('tmppriority').value = '';
 
 
-      $('#s_asset').select2({
-        width: '100%',
-        theme: 'bootstrap4',
-        asset
-      })
+      // $('#s_asset').select2({
+      //   width: '100%',
+      //   theme: 'bootstrap4',
+      //   asset
+      // })
       fetch_data(page, sort_type, column_name, wonumber, asset, status, priority);
     });
   </script>

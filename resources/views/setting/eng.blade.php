@@ -237,7 +237,9 @@
                             <input id="t_photo" name="t_photo" type="file" class="form-control-file" id="exampleFormControlFile1"  value="{{ old('t_photo') }}">
                         </div>
                     </div>
-                    <div class="form-group row divqad" id="divqad" style="display: none;">
+
+                    {{--  tidak ada lagi lokasi dengan nama eng
+                        <div class="form-group row divqad" id="divqad" style="display: none;">
                         <label for="t_qad" class="col-md-4 col-form-label text-md-right" style="color:blue">For QAD Location :</label>
                     </div>
                     <div class="form-group row divsite" id="divsite" style="display: none;">
@@ -258,7 +260,7 @@
                                 
                             </select>
                         </div>
-                    </div>
+                    </div>  --}}
             
                 <div class="modal-footer">
                     <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
@@ -409,7 +411,8 @@
                     </div>
                 </div>
 
-                <div class="form-group row diveqad" id="diveqad" style="display: none;">
+                {{--  Tidak ada lagi lokasi dengan nama eng 
+                    <div class="form-group row diveqad" id="diveqad" style="display: none;">
                     <label for="t_qad" class="col-md-4 col-form-label text-md-right" style="color:blue">For QAD Location :</label>
                 </div>
                 <div class="form-group row divesite" id="divesite" style="display: none;">
@@ -430,7 +433,7 @@
                             
                         </select>
                     </div>
-                </div>
+                </div>  --}}
                 
                 
             </div>
@@ -526,7 +529,7 @@
 
             
             if(acc == 'Engineer'){
-                document.getElementById('te_site').value     = site;
+                {{--  document.getElementById('te_site').value     = site;  --}}
 
                 $.ajax({
                     url:"/searchlocsp2?site=" + site  + "&&loc=" + loc ,
@@ -543,9 +546,9 @@
                 document.getElementById('diveskill').style.display='';
                 document.getElementById('divefoto').style.display='';
                 document.getElementById('divefoto1').style.display='';
-                document.getElementById('diveqad').style.display='';
-                document.getElementById('divesite').style.display='';
-                document.getElementById('diveloc').style.display='';
+                {{--  document.getElementById('diveqad').style.display='';  --}}
+                {{--  document.getElementById('divesite').style.display='';
+                document.getElementById('diveloc').style.display='';  --}}
             }
             else{ 
                 document.getElementById('diveapp').style.display='none';
@@ -555,9 +558,9 @@
                 document.getElementById('diveskill').style.display='none';
                 document.getElementById('divefoto').style.display='none';
                 document.getElementById('divefoto1').style.display='none';
-                document.getElementById('diveqad').style.display='none';
-                document.getElementById('divesite').style.display='none';
-                document.getElementById('diveloc').style.display='none';
+                {{--  document.getElementById('diveqad').style.display='none';  --}}
+                {{--  document.getElementById('divesite').style.display='none';
+                document.getElementById('diveloc').style.display='none';  --}}
             }
            
        });
@@ -796,9 +799,9 @@
             var acc = document.getElementById('t_acc').value;
 
             if(acc == 'Engineer'){
-                document.getElementById('divloc').style.display='';
+                {{--  document.getElementById('divloc').style.display='';
                 document.getElementById('divsite').style.display='';
-                document.getElementById('divqad').style.display='';
+                document.getElementById('divqad').style.display='';  --}}
                 document.getElementById('divapp').style.display='';
                 document.getElementById('divbrt').style.display='';
                 document.getElementById('divjoin').style.display='';
@@ -807,9 +810,9 @@
                 document.getElementById('divfoto').style.display='';
             }
             else{ 
-                document.getElementById('divloc').style.display='none';
-                document.getElementById('divsite').style.display='none';
-                document.getElementById('divqad').style.display='none';
+                {{--  document.getElementById('divloc').style.display='none';  --}}
+                {{--  document.getElementById('divsite').style.display='none';  --}}
+                {{--  document.getElementById('divqad').style.display='none';  --}}
                 document.getElementById('divapp').style.display='none';
                 document.getElementById('divbrt').style.display='none';
                 document.getElementById('divjoin').style.display='none';
@@ -830,7 +833,7 @@
                 document.getElementById('diveskill').style.display='';
                 document.getElementById('divefoto').style.display='';
                 document.getElementById('divefoto1').style.display='';
-                document.getElementById('diveqad').style.display='';
+                {{--  document.getElementById('diveqad').style.display='';  --}}
                 document.getElementById('divesite').style.display='';
                 document.getElementById('diveloc').style.display='';
             }
@@ -842,7 +845,7 @@
                 document.getElementById('diveskill').style.display='none';
                 document.getElementById('divefoto').style.display='none';
                 document.getElementById('divefoto1').style.display='none';
-                document.getElementById('diveqad').style.display='none';
+                {{--  document.getElementById('diveqad').style.display='none';  --}}
                 document.getElementById('divesite').style.display='none';
                 document.getElementById('diveloc').style.display='nones';
             }
@@ -860,7 +863,7 @@
               }) 
         });
 
-        $(document).on('change', '#te_site', function() {
+        {{--  $(document).on('change', '#te_site', function() {
             var site = $('#te_site').val();
             
               $.ajax({
@@ -870,7 +873,7 @@
                       $('#te_loc').html('').append(data);
                   }
               }) 
-        });
+        });  --}}
         
     </script>
 

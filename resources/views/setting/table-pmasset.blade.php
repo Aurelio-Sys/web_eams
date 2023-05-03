@@ -10,7 +10,7 @@
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal"
         data-asset="{{$show->pma_asset}}" data-pmcode="{{$show->pma_pmcode}}" data-time="{{$show->pma_leadtime}}" 
-        data-mea="{{$show->pma_mea}}" 
+        data-mea="{{$show->pma_mea}}" data-pmaid="{{$show->pma_id}}"
         data-cal="{{$show->pma_cal}}" data-meter="{{$show->pma_meter}}" data-meterum="{{$show->pma_meterum}}" 
         data-tolerance="{{$show->pma_tolerance}}" data-start="{{$show->pma_start}}" data-eng="{{$show->pma_eng}}"
         >

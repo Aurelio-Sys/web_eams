@@ -177,7 +177,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/locasset2', 'SettingController@locasset2');
 	route::get('/repaircode', 'SettingController@repaircode');
 	route::get('/downloadfile/{id}', 'SettingController@downloadfile');
-	route::get('/listupload/{id}', 'SettingController@listupload')->name('listupload');
+	route::get('/setlistupload/{id}', 'SettingController@listupload')->name('setlistupload');
 	route::get('/deleteupload/{id}', 'SettingController@deleteupload');
 	route::get('/excelasset', 'SettingController@excelasset'); // untuk download data asset ke excel -> menu master asset
 
@@ -484,6 +484,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('/approval', 'ServiceController@approval');
 	route::post('/approvaleng', 'ServiceController@approvaleng');
 	route::get('/srapproval/searchapproval', 'ServiceController@searchapproval');
+	route::get('/srapproval/searchapprovaleng', 'ServiceController@searchapprovaleng');
 	route::get('/searchimpactdesc', 'ServiceController@searchimpact');
 	route::get('/searchfailtype','ServiceController@searchfailtype');
 	route::get('/searchfailcode','ServiceController@searchfailcode');
@@ -678,6 +679,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	//Preventive Maintenance
 	Route::get('/pmasset',[PmassetController::class, 'index']);
+	route::get('/cekpmmtc', [PmassetController::class, 'cekpmmtc']);
 	Route::get('/pickeng',[PmassetController::class, 'pickeng']);
 	Route::post('/creatpmasset',[PmassetController::class, 'store']);
 	Route::post('/editpmasset',[PmassetController::class, 'update']);
@@ -717,7 +719,7 @@ Route::group(['middleware' => ['auth']], function() {
 	// 5 Why Transaction
 	Route::get('/whyhist',[WhyHistController::class, 'index']); 
 	Route::post('/createwhyhist',[WhyHistController::class, 'store']);
-	route::get('/whyfile/{id}', [WhyHistController::class, 'whyfile'])->name('getspmstr');
+	route::get('/whyfile/{id}', [WhyHistController::class, 'whyfile'])->name('whyfile');
 	Route::post('/editwhyhist',[WhyHistController::class, 'update']);
 	Route::post('/delwhyhist', [WhyHistController::class, 'destroy']);
 

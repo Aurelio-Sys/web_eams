@@ -72,22 +72,23 @@
         <!--FORM Search Disini-->
         <label for="s_servicenbr" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Service Request Number') }}</label>
         <div class="col-md-3 col-sm-4 mb-2 input-group">
-          <!-- <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off"> -->
-          <select id="s_servicenbr" name="s_servicenbr" class="form-control" value="" autofocus autocomplete="off">
+          <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off" placeholder="Search SR Number">
+          <!-- <select id="s_servicenbr" name="s_servicenbr" class="form-control" value="" autofocus autocomplete="off">
             <option value="">--Select SR Number--</option>
             @foreach($datasrnbr as $srnbr)
             <option value="{{$srnbr->sr_number}}">{{$srnbr->sr_number}}</option>
             @endforeach
-          </select>
+          </select> -->
         </div>
         <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('Asset Code') }}</label>
         <div class="col-md-3 col-sm-4 mb-2 input-group">
-          <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
+          <!-- <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
             <option value="">--Select Asset--</option>
             @foreach($asset as $show)
             <option value="{{$show->asset_desc}}">{{$show->asset_desc}}</option>
             @endforeach
-          </select>
+          </select> -->
+          <input id="s_asset" type="text" class="form-control" name="s_asset" value="" autofocus autocomplete="off" placeholder="Search Asset Desc">
         </div>
       </div>
       <div class="col-12 form-group row">
@@ -144,7 +145,7 @@
   <div class="modal-dialog modal-md" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel">Service Request Approval</h5>
+        <h5 class="modal-title text-center" id="exampleModalLabel">Service Request Approval Engineer</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -438,17 +439,17 @@
       theme: 'bootstrap4',
     });
 
-    $("#s_asset").select2({
-      width: '100%',
-      // placeholder : "Select Asset",
-      theme: 'bootstrap4',
-    });
+    // $("#s_asset").select2({
+    //   width: '100%',
+    //   // placeholder : "Select Asset",
+    //   theme: 'bootstrap4',
+    // });
 
-    $("#s_servicenbr").select2({
-      width: '100%',
-      // placeholder : "Select Asset",
-      theme: 'bootstrap4',
-    });
+    // $("#s_servicenbr").select2({
+    //   width: '100%',
+    //   // placeholder : "Select Asset",
+    //   theme: 'bootstrap4',
+    // });
 
     $(".select2bs4").select2({
       width: '100%',
@@ -641,7 +642,7 @@
 
     function fetch_data(page, srnumber, asset, priority) {
       $.ajax({
-        url: "/srapproval/searchapproval?page=" + page + "&srnumber=" + srnumber + "&asset=" + asset + "&priority=" + priority,
+        url: "/srapproval/searchapprovaleng?page=" + page + "&srnumber=" + srnumber + "&asset=" + asset + "&priority=" + priority,
         success: function(data) {
           console.log(data);
           $('tbody').html('');
@@ -696,19 +697,19 @@
 
       fetch_data(page, srnumber, asset, priority);
 
-      $("#s_asset").select2({
-        width: '100%',
-        // placeholder : "Select Asset",
-        theme: 'bootstrap4',
-        asset,
-      });
+      // $("#s_asset").select2({
+      //   width: '100%',
+      //   // placeholder : "Select Asset",
+      //   theme: 'bootstrap4',
+      //   asset,
+      // });
 
-      $("#s_servicenbr").select2({
-        width: '100%',
-        // placeholder : "Select Asset",
-        theme: 'bootstrap4',
-        asset,
-      });
+      // $("#s_servicenbr").select2({
+      //   width: '100%',
+      //   // placeholder : "Select Asset",
+      //   theme: 'bootstrap4',
+      //   asset,
+      // });
     });
 
     $(document).on('click', '.approvaleng', function() {

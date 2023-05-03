@@ -22,18 +22,20 @@ class PmassetController extends Controller
         $s_desc = $req->s_desc;
 
         $data = DB::table('pma_asset')
+            ->selectRaw('asset_mstr.*, pmc_mstr.*, pma_asset.id as pma_id, pma_asset, pma_pmcode, pma_leadtime, pma_leadtimeum, 
+                pma_mea, pma_cal, pma_calum, pma_meter, pma_meterum, pma_tolerance, pma_start, pma_eng')
             ->leftJoin('asset_mstr','asset_code','pma_asset')
             ->leftJoin('pmc_mstr','pmc_code','pma_pmcode')
             ->orderby('pma_asset')
             ->orderby('pma_pmcode');
-/*
+
         if($s_code) {
-            $data = $data->where('pmc_code','like','%'.$s_code.'%');
+            $data = $data->where('pma_asset','like','%'.$s_code.'%');
         }
         if($s_desc) {
-            $data = $data->where('pmc_desc','like','%'.$s_desc.'%');
+            $data = $data->where('pma_pmcode','like','%'.$s_desc.'%');
         }
-*/
+
         $data = $data->paginate(10);
 
         $dataasset = Db::table('asset_mstr')
@@ -67,6 +69,21 @@ class PmassetController extends Controller
         //
     }
 
+    //cek dobel data asset dan PM code yang sama
+    public function cekpmmtc(Request $req)
+    {
+        
+        $cek = DB::table('pma_asset')
+            ->wherePmaAsset($req->asset)
+            ->wherePmaPmcode($req->pmcode);
+
+        if ($cek->count() == 0) {
+            return "tidak";
+        } else {
+            return "ada";
+        }
+    }
+
     //untuk menampilkan select engineer
     public function pickeng(Request $req)
     {
@@ -90,6 +107,17 @@ class PmassetController extends Controller
      */
     public function store(Request $req)
     {
+        //cek apakah terdapat data yang sama
+        $cekdata = DB::table('pma_asset')
+            ->wherePmaAsset($req->t_asset)
+            ->wherePmaPmcode($req->t_pmcode)
+            ->count();
+
+        if ($cekdata > 0) {
+            toast('Data Already Registered!!', 'error');
+            return back();
+        }
+
         $eng = "";
         if(!is_null($req->t_eng)) {
             $flg = 0;
@@ -151,6 +179,20 @@ class PmassetController extends Controller
      */
     public function update(Request $req)
     {
+        // dd($req->all());
+
+        //cek data dobel, tidak boleh menyimpan data dengan asset dan pmcode yang sudah terdaftar
+        $cekdata = DB::table('pma_asset')
+            ->wherePmaAsset($req->te_asset)
+            ->wherePmaPmcode($req->te_pmcode)
+            ->where('id','<>',$req->te_pmaid)
+            ->count();
+
+        if($cekdata > 0) {
+            toast('Asset code with PM code selected is already registered!!!', 'error');
+            return back();
+        }
+
         $eng = "";
         if(!is_null($req->te_eng)) {
             $flg = 0;
@@ -160,9 +202,11 @@ class PmassetController extends Controller
             }
         } 
         
-        DB::table('pma_asset')
-            ->wherePma_asset($req->te_asset)
-            ->wherePma_pmcode($req->te_pmcode)
+        $asset = DB::table('pma_asset')
+            // ->wherePmaAsset($req->te_asset)
+            // ->wherePmaPmcode($req->te_pmcode)
+            ->where('id',$req->te_pmaid)
+            // ->get();
             ->update([
                 'pma_leadtime' => $req->te_time,
                 'pma_mea' => $req->te_mea,
@@ -175,7 +219,7 @@ class PmassetController extends Controller
                 'pma_editedby'  => Session::get('username'),
                 'created_at'    => Carbon::now()->toDateTimeString(),
             ]);
-
+// dd($req->pmaid);
         toast('Preventive Maintenance Updated.', 'success');
         return back();
     }
