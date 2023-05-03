@@ -553,6 +553,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/wotransfer/detailwhs/{id}', [WHSConfirm::class, 'detailwhs'])->name('WhsconfDetail');
 	Route::post('/whssubmit', [WHSConfirm::class,'whssubmit'])->name('WhsconfSubmit');
 	Route::get('/searchlot', [WHSConfirm::class, 'searchlot'])->name('searchlot');
+	Route::get('/getwsastockfrom', [WHSConfirm::class, 'getwsastockfrom']);
 	
 	//Generate WO PM
 	Route::get('/viewwogenerator', [AllWOGenerate::class, 'viewWoGenerator'])->name('viewWOGen');
