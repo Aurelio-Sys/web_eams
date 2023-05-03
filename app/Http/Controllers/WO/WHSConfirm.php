@@ -76,166 +76,22 @@ class WHSConfirm extends Controller
 
         // dd($id);
         $data = DB::table('wo_mstr')
-            ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-            ->where('wo_id', '=', $id)
+            ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+            ->where('wo_number', '=', $id)
             ->first();
 
-        $rpdata = DB::table('rep_master')
-            ->orderBy('repm_code')
-            ->get();
+        $sparepart_detail = DB::table('wo_dets_sp')
+                            ->join('sp_mstr','sp_mstr.spm_code','wo_dets_sp.wd_sp_spcode')
+                            ->where('wd_sp_wonumber','=',$id)
+                            ->get();
 
-        $insdata = DB::table('ins_mstr')
-            ->orderBy('ins_code')
-            ->get();
-
-        $spdata = DB::table('sp_mstr')
-            ->orderBy('spm_code')
-            ->get();
-
-        $locdata = DB::table('loc_mstr')
-            ->join('site_mstrs','site_code','=','loc_site')
-            ->where('site_flag','=','yes')
-            ->orderBy('loc_code')
-            ->get();
-
-        $sitedata = DB::table('site_mstrs')
-            ->where('site_flag','=','yes')
-            ->orderBy('site_code')
-            ->get();
-
-        $wodetdata = DB::table('wo_dets')
-            ->whereWo_dets_nbr($data->wo_nbr)
-            ->get();
-
-        /* Mencari daata lokasi eng */
-        $dataloceng = DB::table('eng_mstr')
-            ->join('wo_dets','wo_dets_rlsuser','=','eng_code')
-            ->first();
-
-        /* Semua data release sudah masuk di wo_dets 
-        if ($data->wo_repair_code1 != "") {
-            $sparepart1 = DB::table('wo_mstr')
-                ->select('wo_repair_code1 as repair_code', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
-                ->leftJoin('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
-                ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-                ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-                ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-                ->where('wo_id', '=', $id)
-                ->orderBy('insd_det.insd_part')
-                ->get();
-
-            $combineSP = $sparepart1;
-        }
-
-        if ($data->wo_repair_code2 != "") {
-            $sparepart2 = DB::table('wo_mstr')
-                ->select('wo_repair_code2 as repair_code', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
-                ->leftJoin('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
-                ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-                ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-                ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-                ->where('wo_id', '=', $id)
-                ->orderBy('insd_det.insd_part')
-                ->get();
-
-            $combineSP = $sparepart1->merge($sparepart2);
-        }
-
-        if ($data->wo_repair_code3 != "") {
-            $sparepart3 = DB::table('wo_mstr')
-                ->select('wo_repair_code3 as repair_code', 'ins_code', 'insd_part_desc', 'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty')
-                ->leftJoin('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
-                ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-                ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-                ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-                ->where('wo_id', '=', $id)
-                ->orderBy('insd_det.insd_part')
-                ->get();
-
-            $combineSP = $sparepart1->merge($sparepart2)->merge($sparepart3);
-        }
-        */
-
-        $combineSP = DB::table('wo_mstr')
-            ->select('wo_dets_rc as repair_code', 'wo_dets_id as repdet_step', 'wo_dets_ins as ins_code', 'insd_part_desc', 'wo_dets_sp as insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_dets_wh_conf as whconf' , 'wo_dets_sp_qty','wo_dets_line')
-            ->leftJoin('wo_dets','wo_mstr.wo_nbr','wo_dets.wo_dets_nbr')
-            ->leftJoin('insd_det', function($join)
-            {
-                $join->on('wo_dets.wo_dets_ins', '=', 'insd_det.insd_code');
-                $join->on('wo_dets.wo_dets_sp', '=', 'insd_det.insd_part');
-            })
-            ->where('wo_id', '=', $id)
-            ->orderBy('wo_dets_line')
-            ->orderBy('ins_code', 'asc')
-            ->orderBy('repdet_step', 'asc')
-            ->get();
-
-        // load stock
-        $siteactive = DB::table('site_mstrs')
-            ->where('site_flag','=','yes')
-            ->get();
-
-        Schema::create('temp_stok', function ($table) {
-            $table->increments('id');
-            $table->string('stok_site');
-            $table->string('stok_loc');
-            $table->string('stok_part');
-            $table->decimal('stok_qty',13,2);
-            $table->string('stok_lot');
-            $table->string('stok_exp');
-            $table->string('stok_date');
-            $table->temporary();
-        });
-
-        foreach($siteactive as $qsite) {
-            $domain = ModelsQxwsa::first();
-
-            $stokdata = (new WSAServices())->wsastok($domain->wsas_domain,$qsite->site_code);
-
-            if ($stokdata === false) {
-                toast('WSA Failed', 'error')->persistent('Dismiss');
-                return redirect()->back();
-            } else {
-
-                if ($stokdata[1] == "false") {
-                    toast('Stok tidak ditemukan', 'error')->persistent('Dismiss');
-                    return redirect()->back();
-                } else {
-                    foreach ($stokdata[0] as $datas) {
-                        DB::table('temp_stok')->insert([
-                            'stok_site' => $datas->t_site,
-                            'stok_loc' => $datas->t_loc,
-                            'stok_part' => $datas->t_part,
-                            'stok_qty' => $datas->t_qty,
-                            'stok_lot' => $datas->t_lot,
-                            'stok_exp' => $datas->t_exp,
-                            'stok_date' => $datas->t_date,
-                        ]);
-                    } 
-                }
-            }
-        }
-
-        $qstok = DB::table('temp_stok')
-            ->orderBy('stok_date')
-            ->orderBy('stok_site')
-            ->orderBy('stok_lot')
-            ->orderBy('stok_loc')
-            ->get();  
-
-        Schema::dropIfExists('temp_stok');
         
+        
+
+
         return view('workorder.whsconf-detail', compact(
             'data',
-            'spdata',
-            'combineSP',
-            'rpdata',
-            'insdata',
-            'locdata',
-            'sitedata',
-            'qstok',
-            'wodetdata',
-            'dataloceng'
+            'sparepart_detail'
         ));
     }
 
@@ -665,5 +521,53 @@ class WHSConfirm extends Controller
             dump($output);
             return response($output);
         }
+    }
+
+    public function getwsastockfrom(Request $req){
+        $assetsite = $req->get('assetsite');
+        $spcode = $req->get('spcode');
+
+        //ambil data dari tabel inc_source berdasarkan asset site nya
+        $getSource = DB::table('inc_source')
+                        ->where('inc_asset_site','=', $assetsite)
+                        ->get();
+
+        $data = [];
+
+        foreach($getSource as $invsource){
+            $qadsourcedata = (new WSAServices())->wsagetsource($spcode,$invsource->inc_source_site,$invsource->inc_loc);
+
+            if ($qadsourcedata === false) {
+                toast('WSA Connection Failed', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+
+                // jika hasil WSA ke QAD tidak ditemukan
+                if ($qadsourcedata[1] == "false") {
+                    toast('Something went wrong with the data', 'error')->persistent('Dismiss');
+                    return redirect()->back();
+                }
+
+
+                // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+                
+                $resultWSA = $qadsourcedata[0];
+ 
+                //kumpulkan hasilnya ke dalam 1 array sebagai penampung list location dan lot from
+                foreach($resultWSA as $thisresult){
+                    array_push($data, [
+                        't_domain' => (string) $thisresult->t_domain,
+                        't_part' => (string) $thisresult->t_part,
+                        't_site' => (string) $thisresult->t_site,
+                        't_loc' => (string) $thisresult->t_loc,
+                        't_lot' => (string) $thisresult->t_lot,
+                        't_qtyoh' => number_format((float) $thisresult->t_qtyoh, 2),
+                    ]);
+                }
+                
+            }
+        }
+
+        return response()->json($data);
     }
 }

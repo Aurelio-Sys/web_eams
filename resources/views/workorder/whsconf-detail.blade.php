@@ -45,6 +45,7 @@
         <label class="col-md-2 col-form-label text-md-right">Due Date</label>
         <div class="col-md-2">
             <input type="text" class="form-control" id="duedate" name="duedate" value="{{$data->wo_due_date}}" readonly>
+            <input type="hidden" id="hidden_assetsite" value="{{$data->asset_site}}" />
         </div>
     </div>
 </div>
@@ -60,7 +61,7 @@
         {{ method_field('post') }}
         {{ csrf_field() }}
 
-        <input type="hidden" name="hide_wonum" value="{{$data->wo_nbr}}" />
+        <input type="hidden" name="hide_wonum" value="{{$data->wo_number}}" />
 
         <div class="modal-header">
         </div>
@@ -80,41 +81,37 @@
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
+                            @forelse ( $sparepart_detail as $index => $spd )
                             <tr>
                                 <td style="vertical-align:middle;text-align:left;">
-                                    {{$datas->repair_code}}
-                                    <input type="hidden" name="repcode[]" value="{{$datas->repair_code}}" />
-                                    <input type="hidden" name="line[]" value="{{$datas->wo_dets_line}}" />
+                                    {{$spd->wd_sp_spcode}}
+                                    <input type="hidden" class="hidden_spcode" name="hidden_spcode[]" value="{{$spd->wd_sp_spcode}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
-                                    {{$datas->ins_code}}
-                                    <input type="hidden" name="inscode[]" value="{{$datas->ins_code}}" />
+                                    {{$spd->spm_desc}}
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
-                                    {{$datas->insd_part}} -- {{$descpart}}
-                                    <input type="hidden" class="partneed" name="partneed[]" value="{{$datas->insd_part}}" />
-                                    <input type="hidden" class="partdesc" name="partdesc[]" value="{{$descpart}}" />
+                                    {{$spd->wd_sp_required}}
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    {{ number_format($cqty ?? $dqtyreq,2) }}
-                                    <input type="hidden" name="qtyreq[]" value="{{$cqty}}" />
+                                    <input type="text" id="loclotfrom" class="form-control loclotfrom" name="loclotfrom[]" value="" data-index="{{ $index }}">
+                                    <input type="hidden" class="hidden_siteform" name="hidden_siteform" value="" />
+                                    <input type="hidden" class="hidden_locform" name="hidden_locform[]" value="" />
+                                    <input type="hidden" class="hidden_lotform" name="hidden_lotform[]" value="" /> 
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    {{ number_format($dqtyreq,2) }}
-                                    <input type="hidden" name="qtyrequest[]" value="{{ $dqtyreq }}" class="dqtyreq" />
-                                </td>
-                                
-                                <td style="vertical-align: middle; text-align: center;">
-                                    <select name="t_site[]" class="form-control t_site">
-                                        <option value="">-- Select --</option>
-                                    @foreach($sitedata as $rssite)
-                                        <option value="{{ $rssite->site_code }}" {{$dsite == $rssite->site_code ? "selected" : ""}}>{{ $rssite->site_code }}</option>
-                                    @endforeach
+                                    <select id="locto" class="form-control" name="locto[]">
+                                        <option value=""></option>
                                     </select>
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <input type="number" id="qtytotransfer" class="form-control" name="qtytotransfer[]" min="0" step="0.01" />
                                 </td>
                             </tr>
                             @empty
-
+                            <tr>
+                                <td colspan="7" style="color: red; text-align: center;" >No Data Available</td>
+                            </tr>
                             @endforelse
                         </tbody>
                         <tfoot>
@@ -136,6 +133,30 @@
         </div>
     </form>
 </div>
+
+<div id="myModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Select Location & Lot From</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="thistablemodal">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="loadingtable" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <h1 class="animate__animated animate__bounce" style="display:inline;width:100%;text-align:center;color:white;font-size:larger;text-align:center">Loading...</h1>
+  </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -147,6 +168,100 @@
     }
 
     $(document).ready(function() {
+
+        $(document).on('click', '.loclotfrom', function() { 
+            var row = $(this).closest("tr");
+            const spcode = row.find(".hidden_spcode").val();
+            const getassetsite = document.getElementById('hidden_assetsite').value;
+
+            // console.log(spcode);
+
+            $.ajax({
+                url: '/getwsastockfrom',
+                method: 'GET',
+                data: {
+                    assetsite : getassetsite,
+                    spcode : spcode,
+                },
+                success: function(vamp) {
+
+                    // select elemen HTML tempat menampilkan tabel
+                    const tableContainer = document.getElementById("thistablemodal");
+
+                    // hapus tabel lama (jika ada)
+                    if (tableContainer.hasChildNodes()) {
+                        tableContainer.removeChild(tableContainer.firstChild);
+                    }
+
+                    // membuat elemen tabel
+                    const table = document.createElement("table");
+                    table.setAttribute("class", "table table-bordered table-hover");
+
+                    // membuat header tabel
+                    const headerRow = document.createElement("tr");
+                    const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "Select"];
+                    headerColumns.forEach((columnTitle) => {
+                        const headerColumn = document.createElement("th");
+                        headerColumn.textContent = columnTitle;
+                        headerRow.appendChild(headerColumn);
+                    });
+                    table.appendChild(headerRow);
+
+                    // membuat baris record untuk setiap objek dalam dataLocLotFrom
+                    vamp.forEach((record) => {
+                        const rowtable = document.createElement("tr");
+                        const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh"];
+                        columns.forEach((columnKey) => {
+                            const column = document.createElement("td");
+                            column.textContent = record[columnKey];
+                            rowtable.appendChild(column);
+                        });
+                        const selectColumn = document.createElement("td");
+                        const selectButton = document.createElement("button");
+                        selectButton.setAttribute("class", "btn btn-primary");
+                        selectButton.textContent = "Select";
+                        selectButton.setAttribute("type", "button");
+                        selectButton.addEventListener("click", function() {
+                            // aksi yang ingin dilakukan saat tombol select diklik
+                            const site = record.t_site;
+                            const loc = record.t_loc;
+                            const lot = record.t_site;
+                            row.find(".hidden_siteform").val(site);
+                            row.find(".hidden_locform").val(loc);
+                            row.find(".hidden_lotform").val(lot);
+
+                            row.find(".loclotform").val();
+                            // console.log("Record selected:", record.t_loc);
+                        });
+                        selectColumn.appendChild(selectButton);
+                        rowtable.appendChild(selectColumn);
+                        table.appendChild(rowtable);
+                    });
+
+                    // menampilkan tabel pada elemen HTML yang dituju
+                    tableContainer.appendChild(table);
+
+                    // memanggil modal setelah tabel dimuat
+                    $('#myModal').modal('show');
+                    
+
+                },complete: function(vamp) {
+                    //  $('.modal-backdrop').modal('hide');
+                    // alert($('.modal-backdrop').hasClass('in'));
+
+                    setTimeout(function() {
+                    $('#loadingtable').modal('hide');
+                    }, 500);
+
+                    setTimeout(function() {
+                    $('#viewModal').modal('show');
+                    }, 1000);
+
+                }
+            })
+        });
+
+
 
         const checkboxes = document.querySelectorAll('.qaddel');
         const submitButton = document.querySelector('#btnconf');
@@ -256,19 +371,7 @@
             loc.val(vloc);
             console.log(vloc, part, site, vlot);
             
-            @foreach ($qstok as $qstok)
-            if(part == "{{$qstok->stok_part}}" && site == "{{$qstok->stok_site}}" && vloc == "{{$qstok->stok_loc}}" && vlot == "{{$qstok->stok_lot}}") {
-                
-                qtystok.html({{$qstok->stok_qty}});
-                
-                 /*if(dqtyreq > {{$qstok->stok_qty}}) {
-                    {{--  $(this).closest('tr').find('.qtyconf').val({{$qstok->stok_qty}});  --}}
-                    qtyconf.val({{$qstok->stok_qty}});
-                } else {
-                    qtyconf.val(dqtyreq);
-                } */
-            }
-            @endforeach
+            
         });
 
         /* jika site diubah, select lot dan location diubah sesuai dengan wsa stok */
