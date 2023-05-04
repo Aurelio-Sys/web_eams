@@ -85,18 +85,25 @@ class WHSConfirm extends Controller
                             ->where('wd_sp_wonumber','=',$id)
                             ->get();
 
+
+
+        $datalocsupply = DB::table('inp_supply')
+                        ->where('inp_asset_site', '=', $data->asset_site)
+                        ->get();
+
         
         
 
 
         return view('workorder.whsconf-detail', compact(
             'data',
-            'sparepart_detail'
+            'sparepart_detail',
+            'datalocsupply'
         ));
     }
 
     public function whssubmit(Request $req){
-        // dd($req->all());
+        dd($req->all());
         DB::beginTransaction();
 
         try{

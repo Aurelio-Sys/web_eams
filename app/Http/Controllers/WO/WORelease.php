@@ -101,8 +101,7 @@ class WORelease extends Controller
     }
 
     public function submitrelease(Request $req)
-    {        
-
+    {
         DB::beginTransaction();
 
         try {
@@ -139,15 +138,19 @@ class WORelease extends Controller
 
                 //cari dan simpan ke dalam inv_required kemudian ambil data dari QAD berdasarkan table inp_supply yang kondisinya inp_asset_site sama dengan asset site wo yang di release
                 foreach($groupedData as $loopsp){
+                    $getAssetSite = DB::table('asset_mstr')
+                                    ->where('asset_code', '=', $req->assetcode)
+                                    ->first();
+
                     $ir = DB::table('inv_required')
                         ->where('ir_spare_part', $loopsp['spreq'])
-                        ->where('ir_site', $req->assetsite)
+                        ->where('ir_site', $getAssetSite->asset_site)
                         ->first();
                     if ($ir) {
                         // jika data sudah ada, update record table inv_required
                         DB::table('inv_required')
                             ->where('ir_spare_part', $loopsp['spreq'])
-                            ->where('ir_site', $req->assetsite)
+                            ->where('ir_site', $getAssetSite->asset_site)
                             ->update([
                                 'inv_qty_required' => DB::raw('inv_qty_required + '.$loopsp['qtyrequired']), //inv_qty_required yang lama + inv_qty_required dari wo yang baru di release
                                 'ir_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -156,7 +159,7 @@ class WORelease extends Controller
                         // jika data belum ada, buat data baru
                         DB::table('inv_required')->insert([
                             'ir_spare_part' => $loopsp['spreq'],
-                            'ir_site' => $req->assetsite,
+                            'ir_site' => $getAssetSite->asset_site,
                             'inv_qty_required' => $loopsp['qtyrequired'],
                             'ir_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             'ir_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -176,7 +179,7 @@ class WORelease extends Controller
 
                     //harus ada datanya. ambil data dari table inp_supply untuk kemudian dicheck ke QAD untuk qty on hand yang ada di QAD
                     $supplydata = DB::table('inp_supply')
-                                ->where('inp_asset_site','=', $req->assetsite)
+                                ->where('inp_asset_site','=', $getAssetSite->asset_site)
                                 ->where('inp_avail','=', 'Yes')
                                 ->get();
 
@@ -188,6 +191,8 @@ class WORelease extends Controller
                         $qadsupplydata = (new WSAServices())->wsagetsupply($loopsp['spreq'],$invsupply->inp_supply_site,$invsupply->inp_loc);
 
                         if ($qadsupplydata === false) {
+
+                            DB::rollBack();
                             toast('WSA Connection Failed', 'error')->persistent('Dismiss');
                             return redirect()->back();
                         } else {
@@ -195,6 +200,7 @@ class WORelease extends Controller
                             // jika hasil WSA ke QAD tidak ditemukan
                             if ($qadsupplydata[1] == "false") {
                                 // dd('stop there');
+                                DB::rollBack();
                                 toast('Something went wrong with the data', 'error')->persistent('Dismiss');
                                 return redirect()->back();
                             }
@@ -257,19 +263,19 @@ class WORelease extends Controller
                 }
 
 
-
-
-
                 //mulai membandingkan data antara data di table inv_required (web) dengan qty tersedia dari data QAD ($output)
 
                 //ambil data dari table inv_required
 
                 foreach($output as $qadData){
+                    $getAssetSite2 = DB::table('asset_mstr')
+                                ->where('asset_code', '=', $req->assetcode)
+                                ->first();
 
                     $getInvRequired = DB::table('inv_required')
                                             ->where('ir_spare_part', '=', $qadData['part'])
+                                            ->where('ir_site','=', $getAssetSite2->asset_site)
                                             ->first();
-
 
                     if($getInvRequired->inv_qty_required <= $qadData['qtyoh']){
                         //jika qty di qad supply cukup
