@@ -262,11 +262,11 @@ class WORelease extends Controller
                     }
                 }
 
-
                 //mulai membandingkan data antara data di table inv_required (web) dengan qty tersedia dari data QAD ($output)
 
-                //ambil data dari table inv_required
+                $not_enough = false; //penanda jika tidak cukup nantik akan berubah jadi true. defaultnya adalah false
 
+                //ambil data dari table inv_required
                 foreach($output as $qadData){
                     $getAssetSite2 = DB::table('asset_mstr')
                                 ->where('asset_code', '=', $req->assetcode)
@@ -280,28 +280,15 @@ class WORelease extends Controller
                     if($getInvRequired->inv_qty_required <= $qadData['qtyoh']){
                         //jika qty di qad supply cukup
 
-
                         //update status kalau wo sudah di released.
-                        DB::table('wo_mstr')
-                            ->where('wo_number','=', $requestData['hide_wonum'])
-                            ->update([
-                                'wo_status' => 'released',
-                                'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                            ]);
-
                         
+   
                     }else{
-
 
                         //jika qty di qad supply tidak cukup, kirim notifikasi email ke warehouse
                         //nantinya warehouse akan melakukan transfer dari source ke supply
                         //status tetap released walaupun tidak cukup stocknya di supply
-                        DB::table('wo_mstr')
-                            ->where('wo_number','=', $requestData['hide_wonum'])
-                            ->update([
-                                'wo_status' => 'released',
-                                'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                            ]);
+                        $not_enough = true;
 
                         //kasih flag true(1) jika stock di supply tidak cukup supaya menjadi penanda spare part yang perlu dilakukan wo transfer spare part
                         DB::table('wo_dets_sp')
@@ -310,18 +297,30 @@ class WORelease extends Controller
                             ->update([
                                 'wd_sp_flag' => true,
                                 'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                            ]);
-
-                        $wonumber_email = $requestData['hide_wonum'];
-                        
-                        SendWorkOrderWarehouseNotification::dispatch($wonumber_email);
-
-                        //kirim notifikasi ke warehouse bahwa ada stock yang diperlukan untuk WO namun tidak cukup di inventory supply
-                        
+                            ]);                        
 
                     }
                     
                 }
+
+                //perubahaan status dan kirim email harus diluar looping diatas atau ga bisa dobel kirim email
+                DB::table('wo_mstr')
+                            ->where('wo_number','=', $requestData['hide_wonum'])
+                            ->update([
+                                'wo_status' => 'released',
+                                'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+
+                if ($not_enough) {
+                    // Ada spare part yang tidak cukup
+                    $wonumber_email = $requestData['hide_wonum'];
+                        
+                    SendWorkOrderWarehouseNotification::dispatch($wonumber_email);
+
+                    //kirim notifikasi ke warehouse bahwa ada stock yang diperlukan untuk WO namun tidak cukup di inventory supply
+                    
+                }
+
 
             }else{ //jika di release tanpa spare part
                 DB::table('wo_mstr')

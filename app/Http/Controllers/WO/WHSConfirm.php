@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
+use Psy\Command\DumpCommand;
 
 class WHSConfirm extends Controller
 {
@@ -103,90 +104,84 @@ class WHSConfirm extends Controller
     }
 
     public function whssubmit(Request $req){
-        dd($req->all());
+        // dd($req->all()); 
+
+        //ambil data dari qad untuk pengecekan kembali stock inventory source di QAD
+        Schema::dropIfExists('temp_table');
+        Schema::create('temp_table', function ($table) {
+            $table->string('t_part');
+            $table->string('t_site');
+            $table->string('t_loc')->nullable();
+            $table->string('t_lot')->nullable();
+            $table->decimal('t_qtyoh', 10, 2);
+            $table->temporary();
+        });
+
+        foreach($req->hidden_spcode as $index => $spcode){
+            $getActualStockSource = (new WSAServices())->wsacekstoksource($spcode,$req->hidden_sitefrom[$index],$req->hidden_locfrom[$index],$req->hidden_lotfrom[$index]);
+
+            if ($getActualStockSource === false) {
+                toast('WSA Connection Failed', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+
+                // jika hasil WSA ke QAD tidak ditemukan
+                if ($getActualStockSource[1] == "false") {
+                    toast('Something went wrong with the data', 'error')->persistent('Dismiss');
+                    return redirect()->back();
+                }
+
+
+                // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+                
+                $resultWSA = $getActualStockSource[0];
+ 
+                //kumpulkan hasilnya ke dalam 1 array sebagai penampung list location dan lot from
+                foreach($resultWSA as $thisresult){
+                    DB::table('temp_table')
+                        ->insert([
+                            't_part' => $thisresult->t_part,
+                            't_site' => $thisresult->t_site,
+                            't_loc' => $thisresult->t_loc,
+                            't_lot' => $thisresult->t_lot,
+                            't_qtyoh' => $thisresult->t_qtyoh,
+                        ]);
+                }
+                
+            }
+
+        }
+
+        $dataStockQAD = DB::table('temp_table')
+                    ->get();
+
+
+        Schema::dropIfExists('temp_table');
+
         DB::beginTransaction();
 
         try{
-            // cek qty
-            foreach($req->partneed as $a => $key){
-                if($req->tick[$a] == 1) {
-                    if($req->qtyconf[$a] > $req->qtystok[$a]) {
-                        toast('Quantity Error !', 'error');
-                        return redirect()->route('browseWhconfirm');
+
+            $notEnough = "";
+            foreach($req->qtytotransfer as $index => $qtytotransfer){
+                foreach($dataStockQAD as $source){
+                    if($req->hidden_spcode[$index] == $source->t_part && $req->hidden_sitefrom[$index] == $source->t_site && $req->hidden_locfrom[$index] == $source->t_loc && $req->hidden_lotfrom[$index] == $source->t_lot){
+                        if(floatval($req->qtytotransfer[$index]) > floatval($source->t_qtyoh)){
+                            //jika tidak cukup berikan alert
+                            // dump($source->t_qtyoh);
+                            $notEnough .= $req->hidden_spcode[$index] . ", ";
+                        }
                     }
                 }
             }
-
-            $cekstatus = "";  //digunakan untuk melakukan cek apakah semua line sudah dikonfirm atau belum
-            $cekqty = ""; //digunakan untuk melakukan cek apakah qty yang diconfirm setiap line sudah sesuai dengan qty request
-            foreach($req->partneed as $a => $key){
-                if ($req->tick[$a] == 1) {
-
-                    $vlot = explode(",", $req->t_lot[$a]);
-
-                    /* Input histori transfer, agar bisa menyimpan qty confirm jika partial */
-                    if ($req->whsconf[$a] == 0) {
-                        DB::table('wowh_det')
-                        ->insert([
-                            'wowh_wonbr' => $req->hide_wonum,
-                            'wowh_line' => $req->line[$a],
-                            'wowh_spcode' => $req->partneed[$a],
-                            'wowh_spdesc' => $req->partdesc[$a],
-                            'wowh_sitefrom' => $req->t_site[$a],
-                            'wowh_locfrom' => $req->t_loc[$a],
-                            'wowh_siteto' => $req->rlssite[$a],
-                            'wowh_locto' => $req->rlsloc[$a],
-                            'wowh_lot' => $vlot[0],
-                            'wowh_qty_req' => $req->qtyrequest[$a],
-                            'wowh_qty_conf' => $req->qtyconf[$a],
-                            'wowh_qx' => 'no',
-                            'wowh_user' => $req->session()->get('username'),
-                            'wowh_created_at' => Carbon::now()->toDateTimeString(),
-                            'wowh_updated_at' => Carbon::now()->toDateTimeString(),
-                        ]);
-                    }
-
-                    /* Jika qty yang diconfirm hanya sebagian, maka belum ada tanggal dan qty conf di tabel wo_dets */
-                    if($req->qtyrequest[$a] == $req->qtyconf[$a] + $req->qtymove[$a]) {
-                        $vconf = 1;
-                        $vdate = Carbon::now()->toDateTimeString();
-                    } else {
-                        $vconf = 0;
-                        $vdate = "";
-                        $cekqty = "nol"; 
-                    }
-
-                    DB::table('wo_dets')
-                        ->where('wo_dets_nbr', $req->hide_wonum)
-                        ->where('wo_dets_rc', $req->repcode[$a])
-                        ->where('wo_dets_line', $req->line[$a])
-                        ->where('wo_dets_ins', $req->inscode[$a])
-                        ->where('wo_dets_sp', $req->partneed[$a])
-                        ->update([
-                        'wo_dets_wh_site' => $req->t_site[$a],
-                        'wo_dets_wh_loc' => $req->t_loc[$a],
-                        'wo_dets_wh_lot' => $vlot[0],
-                        'wo_dets_wh_qty' => $req->qtyconf[$a] + $req->qtymove[$a],
-                        'wo_dets_wh_conf' => $vconf,
-                        'wo_dets_wh_tosite' => $req->rlssite[$a],
-                        'wo_dets_wh_toloc' => $req->rlsloc[$a],
-                        'wo_dets_wh_date' =>$vdate,
-                        'wo_dets_wh_user' => $req->session()->get('username'),
-                    ]); 
-
-                } else {
-                    $cekstatus = "nol";
-                }
-                
-            }    
             
-            if ($cekstatus == "" && $cekqty == "") {
-                DB::table('wo_mstr')
-                    ->where('wo_nbr',$req->hide_wonum)
-                    ->update([
-                        'wo_status' => 'open',
-                    ]);
+            if ($notEnough != "") {
+                $notEnough = rtrim($notEnough, ", "); // hapus koma terakhir
+                alert()->html('<u><b>Alert!</b></u>',"<b>The qty to be transferred does not have sufficient stock for the following spare part code :</b><br>".$notEnough."",'error')->persistent('Dismiss');
+                return redirect()->back();
             }
+
+            // dd('stop here');
             
             /* cek apakah semua qty 0 atau tidak, jika semua qty 0, maka tetap bisa di confirm. mungkin tidak ada item numbernya */
             /* $qx = DB::table('wo_dets')

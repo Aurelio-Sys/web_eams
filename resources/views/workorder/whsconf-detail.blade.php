@@ -95,9 +95,9 @@
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" data-index="{{ $index }}"  required>
-                                    <input type="hidden" class="hidden_siteform" name="hidden_siteform[]" value="" />
-                                    <input type="hidden" class="hidden_locform" name="hidden_locform[]" value="" />
-                                    <input type="hidden" class="hidden_lotform" name="hidden_lotform[]" value="" /> 
+                                    <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
+                                    <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
+                                    <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" /> 
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     <select id="locto" class="form-control selectpicker" name="locto[]" data-dropup-auto="false" data-live-search="true" required>
@@ -252,11 +252,11 @@
                             // aksi yang ingin dilakukan saat tombol select diklik
                             const site = record.t_site;
                             const loc = record.t_loc;
-                            const lot = record.t_site;
+                            const lot = record.t_lot;
                             const qtyoh = record.t_qtyoh;
-                            row.find(".hidden_siteform").val(site);
-                            row.find(".hidden_locform").val(loc);
-                            row.find(".hidden_lotform").val(lot);
+                            row.find(".hidden_sitefrom").val(site);
+                            row.find(".hidden_locfrom").val(loc);
+                            row.find(".hidden_lotfrom").val(lot);
 
                             const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
 
