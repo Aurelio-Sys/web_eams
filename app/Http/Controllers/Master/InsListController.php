@@ -57,6 +57,20 @@ class InsListController extends Controller
         
     }
 
+    //cek data sudah ada atau belum sebelum input
+    public function cekinslist(Request $req)
+    {
+        $cek = DB::table('ins_list')
+            ->whereInsCode($req->code)
+            ->get();
+
+        if ($cek->count() == 0) {
+            return "tidak";
+        } else {
+            return "ada";
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -65,23 +79,47 @@ class InsListController extends Controller
      */
     public function store(Request $req)
     {
-        $flg = 0;
-        foreach($req->t_step as $t_step){
+        //cek apakah sudah ada data yang sama
+        $cekData = DB::table('ins_list')
+            ->whereInsCode($req->t_code)
+            ->count();
+        
+        if ($cekData > 0) {
+            toast('Data Already Registered!!', 'error');
+            return back();
+        }
+        // cek menyimpan dengan detail atau tidak
+        if($req->t_step) {
+            $flg = 0;
+            foreach($req->t_step as $t_step){
+                DB::table('ins_list')
+                    ->insert([
+                        'ins_code' => $req->t_code,
+                        'ins_desc' => $req->t_desc,
+                        'ins_duration' => $req->t_dur,
+                        'ins_durationum' => $req->t_durum,
+                        'ins_manpower' => $req->t_mp,
+                        'ins_step' => $req->t_step[$flg],
+                        'ins_stepdesc' => $req->t_stepdesc[$flg],
+                        'ins_ref' => $req->t_ref[$flg],
+                        'ins_editedby'  => Session::get('username'),
+                        'created_at'    => Carbon::now()->toDateTimeString(),
+                        'updated_at'    => Carbon::now()->toDateTimeString(),
+                    ]);
+                $flg += 1;
+            }
+        } else {
             DB::table('ins_list')
-                ->insert([
-                    'ins_code' => $req->t_code,
-                    'ins_desc' => $req->t_desc,
-                    'ins_duration' => $req->t_dur,
-                    'ins_durationum' => $req->t_durum,
-                    'ins_manpower' => $req->t_mp,
-                    'ins_step' => $req->t_step[$flg],
-                    'ins_stepdesc' => $req->t_stepdesc[$flg],
-                    'ins_ref' => $req->t_ref[$flg],
-                    'ins_editedby'  => Session::get('username'),
-                    'created_at'    => Carbon::now()->toDateTimeString(),
-                    'updated_at'    => Carbon::now()->toDateTimeString(),
-                ]);
-            $flg += 1;
+                    ->insert([
+                        'ins_code' => $req->t_code,
+                        'ins_desc' => $req->t_desc,
+                        'ins_duration' => $req->t_dur,
+                        'ins_durationum' => $req->t_durum,
+                        'ins_manpower' => $req->t_mp,
+                        'ins_editedby'  => Session::get('username'),
+                        'created_at'    => Carbon::now()->toDateTimeString(),
+                        'updated_at'    => Carbon::now()->toDateTimeString(),
+                    ]);
         }
 
         toast('Instruction List Created.', 'success');
@@ -116,6 +154,7 @@ class InsListController extends Controller
         if ($req->ajax()) {
             $data = DB::table('ins_list')
                     ->whereIns_code($req->code)
+                    ->whereNotNull('ins_step')
                     ->orderBy('ins_step')
                     ->get();
 
@@ -144,35 +183,76 @@ class InsListController extends Controller
     public function update(Request $req)
     {
         // dd($req->all());
-        // cari tanggal create
-        $dcreate = DB::table('ins_list')
+        if($req->te_step) {
+            // cari tanggal create
+            $dcreate = DB::table('ins_list')
             ->whereIns_code($req->te_code)
             ->value('created_at');
 
-        // delete terlebih dahulu data nya
-        DB::table('ins_list')
-            ->whereIns_code($req->te_code)
-            ->delete();
-        
-        $flg = 0;
-        foreach($req->te_step as $te_step){
-            if($req->tick[$flg] == 0) {
+            // delete terlebih dahulu data nya
+            DB::table('ins_list')
+                ->whereIns_code($req->te_code)
+                ->delete();
+
+            //cek apakah ada detail nya atau tidak, untuk membedakan cara menyimpannya
+            $flg = 0;
+            $cekdetail = 0;
+            foreach($req->te_step as $te_step){
+                if($req->tick[$flg] == 0) {
+                    $cekdetail = 1;
+                }
+                $flg += 1;  
+            }
+
+            if($cekdetail == 1) {
+                $flg = 0;
+                foreach($req->te_step as $te_step){
+                    if($req->tick[$flg] == 0) {
+                        DB::table('ins_list')
+                        ->insert([
+                            'ins_code' => $req->te_code,
+                            'ins_desc' => $req->te_desc,
+                            'ins_duration' => $req->te_dur,
+                            'ins_durationum' => $req->te_durum,
+                            'ins_manpower' => $req->te_mp,
+                            'ins_step' => $req->te_step[$flg],
+                            'ins_stepdesc' => $req->te_stepdesc[$flg],
+                            'ins_ref' => $req->te_ref[$flg],
+                            'ins_editedby'  => Session::get('username'),
+                            'created_at'    => $dcreate,
+                            'updated_at'    => Carbon::now()->toDateTimeString(),
+                        ]);
+                    }
+                    $flg += 1;  
+                }
+            } else {
                 DB::table('ins_list')
-                ->insert([
+                    ->insert([
+                        'ins_code' => $req->te_code,
+                        'ins_desc' => $req->te_desc,
+                        'ins_duration' => $req->te_dur,
+                        'ins_durationum' => $req->te_durum,
+                        'ins_manpower' => $req->te_mp,
+                        'ins_editedby'  => Session::get('username'),
+                        'created_at'    => $dcreate,
+                        'updated_at'    => Carbon::now()->toDateTimeString(),
+                    ]);
+            }
+
+            
+
+        } else {
+            DB::table('ins_list')
+                ->whereIns_code($req->te_code)
+                ->update([
                     'ins_code' => $req->te_code,
                     'ins_desc' => $req->te_desc,
                     'ins_duration' => $req->te_dur,
                     'ins_durationum' => $req->te_durum,
                     'ins_manpower' => $req->te_mp,
-                    'ins_step' => $req->te_step[$flg],
-                    'ins_stepdesc' => $req->te_stepdesc[$flg],
-                    'ins_ref' => $req->te_ref[$flg],
                     'ins_editedby'  => Session::get('username'),
-                    'created_at'    => $dcreate,
                     'updated_at'    => Carbon::now()->toDateTimeString(),
                 ]);
-            }
-            $flg += 1;  
         }
 
         toast('Instruction List Updated.', 'success');

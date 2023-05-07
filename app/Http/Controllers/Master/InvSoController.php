@@ -20,6 +20,7 @@ class InvSoController extends Controller
     {
         $s_code = $req->s_code;
         $s_desc = $req->s_desc;
+        $s_loc = $req->s_loc;
 
         $data = DB::table('inc_source')
             ->leftJoin('asset_site','assite_code','=','inc_asset_site')
@@ -42,6 +43,12 @@ class InvSoController extends Controller
             $data = $data->where(function($query) use ($s_desc) {
                 $query->where('inc_source_site','like','%'.$s_desc.'%')
                 ->orWhere('site_desc','like','%'.$s_desc.'%');
+            });
+        }
+        if($s_loc) {
+            $data = $data->where(function($query) use ($s_loc) {
+                $query->where('inc_loc','like','%'.$s_loc.'%')
+                ->orWhere('loc_desc','like','%'.$s_loc.'%');
             });
         }
 

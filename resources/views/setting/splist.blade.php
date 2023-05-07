@@ -95,13 +95,13 @@
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label for="t_code" class="col-md-4 col-form-label text-md-right">Sparepart List Code</label>
+                        <label for="t_code" class="col-md-4 col-form-label text-md-right">Sparepart List Code <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-2">
                             <input type="text" class="form-control" id="t_code" name="t_code" autocomplete="off" maxlength="24" required>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_desc" class="col-md-4 col-form-label text-md-right">Sparepart List Desc</label>
+                        <label for="t_desc" class="col-md-4 col-form-label text-md-right">Sparepart List Desc <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-6">
                             <input type="text" class="form-control" id="t_desc" name="t_desc" autocomplete="off" maxlength="255" required>
                         </div>
@@ -157,12 +157,13 @@
                     <label for="te_code" class="col-md-4 col-form-label text-md-right">Sparepart List Code</label>
                     <div class="col-md-2">
                         <input type="text" class="form-control" id="te_code" name="te_code" readonly>
+                        <input type="hidden" class="form-control" id="te_transid" name="te_transid">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="te_desc" class="col-md-4 col-form-label text-md-right">Sparepart List Desc</label>
+                    <label for="te_desc" class="col-md-4 col-form-label text-md-right">Sparepart List Desc <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control" id="te_desc" name="te_desc" readonly>
+                        <input type="text" class="form-control" id="te_desc" name="te_desc" autocomplete="off" required>
                     </div>
                 </div>
                 <div class="col-md-10 offset-md-1">
@@ -209,7 +210,8 @@
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <input type="hidden" id="d_code" name="d_code">
-                    Delete Sparepart List <b><span id="td_code"></span> -- <span id="td_desc"></span></b> ?
+                    <input type="hidden" id="d_transid" name="d_transid">
+                    Delete Sparepart List <b><span id="td_code"></span></b> -- with Sparepart <b><span id="td_desc"></span></b> ?
                 </div>
 
                 <div class="modal-footer">
@@ -235,9 +237,11 @@
 
            var code = $(this).data('code');
            var desc = $(this).data('desc');
+           var transid = $(this).data('transid');
 
            document.getElementById('te_code').value = code;
            document.getElementById('te_desc').value = desc;
+           document.getElementById('te_transid').value = transid;
 
             $.ajax({
                 url:"editdetsplist?code="+code,
@@ -254,10 +258,13 @@
 
             var code = $(this).data('code');
             var desc = $(this).data('desc');
+            var transid = $(this).data('transid');
+            var spcode = $(this).data('spcode');
 
             document.getElementById('d_code').value          = code;
+            document.getElementById('d_transid').value = transid;
             document.getElementById('td_code').innerHTML = code;
-            document.getElementById('td_desc').innerHTML = desc;
+            document.getElementById('td_desc').innerHTML = spcode;
        });
 
         $("#addrow").on("click", function() {
@@ -378,6 +385,26 @@
       width : '100%',
       theme : 'bootstrap4',
      });
+
+     //cek dobel code saat menu Create
+     $(document).on('change', '#t_code', function() {
+          
+        var code = $('#t_code').val();
+
+          $.ajax({
+            url:"/cekqcslist?code="+code ,
+            success: function(data) {
+              
+              if (data == "ada") {
+                alert("Data Already Registered!");
+                document.getElementById('t_code').value = '';
+                document.getElementById('t_code').focus();
+              }
+              console.log(data);
+            
+            }
+          })
+      });
 
     </script>
 
