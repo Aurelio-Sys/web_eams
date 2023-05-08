@@ -181,258 +181,227 @@ class WHSConfirm extends Controller
                 return redirect()->back();
             }
 
-            // dd('stop here');
-            
-            /* cek apakah semua qty 0 atau tidak, jika semua qty 0, maka tetap bisa di confirm. mungkin tidak ada item numbernya */
-            /* $qx = DB::table('wo_dets')
-                ->where('wo_dets_nbr','=',$req->hide_wonum)
-                ->where('wo_dets_wh_conf','=',1)
-                ->where('wo_dets_wh_qx','=','no')
-                ->where('wo_dets_wh_qty','<>',0); */
-            $qx = DB::table('wowh_det')
-                ->where('wowh_wonbr','=',$req->hide_wonum)
-                ->where('wowh_qx','=','no');
+            /* Qxtend Transfer Single Item */
+            $qxwsa = ModelsQxwsa::first();
 
-            // dd($qx);
+            // Var Qxtend
+            $qxUrl          = $qxwsa->qx_url; // Edit Here
+
+            $qxRcv          = $qxwsa->qx_rcv;
+
+            $timeout        = 0;
+
+            $domain         = $qxwsa->wsas_domain;
+
+            // XML Qextend ** Edit Here
+
+            // dd($qxRcv);
+
+            $qdocHead = '  
+            <soapenv:Envelope xmlns="urn:schemas-qad-com:xml-services"
+            xmlns:qcom="urn:schemas-qad-com:xml-services:common"
+            xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing">
+            <soapenv:Header>
+                <wsa:Action/>
+                <wsa:To>urn:services-qad-com:'.$qxRcv.'</wsa:To>
+                <wsa:MessageID>urn:services-qad-com::'.$qxRcv.'</wsa:MessageID>
+                <wsa:ReferenceParameters>
+                <qcom:suppressResponseDetail>true</qcom:suppressResponseDetail>
+                </wsa:ReferenceParameters>
+                <wsa:ReplyTo>
+                <wsa:Address>urn:services-qad-com:</wsa:Address>
+                </wsa:ReplyTo>
+            </soapenv:Header>
+            <soapenv:Body>
+                <transferInvSingleItem>
+                <qcom:dsSessionContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>domain</qcom:propertyName>
+                    <qcom:propertyValue>'.$domain.'</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>scopeTransaction</qcom:propertyName>
+                    <qcom:propertyValue>true</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>version</qcom:propertyName>
+                    <qcom:propertyValue>ERP3_1</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>mnemonicsRaw</qcom:propertyName>
+                    <qcom:propertyValue>false</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>username</qcom:propertyName>
+                    <qcom:propertyValue>mfg</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>password</qcom:propertyName>
+                    <qcom:propertyValue></qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>action</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>entity</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>email</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>emailLevel</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                </qcom:dsSessionContext>
+                <dsItem>';
+
+            $qdocBody = '';
+            
+            /* bisa foreach per item dari sini */
+
+            foreach($req->qtytotransfer as $index => $qtyfromweb){
+                if($qtyfromweb > 0 ){ //jika qty to transfer yang diisi user dari menu wo transfer lebih dari 0, baru lakukan qxtend transfer single item
+                    $qdocBody .= '<item>
+                            <part>'.$req->hidden_spcode[$index].'</part>
+                            <itemDetail>
+                                <lotserialQty>'.$qtyfromweb.'</lotserialQty>
+                                <nbr>'.$req->hide_wonum.'</nbr>
+                                <siteFrom>'.$req->hidden_sitefrom[$index].'</siteFrom>
+                                <locFrom>'.$req->hidden_locfrom[$index].'</locFrom>
+                                <lotserFrom>'.$req->hidden_lotfrom[$index].'</lotserFrom>
+                                <siteTo>'.$req->hidden_siteto[$index].'</siteTo>
+                                <locTo>'.$req->hidden_locto[$index].'</locTo>
+                            </itemDetail>
+                        </item>';
+                }
+            }
+            
+            // <rmks>'.$dqx->wo_dets_nbr.'</rmks>
+            /* endforeach disini */
+            // dd($qdocBody);
+            $qdocfooter =   '</dsItem>
+                            </transferInvSingleItem>
+                        </soapenv:Body>
+                    </soapenv:Envelope>';
+
+            $qdocRequest = $qdocHead . $qdocBody . $qdocfooter;
+
+            $curlOptions = array(
+                CURLOPT_URL => $qxUrl,
+                CURLOPT_CONNECTTIMEOUT => $timeout,        // in seconds, 0 = unlimited / wait indefinitely.
+                CURLOPT_TIMEOUT => $timeout + 120, // The maximum number of seconds to allow cURL functions to execute. must be greater than CURLOPT_CONNECTTIMEOUT
+                CURLOPT_HTTPHEADER => $this->httpHeader($qdocRequest),
+                CURLOPT_POSTFIELDS => preg_replace("/\s+/", " ", $qdocRequest),
+                CURLOPT_POST => true,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => false
+            );
+
+            $getInfo = '';
+            $httpCode = 0;
+            $curlErrno = 0;
+            $curlError = '';
+
+
+            $qdocResponse = '';
+
+            $curl = curl_init();
+            if ($curl) {
+                curl_setopt_array($curl, $curlOptions);
+                $qdocResponse = curl_exec($curl);           // sending qdocRequest here, the result is qdocResponse.
+                //
+                $curlErrno = curl_errno($curl);
+                $curlError = curl_error($curl);
+                $first = true;
+                foreach (curl_getinfo($curl) as $key => $value) {
+                    if (gettype($value) != 'array') {
+                        if (!$first) $getInfo .= ", ";
+                        $getInfo = $getInfo . $key . '=>' . $value;
+                        $first = false;
+                        if ($key == 'http_code') $httpCode = $value;
+                    }
+                }
+                curl_close($curl);
+            }
+
+            if (is_bool($qdocResponse)) {
+
+                DB::rollBack();
+                toast('Something Wrong with Qxtend', 'error');
+                /* jika qxtend servicenya mati */
+            }
+            $xmlResp = simplexml_load_string($qdocResponse);
+            $xmlResp->registerXPathNamespace('soapenv', 'urn:schemas-qad-com:xml-services:common');
+            $qdocFault = '';
+            $qdocFault = $xmlResp->xpath('//soapenv:faultstring');
+            // dd($qdocFault);
+
+            if(!empty($qdocFault)){
+                DB::rollBack();
+
+                $qdocFault = (string) $xmlResp->xpath('//soapenv:faultstring')[0];
+
+                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$qdocFault."",'error')->persistent('Dismiss');
+                return redirect()->back();
+            }
+
+            $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
+            $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
+
+
+
+            if ($qdocResult == "success" or $qdocResult == "warning") {
+                /* jika response sukses atau warning maka menyimpan data jika sudah di transferr ke qad*/
+                /* DB::table('wo_dets')
+                
+            } else {
+
+                DB::rollBack();
+                $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
+                $outputerror = '';
+                foreach ($xmlResp->xpath('//ns3:temp_err_msg') as $temp_err_msg) {
+                    $context = $temp_err_msg->xpath('./ns3:tt_msg_context')[0];
+                    $desc = $temp_err_msg->xpath('./ns3:tt_msg_desc')[0];
+                    $outputerror .= "&bull;  ".$context . " - " . $desc . "<br>";
+                }
+
+                // dd('stop');
+                // $qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
+                // $output = '';
+
+                // foreach($qdocMsgDesc as $datas){
+                // 	if(str_contains($datas, 'ERROR:')){
+                // 		$output .= $datas. ' <br> ';
+                // 	}
+                // }
+
+                // $output = substr($output, 0, -6);
+
+                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$outputerror."",'error')->persistent('Dismiss');
+                return redirect()->route('browseWhconfirm');
+                /* jika qxtend response error */
+            }
+
+            dd('stop here');
 
             if($qx->count() > 0) {
                 /* ini qxtend transfer single item */
 
-                $qxwsa = ModelsQxwsa::first();
-
-                // Var Qxtend
-                $qxUrl          = $qxwsa->qx_url; // Edit Here
-
-                $qxRcv          = $qxwsa->qx_rcv;
-
-                $timeout        = 0;
-
-                $domain         = $qxwsa->wsas_domain;
-
-                // XML Qextend ** Edit Here
-
-                // dd($qxRcv);
-
-                $qdocHead = '  
-                <soapenv:Envelope xmlns="urn:schemas-qad-com:xml-services"
-                xmlns:qcom="urn:schemas-qad-com:xml-services:common"
-                xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing">
-                <soapenv:Header>
-                    <wsa:Action/>
-                    <wsa:To>urn:services-qad-com:'.$qxRcv.'</wsa:To>
-                    <wsa:MessageID>urn:services-qad-com::'.$qxRcv.'</wsa:MessageID>
-                    <wsa:ReferenceParameters>
-                    <qcom:suppressResponseDetail>true</qcom:suppressResponseDetail>
-                    </wsa:ReferenceParameters>
-                    <wsa:ReplyTo>
-                    <wsa:Address>urn:services-qad-com:</wsa:Address>
-                    </wsa:ReplyTo>
-                </soapenv:Header>
-                <soapenv:Body>
-                    <transferInvSingleItem>
-                    <qcom:dsSessionContext>
-                        <qcom:ttContext>
-                        <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-                        <qcom:propertyName>domain</qcom:propertyName>
-                        <qcom:propertyValue>'.$domain.'</qcom:propertyValue>
-                        </qcom:ttContext>
-                        <qcom:ttContext>
-                        <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-                        <qcom:propertyName>scopeTransaction</qcom:propertyName>
-                        <qcom:propertyValue>true</qcom:propertyValue>
-                        </qcom:ttContext>
-                        <qcom:ttContext>
-                        <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-                        <qcom:propertyName>version</qcom:propertyName>
-                        <qcom:propertyValue>ERP3_1</qcom:propertyValue>
-                        </qcom:ttContext>
-                        <qcom:ttContext>
-                        <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-                        <qcom:propertyName>mnemonicsRaw</qcom:propertyName>
-                        <qcom:propertyValue>false</qcom:propertyValue>
-                        </qcom:ttContext>
-                        <qcom:ttContext>
-                        <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-                        <qcom:propertyName>username</qcom:propertyName>
-                        <qcom:propertyValue>mfg</qcom:propertyValue>
-                        </qcom:ttContext>
-                        <qcom:ttContext>
-                        <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-                        <qcom:propertyName>password</qcom:propertyName>
-                        <qcom:propertyValue></qcom:propertyValue>
-                        </qcom:ttContext>
-                        <qcom:ttContext>
-                        <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-                        <qcom:propertyName>action</qcom:propertyName>
-                        <qcom:propertyValue/>
-                        </qcom:ttContext>
-                        <qcom:ttContext>
-                        <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-                        <qcom:propertyName>entity</qcom:propertyName>
-                        <qcom:propertyValue/>
-                        </qcom:ttContext>
-                        <qcom:ttContext>
-                        <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-                        <qcom:propertyName>email</qcom:propertyName>
-                        <qcom:propertyValue/>
-                        </qcom:ttContext>
-                        <qcom:ttContext>
-                        <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
-                        <qcom:propertyName>emailLevel</qcom:propertyName>
-                        <qcom:propertyValue/>
-                        </qcom:ttContext>
-                    </qcom:dsSessionContext>
-                    <dsItem>';
-
-                $qdocBody = '';
                 
-                /* bisa foreach per item dari sini */
-                
-                foreach($qx->get() as $dqx) {
-                    /* $qdocBody .= '<item>
-                                    <part>'.$dqx->wo_dets_sp.'</part>
-                                    <itemDetail>
-                                        <lotserialQty>'.$dqx->wo_dets_wh_qty.'</lotserialQty>
-                                        <nbr>'.$dqx->wo_dets_nbr.'</nbr>
-                                        <siteFrom>'.$dqx->wo_dets_wh_site.'</siteFrom>
-                                        <locFrom>'.$dqx->wo_dets_wh_loc.'</locFrom>
-                                        <lotserFrom>'.$dqx->wo_dets_wh_lot.'</lotserFrom>
-                                        <siteTo>'.$dqx->wo_dets_wh_tosite.'</siteTo>
-                                        <locTo>'.$dqx->wo_dets_wh_toloc.'</locTo>
-                                    </itemDetail>
-                                </item>'; */
-                    $qdocBody .= '<item>
-                                <part>'.$dqx->wowh_spcode.'</part>
-                                <itemDetail>
-                                    <lotserialQty>'.$dqx->wowh_qty_conf.'</lotserialQty>
-                                    <nbr>'.$dqx->wowh_wonbr.'</nbr>
-                                    <siteFrom>'.$dqx->wowh_sitefrom.'</siteFrom>
-                                    <locFrom>'.$dqx->wowh_locfrom.'</locFrom>
-                                    <lotserFrom>'.$dqx->wowh_lot.'</lotserFrom>
-                                    <siteTo>'.$dqx->wowh_siteto.'</siteTo>
-                                    <locTo>'.$dqx->wowh_locto.'</locTo>
-                                </itemDetail>
-                            </item>';
-                }
-                // <rmks>'.$dqx->wo_dets_nbr.'</rmks>
-                /* endforeach disini */
-                // dd($qdocBody);
-                $qdocfooter =   '</dsItem>
-                                </transferInvSingleItem>
-                            </soapenv:Body>
-                        </soapenv:Envelope>';
-
-                $qdocRequest = $qdocHead . $qdocBody . $qdocfooter;
-
-                // dd($qdocRequest);
-
-                $curlOptions = array(
-                    CURLOPT_URL => $qxUrl,
-                    CURLOPT_CONNECTTIMEOUT => $timeout,        // in seconds, 0 = unlimited / wait indefinitely.
-                    CURLOPT_TIMEOUT => $timeout + 120, // The maximum number of seconds to allow cURL functions to execute. must be greater than CURLOPT_CONNECTTIMEOUT
-                    CURLOPT_HTTPHEADER => $this->httpHeader($qdocRequest),
-                    CURLOPT_POSTFIELDS => preg_replace("/\s+/", " ", $qdocRequest),
-                    CURLOPT_POST => true,
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_SSL_VERIFYPEER => false,
-                    CURLOPT_SSL_VERIFYHOST => false
-                );
-
-                $getInfo = '';
-                $httpCode = 0;
-                $curlErrno = 0;
-                $curlError = '';
-
-
-                $qdocResponse = '';
-
-                $curl = curl_init();
-                if ($curl) {
-                    curl_setopt_array($curl, $curlOptions);
-                    $qdocResponse = curl_exec($curl);           // sending qdocRequest here, the result is qdocResponse.
-                    //
-                    $curlErrno = curl_errno($curl);
-                    $curlError = curl_error($curl);
-                    $first = true;
-                    foreach (curl_getinfo($curl) as $key => $value) {
-                        if (gettype($value) != 'array') {
-                            if (!$first) $getInfo .= ", ";
-                            $getInfo = $getInfo . $key . '=>' . $value;
-                            $first = false;
-                            if ($key == 'http_code') $httpCode = $value;
-                        }
-                    }
-                    curl_close($curl);
-                }
-
-                if (is_bool($qdocResponse)) {
-
-                    DB::rollBack();
-                    toast('Something Wrong with Qxtend', 'error');
-                    /* jika qxtend servicenya mati */
-                }
-                $xmlResp = simplexml_load_string($qdocResponse);
-                $xmlResp->registerXPathNamespace('soapenv', 'urn:schemas-qad-com:xml-services:common');
-                $qdocFault = '';
-                $qdocFault = $xmlResp->xpath('//soapenv:faultstring');
-                // dd($qdocFault);
-
-                if(!empty($qdocFault)){
-                    DB::rollBack();
-
-                    $qdocFault = (string) $xmlResp->xpath('//soapenv:faultstring')[0];
-
-                    alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$qdocFault."",'error')->persistent('Dismiss');
-                    return redirect()->back();
-                }
-
-                $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
-                $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
-
-
-
-                if ($qdocResult == "success" or $qdocResult == "warning") {
-                    /* jika response sukses atau warning maka menyimpan data jika sudah di transferr ke qad*/
-                    /* DB::table('wo_dets')
-                        ->where('wo_dets_nbr',$req->hide_wonum)
-                        ->where('wo_dets_wh_conf','=',1)
-                        ->where('wo_dets_wh_qx','=','no')
-                        ->update([
-                            'wo_dets_wh_qx' => 'yes',
-                    ]); */
-                    DB::table('wowh_det')
-                        ->where('wowh_wonbr','=',$req->hide_wonum)
-                        ->where('wowh_qx','=','no')
-                        ->update([
-                            'wowh_qx' => 'yes'
-                        ]);
-                } else {
-
-                    DB::rollBack();
-                    $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
-                    $outputerror = '';
-                    foreach ($xmlResp->xpath('//ns3:temp_err_msg') as $temp_err_msg) {
-                        $context = $temp_err_msg->xpath('./ns3:tt_msg_context')[0];
-                        $desc = $temp_err_msg->xpath('./ns3:tt_msg_desc')[0];
-                        $outputerror .= "&bull;  ".$context . " - " . $desc . "<br>";
-                    }
-
-                    // dd('stop');
-					// $qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
-					// $output = '';
-
-					// foreach($qdocMsgDesc as $datas){
-					// 	if(str_contains($datas, 'ERROR:')){
-					// 		$output .= $datas. ' <br> ';
-					// 	}
-					// }
-
-					// $output = substr($output, 0, -6);
-
-                    alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$outputerror."",'error')->persistent('Dismiss');
-                    return redirect()->route('browseWhconfirm');
-                    /* jika qxtend response error */
-                }
             } /* endif($qx->count()) */ 
 
             $cekpartial = DB::table('wo_dets')
@@ -454,7 +423,7 @@ class WHSConfirm extends Controller
             return redirect()->route('browseWhconfirm');
             
         } catch (Exception $e) {
-            // dd($e);
+            dd($e);
             DB::rollBack();
             toast('Confirm Failed', 'error');
             return redirect()->route('browseWhconfirm');
@@ -545,27 +514,28 @@ class WHSConfirm extends Controller
             } else {
 
                 // jika hasil WSA ke QAD tidak ditemukan
-                if ($qadsourcedata[1] == "false") {
-                    toast('Something went wrong with the data', 'error')->persistent('Dismiss');
-                    return redirect()->back();
-                }
+                if ($qadsourcedata[1] !== "false") {
 
-
-                // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+                     // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
                 
-                $resultWSA = $qadsourcedata[0];
- 
-                //kumpulkan hasilnya ke dalam 1 array sebagai penampung list location dan lot from
-                foreach($resultWSA as $thisresult){
-                    array_push($data, [
-                        't_domain' => (string) $thisresult->t_domain,
-                        't_part' => (string) $thisresult->t_part,
-                        't_site' => (string) $thisresult->t_site,
-                        't_loc' => (string) $thisresult->t_loc,
-                        't_lot' => (string) $thisresult->t_lot,
-                        't_qtyoh' => number_format((float) $thisresult->t_qtyoh, 2),
-                    ]);
+                    $resultWSA = $qadsourcedata[0];
+    
+                    //kumpulkan hasilnya ke dalam 1 array sebagai penampung list location dan lot from
+                    foreach($resultWSA as $thisresult){
+                        array_push($data, [
+                            't_domain' => (string) $thisresult->t_domain,
+                            't_part' => (string) $thisresult->t_part,
+                            't_site' => (string) $thisresult->t_site,
+                            't_loc' => (string) $thisresult->t_loc,
+                            't_lot' => (string) $thisresult->t_lot,
+                            't_qtyoh' => number_format((float) $thisresult->t_qtyoh, 2),
+                        ]);
+                    }
+
                 }
+
+
+               
                 
             }
         }

@@ -100,12 +100,14 @@
                                     <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" /> 
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    <select id="locto" class="form-control selectpicker" name="locto[]" data-dropup-auto="false" data-live-search="true" required>
+                                    <select id="locto" class="form-control locto selectpicker" name="locto[]" data-dropup-auto="false" data-live-search="true" required>
                                         <option></option>
                                         @foreach ( $datalocsupply as $dtloc  )
-                                            <option value="{{$dtloc->inp_loc}}">Site : {{$dtloc->inp_supply_site}} Loc : {{$dtloc->inp_loc}}</option>
+                                            <option value="{{$dtloc->inp_loc}}" data-siteto="{{$dtloc->inp_supply_site}}">Site : {{$dtloc->inp_supply_site}} Loc : {{$dtloc->inp_loc}}</option>
                                         @endforeach
                                     </select>
+                                    <input type="hidden" class="hidden_siteto" name="hidden_siteto[]" value="" />
+                                    <input type="hidden" class="hidden_locto" name="hidden_locto[]" value="" />
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
                                     <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0" value="{{$spd->wd_sp_required}}" step="0.01" required />
@@ -184,19 +186,19 @@
                 e.preventDefault();
         });
 
-        $('.locto').select2({
-            placeholder: 'Select Location To',
-            width: '100%',
-            theme: 'bootstrap4',
-            allowClear: true,
-            closeOnSelect: false,
-            templateSelection: function (data, container) {
-                // Memotong teks opsi menjadi 20 karakter
-                var text = data.text.slice(0, 20);
-                // Mengembalikan teks opsi yang sudah dipotong dan menambahkan tanda elipsis
-                return text + (data.text.length > 20 ? '...' : '');
-            }
-        });
+        // $('.locto').select2({
+        //     placeholder: 'Select Location To',
+        //     width: '100%',
+        //     theme: 'bootstrap4',
+        //     allowClear: true,
+        //     closeOnSelect: false,
+        //     templateSelection: function (data, container) {
+        //         // Memotong teks opsi menjadi 20 karakter
+        //         var text = data.text.slice(0, 20);
+        //         // Mengembalikan teks opsi yang sudah dipotong dan menambahkan tanda elipsis
+        //         return text + (data.text.length > 20 ? '...' : '');
+        //     }
+        // });
 
         $(document).on('click', '.loclotfrom', function() { 
             var row = $(this).closest("tr");
@@ -300,6 +302,18 @@
                 }
             })
         });
+
+        // $(document).on('change', 'select.locto', function(){
+
+        //     var row = $(this).closest("tr");
+        //     const locto = row.find(':selected').val();
+        //     const siteto = row.find(':selected').data('siteto');
+
+
+        //     row.find('.hidden_siteto').val(siteto);
+        //     row.find('.hidden_locto').val(locto);
+            
+        // });
 
         const confirmationCheckbox = document.getElementById("confirmation-checkbox");
         const transferButton = document.getElementById("btnconf");
