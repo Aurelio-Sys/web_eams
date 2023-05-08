@@ -26,18 +26,17 @@ class AppSrController extends Controller
         $data = DB::table('dept_mstr')
             ->orderBy('dept_code');
 
-        // if($s_code) {
-        //     $data = $data->where('spg_code','like','%'.$s_code.'%');
-        // }
-        // if($s_desc) {
-        //     $data = $data->where('spg_desc','like','%'.$s_desc.'%');
-        // }
-        // if($s_code1) {
-        //     $data = $data->where('spm_code','like','%'.$s_code1.'%');
-        // }
-        // if($s_desc1) {
-        //     $data = $data->where('spm_desc','like','%'.$s_desc1.'%');
-        // }
+        if($s_code) {
+            $data = $data->where('dept_code','like','%'.$s_code.'%');
+        }
+        if($s_desc) {
+            $data = $data->where(function ($query) use ($s_desc) {
+                // $query->DB::table('sr_approver_mstr')
+                //     ->select('sr_approver_dept')
+                //     ->whereSrApproverRole($s_desc)
+                //     ->get();
+            });
+        }
 
         $data = $data->paginate(10);
 
@@ -101,6 +100,7 @@ class AppSrController extends Controller
     {
         if ($req->ajax()) {
             $data = DB::table('sr_approver_mstr')
+                ->leftJoin('roles','role_code','sr_approver_role')
                 ->whereSr_approver_dept($req->code)
                 ->orderBy('sr_approver_order')
                 ->get();
@@ -108,8 +108,8 @@ class AppSrController extends Controller
             $output = '';
             foreach ($data as $data) {
                 $output .= '<tr>'.
-                            '<td><input type="text" class="form-control" name="te_seq[]" value="'.$data->sr_approver_order.'" readonly></td>'.
-                            '<td><input type="text" class="form-control" name="te_role[]" value="'.$data->sr_approver_role.'" readonly></td>'.
+                            '<td><input type="hidden" name="te_seq[]" value="'.$data->sr_approver_order.'">'.$data->sr_approver_order.'</td>'.
+                            '<td><input type="hidden" name="te_role[]" value="'.$data->sr_approver_role.'">'.$data->sr_approver_role.' -- '.$data->role_desc.'</td>'.
                             '<td><input type="checkbox" name="cek[]" class="cek" id="cek" value="0">
                             <input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>'.
                             '</tr>';
@@ -130,37 +130,57 @@ class AppSrController extends Controller
     public function update(Request $req)
     {
         // dd($req->all());
-        // cari tanggal create
-        $dcreate = DB::table('sr_approver_mstr')
+
+        if($req->te_seq) {
+            // cek apakah ada duplikat sequence
+            if(count(array_unique($req->te_seq))<count($req->te_seq))
+            {
+                toast('Duplicate Sequence!!!', 'error');
+                return back();
+            }
+
+            // cek apakah ada duplikat role
+            if(count(array_unique($req->te_role))<count($req->te_role))
+            {
+                toast('Duplicate Role!!!', 'error');
+                return back();
+            }
+
+            // cari tanggal create
+            $dcreate = DB::table('sr_approver_mstr')
             ->whereSr_approver_dept($req->te_code)
             ->value('created_at');
 
-        if(is_null($dcreate)) {
-            $dcreate = Carbon::now()->toDateTimeString();
-        }
-
-        // delete terlebih dahulu data nya
-        DB::table('sr_approver_mstr')
-            ->whereSr_approver_dept($req->te_code)
-            ->delete();
-        
-        $flg = 0;
-        foreach($req->te_seq as $te_seq){
-            if($req->tick[$flg] == 0) {
-                DB::table('sr_approver_mstr')
-                ->insert([
-                    'sr_approver_dept' => $req->te_code,
-                    'sr_approver_order' => $req->te_seq[$flg],
-                    'sr_approver_role' => $req->te_role[$flg],
-                    'created_at'    => $dcreate,
-                    'updated_at'    => Carbon::now()->toDateTimeString(),
-                ]);
+            if(is_null($dcreate)) {
+                $dcreate = Carbon::now()->toDateTimeString();
             }
-            $flg += 1;  
-        }
 
-        toast('Approval SR Updated.', 'success');
-        return back();
+            // delete terlebih dahulu data nya
+            DB::table('sr_approver_mstr')
+                ->whereSr_approver_dept($req->te_code)
+                ->delete();
+            
+            $flg = 0;
+            foreach($req->te_seq as $te_seq){
+                if($req->tick[$flg] == 0) {
+                    DB::table('sr_approver_mstr')
+                    ->insert([
+                        'sr_approver_dept' => $req->te_code,
+                        'sr_approver_order' => $req->te_seq[$flg],
+                        'sr_approver_role' => $req->te_role[$flg],
+                        'created_at'    => $dcreate,
+                        'updated_at'    => Carbon::now()->toDateTimeString(),
+                    ]);
+                }
+                $flg += 1;  
+            }
+
+            toast('Approval SR Updated.', 'success');
+            return back();
+        } else {
+            return back();
+        }
+        
     }
 
     /**
