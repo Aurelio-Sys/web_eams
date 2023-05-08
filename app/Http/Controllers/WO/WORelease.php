@@ -198,31 +198,25 @@ class WORelease extends Controller
                         } else {
 
                             // jika hasil WSA ke QAD tidak ditemukan
-                            if ($qadsupplydata[1] == "false") {
-                                // dd('stop there');
-                                DB::rollBack();
-                                toast('Something went wrong with the data', 'error')->persistent('Dismiss');
-                                return redirect()->back();
+                            if ($qadsupplydata[1] !== "false") {
+                                // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+                            
+                                $resultWSA = $qadsupplydata[0];
+                                
+                                $t_domain = (string) $resultWSA[0]->t_domain;
+                                $t_part = (string) $resultWSA[0]->t_part;
+                                $t_site = (string) $resultWSA[0]->t_site;
+                                $t_loc = (string) $resultWSA[0]->t_loc;
+                                $t_qtyoh = (string) $resultWSA[0]->t_qtyoh;
+
+                                array_push($data, [
+                                    't_domain' => $t_domain,
+                                    't_part' => $t_part,
+                                    't_site' => $t_site,
+                                    't_loc' => $t_loc,
+                                    't_qtyoh' => $t_qtyoh,
+                                ]);
                             }
-
-
-                            // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
-                            
-                            $resultWSA = $qadsupplydata[0];
-                            
-                            $t_domain = (string) $resultWSA[0]->t_domain;
-                            $t_part = (string) $resultWSA[0]->t_part;
-                            $t_site = (string) $resultWSA[0]->t_site;
-                            $t_loc = (string) $resultWSA[0]->t_loc;
-                            $t_qtyoh = (string) $resultWSA[0]->t_qtyoh;
-
-                            array_push($data, [
-                                't_domain' => $t_domain,
-                                't_part' => $t_part,
-                                't_site' => $t_site,
-                                't_loc' => $t_loc,
-                                't_qtyoh' => $t_qtyoh,
-                            ]);
                         }
 
                         //tampung didalam array
