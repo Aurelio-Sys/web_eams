@@ -96,7 +96,7 @@ class AsfnController extends Controller
      */
     public function store(Request $req)
     {
-        //cek parent sudah terdaftar atau belum
+        //cek data sudah terdaftar atau belum
         $cekData = DB::table('asfn_det')
                 ->where('asfn_asset','=',$req->t_asset)
                 ->where('asfn_fntype','=',$req->t_fntype)

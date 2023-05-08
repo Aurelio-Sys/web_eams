@@ -6,7 +6,7 @@
   @if($stepdesc == "")
     @php($stepdesc = $qdet->ins_stepdesc)
   @else
-    @php($stepdesc = $stepdesc . " , " . $qdet->ins_stepdesc)
+    @php($stepdesc = $stepdesc . " ; " . $qdet->ins_stepdesc)
   @endif
 @endforeach
 

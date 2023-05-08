@@ -26,12 +26,12 @@ class QCSpecController extends Controller
             ->orderby('qcs_code')
             ->groupBy('qcs_code');
 
-        /* if($s_code) {
-            $data = $data->where('egr_code','like','%'.$s_code.'%');
+        if($s_code) {
+            $data = $data->where('qcs_code','like','%'.$s_code.'%');
         }
         if($s_desc) {
-            $data = $data->where('egr_desc','like','%'.$s_desc.'%');
-        } */
+            $data = $data->where('qcs_desc','like','%'.$s_desc.'%');
+        }
 
         $data = $data->paginate(10);
 
@@ -53,6 +53,20 @@ class QCSpecController extends Controller
         
     }
 
+    //cek data sudah ada atau belum sebelum input
+    public function cekqcslist(Request $req)
+    {
+        $cek = DB::table('qcs_list')
+            ->whereQcsCode($req->code)
+            ->get();
+
+        if ($cek->count() == 0) {
+            return "tidak";
+        } else {
+            return "ada";
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -61,24 +75,47 @@ class QCSpecController extends Controller
      */
     public function store(Request $req)
     {
-        $flg = 0;
-        foreach($req->t_spec as $t_spec){
+        //cek apakah sudah ada data yang sama
+        $cekData = DB::table('qcs_list')
+            ->whereQcsCode($req->t_code)
+            ->count();
+        
+        if ($cekData > 0) {
+            toast('Data Already Registered!!', 'error');
+            return back();
+        }
+
+        // cek menyimpan dengan detail atau tidak
+        if($req->t_spec) {
+            $flg = 0;
+            foreach($req->t_spec as $t_spec){
+                DB::table('qcs_list')
+                    ->insert([
+                        'qcs_code' => $req->t_code,
+                        'qcs_desc' => $req->t_desc,
+                        'qcs_spec' => $req->t_spec[$flg],
+                        'qcs_tools' => $req->t_tools[$flg],
+                        'qcs_op' => $req->t_op[$flg],
+                        'qcs_val1' => $req->t_val1[$flg],
+                        'qcs_val2' => $req->t_val2[$flg],
+                        'qcs_um' => $req->t_um[$flg],
+                        'qcs_editedby'  => Session::get('username'),
+                        'created_at'    => Carbon::now()->toDateTimeString(),
+                        'updated_at'    => Carbon::now()->toDateTimeString(),
+                    ]);
+                $flg += 1;
+            }
+        } else {
             DB::table('qcs_list')
                 ->insert([
                     'qcs_code' => $req->t_code,
                     'qcs_desc' => $req->t_desc,
-                    'qcs_spec' => $req->t_spec[$flg],
-                    'qcs_tools' => $req->t_tools[$flg],
-                    'qcs_op' => $req->t_op[$flg],
-                    'qcs_val1' => $req->t_val1[$flg],
-                    'qcs_val2' => $req->t_val2[$flg],
-                    'qcs_um' => $req->t_um[$flg],
                     'qcs_editedby'  => Session::get('username'),
                     'created_at'    => Carbon::now()->toDateTimeString(),
                     'updated_at'    => Carbon::now()->toDateTimeString(),
                 ]);
-            $flg += 1;
         }
+        
 
         toast('QC Specification Created.', 'success');
         return back();
@@ -101,6 +138,10 @@ class QCSpecController extends Controller
         if ($req->ajax()) {
             $data = DB::table('qcs_list')
                 ->whereQcs_code($req->code)
+                ->where( function ($query) {
+                    $query->whereNotNull('qcs_spec')
+                    ->Where('qcs_spec','!=','');
+                }                )
                 ->orderBy('qcs_spec')
                 ->get();
 
@@ -144,37 +185,70 @@ class QCSpecController extends Controller
     public function update(Request $req)
     {
         // dd($req->all());
-        // cari tanggal create
-        $dcreate = DB::table('qcs_list')
+        if($req->te_spec) {
+            // cari tanggal create
+            $dcreate = DB::table('qcs_list')
             ->whereQcs_code($req->te_code)
             ->value('created_at');
 
-        // delete terlebih dahulu data nya
-        DB::table('qcs_list')
-            ->whereQcs_code($req->te_code)
-            ->delete();
-        
-        $flg = 0;
-        foreach($req->te_spec as $te_spec){
-            if($req->tick[$flg] == 0) {
+            // delete terlebih dahulu data nya
+            DB::table('qcs_list')
+                ->whereQcs_code($req->te_code)
+                ->delete();
+
+            //cek apakah ada detail nya atau tidak, untuk membedakan cara menyimpannya
+            $flg = 0;
+            $cekdetail = 0;
+            foreach($req->te_spec as $te_spec){
+                if($req->tick[$flg] == 0) {
+                    $cekdetail = 1;
+                }
+                $flg += 1;  
+            }
+
+            if($cekdetail == 1) {
+                $flg = 0;
+                foreach($req->te_spec as $te_spec){
+                    if($req->tick[$flg] == 0) {
+                        DB::table('qcs_list')
+                        ->insert([
+                            'qcs_code' => $req->te_code,
+                            'qcs_desc' => $req->te_desc,
+                            'qcs_spec' => $req->te_spec[$flg],
+                            'qcs_tools' => $req->te_tools[$flg],
+                            'qcs_op' => $req->te_op[$flg],
+                            'qcs_val1' => $req->te_val1[$flg],
+                            'qcs_val2' => $req->te_val2[$flg],
+                            'qcs_um' => $req->te_um[$flg],
+                            'qcs_editedby'  => Session::get('username'),
+                            'created_at'    => $dcreate,
+                            'updated_at'    => Carbon::now()->toDateTimeString(),
+                        ]);
+                    }
+                    $flg += 1;  
+                }
+            } else {
                 DB::table('qcs_list')
-                ->insert([
-                    'qcs_code' => $req->te_code,
+                    ->insert([
+                        'qcs_code' => $req->te_code,
+                        'qcs_desc' => $req->te_desc,
+                        'qcs_editedby'  => Session::get('username'),
+                        'created_at'    => $dcreate,
+                        'updated_at'    => Carbon::now()->toDateTimeString(),
+                    ]);
+            }
+            
+            
+        } else {
+            DB::table('qcs_list')
+                ->whereQcs_code($req->te_code)
+                ->update([
                     'qcs_desc' => $req->te_desc,
-                    'qcs_spec' => $req->te_spec[$flg],
-                    'qcs_tools' => $req->te_tools[$flg],
-                    'qcs_op' => $req->te_op[$flg],
-                    'qcs_val1' => $req->te_val1[$flg],
-                    'qcs_val2' => $req->te_val2[$flg],
-                    'qcs_um' => $req->te_um[$flg],
                     'qcs_editedby'  => Session::get('username'),
-                    'created_at'    => $dcreate,
                     'updated_at'    => Carbon::now()->toDateTimeString(),
                 ]);
-            }
-            $flg += 1;  
         }
-
+        
         toast('QC Specifation Updated.', 'success');
         return back();
     }

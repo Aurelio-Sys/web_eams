@@ -23,17 +23,16 @@ class RcmMstrController extends Controller
 
         $data = DB::table('rcm_mstr')
             ->leftJoin('asset_mstr','asset_code','rcm_asset')
-            ->leftJoin('qcs_list','qcs_code','rcm_qcs')
             ->orderby('rcm_asset')
-            ->orderby('qcs_code');
-/*
+            ->orderby('rcm_qcs');
+
         if($s_code) {
-            $data = $data->where('pmc_code','like','%'.$s_code.'%');
+            $data = $data->where('rcm_asset','like','%'.$s_code.'%');
         }
         if($s_desc) {
-            $data = $data->where('pmc_desc','like','%'.$s_desc.'%');
+            $data = $data->where('rcm_qcs','like','%'.$s_desc.'%');
         }
-*/
+
         $data = $data->paginate(10);
 
         $dataasset = Db::table('asset_mstr')
@@ -65,6 +64,21 @@ class RcmMstrController extends Controller
         //
     }
 
+    //cek data sudah ada atau belum sebelum input
+    public function cekrcmlist(Request $req)
+    {
+        $cek = DB::table('rcm_mstr')
+            ->whereRcmAsset($req->asset)
+            ->whereRcmQcs($req->qcs)
+            ->get();
+
+        if ($cek->count() == 0) {
+            return "tidak";
+        } else {
+            return "ada";
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -73,6 +87,17 @@ class RcmMstrController extends Controller
      */
     public function store(Request $req)
     {
+        //cek apakah sudah ada data yang sama
+        $cekData = DB::table('rcm_mstr')
+            ->whereRcmAsset($req->t_asset)
+            ->whereRcmQcs($req->t_qcs)
+            ->count();
+        
+        if ($cekData > 0) {
+            toast('Data Already Registered!!', 'error');
+            return back();
+        }
+        
         DB::table('rcm_mstr')
             ->insert([
                 'rcm_asset' => $req->t_asset,

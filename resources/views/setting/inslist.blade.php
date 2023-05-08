@@ -84,13 +84,13 @@
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label for="t_code" class="col-md-4 col-form-label text-md-right">Instruction List Code</label>
+                        <label for="t_code" class="col-md-4 col-form-label text-md-right">Instruction List Code <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-2">
                             <input type="text" class="form-control" id="t_code" name="t_code" autocomplete="off" maxlength="24" required>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_desc" class="col-md-4 col-form-label text-md-right">Instruction List Desc</label>
+                        <label for="t_desc" class="col-md-4 col-form-label text-md-right">Instruction List Desc <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-6">
                             <input type="text" class="form-control" id="t_desc" name="t_desc" autocomplete="off" maxlength="255" required>
                         </div>
@@ -102,6 +102,7 @@
                      </div>
                      <div class="col-md-2">
                         <select class="form-control" id="t_durum" name="t_durum">
+                           <option value="">-- Select data --</option>
                            @foreach($dataum as $du)
                            <option value="{{$du->um_code}}">{{$du->um_code}} -- {{$du->um_desc}}</option>
                            @endforeach
@@ -167,9 +168,9 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="te_desc" class="col-md-4 col-form-label text-md-right">Instruction List Desc</label>
+                    <label for="te_desc" class="col-md-4 col-form-label text-md-right">Instruction List Desc <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control" id="te_desc" name="te_desc">
+                        <input type="text" class="form-control" id="te_desc" name="te_desc" autocomplete="off" required>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -179,7 +180,6 @@
                     </div>
                     <div class="col-md-2">
                        <select class="form-control" id="te_durum" name="te_durum">
-                          <option value=""></option>
                           @foreach($dataum as $du)
                           <option value="{{$du->um_code}}">{{$du->um_code}} -- {{$du->um_desc}}</option>
                           @endforeach
@@ -298,9 +298,9 @@
           var newRow = $("<tr>");
           var cols = "";
 
-          cols += '<td width="15%"><input type="number" class="form-control" name="t_step[]" min="1"></td>'
-          cols += '<td width="40%"><input type="text" class="form-control" name="t_stepdesc[]" maxlenght="255" autocomplete="off"></td>'
-          cols += '<td width="30%"><input type="text" class="form-control" name="t_ref[]" maxlenght="255" autocomplete="off"></td>'
+          cols += '<td width="15%"><input type="number" class="form-control" name="t_step[]" min="1" autocomplete="off" required></td>'
+          cols += '<td width="40%"><input type="text" class="form-control" name="t_stepdesc[]" maxlength="255" autocomplete="off" required></td>'
+          cols += '<td width="30%"><input type="text" class="form-control" name="t_ref[]" maxlength="255" autocomplete="off"></td>'
           cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
           cols += '</tr>'
           newRow.append(cols);
@@ -320,9 +320,9 @@
           var newRow = $("<tr>");
           var cols = "";
 
-          cols += '<td width="15%"><input type="number" class="form-control" name="te_step[]" min="1"></td>'
-          cols += '<td width="40%"><input type="text" class="form-control" name="te_stepdesc[]" maxlenght="255" autocomplete="off"></td>'
-          cols += '<td width="30%"><input type="text" class="form-control" name="te_ref[]" maxlenght="255" autocomplete="off"></td>'
+          cols += '<td width="15%"><input type="number" class="form-control" name="te_step[]" min="1" autocomplete="off" required></td>'
+          cols += '<td width="40%"><input type="text" class="form-control" name="te_stepdesc[]" maxlength="255" autocomplete="off" required></td>'
+          cols += '<td width="30%"><input type="text" class="form-control" name="te_ref[]" maxlength="255" autocomplete="off"></td>'
           cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
           cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
           cols += '</tr>'
@@ -355,7 +355,31 @@
         $("#t_durum").select2({
          width : '100%',
          theme : 'bootstrap4',
-     });
+        });
+        $("#te_durum").select2({
+            width : '100%',
+            theme : 'bootstrap4',
+        });
+
+     //cek dobel code saat menu Create
+     $(document).on('change', '#t_code', function() {
+          
+        var code = $('#t_code').val();
+
+          $.ajax({
+            url:"/cekinslist?code="+code ,
+            success: function(data) {
+              
+              if (data == "ada") {
+                alert("Data Already Registered!");
+                document.getElementById('t_code').value = '';
+                document.getElementById('t_code').focus();
+              }
+              console.log(data);
+            
+            }
+          })
+      });
 
     </script>
 

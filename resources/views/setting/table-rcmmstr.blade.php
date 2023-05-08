@@ -1,10 +1,20 @@
 @forelse($data as $show)
 
+@php($qdet = $dataqcs->where('qcs_code','=',$show->rcm_qcs))
+@php($desc1 = "")
+@foreach($qdet as $qdet)
+  @if($desc1 == "")
+    @php($desc1 = $qdet->qcs_desc)
+  @else
+    @php($desc1 = $desc1 . " ; " . $qdet->qcs_desc)
+  @endif
+@endforeach
+
 <tr>
     <td>{{$show->rcm_asset}}</td>
     <td>{{$show->asset_desc}}</td>
     <td>{{$show->rcm_qcs}}</td>
-    <td>{{$show->qcs_desc}}</td>
+    <td>{{$desc1}}</td>
     <td>{{date('H:i', strtotime($show->rcm_start))}} - {{date('H:i', strtotime($show->rcm_end))}}</td>
     <td>{{$show->rcm_interval}} HR</td>
     <td>{{$show->rcm_eng}}</td>
@@ -18,7 +28,7 @@
         &ensp;
         <a href="javascript:void(0)" class="deletedata" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal" 
         data-asset="{{$show->rcm_asset}}" data-qcs="{{$show->rcm_qcs}}"
-        data-assetdesc="{{$show->asset_desc}}" data-qcsdesc="{{$show->qcs_desc}}" >
+        data-assetdesc="{{$show->asset_desc}}" data-qcsdesc="{{$desc1}}" >
         <i class="icon-table fa fa-trash fa-lg"></i></a>
     </td>
 </tr>

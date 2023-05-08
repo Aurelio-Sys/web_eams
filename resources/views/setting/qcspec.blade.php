@@ -17,7 +17,7 @@
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-<form action="/enggroup" method="GET">
+<form action="/qcspec" method="GET">
 <!-- Bagian Searching -->
 <div class="container-fluid mb-2">
     <div class="row">
@@ -83,13 +83,13 @@
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label for="t_code" class="col-md-4 col-form-label text-md-right">QC Spec Code</label>
+                        <label for="t_code" class="col-md-4 col-form-label text-md-right">QC Spec Code <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-2">
                             <input type="text" class="form-control" id="t_code" name="t_code" autocomplete="off" maxlength="24" required>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_code" class="col-md-4 col-form-label text-md-right">QC Spec Desc</label>
+                        <label for="t_code" class="col-md-4 col-form-label text-md-right">QC Spec Desc <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-6">
                             <input type="text" class="form-control" id="t_desc" name="t_desc" autocomplete="off" maxlength="255" required>
                         </div>
@@ -144,15 +144,15 @@
             {{ csrf_field() }}
             <div class="modal-body">
                 <div class="form-group row">
-                    <label for="te_code" class="col-md-4 col-form-label text-md-right">QC Spec Code</label>
+                    <label for="te_code" class="col-md-4 col-form-label text-md-right">QC Spec Code </label>
                     <div class="col-md-2">
                         <input type="text" class="form-control" id="te_code" name="te_code" readonly>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="te_desc" class="col-md-4 col-form-label text-md-right">QC Spec Desc</label>
+                    <label for="te_desc" class="col-md-4 col-form-label text-md-right">QC Spec Desc <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control" id="te_desc" name="te_desc" readonly>
+                        <input type="text" class="form-control" id="te_desc" name="te_desc" autocomplete="off" maxlength="255" required>
                     </div>
                 </div>
                 
@@ -258,12 +258,12 @@
           var newRow = $("<tr>");
           var cols = "";
 
-          cols += '<td><input type="text" class="form-control" name="t_spec[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="t_tools[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="t_op[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="t_val1[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="t_val2[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="t_um[]" autocomple="off"></td>';
+          cols += '<td><input type="text" class="form-control" name="t_spec[]" autocomplete="off" maxlength="255" required></td>';
+          cols += '<td><input type="text" class="form-control" name="t_tools[]" autocomplete="off" maxlength="255"></td>';
+          cols += '<td><input type="text" class="form-control" name="t_op[]" autocomplete="off" required></td>';
+          cols += '<td><input type="text" class="form-control" name="t_val1[]" autocomplete="off" required></td>';
+          cols += '<td><input type="text" class="form-control" name="t_val2[]" autocomplete="off"></td>';
+          cols += '<td><input type="text" class="form-control" name="t_um[]" autocomplete="off"></td>';
           cols += '<td data-title="Action"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
           cols += '</tr>'
           newRow.append(cols);
@@ -283,12 +283,12 @@
           var newRow = $("<tr>");
           var cols = "";
 
-          cols += '<td><input type="text" class="form-control" name="te_spec[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="te_tools[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="te_op[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="te_val1[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="te_val2[]" autocomple="off"></td>';
-          cols += '<td><input type="text" class="form-control" name="te_um[]" autocomple="off"></td>';
+          cols += '<td><input type="text" class="form-control" name="te_spec[]" autocomplete="off" maxlength="255" required></td>';
+          cols += '<td><input type="text" class="form-control" name="te_tools[]" autocomplete="off" maxlength="255"></td>';
+          cols += '<td><input type="text" class="form-control" name="te_op[]" autocomplete="off" maxlength="255" required></td>';
+          cols += '<td><input type="text" class="form-control" name="te_val1[]" autocomplete="off" maxlength="255" required></td>';
+          cols += '<td><input type="text" class="form-control" name="te_val2[]" autocomplete="off"></td>';
+          cols += '<td><input type="text" class="form-control" name="te_um[]" autocomplete="off"></td>';
           cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
 
           cols += '<td data-title="Action"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
@@ -318,6 +318,25 @@
             $('#s_code').val('');
             $('#s_desc').val('');
         });   
+
+        //cek dobel code saat menu Create
+        $(document).on('change', '#t_code', function() {
+            var code = $('#t_code').val();
+
+            $.ajax({
+                url:"/cekqcslist?code="+code ,
+                success: function(data) {
+                
+                if (data == "ada") {
+                    alert("Data Already Registered!");
+                    document.getElementById('t_code').value = '';
+                    document.getElementById('t_code').focus();
+                }
+                console.log(data);
+                
+                }
+            })
+        });
 
     </script>
 
