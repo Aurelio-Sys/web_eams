@@ -41,14 +41,16 @@ class WORelease extends Controller
             ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
             ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
             ->where('wo_status','=','firm')
-            ->where('wo_list_engineer', '=', $username.';')
-            ->orWhere('wo_list_engineer', 'LIKE', $username.';%')
-            ->orWhere('wo_list_engineer', 'LIKE', '%;'.$username.';%')
-            ->orWhere('wo_list_engineer', 'LIKE', '%;'.$username)
+            ->where(function ($query) use ($username){
+                $query->where('wo_list_engineer', '=', $username.';')
+                ->orWhere('wo_list_engineer', 'LIKE', $username.';%')
+                ->orWhere('wo_list_engineer', 'LIKE', '%;'.$username.';%')
+                ->orWhere('wo_list_engineer', 'LIKE', '%;'.$username)
+                ->orWhere('wo_list_engineer', '=', $username);
+            })
             ->orderby('wo_system_create', 'desc');
+            
         }
-
-        
 
         if ($request->s_nomorwo) {
             $data->where('wo_number', 'like', '%'.$request->s_nomorwo.'%');
@@ -63,7 +65,6 @@ class WORelease extends Controller
         }
 
         $data = $data->paginate(10);
-        // $data = $data->get();
 
         return view('workorder.worelease-browse', ['asset1' => $asset1, 'data' => $data]);
     }

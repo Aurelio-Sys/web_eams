@@ -18,11 +18,11 @@ class AppWoController extends Controller
      */
     public function index()
     {
-        $data = DB::table('wo_approver_mstr')
-            ->orderBy('wo_approver_order')
+        $datarole = DB::table('roles')
+            ->orderBy('role_code')
             ->get();
 
-        return view('setting.appwo', compact('data'));
+        return view('setting.appwo', compact('datarole'));
     }
 
     /**
