@@ -305,7 +305,7 @@
               <span id="alert3" style="color: red; font-weight: 200;"></span>
             </div>
           </div>
-          
+
           <input type="hidden" id="tmpfail1" name="tmpfail1" value="">
           <input type="hidden" id="impactcode1" name="impactcode1" value="">
           <input type="hidden" id="tmpfail2" name="tmpfail2" value="">
@@ -375,7 +375,7 @@
           <div class="form-group row col-md-12">
             <label for="v_assetdesc" class="col-md-5 col-form-label text-md-left">Asset Description</label>
             <div class="col-md-7">
-              <textarea id="v_assetdesc" type="text" class="form-control" name="v_assetdesc" autocomplete="off" rows="3" readonly ></textarea>
+              <textarea id="v_assetdesc" type="text" class="form-control" name="v_assetdesc" autocomplete="off" rows="3" readonly></textarea>
             </div>
           </div>
           <div class="form-group row col-md-12">
@@ -467,7 +467,7 @@
               <!-- <span id="alert3" style="color: red; font-weight: 200;"></span> -->
             </div>
           </div>
-          
+
           <input type="hidden" id="tmpfail1" name="tmpfail1" value="">
           <input type="hidden" id="v_impactcode1" name="v_impactcode1" value="">
           <input type="hidden" id="tmpfail2" name="tmpfail2" value="">
@@ -852,7 +852,7 @@
       var reqbyname = $(this).data('reqbyname');
       var wotype = $(this).data('wotypedescx');
       var impact = $(this).data('impactcode');
-      // alert(impact);
+      // alert(priority);
       var assetloc = $(this).data('assetloc');
       var hassetsite = $(this).data('hassetsite');
       var hassetloc = $(this).data('hassetloc');
@@ -1038,7 +1038,6 @@
       var reqbyname = $(this).data('reqbyname');
       var wotype = $(this).data('wotypedescx');
       var impact = $(this).data('impactcode');
-      // alert(impact);
       var assetloc = $(this).data('assetloc');
       var hassetsite = $(this).data('hassetsite');
       var hassetloc = $(this).data('hassetloc');
@@ -1047,25 +1046,9 @@
       var failcode = $(this).data('failcode');
       var id = $(this).data('id');
       var reason = $(this).data('reason');
-
-      var failcode1 = $(this).data('fc1');
-      var failcode2 = $(this).data('fc2');
-      var failcode3 = $(this).data('fc3');
-
+      // alert(priority);
       // var fail_list = fail1 + '\n' + fail2 + '\n' + fail3;
-
-      // array failure code
-      var newarrfc = [];
-      if (failcode1 != '') {
-        newarrfc.push(failcode1);
-      }
-      if (failcode2 != '') {
-        newarrfc.push(failcode2);
-      }
-      if (failcode3 != '') {
-        newarrfc.push(failcode3);
-      }
-
+      // console.log(wotype, impact);
 
       // array impact
       var newarrimp = [];
@@ -1074,6 +1057,17 @@
         for (var i = 0; i <= (desc.length - 1); i++) {
           if (desc[i] != '') {
             newarrimp.push(desc[i]);
+          }
+        }
+      }
+
+      // array failcode
+      var newarrfc = [];
+      var desc = failcode.split(",");
+      if (desc != null) {
+        for (var i = 0; i <= (desc.length - 1); i++) {
+          if (desc[i] != '') {
+            newarrfc.push(desc[i]);
           }
         }
       }
@@ -1100,13 +1094,13 @@
 
           // console.log(desc);
 
-          document.getElementById('impact').value = desc;
+          document.getElementById('v_impact').value = desc;
           // }
 
         },
         statusCode: {
           500: function() {
-            document.getElementById('impact').value = "";
+            document.getElementById('v_impact').value = "";
           }
         }
       })
@@ -1125,13 +1119,31 @@
 
           // console.log(desc);
 
-          document.getElementById('failcode').value = desc;
+          document.getElementById('v_failcode').value = desc;
           // }
 
         },
         statusCode: {
           500: function() {
-            document.getElementById('failcode').value = "";
+            document.getElementById('v_failcode').value = "";
+          }
+        }
+      })
+
+      $.ajax({
+        url: "/searchfailtype",
+        data: {
+          failtype: wotype,
+        },
+        success: function(data) {
+
+          document.getElementById('v_wotype').value = data;
+          // }
+
+        },
+        statusCode: {
+          500: function() {
+            document.getElementById('v_wotype').value = "";
           }
         }
       })
@@ -1152,6 +1164,7 @@
           // --
         }
       }
+      console.log(wotype);
       document.getElementById('v_wotype').value = wotype;
       document.getElementById('v_impactcode1').value = impactcode1;
       document.getElementById('v_assetloc').value = assetloc;
