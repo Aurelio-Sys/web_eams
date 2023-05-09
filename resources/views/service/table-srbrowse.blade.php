@@ -94,7 +94,7 @@
     <td style="text-align: center;">
     {{--  Cancel SR  --}}
     @php($session = session('username'))
-    @if($show->sr_req_by == $session && $show->sr_status != 'Canceled')
+    @if($show->sr_req_by == $session && $show->sr_status != 'Canceled' && $show->sr_status != 'Inprocess')
     <a href="javascript:void(0)" class="cancelsr" data-toggle="tooltip"  title="Cancel SR"  data-target="#cancelModal" 
     data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_asset}}" data-assetdesc="{{$show->asset_desc}}"
     data-reqby="{{$show->name}}" data-srnote="{{$show->sr_note}}" data-priority="{{$show->sr_priority}}" data-impact="{{$show->sr_impact}}"

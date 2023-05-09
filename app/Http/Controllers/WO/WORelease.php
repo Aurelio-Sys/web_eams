@@ -251,11 +251,19 @@ class WORelease extends Controller
 
                 //hasil pengelompokan/grouping by part dan site data QAD kemudian ditampung dalam $output
                 $output = [];
-                foreach ($result as $part => $sites) {
-                    foreach ($sites as $site => $qtyoh) {
-                        $output[] = $qtyoh;
+
+                if(empty($result)){
+                    DB::rollBack();
+                    toast('WO Release Failed, Invalid data Inventory Supply', 'error');
+                    return redirect()->back();
+                }else{
+                    foreach ($result as $part => $sites) {
+                        foreach ($sites as $site => $qtyoh) {
+                            $output[] = $qtyoh;
+                        }
                     }
                 }
+                
 
                 //mulai membandingkan data antara data di table inv_required (web) dengan qty tersedia dari data QAD ($output)
 

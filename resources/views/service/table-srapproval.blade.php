@@ -30,11 +30,11 @@
 
     <td style="text-align: center;">
     @if($show->getCurrentApprover != null)
-      @if($show->getCurrentApprover->srta_role_approval == $session || $session == 'ADMIN')
+      @if($show->getCurrentApprover->srta_role_approval == $session || $session == 'ADMIN' && $show->sr_status == 'Open' || $show->sr_status == 'Revise')
       <a href="javascript:void(0)" class="approval" type="button" data-toggle="tooltip" title="Service Request Approval" data-target="#approvalModal" data-id="{{$show->id}}" data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_asset}}" data-assetdesc="{{$show->asset_desc}}" data-assetloc="{{$show->asset_loc}}" data-srdate="{{$show->sr_req_date}}" data-reqby="{{$show->name}}" data-srnote="{{$show->sr_note}}" data-priority="{{$show->sr_priority}}" data-deptdesc="{{$show->dept_desc}}" data-deptcode="{{$show->dept_code}}" data-reqbyname="{{$show->sr_req_by}}" data-assetloc="{{$show->asset_loc}}" data-hassetloc="{{$show->asset_loc}}" data-hassetsite="{{$show->asset_site}}" data-astypedesc="{{$show->astype_desc}}" data-failcode="{{$show->sr_fail_code}}" data-wotypedescx="{{$show->wotyp_desc}}" data-impactcode="{{$show->sr_impact}}">
         <i class="icon-table fas fa-thumbs-up fa-lg"></i>
       </a>
-      @elseif($show->getCurrentApprover->srta_role_approval != $session || $session != 'ADMIN')
+      @elseif($show->getCurrentApprover->srta_role_approval != $session)
       <a href="javascript:void(0)" class="view" type="button" data-toggle="tooltip" title="Service Request View" data-target="#viewModal" data-id="{{$show->id}}" data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_asset}}" data-assetdesc="{{$show->asset_desc}}" data-assetloc="{{$show->asset_loc}}" data-srdate="{{$show->sr_req_date}}" data-reqby="{{$show->name}}" data-srnote="{{$show->sr_note}}" data-priority="{{$show->sr_priority}}" data-deptdesc="{{$show->dept_desc}}" data-deptcode="{{$show->dept_code}}" data-reqbyname="{{$show->sr_req_by}}" data-assetloc="{{$show->asset_loc}}" data-hassetloc="{{$show->asset_loc}}" data-hassetsite="{{$show->asset_site}}" data-astypedesc="{{$show->astype_desc}}" data-failcode="{{$show->sr_fail_code}}" data-reason="{{$show->srta_reason}}" data-wotypedescx="{{$show->wotyp_desc}}" data-impactcode="{{$show->sr_impact}}">
         <i class="icon-table far fa-eye fa-lg"></i>
       </a>
