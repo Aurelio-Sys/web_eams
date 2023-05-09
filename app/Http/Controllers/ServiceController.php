@@ -702,7 +702,8 @@ class ServiceController extends Controller
                 ->leftjoin('wo_mstr', 'wo_mstr.wo_number', 'service_req_mstr.wo_number')
                 ->leftjoin('sr_trans_approval_eng', 'sr_trans_approval_eng.srta_eng_mstr_id', 'service_req_mstr.id')
                 ->selectRaw('service_req_mstr.*,asset_mstr.*,asset_type.*,asset_loc.*,wotyp_mstr.*,users.*,dept_mstr.*,service_req_mstr.id,wo_mstr.wo_list_engineer')
-                ->where('sr_status', '=', 'Open')
+                ->where('sr_status', '<>', 'Canceled')
+                ->where('sr_status', '<>', 'Inprocess')
                 ->orderBy('sr_req_date', 'DESC')
                 ->orderBy('sr_number', 'DESC')
                 ->groupBy('sr_number',);
@@ -1900,8 +1901,9 @@ class ServiceController extends Controller
                     // ->join('users', 'users.name', 'service_req_mstr.req_by')                  --> B211014
                     ->join('users', 'users.username', 'service_req_mstr.sr_req_by')
                     ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
+                    ->leftjoin('wo_mstr', 'wo_mstr.wo_number', 'service_req_mstr.wo_number')
                     ->leftjoin('sr_trans_approval_eng', 'sr_trans_approval_eng.srta_eng_mstr_id', 'service_req_mstr.id')
-                    ->selectRaw('service_req_mstr.*,asset_mstr.*,asset_type.*,asset_loc.*,wotyp_mstr.*,users.*,dept_mstr.*,service_req_mstr.id')
+                    ->selectRaw('service_req_mstr.*,asset_mstr.*,asset_type.*,asset_loc.*,wotyp_mstr.*,users.*,dept_mstr.*,service_req_mstr.id,wo_mstr.wo_list_engineer')
                     ->where('sr_status', '<>', 'Canceled')
                     ->where('sr_status', '<>', 'Inprocess')
                     ->orderBy('sr_req_date', 'DESC')
@@ -1955,8 +1957,9 @@ class ServiceController extends Controller
                     // ->join('users', 'users.name', 'service_req_mstr.req_by')                  --> B211014
                     ->join('users', 'users.username', 'service_req_mstr.sr_req_by')
                     ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
+                    ->leftjoin('wo_mstr', 'wo_mstr.wo_number', 'service_req_mstr.wo_number')
                     ->leftjoin('sr_trans_approval_eng', 'sr_trans_approval_eng.srta_eng_mstr_id', 'service_req_mstr.id')
-                    ->selectRaw('service_req_mstr.*,asset_mstr.*,asset_type.*,asset_loc.*,wotyp_mstr.*,users.*,dept_mstr.*,service_req_mstr.id')
+                    ->selectRaw('service_req_mstr.*,asset_mstr.*,asset_type.*,asset_loc.*,wotyp_mstr.*,users.*,dept_mstr.*,service_req_mstr.id,wo_mstr.wo_list_engineer')
                     ->where('sr_status', '<>', 'Canceled')
                     ->where('sr_status', '<>', 'Inprocess')
                     ->orderBy('sr_req_date', 'DESC')
