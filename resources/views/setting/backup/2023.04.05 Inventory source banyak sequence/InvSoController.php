@@ -20,18 +20,14 @@ class InvSoController extends Controller
     {
         $s_code = $req->s_code;
         $s_desc = $req->s_desc;
-        $s_loc = $req->s_loc;
 
         $data = DB::table('inc_source')
             ->leftJoin('asset_site','assite_code','=','inc_asset_site')
             ->leftJoin('site_mstrs','site_code','=','inc_source_site')
-            ->leftJoin('loc_mstr', function($join) {
-                $join->on('loc_mstr.loc_code', '=', 'inc_source.inc_loc')
-                     ->on('loc_mstr.loc_site', '=', 'inc_source.inc_source_site');
-            })
-            ->select('inc_asset_site','inc_source_site','assite_desc','site_desc','inc_loc','loc_desc','inc_source.id as incid')
+            ->select('inc_asset_site','inc_source_site','assite_desc','site_desc')
             ->orderby('inc_asset_site')
-            ->orderBy('inc_source_site');
+            ->orderBy('inc_source_site')
+            ->groupBy('inc_asset_site','inc_source_site');
 
         if($s_code) {
             $data = $data->where(function($query) use ($s_code) {
@@ -43,12 +39,6 @@ class InvSoController extends Controller
             $data = $data->where(function($query) use ($s_desc) {
                 $query->where('inc_source_site','like','%'.$s_desc.'%')
                 ->orWhere('site_desc','like','%'.$s_desc.'%');
-            });
-        }
-        if($s_loc) {
-            $data = $data->where(function($query) use ($s_loc) {
-                $query->where('inc_loc','like','%'.$s_loc.'%')
-                ->orWhere('loc_desc','like','%'.$s_loc.'%');
             });
         }
 
@@ -107,22 +97,6 @@ class InvSoController extends Controller
         }
     }
 
-    //cek duplikat data sebelum input
-    public function cekinvso(Request $req)
-    {
-        $cek = DB::table('inc_source')
-            ->where('inc_asset_site','=',$req->input('code'))
-            ->Where('inc_source_site','=',$req->input('desc'))
-            ->Where('inc_loc','=',$req->input('loc'))
-            ->get();
-
-        if ($cek->count() == 0) {
-            return "tidak";
-        } else {
-            return "ada";
-        }
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -131,29 +105,35 @@ class InvSoController extends Controller
      */
     public function store(Request $req)
     {
-        // dd($req->all());
-        $cekData = DB::table('inc_source')
-            ->where('inc_asset_site','=',$req->t_code)
-            ->Where('inc_source_site','=',$req->t_desc)
-            ->Where('inc_loc','=',$req->t_loc);
-
-        if ($cekData->count() == 0) {
-            DB::table('inc_source')
-            ->insert([
-                'inc_asset_site' => $req->t_code,
-                'inc_source_site' => $req->t_desc,
-                'inc_loc' => $req->t_loc,
-                'inc_editedby'  => Session::get('username'),
-                'created_at'    => Carbon::now()->toDateTimeString(),
-                'updated_at'    => Carbon::now()->toDateTimeString(),
-            ]);
-
-            toast('Inventory Source Created.', 'success');
-            return back();
+        // cek menyimpan dengan detail atau tidak
+        if($req->t_step) {
+            $flg = 0;
+            foreach($req->t_step as $t_step){
+                DB::table('inc_source')
+                    ->insert([
+                        'inc_asset_site' => $req->t_code,
+                        'inc_source_site' => $req->t_desc,
+                        'inc_sequence' => $req->t_step[$flg],
+                        'inc_loc' => $req->a_code[$flg],
+                        'inc_editedby'  => Session::get('username'),
+                        'created_at'    => Carbon::now()->toDateTimeString(),
+                        'updated_at'    => Carbon::now()->toDateTimeString(),
+                    ]);
+                $flg += 1;
+            }
         } else {
-            toast('Inventory Source are Already Registered!!', 'error');
-            return back();
+            DB::table('inc_source')
+                ->insert([
+                    'inc_asset_site' => $req->t_code,
+                    'inc_source_site' => $req->t_desc,
+                    'inc_editedby'  => Session::get('username'),
+                    'created_at'    => Carbon::now()->toDateTimeString(),
+                    'updated_at'    => Carbon::now()->toDateTimeString(),
+                ]);
         }
+
+        toast('Inventory Source Created.', 'success');
+        return back();
     }
 
     /**
@@ -178,7 +158,7 @@ class InvSoController extends Controller
         //
     }
 
-    //menampilkan detail edit  -> ini dulu buat kalau bentuk inputan nya sequence
+    //menampilkan detail edit
     public function editdetinvso(Request $req)
     {
         if ($req->ajax()) {
@@ -206,31 +186,6 @@ class InvSoController extends Controller
         }
     }
 
-    //untuk search location by site di menu edit
-    public function locsp2(Request $req)
-    {
-        if ($req->ajax()) {
-            // dd($req->all());
-            $site = $req->get('site');
-            $loc = $req->get('loc');
-      
-            $data = DB::table('loc_mstr')
-                    ->where('loc_site','=',$site)
-                    ->get();
-
-            $output = '<option value="" >Select</option>';
-            foreach($data as $data){
-                if ($data->loc_code == $loc) {
-                    $output .= '<option value="'.$data->loc_code.'" selected>'.$data->loc_code.' -- '.$data->loc_desc.'</option>';
-                } else {
-                    $output .= '<option value="'.$data->loc_code.'" >'.$data->loc_code.' -- '.$data->loc_desc.'</option>';
-                }         
-            }
-        
-            return response($output);
-        }
-    }
-
     /**
      * Update the specified resource in storage.
      *
@@ -240,30 +195,65 @@ class InvSoController extends Controller
      */
     public function update(Request $req)
     {
-        // dd($req->all());
-        //cek data sudah terdaftar atau belum, dibandingkan dengan id record data
-        $cekData = DB::table('inc_source')
-            ->whereInc_asset_site($req->te_code)
-            ->whereInc_source_site($req->te_desc)
-            ->whereInc_loc($req->te_loc)
-            ->where('id','!=',$req->te_incid)
-            ->count();
+        // dd($req->all())
+        if($req->te_step) {
+            // cari tanggal create
+            $dcreate = DB::table('inc_source')
+                ->whereInc_asset_site($req->te_code)
+                ->whereInc_source_site($req->te_desc)
+                ->value('created_at');
 
-        if ($cekData > 0) {
-            toast('Data Already Registered!!', 'error');
+            // delete terlebih dahulu data nya
+            DB::table('inc_source')
+                ->whereInc_asset_site($req->te_code)
+                ->whereInc_source_site($req->te_desc)
+                ->delete();
+
+            //cek apakah ada detail nya atau tidak, untuk membedakan cara menyimpannya
+            $flg = 0;
+            $cekdetail = 0;
+            foreach($req->te_step as $te_step){
+                if($req->tick[$flg] == 0) {
+                    $cekdetail = 1;
+                }
+                $flg += 1;  
+            }
+
+            if($cekdetail == 1) {
+                $flg = 0;
+                foreach($req->te_step as $te_step){
+                    if($req->tick[$flg] == 0) {
+                        DB::table('inc_source')
+                        ->insert([
+                            'inc_asset_site' => $req->te_code,
+                            'inc_source_site' => $req->te_desc,
+                            'inc_sequence' => $req->te_step[$flg],
+                            'inc_loc' => $req->te_loc[$flg],
+                            'inc_editedby'  => Session::get('username'),
+                            'created_at'    => $dcreate,
+                            'updated_at'    => Carbon::now()->toDateTimeString(),
+                        ]);
+                    }
+                    $flg += 1;  
+                }
+            } else {
+                DB::table('inc_source')
+                ->insert([
+                    'inc_asset_site' => $req->te_code,
+                    'inc_source_site' => $req->te_desc,
+                    'inc_editedby'  => Session::get('username'),
+                    'created_at'    => $dcreate,
+                    'updated_at'    => Carbon::now()->toDateTimeString(),
+                ]);
+            }
+            
+            toast('Inventory Source Updated.', 'success');
+            return back();
+
+        } else {
+            toast('Detail Not Found!', 'error');
             return back();
         }
-
-        DB::table('inc_source')
-        ->where('id','=',$req->te_incid)
-        ->update([
-            'inc_loc' => $req->te_loc,
-            'inc_editedby'  => Session::get('username'),
-            'updated_at'    => Carbon::now()->toDateTimeString(),
-        ]);
-                    
-        toast('Inventory Source Updated.', 'success');
-        return back();
 
     }
 
@@ -276,7 +266,8 @@ class InvSoController extends Controller
     public function destroy(Request $req)
     {
         DB::table('inc_source')
-            ->whereId($req->d_incid)
+            ->whereInc_asset_site($req->d_code)
+            ->whereInc_source_site($req->d_desc)
             ->delete();
 
         toast('Inventory Source Successfully.', 'success');

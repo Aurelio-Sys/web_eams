@@ -61,8 +61,7 @@
         {{ csrf_field() }}
 
         <input type="hidden" name="hide_wonum" value="{{$data->wo_number}}" />
-        <input type="hidden" name="assetsite" value="{{$data->wo_site}}">
-
+        <input type="hidden" class="form-control" id="hiddenasset" name="assetcode" value="{{$data->asset_code}}" readonly>
         <div class="modal-header">
         </div>
 

@@ -25,13 +25,10 @@ class InvSuController extends Controller
         $data = DB::table('inp_supply')
             ->leftJoin('asset_site','assite_code','=','inp_asset_site')
             ->leftJoin('site_mstrs','site_code','=','inp_supply_site')
-            ->leftJoin('loc_mstr', function($join) {
-                $join->on('loc_mstr.loc_code', '=', 'inp_supply.inp_loc')
-                     ->on('loc_mstr.loc_site', '=', 'inp_supply.inp_supply_site');
-            })
-            ->select('inp_asset_site','inp_supply_site','assite_desc','site_desc','inp_loc','loc_desc','inp_supply.id as transid','inp_avail')
+            ->select('inp_asset_site','inp_supply_site','assite_desc','site_desc')
             ->orderby('inp_asset_site')
-            ->orderBy('inp_supply_site');
+            ->orderBy('inp_supply_site')
+            ->groupBy('inp_asset_site','inp_supply_site');
 
         
         if($s_code) {
@@ -44,12 +41,6 @@ class InvSuController extends Controller
             $data = $data->where(function($query) use ($s_desc) {
                 $query->where('inp_supply_site','like','%'.$s_desc.'%')
                 ->orWhere('site_desc','like','%'.$s_desc.'%');
-            });
-        }
-        if($s_loc) {
-            $data = $data->where(function($query) use ($s_loc) {
-                $query->where('inp_loc','like','%'.$s_loc.'%')
-                ->orWhere('loc_desc','like','%'.$s_loc.'%');
             });
         }
         
@@ -98,30 +89,36 @@ class InvSuController extends Controller
      */
     public function store(Request $req)
     {
-        // dd($req->all());
-        $cekData = DB::table('inp_supply')
-            ->where('inp_asset_site','=',$req->t_code)
-            ->Where('inp_supply_site','=',$req->t_desc)
-            ->Where('inp_loc','=',$req->t_loc);
-
-        if ($cekData->count() == 0) {
-            DB::table('inp_supply')
-                ->insert([
-                    'inp_asset_site' => $req->t_code,
-                    'inp_supply_site' => $req->t_desc,
-                    'inp_loc' => $req->t_loc,
-                    'inp_avail' => $req->t_avail,
-                    'inp_editedby'  => Session::get('username'),
-                    'created_at'    => Carbon::now()->toDateTimeString(),
-                    'updated_at'    => Carbon::now()->toDateTimeString(),
-                ]);
-
-            toast('Inventory Supply Created.', 'success');
-            return back();
+        // cek menyimpan dengan detail atau tidak
+        if($req->t_step) {
+            $flg = 0;
+            foreach($req->t_step as $t_step){
+                DB::table('inp_supply')
+                    ->insert([
+                        'inp_asset_site' => $req->t_code,
+                        'inp_supply_site' => $req->t_desc,
+                        'inp_sequence' => $req->t_step[$flg],
+                        'inp_loc' => $req->a_code[$flg],
+                        'inp_avail' => $req->a_avail[$flg],
+                        'inp_editedby'  => Session::get('username'),
+                        'created_at'    => Carbon::now()->toDateTimeString(),
+                        'updated_at'    => Carbon::now()->toDateTimeString(),
+                    ]);
+                $flg += 1;
+            }
         } else {
-            toast('Inventory Supply are Already Registered!!', 'error');
-            return back();
+            DB::table('inp_supply')
+                    ->insert([
+                        'inp_asset_site' => $req->t_code,
+                        'inp_supply_site' => $req->t_desc,
+                        'inp_editedby'  => Session::get('username'),
+                        'created_at'    => Carbon::now()->toDateTimeString(),
+                        'updated_at'    => Carbon::now()->toDateTimeString(),
+                    ]);
         }
+
+        toast('Inventory Supply Created.', 'success');
+        return back();
     }
 
     /**
@@ -194,30 +191,63 @@ class InvSuController extends Controller
     public function update(Request $req)
     {
         // dd($req->all());        
-        //cek data sudah terdaftar atau belum, dibandingkan dengan id record data
-        $cekData = DB::table('inp_supply')
-            ->whereInp_asset_site($req->te_code)
-            ->whereInp_supply_site($req->te_desc)
-            ->whereInp_loc($req->te_loc)
-            ->where('id','!=',$req->te_transid)
-            ->count();
+        if($req->te_step) {
+            // cari tanggal create
+            $dcreate = DB::table('inp_supply')
+                ->whereInp_asset_site($req->te_code)
+                ->whereInp_supply_site($req->te_desc)
+                ->value('created_at');
 
-        if ($cekData > 0) {
-            toast('Data Already Registered!!', 'error');
+            // delete terlebih dahulu data nya
+            DB::table('inp_supply')
+                ->whereInp_asset_site($req->te_code)
+                ->whereInp_supply_site($req->te_desc)
+                ->delete();
+                
+            //cek apakah ada detail nya atau tidak, untuk membedakan cara menyimpannya
+            $flg = 0;
+            $cekdetail = 0;
+            foreach($req->te_step as $te_step){
+                if($req->tick[$flg] == 0) {
+                    $cekdetail = 1;
+                }
+                $flg += 1;  
+            }
+
+            if($cekdetail == 1) {
+                $flg = 0;
+                foreach($req->te_step as $te_step){
+                    if($req->tick[$flg] == 0) {
+                        DB::table('inp_supply')
+                        ->insert([
+                            'inp_asset_site' => $req->te_code,
+                            'inp_supply_site' => $req->te_desc,
+                            'inp_sequence' => $req->te_step[$flg],
+                            'inp_loc' => $req->te_loc[$flg],
+                            'inp_avail' => $req->te_avail[$flg],
+                            'inp_editedby'  => Session::get('username'),
+                            'created_at'    => $dcreate,
+                            'updated_at'    => Carbon::now()->toDateTimeString(),
+                        ]);
+                    }
+                    $flg += 1;  
+            }
+                DB::table('inp_supply')
+                ->insert([
+                    'inp_asset_site' => $req->te_code,
+                    'inp_supply_site' => $req->te_desc,
+                    'inp_editedby'  => Session::get('username'),
+                    'created_at'    => $dcreate,
+                    'updated_at'    => Carbon::now()->toDateTimeString(),
+                ]);
+            }
+
+            toast('Inventory Supply Updated.', 'success');
+            return back();
+        } else {
+            toast('Detail Not Found!', 'error');
             return back();
         }
-
-        DB::table('inp_supply')
-        ->where('id','=',$req->te_transid)
-        ->update([
-            'inp_loc' => $req->te_loc,
-            'inp_avail' => $req->te_avail,
-            'inp_editedby'  => Session::get('username'),
-            'updated_at'    => Carbon::now()->toDateTimeString(),
-        ]);
-                    
-        toast('Inventory Supply Updated.', 'success');
-        return back();
     }
 
     /**
@@ -229,7 +259,8 @@ class InvSuController extends Controller
     public function destroy(Request $req)
     {
         DB::table('inp_supply')
-            ->where('id','=',$req->d_transid)
+            ->whereInp_asset_site($req->d_code)
+            ->whereInp_supply_site($req->d_desc)
             ->delete();
 
         toast('Inventory Supply Successfully.', 'success');

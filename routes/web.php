@@ -555,6 +555,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/wotransfer/detailwhs/{id}', [WHSConfirm::class, 'detailwhs'])->name('WhsconfDetail');
 	Route::post('/whssubmit', [WHSConfirm::class,'whssubmit'])->name('WhsconfSubmit');
 	Route::get('/searchlot', [WHSConfirm::class, 'searchlot'])->name('searchlot');
+	Route::get('/getwsastockfrom', [WHSConfirm::class, 'getwsastockfrom']);
 	
 	//Generate WO PM
 	Route::get('/viewwogenerator', [AllWOGenerate::class, 'viewWoGenerator'])->name('viewWOGen');
@@ -651,6 +652,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// Instruction List
 	Route::get('/inslist',[InsListController::class, 'index']);
+	Route::get('/cekinslist',[InsListController::class, 'cekinslist']);
 	Route::post('/createinslist',[InsListController::class, 'store']);
 	Route::get('/editdetins',[InsListController::class, 'editdetins']);
 	Route::post('/editinslist',[InsListController::class, 'update']);
@@ -659,6 +661,7 @@ Route::group(['middleware' => ['auth']], function() {
 	// Sparepart List
 	Route::get('/splist',[SplistController::class, 'index']);
 	Route::get('/getspmstr',[SplistController::class, 'getspmstr'])->name('getspmstr');
+	Route::get('/cekspglist',[SplistController::class, 'cekspglist']);
 	Route::post('/createsplist',[SplistController::class, 'store']);
 	Route::get('/editdetsplist',[SplistController::class, 'editdetsplist']);
 	Route::post('/editsplist',[SplistController::class, 'update']);
@@ -666,12 +669,14 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// PM Code Maintenance
 	Route::get('/pmcode',[PMCodeController::class, 'index']);
+	Route::get('/cekpmclist',[PMCodeController::class, 'cekpmclist']);
 	Route::post('/createpmcode',[PMCodeController::class, 'store']);
 	Route::post('/editpmcode',[PMCodeController::class, 'update']);
 	Route::post('/delpmcode', [PMCodeController::class, 'destroy']);
 
 	// QC Spec
 	Route::get('/qcspec',[QCSpecController::class, 'index']);
+	Route::get('/cekqcslist',[QCSpecController::class, 'cekqcslist']);
 	Route::post('/createqcs',[QCSpecController::class, 'store']);
 	Route::get('/editdetqcs', [QCSpecController::class, 'editdetqcs']);
 	Route::post('/editqcs',[QCSpecController::class, 'update']);
@@ -687,6 +692,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	//Routine Check Maintenance
 	Route::get('/rcmmstr',[RcmMstrController::class, 'index']);
+	Route::get('/cekrcmlist',[RcmMstrController::class, 'cekrcmlist']);
 	Route::post('/creatrcmmstr',[RcmMstrController::class, 'store']);
 	Route::post('/editrcmmstr',[RcmMstrController::class, 'update']);
 	Route::post('/delrcmmstr', [RcmMstrController::class, 'destroy']);
@@ -704,6 +710,9 @@ Route::group(['middleware' => ['auth']], function() {
 
 	//Inventory Source Maintenance
 	Route::get('/invso',[InvSoController::class, 'index']);
+	Route::get('/locsp',[InvSoController::class, 'locsp']);
+	Route::get('/locsp2',[InvSoController::class, 'locsp2']);
+	Route::get('/cekinvso',[InvSoController::class, 'cekinvso']);
 	Route::post('/createinvso',[InvSoController::class, 'store']);
 	Route::get('/editdetinvso',[InvSoController::class, 'editdetinvso']);
 	Route::post('/editinvso',[InvSoController::class, 'update']);

@@ -1251,14 +1251,24 @@ class wocontroller extends Controller
             $thisFailCode = "";
 
             if ($req->has('m_failurecode')) {
+                // dd('masuk failcode');
                 $thisFailCode = implode(';', array_map('strval', $req->m_failurecode));
+            } else {
+                $thisFailCode = null;
             }
+
+            // dd($thisFailCode);
 
             $thisImpact = "";
 
             if ($req->has('e_impact')) {
+                // dd('masuk impack');
                 $thisImpact = implode(';', array_map('strval', $req->e_impact));
+            } else{
+                $thisImpact = null;
             }
+
+            // dd($thisImpact);
 
             $thisListEng = "";
 
@@ -2063,6 +2073,8 @@ class wocontroller extends Controller
         $currwo = DB::table('wo_mstr')
             ->where('wo_mstr.wo_number', '=', $nowo)
             ->first();
+
+        // dd($currwo);
 
         if ($currwo->wo_failure_type !== null) {
             $getFailTypeDesc = DB::table('wotyp_mstr')

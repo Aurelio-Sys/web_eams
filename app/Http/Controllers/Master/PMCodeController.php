@@ -64,6 +64,20 @@ class PMCodeController extends Controller
         //
     }
 
+    //cek data sudah ada atau belum sebelum input
+    public function cekpmclist(Request $req)
+    {
+        $cek = DB::table('pmc_mstr')
+            ->wherePmcCode($req->code)
+            ->get();
+
+        if ($cek->count() == 0) {
+            return "tidak";
+        } else {
+            return "ada";
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -72,6 +86,18 @@ class PMCodeController extends Controller
      */
     public function store(Request $req)
     {
+        // dd($req->all());
+        
+        //cek apakah sudah ada data yang sama
+        $cekData = DB::table('pmc_mstr')
+            ->wherePmcCode($req->t_code)
+            ->count();
+        
+        if ($cekData > 0) {
+            toast('Data Already Registered!!', 'error');
+            return back();
+        }
+
         DB::table('pmc_mstr')
             ->insert([
                 'pmc_code' => $req->t_code,

@@ -87,19 +87,19 @@
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label for="t_code" class="col-md-3 col-form-label text-md-right">PM Code Code</label>
+                        <label for="t_code" class="col-md-3 col-form-label text-md-right">PM Code Code <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-4">
                             <input type="text" class="form-control" id="t_code" name="t_code" autocomplete="off" maxlength="24" required>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_desc" class="col-md-3 col-form-label text-md-right">PM Code Desc</label>
+                        <label for="t_desc" class="col-md-3 col-form-label text-md-right">PM Code Desc <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-8">
                             <input type="text" class="form-control" id="t_desc" name="t_desc" autocomplete="off" maxlength="255" required>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_type" class="col-md-3 col-form-label text-md-right">PM Type</label>
+                        <label for="t_type" class="col-md-3 col-form-label text-md-right">PM Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-4">
                         <select class="form-control " id="t_type" name="t_type" required>
                            <option value="">--</option>
@@ -172,13 +172,13 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="te_desc" class="col-md-3 col-form-label text-md-right">PM Code Desc</label>
+                    <label for="te_desc" class="col-md-3 col-form-label text-md-right">PM Code Desc <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" id="te_desc" name="te_desc">
+                        <input type="text" class="form-control" id="te_desc" name="te_desc" autocomplete="off" maxlength="255" required>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="te_type" class="col-md-3 col-form-label text-md-right">PM Type</label>
+                    <label for="te_type" class="col-md-3 col-form-label text-md-right">PM Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-4">
                     <select class="form-control " id="te_type" name="te_type" required>
                        <option value="">--</option>
@@ -368,6 +368,25 @@
             width : '100%',
             theme : 'bootstrap4',
          });
+
+        //cek dobel code saat menu Create
+        $(document).on('change', '#t_code', function() {
+        var code = $('#t_code').val();
+
+            $.ajax({
+            url:"/cekpmclist?code="+code ,
+            success: function(data) {
+                
+                if (data == "ada") {
+                alert("Data Already Registered!");
+                document.getElementById('t_code').value = '';
+                document.getElementById('t_code').focus();
+                }
+                console.log(data);
+            
+            }
+            })
+        });
 
     </script>
 

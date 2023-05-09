@@ -45,6 +45,7 @@
         <label class="col-md-2 col-form-label text-md-right">Due Date</label>
         <div class="col-md-2">
             <input type="text" class="form-control" id="duedate" name="duedate" value="{{$data->wo_due_date}}" readonly>
+            <input type="hidden" id="hidden_assetsite" value="{{$data->asset_site}}" />
         </div>
     </div>
 </div>
@@ -60,61 +61,62 @@
         {{ method_field('post') }}
         {{ csrf_field() }}
 
-        <input type="hidden" name="hide_wonum" value="{{$data->wo_nbr}}" />
+        <input type="hidden" name="hide_wonum" value="{{$data->wo_number}}" />
 
         <div class="modal-header">
         </div>
 
         <div class="modal-body">
             <div class="form-group row">
-                <div class="table-responsive col-lg-12 col-md-12 tag-container" style="overflow-x: auto; display:inline-block; white-space: nowrap; padding:0; text-align:center; position:relative">
+                <div class="table-responsive col-lg-12 col-md-12 tag-container" style="overflow-x: auto; display:inline-table; white-space: nowrap; padding:0; text-align:center; position:relative">
                     <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0" >
                         <thead>
                             <tr>
-                                <td style="text-align: center; width: 7% !important; font-weight: bold;">Spare Part Code</td>
-                                <td style="text-align: center; width: 7% !important; font-weight: bold;">Spare Part Desc</td>
-                                <td style="text-align: center; width: 20% !important; font-weight: bold;">Qty Required</td>
-                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Location & Lot From</td>
-                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Location To</td>
+                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Spare Part Code</td>
+                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Spare Part Desc</td>
+                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty Required</td>
+                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Location & Lot From</td>
+                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Location To</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty to Transfer</td>
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
+                            @forelse ( $sparepart_detail as $index => $spd )
                             <tr>
                                 <td style="vertical-align:middle;text-align:left;">
-                                    {{$datas->repair_code}}
-                                    <input type="hidden" name="repcode[]" value="{{$datas->repair_code}}" />
-                                    <input type="hidden" name="line[]" value="{{$datas->wo_dets_line}}" />
+                                    {{$spd->wd_sp_spcode}}
+                                    <input type="hidden" class="hidden_spcode" name="hidden_spcode[]" value="{{$spd->wd_sp_spcode}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
-                                    {{$datas->ins_code}}
-                                    <input type="hidden" name="inscode[]" value="{{$datas->ins_code}}" />
+                                    {{$spd->spm_desc}}
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
-                                    {{$datas->insd_part}} -- {{$descpart}}
-                                    <input type="hidden" class="partneed" name="partneed[]" value="{{$datas->insd_part}}" />
-                                    <input type="hidden" class="partdesc" name="partdesc[]" value="{{$descpart}}" />
+                                    {{$spd->wd_sp_required}}
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    {{ number_format($cqty ?? $dqtyreq,2) }}
-                                    <input type="hidden" name="qtyreq[]" value="{{$cqty}}" />
+                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" data-index="{{ $index }}"  required>
+                                    <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
+                                    <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
+                                    <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" /> 
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    {{ number_format($dqtyreq,2) }}
-                                    <input type="hidden" name="qtyrequest[]" value="{{ $dqtyreq }}" class="dqtyreq" />
-                                </td>
-                                
-                                <td style="vertical-align: middle; text-align: center;">
-                                    <select name="t_site[]" class="form-control t_site">
-                                        <option value="">-- Select --</option>
-                                    @foreach($sitedata as $rssite)
-                                        <option value="{{ $rssite->site_code }}" {{$dsite == $rssite->site_code ? "selected" : ""}}>{{ $rssite->site_code }}</option>
-                                    @endforeach
+                                    <select id="locto" class="form-control locto selectpicker" name="locto[]" data-dropup-auto="false" data-live-search="true" required>
+                                        <option></option>
+                                        @foreach ( $datalocsupply as $dtloc  )
+                                            <option value="{{$dtloc->inp_loc}}" data-siteto="{{$dtloc->inp_supply_site}}">Site : {{$dtloc->inp_supply_site}} Loc : {{$dtloc->inp_loc}}</option>
+                                        @endforeach
                                     </select>
+                                    <input type="hidden" class="hidden_siteto" name="hidden_siteto[]" value="" />
+                                    <input type="hidden" class="hidden_locto" name="hidden_locto[]" value="" />
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0" value="{{$spd->wd_sp_required}}" step="0.01" required />
                                 </td>
                             </tr>
                             @empty
-
+                            <tr>
+                                <td colspan="7" style="color: red; text-align: center;" >No Data Available</td>
+                            </tr>
                             @endforelse
                         </tbody>
                         <tfoot>
@@ -127,14 +129,44 @@
             </div>
         </div>
 
+        <div class="container" style="text-align: center;" >
+            <label>
+                <input type="checkbox" id="confirmation-checkbox" required/> Confirm Transfer
+            </label>
+        </div>
+
         <div class="modal-footer">
-            <a class="btn btn-danger" href="/whsconfirm" id="btnback">Back</a>
+            <a class="btn btn-danger" href="/wotransfer" id="btnback">Back</a>
             <button type="submit" class="btn btn-success bt-action" id="btnconf" disabled>Confirm</button>
             <button type="button" class="btn bt-action" id="btnloading" style="display:none">
                 <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
             </button>
         </div>
     </form>
+</div>
+
+<div id="myModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Select Location & Lot From</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="thistablemodal">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="loadingtable" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <h1 class="animate__animated animate__bounce" style="display:inline;width:100%;text-align:center;color:white;font-size:larger;text-align:center">Loading...</h1>
+  </div>
 </div>
 @endsection
 
@@ -148,156 +180,151 @@
 
     $(document).ready(function() {
 
-        const checkboxes = document.querySelectorAll('.qaddel');
-        const submitButton = document.querySelector('#btnconf');
+        // untuk membuat readonly
+        $(".readonly").on('keydown paste focus mousedown', function(e){
+        if(e.keyCode != 9) // ignore tab
+                e.preventDefault();
+        });
 
-        function checkButton() {
-            let checked = false;
-            for (const checkbox of checkboxes) {
-            if (checkbox.checked) {
-                checked = true;
-                break;
-            }
-            }
+        // $('.locto').select2({
+        //     placeholder: 'Select Location To',
+        //     width: '100%',
+        //     theme: 'bootstrap4',
+        //     allowClear: true,
+        //     closeOnSelect: false,
+        //     templateSelection: function (data, container) {
+        //         // Memotong teks opsi menjadi 20 karakter
+        //         var text = data.text.slice(0, 20);
+        //         // Mengembalikan teks opsi yang sudah dipotong dan menambahkan tanda elipsis
+        //         return text + (data.text.length > 20 ? '...' : '');
+        //     }
+        // });
 
-            if (checked) {
-            submitButton.removeAttribute('disabled');
-            } else {
-            submitButton.setAttribute('disabled', 'disabled');
-            }
-        }
-
-        for (const checkbox of checkboxes) {
-            checkbox.addEventListener('click', checkButton);
-        }
-
-        $("table.order-list").on("click", ".ibtnDel", function(event) {
+        $(document).on('click', '.loclotfrom', function() { 
             var row = $(this).closest("tr");
-            var line = row.find(".line").val();
-
-            if (line == counter - 1) {
-                // kalo line terakhir delete kurangin counter
-                counter -= 1
-            }
-
-            $(this).closest("tr").remove();
-        });
-
-        $(document).on('click', '.qaddel', function() {
-            var checkbox = $(this), // Selected or current checkbox
-            value = checkbox.val(); // Value of checkbox
-
-            if (checkbox.is(':checked')) {
-                $(this).closest("tr").find('.op').val('R');
-            } else {
-                $(this).closest("tr").find('.op').val('M');
-            }
-
-        });
-
-        /* 
-        $(document).on('change', '.t_site', function() {
-            var loc = $(this).closest('tr').find('.t_loc');
-            var site = $(this).val();
-        
-              $.ajax({
-                  url:"/locasset?t_site="+site,
-                  success:function(data){
-                      console.log(data);
-                      loc.html('').append(data);
-                      loc.val(data);
-                  }
-              }) 
-              
-        }); */
-
-        /* $(".t_loc").select2({
-            width : '100%',
-            theme : 'bootstrap4',
-            
-        }); */
-
-        $(".t_site").select2({
-            width : '100%',
-            theme : 'bootstrap4',
-            
-        });
-
-        $(".t_lot").select2({
-            width : '100%',
-            theme : 'bootstrap4',
-            
-        });
-
-        $(document).on('change', '.t_loc', function() {
-            var qtystok = $(this).closest('tr').find('.qtystok');
-            var site = $(this).closest('tr').find('.t_site').val();
-            var loc = $(this).closest('tr').find('.t_loc').val();
-            var part = $(this).closest('tr').find('.partneed').val();
-            var dqtyreq = $(this).closest('tr').find('.dqtyreq').val();
-            var qtyconf = $(this).closest('tr').find('.qtyconf');
-
-            
-        });
-
-        $(document).on('change', '.t_lot', function() {
-            var qtystok = $(this).closest('tr').find('.qtystok');
-            var site = $(this).closest('tr').find('.t_site').val();
-            var loc = $(this).closest('tr').find('.t_loc');
-            var part = $(this).closest('tr').find('.partneed').val();
-            var dqtyreq = $(this).closest('tr').find('.dqtyreq').val();
-            var qtyconf = $(this).closest('tr').find('.qtyconf');
-
-            var lot = $(this).closest('tr').find('.t_lot').val();
-            var explode = lot.split(",");
-            var vloc = explode[1];
-            var vlot = explode[0];
-
-            loc.val(vloc);
-            console.log(vloc, part, site, vlot);
-            
-            @foreach ($qstok as $qstok)
-            if(part == "{{$qstok->stok_part}}" && site == "{{$qstok->stok_site}}" && vloc == "{{$qstok->stok_loc}}" && vlot == "{{$qstok->stok_lot}}") {
-                
-                qtystok.html({{$qstok->stok_qty}});
-                
-                 /*if(dqtyreq > {{$qstok->stok_qty}}) {
-                    {{--  $(this).closest('tr').find('.qtyconf').val({{$qstok->stok_qty}});  --}}
-                    qtyconf.val({{$qstok->stok_qty}});
-                } else {
-                    qtyconf.val(dqtyreq);
-                } */
-            }
-            @endforeach
-        });
-
-        /* jika site diubah, select lot dan location diubah sesuai dengan wsa stok */
-        $(document).on('change', '.t_site', function() {
-            var site = $(this).closest('tr').find('.t_site').val();
-            var part = $(this).closest('tr').find('.partneed').val();
-            var lot = $(this).closest('tr').find('.t_lot');
+            const spcode = row.find(".hidden_spcode").val();
+            const getassetsite = document.getElementById('hidden_assetsite').value;
 
             $.ajax({
-                url:"/searchlot?t_site="+site+"&t_part="+part,
-                success:function(data){
-                    console.log(data);
-                    lot.html('').append(data);
-                    lot.val(data);
+                url: '/getwsastockfrom',
+                method: 'GET',
+                data: {
+                    assetsite : getassetsite,
+                    spcode : spcode,
+                },
+                success: function(vamp) {
+
+                    // select elemen HTML tempat menampilkan tabel
+                    const tableContainer = document.getElementById("thistablemodal");
+
+                    // hapus tabel lama (jika ada)
+                    if (tableContainer.hasChildNodes()) {
+                        tableContainer.removeChild(tableContainer.firstChild);
+                    }
+
+                    // membuat elemen tabel
+                    const table = document.createElement("table");
+                    table.setAttribute("class", "table table-bordered table-hover");
+
+                    // membuat header tabel
+                    const headerRow = document.createElement("tr");
+                    const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "Select"];
+                    headerColumns.forEach((columnTitle) => {
+                        const headerColumn = document.createElement("th");
+                        headerColumn.textContent = columnTitle;
+                        headerRow.appendChild(headerColumn);
+                    });
+                    table.appendChild(headerRow);
+
+                    // membuat baris record untuk setiap objek dalam dataLocLotFrom
+                    vamp.forEach((record) => {
+                        const rowtable = document.createElement("tr");
+                        const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh"];
+                        columns.forEach((columnKey) => {
+                            const column = document.createElement("td");
+                            column.textContent = record[columnKey];
+                            rowtable.appendChild(column);
+                        });
+                        const selectColumn = document.createElement("td");
+                        const selectButton = document.createElement("button");
+                        selectButton.setAttribute("class", "btn btn-primary");
+                        selectButton.textContent = "Select";
+                        selectButton.setAttribute("type", "button");
+                        selectButton.addEventListener("click", function() {
+                            // aksi yang ingin dilakukan saat tombol select diklik
+                            const site = record.t_site;
+                            const loc = record.t_loc;
+                            const lot = record.t_lot;
+                            const qtyoh = record.t_qtyoh;
+                            row.find(".hidden_sitefrom").val(site);
+                            row.find(".hidden_locfrom").val(loc);
+                            row.find(".hidden_lotfrom").val(lot);
+
+                            const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
+
+                            row.find(".loclotfrom").val(loclot);
+                            row.find(".loclotfrom").attr('title',loclot);
+                            
+
+                            const qtyohold = row.find(".qtytotransfer").val();
+
+                            //jika lebih besar yang diminta dari pada yg dimiliki di inventory supply maka qty to transfer maks = qty onhand di inv source
+                            if(qtyohold >= qtyoh){
+                                row.find(".qtytotransfer").attr("max", qtyoh).val(qtyoh);
+                            }
+
+                            $('#myModal').modal('hide');
+                        });
+                        selectColumn.appendChild(selectButton);
+                        rowtable.appendChild(selectColumn);
+                        table.appendChild(rowtable);
+                    });
+
+                    // menampilkan tabel pada elemen HTML yang dituju
+                    tableContainer.appendChild(table);
+
+                    // memanggil modal setelah tabel dimuat
+                    $('#myModal').modal('show');
+                    
+
+                },complete: function(vamp) {
+                    //  $('.modal-backdrop').modal('hide');
+                    // alert($('.modal-backdrop').hasClass('in'));
+
+                    setTimeout(function() {
+                    $('#loadingtable').modal('hide');
+                    }, 500);
+
+                    setTimeout(function() {
+                    $('#viewModal').modal('show');
+                    }, 1000);
+
                 }
-            }) 
+            })
         });
 
-        $(document).on('change','.qaddel',function(e){
-            var checkbox = $(this), // Selected or current checkbox
-            value = checkbox.val(); // Value of checkbox
-    
-            if (checkbox.is(':checked'))
-            {
-                $(this).closest("tr").find('.tick').val(1);
-            } else
-            {
-                $(this).closest("tr").find('.tick').val(0);
-            }        
+        // $(document).on('change', 'select.locto', function(){
+
+        //     var row = $(this).closest("tr");
+        //     const locto = row.find(':selected').val();
+        //     const siteto = row.find(':selected').data('siteto');
+
+
+        //     row.find('.hidden_siteto').val(siteto);
+        //     row.find('.hidden_locto').val(locto);
+            
+        // });
+
+        const confirmationCheckbox = document.getElementById("confirmation-checkbox");
+        const transferButton = document.getElementById("btnconf");
+
+        // checkbox confirm transfer
+        confirmationCheckbox.addEventListener("change", () => {
+            if (confirmationCheckbox.checked) {
+                transferButton.disabled = false;
+            } else {
+                transferButton.disabled = true;
+            }
         });
     });
 </script>

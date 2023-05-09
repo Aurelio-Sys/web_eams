@@ -17,7 +17,7 @@
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-<form action="/pmcode" method="GET">
+<form action="/rcmmstr" method="GET">
 <!-- Bagian Searching -->
 <div class="container-fluid mb-2">
     <div class="row">
@@ -30,12 +30,12 @@
         <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
         <div class="card card-body bg-black rounded-0">
             <div class="col-12 form-group row">
-                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Routine Check Code</label>
+                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Code</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_code" type="text" class="form-control" name="s_code"
                     value="" autofocus autocomplete="off"/>
                 </div>
-                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Routine Check Desc</label>
+                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">QC Spec Desc</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_desc" type="text" class="form-control" name="s_desc"
                     value="" autofocus autocomplete="off"/>
@@ -88,7 +88,7 @@
                 {{ csrf_field() }}
                 <div class="modal-body">
                   <div class="form-group row">
-                     <label for="t_asset" class="col-md-3 col-form-label text-md-right">Asset</label>
+                     <label for="t_asset" class="col-md-3 col-form-label text-md-right">Asset <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                      <div class="col-md-8">
                         <select class="form-control " id="t_asset" name="t_asset" required>
                         <option value="">-- Select Asset --</option>
@@ -99,7 +99,7 @@
                      </div>
                  </div>
                  <div class="form-group row">
-                     <label for="t_qcs" class="col-md-3 col-form-label text-md-right">QC Spesification</label>
+                     <label for="t_qcs" class="col-md-3 col-form-label text-md-right">QC Spesification <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                      <div class="col-md-8">
                         <select class="form-control " id="t_qcs" name="t_qcs" required>
                         <option value="">-- Select QC Specification --</option>
@@ -110,28 +110,28 @@
                      </div>
                   </div>
                   <div class="form-group row">
-                     <label for="t_start" class="col-md-3 col-form-label text-md-right">Start Time</label>
+                     <label for="t_start" class="col-md-3 col-form-label text-md-right">Start Time <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                      <div class="col-md-3">
                         <input type="time" class="form-control" id="t_start" name="t_start" min="00:00" max="23:00" required>
                      </div>
                   </div>
                   <div class="form-group row">
-                     <label for="t_end" class="col-md-3 col-form-label text-md-right">End Time</label>
+                     <label for="t_end" class="col-md-3 col-form-label text-md-right">End Time <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                      <div class="col-md-3">
                         <input type="time" class="form-control" id="t_end" name="t_end" min="00:00" max="23:00" required>
                      </div>
                   </div>
                   <div class="form-group row">
-                     <label for="t_interval" class="col-md-3 col-form-label text-md-right">Interval</label>
+                     <label for="t_interval" class="col-md-3 col-form-label text-md-right">Interval <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                      <div class="col-md-3">
                         <input type="number" class="form-control" id="t_interval" name="t_interval" min="1" max="24" required>
                      </div>
                      <label for="t_cal" class="col-md-2 col-form-label text-md-left">Hour</label>
                   </div>
                   <div class="form-group row">
-                     <label for="t_eng" class="col-md-3 col-form-label text-md-right">Engineer Group</label>
+                     <label for="t_eng" class="col-md-3 col-form-label text-md-right">Engineer Group <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                      <div class="col-md-8">
-                        <select class="form-control" id="t_eng" name="t_eng">
+                        <select class="form-control" id="t_eng" name="t_eng" required>
                         <option value="">-- Select Engineer Group --</option>
                         @foreach($dataegr as $de)
                         <option value="{{$de->egr_code}}">{{$de->egr_code}} -- {{$de->egr_desc}}</option>
@@ -252,7 +252,7 @@
                 <div class="modal-body">
                     <input type="hidden" id="d_asset" name="d_asset">
                     <input type="hidden" id="d_qcs" name="d_qcs">
-                    Delete Routine Check <b><span id="td_asset"></span> -- <span id="td_qcs"></span></b> ?
+                    Delete Routine Check <b><span id="td_asset"></span></b> with Spesification <b> <span id="td_qcs"></span></b> ?
                 </div>
 
                 <div class="modal-footer">
@@ -328,7 +328,25 @@
             theme : 'bootstrap4',
          });
 
-         
+         //cek dobel code saat menu Create
+        $(document).on('change', '#t_qcs', function() {
+            var qcs = $('#t_qcs').val();
+            var asset = $('#t_asset').val();
+    
+                $.ajax({
+                url:"/cekrcmlist?asset="+asset+"&qcs="+qcs ,
+                success: function(data) {
+                    
+                    if (data == "ada") {
+                    alert("Data Already Registered!");
+                    document.getElementById('t_qcs').value = '';
+                    document.getElementById('t_qcs').focus();
+                    }
+                    console.log(data);
+                
+                }
+                })
+            });
 
     </script>
 

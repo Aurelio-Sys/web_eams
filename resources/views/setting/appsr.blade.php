@@ -9,7 +9,7 @@
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-<form action="/splist" method="GET">
+<form action="/appsr" method="GET">
 <!-- Bagian Searching -->
 <div class="container-fluid mb-2">
     <div class="row">
@@ -22,24 +22,14 @@
         <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
         <div class="card card-body bg-black rounded-0">
             <div class="col-12 form-group row">
-                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Sp List Code</label>
+                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Departement Code</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_code" type="text" class="form-control" name="s_code"
                     value="" autofocus autocomplete="off"/>
                 </div>
-                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Sp List Desc</label>
+                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Role code</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_desc" type="text" class="form-control" name="s_desc"
-                    value="" autofocus autocomplete="off"/>
-                </div>
-                <label for="s_code1" class="col-md-2 col-sm-2 col-form-label text-md-right">Sparepart Code</label>
-                <div class="col-md-4 col-sm-4 mb-2 input-group">
-                    <input id="s_code1" type="text" class="form-control" name="s_code1"
-                    value="" autofocus autocomplete="off"/>
-                </div>
-                <label for="s_desc1" class="col-md-2 col-sm-2 col-form-label text-md-right">Sparepart Desc</label>
-                <div class="col-md-4 col-sm-4 mb-2 input-group">
-                    <input id="s_desc1" type="text" class="form-control" name="s_desc1"
                     value="" autofocus autocomplete="off"/>
                 </div>
                 <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
@@ -74,7 +64,7 @@
 
 <!-- Modal Edit -->
 <div class="modal fade" id="editModal" role="dialog" aria-hidden="true" data-backdrop="static">
-    <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
         <h5 class="modal-title text-center" id="exampleModalLabel">Approval SR</h5>
@@ -97,12 +87,12 @@
                         <input type="text" class="form-control" id="te_desc" name="te_desc" readonly>
                      </div>
                </div>
-               <div class="col-md-10 offset-md-1">
+               <div class="col-md-12">
                   <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
                       <thead>
-                       <th width="30%">Sequence</th>
-                       <th width="50%">Role</th>
-                       <th width="20%">Delete</th>
+                       <th width="15%">Sequence</th>
+                       <th width="70%">Role</th>
+                       <th width="15%">Delete</th>
                       </thead>
                       <tbody id='ed_detailapp'></tbody>
                       <tfoot>
