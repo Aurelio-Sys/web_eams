@@ -247,7 +247,7 @@
             </div>
           </div>
 
-          <input type="hidden" id="hide_editassetgroup"/>
+          <input type="hidden" id="hide_editassetgroup" />
           <div class="form-group row col-md-12">
             <label for="impact" class="col-md-5 col-form-label text-md-left">Impact</label>
             <div class="col-md-7">
@@ -402,6 +402,243 @@
             <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
             <button type="submit" class="btn btn-danger" name="action" value="reject" id="btnreject">Reject</button>
             <button type="submit" class="btn btn-success" name="action" value="approve" id="btnapprove">Approve</button>
+            <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
+              <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+            </button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal fade" id="viewApprModal" role="dialog" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center" id="exampleModalLabel">Service Request Approval Engineer View</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="form-horizontal" id="approvaleng" method="post" action="/approvaleng" enctype="multipart/form-data">
+        {{ csrf_field() }}
+        <div class="modal-body">
+          <input type="hidden" id="v_hiddenreq" name="v_hiddenreq" />
+          <input type="hidden" id="v_idsr" name="v_idsr" />
+          <div class="form-group row col-md-12">
+            <label for="v_srnumber" class="col-md-5 col-form-label text-md-left">Service Request Number</label>
+            <div class="col-md-7">
+              <input id="v_srnumber" type="text" class="form-control" name="v_srnumber" readonly />
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_srdate" class="col-md-5 col-form-label text-md-left">Service Request Date</label>
+            <div class="col-md-7">
+              <input id="v_srdate" type="text" class="form-control" name="v_srdate" readonly />
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_reqbyname" class="col-md-5 col-form-label text-md-left">Requested by</label>
+            <div class="col-md-7">
+              <input id="v_reqbyname" type="text" class="form-control" name="v_reqbyname" autocomplete="off" autofocus readonly />
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_dept" class="col-md-5 col-form-label text-md-left">Department</label>
+            <div class="col-md-7">
+              <input id="v_dept" type="text" class="form-control" name="v_dept" autocomplete="off" autofocus readonly />
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_assetcode" class="col-md-5 col-form-label text-md-left">Asset Code</label>
+            <div class="col-md-7">
+              <input id="v_assetcode" type="text" class="form-control" name="v_assetcode" autocomplete="off" autofocus readonly />
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_assetdesc" class="col-md-5 col-form-label text-md-left">Asset Description</label>
+            <div class="col-md-7">
+              <textarea id="v_assetdesc" type="text" class="form-control" name="v_assetdesc" rows="3" autocomplete="off" autofocus readonly></textarea>
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_assetloc" class="col-md-5 col-form-label text-md-left">Location</label>
+            <div class="col-md-7">
+              <input id="v_assetloc" type="text" class="form-control" name="v_assetloc" autocomplete="off" autofocus readonly />
+              <input id="v_h_assetsite" type="hidden" name="v_h_assetsite" />
+              <input id="v_h_assetloc" type="hidden" name="v_h_assetloc" />
+            </div>
+          </div>
+          <!-- <div class="form-group row">
+                        <label for="assettype" class="col-md-5 col-form-label text-md-left">Process / Technology</label>
+                        <div class="col-md-7">
+                            <input id="assettype" type="text" class="form-control" name="assettype" autocomplete="off" autofocus readonly/>
+                        </div>
+                    </div> -->
+          <div class="form-group row col-md-12">
+            <label for="v_srnote" class="col-md-5 col-form-label text-md-left">SR Note</label>
+            <div class="col-md-7">
+              <textarea id="v_srnote" type="text" class="form-control" name="v_srnote" maxlength="250" autocomplete="off" autofocus readonly></textarea>
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="file" class="col-md-5 col-form-label text-md-left">Current File</label>
+            <div class="col-md-7">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>File Name</th>
+                  </tr>
+                </thead>
+                <tbody id="v_listupload">
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_wotype" class="col-md-5 col-form-label text-md-left">Failure Type</label>
+            <div class="col-md-7">
+              <input id="v_wotype" type="text" class="form-control" name="v_wotype" autocomplete="off" readonly />
+              <!-- <select class="form-control wotype" name="v_wotype" id="v_wotype">
+                <option value="">Select Failure Type</option>
+                @foreach($wotypes as $wotype)
+                <option value="{{$wotype->wotyp_code}}">{{$wotype->wotyp_code}} - {{$wotype->wotyp_desc}}</option>
+                @endforeach
+              </select> -->
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_fclist" class="col-md-5 col-form-label text-md-left">Failure Code</label>
+            <div class="col-md-7">
+              <textarea id="v_fclist" type="text" class="form-control" name="v_fclist" rows="3" readonly></textarea>
+              <!-- <select class="form-control fclist" name="v_fclist[]" id="v_fclist" multiple="multiple">
+              </select> -->
+            </div>
+          </div>
+
+          <input type="hidden" id="hide_editassetgroup" />
+          <div class="form-group row col-md-12">
+            <label for="v_impact" class="col-md-5 col-form-label text-md-left">Impact</label>
+            <div class="col-md-7">
+              <textarea id="v_impact" type="text" class="form-control" name="v_impact" autocomplete="off" rows="3" readonly></textarea>
+              <!-- <select class="form-control v_impact" name="v_impact[]" id="v_impact" multiple="multiple">
+                <option value=""></option>
+                @foreach($impacts as $impact)
+                <option value="{{$impact->imp_code}}">{{$impact->imp_code}} - {{$impact->imp_desc}}</option>
+                @endforeach
+              </select> -->
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_priority" class="col-md-5 col-form-label text-md-left">Priority <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+            <div class="col-md-7">
+              <input id="v_priority" type="text" name="v_priority" class="form-control" readonly>
+              <!-- <select class="form-control v_priority" name="v_priority" id="v_priority">
+                <option value='low'>Low</option>
+                <option value='medium'>Medium</option>
+                <option value='high'>High</option>
+              </select> -->
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_enjiners" class="col-md-5 col-form-label text-md-left">Engineer (Max. 5) <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+            <div class="col-md-7">
+            <textarea id="v_enjiners" type="text" class="form-control" name="v_enjiners" autocomplete="off" rows="3" readonly></textarea>
+              <!-- <select id="v_enjiners" name="v_enjiners[]" class="form-control" multiple="multiple" required>
+                <option value="">--Select Engineer--</option>
+              </select> -->
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_scheduledate" class="col-md-5 col-form-label text-md-left">Start Date <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+            <div class="col-md-7">
+              {{-- <input id="scheduledate" type="date" class="form-control" name="scheduledate" placeholder="yy-mm-dd"  autocomplete="off" min="{{Carbon\Carbon::now()->format("Y-m-d")}}" autofocus required value="{{ old('scheduledate') }}"> --}}
+              <input id="v_scheduledate" type="date" class="form-control" name="v_scheduledate" placeholder="yy-mm-dd" autocomplete="off" autofocus required value="{{ old('scheduledate') }}" readonly>
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_duedate" class="col-md-5 col-form-label text-md-left">Due Date <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+            <div class="col-md-7">
+              {{-- <input id="duedate" type="date" class="form-control" name="duedate" placeholder="yy-mm-dd"  autocomplete="off" min="{{Carbon\Carbon::now()->format("Y-m-d")}}" autofocus required value="{{ old('duedate') }}"> --}}
+              <input id="v_duedate" type="date" class="form-control" name="v_duedate" placeholder="yy-mm-dd" autocomplete="off" autofocus required value="{{ old('duedate') }}" readonly>
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_wonote" class="col-md-5 col-form-label text-md-left">Note</label>
+            <div class="col-md-7">
+              <textarea id="v_wonote" type="text" class="form-control" name="v_wonote" maxlength="250" autocomplete="off" readonly></textarea>
+              <span id="alert3" style="color: red; font-weight: 200;"></span>
+            </div>
+          </div>
+          <!-- <div class="form-group row col-md-12">
+            <label for="v_mtcode" class="col-md-5 col-form-label text-md-left">Maintenance Code</label>
+            <div class="col-md-7">
+            <input id="v_mtcode" type="text" name="v_mtcode" class="form-control" readonly> -->
+              <!-- <select id="v_mtcode" name="v_mtcode" class="form-control">
+                <option></option>
+                @foreach($maintenancelist as $mt)
+                <option value="{{$mt->pmc_code}}">{{$mt->pmc_code}} -- {{$mt->pmc_desc}}</option>
+                @endforeach
+              </select> -->
+            <!-- </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_inslist" class="col-md-5 col-form-label text-md-left">Instruction List</label>
+            <div class="col-md-7">
+            <input id="v_inslist" type="text" name="v_inslist" class="form-control" readonly> -->
+              <!-- <select id="v_inslist" name="v_inslist" class="form-control">
+                <option></option>
+                @foreach ($inslist as $ins)
+                <option value="{{$ins->ins_code}}">{{$ins->ins_code}} -- {{$ins->ins_desc}}</option>
+                @endforeach
+              </select> -->
+            <!-- </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_splist" class="col-md-5 col-form-label text-md-left">Instruction Spare Part</label>
+            <div class="col-md-7">
+            <input id="v_splist" type="text" name="v_splist" class="form-control" readonly> -->
+              <!-- <select id="v_splist" name="v_splist" class="form-control">
+                <option></option>
+                @foreach ($splist as $sp)
+                <option value="{{$sp->spg_code}}">{{$sp->spg_code}} -- {{$sp->spg_desc}}</option>
+                @endforeach
+              </select> -->
+            <!-- </div>
+          </div> -->
+          <!-- <div class="form-group row col-md-12">
+            <label for="v_qclist" class="col-md-5 col-form-label text-md-left">Instruction QC</label>
+            <div class="col-md-7">
+            <input id="v_qclist" type="text" name="v_qclist" class="form-control" readonly> -->
+              <!-- <select id="v_qclist" name="v_qclist" class="form-control">
+                <option></option>
+                @foreach ($qclist as $qc)
+                <option value="{{$qc->qcs_code}}">{{$qc->qcs_code}} -- {{$qc->qcs_desc}}</option>
+                @endforeach
+              </select> -->
+            <!-- </div>
+          </div> -->
+          <!-- <div class="form-group row col-md-12">
+            <label for="v_rejectreason" class="col-md-5 col-form-label text-md-left">Reason</label>
+            <div class="col-md-7">
+              <textarea id="v_rejectreason" type="text" class="form-control" name="v_rejectreason" maxlength="250" autocomplete="off" autofocus readonly></textarea>
+              <span id="alert3" style="color: red; font-weight: 200;"></span>
+            </div>
+          </div> -->
+
+          <!-- <input type="hidden" id="tmpfail1" name="tmpfail1" value="">
+          <input type="hidden" id="impactcode1" name="impactcode1" value="">
+          <input type="hidden" id="tmpfail2" name="tmpfail2" value="">
+          <input type="hidden" id="tmpfail3" name="tmpfail3" value="">
+          <input type="hidden" id="hiddendeptcode" name="hiddendeptcode" /> -->
+          <!-- <input type="hidden" id="hiddenreqby" name="hiddenreqby" /> -->
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
+            <!-- <button type="submit" class="btn btn-danger" name="action" value="reject" id="btnreject">Reject</button>
+            <button type="submit" class="btn btn-success" name="action" value="approve" id="btnapprove">Approve</button> -->
             <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
               <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
             </button>
@@ -826,6 +1063,295 @@
       // document.getElementById('tmpfail1').value = failcode1;
       // document.getElementById('tmpfail2').value = failcode2;
       // document.getElementById('tmpfail3').value = failcode3;
+
+      $(document).on('change', '#wotype', function() {
+        // console.log('masuk');
+        var getAssetG = document.getElementById('hide_editassetgroup').value;
+        var getType = $(this).val();
+
+        // console.log(getAssetG);
+        // console.log(getType);
+        $.ajax({
+          url: "/srcheckfailurecodetype",
+          data: {
+            group: getAssetG,
+            type: getType,
+
+          },
+          success: function(data) {
+            var code = data.optionfailcode;
+
+            // console.log(code);
+
+            var selectthis = document.getElementById('fclist');
+
+            // Hapus semua option yang ada
+            selectthis.innerHTML = '';
+
+            // Tambahkan option baru
+            code.forEach(data => {
+              const option = document.createElement('option');
+              option.value = data.fn_code;
+              option.text = data.fn_code + ' - ' + data.fn_desc;
+              selectthis.add(option);
+            });
+          }
+        })
+      });
+
+      $('#c_mtcode').on('change', function() {
+        // alert('ganti');
+        let selectedValue = $(this).val();
+        $.ajax({
+          url: '/searchic',
+          method: 'GET',
+          data: {
+            pmc_code: selectedValue
+          },
+          success: function(response) {
+            // Manipulasi data di sini
+            // console.log(response);
+
+            //jika response tidak kosong
+            if (response && Object.keys(response).length) {
+              let inslistval = response.pmc_ins;
+              let spglistval = response.pmc_spg;
+              let qcslistval = response.pmc_qcs;
+
+              $('#c_inslist option[value !="' + inslistval + '"]').prop('disabled', true);
+              $('#c_inslist option[value="' + inslistval + '"]').prop('disabled', false);
+              $('#c_inslist').val(inslistval).trigger('change');
+
+              $('#c_splist option[value !="' + spglistval + '"]').prop('disabled', true);
+              $('#c_splist option[value="' + spglistval + '"]').prop('disabled', false);
+              $('#c_splist').val(spglistval).trigger('change');
+
+              $('#c_qclist option[value !="' + qcslistval + '"]').prop('disabled', true);
+              $('#c_qclist option[value="' + qcslistval + '"]').prop('disabled', false);
+              $('#c_qclist').val(qcslistval).trigger('change');
+
+              $("#c_inslist").select2({
+                width: '100%',
+                placeholder: "Select Instruction List Code",
+                allowClear: false,
+              });
+
+              $("#c_splist").select2({
+                width: '100%',
+                placeholder: "Select Spare Part List Code",
+                allowClear: false,
+              });
+
+              $("#c_qclist").select2({
+                width: '100%',
+                placeholder: "Select QC List Code",
+                allowClear: false,
+              });
+
+            } else { //jika response kosong karena user click tanda "x" di field select maintenance code
+              $('#c_inslist option[value!=""]').prop('disabled', false);
+              $('#c_inslist').val('').trigger('change');
+
+              $('#c_splist option').prop('disabled', false);
+              $('#c_splist').val('').trigger('change');
+
+              $('#c_qclist option').prop('disabled', false);
+              $('#c_qclist').val('').trigger('change');
+
+              $("#c_inslist").select2({
+                width: '100%',
+                placeholder: "Select Instruction List Code",
+                allowClear: true,
+              });
+
+              $("#c_splist").select2({
+                width: '100%',
+                placeholder: "Select Spare Part List Code",
+                allowClear: true,
+              });
+
+              $("#c_qclist").select2({
+                width: '100%',
+                placeholder: "Select QC List Code",
+                allowClear: true,
+              });
+            }
+
+          },
+          error: function(xhr, status, error) {
+            console.error(error);
+          }
+        });
+      });
+
+      $("#scheduledate").change(function() {
+        var start_date = new Date($("#scheduledate").val());
+        var due_date = new Date($("#duedate").val());
+        var today = new Date();
+        var min_date = start_date.toJSON().slice(0, 10);
+
+
+        $("#duedate").prop("min", min_date);
+
+
+        if (start_date > due_date) {
+          $("#duedate").val($("#scheduledate").val());
+        }
+      });
+
+      $('#wotype').select2({
+        theme: 'bootstrap4',
+        width: '100%',
+        // wotype,
+      });
+
+      $('#fclist').select2({
+        width: '100%',
+        placeholder: "Select Failure Code",
+        theme: "bootstrap4",
+        allowClear: true,
+        maximumSelectionLength: 5,
+        closeOnSelect: false,
+        allowClear: true,
+        multiple: true,
+      });
+
+      $('#impact').select2({
+        width: '100%',
+        placeholder: "Select Value",
+        theme: "bootstrap4",
+        allowClear: true,
+        closeOnSelect: false,
+        allowClear: true,
+        multiple: true,
+      });
+
+    });
+
+    $(document).on('click', '.viewapprovaleng', function() {
+      $('#viewApprModal').modal('show');
+
+      var srnumber = $(this).data('srnumber');
+      var srdate = $(this).data('srdate');
+      var assetcode = $(this).data('assetcode');
+      var assetdesc = $(this).data('assetdesc');
+      var srnote = $(this).data('srnote');
+      var reqby = $(this).data('reqby');
+      var priority = $(this).data('priority');
+      var dept = $(this).data('deptdesc');
+      var deptcode = $(this).data('deptcode');
+      var reqbyname = $(this).data('reqbyname');
+      var wotype = $(this).data('wotypedescx');
+      var impact = $(this).data('impactcode');
+      var failcode = $(this).data('failcode');
+      // alert(impact);
+      var assetloc = $(this).data('assetloc');
+      var hassetsite = $(this).data('hassetsite');
+      var hassetloc = $(this).data('hassetloc');
+      var astype = $(this).data('astypedesc');
+      var impactcode1 = $(this).data('impactcode');
+      var id = $(this).data('idsr');
+
+      $.ajax({
+        url: "/searchimpactdesc",
+        data: {
+          impact: impact,
+        },
+        success: function(data) {
+          // console.log(data);
+
+          var imp_desc = data;
+
+          var desc = imp_desc.replaceAll(",", "\n");
+
+          // console.log(desc);
+
+          document.getElementById('v_impact').value = desc;
+          // }
+
+        },
+        statusCode: {
+          500: function() {
+            document.getElementById('v_impact').value = "";
+          }
+        }
+      })
+
+      $.ajax({
+        url: "/searchfailcode",
+        data: {
+          failcode: failcode,
+        },
+        success: function(data) {
+          console.log(data);
+
+          var fail_desc = data;
+
+          var desc = fail_desc.replaceAll(",", "\n");
+
+          // console.log(desc);
+
+          document.getElementById('v_fclist').value = desc;
+          // }
+
+        },
+        statusCode: {
+          500: function() {
+            document.getElementById('v_fclist').value = "";
+          }
+        }
+      })
+
+      $.ajax({
+        url: "/searchfailtype",
+        data: {
+          failtype: wotype,
+        },
+        success: function(data) {
+
+          document.getElementById('v_wotype').value = data;
+          // }
+
+        },
+        statusCode: {
+          500: function() {
+            document.getElementById('v_wotype').value = "";
+          }
+        }
+      })
+
+      $.ajax({
+        url: "/listupload/" + srnumber,
+        success: function(data) {
+          // console.log(data);
+          $('#v_listupload').html('').append(data);
+        }
+      })
+
+      // alert(impactcode1);
+      document.getElementById('v_idsr').value = id;
+      document.getElementById('v_srnumber').value = srnumber;
+      document.getElementById('v_srdate').value = srdate;
+      document.getElementById('v_assetcode').value = assetcode;
+      document.getElementById('v_assetdesc').value = assetdesc;
+      // console.log(document.getElementById('idsr').value);
+      {
+        {
+          // --document.getElementById('assettype').value = astype;
+          // --
+        }
+      }
+      document.getElementById('v_wotype').value = wotype;
+      document.getElementById('impactcode1').value = impactcode1;
+      document.getElementById('v_assetloc').value = assetloc;
+      document.getElementById('v_h_assetsite').value = hassetsite;
+      document.getElementById('v_h_assetloc').value = hassetloc;
+      document.getElementById('v_srnote').value = srnote;
+      document.getElementById('v_hiddenreq').value = reqby;
+      document.getElementById('v_priority').value = priority;
+      document.getElementById('v_dept').value = dept;
+      // document.getElementById('v_hiddendeptcode').value = deptcode;
+      document.getElementById('v_reqbyname').value = reqbyname;
 
       $(document).on('change', '#wotype', function() {
         // console.log('masuk');

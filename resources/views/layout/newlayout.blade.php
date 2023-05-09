@@ -298,11 +298,19 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
-                @if(str_contains( Session::get('menu_access'), 'WO08'))
+                {{-- @if(str_contains( Session::get('menu_access'), 'WO08'))
                 <li class="nav-item">
                   <a href="/woqc" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>WO QC Approval</p>
+                  </a>
+                </li>
+                @endif --}}
+                @if(str_contains( Session::get('menu_access'), 'WO08'))
+                <li class="nav-item">
+                  <a href="/woapprovalbrowse" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>WO Approval</p>
                   </a>
                 </li>
                 @endif

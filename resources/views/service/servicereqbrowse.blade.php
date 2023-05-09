@@ -1073,41 +1073,6 @@
         document.getElementById('approver').value = approver;
         // document.getElementById('reason').value = reason;
 
-        // if(eng1 != ''){
-        //   document.getElementById('engineer1').value = eng1;
-        // }else{
-        //   document.getElementById('engineer1').value = '-';
-        // }
-
-        // if(eng2 != ''){
-        //   // alert('inul');
-        //   document.getElementById('engineer2').value = eng2;
-        // }else{
-        //   // alert('kosong')
-        //   document.getElementById('engineer2').value = '-';
-        // }
-
-        // if(eng3 != ''){
-        //   document.getElementById('engineer3').value = eng3;
-        // }else{
-        //   document.getElementById('engineer3').value = '-';
-        // }
-
-
-        // if(eng4 != ''){
-        //   document.getElementById('engineer4').value = eng4;
-        // }else{
-        //   document.getElementById('engineer4').value = '-';
-        // }
-
-        // if(eng5 != ''){
-        //   document.getElementById('engineer5').value = eng5;
-        // }else{
-        //   document.getElementById('engineer5').value = '-';
-        // }
-
-        // alert(assetdesc);
-
         $.ajax({
           url: "/searchimpactdesc",
           data: {
