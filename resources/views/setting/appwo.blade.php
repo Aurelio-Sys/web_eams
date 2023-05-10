@@ -16,9 +16,9 @@
 <div class="table-responsive col-12">
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
       <thead>
-         <th width="30%">Sequence</th>
-         <th width="50%">Role</th>
-         <th width="20%">Delete</th>
+         <th width="15%">Sequence</th>
+         <th width="70%">Role</th>
+         <th width="15%">Delete</th>
       </thead>
       <tbody id='ed_detailapp'></tbody>
       <tfoot>
@@ -67,7 +67,7 @@
           var newRow = $("<tr>");
           var cols = "";
 
-          cols += '<td width="30%"><input type="number" class="form-control" name="te_seq[]" min="0" required></td>';
+          cols += '<td width="30%"><input type="hidden" name="te_id[]"><input type="number" class="form-control" name="te_seq[]" min="0" required></td>';
           cols += '<td width="50%">';
           cols += '<select id="te_role" class="form-control selectpicker te_role" name="te_role[]" data-live-search="true" required>';
           cols += '<option value = ""> -- Select Data -- </option>'  

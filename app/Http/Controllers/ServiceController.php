@@ -1211,15 +1211,30 @@ class ServiceController extends Controller
 
                 if (is_null($nextapprover)) {
                     //jika tidak ada approver selanjutnya
-                    DB::table('sr_trans_approval')
-                        ->where('srta_mstr_id', '=', $idsr)
-                        ->where('srta_role_approval', '=', $user->role_user)
-                        ->update([
-                            'srta_status'      => 'Approved',
-                            'srta_reason'      => $reason,
-                            'srta_approved_by' => $user->id,
-                            'updated_at' => Carbon::now()->toDateTimeString(),
-                        ]);
+
+                    //cek apakah approver admin atau bukan
+                    if (Session::get('role') <> 'ADMIN') {
+                        //jika user bukan admin
+                        DB::table('sr_trans_approval')
+                            ->where('srta_mstr_id', '=', $idsr)
+                            ->where('srta_role_approval', '=', $user->role_user)
+                            ->update([
+                                'srta_status'      => 'Approved',
+                                'srta_reason'      => $reason,
+                                'srta_approved_by' => $user->id,
+                                'updated_at' => Carbon::now()->toDateTimeString(),
+                            ]);
+                    } else {
+                        //jika user adalah admin
+                        DB::table('sr_trans_approval')
+                            ->where('srta_mstr_id', '=', $idsr)
+                            ->update([
+                                'srta_status'      => 'Approved',
+                                'srta_reason'      => $reason,
+                                'srta_approved_by' => $user->id,
+                                'updated_at' => Carbon::now()->toDateTimeString(),
+                            ]);
+                    }
 
                     DB::table('sr_trans_approval_hist')
                         ->insert([
@@ -1298,6 +1313,7 @@ class ServiceController extends Controller
                     //cek apakah approver admin atau bukan
                     if (Session::get('role') <> 'ADMIN') {
                         //jika user bukan admin
+                        // dd(2);
                         DB::table('sr_trans_approval')
                             ->where('srta_mstr_id', '=', $idsr)
                             ->where('srta_role_approval', '=', $user->role_user)
@@ -1309,6 +1325,7 @@ class ServiceController extends Controller
                             ]);
                     } else {
                         //jika user adalah admin
+                        // dd(1);
                         DB::table('sr_trans_approval')
                             ->where('srta_mstr_id', '=', $idsr)
                             ->update([
@@ -1318,7 +1335,6 @@ class ServiceController extends Controller
                                 'updated_at' => Carbon::now()->toDateTimeString(),
                             ]);
                     }
-
 
                     DB::table('sr_trans_approval_hist')
                         ->insert([
