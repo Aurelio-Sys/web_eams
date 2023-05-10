@@ -11,75 +11,26 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
-use PhpParser\Node\Stmt\Break_;
-use PhpParser\Node\Stmt\Echo_;
 
 class AllWOGenerate extends Controller
 {
     //
     public function viewWoGenerator()
     {
-        $dataasset = DB::table('pma_asset')
-            ->leftJoin('asset_mstr','asset_code','pma_asset')
-            ->whereAssetActive('Yes')
-            ->orderBy('pma_asset')
-            ->groupBy('pma_asset')
-            ->get();
-
-        return view('workorder.wogenerator-view', compact('dataasset'));
+        return view('workorder.wogenerator-view');
     }
 
 
     public function getAll(Request $req)
     {
+
         // dd($req->all());
         $todaydate = Carbon::now()->toDateTime()->format("Y-m-d");
 
         $fromdate = date_create($todaydate);
         $todate = date_create($req->todate);
         
-        // Mencari data PM dari data PM Asset Maintenance
-        $datapm = DB::table('pma_asset')
-            ->orderBy('pma_asset')
-            ->orderBy('pma_mea');
 
-        if($req->asset) {
-            $datapm = $datapm->where('pma_asset','=',$req->asset);
-        }
-
-        $datapm = $datapm->get();
-
-        foreach($datapm as $dp) {
-            // Dibedakan perhitungannya berdasakan measure nya
-            switch ($dp->pma_mea) {
-                case "B" :  // Untuk Mea Both
-                    break;
-                case "C" : // Untuk Mea Calendar
-                    // Membetuk WO sesuai dengan nilai hari yang dimasukkan
-                    $nexttgl = date_create($todaydate);
-                    $tempwo = [];
-                    while($nexttgl < $todate) {
-                        $nexttgl = date_add($fromdate, date_interval_create_from_date_string(''.$dp->pma_cal.' days'));
-                        array_push($tempwo,$nexttgl->format('Y-m-d'));
-                    }
-                    $viewwo = collect($tempwo);
-                    dd($viewwo);
-                    break;
-                case "M" : // Untuk Mea Meter
-                    break;
-                default :
-                    break;
-            }
-        }
-
-
-
-
-
-
-        return back();
-
-        // batas proses yang lama, sebelum inventory supply . nanti yang dibawah ini dihapus aja.
         // $todate = number_format($req->day / 30, 1);
 
         // perhitungan : tanggal seharusnya - tolerance

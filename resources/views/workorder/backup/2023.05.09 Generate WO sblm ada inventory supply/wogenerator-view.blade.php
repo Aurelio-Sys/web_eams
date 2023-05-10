@@ -4,7 +4,6 @@
     <div class="row">
         <div class="col-sm-9">
             <h1 class="m-0 text-dark">Generate Work Order</h1>
-            <br>
         </div><!-- /.col -->
     </div><!-- /.row -->
 </div><!-- /.container-fluid -->
@@ -15,31 +14,20 @@
     {{ method_field('post') }}
     {{ csrf_field() }}
     <div class="form-group row">
-        <label for="t_code" class="col-md-2 col-form-label text-md-left">Asset</label>
-        <div class="col-md-8">
-            <select class="form-control" name="asset" id="asset">
-                <option value="">-- Select Data --</option>
-                @foreach ($dataasset as $da)
-                    <option value={{$da->asset_code}}>{{$da->asset_code}} -- {{$da->asset_desc}}</option>
-                @endforeach
-            </select>
-        </div>
-    </div>
-    <div class="form-group row">
         <div class="col-md-2">
             <label class="col-form-label text-md-right">Date From</label>
         </div>
         <div class="col-md-3">
             <input type="text" class="form-control" value="{{\Carbon\Carbon::now()->toDateString()}}" readonly />
         </div>
-        <div class="col-md-1">
-            <label class="col-form-label text-md-right">Date To</label>
+        <div class="col-md-2">
+            <label class="col-form-label">Date To</label>
         </div>
         <div class="col-md-3">
-            <input type="text" class="form-control datepicker" name="todate" id="todate" autocomplete="off" required/>
+            <input type="text" class="form-control datepicker" name="todate" id="todate" autocomplete="off" />
         </div>
         <div class="col-md-2">
-            <input type="submit" class="btn btn-info" id="btngenerate" value="Generate WO PM"/>
+            <input type="submit" class="btn btn-info" id="btngenerate" value="Generate WO PM" />
             <button type="button" class="btn btn-info" id="s_btnloading" style="display:none;width: 100%;">
                 <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
             </button>
@@ -63,11 +51,6 @@
         document.getElementById('btngenerate').style.display = 'none';
         document.getElementById('s_btnloading').style.display = '';
     });
-
-    $("#asset").select2({
-        width : '100%',
-        theme : 'bootstrap4',
-     });
 
 </script>
 @endsection

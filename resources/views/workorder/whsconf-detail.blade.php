@@ -303,17 +303,17 @@
             })
         });
 
-        // $(document).on('change', 'select.locto', function(){
+        $(document).on('change', 'select.locto', function(){
 
-        //     var row = $(this).closest("tr");
-        //     const locto = row.find(':selected').val();
-        //     const siteto = row.find(':selected').data('siteto');
+            var row = $(this).closest("tr");
+            const locto = row.find(':selected').val();
+            const siteto = row.find(':selected').data('siteto');
 
 
-        //     row.find('.hidden_siteto').val(siteto);
-        //     row.find('.hidden_locto').val(locto);
+            row.find('.hidden_siteto').val(siteto);
+            row.find('.hidden_locto').val(locto);
             
-        // });
+        });
 
         const confirmationCheckbox = document.getElementById("confirmation-checkbox");
         const transferButton = document.getElementById("btnconf");
