@@ -294,7 +294,7 @@ to get the desired effect
                 <li class="nav-item">
                   <a href="/woreport" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>Work Order Finish</p>
+                      <p>Work Order Reporting</p>
                   </a>
                 </li>
                 @endif

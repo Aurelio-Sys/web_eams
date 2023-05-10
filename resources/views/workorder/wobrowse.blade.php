@@ -483,7 +483,6 @@ div #munculgambar .gambar:hover{
             <label for="e_impact" class="col-md-5 col-form-label text-md-left">Impact</label>
             <div class="col-md-7">
               <select id="e_impact" class="form-control e_impact" name="e_impact[]" multiple="multiple" autofocus>
-                <option></option>
                 @foreach($impact as $e_impact)
                 <option value="{{$e_impact->imp_code}}">{{$e_impact->imp_desc}}</option>
                 @endforeach
