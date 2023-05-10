@@ -509,100 +509,14 @@ class ServiceController extends Controller
         $user = FacadesAuth::user();
 
         //cek departemen approval
-        $cekdepartemen = DB::table('dept_mstr')->where('dept_code', $user->dept_user)->first();
         $srdeptapprover = DB::table('sr_approver_mstr')->where('sr_approver_dept', $user->dept_user)->get();
         // dd($srdeptapprover);
 
         if (count($srdeptapprover) == 0) {
-            // dd('yes');
-            $kepalaengineer = DB::table('eng_mstr')
-                ->where('approver', '=', 0)
-                ->where('eng_active', '=', 'Yes')
-                ->where('eng_code', '=', Session::get('username'))
-                ->orderBy('eng_code')
-                ->first();
-
-            // if ($kepalaengineer || Session::get('role') == 'ADMIN') {
-            if ($kepalaengineer) {
-                $wotype = DB::table('wotyp_mstr')
-                    ->orderBy('wotyp_code')
-                    ->get();
-
-                $impact = DB::table('imp_mstr')
-                    ->orderBy('imp_code')
-                    ->get();
-
-                $fcode = DB::table('fn_mstr')
-                    ->orderBy('fn_code')
-                    ->get();
-
-
-                $data = DB::table('service_req_mstr')
-                    ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_asset')
-                    ->leftJoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
-                    ->leftJoin('asset_loc', 'asset_loc.asloc_code', 'asset_mstr.asset_loc')
-                    ->leftJoin('wotyp_mstr', 'wotyp_mstr.wotyp_code', 'service_req_mstr.sr_fail_type')
-                    // ->join('users', 'users.name', 'service_req_mstr.req_by')                  --> B211014
-                    ->join('users', 'users.username', 'service_req_mstr.sr_req_by')
-                    ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
-                    ->selectRaw('service_req_mstr.*,asset_mstr.*,asset_type.*,asset_loc.*,wotyp_mstr.*,users.*,dept_mstr.*')
-                    ->where(function ($q) {
-                        $q->where('sr_status', '==', 'Open')
-                            ->orWhere('sr_status', '==', 'Revise');
-                    })
-                    ->orderBy('sr_req_date', 'DESC')
-                    ->orderBy('sr_number', 'DESC');
-
-                // dd($data);
-
-                /* Jika bukan admin, maka yang muncul adalah approver sesuai login */
-                if (Session::get('role') <> 'ADMIN') {
-                    $data = $data->where('sr_eng_approver', '=', Session::get('username'));
-                    // $data = $data->where('sr_eng_approver', '=', $kepalaengineer->eng_dept)->get();
-                    // dd($data);
-                }
-
-
-                $data = $data->paginate(10);
-                // dd($data);
-
-                $datarepair = DB::table('rep_master')
-                    ->orderBy('repm_code')
-                    ->get();
-
-                $datasset = DB::table('asset_mstr')
-                    ->get();
-
-                $datasrnbr = DB::table('service_req_mstr')->get();
-                // dd($datasrnbr->id);
-
-                $datarepgroup = DB::table('xxrepgroup_mstr')
-                    ->selectRaw('MIN(xxrepgroup_id) as xxrepgroup_id , xxrepgroup_nbr, MIN(xxrepgroup_desc) as xxrepgroup_desc')
-                    ->groupBy('xxrepgroup_nbr')
-                    ->get();
-
-                $wotypes = DB::table('wotyp_mstr')
-                    ->get();
-                // dd($wotype);    
-
-                $impacts = DB::table('imp_mstr')
-                    ->get();
-
-                $fcodes = DB::table('fn_mstr')
-                    ->get();
-                return view('service.servicereq-approval', ['wotypes' => $wotypes, 'impacts' => $impacts, 'fcodes' => $fcodes, 'datasrnbr' => $datasrnbr, 'datas' => $data, 'asset' => $datasset, 'repaircode' => $datarepair, 'repgroup' => $datarepgroup]);
-            } else {
-                // toast('anda tidak memiliki akses sebagai approver', 'error');
-                return view('service.accessdenied');
-            }
+            //jika department tidak memiliki approval department
+            return view('service.accessdenied');
         } else {
-            // dd('get');
-            $user = FacadesAuth::user();
-
-            // cek departemen approval
-            $cekdepartemen = DB::table('dept_mstr')->where('dept_code', $user->dept_user)->first();
-            $srdeptapprover = DB::table('sr_approver_mstr')->where('sr_approver_dept', $cekdepartemen->ID)->first();
-
+            //jika department memiliki approval department
             $data = ServiceReqMaster::query()
                 ->with(['getCurrentApprover'])
                 ->where('sr_status', '<>', 'Canceled')
@@ -650,10 +564,6 @@ class ServiceController extends Controller
             $fcodes = DB::table('fn_mstr')
                 ->get();
             return view('service.servicereq-approval', ['wotypes' => $wotypes, 'impacts' => $impacts, 'fcodes' => $fcodes, 'datasrnbr' => $datasrnbr, 'datas' => $data, 'asset' => $datasset, 'repaircode' => $datarepair, 'repgroup' => $datarepgroup]);
-            // } else {
-            //     // toast('anda tidak memiliki akses sebagai approver', 'error');
-            //     return view('service.accessdenied');
-            // }
         }
     }
 
@@ -675,8 +585,6 @@ class ServiceController extends Controller
             ->orderBy('eng_code')
             ->first();
 
-
-        // if ($kepalaengineer || Session::get('role') == 'ADMIN') {
         if ($kepalaengineer) {
             $wotype = DB::table('wotyp_mstr')
                 ->orderBy('wotyp_code')
@@ -1318,7 +1226,6 @@ class ServiceController extends Controller
                                 'updated_at' => Carbon::now()->toDateTimeString(),
                             ]);
                     }
-
 
                     DB::table('sr_trans_approval_hist')
                         ->insert([
