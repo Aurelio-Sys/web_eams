@@ -6,6 +6,7 @@ use App\Models\Qxwsa as ModelsQxwsa;
 use App\Services\WSAServices;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendNotifWarehousetoEng;
 use App\Services\CreateTempTable;
 use App\Services\QxtendServices;
 use Carbon\Carbon;
@@ -299,6 +300,8 @@ class WHSConfirm extends Controller
 
             $qdocRequest = $qdocHead . $qdocBody . $qdocfooter;
 
+            // dd($qdocRequest);
+            
             $curlOptions = array(
                 CURLOPT_URL => $qxUrl,
                 CURLOPT_CONNECTTIMEOUT => $timeout,        // in seconds, 0 = unlimited / wait indefinitely.
@@ -366,9 +369,12 @@ class WHSConfirm extends Controller
 
             if ($qdocResult == "success" or $qdocResult == "warning") {
                 /* jika response sukses atau warning maka menyimpan data jika sudah di transferr ke qad*/
-                /* DB::table('wo_dets')
-                
+                $wonumber = $req->hide_wonum;
+                //kirim notifikasi kepada para engineer yg mengerjakan wo tersebut bahwa spare part yg tidak cukup sudah ditransfer ke inventory supply
+                SendNotifWarehousetoEng::dispatch($wonumber);
             } else {
+
+                //jika qtend mengembalikan pesan error 
 
                 DB::rollBack();
                 $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
@@ -392,34 +398,13 @@ class WHSConfirm extends Controller
                 // $output = substr($output, 0, -6);
 
                 alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$outputerror."",'error')->persistent('Dismiss');
-                return redirect()->route('browseWhconfirm');
+                return redirect()->back();
                 /* jika qxtend response error */
-            }
-
-            dd('stop here');
-
-            if($qx->count() > 0) {
-                /* ini qxtend transfer single item */
-
-                
-            } /* endif($qx->count()) */ 
-
-            $cekpartial = DB::table('wo_dets')
-                        ->where('wo_dets_nbr', $req->hide_wonum)
-                        ->where('wo_dets_wh_qx', 'no')
-                        ->get();
-
-            /* jika masih ada yang no berarti pop up message partial/ jika sudah diconfirm semua berarti pop up message complete */
-            $thisstatus = "";
-            if($cekpartial->count() > 0){
-                $thisstatus = "Partial";
-            }else{
-                $thisstatus = "Complete";
             }
 
             DB::commit();
 
-            toast('Confirm '.$thisstatus.' Successfuly !', 'success');
+            toast('Work Order Spare Part Transfer for '.$req->hide_wonum.' Successfuly !', 'success');
             return redirect()->route('browseWhconfirm');
             
         } catch (Exception $e) {

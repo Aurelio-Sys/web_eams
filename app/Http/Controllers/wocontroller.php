@@ -230,12 +230,26 @@ class wocontroller extends Controller
                 ->where('username', '=', session()->get('username'))
                 ->get();
 
-            $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code');
 
-            // if (Session::get('role') <> 'ADMIN') {
-            //     $data = $data->where('wo_dept','=',session::get('department'));
-            // }
+            if(Session::get('role') == 'ADMIN'){
+                $data = DB::table('wo_mstr')
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code');
+            }else{
+                $username = Session::get('username');
+
+                // dd($username);
+
+                $data = DB::table('wo_mstr')
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+                    ->where(function ($query) use ($username){
+                        $query->where('wo_list_engineer', '=', $username.';')
+                        ->orWhere('wo_list_engineer', 'LIKE', $username.';%')
+                        ->orWhere('wo_list_engineer', 'LIKE', '%;'.$username.';%')
+                        ->orWhere('wo_list_engineer', 'LIKE', '%;'.$username)
+                        ->orWhere('wo_list_engineer', '=', $username);
+                    });
+            }    
+            
             if ($req->s_nomorwo) {
                 $data->where('wo_number', 'like', '%' . $req->s_nomorwo . '%');
             }
@@ -2114,6 +2128,8 @@ class wocontroller extends Controller
 
                 array_push($listFailDesc, $failure);
             }
+        }   else {
+            $getFailDesc = '';
         }
 
         $listEngDesc = [];
@@ -2148,6 +2164,8 @@ class wocontroller extends Controller
 
                 array_push($listImpactDesc, $impact);
             }
+        } else {
+            $getImpactDesc = '';
         }
 
         $getMtDesc = DB::table('pmc_mstr')
