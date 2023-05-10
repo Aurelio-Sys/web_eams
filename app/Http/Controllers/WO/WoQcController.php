@@ -20,7 +20,7 @@ class WoQcController extends Controller
     {
         //
         $dataApproval = DB::table('wo_mstr')
-            ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset')
+            ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
             ->leftJoin('asset_loc','asloc_code','asset_loc')
             ->where('wo_status', '=', 'QC Approval')
             ->orderBy('wo_updated_at');
@@ -30,7 +30,7 @@ class WoQcController extends Controller
             ->get();
 
         if ($request->s_nomorwo) {
-            $dataApproval->where('wo_nbr', '=', $request->s_nomorwo);
+            $dataApproval->where('wo_number', '=', $request->s_nomorwo);
         }
 
         if ($request->s_asset) {
@@ -85,25 +85,25 @@ class WoQcController extends Controller
                         wo_mstr.wo_failure_code3 as wofc3, fn1.fn_desc as fd1, fn2.fn_desc as fd2, 
                         fn3.fn_desc as fd3,r1.repm_desc as r11,r2.repm_desc as r22,r3.repm_desc as r33,
                         r1.repm_code as rr11,r2.repm_code as rr22,r3.repm_code as rr33,wotyp_desc')
-            ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-            ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
-            ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
-            ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
-            ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
-            ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
+            ->join('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+            // ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
+            // ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
+            // ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
+            // ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
+            // ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
             ->leftjoin('asset_type', 'asset_mstr.asset_type', 'asset_type.astype_code')
-            ->leftjoin('asset_loc', 'asset_mstr.asset_loc', 'asset_loc.asloc_code')
-            ->leftjoin('fn_mstr as fn1', 'wo_mstr.wo_failure_code1', 'fn1.fn_code')
-            ->leftjoin('fn_mstr as fn2', 'wo_mstr.wo_failure_code2', 'fn2.fn_code')
-            ->leftjoin('fn_mstr as fn3', 'wo_mstr.wo_failure_code3', 'fn3.fn_code')
-            ->leftjoin('rep_master as r1', 'wo_mstr.wo_repair_code1', 'r1.repm_code')
-            ->leftjoin('rep_master as r2', 'wo_mstr.wo_repair_code2', 'r2.repm_code')
-            ->leftjoin('rep_master as r3', 'wo_mstr.wo_repair_code3', 'r3.repm_code')
+            // ->leftjoin('asset_loc', 'asset_mstr.asset_loc', 'asset_loc.asloc_code')
+            // ->leftjoin('fn_mstr as fn1', 'wo_mstr.wo_failure_code1', 'fn1.fn_code')
+            // ->leftjoin('fn_mstr as fn2', 'wo_mstr.wo_failure_code2', 'fn2.fn_code')
+            // ->leftjoin('fn_mstr as fn3', 'wo_mstr.wo_failure_code3', 'fn3.fn_code')
+            // ->leftjoin('rep_master as r1', 'wo_mstr.wo_repair_code1', 'r1.repm_code')
+            // ->leftjoin('rep_master as r2', 'wo_mstr.wo_repair_code2', 'r2.repm_code')
+            // ->leftjoin('rep_master as r3', 'wo_mstr.wo_repair_code3', 'r3.repm_code')
             ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
             ->leftJoin('wotyp_mstr', 'wo_mstr.wo_new_type', 'wotyp_mstr.wotyp_code')
             ->leftjoin('xxrepgroup_mstr', 'xxrepgroup_mstr.xxrepgroup_nbr', 'wo_mstr.wo_repair_group')
-            ->where('wo_id', $id)
-            ->where('wo_nbr', $nbr)
+            ->where('id', $id)
+            ->where('wo_number', $nbr)
             ->first();
 
         // dd($dataDetail);
@@ -141,8 +141,8 @@ class WoQcController extends Controller
             if($req->submit == 'approve'){
 
                 DB::table('wo_mstr')
-                    ->where('wo_id', $req->woid)
-                    ->where('wo_nbr', $req->wonumber)
+                    ->where('id', $req->woid)
+                    ->where('wo_number', $req->wonumber)
                     ->update([
                         'wo_qc_appnote' => $req->qcnote,
                         'wo_status' => 'closed',
@@ -168,8 +168,8 @@ class WoQcController extends Controller
             }else{
                 
                 DB::table('wo_mstr')
-                    ->where('wo_id', $req->woid)
-                    ->where('wo_nbr', $req->wonumber)
+                    ->where('id', $req->woid)
+                    ->where('wo_number', $req->wonumber)
                     ->update([
                         'wo_qc_appnote' => $req->qcnote,
                         'wo_status' => 'closed',

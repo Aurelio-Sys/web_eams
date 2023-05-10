@@ -158,7 +158,23 @@ class EmailScheduleJobs implements ShouldQueue
                 ->first();
 
             $srdeptapprover = DB::table('sr_approver_mstr')->where('sr_approver_dept', $toemail->sr_dept)->get();
-            // dump($srdeptapprover);
+            dd($srdeptapprover);
+
+            //cek departemen dan role approval yg sesuai dengan user yg login
+            // if (Session::get('role') <> 'ADMIN') {
+            //     //jika user bukan admin
+            //     $srdeptapprover = DB::table('sr_trans_approval')
+            //         ->where('srta_dept_approval', $toemail->sr_dept)
+            //         ->where('srta_mstr_id', $toemail->id)
+            //         ->where('srta_role_approval', $user->role_user)
+            //         ->first();
+            // } else {
+            //     //jika user adalah admin
+            //     $srdeptapprover = DB::table('sr_trans_approval')
+            //         ->where('srta_dept_approval', $srmstr->sr_dept)
+            //         ->where('srta_mstr_id', $idsr)
+            //         ->first();
+            // }
 
             if (count($srdeptapprover) > 1) {
                 //kirim email ke department approver
@@ -358,7 +374,7 @@ class EmailScheduleJobs implements ShouldQueue
 
             $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
 
-        }  else if ($a == 10) { //kirim email ke department/engineer ketika service request sudah di update
+        } else if ($a == 10) { //kirim email ke department/engineer ketika service request sudah di update
             $srnumber = $this->srnumber;
             // dd($srnumber);
 
@@ -371,7 +387,7 @@ class EmailScheduleJobs implements ShouldQueue
             $srdeptapprover = DB::table('sr_approver_mstr')->where('sr_approver_dept', $toemail->sr_dept)->get();
             // dump($srdeptapprover);
             // dd($toemail->sr_status_approval);
-            if (count($srdeptapprover) > 1 || $toemail->sr_status_approval == 'Waiting for department approval' ) {
+            if (count($srdeptapprover) > 1 || $toemail->sr_status_approval == 'Waiting for department approval') {
                 //kirim email ke department approver
                 $emailto = DB::table('users')
                     ->leftJoin('sr_approver_mstr', 'sr_approver_mstr.sr_approver_dept', '=', 'users.dept_user')
@@ -480,7 +496,6 @@ class EmailScheduleJobs implements ShouldQueue
 
                 }
             }
-
         } else if ($a == 7) { //kirim email ketika service request di approved dan kirim ke approver selanjutnya
             // $tampungarray = $this->tampungarray;
             // dd($tampungarray);
@@ -505,7 +520,7 @@ class EmailScheduleJobs implements ShouldQueue
                 ->where('dept_user', '=', $nextapprover->srta_dept_approval)
                 ->where('role_user', '=', $nextapprover->srta_role_approval)
                 ->get();
-            
+
             $emails = '';
 
             foreach ($emailrequestor as $email) {
@@ -545,7 +560,6 @@ class EmailScheduleJobs implements ShouldQueue
 
 
             }
-
         } else if ($a == 8) { //kirim email ke engineer approver
             // $tampungarray = $this->tampungarray;
             // dd($tampungarray);
@@ -558,12 +572,12 @@ class EmailScheduleJobs implements ShouldQueue
             $srmstr = DB::table('service_req_mstr')->where('sr_number', $srnumber)->first();
 
             $emailrequestor = DB::table('eng_mstr')
-                    ->join('users', 'eng_mstr.eng_code', '=', 'users.username')
-                    ->where('approver', '=', 1)
-                    ->where('eng_active', '=', 'Yes')
-                    ->where('eng_dept', '=', $srmstr->sr_eng_approver)
-                    ->get();
-            
+                ->join('users', 'eng_mstr.eng_code', '=', 'users.username')
+                ->where('approver', '=', 1)
+                ->where('eng_active', '=', 'Yes')
+                ->where('eng_dept', '=', $srmstr->sr_eng_approver)
+                ->get();
+
             $emails = '';
 
             foreach ($emailrequestor as $email) {
@@ -603,7 +617,6 @@ class EmailScheduleJobs implements ShouldQueue
 
 
             }
-
         } else if ($a == 1) {
             $wo = $this->wo;
             $asset = $this->asset;

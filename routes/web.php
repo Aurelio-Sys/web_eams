@@ -417,6 +417,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/womaint/getnowo','wocontroller@geteditwoold');
 	route::get('/womaint/getwoinfo',[wocontroller::class, 'geteditwo'])->name('editWO');
 	route::get('/womaint/getfailure','wocontroller@getfailure');
+	route::get('/woapprovalbrowse','wocontroller@woapprovalbrowse'); 
 	route::post('/approvewo','wocontroller@approvewo'); 
 	route::get('/openprint/{wo}','wocontroller@openprint');
 	route::get('/openprint2/{wo}','wocontroller@openprint2');

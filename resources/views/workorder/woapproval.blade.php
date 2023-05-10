@@ -4,12 +4,12 @@
 <div class="container-fluid">
   <div class="row mb-2">
     <div class="col-sm-6 mt-2">
-      <h1 class="m-0 text-dark">Work Order Start</h1>
+      <h1 class="m-0 text-dark">Work Order Approval</h1>
     </div><!-- /.col -->
     <div class="col-sm-6">
       <ol class="breadcrumb float-sm-right">
         <li class="breadcrumb-item"><a href="{{url('/home')}}">Home</a></li>
-        <li class="breadcrumb-item active">Work Order Start</li>
+        <li class="breadcrumb-item active">Work Order Approval</li>
       </ol>
     </div><!-- /.col -->
   </div><!-- /.row -->
@@ -111,7 +111,7 @@
         </tr>
       </thead>
       <tbody>
-        @include('workorder.table-wostart')
+        @include('workorder.table-woapproval')
       </tbody>
     </table>
     <input type="hidden" name="hidden_page" id="hidden_page" value="1" />
@@ -127,7 +127,7 @@
     <div class="modal-dialog modal-md " role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title text-center" id="exampleModalLabel">Work Order Start</h5>
+          <h5 class="modal-title text-center" id="exampleModalLabel">Work Order Approval</h5>
           <button type="button" id="xclose" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -170,7 +170,7 @@
             <div class="form-group row justify-content-center">
               <label for="v_assetdesc" class="col-md-5 col-form-label text-md-left">Asset Desc</label>
               <div class="col-md-7">
-                <input type="text" readonly id="v_assetdesc" type="text" class="form-control v_assetdesc" name="v_assetdesc" autofocus>
+                <textarea type="text" readonly id="v_assetdesc" type="text" class="form-control v_assetdesc" name="v_assetdesc" rows="3"></textarea>
               </div>
             </div>
             <div class="form-group row justify-content-center">
@@ -212,49 +212,25 @@
             <div class="form-group row justify-content-center">
               <label for="v_mtcode" class="col-md-5 col-form-label text-md-left">Maintenance Code</label>
               <div class="col-md-7">
-              <input id="v_mtcode" type="text" class="form-control" name="v_mtcode" value="{{ old('v_mtcode') }}" autofocus readonly>
-                <!-- <select id="c_mtcode" name="c_mtcode" class="form-control" readonly>
-                  <option></option>
-                  @foreach($maintenancelist as $mt)
-                  <option value="{{$mt->pmc_code}}">{{$mt->pmc_code}} -- {{$mt->pmc_desc}}</option>
-                  @endforeach
-                </select> -->
+                <input id="v_mtcode" type="text" class="form-control" name="v_mtcode" value="{{ old('v_mtcode') }}" autofocus readonly>
               </div>
             </div>
             <div class="form-group row justify-content-center">
               <label for="v_inslist" class="col-md-5 col-form-label text-md-left">Instruction List</label>
               <div class="col-md-7">
-              <input id="v_inslist" type="text" class="form-control" name="v_inslist" value="{{ old('v_inslist') }}" autofocus readonly>
-                <!-- <select id="c_inslist" name="c_inslist" class="form-control">
-                  <option></option>
-                  @foreach ($inslist as $ins)
-                  <option value="{{$ins->ins_code}}">{{$ins->ins_code}} -- {{$ins->ins_desc}}</option>
-                  @endforeach
-                </select> -->
+                <input id="v_inslist" type="text" class="form-control" name="v_inslist" value="{{ old('v_inslist') }}" autofocus readonly>
               </div>
             </div>
             <div class="form-group row justify-content-center">
               <label for="v_splist" class="col-md-5 col-form-label text-md-left">Instruction Spare Part</label>
               <div class="col-md-7">
-              <input id="v_splist" type="text" class="form-control" name="v_splist" value="{{ old('v_splist') }}" autofocus readonly>
-                <!-- <select id="c_splist" name="c_splist" class="form-control">
-                  <option></option>
-                  @foreach ($splist as $sp)
-                  <option value="{{$sp->spg_code}}">{{$sp->spg_code}} -- {{$sp->spg_desc}}</option>
-                  @endforeach
-                </select> -->
+                <input id="v_splist" type="text" class="form-control" name="v_splist" value="{{ old('v_splist') }}" autofocus readonly>
               </div>
             </div>
             <div class="form-group row justify-content-center">
               <label for="v_qclist" class="col-md-5 col-form-label text-md-left">Instruction QC</label>
               <div class="col-md-7">
-              <input id="v_qclist" type="text" class="form-control" name="v_qclist" value="{{ old('v_qclist') }}" autofocus readonly>
-                <!-- <select id="c_qclist" name="c_qclist" class="form-control">
-                  <option></option>
-                  @foreach ($qclist as $qc)
-                  <option value="{{$qc->qcs_code}}">{{$qc->qcs_code}} -- {{$qc->qcs_desc}}</option>
-                  @endforeach
-                </select> -->
+                <input id="v_qclist" type="text" class="form-control" name="v_qclist" value="{{ old('v_qclist') }}" autofocus readonly>
               </div>
             </div>
             <div class="form-group row justify-content-center">
@@ -287,21 +263,23 @@
                 <input id="v_starttime" type="time" class="form-control" name="v_starttime" value="{{ \Carbon\Carbon::now()->format('H:i') }}" autofocus>
               </div>
             </div>
-            <div id="divreprocessreason" class="form-group row justify-content-center" style="display: none;">
-              <label for="v_rejectreason" class="col-md-5 col-form-label text-md-left">Reprocess Reason</label>
+            <div id="divreprocessreason" class="form-group row justify-content-center">
+              <label for="v_rejectreason" class="col-md-5 col-form-label text-md-left">Reason</label>
               <div class="col-md-7">
                 <textarea id="v_rejectreason" class="form-control" rows="3" readonly></textarea>
               </div>
             </div>
-            <!-- <div class="form-group row justify-content-center">
-              <label for="v_mtcby" class="col-md-5 col-form-label text-md-left">Maintenance By</label>
-              <div class="col-md-7">
-                <input id="v_mtcby" type="text" class="form-control" name="v_mtcby" readonly>
-              </div>
-            </div> -->
-            <div class="modal-footer" style="font-size:small;padding-right: 0;padding-left: 0">
+            <div class="modal-footer">
+              <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-danger" name="action" value="reject" id="btnreject">Reject</button>
+              <button type="submit" class="btn btn-success" name="action" value="approve" id="btnapprove">Approve</button>
+              <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
+                <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+              </button>
+            </div>
+            <!-- <div class="modal-footer" style="font-size:small;padding-right: 0;padding-left: 0">
               <div class="container">
-                <div id="divcancel" style="display: none;"> <!-- A211027 -->
+                <div id="divcancel" style="display: none;"> A211027
                   <div class="d-flex justify-content-center mb-2">
                     <label id="labelcheck" style="display: none;" for="checkboxaban">Cancel this job?</label>
                     <input type="checkbox" id="checkboxaban" class="ml-2" style="display: none;">
@@ -324,12 +302,13 @@
                     <button type="submit" style="display:none;" class="btn btn-danger bt-dark ml-2" id="e_btnchgstatus2" disabled>Cancel</button>
                     <button type="button" class="btn btn-info" id="e_btnloading" style="display:none"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Loading</button>
                   </div>
-                  <!-- <div class="col-md-3 p-0">
+                  <div class="col-md-3 p-0">
                     <a id="aprint" target="_blank" style="float:right"><button type="button" class="btn btn-warning bt-action"><b>Print</b></button></a>
-                  </div> -->
+                  </div>
                 </div>
               </div>
-            </div>
+            </div> -->
+
           </div>
         </form>
       </div>
@@ -346,33 +325,12 @@
 
   @section('scripts')
   <script>
-    $(document).on('change', '#checkboxaban', function() {
-      var checkbox = document.getElementById('checkboxaban');
-      if (this.checked) {
-        document.getElementById('e_btnchgstatus2').disabled = false;
-      } else {
-        document.getElementById('e_btnchgstatus2').disabled = true;
-      }
-    })
-    $(document).on('click', '#e_btnchgstatus', function() {
-      document.getElementById('xclose').style.display = 'none';
-      document.getElementById('e_btnchgstatus').style.display = 'none';
-      document.getElementById('e_btnclose').style.display = 'none';
-      //document.getElementById('aprint').style.display='none';
-      document.getElementById('adownload').style.display = 'none';
-      document.getElementById('e_btnloading').style.display = '';
-    })
-
-    $(document).on('click', '#e_btnchgstatus2', function() {
-      document.getElementById('xclose').style.display = 'none';
-      document.getElementById('labelcheck').style.display = 'none';
-      document.getElementById('checkboxaban').style.display = 'none';
-      document.getElementById('e_btnchgstatus2').style.display = 'none';
-      document.getElementById('e_btnclose').style.display = 'none';
-      //document.getElementById('aprint').style.display='none';
-      document.getElementById('adownload').style.display = 'none';
-      document.getElementById('e_btnloading').style.display = '';
-    })
+    $("#newedit").submit(function() {
+      document.getElementById('btnclose').style.display = 'none';
+      document.getElementById('btnreject').style.display = 'none';
+      document.getElementById('btnapprove').style.display = 'none';
+      document.getElementById('btnloading').style.display = '';
+    });
 
     function clear_icon() {
       $('#id_icon').html('');
@@ -450,39 +408,39 @@
             combineEngineer.push(engineer.eng_code + ' - ' + engineer.eng_desc);
           });
 
-          var url = "{{url('openprint','id')}}";
-          url = url.replace('id', wonbr);
-          //document.getElementById('aprint').href=url;
+          // var url = "{{url('openprint','id')}}";
+          // url = url.replace('id', wonbr);
+          // //document.getElementById('aprint').href=url;
 
-          var urldownload = "{{url('wodownloadfile','id')}}";
-          urldownload = urldownload.replace('id', wonbr);
+          // var urldownload = "{{url('wodownloadfile','id')}}";
+          // urldownload = urldownload.replace('id', wonbr);
 
 
-          document.getElementById('adownload').href = urldownload;
+          // document.getElementById('adownload').href = urldownload;
 
-          if (wotype == 'PM') {
-            document.getElementById('divdonload').style.display = '';
-            document.getElementById('divcancel').style.display = 'none'; // A211027
-          } else {
-            document.getElementById('divdonload').style.display = 'none';
-            document.getElementById('divcancel').style.display = ''; // A211027
-          }
+          // if (wotype == 'PM') {
+          //   document.getElementById('divdonload').style.display = '';
+          //   document.getElementById('divcancel').style.display = 'none'; // A211027
+          // } else {
+          //   document.getElementById('divdonload').style.display = 'none';
+          //   document.getElementById('divcancel').style.display = ''; // A211027
+          // }
 
-          if (status == 'released') {
-            document.getElementById('e_btnchgstatus').style.display = '';
-            document.getElementById('divstartdate').style.display = '';
-            document.getElementById('divstarttime').style.display = '';
-            document.getElementById('e_btnchgstatus2').style.display = 'none';
-            document.getElementById('checkboxaban').style.display = 'none';
-            document.getElementById('labelcheck').style.display = 'none';
-          } else {
-            document.getElementById('divstartdate').style.display = 'none';
-            document.getElementById('divstarttime').style.display = 'none';
-            document.getElementById('e_btnchgstatus').style.display = 'none';
-            document.getElementById('e_btnchgstatus2').style.display = '';
-            document.getElementById('checkboxaban').style.display = '';
-            document.getElementById('labelcheck').style.display = '';
-          }
+          // if (status == 'reported') {
+          //   document.getElementById('e_btnchgstatus').style.display = '';
+          //   document.getElementById('divstartdate').style.display = '';
+          //   document.getElementById('divstarttime').style.display = '';
+          //   document.getElementById('e_btnchgstatus2').style.display = 'none';
+          //   document.getElementById('checkboxaban').style.display = 'none';
+          //   document.getElementById('labelcheck').style.display = 'none';
+          // } else {
+          //   document.getElementById('divstartdate').style.display = 'none';
+          //   document.getElementById('divstarttime').style.display = 'none';
+          //   document.getElementById('e_btnchgstatus').style.display = 'none';
+          //   document.getElementById('e_btnchgstatus2').style.display = '';
+          //   document.getElementById('checkboxaban').style.display = '';
+          //   document.getElementById('labelcheck').style.display = '';
+          // }
 
           document.getElementById('v_nowo').value = wonumber;
           document.getElementById('v_asset').value = assetcode;
