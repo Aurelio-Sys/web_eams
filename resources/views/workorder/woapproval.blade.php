@@ -132,9 +132,10 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form class="form-horizontal" id="newedit" method="post" action="editjob">
+        <form class="form-horizontal" id="newedit" method="post" action="/approvewo">
           {{ csrf_field() }}
           <input type="hidden" id="v_counter">
+          <input type="hidden" id="idwo" name="idwo">
           <input type="hidden" name="statuswo" id="statuswo">
           <div class="modal-body">
             <div class="form-group row justify-content-center">
@@ -252,21 +253,21 @@
               </div>
             </div>
             <div id="divstartdate" class="form-group row justify-content-center">
-              <label for="v_startdate" class="col-md-5 col-form-label text-md-left">Start Date</label>
+              <label for="v_jobstartdate" class="col-md-5 col-form-label text-md-left">Job Start Date</label>
               <div class="col-md-7">
-                <input id="v_startdate" type="date" class="form-control" name="v_startdate" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" autofocus>
+                <input id="v_jobstartdate" type="date" class="form-control" name="v_jobstartdate" readonly>
               </div>
             </div>
             <div id="divstarttime" class="form-group row justify-content-center">
-              <label for="v_starttime" class="col-md-5 col-form-label text-md-left">Start Time</label>
+              <label for="v_jobstarttime" class="col-md-5 col-form-label text-md-left">Job Start Time</label>
               <div class="col-md-7">
-                <input id="v_starttime" type="time" class="form-control" name="v_starttime" value="{{ \Carbon\Carbon::now()->format('H:i') }}" autofocus>
+                <input id="v_jobstarttime" type="time" class="form-control" name="v_jobstarttime" readonly>
               </div>
             </div>
             <div id="divreprocessreason" class="form-group row justify-content-center">
-              <label for="v_rejectreason" class="col-md-5 col-form-label text-md-left">Reason</label>
+              <label for="v_reason" class="col-md-5 col-form-label text-md-left">Reason</label>
               <div class="col-md-7">
-                <textarea id="v_rejectreason" class="form-control" rows="3" readonly></textarea>
+                <textarea id="v_reason" name="v_reason" class="form-control" rows="3"></textarea>
               </div>
             </div>
             <div class="modal-footer">
@@ -277,38 +278,6 @@
                 <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
               </button>
             </div>
-            <!-- <div class="modal-footer" style="font-size:small;padding-right: 0;padding-left: 0">
-              <div class="container">
-                <div id="divcancel" style="display: none;"> A211027
-                  <div class="d-flex justify-content-center mb-2">
-                    <label id="labelcheck" style="display: none;" for="checkboxaban">Cancel this job?</label>
-                    <input type="checkbox" id="checkboxaban" class="ml-2" style="display: none;">
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-3 p-0">
-                    <div id="divdonload" style="display:none">
-                      <a id="adownload" target="_blank" style="float:left">
-                        <button type="button" class="btn btn-dark bt-action"><b style="font-size: 15px;color:white">Download</b></button>
-                      </a>
-                    </div>
-                  </div>
-                  <div class="col-md-3">
-                    <button type="button" class="btn btn-primary bt-action ml-5 mr-2" id="e_btnclose" data-dismiss="modal">Close</button>
-                  </div>
-                  <div class="col-md-3">
-                    <button type="submit" class="btn btn-success bt-action ml-2" id="e_btnchgstatus">Start</button>
-                    <button type="submit" style="display:none;" class="btn btn-danger bt-dark ml-2" id="e_btnchgstatus2" disabled>Cancel</button>
-                    <button type="button" class="btn btn-info" id="e_btnloading" style="display:none"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Loading</button>
-                  </div>
-                  <div class="col-md-3 p-0">
-                    <a id="aprint" target="_blank" style="float:right"><button type="button" class="btn btn-warning bt-action"><b>Print</b></button></a>
-                  </div>
-                </div>
-              </div>
-            </div> -->
-
           </div>
         </form>
       </div>
@@ -331,6 +300,7 @@
       document.getElementById('btnapprove').style.display = 'none';
       document.getElementById('btnloading').style.display = '';
     });
+    
 
     function clear_icon() {
       $('#id_icon').html('');
@@ -366,6 +336,7 @@
         },
         success: function(vamp) {
           var wonumber = wonbr;
+          var id = vamp.wo_master.id;
           var srnumber = vamp.wo_master.wo_sr_number;
           var assetcode = vamp.wo_master.wo_asset_code;
           var assetdesc = vamp.asset.asset_desc;
@@ -375,6 +346,8 @@
           var note = vamp.wo_master.wo_note;
           var startdate = vamp.wo_master.wo_start_date;
           var duedate = vamp.wo_master.wo_due_date;
+          var jobstartdate = vamp.wo_master.wo_job_startdate;
+          var jobstarttime = vamp.wo_master.wo_job_starttime;
           var createdby = vamp.wo_master.wo_createdby;
           var status = vamp.wo_master.wo_status;
           var wotype = vamp.wo_master.wo_type;
@@ -387,9 +360,7 @@
           var spcodedesc = vamp.splist ? vamp.splist.spg_desc : '';
           var qccode = vamp.wo_master.wo_qcspec_code ? vamp.wo_master.wo_qcspec_code : '';
           var qccodedesc = vamp.qcslist ? vamp.qcslist.qcs_desc : '';
-
-          // console.log(vamp);
-
+console.log(id);
           let combineFailure = [];
 
           vamp.failurecode.forEach(function(failure) {
@@ -408,41 +379,8 @@
             combineEngineer.push(engineer.eng_code + ' - ' + engineer.eng_desc);
           });
 
-          // var url = "{{url('openprint','id')}}";
-          // url = url.replace('id', wonbr);
-          // //document.getElementById('aprint').href=url;
-
-          // var urldownload = "{{url('wodownloadfile','id')}}";
-          // urldownload = urldownload.replace('id', wonbr);
-
-
-          // document.getElementById('adownload').href = urldownload;
-
-          // if (wotype == 'PM') {
-          //   document.getElementById('divdonload').style.display = '';
-          //   document.getElementById('divcancel').style.display = 'none'; // A211027
-          // } else {
-          //   document.getElementById('divdonload').style.display = 'none';
-          //   document.getElementById('divcancel').style.display = ''; // A211027
-          // }
-
-          // if (status == 'reported') {
-          //   document.getElementById('e_btnchgstatus').style.display = '';
-          //   document.getElementById('divstartdate').style.display = '';
-          //   document.getElementById('divstarttime').style.display = '';
-          //   document.getElementById('e_btnchgstatus2').style.display = 'none';
-          //   document.getElementById('checkboxaban').style.display = 'none';
-          //   document.getElementById('labelcheck').style.display = 'none';
-          // } else {
-          //   document.getElementById('divstartdate').style.display = 'none';
-          //   document.getElementById('divstarttime').style.display = 'none';
-          //   document.getElementById('e_btnchgstatus').style.display = 'none';
-          //   document.getElementById('e_btnchgstatus2').style.display = '';
-          //   document.getElementById('checkboxaban').style.display = '';
-          //   document.getElementById('labelcheck').style.display = '';
-          // }
-
           document.getElementById('v_nowo').value = wonumber;
+          document.getElementById('idwo').value = id;
           document.getElementById('v_asset').value = assetcode;
           document.getElementById('v_assetdesc').value = assetdesc;
           document.getElementById('v_loc').value = assetloc;
@@ -454,6 +392,8 @@
           document.getElementById('v_nosr').value = srnumber;
           document.getElementById('v_startdate').value = startdate;
           document.getElementById('v_duedate').value = duedate;
+          document.getElementById('v_jobstartdate').value = jobstartdate;
+          document.getElementById('v_jobstarttime').value = jobstarttime;
           document.getElementById('v_creator').value = createdby;
           document.getElementById('v_dept').value = department;
           document.getElementById('statuswo').value = status;
@@ -479,6 +419,8 @@
         }
       })
     });
+
+
     $(document).on('click', '#btnsearch', function() {
       var wonumber = $('#s_nomorwo').val();
       var woasset = $('#s_asset').val();

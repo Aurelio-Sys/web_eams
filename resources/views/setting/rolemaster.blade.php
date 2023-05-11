@@ -282,7 +282,7 @@
               </div>
             </div> 
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO QC Approval') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO Approval') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbWoQc">
                   <input type="checkbox" class="custom-control-input" id="cbWoQc" name="cbWoQc" value="WO08" />
@@ -1050,7 +1050,7 @@
               </div>
             </div> 
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO QC Approval') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO Approval') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbWoQc">
                   <input type="checkbox" class="custom-control-input" id="e_cbWoQc" name="e_cbWoQc" value="WO08" />
