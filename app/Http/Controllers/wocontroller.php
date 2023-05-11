@@ -967,6 +967,15 @@ class wocontroller extends Controller
         return response()->json($searchic);
     }
 
+    public function filtermaintcode(Request $req)
+    {
+        $datafilter = DB::table('pmc_mstr')
+            ->where('pmc_type', '=', $req->pmc_type)
+            ->get();
+
+        return response()->json($datafilter);
+    }
+
     public function createenwo(Request $req)
     {
         //  dd($req->all());
@@ -1331,7 +1340,9 @@ class wocontroller extends Controller
             //lakukan pengecekan apakah dia status firm atau released
             if ($req->tmp_wostatus == 'firm') {
 
-                DB::table('wo_mstr')
+                if($req->thisbutton == "btncancel"){
+                    //cancel wo ketika status masih firm
+                    DB::table('wo_mstr')
                     ->where('wo_number', '=', $req->tmp_wonbr)
                     ->where('wo_status', '=', 'firm')
                     ->update([
@@ -1339,32 +1350,150 @@ class wocontroller extends Controller
                         'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                     ]);
 
-                DB::table('wo_trans_history')
-                    ->insert([
-                        'wo_number' => $req->tmp_wonbr,
-                        'wo_action' => 'canceled',
-                    ]);
-
-                //check apakah wo berasal dari sr ? jika ya, ubah status sr jadi open
-                $checksr = DB::table('wo_mstr')
-                    ->where('wo_number', '=', $req->tmp_wonbr)
-                    ->first();
-
-                if ($checksr->wo_sr_number !== "") {
-                    //ubah status sr
-                    DB::table('service_req_mstr')
-                        ->where('sr_number', '=', $checksr->wo_sr_number)
-                        ->update([
-                            'sr_status' => 'Open',
-                            'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    DB::table('wo_trans_history')
+                        ->insert([
+                            'wo_number' => $req->tmp_wonbr,
+                            'wo_action' => 'canceled',
                         ]);
 
-                    //kirim notifikasi ke pembuat sr
-                    $thiswonumber = $checksr->wo_number;
-                    $thissrnumber = $checksr->wo_sr_number;
-                    $thisnotecancel = $req->notecancel;
-                    SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
+                    //check apakah wo berasal dari sr ? jika ya, ubah status sr jadi open
+                    $checksr = DB::table('wo_mstr')
+                        ->where('wo_number', '=', $req->tmp_wonbr)
+                        ->first();
+
+                    if ($checksr->wo_sr_number !== "") {
+                        //ubah status sr
+                        DB::table('service_req_mstr')
+                            ->where('sr_number', '=', $checksr->wo_sr_number)
+                            ->update([
+                                'sr_status' => 'Open',
+                                'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+
+                        //kirim notifikasi ke pembuat sr
+                        $thiswonumber = $checksr->wo_number;
+                        $thissrnumber = $checksr->wo_sr_number;
+                        $thisnotecancel = $req->notecancel;
+                        SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
+
+
+                        //ambil data sr untuk diinsert ke table service_req_mstr_hist
+                        $getdatasr = DB::table('service_req_mstr')
+                                        ->where('sr_number', '=', $checksr->wo_sr_number)
+                                        ->first();
+
+                        DB::table('service_req_mstr_hist')
+                            ->insert([
+                                'sr_number' => $getdatasr->sr_number,
+                                'wo_number' => $getdatasr->wo_number,
+                                'sr_dept' => $getdatasr->sr_dept,
+                                'sr_asset' => $getdatasr->sr_asset,
+                                'sr_eng_approver' =>$getdatasr->sr_eng_approver,
+                                'sr_note' => $getdatasr->sr_note,
+                                'sr_status' => 'Open',
+                                'sr_status_approval' => $getdatasr->sr_status_approval,
+                                'sr_req_by' => $getdatasr->sr_req_by,
+                                'sr_req_date'=> $getdatasr->sr_req_date,
+                                'sr_req_time' => $getdatasr->sr_req_time,
+                                'sr_fail_type' => $getdatasr->sr_fail_type,
+                                'sr_fail_code' => $getdatasr->sr_fail_code,
+                                'sr_impact' => $getdatasr->sr_impact,
+                                'sr_priority' => $getdatasr->sr_priority,
+                                'sr_action' => 'WO Canceled',
+                                'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+                    }
+
+                    DB::commit();
+                    toast('Work Order ' . $req->tmp_wonbr . ' Successfuly Canceled!', 'success');
+                    return back();
+
+
+
+                }elseif($req->thisbutton == "btndelete"){
+                    //delete wo saat status masih firm
+
+                    DB::table('wo_trans_history')
+                        ->insert([
+                            'wo_number' => $req->tmp_wonbr,
+                            'wo_action' => 'deleted',
+                        ]);
+
+                    //check apakah wo berasal dari sr ? jika ya, ubah status sr jadi open
+                    $checksr = DB::table('wo_mstr')
+                        ->where('wo_number', '=', $req->tmp_wonbr)
+                        ->first();
+
+                    if ($checksr->wo_sr_number !== "") {
+                        //ubah status sr
+                        DB::table('service_req_mstr')
+                            ->where('sr_number', '=', $checksr->wo_sr_number)
+                            ->update([
+                                'sr_status' => 'Open',
+                                'wo_number' => null, //dibuat null jika wo akan didelete
+                                'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+
+                        //kirim notifikasi ke pembuat sr
+                        $thiswonumber = $checksr->wo_number;
+                        $thissrnumber = $checksr->wo_sr_number;
+                        $thisnotecancel = $req->notecancel;
+                        SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
+
+                        //ambil data sr untuk diinsert ke table service_req_mstr_hist
+                        $getdatasr = DB::table('service_req_mstr')
+                                        ->where('sr_number', '=', $checksr->wo_sr_number)
+                                        ->first();
+
+                        DB::table('service_req_mstr_hist')
+                            ->insert([
+                                'sr_number' => $getdatasr->sr_number,
+                                'wo_number' => $req->tmp_wonbr,
+                                'sr_dept' => $getdatasr->sr_dept,
+                                'sr_asset' => $getdatasr->sr_asset,
+                                'sr_eng_approver' =>$getdatasr->sr_eng_approver,
+                                'sr_note' => $getdatasr->sr_note,
+                                'sr_status' => 'Open',
+                                'sr_status_approval' => $getdatasr->sr_status_approval,
+                                'sr_req_by' => $getdatasr->sr_req_by,
+                                'sr_req_date'=> $getdatasr->sr_req_date,
+                                'sr_req_time' => $getdatasr->sr_req_time,
+                                'sr_fail_type' => $getdatasr->sr_fail_type,
+                                'sr_fail_code' => $getdatasr->sr_fail_code,
+                                'sr_impact' => $getdatasr->sr_impact,
+                                'sr_priority' => $getdatasr->sr_priority,
+                                'sr_action' => 'WO Deleted',
+                                'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+                    }
+
+                    //hapus data wo
+                    DB::table('wo_mstr')
+                        ->where('wo_number','=', $req->tmp_wonbr)
+                        ->delete();
+
+                    DB::table('wo_dets_sp')
+                        ->where('wd_sp_wonumber')
+                        ->delete();
+
+                    DB::table('wo_dets_qc')
+                        ->where('wd_qc_wonumber','=', $req->tmp_wonbr)
+                        ->delete();
+
+                    DB::table('wo_dets_ins')
+                        ->where('wd_ins_wonumber','=', $req->tmp_wonbr)
+                        ->delete();
+
+
+                    DB::commit();
+                    toast('Work Order ' . $req->tmp_wonbr . ' Successfuly Deleted!', 'success');
+                    return back();
+                    
                 }
+
+                
             } elseif ($req->tmp_wostatus == 'released') {
                 //jika status wo sudah released
 
@@ -1379,39 +1508,157 @@ class wocontroller extends Controller
                     return back();
                 } else {
                     //jika status wo sudah released dan belum ada transaksi maka status wo bisa diubah menjadi cancel
-                    DB::table('wo_mstr')
+                    if($req->thisbutton == "btncancel"){
+                        //cancel wo ketika status masih firm
+                        DB::table('wo_mstr')
                         ->where('wo_number', '=', $req->tmp_wonbr)
                         ->where('wo_status', '=', 'released')
                         ->update([
                             'wo_status' => 'canceled',
                             'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                         ]);
-
-                    DB::table('wo_trans_history')
-                        ->insert([
-                            'wo_number' => $req->tmp_wonbr,
-                            'wo_action' => 'canceled',
-                        ]);
-
-                    //check apakah wo berasal dari sr ? jika ya, ubah status sr jadi open
-                    $checksr = DB::table('wo_mstr')
-                        ->where('wo_number', '=', $req->tmp_wonbr)
-                        ->first();
-
-                    if ($checksr->wo_sr_number !== "") {
-                        DB::table('service_req_mstr')
-                            ->where('sr_number', '=', $checksr->wo_sr_number)
-                            ->update([
-                                'sr_status' => 'Open',
-                                'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+    
+                        DB::table('wo_trans_history')
+                            ->insert([
+                                'wo_number' => $req->tmp_wonbr,
+                                'wo_action' => 'canceled',
                             ]);
-
-
-                        //kirim notifikasi ke pembuat sr
-                        $thiswonumber = $checksr->wo_number;
-                        $thissrnumber = $checksr->wo_sr_number;
-                        $thisnotecancel = $req->notecancel;
-                        SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
+    
+                        //check apakah wo berasal dari sr ? jika ya, ubah status sr jadi open
+                        $checksr = DB::table('wo_mstr')
+                            ->where('wo_number', '=', $req->tmp_wonbr)
+                            ->first();
+    
+                        if ($checksr->wo_sr_number !== "") {
+                            //ubah status sr
+                            DB::table('service_req_mstr')
+                                ->where('sr_number', '=', $checksr->wo_sr_number)
+                                ->update([
+                                    'sr_status' => 'Open',
+                                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                ]);
+    
+                            //kirim notifikasi ke pembuat sr
+                            $thiswonumber = $checksr->wo_number;
+                            $thissrnumber = $checksr->wo_sr_number;
+                            $thisnotecancel = $req->notecancel;
+                            SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
+    
+    
+                            //ambil data sr untuk diinsert ke table service_req_mstr_hist
+                            $getdatasr = DB::table('service_req_mstr')
+                                            ->where('sr_number', '=', $checksr->wo_sr_number)
+                                            ->first();
+    
+                            DB::table('service_req_mstr_hist')
+                                ->insert([
+                                    'sr_number' => $getdatasr->sr_number,
+                                    'wo_number' => $getdatasr->wo_number,
+                                    'sr_dept' => $getdatasr->sr_dept,
+                                    'sr_asset' => $getdatasr->sr_asset,
+                                    'sr_eng_approver' =>$getdatasr->sr_eng_approver,
+                                    'sr_note' => $getdatasr->sr_note,
+                                    'sr_status' => 'Open',
+                                    'sr_status_approval' => $getdatasr->sr_status_approval,
+                                    'sr_req_by' => $getdatasr->sr_req_by,
+                                    'sr_req_date'=> $getdatasr->sr_req_date,
+                                    'sr_req_time' => $getdatasr->sr_req_time,
+                                    'sr_fail_type' => $getdatasr->sr_fail_type,
+                                    'sr_fail_code' => $getdatasr->sr_fail_code,
+                                    'sr_impact' => $getdatasr->sr_impact,
+                                    'sr_priority' => $getdatasr->sr_priority,
+                                    'sr_action' => 'WO Canceled',
+                                    'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                ]);
+                        }
+    
+                        DB::commit();
+                        toast('Work Order ' . $req->tmp_wonbr . ' Successfuly Canceled!', 'success');
+                        return back();
+    
+    
+    
+                    }elseif($req->thisbutton == "btndelete"){
+                        //delete wo saat status masih firm
+    
+                        DB::table('wo_trans_history')
+                            ->insert([
+                                'wo_number' => $req->tmp_wonbr,
+                                'wo_action' => 'deleted',
+                            ]);
+    
+                        //check apakah wo berasal dari sr ? jika ya, ubah status sr jadi open
+                        $checksr = DB::table('wo_mstr')
+                            ->where('wo_number', '=', $req->tmp_wonbr)
+                            ->first();
+    
+                        if ($checksr->wo_sr_number !== "") {
+                            //ubah status sr
+                            DB::table('service_req_mstr')
+                                ->where('sr_number', '=', $checksr->wo_sr_number)
+                                ->update([
+                                    'sr_status' => 'Open',
+                                    'wo_number' => null, //dibuat null jika wo akan didelete
+                                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                ]);
+    
+                            //kirim notifikasi ke pembuat sr
+                            $thiswonumber = $checksr->wo_number;
+                            $thissrnumber = $checksr->wo_sr_number;
+                            $thisnotecancel = $req->notecancel;
+                            SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
+    
+                            //ambil data sr untuk diinsert ke table service_req_mstr_hist
+                            $getdatasr = DB::table('service_req_mstr')
+                                            ->where('sr_number', '=', $checksr->wo_sr_number)
+                                            ->first();
+    
+                            DB::table('service_req_mstr_hist')
+                                ->insert([
+                                    'sr_number' => $getdatasr->sr_number,
+                                    'wo_number' => $req->tmp_wonbr,
+                                    'sr_dept' => $getdatasr->sr_dept,
+                                    'sr_asset' => $getdatasr->sr_asset,
+                                    'sr_eng_approver' =>$getdatasr->sr_eng_approver,
+                                    'sr_note' => $getdatasr->sr_note,
+                                    'sr_status' => 'Open',
+                                    'sr_status_approval' => $getdatasr->sr_status_approval,
+                                    'sr_req_by' => $getdatasr->sr_req_by,
+                                    'sr_req_date'=> $getdatasr->sr_req_date,
+                                    'sr_req_time' => $getdatasr->sr_req_time,
+                                    'sr_fail_type' => $getdatasr->sr_fail_type,
+                                    'sr_fail_code' => $getdatasr->sr_fail_code,
+                                    'sr_impact' => $getdatasr->sr_impact,
+                                    'sr_priority' => $getdatasr->sr_priority,
+                                    'sr_action' => 'WO Deleted',
+                                    'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                ]);
+                        }
+    
+                        //hapus data wo
+                        DB::table('wo_mstr')
+                            ->where('wo_number','=', $req->tmp_wonbr)
+                            ->delete();
+    
+                        DB::table('wo_dets_sp')
+                            ->where('wd_sp_wonumber')
+                            ->delete();
+    
+                        DB::table('wo_dets_qc')
+                            ->where('wd_qc_wonumber','=', $req->tmp_wonbr)
+                            ->delete();
+    
+                        DB::table('wo_dets_ins')
+                            ->where('wd_ins_wonumber','=', $req->tmp_wonbr)
+                            ->delete();
+    
+    
+                        DB::commit();
+                        toast('Work Order ' . $req->tmp_wonbr . ' Successfuly Deleted!', 'success');
+                        return back();
+                        
                     }
                 }
             } else {
@@ -1420,10 +1667,6 @@ class wocontroller extends Controller
                 return back();
             }
 
-
-            DB::commit();
-            toast('Work Order ' . $req->tmp_wonbr . ' Successfuly Canceled!', 'success');
-            return back();
         } catch (Exception $e) {
             DB::rollBack();
 

@@ -357,10 +357,6 @@ div #munculgambar .gambar:hover{
             <label for="c_mtcode" class="col-md-5 col-form-label text-md-left">Maintenance Code</label>
             <div class="col-md-7">
               <select id="c_mtcode" name="c_mtcode" class="form-control">
-                <option></option>
-                @foreach($maintenancelist as $mt)
-                <option value="{{$mt->pmc_code}}">{{$mt->pmc_code}} -- {{$mt->pmc_desc}}</option>
-                @endforeach
               </select>
             </div>
           </div>
@@ -421,7 +417,6 @@ div #munculgambar .gambar:hover{
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <input type="hidden" id="statusedit">
       <form class="form-horizontal" id="newedit" method="post" action="editwo">
         {{ csrf_field() }}
         <input type="hidden" id="counter" value=0>
@@ -521,10 +516,6 @@ div #munculgambar .gambar:hover{
             <label for="e_mtcode" class="col-md-5 col-form-label text-md-left">Maintenance Code</label>
             <div class="col-md-7">
               <select id="e_mtcode" name="e_mtcode" class="form-control">
-                <option></option>
-                @foreach($maintenancelist as $mt)
-                <option value="{{$mt->pmc_code}}">{{$mt->pmc_code}} -- {{$mt->pmc_desc}}</option>
-                @endforeach
               </select>
             </div>
           </div>
@@ -1052,7 +1043,7 @@ div #munculgambar .gambar:hover{
   <div class="modal-dialog modal-md" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel">Work Order Cancel</h5>
+        <h5 class="modal-title text-center" id="exampleModalLabel">Work Order Cancel / Delete</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -1064,7 +1055,7 @@ div #munculgambar .gambar:hover{
         <div class="modal-body">
           <input type="hidden" name="tmp_wonbr" id="tmp_wonbr"/>
           <input type="hidden" name="tmp_wostatus" id="tmp_wostatus"/>
-          Are you sure want to cancel this <i>Work Order</i> <b> <span id="d_wonbr"></span></b> ?
+          Are you sure want to cancel/delete this <i>Work Order</i> <b> <span id="d_wonbr"></span></b> ?
           <div class="form-group row" id="divnotecancel" style="display: none;">
             <label class="col-md-12 col-form-label">Note for Service Request maker : </label>
             <textarea class="form-control" id="notecancel" name="notecancel" autofocus maxlength="150"></textarea>
@@ -1072,8 +1063,9 @@ div #munculgambar .gambar:hover{
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-info bt-action" id="d_btnclosed" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-success bt-action" id="d_btnconfd">Confirm</button>
+          <button type="button" class="btn btn-info bt-action" id="d_btnclosed" data-dismiss="modal">Back</button>
+          <button type="submit" class="btn btn-danger bt-action" id="d_btnconfd" name="thisbutton" value="btndelete">Delete</button>
+          <button type="submit" class="btn btn-primary bt-action" id="d_btnconfd" name="thisbutton" value="btncancel">Cancel</button>
           <button type="button" class="btn btn-block btn-info" id="d_btnloadingd" style="display:none">
             <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
           </button>
@@ -1943,6 +1935,28 @@ div #munculgambar .gambar:hover{
 
         var wonbr = $(this).data('wonumber');
         var status = $(this).data('status');
+        var wotype = $(this).data('wotype');
+
+        $.ajax({
+            url: '/filtermaintcode',
+            method: 'GET',
+            data: { pmc_type: wotype },
+            success: function(response) {
+                // Manipulasi data di sini
+                console.log(response);
+
+                var select = $('#e_mtcode');
+                select.empty();
+                select.append('<option value="">Select Maintenance Code</option>');
+                $.each(response, function(key, value) {
+                  select.append('<option value="' + value.pmc_code + '">' + value.pmc_code + ' -- ' + value.pmc_desc + '</option>');
+                });
+
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
 
         if(status == "released" || status == "started"){
           document.getElementById('e_engineerlist').setAttribute('readonly', true);
@@ -2125,6 +2139,34 @@ div #munculgambar .gambar:hover{
         if (start_date > due_date) {
           $("#c_duedate").val($("#c_startdate").val());
         }
+      });
+
+      $('input[name="cwotype"]').on('change', function() {
+        // ambil value dari input radio yang dipilih
+        var selectedValue = $('input[name="cwotype"]:checked').val();
+
+        console.log(selectedValue);
+
+        $.ajax({
+            url: '/filtermaintcode',
+            method: 'GET',
+            data: { pmc_type: selectedValue },
+            success: function(response) {
+                // Manipulasi data di sini
+                console.log(response);
+
+                var select = $('#c_mtcode');
+                select.empty();
+                select.append('<option value="">Select Maintenance Code</option>');
+                $.each(response, function(key, value) {
+                  select.append('<option value="' + value.pmc_code + '">' + value.pmc_code + ' -- ' + value.pmc_desc + '</option>');
+                });
+
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
       });
 
       $('#c_mtcode').on('change', function() {
