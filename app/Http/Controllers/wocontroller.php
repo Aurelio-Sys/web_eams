@@ -2445,6 +2445,31 @@ class wocontroller extends Controller
             'qcslist' => $getQClistDesc,
         ]);
     }
+    
+    public function woreportingdetail($wonumber){
+        //ambil data untuk header wo report detail
+        $dataheader = DB::table('wo_mstr')
+                        ->leftJoin('asset_mstr','asset_mstr.asset_code','wo_mstr.wo_asset_code')
+                        ->where('wo_number','=', $wonumber)
+                        ->first();
+
+        // dd($wonumber);
+
+
+        $datasparepart = DB::table('wo_dets_sp')
+                        ->join('sp_mstr','sp_mstr.spm_code','wo_dets_sp.wd_sp_spcode')
+                        ->where('wd_sp_wonumber','=', $wonumber)
+                        ->get();
+
+        // dd($datasparepart);
+
+        $sp_all = DB::table('sp_mstr')
+                        ->select('spm_code','spm_desc', 'spm_um','spm_site','spm_loc','spm_lot')
+                        ->where('spm_active','=', 'Yes')
+                        ->get();
+
+        return view('workorder.wofinish-done', ['header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all]);
+    }
 
     public function woapprovalbrowse(Request $req)
     {
@@ -2969,105 +2994,66 @@ class wocontroller extends Controller
         }
     }
 
-    public function wocloselist()
+    public function wocloselist(Request $request)
     {      //route : woreport      blade : workorder.woclose
+        $engineer = DB::table('users')
+                    ->join('roles', 'users.role_user', 'roles.role_code')
+                    ->where('role_desc', '=', 'Engineer')
+                    ->get();
 
-        //dd(Session()->get('username'));
+        $asset1 = DB::table('asset_mstr')
+                    ->where('asset_active', '=', 'Yes')
+                    ->get();
+
         if (strpos(Session::get('menu_access'), 'WO03') !== false) {
 
             if (Session::get('role') == 'ADMIN') {
 
                 $data = DB::table('wo_mstr')
-                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                     ->where(function ($status) {
-                        $status->where('wo_status', '=', 'started')
-                            ->orwhere('wo_status', '=', 'finish');
+                        $status->where('wo_status', '=', 'started');
                     })
                     ->orderBy('wo_status', 'desc')
-                    ->orderby('wo_created_at', 'desc')
-                    ->orderBy('wo_mstr.wo_id', 'desc')
-                    ->paginate(10);
+                    ->orderBy('wo_mstr.id', 'desc');
 
-                $engineer = DB::table('users')
-                    ->join('roles', 'users.role_user', 'roles.role_code')
-                    ->where('role_desc', '=', 'Engineer')
-                    ->get();
-                $asset = DB::table('wo_mstr')
-                    ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
-                    ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-                    ->where(function ($status) {
-                        $status->where('wo_status', '=', 'started')
-                            ->orwhere('wo_status', '=', 'finish');
-                    })
-                    ->groupBy('asset_code')
-                    ->orderBy('asset_code')
-                    ->get();
-                $repaircode = DB::table('rep_master')
-                    ->get();
-
-                $sparepart = DB::table('sp_mstr')
-                    ->get();
-                $repairgroup = DB::table('xxrepgroup_mstr')
-                    ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
-                    ->distinct('xxrepgroup_nbr')
-                    ->get();
-                $instruction = DB::table('ins_mstr')
-                    ->get();
+                
             } else {
+                $username = Session::get('username');
 
                 $data = DB::table('wo_mstr')
                     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
                     ->where(function ($status) {
-                        $status->where('wo_status', '=', 'started')
-                            ->orwhere('wo_status', '=', 'finish');
+                        $status->where('wo_status', '=', 'started');
                     })
-                    ->where(function ($query) {
-                        $query->where('wo_engineer1', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer5', '=', Session()->get('username'));
+                    ->where(function ($query) use ($username){
+                        $query->where('wo_list_engineer', '=', $username.';')
+                        ->orWhere('wo_list_engineer', 'LIKE', $username.';%')
+                        ->orWhere('wo_list_engineer', 'LIKE', '%;'.$username.';%')
+                        ->orWhere('wo_list_engineer', 'LIKE', '%;'.$username)
+                        ->orWhere('wo_list_engineer', '=', $username);
                     })
                     ->orderBy('wo_status', 'desc')
-                    ->orderby('wo_created_at', 'desc')
-                    ->orderBy('wo_mstr.wo_id', 'desc')
-                    ->paginate(10);
-                $engineer = DB::table('users')
-                    ->join('roles', 'users.role_user', 'roles.role_code')
-                    ->where('role_desc', '=', 'Engineer')
-                    ->get();
-                $asset = DB::table('wo_mstr')
-                    ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
-                    ->join('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-                    ->where(function ($status) {
-                        $status->where('wo_status', '=', 'started')
-                            ->orwhere('wo_status', '=', 'finish');
-                    })
-                    ->where(function ($query) {
-                        $query->where('wo_engineer1', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer2', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer3', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer4', '=', Session()->get('username'))
-                            ->orwhere('wo_engineer5', '=', Session()->get('username'));
-                    })
-                    ->groupBy('asset_code')
-                    ->orderBy('asset_code')
-                    ->get();
-                $repaircode = DB::table('rep_master')
-                    ->get();
-
-                $sparepart = DB::table('sp_mstr')
-                    ->get();
-                $repairgroup = DB::table('xxrepgroup_mstr')
-                    ->selectRaw('xxrepgroup_nbr,xxrepgroup_desc')
-                    ->distinct('xxrepgroup_nbr')
-                    ->get();
-                $instruction = DB::table('ins_mstr')
-                    ->get();
+                    ->orderBy('wo_mstr.wo_id', 'desc');
+                    
             }
 
+            if ($request->s_nomorwo) {
+                $data->where('wo_number', 'like', '%'.$request->s_nomorwo.'%');
+            }
+    
+            if ($request->s_asset) {
+                $data->where('wo_asset_code', '=', $request->s_asset);
+            }
 
-            return view('workorder.woclose', ['data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'repaircode' => $repaircode, 'sparepart' => $sparepart, 'repairgroup' => $repairgroup, 'instruction' => $instruction]);
+            if ($request->s_priority) {
+                $data->where('wo_priority', '=', $request->s_priority);
+            }
+
+            $data = $data->paginate(10);
+
+
+            return view('workorder.woclose', ['data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset' => $asset1]);
         } else {
             toast('you dont have access, please contact admin', 'error');
             return back();

@@ -445,6 +445,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/delfilewofinish/{id}', 'wocontroller@delfilewofinish'); // untuk delete file wo finish dari approval spv`
 	route::get('/woreport/reissued/{wo}',[wocontroller::class, 'reissued_wo'])->name('reissuedWO');
 	route::post('/reissuedwofinish', [wocontroller::class, 'reissuedwofinish']);
+	route::get('/woreportingdetail/{wonumber}', [wocontroller::class, 'woreportingdetail'])->name('reportingWO');
 
 
 	//13-08-2021
