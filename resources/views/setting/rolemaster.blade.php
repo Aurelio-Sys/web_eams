@@ -323,6 +323,15 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO PM Generator') }}</label>
+              <div class="col-6">
+                <label class="switch" for="pmconf">
+                  <input type="checkbox" class="custom-control-input" id="pmconf" name="pmconf" value="US05" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Usage Browse') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbUSBrowse">
@@ -1086,6 +1095,15 @@
               <div class="col-6">
                 <label class="switch" for="e_cbUSGen">
                   <input type="checkbox" class="custom-control-input" id="e_cbUSGen" name="e_cbUSGen" value="US03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO PM Confirm') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_pmconf">
+                  <input type="checkbox" class="custom-control-input" id="e_pmconf" name="e_pmconf" value="US05" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -2079,6 +2097,11 @@
           document.getElementById('e_cbUSGen').checked = true;
         } else {
           document.getElementById('e_cbUSGen').checked = false;
+        }
+        if (listmenu.search("US05") >= 0) {
+          document.getElementById('e_pmconf').checked = true;
+        } else {
+          document.getElementById('e_pmconf').checked = false;
         }
         if (listmenu.search("US04") >= 0) {
           document.getElementById('e_cbUSBrowse').checked = true;
