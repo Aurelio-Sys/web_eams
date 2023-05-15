@@ -287,6 +287,15 @@ class WHSConfirm extends Controller
                                 <locTo>'.$req->hidden_locto[$index].'</locTo>
                             </itemDetail>
                         </item>';
+
+
+                    DB::table('wo_dets_sp')
+                        ->where('wd_sp_wonumber','=', $req->hide_wonum)
+                        ->where('wd_sp_spcode', '=', $req->hidden_spcode[$index])
+                        ->update([
+                            'wd_sp_flag' => false,
+                            'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
                 }
             }
             

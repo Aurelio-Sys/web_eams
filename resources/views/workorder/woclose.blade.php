@@ -4,12 +4,12 @@
 <div class="container-fluid">
   <div class="row mb-2">
     <div class="col-sm-6 mt-2">
-      <h1 class="m-0 text-dark">Work Order Finish</h1>
+      <h1 class="m-0 text-dark">Work Order Reporting</h1>
     </div><!-- /.col -->
     <div class="col-sm-6">
       <ol class="breadcrumb float-sm-right">
         <li class="breadcrumb-item"><a href="{{url('/home')}}">Home</a></li>
-        <li class="breadcrumb-item active">Work Order Finish</li>
+        <li class="breadcrumb-item active">Work Order Reporting</li>
       </ol>
     </div><!-- /.col -->
   </div><!-- /.row -->
@@ -96,52 +96,54 @@
   }
 </style>
 <!--Table Menu-->
-<div class="container-fluid mb-2">
-    <div class="row">
-      <div class="col-md-12">
-        <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
-      </div>  
-    </div>
-    <!-- Element div yang akan collapse atau expand -->
-    <div class="collapse" id="collapseExample">
-        <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
-        <div class="card card-body bg-black rounded-0">
-          <div class="col-12 form-group row">
+<form action="/woreport" method="GET" />
+  <div class="container-fluid mb-2">
+      <div class="row">
+        <div class="col-md-12">
+          <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
+        </div>  
+      </div>
+      <!-- Element div yang akan collapse atau expand -->
+      <div class="collapse" id="collapseExample">
+          <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+          <div class="card card-body bg-black rounded-0">
+            <div class="col-12 form-group row">
 
-              <!--FORM Search Disini-->
-              <label for="s_nomorwo" class="col-md-2 col-form-label text-md-left">{{ __('WO Number') }}</label>
-              <div class="col-md-4 col-sm-12 mb-2 input-group">
-                <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="" autofocus autocomplete="off">
-              </div>
-              <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
-              <div class="col-md-4 col-sm-12 mb-2 input-group">
-                <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
-                  <option value="">--Select Asset--</option>
-                  @foreach($asset1 as $assetsearch)
-                  <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
-                  @endforeach
-                </select>
-              </div>
-              <label for="s_status" class="col-md-2 col-form-label text-md-left">{{ __('WO Status') }}</label>
-              <div class="col-md-3 col-sm-12 mb-2 input-group">
-                <select id="s_status" type="text" class="form-control" name="s_status">
-                  <option value="">--Select Status--</option>
-                  <option value="started">Started</option>
-                  <option value="finish">Finish</option>
-
-                </select>
-              </div>
-              <label for="" class="col-md-3 col-form-label text-md-right">{{ __('') }}</label>
-              <div class="col-md-2 col-sm-12 mb-2 input-group">
-                <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" style="float:right" />
-              </div>
-              <div class="col-md-2 col-sm-12 mb-2 input-group">
-                <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'><i class="fas fa-sync-alt"></i></button>
-              </div>
+                <!--FORM Search Disini-->
+                <label for="s_nomorwo" class="col-md-2 col-form-label text-md-left">{{ __('WO Number') }}</label>
+                <div class="col-md-4 col-sm-12 mb-2 input-group">
+                  <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="" autofocus autocomplete="off">
+                </div>
+                <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
+                <div class="col-md-4 col-sm-12 mb-2 input-group">
+                  <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
+                    <option value="">--Select Asset--</option>
+                    @foreach($asset as $assetsearch)
+                      <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
+                    @endforeach
+                  </select>
+                </div>
+                <label for="s_status" class="col-md-2 col-form-label text-md-left">{{ __('WO Status') }}</label>
+                <div class="col-md-3 col-sm-12 mb-2 input-group">
+                  <select id="s_priority" type="text" class="form-control" name="s_priority">
+                    <option value="">--Select Priority--</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+                <label for="" class="col-md-3 col-form-label text-md-right">{{ __('') }}</label>
+                <div class="col-md-2 col-sm-12 mb-2 input-group">
+                  <button type="submit" class="btn btn-block btn-primary" id="btnsearch" style="float:right" />Search</button>
+                </div>
+                <div class="col-md-2 col-sm-12 mb-2 input-group">
+                  <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'><i class="fas fa-sync-alt"></i></button>
+                </div>
+            </div>
           </div>
-        </div>
-    </div>
-</div>
+      </div>
+  </div>
+</form>
 <input type="hidden" id="tmpwo" value="" />
 <input type="hidden" id="tmpasset" value="" />
 <input type="hidden" id="tmpstatus" value="" />
@@ -154,10 +156,9 @@
 </div>
 
 <hr>
-<div class="col-12 form-group row p-0 m-0">
 
-  <div class="table-responsive col-12">
-    <table class="table table-bordered mini-table mt-4" id="dataTable" width="100%" cellspacing="0">
+  <div class=""table-responsive col-12 mt-0 pt-0" style="overflow-x: auto;overflow-y: hidden ;display: inline-block;white-space: nowrap; position:relative;">
+    <table class="table table-bordered mt-0" id="dataTable" width="100%" cellspacing="0">
       <thead>
         <tr style="text-align: center;">
           <th style="width: 10%;">Work Order Number</th>
@@ -243,9 +244,6 @@
                     <input type="hidden" id="inputgroup1">
                     <select id="repairgroup" type="text" class="form-control repairgroup" name="repairgroup[]" autofocus>
                       <option value="" selected disabled>--Select Repair Group--</option>
-                      @foreach($repairgroup as $rp)
-                      <option value="{{$rp->xxrepgroup_nbr}}">{{$rp->xxrepgroup_nbr}} -- {{$rp->xxrepgroup_desc}}</option>
-                      @endforeach
                     </select>
                   </div>
                 </div>
@@ -263,9 +261,7 @@
                     <input type="hidden" id="inputgroup1">
                     <select id="manualcount" type="text" class="form-control repairgroup" name="manualcount" autofocus>
                       <option value="" selected disabled>--Number of part repaired--</option>
-                      @for($co = 1; $co<=50; $co++) <option value="{{$co}}">{{$co}}</option>
-                        @endfor
-                    </select>
+
                   </div>
                 </div>
                 <div id="testmanual">
@@ -283,9 +279,6 @@
                     <input type="hidden" id="inputrepair1">
                     <select id="repaircode1" type="text" class="form-control repaircode1" name="repaircode1[]" autofocus>
                       <option value="" selected disabled>--Select Repair Code--</option>
-                      @foreach ($repaircode as $repaircode2)
-                      <option value="{{$repaircode2->repm_code}}">{{$repaircode2->repm_code}} -- {{$repaircode2->repm_desc}}</option>
-                      @endforeach
                     </select>
                   </div>
                 </div>
@@ -300,9 +293,6 @@
                     <input type="hidden" id="inputrepair2">
                     <select id="repaircode2" type="text" class="form-control repaircode2" name="repaircode2[]" autofocus>
                       <option value="" selected disabled>--Select Repair Code--</option>
-                      @foreach ($repaircode as $repaircode3)
-                      <option value="{{$repaircode3->repm_code}}">{{$repaircode3->repm_code}} -- {{$repaircode3->repm_desc}}</option>
-                      @endforeach
                     </select>
                   </div>
                 </div>
@@ -317,9 +307,6 @@
                     <input type="hidden" id="inputrepair3">
                     <select id="repaircode3" type="text" class="form-control repaircode3" name="repaircode3[]" autofocus>
                       <option value="" selected disabled>--Select Repair Code--</option>
-                      @foreach ($repaircode as $repaircode4)
-                      <option value="{{$repaircode4->repm_code}}">{{$repaircode4->repm_code}} -- {{$repaircode4->repm_desc}}</option>
-                      @endforeach
                     </select>
                   </div>
                 </div>
@@ -485,99 +472,11 @@
 
   @section('scripts')
   <script>
-    $(document).on('click', '#btnsearch', function() {
-      var wonumber = $('#s_nomorwo').val();
-      var woasset = $('#s_asset').val();
-      var wostatus = $('#s_status').val();
-
-
-      var column_name = $('#hidden_column_name').val();
-      var sort_type = $('#hidden_sort_type').val();
-      var page = 1;
-
-      document.getElementById('tmpwo').value = wonumber;
-      document.getElementById('tmpasset').value = woasset;
-      document.getElementById('tmpstatus').value = wostatus;
-
-
-
-      fetch_data(page, sort_type, column_name, wonumber, woasset, wostatus);
-    });
-
-
-    $(document).on('click', '.sorting', function() {
-      var column_name = $(this).data('column_name');
-      var order_type = $(this).data('sorting_type');
-      var reverse_order = '';
-      if (order_type == 'asc') {
-        $(this).data('sorting_type', 'desc');
-        reverse_order = 'desc';
-        clear_icon();
-        $('#' + column_name + '_icon').html('<span class="glyphicon glyphicon-triangle-bottom"></span>');
-      }
-      if (order_type == 'desc') {
-        $(this).data('sorting_type', 'asc');
-        reverse_order = 'asc';
-        clear_icon();
-        $('#' + column_name + '_icon').html('<span class="glyphicon glyphicon-triangle-top"></span>');
-      }
-      $('#hidden_column_name').val(column_name);
-      $('#hidden_sort_type').val(reverse_order);
-
-      var page = $('#hidden_page').val();
-      var wonumber = $('#tmpwo').val();
-      var assert = $('#tmpasset').val();
-      var status = $('#tmpstatus').val();
-      var priority = $('#tmppriority').val();
-      var period = $('#tmpperiod').val();
-      fetch_data(page, reverse_order, column_name, username, divisi);
-    });
-
-
-    $(document).on('click', '.pagination a', function(event) {
-      event.preventDefault();
-      var page = $(this).attr('href').split('page=')[1];
-      $('#hidden_page').val(page);
-      var column_name = $('#hidden_column_name').val();
-      var sort_type = $('#hidden_sort_type').val();
-      var wonumber = $('#tmpwo').val();
-      var asset = $('#tmpasset').val();
-      var status = $('#tmpstatus').val();
-      fetch_data(page, sort_type, column_name, wonumber, asset, status);
-    });
     $("#s_asset").select2({
       width: '100%',
 
       closeOnSelect: true,
       theme: 'bootstrap4'
-    });
-    $(document).on('click', '#btnrefresh', function() {
-      var wonumber = '';
-      var asset = '';
-      var status = '';
-
-      var priority = '';
-      var column_name = $('#hidden_column_name').val();
-      var sort_type = $('#hidden_sort_type').val();
-      var page = 1;
-
-      document.getElementById('s_nomorwo').value = '';
-      document.getElementById('s_asset').value = '';
-      document.getElementById('s_status').value = '';
-
-
-      document.getElementById('tmpwo').value = '';
-      document.getElementById('tmpasset').value = '';
-      document.getElementById('tmpstatus').value = '';
-      document.getElementById('tmppriority').value = '';
-
-
-      $('#s_asset').select2({
-        width: '100%',
-        theme: 'bootstrap4',
-        asset
-      })
-      fetch_data(page, sort_type, column_name, wonumber, asset, status, priority);
     });
 
     $(document).on('change', '#arccheck', function(e) {
@@ -843,615 +742,6 @@
       })
     });
 
-
-
-    // $(document).on('change','#c_repaircodenum',function(){
-    //   var col = '';
-    //   var repairnum = document.getElementById('c_repaircodenum').value;
-
-    //   var divengine1 = document.getElementById('divrepair');
-    //   var appendclone = divengine1.cloneNode(true);
-    //   col = '';
-    //   var i;
-    //   if(repairnum != 0 && repairnum <6){
-    //     $('.divrepcode').remove();
-    //     $('.divspare').remove();
-    //     $('.hr').remove();
-    //   for(i =1; i<=repairnum;i++){
-    //     col +='<div class="form-group row col-md-12 divrepcode" >';
-    //     col +='<label for="repaircode'+i+'" class="col-md-5 col-form-label text-md-left">Repair Code '+i+'</label>';
-    //     col +='<div class="col-md-7">';
-    //     col +='<select id="repaircode'+i+'" type="text" class="form-control repaircode" name="repaircode[]" required autofocus>';
-    //     col +='<option value="" selected disabled>--Select Engineer--</option>';
-
-    //     col +='</select>';
-    //     col +='</div>';
-    //     col +='</div>';
-    //     col +='<div class="form-group row col-md-12 divrepcode" >';
-    //     col +='<label for="sparepartnum'+i+'" class="col-md-5 col-form-label text-md-left">Repair Code '+i+' Spareparts </label>';
-    //     col +='<div class="col-md-7">';
-    //     col +='<input id="sparepartnum'+i+'" type="number" class="form-control sparepartnum" name="sparepartnum[]" required autofocus min ="1">';
-    //     col +='</div>';
-    //     col +='</div>';
-    //     col +='<div class="divspare" id="divspare'+i+'">'
-    //     col +='</div>';
-    //     col += '<div class="hr">';
-    //     col += '<hr class="new1">';
-    //     col += '</div>';
-    //     // var newid = 'engineer'+i;
-    //     // console.log(newid);
-    //     // document.getElementById('testdiv').append(col);
-    //     $("#testdiv").append(col);
-    //     col='';
-    //     }
-    //     $('.repaircode').select2({
-    //       placeholder: "Select Data",
-    //       width:'100%',
-    //       theme: 'bootstrap4',
-    //     }); 
-    //   }
-    // });
-
-    // $(document).on('change','.sparepartnum',function(){
-    //   var thisid = this.id;
-    //   var valu = document.getElementById(thisid).value;
-    //   if(thisid == 'sparepartnum1'){
-    //     object.spare1 = valu;
-    //   }
-    //   else if(thisid == 'sparepartnum2'){
-    //     object.spare2 = valu;
-    //   }
-    //   else if(thisid == 'sparepartnum3'){
-    //     object.spare3 = valu;
-    //   }
-
-    //   var newval = parseInt(object.spare1) + parseInt(object.spare2) + parseInt(object.spare3);
-    //   if(newval < 11){
-    //   var substrthis = parseInt(thisid.substr(12,1));
-    //   var intid = document.getElementById(thisid).value;
-    //   var col2 = '';
-    //   if(intid != 0 && intid <6){
-    //     $('.divspare'+substrthis).remove();
-    //     // $('.sparepart').select2('destroy');
-    //     for(var i = 1; i<=intid; i++){
-    //       col2 +='<div class="form-group row col-md-12 divspare'+substrthis+'" >';
-    //       col2 +='<label class="col-md-5 col-form-label text-md-left">Spare Part '+i+'</label>';
-    //       col2 +='<div class="col-md-5 maman">';
-    //       col2 +='<select type="text" class="form-control sparepart" name="sparepart'+substrthis+'[]" required autofocus>';
-    //       col2 +='<option value="" selected disabled>--Select Sparepart--</option>';
-    //       @foreach ($sparepart as $sparepart2)
-    // col2 +='<option value=""></option>';
-    //       @endforeach
-    //       col2 +='</select>';
-
-    //       col2 +='</div>';
-    //       col2 +='<div class="col-md-2">';
-    //       col2 +='<input type="number"  min="1" class="form-control qtyspare" name="qtyspare'+i+'[]">';
-    //       col2 +='</div>';
-    //       col2 +='</div>';
-    //     }
-
-    //     $("#divspare"+substrthis).append(col2);
-    //     $('.sparepart').select2({
-    //         placeholder: "--Select Spare Part--",
-    //         width:'100%',
-    //         theme: 'bootstrap4',
-    //       }); 
-    //     col2 = '';
-
-    //     }
-    //   }
-    //   else{
-    //     swal.fire({
-    //                   position: 'top-end',
-    //                   icon: 'error',
-    //                   title: 'Spare part cannot exceed 10 item',
-    //                   toast: true,
-    //                   showConfirmButton: false,
-    //                   timer: 2000,
-    //         })
-    //   }
-    // })
-
-
-
-    // $(document).on('change','#repaircode1',function(event){
-    //   var rc1 = document.getElementById('repaircode1').value;
-    //   // alert(rc1);
-    //   $("#testdiv").html('');
-    //   if(rc1 != ''){
-    //   $.ajax({
-    //     url: "/getrepair1/" + rc1,
-    //     success: function(data) {
-
-    //       var tempres    = JSON.stringify(data);
-    //       var result     = JSON.parse(tempres);
-    //       // console.log(result[0]);
-    //       console.log(result);
-    //       var len        = result.length;
-    //       var col        = '';
-    //       var currenttype;
-    //       var currentnum = 1;
-    //       if(len >0){
-    //       col +='<div class="form-group row col-md-12 divrepcode" >';
-    //       col +='<label class="col-md-5 col-form-label text-md-left">Instruction :</label>';
-    //       col +='</div>';
-    //       col+='<div class="table-responsive col-12">';
-    //       col+='<table class="table table-borderless mt-4" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">';
-    //       col+='<thead>';
-    //       col+='<tr style="text-align: center;style="border:2px solid"">';
-    //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Kode</p></th>';
-    //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Deskripsi</p></th>';
-    //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Standard</p></th>';
-
-    //       col+='<th colspan="2" style="border:2px solid"><p style="height:100%">kondisi</p></th>';
-    //       col+='</tr>';
-    //       col+='<tr style="text-align: center;">';
-    //       col+='<th style="border:2px solid">Baik</th>';
-    //       col+='<th style="border:2px solid">Tidak</th>';
-    //       col+='</tr>';
-    //       col+='</thead>';
-    //       col+='<tbody style="border:2px solid" >';
-    //       col+='<tr>';
-    //       col+='<td style="height: 20px;border:2px solid"><p style="margin:0px"><b>'+result[0].repm_code+'</b></p></td>';
-    //       col+='<td style="height: 20px;border:2px solid"><p style="margin:0px"><b>'+result[0].repm_desc+'</b></p></td>';
-    //       col+='<td style="height: 20px;border:2px solid"></td>';
-    //       col+='<td style="height: 20px;border:2px solid"></td>';
-
-    //       col+='<td style="height: 20px;border:2px solid"></td>'; 
-    //       col+='</tr>';
-    //       for(i =0; i<len;i++){
-
-    //         // alert(result[i].spm_desc);
-    //         if(result[i].spm_desc == null){
-    //           col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>-</b></p></td>';
-    //         }
-    //         else{
-    //           col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].spm_desc+'</b></p></td>';  
-    //         }
-
-    //         col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].ins_desc+'</b></p></td>';
-    //         if(result[i].ins_check == null){
-    //           col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>-</b></p></td>';
-    //         }
-    //         else{
-    //           col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].ins_check+'</b></p></td>';
-    //         }
-
-    //         col+='<td style="text-align:center;margin-top:0;border:2px solid"><input type="radio" name="group1[group'+i+']" id="item'+i+'" value="y'+i+'"></td>';
-    //         col+='<td style="text-align:center;margin-top:0;border:2px solid"><input type="radio" name="group1[group'+i+']" id="item'+i+'" value="n'+i+'"></td>';
-    //         col+='</tr>';
-    //       }
-    //       col+='</tbody>';
-    //       col+='</table>';
-    //       col+='</div>';
-    //       $("#testdiv").append(col);
-    //       col='';
-
-    //       }  
-    //     }
-    //   })
-    //   }
-    // })
-    // $(document).on('change','#repaircode2',function(event){
-    //   var rc2 = document.getElementById('repaircode2').value;
-    //   $("#testdiv2").html('');
-    //   if(rc2 != ''){
-    //   $.ajax({
-    //     url: "/getrepair1/" + rc2,
-    //     success: function(data) {
-    //       var tempres    = JSON.stringify(data);
-    //       var result     = JSON.parse(tempres);
-    //       var len = result.length;
-    //       var col = '';
-    //       var currenttype;
-    //       var currentnum = 1;
-    //       if(len >0){
-    //       col +='<div class="form-group row col-md-12 divrepcode" >';
-    //       col +='<label class="col-md-5 col-form-label text-md-left">Instruction :</label>';
-    //       col +='</div>';
-    //       col+='<div class="table-responsive col-12">';
-    //       col+='<table class="table table-borderless mt-4" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">';
-    //       col+='<thead>';
-    //       col+='<tr style="text-align: center;style="border:2px solid"">';
-    //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Kode</p></th>';
-    //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Deskripsi</p></th>';
-    //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Standard</p></th>';
-
-    //       col+='<th colspan="2" style="border:2px solid"><p style="height:100%">kondisi</p></th>';
-    //       col+='</tr>';
-    //       col+='<tr style="text-align: center;">';
-    //       col+='<th style="border:2px solid">Baik</th>';
-    //       col+='<th style="border:2px solid">Tidak</th>';
-    //       col+='</tr>';
-    //       col+='</thead>';
-    //       col+='<tbody style="border:2px solid" >';
-    //       col+='<tr>';
-    //       col+='<td style="height: 20px;border:2px solid"><p style="margin:0px"><b>'+result[0].repm_code+'</b></p></td>';
-    //       col+='<td style="height: 20px;border:2px solid"><p style="margin:0px"><b>'+result[0].repm_desc+'</b></p></td>';
-    //       col+='<td style="height: 20px;border:2px solid"></td>';
-    //       col+='<td style="height: 20px;border:2px solid"></td>';
-
-    //       col+='<td style="height: 20px;border:2px solid"></td>'; 
-    //       col+='</tr>';
-    //       for(i =0; i<len;i++){
-
-    //         if(result[i].spm_desc == null){
-    //           col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>-</b></p></td>';
-    //         }
-    //         else{
-    //           col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].spm_desc+'</b></p></td>';  
-    //         }
-    //                     col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].ins_desc+'</b></p></td>';
-    //                     if(result[i].ins_check == null){
-    //                       col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>-</b></p></td>';
-    //                     }
-    //                     else{
-    //                       col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].ins_check+'</b></p></td>';
-    //                     }
-
-    //         col+='<td style="text-align:center;margin-top:0;border:2px solid"><input type="radio" name="group2[group'+i+']" id="item'+i+'" value="y'+i+'"></td>';
-    //         col+='<td style="text-align:center;margin-top:0;border:2px solid"><input type="radio" name="group2[group'+i+']" id="item'+i+'" value="n'+i+'"></td>';
-    //         col+='</tr>';
-    //       }
-    //       col+='</tbody>';
-    //       col+='</table>';
-    //       col+='</div>';
-    //       $("#testdiv2").append(col);
-    //       col='';
-
-    //       }  
-    //     }
-    //   })
-    //   }
-    // })
-    // $(document).on('change','#repaircode3',function(event){
-    //   var rc3 = document.getElementById('repaircode3').value;
-    //   $("#testdiv3").html('');
-    //   if(rc3 != ''){
-    //   $.ajax({
-    //     url: "/getrepair1/" + rc3,
-    //     success: function(data) {
-    //       var tempres    = JSON.stringify(data);
-    //       var result     = JSON.parse(tempres);
-    //       var len = result.length;
-    //       var col = '';
-    //       var currenttype;
-    //       var currentnum = 1;
-    //       if(len >0){
-    //       col +='<div class="form-group row col-md-12 divrepcode"  >';
-    //       col +='<label class="col-md-5 col-form-label text-md-left">Instruction :</label>';
-    //       col +='</div>';
-    //       col+='<div class="table-responsive col-12">';
-    //       col+='<table class="table table-borderless mt-4" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">';
-    //       col+='<thead>';
-    //       col+='<tr style="text-align: center;style="border:2px solid"">';
-    //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Kode</p></th>';
-    //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Deskripsi</p></th>';
-    //       col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Standard</p></th>';
-
-    //       col+='<th colspan="2" style="border:2px solid"><p style="height:100%">kondisi</p></th>';
-    //       col+='</tr>';
-    //       col+='<tr style="text-align: center;">';
-    //       col+='<th style="border:2px solid">Baik</th>';
-    //       col+='<th style="border:2px solid">Tidak</th>';
-    //       col+='</tr>';
-    //       col+='</thead>';
-    //       col+='<tbody style="border:2px solid" >';
-    //       col+='<tr>';
-    //       col+='<td style="height: 20px;border:2px solid"><p style="margin:0px"><b>'+result[0].repm_code+'</b></p></td>';
-    //       col+='<td style="height: 20px;border:2px solid"><p style="margin:0px"><b>'+result[0].repm_desc+'</b></p></td>';
-    //       col+='<td style="height: 20px;border:2px solid"></td>';
-    //       col+='<td style="height: 20px;border:2px solid"></td>';
-
-    //       col+='<td style="height: 20px;border:2px solid"></td>'; 
-    //       col+='</tr>';
-    //       for(i =0; i<len;i++){
-
-    //         if(result[i].spm_desc == null){
-    //           col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>-</b></p></td>';
-    //         }
-    //         else{
-    //           col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].spm_desc+'</b></p></td>';  
-    //         }                      col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].ins_desc+'</b></p></td>';
-    //                     if(result[i].ins_check == null){
-    //                       col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>-</b></p></td>';
-    //                     }
-    //                     else{
-    //                       col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].ins_check+'</b></p></td>';
-    //                     }
-
-    //         col+='<td style="text-align:center;margin-top:0;border:2px solid"><input type="radio" name="group3[group'+i+']" id="item'+i+'" value="y'+i+'"></td>';
-    //         col+='<td style="text-align:center;margin-top:0;border:2px solid"><input type="radio" name="group3[group'+i+']" id="item'+i+'" value="n'+i+'"></td>';
-    //         col+='</tr>';
-    //       }
-    //       col+='</tbody>';
-    //       col+='</table>';
-    //       col+='</div>';
-    //       $("#testdiv3").append(col);
-    //       col='';
-
-    //       }  
-    //     }
-    //   })
-    //   }
-    // })
-
-    // $(document).on('change','#manualcount',function(e){
-    //   // alert('aaa');
-    //   $("#testmanual").html('');
-    //   var count1 = document.getElementById('manualcount').value;
-    //   if(count1 != ''){
-    //     var col = '';
-    //     col +='<div class="form-group row col-md-12 divrepmanual" >';
-    //     col +='<input type="hidden" id="repairtypereport" name="repairtypereport" value="manual" >';
-    //     col +='<label class="col-md-12 col-form-label text-md-left">Detail : </label>';
-    //     col +='</div>';
-    //     col +='<div class="table-responsive col-12">';
-    //     col +='<table class="table table-borderless mt-4" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">';
-    //     col +='<thead>';
-    //     col +='<tr style="text-align: center;style="border:2px solid"">';
-    //     col +='<th rowspan="2" style="border:2px solid;width:10%"><p style="height:100%">No</p></th>';
-    //     col +='<th rowspan="2" style="border:2px solid;width:35%"><p style="height:100%">Kode</p></th>';
-    //     col +='<th rowspan="2" style="border:2px solid;width:35%"><p style="height:100%">Deskripsi</p></th>';
-    //     col +='<th colspan="2" style="border:2px solid;width:20%"><p style="height:100%">kondisi</p></th>';
-    //     col +='</tr>';
-    //     col +='<tr style="text-align: center;">';
-    //     col +='<th style="border:2px solid">Baik</th>';
-    //     col +='<th style="border:2px solid">Tidak</th>';
-    //     col +='</tr>';
-    //     col +='</thead>';
-    //     col +='<tbody style="border:2px solid" >';
-    //     for(var co = 0; co < count1; co++){
-    //       col +='<tr>';
-    //       col+='<td style="height: 20px;text-align:center;border:2px solid"><input type="number" style="text-align:center;border:none;width:100%" name="number[]" value='+(co+1)+'></td>';
-    //       col+='<td style="height: 20px;border:2px solid"><input type="text" name="part[]" style="border:none;width:100%"></td>';
-    //       col+='<td style="height: 20px;border:2px solid"><input type="text" name="desc[]" style="border:none;width:100%"></td>';
-    //       col+='<td style="text-align:center;margin-top:0;border:2px solid"><input type="radio" name="group4['+co+']" id="item'+co+'" value="y'+co+'"></td>';
-    //       col+='<td style="text-align:center;margin-top:0;border:2px solid"><input type="radio" name="group4['+co+']" id="item'+co+'" value="n'+co+'"></td>'; 
-    //       col+='</tr>';
-    //     }
-
-    //         col+='</tbody>';
-    //         col+='</table>';
-    //         col+='</div>';
-    //         $("#testmanual").append(col);
-    //   } 
-    // });
-
-    // $(document).on('change','#repairgroup',function(event){
-    //   var rg1 = document.getElementById('repairgroup').value;
-    //   // alert(rc1);
-    //   $("#testdivgroup").html('');
-    //   if(rg1 != ''){
-    //     $.ajax({
-    //       url: "/getgroup1/" + rg1,
-    //       success: function(data) {
-    //         var tempres    = JSON.stringify(data);
-    //         var result     = JSON.parse(tempres);
-    //         console.log(data);
-    //         console.log(result);
-    //         var len        = result.length;
-    //         var col        = '';
-    //         var currenttype;
-    //         var currentnum = 1;
-    //         var temprepair = new Array();
-    //         var counter = 0;
-    //         var countrepair = 0;
-    //         var repairnow = '';
-    //         for(j =0; j<len;j++){
-    //           if(!temprepair.includes(result[j].xxrepgroup_rep_code)){
-    //             temprepair.push(result[j].xxrepgroup_rep_code);
-    //             countrepair += 1;
-    //           }
-    //         }
-    //         console.log(temprepair[0]);
-    //         // console.log(countrepair);
-    //         // alert(temprepair);
-    //         // alert(countrepair);
-    //         // var currentrepair;
-    //         if(len >0){
-    //           for(p = 0; p<countrepair; p++){
-    //             col +='<div class="form-group row col-md-12 divrepgroup'+p+'" >';
-    //             col +='<input type="hidden" id="repaircodeselection" name="repaircodeselection[]" value="'+temprepair[p]+'" >';
-    //             col +='<input type="hidden" id="repairtypereport" name="repairtypereport" value="group" >';
-    //             col +='<label class="col-md-12 col-form-label text-md-left">Repair group : '+result[0].xxrepgroup_nbr+'</label>';
-    //             col +='<label class="col-md-12 col-form-label text-md-left">Repair code : '+temprepair[p]+'</label>';
-    //             col +='<label class="col-md-5 col-form-label text-md-left">Instruction :</label>';
-    //             col +='</div>';
-    //             col+='<div class="table-responsive col-12">';
-    //             col+='<table class="table table-borderless mt-4" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">';
-    //             col+='<thead>';
-    //             col+='<tr style="text-align: center;style="border:2px solid"">';
-    //             col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Kode</p></th>';
-    //             col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Deskripsi</p></th>';
-    //             col+='<th rowspan="2" style="border:2px solid"><p style="height:100%">Standard</p></th>';
-
-    //             col+='<th colspan="2" style="border:2px solid"><p style="height:100%">kondisi</p></th>';
-    //             col+='</tr>';
-    //             col+='<tr style="text-align: center;">';
-    //             col+='<th style="border:2px solid">Baik</th>';
-    //             col+='<th style="border:2px solid">Tidak</th>';
-    //             col+='</tr>';
-    //             col+='</thead>';
-    //             col+='<tbody style="border:2px solid" >';
-
-    //             for(var i =0; i<len;i++){
-    //               // console.log(temprepair[p]);
-
-    //               if(result[i].xxrepgroup_rep_code == temprepair[p]){
-
-    //                     if(result[i].spm_desc == null){
-    //                       col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>-</b></p></td>';
-    //                     }
-    //                     else{
-    //                       col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].spm_desc+'</b></p></td>';  
-    //                     }
-    //                     col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].ins_desc+'</b></p></td>';
-    //                     if(result[i].ins_check == null){
-    //                       col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>-</b></p></td>';
-    //                     }
-    //                     else{
-    //                       col+='<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>'+result[i].ins_check+'</b></p></td>';
-    //                     }
-
-    //                     col+='<td style="text-align:center;margin-top:0;border:2px solid"><input type="radio" name="group4['+p+']['+counter+']" id="item'+p+counter+'" value="y'+counter+'"></td>';
-    //                     col+='<td style="text-align:center;margin-top:0;border:2px solid"><input type="radio" name="group4['+p+']['+counter+']" id="item'+p+counter+'" value="n'+counter+'"></td>';
-    //                     col+='</tr>';
-    //                     counter +=1;
-    //                   }
-    //                 }
-
-    //                 col+='</tbody>';
-    //                 col+='</table>';
-    //                 col+='</div>';
-    //                 counter = 0;
-    //                 currentnum = 1;
-    //                 currenttype = '';
-
-    //               }
-    //             }
-
-
-    //           $("#testdivgroup").append(col);
-    //           col='';
-
-    //         }  
-
-    //     })
-    //   }
-    // })
-
-    //------------------------------------------------------------------------------------------------------------------
-    $(document).on('change', '.sparepartnum', function() {
-      // if(document.getElementById('repaircode').checked){
-      var thisid = this.id;
-
-      var valu = document.getElementById(thisid).value;
-      if (thisid == 'sparepartnum1') {
-        object.spare1 = valu;
-      } else if (thisid == 'sparepartnum2') {
-        object.spare2 = valu;
-      } else if (thisid == 'sparepartnum3') {
-        object.spare3 = valu;
-      }
-      //alert(object.spare1);
-      // alert(thisid);
-      var newval = parseInt(object.spare1) + parseInt(object.spare2) + parseInt(object.spare3);
-      //alert(newval);
-      // if(newval < 11){
-      var substrthis = parseInt(thisid.substr(12, 1));
-      var intid = document.getElementById(thisid).value;
-
-      // alert(substrthis);
-      var col2 = '';
-      if (intid != 0 && intid < 11) {
-        var tablenamenow = '#divtablespare' + substrthis;
-        // $('.divspare'+substrthis).remove();
-        $(tablenamenow).remove();
-        // $('.sparepart').select2('destroy');
-        var col2 = '';
-        // alert(intid);
-
-        col2 += '<div class="table-responsive col-12" id="divtablespare' + substrthis + '">';
-        col2 += '<table class="table table-borderless mt-0" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">';
-        col2 += '<thead>';
-        col2 += '<tr style="text-align: center;style="border:2px solid"">';
-        col2 += '<th rowspan="2" style="border:2px solid;width:5%"><p style="height:100%">No</p></th>';
-        col2 += '<th rowspan="2" style="border:2px solid;width:20%"><p style="height:100%">Instruksi</p></th>';
-        col2 += '<th rowspan="2" style="border:2px solid;width:10%"><p style="height:100%">Sparepart</p></th>';
-        col2 += '<th rowspan="2" style="border:2px solid;width:20%"><p style="height:100%">Standard</p></th>';
-        col2 += '<th rowspan="2" style="border:2px solid;width:5%"><p style="height:100%">Qty</p></th>';
-        col2 += '<th rowspan="2" style="border:2px solid;width:5%"><p style="height:100%">Hour(s)</p></th>';
-        col2 += '<th colspan="2" style="border:2px solid;width:15%"><p style="height:50%">Result</p></th>';
-        col2 += '<th rowspan="2" style="border:2px solid;width:20%"><p style="height:100%">Note</p></th>';
-        col2 += '</tr>';
-        col2 += '<tr style="text-align: center;">';
-        col2 += '<th style="border:2px solid">OK</th>';
-        col2 += '<th style="border:2px solid">F.U.</th>';
-        col2 += '</tr>';
-        col2 += '</thead>';
-        col2 += '<tbody style="border:2px solid" >';
-
-
-        for (var i = 0; i < intid; i++) {
-
-          col2 += '<tr>';
-          col2 += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>' + (i + 1) + '</b></p></td>';
-
-          col2 += '<td style="height: 20px;border:2px solid"><select id="insspare' + substrthis + '" name="insspare' + substrthis + '[]" style="border:none;width:100%"><option value=null></option>';
-          col2 += '@foreach($instruction as $instruction1)';
-          col2 += '<option value="{{$instruction1->ins_code}}">{{$instruction1->ins_code}} -- {{$instruction1->ins_desc}}</option>';
-          col2 += '@endforeach</select></td>';
-
-          col2 += '<td style="height: 20px;border:2px solid"><select id="partspare' + substrthis + '" name="partspare' + substrthis + '[]" style="border:none;width:100%"><option value=null></option>';
-          col2 += '@foreach($sparepart as $sparepart1)';
-          col2 += '<option value="{{$sparepart1->spm_code}}">{{$sparepart1->spm_code}} -- {{$sparepart1->spm_desc}}</option>';
-          col2 += '@endforeach</select></td>';
-
-          col2 += '<td style="height: 20px;border:2px solid"><input type="text" name="descspare' + substrthis + '[]" style="border:none;width:100%"></td>';
-          col2 += '<td style="margin-top:0;height:40px;border:2px solid"><input type="number" name="qtyspare' + substrthis + '[]" min=1 value=1 style="border:0px;width:100%"></td>';
-          col2 += '<td style="margin-top:0;height:40px;border:2px solid"><input type="number" name="rphspare' + substrthis + '[]" min=1 value=1 step="0.1" style="border:0px;width:100%"></td>';
-
-          col2 += '<input type="hidden" name="groupspare' + substrthis + '[' + i + ']" value="n' + i + '">';
-          col2 += '<td style="text-align:center;margin-top:0;border:2px solid;vertical-align:middle"><input type="checkbox" name="groupspare' + substrthis + '[' + i + ']" id="itemspare' + i + '" value="y' + i + '"></td>';
-          col2 += '<input type="hidden" name="groupspare' + substrthis + '1[' + i + ']" value="n' + i + '">';
-          col2 += '<td style="text-align:center;margin-top:0;border:2px solid;vertical-align:middle"><input type="checkbox" name="groupspare' + substrthis + '1[' + i + ']" id="itemspare1' + i + '" value="y' + i + '"></td>';
-          col2 += '<td style="text-align:center;margin-top:0;border:2px solid"><textarea name="note' + substrthis + substrthis + '[' + i + ']" id="note' + i + '" style="border:0;width:100%"></textarea></td>';
-          col2 += '</tr>';
-
-
-          // col2 +='<div class="form-group row col-md-12 divspare'+substrthis+'" >';
-          // col2 +='<label class="col-md-5 col-form-label text-md-left">Spare Part '+i+'</label>';
-          // col2 +='<div class="col-md-5 maman">';
-          // col2 +='<select type="text" class="form-control sparepart" name="sparepart'+substrthis+'[]" required autofocus>';
-          // col2 +='<option value="" selected disabled>--Select Sparepart--</option>';
-
-
-          // @foreach ($sparepart as $sparepart2)
-          // col2 +='<option value="{{$sparepart2->spm_code}}">{{$sparepart2->spm_code}} </option>';
-          // @endforeach
-          // col2 +='</select>';
-
-          // col2 +='</div>';
-          // col2 +='<div class="col-md-2">';
-          // col2 +='<input type="number"  min="1" class="form-control qtyspare" name="qtyspare'+substrthis+'[]">';
-          // col2 +='</div>';
-          // col2 +='</div>';
-        }
-        col2 += '</tbody>';
-        col2 += '</table>';
-        col2 += '</div>';
-
-
-        $("#divspare" + substrthis).append(col2);
-        for (cop = 0; cop < intid; cop++) {
-          var namepartnow = "#partspare" + substrthis;
-          var nameinsnow = "#insspare" + substrthis;
-          // alert(namepartnow);
-          $(namepartnow).select2({
-            placeholder: "--Select Spare Part--",
-            width: '150px',
-            theme: 'bootstrap4',
-          });
-          $(nameinsnow).select2({
-            placeholder: "--Select Spare Part--",
-            width: '150px',
-            theme: 'bootstrap4',
-          });
-        }
-        $('.sparepart').select2({
-          placeholder: "--Select Spare Part--",
-          width: '100%',
-          theme: 'bootstrap4',
-        });
-
-        col2 = '';
-
-      }
-
-    });
-
     $(document).on('change', '#repaircode1', function(event) {
       var rc1 = document.getElementById('repaircode1').value;
       // alert(rc1);
@@ -1656,322 +946,7 @@
         })
       }
     })
-    $(document).on('change', '#repaircode3', function(event) {
-      var rc3 = document.getElementById('repaircode3').value;
-      $("#testdiv3").html('');
-      if (rc3 != '') {
-        $.ajax({
-          url: "/getrepair1/" + rc3,
-          success: function(data) {
-            var tempres = JSON.stringify(data);
-            var result = JSON.parse(tempres);
-            var len = result.length;
-            var col = '';
-            var currenttype;
-            var currentnum = 1;
-            if (len > 0) {
-              col += '<div class="form-group row col-md-12 divrepcode"  >';
-              col += '<label class="col-md-12 col-form-label text-md-left">Repair code : ' + result[0].repm_code + ' -- ' + result[0].repm_desc + '</label>';
-              // col +='<label class="col-md-5 col-form-label text-md-left">Instruction :</label>';
-              col += '</div>';
-              col += '<div class="table-responsive col-12">';
-              col += '<table class="table table-borderless mt-0" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">';
-              col += '<thead>';
-              col += '<tr style="text-align: center;style="border:2px solid"">';
-              col += '<th rowspan="2" style="border:2px solid;width:5%"><p style="height:100%">No</p></th>';
-              col += '<th rowspan="2" style="border:2px solid;width:20%"><p style="height:100%">Instruksi</p></th>';
-              col += '<th rowspan="2" style="border:2px solid;width:10%"><p style="height:100%">Sparepart</p></th>';
-              col += '<th rowspan="2" style="border:2px solid;width:20%"><p style="height:100%">Standard</p></th>';
-              col += '<th rowspan="2" style="border:2px solid;width:5%"><p style="height:100%">Qty</p></th>';
-              col += '<th rowspan="2" style="border:2px solid;width:5%"><p style="height:100%">Hour(s)</p></th>';
-              col += '<th colspan="2" style="border:2px solid;width:15%"><p style="height:50%">Result</p></th>';
-              col += '<th rowspan="2" style="border:2px solid;width:20%"><p style="height:100%">Note</p></th>';
-              col += '</tr>';
-              col += '<tr style="text-align: center;">';
-              col += '<th style="border:2px solid">OK</th>';
-              col += '<th style="border:2px solid">F.U.</th>';
-              col += '</tr>';
-              col += '</thead>';
-              col += '<tbody style="border:2px solid" >';
 
-              for (i = 0; i < len; i++) {
-                col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>' + (i + 1) + '</b></p></td>';
-
-                if (result[i].ins_code == null) {
-                  col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>-</b></p></td>';
-                  col += '<input type="hidden" name="ins3[]" value="">';
-                } else {
-                  col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>' + result[i].ins_desc + '</b></p></td>';
-                  col += '<input type="hidden" name="ins3[]" value="' + result[i].ins_code + '">';
-                }
-                if (result[i].spm_desc == null) {
-                  col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>-</b></p></td>';
-                  col += '<input type="hidden" name="spm3[]" value="">';
-                } else {
-                  col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>' + result[i].spm_desc + '</b></p></td>';
-                  col += '<input type="hidden" name="spm3[]" value="' + result[i].spm_code + '">';
-                }
-
-                if (result[i].ins_check == null) {
-                  col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>-</b></p></td>';
-                  col += '<input type="hidden" name="std3[]" value="">';
-                } else {
-                  col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>' + result[i].ins_check + '</b></p></td>';
-                  col += '<input type="hidden" name="std3[]" value="' + result[i].ins_check + '">';
-                }
-                col += '<td style="margin-top:0;height:40px;border:2px solid"><input type="number" name="qty3[]" min=1 value=1 style="border:0px;width:100%;height:100%"></td>';
-                col += '<td style="margin-top:0;height:40px;border:2px solid"><input type="number" name="rph3[]" min=1 value=1 step="0.1" style="border:0px;width:100%;height:100%"></td>';
-                col += '<input type="hidden" name="group3[' + i + ']" value="n' + i + '">';
-                col += '<td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;vertical-align:middle"><input type="checkbox" name="group3[' + i + ']" id="item' + i + '" value="y' + i + '"></td>';
-                col += '<input type="hidden" name="group31[' + i + ']" value="n' + i + '">';
-                col += '<td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;vertical-align:middle"><input type="checkbox" name="group31[' + i + ']" id="item' + i + '" value="y' + i + '"></td>';
-                col += '<td style="text-align:center;margin-top:0;border:2px solid"><textarea name="note3[' + i + ']" id="note' + i + '" style="border:0;width:100%"></textarea></td>';
-                col += '</tr>';
-              }
-              col += '</tbody>';
-              col += '</table>';
-              col += '</div>';
-              col += '<div class="form-group row col-md-12 divrepcode" >';
-              col += '<label for="sparepartnum3" class="col-md-4 col-form-label text-md-left">Repair Code 3 New Instructions </label>';
-              col += '<div class="col-md-6">';
-              col += '<input id="sparepartnum3" type="number" class="form-control sparepartnum" name="sparepartnum3"  min ="0" max="100">';
-              col += '</div>';
-              col += '</div>';
-              col += '<div class="divspare" id="divspare3">'
-              col += '</div>';
-              col += '<div class="hr">';
-              col += '<hr class="new1">';
-              col += '</div>';
-              $("#testdiv3").append(col);
-              col = '';
-
-            }
-          }
-        })
-      }
-    })
-
-    $(document).on('change', '#manualcount', function(e) {
-      // alert('aaa');
-      $("#testmanual").html('');
-      var count1 = document.getElementById('manualcount').value;
-      if (count1 != '') {
-        var col = '';
-        col += '<div class="form-group row col-md-12 divrepmanual" >';
-        col += '<input type="hidden" id="repairtypereport" name="repairtypereport" value="manual" >';
-        col += '<label class="col-md-12 col-form-label text-md-left">Detail : </label>';
-        col += '</div>';
-        col += '<div class="table-responsive col-12">';
-        col += '<table class="table table-borderless mt-0" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">';
-        col += '<thead>';
-        col += '<tr style="text-align: center;style="border:2px solid"">';
-        col += '<th rowspan="2" style="border:2px solid;width:5%"><p style="height:100%">No</p></th>';
-        col += '<th rowspan="2" style="border:2px solid;width:20%"><p style="height:100%">Instruksi</p></th>';
-        col += '<th rowspan="2" style="border:2px solid;width:10%"><p style="height:100%">Sparepart</p></th>';
-        col += '<th rowspan="2" style="border:2px solid;width:20%"><p style="height:100%">Standard</p></th>';
-        col += '<th rowspan="2" style="border:2px solid;width:5%"><p style="height:100%">Qty</p></th>';
-        col += '<th rowspan="2" style="border:2px solid;width:5%"><p style="height:100%">Hour(s)</p></th>';
-        col += '<th colspan="2" style="border:2px solid;width:15%"><p style="height:50%">Result</p></th>';
-        col += '<th rowspan="2" style="border:2px solid;width:20%"><p style="height:100%">Note</p></th>';
-        col += '</tr>';
-        col += '<tr style="text-align: center;">';
-        col += '<th style="border:2px solid">OK</th>';
-        col += '<th style="border:2px solid">F.U.</th>';
-        col += '</tr>';
-        col += '</thead>';
-        col += '<tbody style="border:2px solid" >';
-        for (var co = 0; co < count1; co++) {
-          col += '<tr>';
-          col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>' + (co + 1) + '</b></p></td>';
-          col += '<td style="height: 20px;border:2px solid"><select id="ins' + co + '" name="ins[]" style="border:none;width:100%"><option value=""></option>';
-          col += '@foreach($instruction as $instruction1)';
-          col += '<option value="{{$instruction1->ins_code}}">{{$instruction1->ins_code}} -- {{$instruction1->ins_desc}}</option>';
-          col += '@endforeach</select></td>';
-          col += '<td style="height: 20px;border:2px solid"><select id="part' + co + '" name="part[]" style="border:none;width:100%"><option value=""></option>';
-          col += '@foreach($sparepart as $sparepart1)';
-          col += '<option value="{{$sparepart1->spm_code}}">{{$sparepart1->spm_code}} -- {{$sparepart1->spm_desc}}</option>';
-          col += '@endforeach</select></td>';
-
-
-          col += '<td style="height: 20px;border:2px solid"><input type="text" name="desc[]" style="border:none;width:100%"></td>';
-          col += '<td style="margin-top:0;height:40px;border:2px solid"><input type="number" name="qty5[' + co + ']" min=1 value=1 style="border:0px;width:100%"></td>';
-          col += '<td style="margin-top:0;height:40px;border:2px solid"><input type="number" name="rph5[' + co + ']" min=1 value=1 style="border:0px;width:100%"></td>';
-          col += '<input type="hidden" name="group5[' + co + ']" value="n' + co + '">';
-          col += '<td style="text-align:center;margin-top:0;vertical-align:middle;border:2px solid"><input type="checkbox" name="group5[' + co + ']" id="item' + co + '" value="y' + co + '" ></td>';
-          col += '<input type="hidden" name="group51[' + co + ']" value="n' + co + '">';
-          col += '<td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid"><input type="checkbox" name="group51[' + co + ']" id="item' + co + '" value="y' + co + '" ></td>';
-          col += '<td style="text-align:center;margin-top:0;border:2px solid"><textarea name="note5[' + co + ']" id="note' + co + '" style="border:0;width:100%"></textarea></td>';
-          col += '</tr>';
-        }
-
-        col += '</tbody>';
-        col += '</table>';
-        col += '</div>';
-        // col +='<div class="form-group row col-md-12 divrepcode" >';
-        // col +='<label for="sparepartnum4" class="col-md-5 col-form-label text-md-left">Repair Code Manual Spareparts </label>';
-        // col +='<div class="col-md-7">';
-        // col +='<input id="sparepartnum4" type="number" class="form-control sparepartnum" name="sparepartnum[]" required autofocus min ="1">';
-        // col +='</div>';
-        // col +='</div>';
-        // col +='<div class="divspare" id="divspare4">'
-        // col +='</div>';
-        // col += '<div class="hr">';
-        // col += '<hr class="new1">';
-        // col += '</div>';
-        $("#testmanual").append(col);
-        for (cop = 0; cop < count1; cop++) {
-          var namepartnow = "#part" + cop;
-          var nameinsnow = "#ins" + cop;
-          // alert(namepartnow);
-          $(namepartnow).select2({
-            width: '150px',
-            placeholder: "Select Sparepart",
-            closeOnSelect: true,
-            theme: 'bootstrap4'
-          });
-          $(nameinsnow).select2({
-            width: '200px',
-            placeholder: "Select Instruction",
-            closeOnSelect: true,
-            theme: 'bootstrap4'
-          });
-        }
-      }
-    });
-
-    $(document).on('change', '#repairgroup', function(event) {
-      var rg1 = document.getElementById('repairgroup').value;
-      // alert(rc1);
-      $("#testdivgroup").html('');
-      if (rg1 != '') {
-        $.ajax({
-          url: "/getgroup1/" + rg1,
-          success: function(data) {
-            var tempres = JSON.stringify(data);
-            var result = JSON.parse(tempres);
-            // console.log(data);
-            console.log(result);
-            var len = result.length;
-            var col = '';
-            var currenttype;
-            var curfrentnum = 1;
-            var temprepair = new Array();
-            var counter = 0;
-            var countrepair = 0;
-            var repairnow = '';
-            var contline = 1;
-            // console.log(result[0]);
-            for (j = 0; j < len; j++) {
-              if (!temprepair.includes(result[j].xxrepgroup_rep_code)) {
-                temprepair.push(result[j].xxrepgroup_rep_code);
-                countrepair += 1;
-              }
-            }
-            console.log(temprepair[0]);
-            // console.log(countrepair);
-            // alert(temprepair);
-            // alert(countrepair);
-            // var currentrepair;
-            if (len > 0) {
-              for (p = 0; p < countrepair; p++) {
-                col += '<div class="form-group row col-md-12 pb-0 mb-0 divrepgroup' + p + '" >';
-                col += '<input type="hidden" id="repaircodeselection" name="repaircodeselection[]" value="' + temprepair[p] + '" >';
-                col += '<input type="hidden" id="repairtypereport" name="repairtypereport" value="group" >';
-                col += '<label class="col-md-12 col-form-label text-md-left">Repair code : ' + temprepair[p] + ' -- ' + result[p].repm_desc + '</label>';
-                col += '</div>';
-                col += '<div class="table-responsive col-12">';
-                col += '<table class="table table-borderless mt-0" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">';
-                col += '<thead>';
-                col += '<tr style="text-align: center;style="border:2px solid"">';
-                col += '<th rowspan="2" style="border:2px solid;width:5%"><p style="height:100%">No</p></th>';
-                col += '<th rowspan="2" style="border:2px solid;width:20%"><p style="height:100%">Instruksi</p></th>';
-                col += '<th rowspan="2" style="border:2px solid;width:10%"><p style="height:100%">Sparepart</p></th>';
-                col += '<th rowspan="2" style="border:2px solid;width:20%"><p style="height:100%">Standard</p></th>';
-                col += '<th rowspan="2" style="border:2px solid;width:5%"><p style="height:100%">Qty</p></th>';
-                col += '<th rowspan="2" style="border:2px solid;width:5%"><p style="height:100%">Hour(s)</p></th>';
-                col += '<th colspan="2" style="border:2px solid;width:15%"><p style="height:50%">Result</p></th>';
-                col += '<th rowspan="2" style="border:2px solid;width:20%"><p style="height:100%">Note</p></th>';
-                col += '</tr>';
-                col += '<tr style="text-align: center;">';
-                col += '<th style="border:2px solid">OK</th>';
-                col += '<th style="border:2px solid">F.U.</th>';
-                col += '</tr>';
-                col += '</thead>';
-                col += '<tbody style="border:2px solid" >';
-
-                for (var i = 0; i < len; i++) {
-                  // console.log(temprepair[p]);
-
-                  if (result[i].xxrepgroup_rep_code == temprepair[p]) {
-                    col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>' + contline + '</b></p></td>';
-                    if (result[i].ins_code == null) {
-                      col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>-</b></p></td>';
-                      col += '<input type="hidden" name="insm4[' + p + '][' + counter + ']" value="">';
-                    } else {
-                      col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>' + result[i].ins_desc + '</b></p></td>';
-                      col += '<input type="hidden" name="insm4[' + p + '][' + counter + ']" value="' + result[i].ins_code + '">';
-                    }
-                    if (result[i].spm_desc == null) {
-                      col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>-</b></p></td>';
-                      col += '<input type="hidden" name="spm4[' + p + '][' + counter + ']" value="">'
-                    } else {
-                      col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>' + result[i].spm_desc + '</b></p></td>';
-                      col += '<input type="hidden" name="spm4[' + p + '][' + counter + ']" value="' + result[i].spm_code + '">'
-                    }
-
-
-                    if (result[i].ins_check == null) {
-                      col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>-</b></p></td>';
-                      col += '<input type="hidden" name="std4[' + p + '][' + counter + ']" value="">'
-                    } else {
-                      col += '<td style="margin-top:0;height:40px;border:2px solid"><p style="margin:0px;"><b>' + result[i].ins_check + '</b></p></td>';
-                      col += '<input type="hidden" name="std4[' + p + '][' + counter + ']" value="' + result[i].ins_check + '">'
-                    }
-                    col += '<td style="margin-top:0;height:40px;border:2px solid"><input type="number" name="qty4[' + p + '][' + counter + ']" min=0 value=1 style="border:0px;width:100%;height:100%"></td>';
-                    col += '<td style="margin-top:0;height:40px;border:2px solid"><input type="number" name="rph4[' + p + '][' + counter + ']" min=0 value=1 step="0.1" style="border:0px;width:100%;height:100%"></td>';
-                    col += '<input type="hidden" name="group4[' + p + '][' + counter + ']" value="n' + counter + '">';
-                    col += '<td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid"><input type="checkbox" name="group4[' + p + '][' + counter + ']" id="item' + p + counter + '" value="y' + counter + '" ></td>';
-                    col += '<input type="hidden" name="group41[' + p + '][' + counter + ']" value="n' + counter + '">';
-                    col += '<td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid"><input type="checkbox" name="group41[' + p + '][' + counter + ']" id="item' + p + counter + '" value="y' + counter + '" ></td>';
-                    col += '<td style="text-align:center;margin-top:0;border:2px solid"><textarea name="note[' + p + '][' + counter + ']" id="note' + p + counter + '" style="border:0;width:100%"></textarea></td>';
-                    col += '</tr>';
-                    counter += 1;
-                    contline += 1;
-                  }
-
-                }
-                contline = 1;
-
-                col += '</tbody>';
-                col += '</table>';
-                col += '</div>';
-                col += '<div class="form-group row col-md-12 divrepcode" >';
-                col += '<label for="sparepartnum' + (p + 1) + '" class="col-md-4 col-form-label text-md-left">Repair Code ' + (p + 1) + ' New Instructions </label>';
-                col += '<div class="col-md-6">';
-                col += '<input id="sparepartnum' + (p + 1) + '" type="number" class="form-control sparepartnum" name="sparepartnum[]"  min ="0" max="100">';
-                col += '</div>';
-                col += '</div>';
-                col += '<div class="divspare" id="divspare' + (p + 1) + '">'
-                col += '</div>';
-                col += '<div class="hr">';
-                col += '<hr class="new1">';
-                col += '</div>';
-                counter = 0;
-                currentnum = 1;
-                currenttype = '';
-
-              }
-            }
-
-
-            $("#testdivgroup").append(col);
-            col = '';
-
-          }
-
-        })
-      }
-    })
 
 
     $(document).on('click', '.aprint', function(event) {
@@ -2059,6 +1034,16 @@
           }) //if File API is absent
         }
       });
+    });
+
+    function resetSearch() {
+        $('#s_nomorwo').val('');
+        $('#s_asset').val('');
+        $('#s_priority').val('');
+    }
+
+    $(document).on('click', '#btnrefresh', function() {
+        resetSearch();
     });
   </script>
   @endsection

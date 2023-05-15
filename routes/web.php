@@ -410,6 +410,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/womaint', [wocontroller::class, 'wobrowse'])->name('womaint');
 	Route::post('/createwo', [wocontroller::class, 'createwo']);
 	Route::get('/searchic', [wocontroller::class, 'searchic']);
+	Route::get('/filtermaintcode', [wocontroller::class, 'filtermaintcode']);
 	route::get('/womaint/pagination', 'wocontroller@wopaging');
 	route::post('/editwo', [wocontroller::class, 'editwo']); 
 	route::post('/editwoeng','wocontroller@editwoeng'); 
@@ -444,6 +445,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/delfilewofinish/{id}', 'wocontroller@delfilewofinish'); // untuk delete file wo finish dari approval spv`
 	route::get('/woreport/reissued/{wo}',[wocontroller::class, 'reissued_wo'])->name('reissuedWO');
 	route::post('/reissuedwofinish', [wocontroller::class, 'reissuedwofinish']);
+	route::get('/woreportingdetail/{wonumber}', [wocontroller::class, 'woreportingdetail'])->name('reportingWO');
 
 
 	//13-08-2021
