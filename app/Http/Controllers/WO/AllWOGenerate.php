@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpParser\Node\Stmt\Break_;
 use PhpParser\Node\Stmt\Echo_;
+use Illuminate\Support\Facades\Session;
 
 class AllWOGenerate extends Controller
 {
@@ -34,11 +35,21 @@ class AllWOGenerate extends Controller
     {
         // dd($req->all());
         $todaydate = Carbon::now()->toDateTime()->format("Y-m-d");
-
-        $fromdate = date_create($todaydate);
         $todate = date_create($req->todate);
         
-        // Mencari data PM dari data PM Asset Maintenance
+        // 1111111111111111111111   Mencari data PM dari data PM Asset Maintenance      1111111111111111111111
+        // Hasil perhitungan preventive disimpan pada tabel PM_TEMP_HIST dan PM_TEMP
+        // Belum dilakukan -> PM_TEMP_HIST digunakan untuk menyimpan hasil proses generate dan tidak akan pernah dihapus datanya
+        // PM_TEMP digunakan untuk menyimpan hasil proses generate, jika generate ulang maka data yang lama akan dihapus. Yang dihapus sesuai dengan asset dan pmcode dari looping
+        // Schema::dropIfExists('temp_sch');
+        // Schema::create('temp_sch', function ($table) {
+        //     $table->string('tsch_asset');
+        //     $table->string('tsch_pmcode')->nullable();
+        //     $table->date('tsch_date');
+        //     $table->temporary();
+        // });
+        
+        // Mencari data dari master PM
         $datapm = DB::table('pma_asset')
             ->orderBy('pma_asset')
             ->orderBy('pma_mea');
@@ -49,31 +60,224 @@ class AllWOGenerate extends Controller
 
         $datapm = $datapm->get();
 
-        foreach($datapm as $dp) {
-            // Dibedakan perhitungannya berdasakan measure nya
-            switch ($dp->pma_mea) {
-                case "B" :  // Untuk Mea Both
-                    break;
-                case "C" : // Untuk Mea Calendar
-                    // Membetuk WO sesuai dengan nilai hari yang dimasukkan
-                    $nexttgl = date_create($todaydate);
-                    $tempwo = [];
-                    while($nexttgl < $todate) {
-                        $nexttgl = date_add($fromdate, date_interval_create_from_date_string(''.$dp->pma_cal.' days'));
-                        array_push($tempwo,$nexttgl->format('Y-m-d'));
-                    }
-                    $viewwo = collect($tempwo);
-                    dd($viewwo);
-                    break;
-                case "M" : // Untuk Mea Meter
-                    break;
-                default :
-                    break;
+        DB::beginTransaction();
+        try {
+
+            $tempsch = [];
+            foreach($datapm as $dp) {
+                //Hapus dulu data yang sudah terbentuk, yang asset dan pmcode nya sama, agar terbentuk data yang baru
+                DB::table('pmt_temp')
+                    ->wherePmtAsset($dp->pma_asset)
+                    ->wherePmtPmcode($dp->pma_pmcode)
+                    ->delete();
+
+                DB::table('pmo_confirm')
+                    ->wherePmoAsset($dp->pma_asset)
+                    ->wherePmoPmcode($dp->pma_pmcode)
+                    ->delete();
+
+                DB::table('pml_log')
+                    ->wherePmlAsset($dp->pma_asset)
+                    ->wherePmlPmcode($dp->pma_pmcode)
+                    ->delete();
+
+                $fromdate = date_create($todaydate);
+                // Dibedakan perhitungannya berdasakan measure nya
+                switch ($dp->pma_mea) {
+                    case "B" :  // Untuk Mea Both
+                        break;
+                    case "C" : // Untuk Mea Calendar
+                        // cek kapan terakhir dilakukan maintenance
+                        // pma_start adalah field untuk menyimpan tanggal terakhir maintenance nya
+                        if(date_create($dp->pma_start) > $fromdate) {
+                            $lastmtc = date_create($dp->pma_start);
+                        } else {
+                            $lastmtc = $fromdate;
+                        }
+                        
+                        // Membetuk WO sesuai dengan nilai hari yang dimasukkan
+                        while($lastmtc < $todate) {
+                            $lastmtc = date_add($lastmtc, date_interval_create_from_date_string(''.$dp->pma_cal.' days'));
+                            array_push($tempsch,[
+                                'arr_asset' => $dp->pma_asset,
+                                'arr_lastmtc' => $lastmtc->format('Y-m-d'),
+                                'arr_pmcode' => $dp->pma_pmcode,
+                            ]);
+                            DB::table('pmt_temp')
+                                ->insert([
+                                    'pmt_asset' => $dp->pma_asset,
+                                    'pmt_pmcode' =>$dp->pma_pmcode,
+                                    'pmt_sch_date' => $lastmtc->format('Y-m-d'),
+                                    'pmt_editedby'  => Session::get('username'),
+                                    'created_at'    => Carbon::now()->toDateTimeString(),
+                                    'updated_at'    => Carbon::now()->toDateTimeString(),
+                                ]);
+                        }
+                        break;
+                    case "M" : // Untuk Mea Meter
+                        break;
+                    default :
+                        break;
+                }
+            } // End foreach($datapm as $dp)
+
+            // 1111111111111111111111    End Mencari data PM dari data PM Asset Maintenance     1111111111111111111111
+
+            // 2222222222222222222222    Mencari data WO yang sudah terbentuk    2222222222222222222222222222222222222
+            Schema::dropIfExists('temp_wo');
+            Schema::create('temp_wo', function ($table) {
+                $table->string('two_asset');
+                $table->string('two_pmcode')->nullable();
+                $table->string('two_number',24);
+                $table->date('two_date');
+                $table->string('two_avail');
+                $table->temporary();
+            });
+
+            $datawo = DB::table('pma_asset')
+                ->join('wo_mstr', function ($join) {
+                    $join->on('wo_mstr.wo_asset_code', '=', 'pma_asset.pma_asset') 
+                        ->on('wo_mstr.wo_mt_code', '=', 'pma_asset.pma_pmcode')
+                        ->whereNotIn('wo_status',['closed'])
+                        ->whereWoType('PM');     
+                })
+                ->orderBy('pma_asset')
+                ->orderBy('pma_mea');
+
+            if($req->asset) {
+                $datawo = $datawo->where('pma_asset','=',$req->asset);
             }
+
+            $datawo = $datawo->get();
+            $tempwo = [];
+
+            foreach($datawo as $dw) {
+                array_push($tempwo,$dw->wo_number);
+                DB::table('temp_wo')
+                    ->insert([
+                        'two_asset' => $dw->pma_asset,
+                        'two_pmcode' =>$dw->pma_pmcode,
+                        'two_number' => $dw->wo_number,
+                        'two_date' => $dw->wo_start_date,
+                        'two_avail' => 'No',
+                    ]);
+            } // Eng foreach($datawo as $dw)
+
+            // 2222222222222222222222222222222       End Mencari data WO    222222222222222222222222222222222
+
+            // 33333333333333333333333333        Membandingkan Temporary Schedule dan WO yang sudah terbentuk       33333333333333333333333333
+            $datasch = DB::table('pmt_temp')
+                ->orderBy('pmt_asset')
+                ->orderBy('pmt_pmcode')
+                ->orderBy('pmt_sch_date')
+                ->get();
+
+            $tempcrsch = [];
+            foreach($datasch as $tsch) {
+                $datawo = DB::table('temp_wo')
+                    ->whereTwoAsset($tsch->pmt_asset)
+                    ->whereTwoPmcode($tsch->pmt_pmcode)
+                    ->whereTwoAvail('No')
+                    ->orderBy('two_date')
+                    ->get();
+
+                    foreach($datawo as $two) {
+                        $rsltdate = "";
+                        $schdate = date_create($tsch->pmt_sch_date);
+                        $wodate = date_create($two->two_date);
+                        dump($schdate, $wodate);  
+                        if($schdate < $wodate) {        // jika tanggal temporary sch lebih kecil dibandingan dengan tanggal WO yang sudah terbentuk
+                            // jika masuk dalam kondisi ini, yang diambil adalah data temporary sch
+                            $rsltdate = $tsch->pmt_sch_date;
+                            $rsltnumber = $tsch->id;
+                            $rsltsource = 'TEMP-PM';
+
+                            array_push($tempcrsch,[
+                                'ts_asset' => $tsch->pmt_asset,
+                                'ts_pmcode' => $tsch->pmt_pmcode,
+                                'td_date' => $rsltdate,
+                            ]);
+
+                            dump('1'); 
+                            break;
+                        } elseif($schdate >= $wodate) {     //jika tanggal temporary sch lebih besar dibandingkan dengan tanggal WO yang terbentuk
+                            // jika masuk dalam kondisi ini, yang diambil adalah data wo yang sudah terbentuk
+                            $rsltdate = $two->two_date;
+                            $rsltnumber = $two->two_number;
+                            $rsltsource = 'WO';
+
+                            DB::table('pml_log')
+                                ->insert([
+                                    'pml_asset' => $tsch->pmt_asset,
+                                    'pml_pmcode' => $tsch->pmt_pmcode,
+                                    'pml_pm_number' => $tsch->id,
+                                    'pml_pm_date' => $tsch->pmt_sch_date,
+                                    'pml_wo_number' => $two->two_number,
+                                    'pml_wo_date' => $two->two_date,
+                                ]);
+
+                            // Field avail di update Yes agar tidak dibandingkan lagi pada saat looping berikutnya dari temp-pm
+                            DB::table('temp_wo')
+                                ->whereTwoAsset($tsch->pmt_asset)
+                                ->whereTwoPmcode($tsch->pmt_pmcode)
+                                ->whereTwoDate($two->two_date)
+                                ->update([
+                                    'two_avail' => 'Yes',
+                                ]);
+
+                            array_push($tempcrsch,[
+                                'ts_asset' => $tsch->pmt_asset,
+                                'ts_pmcode' => $tsch->pmt_pmcode,
+                                'td_date' => $rsltdate,
+                            ]);
+                            dump('2'); 
+                            break;
+                        } else {
+                            $rsltdate = "";
+                            dump('3');
+                        }
+                        
+                    } // End    foreach($datawo as $two)
+                    if($datawo->count() == 0){
+                        dump('4');
+                        $rsltdate = $tsch->pmt_sch_date;
+                        $rsltnumber = $tsch->id;
+                        $rsltsource = 'TEMP-PM';
+                        array_push($tempcrsch,[
+                            'ts_asset' => $tsch->pmt_asset,
+                            'ts_pmcode' => $tsch->pmt_pmcode,
+                            'td_date' => $tsch->pmt_sch_date,
+                        ]);
+                    }
+
+                    DB::table('pmo_confirm')
+                        ->insert([
+                            'pmo_asset' => $tsch->pmt_asset,
+                            'pmo_pmcode' => $tsch->pmt_pmcode,
+                            'pmo_sch_date' => $rsltdate,
+                            'pmo_number' => $rsltnumber,
+                            'pmo_source' => $rsltsource,
+                        ]);
+            } // End    foreach($datasch as $ds)
+            // 33333333333333333333333333 End Membandingkan Temporary Schedule dan WO yang sudah terbentuk      33333333333333333333333333
+    
+            $viewwo = collect($tempwo);
+            $viewsch = collect($tempsch);
+            $viewrslt = collect($tempcrsch);
+            dump($viewsch, $viewwo, $viewrslt);
+            // dump($viewsch);
+            // dd('stop');
+
+            DB::commit();
+            toast('Work Order Generated Success', 'success');
+            return back();
+        } catch (Exception $err) {
+            DB::rollBack();
+
+            dd($err);
+            toast('Work Order Generated Error, please re-generate again.', 'success');
+            return back();
         }
-
-
-
 
 
 

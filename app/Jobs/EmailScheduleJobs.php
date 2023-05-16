@@ -158,7 +158,7 @@ class EmailScheduleJobs implements ShouldQueue
                 ->first();
 
             $srdeptapprover = DB::table('sr_approver_mstr')->where('sr_approver_dept', $toemail->sr_dept)->get();
-            dd($srdeptapprover);
+            // dd($srdeptapprover);
 
             //cek departemen dan role approval yg sesuai dengan user yg login
             // if (Session::get('role') <> 'ADMIN') {

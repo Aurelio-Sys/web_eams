@@ -30,8 +30,8 @@ use App\Http\Controllers\WO\WHSConfirm;
 use App\Http\Controllers\WO\PMdetsController;
 use App\Http\Controllers\WO\WoQcController;
 use App\Http\Controllers\Usage\UsageBrowseController;
+use App\Http\Controllers\Usage\PmConfirmController;
 use App\Http\Controllers\Other\WhyHistController;
-
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
 use Illuminate\Support\Facades\Auth;
@@ -739,6 +739,9 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/getwsasupply', [wocontroller::class, 'getwsasupply']);
 	
 
+	// PM Confirm
+	Route::get('/pmconf',[PmConfirmController::class, 'index'])->name('pmconf'); 
+	Route::get('/searchlog',[PmConfirmController::class, 'searchlog']); 
 });
 
 Auth::routes();
