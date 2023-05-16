@@ -2455,7 +2455,29 @@ class wocontroller extends Controller
 
         // dd($wonumber);
 
+        // ambil UM
+        $um = DB::table('um_mstr')
+                ->get();
 
+
+        // ambil data deskripsi engineer
+        $listeng_wo = $dataheader->wo_list_engineer;
+
+        $listeng_wo = explode(';', $listeng_wo);
+
+        $engData = array();
+
+        foreach($listeng_wo as $datalisteng){
+
+            $engdesc = DB::table('eng_mstr')
+                ->where('eng_code', '=', $datalisteng)
+                ->first()->eng_desc;
+            
+            $engData[] = array('eng_code' => $datalisteng, 'eng_desc' => $engdesc);
+        }
+
+
+        //ambil data spare part dari wo_dets_sp
         $datasparepart = DB::table('wo_dets_sp')
                         ->join('sp_mstr','sp_mstr.spm_code','wo_dets_sp.wd_sp_spcode')
                         ->where('wd_sp_wonumber','=', $wonumber)
@@ -2463,12 +2485,82 @@ class wocontroller extends Controller
 
         // dd($datasparepart);
 
+        // ambil semua data spare part
         $sp_all = DB::table('sp_mstr')
                         ->select('spm_code','spm_desc', 'spm_um','spm_site','spm_loc','spm_lot')
                         ->where('spm_active','=', 'Yes')
                         ->get();
 
-        return view('workorder.wofinish-done', ['header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all]);
+        // ambil data instruction step dari wo_dets_ins
+        $datainstruction = DB::table('wo_dets_ins')
+                        ->leftjoin('ins_list', function ($join) {
+                            $join->on('wo_dets_ins.wd_ins_code', '=', 'ins_list.ins_code');
+                            $join->on('wo_dets_ins.wd_ins_step', '=', 'ins_list.ins_step');
+                        })
+                        ->leftJoin('um_mstr','um_mstr.um_code','ins_list.ins_durationum')
+                        ->where('wd_ins_wonumber','=', $wonumber)
+                        ->get();
+
+        // dd($datainstruction);
+
+        // ambil semua step instruction dari ins_list
+        $ins_all = DB::table('ins_list')
+                        ->select('ins_code', 'ins_desc', 'ins_duration','ins_durationum','ins_manpower','ins_step','ins_stepdesc','ins_ref')
+                        ->get();
+
+        return view('workorder.wofinish-done', ['header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all,
+                                                'instruction' => $datainstruction, 'inslist' => $ins_all, 'um' => $um,
+                                                'engineers' => $engData]);
+    }
+
+    public function getwsasupply(Request $req){
+        $assetsite = $req->get('assetsite');
+        $spcode = $req->get('spcode');
+
+        //ambil data dari tabel inp_supply berdasarkan asset site nya
+        $getSource = DB::table('inp_supply')
+                        ->where('inp_asset_site','=', $assetsite)
+                        ->get();
+
+        $data = [];
+
+        foreach($getSource as $invsource){
+            //ini ambil wsa ke qad ld_det untuk inventory supply. masih menggunakan WSA yang sama dengan saat mengambil qad ld_det inventory source. perbedaannya ini diambil dari table inp_supply
+            $qadsourcedata = (new WSAServices())->wsagetsource($spcode,$invsource->inp_supply_site,$invsource->inp_loc);
+
+            if ($qadsourcedata === false) {
+                toast('WSA Connection Failed', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+
+                // jika hasil WSA ke QAD tidak ditemukan
+                if ($qadsourcedata[1] !== "false") {
+
+                     // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+                
+                    $resultWSA = $qadsourcedata[0];
+    
+                    //kumpulkan hasilnya ke dalam 1 array sebagai penampung list location dan lot from
+                    foreach($resultWSA as $thisresult){
+                        array_push($data, [
+                            't_domain' => (string) $thisresult->t_domain,
+                            't_part' => (string) $thisresult->t_part,
+                            't_site' => (string) $thisresult->t_site,
+                            't_loc' => (string) $thisresult->t_loc,
+                            't_lot' => (string) $thisresult->t_lot,
+                            't_qtyoh' => number_format((float) $thisresult->t_qtyoh, 2),
+                        ]);
+                    }
+
+                }
+
+
+               
+                
+            }
+        }
+
+        return response()->json($data);
     }
 
     public function woapprovalbrowse(Request $req)
