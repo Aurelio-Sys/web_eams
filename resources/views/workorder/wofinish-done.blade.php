@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-9">
-            <h1 class="m-0 text-dark">Work Order Finish Detail</h1>
+            <h1 class="m-0 text-dark">Work Order Report Detail</h1>
         </div><!-- /.col -->
     </div><!-- /.row -->
 </div><!-- /.container-fluid -->
@@ -11,8 +11,8 @@
 @section('content')
 <style type="text/css">
     .bootstrap-select .dropdown-menu {
-        width: 400px !important;
-        min-width: 400px !important;
+        width: 350px !important;
+        min-width: 350px !important;
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
         box-sizing: border-box;
@@ -99,7 +99,7 @@
     <form class="form-horizontal" id="newedit" method="post" action="/reportingwo" enctype="multipart/form-data">
         {{ csrf_field() }}
         <div class="modal-body">
-            <input type="hidden" name="repairtype" id="repairtype" value="{{$data->first()->wo_repair_type}}">
+            <input type="hidden" name="repairtype" id="repairtype" value="">
             <input type="hidden" id="v_counter">
             <input type="hidden" name="statuswo" id="statuswo">
             <div class="form-group row col-md-12">
@@ -109,213 +109,207 @@
                 <div class="col-md-3 h-50">
                     <label for="c_srnbr" class="col-md-12 col-form-label text-md-left p-0">SR Number</label>
                 </div>
+                <div class="col-md-3 h-50">
+                    <label for="c_assetcode" class="col-md-12 col-form-label text-md-left p-0">Asset Code</label>
+                </div>
+                <div class="col-md-3 h-50">
+                    <label for="c_assetdesc" class="col-md-12 col-form-label text-md-left p-0">Asset Desc</label>
+                </div>
+                <div class="col-md-3">
+                    <input id="c_wonbr" type="text" class="form-control pl-0 col-md-12 c_wonbr" style="background:transparent;border:none;text-align:left" name="c_wonbr" value="{{$header->wo_number}}" autofocus readonly>
+                </div>
+                <div class="col-md-3">
+                    <input id="c_srnbr" type="text" class="form-control pl-0 col-md-12 c_srnbr" style="background:transparent;border:none;text-align:left" name="c_srnbr" value="{{$header->wo_sr_number}}" autofocus readonly>
+                </div>
+                <div class="col-md-3">
+                    <input id="c_assetcode" type="text" class="form-control pl-0 col-md-12 c_assetcode" style="background:transparent;border:none;text-align:left" name="c_assetcode" value="{{$header->asset_code}}" autofocus readonly>
+                </div>
+                <div class="col-md-3">
+                    <input id="c_assetdesc" type="text" class="form-control pl-0 col-md-12 c_assetdesc" style="background:transparent;border:none;text-align:left" name="c_assetdesc" value="{{$header->asset_desc}}" autofocus readonly/>
+                </div>
+            </div>
+            <div class="form-group row col-md-12">
+                    <div class="col-md-3 h-50">
+                    <label for="c_startdate" class="col-md-12 col-form-label text-md-left p-0">Start Date WO</label>
+                </div>
+                <div class="col-md-3 h-50">
+                    <label for="c_duedate" class="col-md-12 col-form-label text-md-left p-0">Due Date WO</label>
+                </div>
                 <div class="col-md-6 h-50">
-                    <label for="c_asset" class="col-md-12 col-form-label text-md-left p-0">Asset</label>
+
                 </div>
-                <div class="col-md-3">
-                    <input id="c_wonbr" type="text" class="form-control pl-0 col-md-12 c_wonbr" style="background:transparent;border:none;text-align:left" name="c_wonbr" value="{{$data->first()->wo_nbr}}" autofocus readonly>
+                <div class="col-md-3 h-50">
+                    <input id="c_startdate" type="text" class="form-control pl-0 col-md-12 c_startdate" style="background:transparent;border:none;text-align:left" name="c_startdate" value="{{$header->wo_start_date}}" autofocus readonly/>
                 </div>
-                <div class="col-md-3">
-                    <input id="c_srnbr" type="text" class="form-control pl-0 col-md-12 c_srnbr" style="background:transparent;border:none;text-align:left" name="c_srnbr" value="{{$data->first()->wo_sr_nbr}}" autofocus readonly>
-                </div>
-                <div class="col-md-6">
-                    <input id="c_asset" type="text" class="form-control pl-0 col-md-12 c_asset" style="background:transparent;border:none;text-align:left" name="c_asset" value="{{$data->first()->asset_desc}}" autofocus readonly>
-                    <input id="c_assethid" type="hidden" class="form-control c_asset" name="c_assethidden">
-                </div>
-
-            </div>
-
-            <div id="divrepairtype">
-                <div id="testdiv">
-                    @php
-                        $inc = 0;
-                    @endphp
-                    @foreach ( $data_alldets as $alldetail )
-                    <div class="form-group row col-md-12 divrepcode">
-                        <label class="col-md-12 col-form-label text-md-left" style="color: blue; font-weight: bold;">Repair code : {{$alldetail->wo_dets_rc}} -- {{$alldetail->repm_desc}} </label>
-                        <label class="col-md-5 col-form-label text-md-left">Instruction :</label>
-                    </div>
-                    <div class="table-responsive col-12">
-                        <table class="table table-bordered mt-0" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">
-                            <thead>
-                                <tr style="text-align: center;border:2px solid">
-                                    <th rowspan="2" style="border:2px solid;width:5%;">
-                                        <p style="height:100%">No</p>
-                                    </th>
-                                    <th rowspan="2" style="border:2px solid;width:25%">
-                                        <p style="height:100%">Instruksi</p>
-                                    </th>
-                                    <th rowspan="2" style="border:2px solid;width:20%">
-                                        <p style="height:100%">Standard</p>
-                                    </th>
-                                    <th colspan="2" style="border:2px solid;width:15%">
-                                        <p style="height:50%">Do</p>
-                                    </th>
-                                    <th colspan="2" style="border:2px solid;width:15%">
-                                        <p style="height:50%">Result</p>
-                                    </th>
-                                    <th rowspan="2" style="border:2px solid;width:20%">
-                                        <p style="height:100%">Note</p>
-                                    </th>
-                                </tr>
-                                <tr style="text-align: center;">
-                                    <th style="border:2px solid; width:10%;">Done</th>
-                                    <th style="border:2px solid; width:10%;">Not Done</th>
-                                    <th style="border:2px solid; width:10%;">OK</th>
-                                    <th style="border:2px solid; width:10%;">Not OK</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @php
-                                $i = 1;
-                                @endphp
-                                @forelse ( $datadetail as $insdet )
-                                @if ($insdet->wo_dets_rc == $alldetail->wo_dets_rc)
-                                <tr>
-
-                                    <td style="margin-top:0;height:40px;border:2px solid">
-                                        {{$i++}}
-                                    </td>
-                                    <input type="hidden" name="wonbr_hidden1[]" value="{{$alldetail->wo_dets_nbr}}" />
-                                    <input type="hidden" name="rc_hidden1[]" value="{{$alldetail->wo_dets_rc}}" />
-                                    <td style="margin-top:0;height:40px;border:2px solid">
-                                        {{$insdet->ins_desc}}
-                                        <input type="hidden" name="inscode_hidden1[]" value="{{$insdet->ins_code}}" />
-                                    </td>
-                                    <td style="margin-top:0;height:40px;border:2px solid">
-                                        {{$insdet->ins_check}}
-                                    </td>
-                                    <fieldset id="do">
-                                        <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                            <input type="radio" value="y" name="do[0][{{$inc}}]" {{$alldetail->wo_dets_do_flag == 'y' ? 'checked':''}} required>
-                                        </td>
-                                        <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                            <input type="radio" value="n" name="do[0][{{$inc}}]" {{$alldetail->wo_dets_do_flag == 'n' ? 'checked':''}}>
-                                        </td>
-                                    </fieldset>
-                                    <fieldset id="result">
-                                        <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                            <input type="radio" value="y" name="result[0][{{$inc}}]" {{$alldetail->wo_dets_flag == 'y' ? 'checked':''}} required>
-                                        </td>
-                                        <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                            <input type="radio" value="n" name="result[0][{{$inc}}]" {{$alldetail->wo_dets_flag == 'n' ? 'checked':''}}>
-                                        </td>
-                                    </fieldset>
-                                    <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid">
-                                        <textarea name="note[]" id="note[]" style="border:0;width:100%"></textarea>
-                                    </td>
-                                </tr>
-
-                                @php
-                                $inc++;
-                                @endphp
-
-
-                                @endif
-                                @empty
-                                <tr>
-                                    <td colspan="12" style="color: red; text-align: center;">
-                                        No Data Available
-                                    </td>
-                                </tr>
-                                @endforelse
-
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="form-group row col-md-12">
-                        <label class="col-md-5 col-form-label text-md-left">Spare Part :</label>
-                    </div>
-                    <div class="table-responsive col-12">
-                        <table class="table table-bordered mt-0" id="dataTable" width="100%" style="border:2px solid" cellspacing="0">
-                            <thead>
-                                <tr style="text-align: center;border:2px solid">
-                                    <th style="border:2px solid;width:5%;">
-                                        <p style="height:100%">No</p>
-                                    </th>
-                                    <th style="border:2px solid;width:10%">
-                                        <p style="height:100%">Inst. Code</p>
-                                    </th>
-                                    <th style="border:2px solid;width:10%">
-                                        <p style="height:100%">Spare Part</p>
-                                    </th>
-                                    <th style="border:2px solid;width:30%">
-                                        <p style="height:100%">Description</p>
-                                    </th>
-                                    <th style="border:2px solid;width:5%">
-                                        <p style="height:100%">UM</p>
-                                    </th>
-                                    <th style="border:2px solid;width:10%">
-                                        <p style="height:100%">Qty Required</p>
-                                    </th>
-                                    <th style="border:2px solid; width: 10%;">
-                                        <p style="height:100%">Qty Used</p>
-                                    </th>
-                                    <th style="border:2px solid; width: 10%;">
-                                        <p style="height:100%">Qty Confirmed</p>
-                                    </th>
-                                    <th style="border:2px solid; width: 10%;">
-                                        <p style="height:100%">Qty Already Issued</p>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @php
-                                $i = 1;
-                                @endphp
-                                @forelse ( $detailsp as $spdet )
-                                @if($spdet->wo_dets_rc == $alldetail->wo_dets_rc)
-                                <tr>
-                                    <td style="margin-top:0;min-height:50px;border:2px solid">
-                                        {{$i++}}
-                                        <input type="hidden" name="wonbr_hidden2[]" value="{{$spdet->wo_dets_nbr}}" />
-                                        <input type="hidden" name="rc_hidden2[]" value="{{$spdet->wo_dets_rc}}" />
-                                    </td>
-                                    <td style="margin-top:0;min-height:50px;border:2px solid">
-                                        {{$spdet->wo_dets_ins}}
-                                        <input type="hidden" name="inscode_hidden2[]" value="{{$spdet->wo_dets_ins}}" />
-                                        <input type="hidden" name="spsite_hidden2[]" value="{{$spdet->spm_site}}" />
-                                    </td>
-                                    <td style="margin-top:0;min-height:50px;border:2px solid">
-                                        {{$spdet->wo_dets_sp}}
-                                        <input type="hidden" name="spcode_hidden2[]" value="{{$spdet->wo_dets_sp}}" />
-                                    </td>
-                                    <td style="margin-top:0;min-height:50px;border:2px solid">
-                                        {{$spdet->spm_desc}}
-                                    </td>
-                                    <td style="margin-top:0;min-height:50px;border:2px solid">
-                                        {{($spdet->insd_um != null) ? $spdet->insd_um : $spdet->spm_um }}
-                                    </td>
-                                    <td style="margin-top:0;min-height:50px;border:2px solid">
-                                        {{($spdet->insd_qty != null) ? $spdet->insd_qty : $spdet->wo_dets_wh_qty}}
-                                    </td>
-                                    <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                        <input type="number" step="1" min="0" max="{{($spdet->wo_dets_qty_used != null) ? ($spdet->wo_dets_wh_qty - $spdet->wo_dets_qty_used) : (($spdet->wo_dets_wh_qty != null) ? $spdet->wo_dets_wh_qty : '0')}}" class="form-control" name="qtyused[]" style="width: 100%;" value="{{($spdet->wo_dets_qty_used != null) ? ($spdet->wo_dets_wh_qty - $spdet->wo_dets_qty_used) : (($spdet->wo_dets_wh_qty != null) ? $spdet->wo_dets_wh_qty : '0')}}">
-                                    </td>
-                                    <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                        {{($spdet->wo_dets_wh_qty != null) ? $spdet->wo_dets_wh_qty : '0' }}
-                                    </td>
-                                    <td style="text-align:center;vertical-align:middle;margin-top:0;border:2px solid;">
-                                        {{($spdet->wo_dets_qty_used != null) ? $spdet->wo_dets_qty_used : '0' }}
-                                        <input type="hidden" name="qtyalreadyused[]" value"{{($spdet->wo_dets_qty_used != null) ? $spdet->wo_dets_qty_used : '0'}}"/>
-                                    </td>
-                                </tr>
-                                @endif
-                                @empty
-                                <tr>
-                                    <td colspan="12" style="color: red; text-align: center;">
-                                        No Data Available
-                                    </td>
-                                </tr>
-
-                                @endforelse
-
-                            </tbody>
-                        </table>
-                    </div>
-                    @endforeach
+                <div class="col-md-3 h-50">
+                    <input id="c_duedate" type="text" class="form-control pl-0 col-md-12 c_duedate" style="background:transparent;border:none;text-align:left" name="c_duedate" value="{{$header->wo_due_date}}" autofocus readonly/>
+                    <input type="hidden" id="hidden_assetsite" value="{{$header->asset_site}}" />
                 </div>
             </div>
+
+            <!-- Spare Part -->
+            
+            <div style="border: 1px solid black;">
+                <div class="table-responsive tag-container" style="overflow-x: auto; display:inline-block; white-space: nowrap; padding:0; text-align:center; position:relative">
+                    <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Location & Lot</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Required</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Issued</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Issue</th>
+                                <th style="text-align: center; width: 5% !important; font-weight: bold;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id='detailapp'>
+                            @forelse ( $sparepart as $datas )
+                            <tr>
+                                <td style="vertical-align:middle;text-align:left;">
+                                    {{$datas->spm_code}} -- {{$datas->spm_desc}}
+                                    <input type="hidden" class="hidden_sp" name="hidden_sp[]" value="{{$datas->spm_code}}" />
+                                </td>
+                                <td style="vertical-align: middle; text-align: left;">
+                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" required autocomplete="off">
+                                    <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
+                                    <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
+                                    <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" /> 
+                                </td>
+                                <td style="vertical-align:middle;text-align:right;">
+                                    {{$datas->wd_sp_required}}
+                                    <input type="hidden" name="qtyrequired[]" value="{{$datas->wd_sp_required}}" />
+                                </td>
+                                <td style="vertical-align:middle;text-align:right;">
+                                    {{$datas->wd_sp_issued}}
+                                    <input type="hidden" class="qtyissued" name="qtyissued[]" value="{{$datas->wd_sp_issued}}" />
+                                </td>
+                                <td style="vertical-align:middle;text-align:center;">
+                                    <input type="number" class="form-control qtypotong" step="0.01" min="{{ $datas->wd_sp_issued == 0 ? 0 : -$datas->wd_sp_issued }}" name="qtypotong[]" value="{{$datas->wd_sp_required}}" required />
+                                </td>
+                                <td style="vertical-align:middle;text-align:center;">
+                                
+                                </td>
+                            </tr>
+                            
+                            @empty                            
+                            
+                            <tr>
+                                <td>
+                                    <select style="display: inline-block !important;" class="form-control selectpicker spreq" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="300px" autofocus>
+                                        <option value=""> -- Select Spare Part -- </option>
+                                        @foreach($newsparepart as $da)
+                                        <option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>
+                                        @endforeach
+                                    </select>
+                                    <input type="hidden" class="hidden_sp" name="hidden_sp[]" />
+                                </td>
+                                <td>
+                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" required autocomplete="off">
+                                    <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
+                                    <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
+                                    <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />
+                                </td>
+                                <td>
+                                    <!-- qty required -->
+                                    <input type="hidden" name="qtyrequired[]" value="0" />
+                                </td>
+                                <td>
+                                    <!-- qty issued -->
+                                    <input type="hidden" class="qtyissued" name="qtyissued[]" value="0" />
+                                </td>
+                                <td style="vertical-align:middle;text-align:center;">
+                                    <input type="number" class="form-control qtypotong" min="0" step="0.01" name="qtypotong[]" value="0" required />
+                                </td>
+                                <td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>
+                                <input type="hidden" class="op" name="op[]" value="A" />
+                            </tr>
+                            
+                            @endforelse
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="7">
+                                    <input type="button" class="btn btn-lg btn-block btn-focus" id="addrow" value="Add New Spare Part" style="background-color:#1234A5; color:white; font-size:16px" />
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- End Spare Part -->
+
+
+
+            <!-- Instruction WO -->
+
+            <div style="border: 1px solid black; margin-top: 5% !important;">
+                <div class="table-responsive tag-container" style="overflow-x: auto; display:inline-block; white-space: nowrap; padding:0; text-align:center; position:relative">
+                    <table id="createTableIns" class="table table-bordered order-list" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th style="text-align: center; width: 5% !important; font-weight: bold;">Step</th>
+                                <th style="text-align: center; width: 25% !important; font-weight: bold;">Deskripsi</th>
+                                <th style="text-align: center; width: 15% !important; font-weight: bold;">Duration</th>
+                                <th style="text-align: center; width: 20% !important; font-weight: bold;">Engineer</th>
+                                <th style="text-align: center; width: 5% !important; font-weight: bold;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id='detailapp_ins'>
+                            @forelse ( $instruction as $datains )
+                            <tr>
+                                <td style="vertical-align:middle;text-align:left;">
+                                    {{$datains->wd_ins_step}}
+                                </td>
+                                <td style="vertical-align: middle; text-align: left;">
+                                    {{$datains->ins_stepdesc}}
+                                    <input type="hidden" class="hidden_inscode" name="hidden_inscode[]" value="" />
+                                    <input type="hidden" class="hidden_insdesc" name="hidden_insdesc[]" value="" />
+                                </td>
+                                <td style="vertical-align:middle;text-align:right;">
+                                    <div class="input-group">
+                                        <input type="number" min="0" class="form-control ins_duration" name="ins_duration[]">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="basic-addon2"> {{$datains->um_desc}} </span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="vertical-align:middle;text-align:right;">
+                                    <select class="form-control selectpicker ins_list_eng" name="ins_list_eng[]" multiple data-live-search="true" data-max-options="5" data-size="3" data-dropup-auto="false">
+                                    @foreach ($engineers as $dataeng )
+                                        <option value="{{$dataeng['eng_code']}}">{{$dataeng["eng_code"]}} -- {{$dataeng["eng_desc"]}}</option>
+                                    @endforeach
+                                    </select>
+                                </td>
+                                <td style="vertical-align:middle;text-align:center;">
+                                
+                                </td>
+                            </tr>
+                            
+                            @empty                            
+                        
+                            
+                                        
+                            @endforelse
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="7">
+                                    <input type="button" class="btn btn-lg btn-block btn-focus" id="addrow_ins" value="Add New Step" style="background-color:#1234A5; color:white; font-size:16px" />
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- End Instruction WO -->
+
+            <!-- Qc Spec -->
+
+
+
+            <!-- End Qc Spec -->
 
             <!-- hanya muncul jika WO PM -->
             <div id="preventiveonly" style="display:none">
@@ -333,80 +327,16 @@
                     </div>
                 </div>
                 <input type="hidden" name="assettype" id="assettype">
-                <!-- <div class="form-group row col-md-12 c_lastmeasurement">
-              <label for="c_repairhour" class="col-md-5 col-form-label text-md-left">Last Measurement</label>
-              <div class="col-md-7">
-                <input id="c_lastmeasurement" type="number" class="form-control c_repairhour" name="c_lastmeasurement" min='1' step="0.01" readonly>
-              </div>
-            </div>
-            <div class="form-group row col-md-12 c_engineerdiv">
-              <label for="c_lastmeasurementdate" class="col-md-5 col-form-label text-md-left">Last Maintenance</label>
-              <div class="col-md-7">
-                <input id="c_lastmeasurementdate" type="date" class="form-control c_lastmeasureentdate" name="c_lastmeasurementdate"  readonly>
-              </div>
-            </div> -->
             </div>
 
-
-            <div class="form-group row col-md-12">
-                <label for="c_finishdate" class="col-md-4 col-form-label text-md-left">Finish Date <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-                <div class="col-md-3">
-                    <input id="c_finishdate" type="date" class="form-control c_finishdate" name="c_finishdate" value="{{($data->first()->wo_finish_date != null) ? $data->first()->wo_finish_date : \Carbon\Carbon::now()->format('Y-m-d')}}" autofocus required>
-                </div>
-            </div>
-            <div class="form-group row col-md-12">
-                <label for="c_finishtime" class="col-md-4 col-form-label text-md-left">Finish Time <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-                <div class="col-md-3">
-                    <input type="time" class="form-control" name="c_finishtime" value="{{($data->first()->wo_finish_time != null) ? $data->first()->wo_finish_time : \Carbon\Carbon::now()->format('H:i')}}" autofocus required/>
-                </div>
-            </div>
-
-            <div class="form-group row col-md-12">
-                <label for="failurecode" class="col-md-4 col-form-label my-auto">Failure Code</label>
-                <div class="col-md-5 col-sm-12">
-                    
-                    <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple">
-                        <option></option>
-                        @foreach($fc as $fcshow)
-                        <option value="{{$fcshow->fn_code}}"
-                        @if(old('failurecode') ? in_array($fcshow->fn_code, old('failurecode')) : in_array($fcshow->fn_code, [$data->first()->wofc1, $data->first()->wofc2, $data->first()->wofc3]))
-                        selected
-                        @endif
-                        >{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}} -- {{$fcshow->fn_impact}}</option>
-                        @endforeach
-                    </select>
-
-                </div>
-            </div>
-
-            <div class="form-group row col-md-12">
-                <label for="c_note" class="col-md-4 col-form-label text-md-left">Reporting Note <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-                <div class="col-md-6">
-                    <textarea id="c_note" class="form-control c_note" name="c_note" maxlength="250" autofocus>{{($data->first()->wo_approval_note != null) ? $data->first()->wo_approval_note : ''}}</textarea>
-                </div>
-            </div>
-            <div class="form-group row col-md-12" id="photodiv">
-                <label class="col-md-4 col-form-label text-md-left">Uploaded File</label>
-                <div class="col-md-7">
-                <div id="munculgambar">
-
-                </div>
-                </div>
-            </div>
-            <div class="form-group row col-md-12">
-                <!-- <label class="col-md-12 col-form-label text-md-center"><b>Completed</b></label> -->
-                <label class="col-md-4 col-form-label text-md-left">Upload</label>
-                <div class="col-md-5 input-file-container" style="margin-bottom: 10%;">
-                    <input type="file" class="form-control" id="filenamewo" name="filenamewo[]" multiple>
-                </div>
-            </div>
             <input type="hidden" id="hidden_var" name="hidden_var" value="0" />
             <input type="hidden" id="repairtypenow" name="repairpartnow" />
         </div>
 
         <div class="modal-footer">
             <a id="btnclose" class="btn btn-danger" href="/woreport" id="btnback">Back</a>
-            <button type="submit" class="btn btn-success bt-action" id="btnconf">Save</button>
+            <button type="submit" class="btn btn-dark bt-action" id="btnconf-close" name="btnconf-close" value="closewo">Close WO</button>
+            <button type="submit" class="btn btn-success bt-action" id="btnconf-report" name="btnconf-report" value="reportwo">Report WO</button>
             <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none; width: 150px !important;">
                 <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
             </button>
@@ -414,10 +344,200 @@
     </form>
 </div>
 
+
+<div id="myModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Select Location & Lot From</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="thistablemodal">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('scripts')
 <script type="text/javascript">
+    var counter = 1;
+
+    function selectPicker() {
+
+        $('.selectpicker').selectpicker().focus();
+
+    }
+
+    $(document).ready(function() {
+        $("#addrow").on("click", function() {
+
+            // var line = document.getElementById('line').value;
+
+            var rowCount = $('#createTable tr').length;
+
+            var currow = rowCount - 2;
+
+            // alert(currow);
+
+            var lastline = parseInt($('#createTable tr:eq(' + currow + ') td:eq(0) input[type="number"]').val()) + 1;
+
+            if (lastline !== lastline) {
+                // check apa NaN
+                lastline = 1;
+            }
+
+            // alert(lastline);
+
+            var newRow = $("<tr>");
+            var cols = "";
+
+            cols += '<td>';
+            cols += '<select style="display: inline-block !important;" class="form-control selectpicker selectins" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="300px" autofocus>';
+            cols += '<option value = ""> -- Select Spare Part -- </option>';
+            @foreach($newsparepart as $da)
+            cols += '<option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
+            @endforeach
+            cols += '</select>';
+            cols += '<input type="hidden" class="hidden_sp" name="hidden_sp[]" />';
+            cols += '</td>';
+
+            cols += '<td>';
+            cols += '<input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" required autocomplete="off">';
+            cols += '<input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />';
+            cols += '<input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />';
+            cols += '<input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />';
+            cols += '</td>';
+            
+            cols += '<td>';
+            cols += '<input type="hidden" name="qtyrequired[]" value="0" />';
+            cols += '</td>';
+            
+            cols += '<td>';
+            cols += '<input type="hidden" class="qtyissued" name="qtyissued[]" value="0" />';
+            cols += '</td>';
+
+            cols += '<td style="vertical-align:middle;text-align:center;">';
+            cols += '<input type="number" class="form-control qtypotong" min="0" step="0.01" name="qtypotong[]" value="0" required />';
+            cols += '</td>';
+            
+            cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>';
+            cols += '<input type="hidden" class="op" name="op[]" value="A" />';
+            counter++;
+
+            newRow.append(cols);
+            $("#detailapp").append(newRow);
+
+            // selectRefresh();
+
+            selectPicker();
+        });
+
+        $("#addrow_ins").on("click", function() {
+
+            // var line = document.getElementById('line').value;
+
+            var rowCount = $('#createTableIns tr').length;
+
+            var currow = rowCount - 2;
+
+            // alert(currow);
+
+            var lastline = parseInt($('#createTableIns tr:eq(' + currow + ') td:eq(0) input[type="number"]').val()) + 1;
+
+            if (lastline !== lastline) {
+                // check apa NaN
+                lastline = 1;
+            }
+
+            // alert(lastline);
+
+            var newRow = $("<tr>");
+            var cols = "";
+
+            cols += '<td>';
+            cols += '<input type="number" min="0" class="form-control stepnumber" name="stepnumber[]" />';
+            cols += '</td>';
+
+            cols += '<td>';
+            cols += '<input type="text" class="form-control stepdesc" name="stepdesc[]" />';
+            cols += '<input type="hidden" class="hidden_inscode" name="hidden_inscode[]" value="" />';
+            cols += '<input type="hidden" class="hidden_insdesc" name="hidden_insdesc[]" value="" />';
+            cols += '</td>';
+
+            cols += '<td>';
+            cols += '<div class="input-group">';
+            cols += '<input type="number" min="0" class="form-control ins_duration" id="input-with-select" name="ins_duration[]"/>';
+            cols += '<div class="input-group-append">';
+            cols += '<select class="form-control durationum" name="durationum[]">';
+            @foreach($um as $dataum)
+            cols += '<option value="{{$dataum->um_code}}">{{$dataum->um_desc}}</option>';
+            @endforeach
+            cols += '</select>';
+            cols += '</div>';
+            cols += '</div>';
+            cols += '</td>';
+
+            cols += '<td>';
+            cols += '<select class="form-control selectpicker ins_list_eng" name="ins_list_eng[]" multiple data-live-search="true" data-max-options="5" data-size="3" data-dropup-auto="false" autofocus>';
+            cols += '<option value = ""> -- Select Engineer -- </option>';
+            @foreach ($engineers as $dataeng )
+            cols += '<option value="{{$dataeng["eng_code"]}}">{{$dataeng["eng_code"]}} -- {{$dataeng["eng_desc"]}}</option>';
+            @endforeach
+            cols += '</select>';
+            cols += '</td>';
+
+            cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>';
+            cols += '<input type="hidden" class="op" name="op[]" value="A" />';
+            counter++;
+
+            newRow.append(cols);
+            $("#detailapp_ins").append(newRow);
+
+            // selectRefresh();
+
+            selectPicker();
+        });
+
+        $("table.order-list").on("click", ".ibtnDel", function(event) {
+            var row = $(this).closest("tr");
+            var line = row.find(".line").val();
+            // var colCount = $("#createTable tr").length;
+
+
+            if (line == counter - 1) {
+                // kalo line terakhir delete kurangin counter
+                counter -= 1
+            }
+
+            $(this).closest("tr").remove();
+
+            // if(colCount == 2){
+            //   // Row table kosong. sisa header & footer
+            //   counter = 1;
+            // }
+
+        });
+
+        $(document).on('click', '.qaddel', function() {
+            var checkbox = $(this), // Selected or current checkbox
+                value = checkbox.val(); // Value of checkbox
+
+            if (checkbox.is(':checked')) {
+                $(this).closest("tr").find('.op').val('R');
+            } else {
+                $(this).closest("tr").find('.op').val('M');
+            }
+
+        });
+    });
+
+
     $(document).ready(function() {
 
         $("#failurecode").select2({
@@ -440,50 +560,137 @@
         // }
 
         $('#newedit').submit(function(event) {
-            document.getElementById('btnconf').style.display = 'none';
+            document.getElementById('btnconf-report').style.display = 'none';
+            document.getElementById('btnconf-close').style.display = 'none';
             document.getElementById('btnclose').style.display = 'none';
             document.getElementById('btnloading').style.display = '';
         });
 
-        $('#repairgroup').select2({
-            placeholder: "Select Data",
-            width: '100%',
-            theme: 'bootstrap4',
-        });
-        $('#repaircode1').select2({
-            placeholder: "Select Data",
-            width: '100%',
-            theme: 'bootstrap4',
-        });
-        $('#repaircode2').select2({
-            placeholder: "Select Data",
-            width: '100%',
-            theme: 'bootstrap4',
-        });
-        $('#repaircode3').select2({
-            placeholder: "Select Data",
-            width: '100%',
-            theme: 'bootstrap4',
-        });
-
-        var wonbr = document.getElementById('c_wonbr').value;
-
         // console.log(wonbr);
 
-        $.ajax({
-          url: "/imageview",
-          data: {
-            wonumber: wonbr,
-          },
-          success: function(data) {
-            // console.log(data);
+        // $.ajax({
+        //   url: "/imageview",
+        //   data: {
+        //     wonumber: wonbr,
+        //   },
+        //   success: function(data) {
 
-            /* coding asli ada di backup-20211026 sblm PM attach file, coding aslinya nampilin gambar*/
-            //alert('test');
+        //     /* coding asli ada di backup-20211026 sblm PM attach file, coding aslinya nampilin gambar*/
+        //     //alert('test');
 
-            $('#munculgambar').html('').append(data);
-          }
-        })
+        //     $('#munculgambar').html('').append(data);
+        //   }
+        // })
+        $(document).on('change', 'select.spreq', function() {
+            var row = $(this).closest("tr"); 
+            const spreqOption = $(this).val();
+
+            row.find(".hidden_sp").val(spreqOption);
+
+        }); 
+
+        $(document).on('click', '.loclotfrom', function() { 
+            var row = $(this).closest("tr");
+            const spcode = row.find(".hidden_sp").val();
+            const getassetsite = document.getElementById('hidden_assetsite').value;
+
+            $.ajax({
+                url: '/getwsasupply',
+                method: 'GET',
+                data: {
+                    assetsite : getassetsite,
+                    spcode : spcode,
+                },
+                success: function(vamp) {
+
+                    // select elemen HTML tempat menampilkan tabel
+                    const tableContainer = document.getElementById("thistablemodal");
+
+                    // hapus tabel lama (jika ada)
+                    if (tableContainer.hasChildNodes()) {
+                        tableContainer.removeChild(tableContainer.firstChild);
+                    }
+
+                    // membuat elemen tabel
+                    const table = document.createElement("table");
+                    table.setAttribute("class", "table table-bordered table-hover");
+
+                    // membuat header tabel
+                    const headerRow = document.createElement("tr");
+                    const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "Select"];
+                    headerColumns.forEach((columnTitle) => {
+                        const headerColumn = document.createElement("th");
+                        headerColumn.textContent = columnTitle;
+                        headerRow.appendChild(headerColumn);
+                    });
+                    table.appendChild(headerRow);
+
+                    // membuat baris record untuk setiap objek dalam dataLocLotFrom
+                    vamp.forEach((record) => {
+                        const rowtable = document.createElement("tr");
+                        const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh"];
+                        columns.forEach((columnKey) => {
+                            const column = document.createElement("td");
+                            column.textContent = record[columnKey];
+                            rowtable.appendChild(column);
+                        });
+                        const selectColumn = document.createElement("td");
+                        const selectButton = document.createElement("button");
+                        selectButton.setAttribute("class", "btn btn-primary");
+                        selectButton.textContent = "Select";
+                        selectButton.setAttribute("type", "button");
+                        selectButton.addEventListener("click", function() {
+                            // aksi yang ingin dilakukan saat tombol select diklik
+                            const site = record.t_site;
+                            const loc = record.t_loc;
+                            const lot = record.t_lot;
+                            let qtyoh = record.t_qtyoh;
+                            qtyoh = qtyoh.replace(',', '');
+                            row.find(".hidden_sitefrom").val(site);
+                            row.find(".hidden_locfrom").val(loc);
+                            row.find(".hidden_lotfrom").val(lot);
+
+                            const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
+
+                            row.find(".loclotfrom").val(loclot);
+                            row.find(".loclotfrom").attr('title',loclot);
+
+                            const qtyohold = row.find(".qtypotong").val();
+
+                            //jika lebih besar yang diminta dari pada yg dimiliki di inventory supply maka qty to transfer maks = qty onhand di inv source
+                            if(parseFloat(qtyohold) > parseFloat(qtyoh)){
+                                row.find(".qtypotong").attr("max", qtyoh).val(qtyoh);
+                            }
+
+                            $('#myModal').modal('hide');
+                        });
+                        selectColumn.appendChild(selectButton);
+                        rowtable.appendChild(selectColumn);
+                        table.appendChild(rowtable);
+                    });
+
+                    // menampilkan tabel pada elemen HTML yang dituju
+                    tableContainer.appendChild(table);
+
+                    // memanggil modal setelah tabel dimuat
+                    $('#myModal').modal('show');
+                    
+
+                },complete: function(vamp) {
+                    //  $('.modal-backdrop').modal('hide');
+                    // alert($('.modal-backdrop').hasClass('in'));
+
+                    setTimeout(function() {
+                    $('#loadingtable').modal('hide');
+                    }, 500);
+
+                    setTimeout(function() {
+                    $('#viewModal').modal('show');
+                    }, 1000);
+
+                }
+            })
+        });
 
 
     
@@ -513,6 +720,7 @@
 
         }
         })
-  });
+    });
+
 </script>
 @endsection

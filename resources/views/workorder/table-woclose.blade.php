@@ -1,38 +1,28 @@
 @forelse ($data as $show)
 <tr class="foottr">
-  <td class="foot2" style="text-align: center; vertical-align: middle;" data-label="WO Number">{{ $show->wo_nbr }}</td>
-  <td class="foot2" style="text-align: center; vertical-align: middle;" data-label="Asset">{{ $show->asset_code }} -- {{ $show->asset_desc }}</td>
-  @if($show->wo_type == 'auto')
-    <td class="foot2" style="text-align: center; vertical-align: middle;" data-label="WO Type">Preventive</td>
-  @elseif($show->wo_type == 'direct')
-    <td class="foot2" style="text-align: center; vertical-align: middle;" data-label="WO Type">Direct</td>
-  @elseif($show->wo_type == 'other')
-    @if($show->wo_sr_nbr != null)
-      <td class="foot2" style="text-align: center; vertical-align: middle;" data-label="WO Type">WO from service request</td>
-    @else
-      <td class="foot2" style="text-align: center; vertical-align: middle;" data-label="WO Type">Work Order</td>
-    @endif
-  @endif
-  <td class="foot2" style="text-align: center; vertical-align: middle;" data-label="Status">{{ $show->wo_status }}</td>
+  <td class="foot2" data-label="WO Number">{{ $show->wo_number }}</td>
+  <td class="foot2" data-label="Asset">{{ $show->asset_code }} -- {{ $show->asset_desc }}</td>
+  <td class="foot2" data-label="WO Type">{{ $show->wo_type }}</td>
+  <td class="foot2" data-label="Status">{{ $show->wo_status }}</td>
   <td class="foot2" >
   <div class="text-center">
-  <input type="hidden" name='wonbrr' value="{{$show->wo_nbr}}"> 
+  <input type="hidden" name='wonbrr' value="{{$show->wo_number}}"> 
   <input type="hidden" name='wotypee' value="{{$show->wo_type}}"> 
   @if($show->wo_status == 'started')
     <!-- <button type="button" class="btn btn-success btn-action jobview" style="width: 80%;">View</button> -->
-    <a class="btn btn-success btn-action" href="{{route('editWO', $show->wo_nbr)}}" title="Finish WO"><i class="fas fa-check-square"></i></a>
+    <a class="btn btn-success btn-action" href="{{route('reportingWO', $show->wo_number)}}" title="Report WO"><i class="fas fa-check-square"></i></a>
   
   @endif
 
   
-  @if($show->wo_status =='finish')
+  @if($show->wo_status =='reported')
   <a class="aprint" target="_blank" title="print WO"><button type="button" class="btn btn-warning bt-action"><i class="fas fa-print"></i></button></a>
-  <a class="reissued" href="{{route('reissuedWO', $show->wo_nbr)}}" title="Reissued WO"><button type="button" class="btn btn-danger" style="width: 25%;"><i class="fas fa-file-contract"></i></button></a>
+  <a class="reissued" href="{{route('reissuedWO', $show->wo_number)}}" title="Reissued WO"><button type="button" class="btn btn-danger" style="width: 25%;"><i class="fas fa-file-contract"></i></button></a>
   @endif
 
 
   {{-- Print 
-  @if($show->wo_status == 'finish' )
+  @if($show->wo_status == 'reported' )
     <a class="aprint" target="_blank" style="width: 80%;"><button type="button" class="btn btn-warning bt-action" style="width: 80%;"><b>Print<b></button></a> 
   @endif
   --}}

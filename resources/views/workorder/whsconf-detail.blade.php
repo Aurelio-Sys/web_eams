@@ -269,7 +269,7 @@
                             const qtyohold = row.find(".qtytotransfer").val();
 
                             //jika lebih besar yang diminta dari pada yg dimiliki di inventory supply maka qty to transfer maks = qty onhand di inv source
-                            if(qtyohold >= qtyoh){
+                            if(parseFloat(qtyohold) > parseFloat(qtyoh)){
                                 row.find(".qtytotransfer").attr("max", qtyoh).val(qtyoh);
                             }
 

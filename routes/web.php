@@ -30,8 +30,8 @@ use App\Http\Controllers\WO\WHSConfirm;
 use App\Http\Controllers\WO\PMdetsController;
 use App\Http\Controllers\WO\WoQcController;
 use App\Http\Controllers\Usage\UsageBrowseController;
+use App\Http\Controllers\Usage\PmConfirmController;
 use App\Http\Controllers\Other\WhyHistController;
-
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
 use Illuminate\Support\Facades\Auth;
@@ -410,6 +410,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/womaint', [wocontroller::class, 'wobrowse'])->name('womaint');
 	Route::post('/createwo', [wocontroller::class, 'createwo']);
 	Route::get('/searchic', [wocontroller::class, 'searchic']);
+	Route::get('/filtermaintcode', [wocontroller::class, 'filtermaintcode']);
 	route::get('/womaint/pagination', 'wocontroller@wopaging');
 	route::post('/editwo', [wocontroller::class, 'editwo']); 
 	route::post('/editwoeng','wocontroller@editwoeng'); 
@@ -447,6 +448,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/delfilewofinish/{id}', 'wocontroller@delfilewofinish'); // untuk delete file wo finish dari approval spv`
 	route::get('/woreport/reissued/{wo}',[wocontroller::class, 'reissued_wo'])->name('reissuedWO');
 	route::post('/reissuedwofinish', [wocontroller::class, 'reissuedwofinish']);
+	route::get('/woreportingdetail/{wonumber}', [wocontroller::class, 'woreportingdetail'])->name('reportingWO');
 
 
 	//13-08-2021
@@ -575,6 +577,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/rptcost', [RptCostController::class, 'index'])->name('rptcost');
 	Route::get('/rptcostview', [RptCostController::class, 'rptcostview'])->name('rptcostview');
 	// Route::get('/yearcost', [RptCostController::class, 'yearcost'])->name('yearcost');
+	
 
 	// Asset Site
 	Route::get('/assetsite', [AssetSiteController::class, 'index']);
@@ -735,6 +738,13 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/editwhyhist',[WhyHistController::class, 'update']);
 	Route::post('/delwhyhist', [WhyHistController::class, 'destroy']);
 
+	//tambahan reporting WO
+	Route::get('/getwsasupply', [wocontroller::class, 'getwsasupply']);
+	
+
+	// PM Confirm
+	Route::get('/pmconf',[PmConfirmController::class, 'index'])->name('pmconf'); 
+	Route::get('/searchlog',[PmConfirmController::class, 'searchlog']); 
 });
 
 Auth::routes();
