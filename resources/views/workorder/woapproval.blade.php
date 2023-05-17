@@ -284,6 +284,75 @@
     </div>
   </div>
 
+  <!--Modal route-->
+  <div class="modal fade" id="routeModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-center" id="exampleModalLabel">Route to Action</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="col-md-12">
+            <div class="form-group row">
+              <label for="ppnumber" class="col-2 col-sm-2 col-md-2 col-lg-2 col-form-label text-sm-center">{{
+                            __('SR No.')
+                            }}</label>
+              <div class="col-4 col-sm-4 col-md-4 col-lg-4">
+                <input type="text" class="form-control" id="m_route_ppnumber" readonly>
+              </div>
+              <label for="requestedBy" class="col-2 col-sm-2 col-md-2 col-lg-2 col-form-label text-sm-center">{{
+                            __('Requested By')
+                            }}</label>
+              <div class="col-4 col-sm-4 col-md-4 col-lg-3">
+                <input type="text" class="form-control" id="m_route_requested_by" readonly>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group row">
+              <label for="site" class="col-2 col-sm-2 col-md-2 col-lg-2 col-form-label text-sm-center">{{
+                            __('Asset')
+                            }}</label>
+              <div class="col-4 col-sm-4 col-md-4 col-lg-4">
+                <input type="text" class="form-control" id="m_route_asset" readonly>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row" style="margin-bottom: 0px;">
+            <div class="col-lg-12 col-md-12" style="overflow-x: auto; display: block;white-space: nowrap;">
+              <table id='routetable' class='table route-list' style="margin-bottom: 0px;">
+                <thead>
+                  <tr>
+                    <th style="width:10%">No.</th>
+                    <th style="width:10%">Department</th>
+                    <th style="width:10%">Role</th>
+                    <th style="width:15%">Reason</th>
+                    <th style="width:10%">Status</th>
+                    <th style="width:10%">Approved By</th>
+                    <th style="width:15%">Timestamp</th>
+                  </tr>
+                </thead>
+                <tbody id='bodyroute'>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-info btn-outline-success" id="e_btnclose" data-dismiss="modal"><i
+                        class="fas fa-undo"></i>&nbsp;Cancel</button> -->
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <div class="modal fade" id="loadingtable" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <h1 class="animate__animated animate__bounce" style="display:inline;width:100%;text-align:center;color:white;font-size:larger;text-align:center">Loading...</h1>
@@ -300,7 +369,7 @@
       document.getElementById('btnapprove').style.display = 'none';
       document.getElementById('btnloading').style.display = '';
     });
-    
+
 
     function clear_icon() {
       $('#id_icon').html('');
@@ -360,7 +429,7 @@
           var spcodedesc = vamp.splist ? vamp.splist.spg_desc : '';
           var qccode = vamp.wo_master.wo_qcspec_code ? vamp.wo_master.wo_qcspec_code : '';
           var qccodedesc = vamp.qcslist ? vamp.qcslist.qcs_desc : '';
-console.log(id);
+          // console.log(id);
           let combineFailure = [];
 
           vamp.failurecode.forEach(function(failure) {
@@ -418,6 +487,43 @@ console.log(id);
           }, 1000);
         }
       })
+    });
+
+
+    $(document).on('click', '.route', function() {
+      var wonbr = $(this).closest('tr').find('input[name="wonbrr"]').val();
+      $('#routeModal').modal('show');
+
+      $.ajax({
+        url: '/womaint/getwoinfo',
+        method: 'GET',
+        data: {
+          wonumber: wonbr,
+        },
+        success: function(vamp) {
+          var wonumber = wonbr;
+          var id = vamp.wo_master.id;
+          var createdby = vamp.wo_master.wo_createdby;
+          var assetcode = vamp.wo_master.wo_asset_code;
+
+          document.getElementById('m_route_ppnumber').value = wonumber;
+          document.getElementById('m_route_requested_by').value = createdby;
+          document.getElementById('m_route_asset').value = assetcode;
+
+          $.ajax({
+            type: "GET",
+            url: "/routewo",
+            data: {
+              wo_number: wonumber
+            },
+            success: function(data) {
+              $('#bodyroute').html(data);
+            }
+          });
+
+        }
+      })
+
     });
 
 
