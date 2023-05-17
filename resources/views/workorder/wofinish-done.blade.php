@@ -116,16 +116,16 @@
                     <label for="c_assetdesc" class="col-md-12 col-form-label text-md-left p-0">Asset Desc</label>
                 </div>
                 <div class="col-md-3">
-                    <input id="c_wonbr" type="text" class="form-control pl-0 col-md-12 c_wonbr" style="background:transparent;border:none;text-align:left" name="c_wonbr" value="{{$header->wo_number}}" autofocus readonly>
+                    <input id="c_wonbr" type="text" class="form-control pl-0 col-md-12 c_wonbr" style="background:transparent;border:none;text-align:left" name="c_wonbr" value="{{$header->wo_number}}" readonly>
                 </div>
                 <div class="col-md-3">
-                    <input id="c_srnbr" type="text" class="form-control pl-0 col-md-12 c_srnbr" style="background:transparent;border:none;text-align:left" name="c_srnbr" value="{{$header->wo_sr_number}}" autofocus readonly>
+                    <input id="c_srnbr" type="text" class="form-control pl-0 col-md-12 c_srnbr" style="background:transparent;border:none;text-align:left" name="c_srnbr" value="{{$header->wo_sr_number}}" readonly>
                 </div>
                 <div class="col-md-3">
-                    <input id="c_assetcode" type="text" class="form-control pl-0 col-md-12 c_assetcode" style="background:transparent;border:none;text-align:left" name="c_assetcode" value="{{$header->asset_code}}" autofocus readonly>
+                    <input id="c_assetcode" type="text" class="form-control pl-0 col-md-12 c_assetcode" style="background:transparent;border:none;text-align:left" name="c_assetcode" value="{{$header->asset_code}}" readonly>
                 </div>
                 <div class="col-md-3">
-                    <input id="c_assetdesc" type="text" class="form-control pl-0 col-md-12 c_assetdesc" style="background:transparent;border:none;text-align:left" name="c_assetdesc" value="{{$header->asset_desc}}" autofocus readonly/>
+                    <input id="c_assetdesc" type="text" class="form-control pl-0 col-md-12 c_assetdesc" style="background:transparent;border:none;text-align:left" name="c_assetdesc" value="{{$header->asset_desc}}" readonly/>
                 </div>
             </div>
             <div class="form-group row col-md-12">
@@ -139,17 +139,17 @@
 
                 </div>
                 <div class="col-md-3 h-50">
-                    <input id="c_startdate" type="text" class="form-control pl-0 col-md-12 c_startdate" style="background:transparent;border:none;text-align:left" name="c_startdate" value="{{$header->wo_start_date}}" autofocus readonly/>
+                    <input id="c_startdate" type="text" class="form-control pl-0 col-md-12 c_startdate" style="background:transparent;border:none;text-align:left" name="c_startdate" value="{{$header->wo_start_date}}" readonly/>
                 </div>
                 <div class="col-md-3 h-50">
-                    <input id="c_duedate" type="text" class="form-control pl-0 col-md-12 c_duedate" style="background:transparent;border:none;text-align:left" name="c_duedate" value="{{$header->wo_due_date}}" autofocus readonly/>
+                    <input id="c_duedate" type="text" class="form-control pl-0 col-md-12 c_duedate" style="background:transparent;border:none;text-align:left" name="c_duedate" value="{{$header->wo_due_date}}" readonly/>
                     <input type="hidden" id="hidden_assetsite" value="{{$header->asset_site}}" />
                 </div>
             </div>
 
             <!-- Spare Part -->
             
-            <div style="border: 1px solid black;">
+            <div style="border: 1px solid black; padding-top: 5%; padding-bottom: 5%; padding-left: 5%; padding-right: 5%;">
                 <div class="table-responsive tag-container" style="overflow-x: auto; display:inline-block; white-space: nowrap; padding:0; text-align:center; position:relative">
                     <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0">
                         <thead>
@@ -195,7 +195,7 @@
                             
                             <tr>
                                 <td>
-                                    <select style="display: inline-block !important;" class="form-control selectpicker spreq" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="300px" autofocus>
+                                    <select style="display: inline-block !important;" class="form-control selectpicker spreq" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="300px">
                                         <option value=""> -- Select Spare Part -- </option>
                                         @foreach($newsparepart as $da)
                                         <option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>
@@ -243,7 +243,7 @@
 
             <!-- Instruction WO -->
 
-            <div style="border: 1px solid black; margin-top: 5% !important;">
+            <div style="border: 1px solid black; margin-top: 5% !important; padding-top: 5%; padding-bottom: 5%; padding-left: 5%; padding-right: 5%;">
                 <div class="table-responsive tag-container" style="overflow-x: auto; display:inline-block; white-space: nowrap; padding:0; text-align:center; position:relative">
                     <table id="createTableIns" class="table table-bordered order-list" width="100%" cellspacing="0">
                         <thead>
@@ -274,8 +274,8 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td style="vertical-align:middle;text-align:right;">
-                                    <select class="form-control selectpicker ins_list_eng" name="ins_list_eng[]" multiple data-live-search="true" data-max-options="5" data-size="3" data-dropup-auto="false">
+                                <td style="vertical-align:middle;text-align:right; max-width: 100px !important;">
+                                    <select class="form-control selectpicker ins_list_eng" name="ins_list_eng[]" style="max-width: 100px !important;" multiple data-live-search="true" data-max-options="5" data-size="3" data-dropup-auto="false">
                                     @foreach ($engineers as $dataeng )
                                         <option value="{{$dataeng['eng_code']}}">{{$dataeng["eng_code"]}} -- {{$dataeng["eng_desc"]}}</option>
                                     @endforeach
@@ -307,9 +307,100 @@
 
             <!-- Qc Spec -->
 
-
+            <div style="border: 1px solid black; margin-top: 5% !important; padding-top: 5%; padding-bottom: 5%; padding-left: 5%; padding-right: 5%;">
+                <div class="table-responsive tag-container" style="overflow-x: auto; display:inline-block; white-space: nowrap; padding:0; text-align:center; position:relative">
+                    <table id="createTableQc" class="table table-bordered order-list" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th style="text-align: center; width: 15% !important; font-weight: bold;">QC Parameter</th>
+                                <th style="text-align: center; width: 20% !important; font-weight: bold;">Result</th>
+                                <th style="text-align: center; width: 5% !important; font-weight: bold;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id='detailapp_qc'>
+                            @forelse ( $qcparam as $dataqc )
+                            <tr>
+                                <td style="vertical-align:middle;text-align:left;">
+                                    {{$dataqc->wd_qc_qcparam}}
+                                </td>
+                                <td style="vertical-align: middle; text-align: left;">
+                                    <input type="text" class="form-control resultqc1" name="resultqc1[]" value="" maxlength="250" /> 
+                                </td>
+                                <td style="vertical-align:middle;text-align:center;">
+                                
+                                </td>
+                            </tr>
+                            
+                            @empty                            
+                        
+                            
+                                        
+                            @endforelse
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="7">
+                                    <input type="button" class="btn btn-lg btn-block btn-focus" id="addrow_qc" value="Add New QC Parameter" style="background-color:#1234A5; color:white; font-size:16px" />
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
 
             <!-- End Qc Spec -->
+
+            <!-- Footer Reporting -->
+
+            <div style="border: 1px solid black; margin-top: 5% !important; padding-top: 5%; padding-bottom: 5%; padding-left: 5%; padding-right: 5%;">
+                <div class="form-group row col-md-12">
+                    <label for="c_finishdate" class="col-md-4 col-form-label text-md-left">Finish Date <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                    <div class="col-md-3">
+                        <input id="c_finishdate" type="date" class="form-control c_finishdate" name="c_finishdate" value="" autofocus required>
+                    </div>
+                </div>
+                <div class="form-group row col-md-12">
+                    <label for="c_finishtime" class="col-md-4 col-form-label text-md-left">Finish Time <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                    <div class="col-md-3">
+                        <input type="time" class="form-control" name="c_finishtime" value="" autofocus required/>
+                    </div>
+                </div>
+
+                <div class="form-group row col-md-12">
+                    <label for="failurecode" class="col-md-4 col-form-label my-auto">Failure Code</label>
+                    <div class="col-md-5 col-sm-12">
+                        
+                        <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple">
+                            <option></option>
+                        </select>
+
+                    </div>
+                </div>
+
+                <div class="form-group row col-md-12">
+                    <label for="c_note" class="col-md-4 col-form-label text-md-left">Reporting Note <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                    <div class="col-md-6">
+                        <textarea id="c_note" class="form-control c_note" name="c_note" maxlength="250" autofocus></textarea>
+                    </div>
+                </div>
+                <div class="form-group row col-md-12" id="photodiv">
+                    <label class="col-md-4 col-form-label text-md-left">Uploaded File</label>
+                    <div class="col-md-7">
+                    <div id="munculgambar">
+
+                    </div>
+                    </div>
+                </div>
+                <div class="form-group row col-md-12">
+                    <!-- <label class="col-md-12 col-form-label text-md-center"><b>Completed</b></label> -->
+                    <label class="col-md-4 col-form-label text-md-left">Upload</label>
+                    <div class="col-md-5 input-file-container">
+                        <input type="file" class="form-control" id="filenamewo" name="filenamewo[]" multiple>
+                    </div>
+                </div>
+            </div>
+
+            <!-- End Footer Reporting -->
 
             <!-- hanya muncul jika WO PM -->
             <div id="preventiveonly" style="display:none">
@@ -397,8 +488,8 @@
             var newRow = $("<tr>");
             var cols = "";
 
-            cols += '<td>';
-            cols += '<select style="display: inline-block !important;" class="form-control selectpicker selectins" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="300px" autofocus>';
+            cols += '<td style="vertical-align:middle;text-align:center;">';
+            cols += '<select style="display: inline-block !important;" class="form-control selectpicker spreq" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="300px">';
             cols += '<option value = ""> -- Select Spare Part -- </option>';
             @foreach($newsparepart as $da)
             cols += '<option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
@@ -407,18 +498,18 @@
             cols += '<input type="hidden" class="hidden_sp" name="hidden_sp[]" />';
             cols += '</td>';
 
-            cols += '<td>';
+            cols += '<td style="vertical-align:middle;text-align:center;">';
             cols += '<input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" required autocomplete="off">';
             cols += '<input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />';
             cols += '<input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />';
             cols += '<input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />';
             cols += '</td>';
             
-            cols += '<td>';
+            cols += '<td style="vertical-align:middle;text-align:center;">';
             cols += '<input type="hidden" name="qtyrequired[]" value="0" />';
             cols += '</td>';
             
-            cols += '<td>';
+            cols += '<td style="vertical-align:middle;text-align:center;">';
             cols += '<input type="hidden" class="qtyissued" name="qtyissued[]" value="0" />';
             cols += '</td>';
 
@@ -434,8 +525,6 @@
             $("#detailapp").append(newRow);
 
             // selectRefresh();
-
-            selectPicker();
         });
 
         $("#addrow_ins").on("click", function() {
@@ -460,17 +549,18 @@
             var newRow = $("<tr>");
             var cols = "";
 
-            cols += '<td>';
+            cols += '<td style="vertical-align:middle;text-align:center;">';
             cols += '<input type="number" min="0" class="form-control stepnumber" name="stepnumber[]" />';
             cols += '</td>';
 
-            cols += '<td>';
-            cols += '<input type="text" class="form-control stepdesc" name="stepdesc[]" />';
+            cols += '<td style="vertical-align:middle;text-align:center;">';
+            cols += '<textarea type="text" class="form-control stepdesc" name="stepdesc[]" maxlength="250">';
+            cols += '</textarea>';
             cols += '<input type="hidden" class="hidden_inscode" name="hidden_inscode[]" value="" />';
             cols += '<input type="hidden" class="hidden_insdesc" name="hidden_insdesc[]" value="" />';
             cols += '</td>';
 
-            cols += '<td>';
+            cols += '<td style="vertical-align:middle;text-align:center;">';
             cols += '<div class="input-group">';
             cols += '<input type="number" min="0" class="form-control ins_duration" id="input-with-select" name="ins_duration[]"/>';
             cols += '<div class="input-group-append">';
@@ -483,9 +573,8 @@
             cols += '</div>';
             cols += '</td>';
 
-            cols += '<td>';
-            cols += '<select class="form-control selectpicker ins_list_eng" name="ins_list_eng[]" multiple data-live-search="true" data-max-options="5" data-size="3" data-dropup-auto="false" autofocus>';
-            cols += '<option value = ""> -- Select Engineer -- </option>';
+            cols += '<td style="max-width: 100px !important; vertical-align:middle;text-align:center;">';
+            cols += '<select class="form-control selectpicker ins_list_eng" name="ins_list_eng[]" style="max-width: 100px !important;" multiple="multiple" data-live-search="true" data-max-options="5" data-size="3" data-dropup-auto="false">';
             @foreach ($engineers as $dataeng )
             cols += '<option value="{{$dataeng["eng_code"]}}">{{$dataeng["eng_code"]}} -- {{$dataeng["eng_desc"]}}</option>';
             @endforeach
@@ -502,6 +591,47 @@
             // selectRefresh();
 
             selectPicker();
+        });
+
+        $("#addrow_qc").on("click", function() {
+
+            // var line = document.getElementById('line').value;
+
+            var rowCount = $('#createTableQc tr').length;
+
+            var currow = rowCount - 2;
+
+            // alert(currow);
+
+            var lastline = parseInt($('#createTableQc tr:eq(' + currow + ') td:eq(0) input[type="number"]').val()) + 1;
+
+            if (lastline !== lastline) {
+                // check apa NaN
+                lastline = 1;
+            }
+
+            // alert(lastline);
+
+            var newRow = $("<tr>");
+            var cols = "";
+
+            cols += '<td>';
+            cols += '<input type="text" class="form-control qcparam" name="qcparam[]" maxlength="250" />';
+            cols += '</td>';
+
+            cols += '<td>';
+            cols += '<input type="text" class="form-control resultqc1" name="resultqc1[]" value="" maxlength="250" />';
+            cols += '</td>';
+
+            cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>';
+            cols += '<input type="hidden" class="op" name="op[]" value="A" />';
+            counter++;
+
+            newRow.append(cols);
+            $("#detailapp_qc").append(newRow);
+
+            // selectRefresh();
+
         });
 
         $("table.order-list").on("click", ".ibtnDel", function(event) {

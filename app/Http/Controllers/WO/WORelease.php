@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
+use App\Models\Qxwsa as ModelsQxwsa;
 
 class WORelease extends Controller
 {
@@ -217,6 +218,18 @@ class WORelease extends Controller
                                     't_loc' => $t_loc,
                                     't_qtyoh' => $t_qtyoh,
                                 ]);
+                            }else{
+                                $wsa = ModelsQxwsa::first();
+                                $domain = $wsa->wsas_domain;
+
+                                array_push($data, [
+                                    't_domain' => $domain,
+                                    't_part' => $loopsp['spreq'],
+                                    't_site' => $invsupply->inp_supply_site,
+                                    't_loc' => $invsupply->inp_loc,
+                                    't_qtyoh' => 0,
+                                ]);
+
                             }
                         }
 
@@ -226,9 +239,6 @@ class WORelease extends Controller
                     }
 
                 }
-
-
-                // dd($data);
 
 
                 //proses pengelompokan berdasarkan part dan site sehingga didapat total qty onhand untuk part per site nya data QAD
@@ -252,18 +262,11 @@ class WORelease extends Controller
                 //hasil pengelompokan/grouping by part dan site data QAD kemudian ditampung dalam $output
                 $output = [];
 
-                if(empty($result)){
-                    DB::rollBack();
-                    toast('WO Release Failed, Invalid data Inventory Supply', 'error');
-                    return redirect()->back();
-                }else{
-                    foreach ($result as $part => $sites) {
-                        foreach ($sites as $site => $qtyoh) {
-                            $output[] = $qtyoh;
-                        }
+                foreach ($result as $part => $sites) {
+                    foreach ($sites as $site => $qtyoh) {
+                        $output[] = $qtyoh;
                     }
                 }
-                
 
                 //mulai membandingkan data antara data di table inv_required (web) dengan qty tersedia dari data QAD ($output)
 
@@ -333,7 +336,7 @@ class WORelease extends Controller
                                     'wd_ins_wonumber' => $requestData['hide_wonum'],
                                     'wd_ins_step' => $ins->ins_step,
                                     'wd_ins_code' => $ins->ins_code,
-                                    'wd_ins_desc' => $ins->ins_stepdesc,
+                                    'wd_ins_stepdesc' => $ins->ins_stepdesc,
                                     'wd_ins_duration' => $ins->ins_duration,
                                     'wd_ins_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                     'wd_ins_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -392,7 +395,7 @@ class WORelease extends Controller
                                     'wd_ins_wonumber' => $requestData['hide_wonum'],
                                     'wd_ins_step' => $ins->ins_step,
                                     'wd_ins_code' => $ins->ins_code,
-                                    'wd_ins_desc' => $ins->ins_stepdesc,
+                                    'wd_ins_stepdesc' => $ins->ins_stepdesc,
                                     'wd_ins_duration' => $ins->ins_duration,
                                     'wd_ins_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                     'wd_ins_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -461,7 +464,7 @@ class WORelease extends Controller
                                 'wd_ins_wonumber' => $requestData['hide_wonum'],
                                 'wd_ins_step' => $ins->ins_step,
                                 'wd_ins_code' => $ins->ins_code,
-                                'wd_ins_desc' => $ins->ins_stepdesc,
+                                'wd_ins_stepdesc' => $ins->ins_stepdesc,
                                 'wd_ins_duration' => $ins->ins_duration,
                                 'wd_ins_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 'wd_ins_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),

@@ -2508,9 +2508,14 @@ class wocontroller extends Controller
                         ->select('ins_code', 'ins_desc', 'ins_duration','ins_durationum','ins_manpower','ins_step','ins_stepdesc','ins_ref')
                         ->get();
 
+
+        $dataqcparam = DB::table('wo_dets_qc')
+                        ->where('wd_qc_wonumber','=', $wonumber)
+                        ->get();
+
         return view('workorder.wofinish-done', ['header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all,
                                                 'instruction' => $datainstruction, 'inslist' => $ins_all, 'um' => $um,
-                                                'engineers' => $engData]);
+                                                'engineers' => $engData, 'qcparam' => $dataqcparam]);
     }
 
     public function getwsasupply(Request $req){
