@@ -186,7 +186,7 @@ to get the desired effect
                 <li class="nav-item has-treeview">
                   <a href="/srbrowse" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                     <p>Service Request Browse</p>
+                     <p>Service Request Maintenance</p>
                   </a>
                 </li>
                 @endif
