@@ -45,7 +45,7 @@
         <label class="col-md-2 col-form-label text-md-right">Due Date</label>
         <div class="col-md-2">
             <input type="text" class="form-control" id="duedate" name="duedate" value="{{$data->wo_due_date}}" readonly>
-            <input type="hidden" id="hidden_assetsite" value="{{$data->asset_site}}" />
+            <input type="hidden" id="hidden_assetsite" value="{{$data->wo_site}}" />
         </div>
     </div>
 </div>

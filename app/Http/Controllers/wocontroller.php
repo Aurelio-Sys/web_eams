@@ -1121,6 +1121,7 @@ class wocontroller extends Controller
                 'wo_sr_number'          => '',
                 'wo_asset_code'          => $req->c_asset,
                 'wo_site'             => $req->hide_site,
+                'wo_location'              => $req->hide_loc,
                 'wo_type'              => $req->cwotype,
                 'wo_status'              => 'firm',
                 'wo_priority'          => $req->c_priority,
@@ -3373,6 +3374,20 @@ class wocontroller extends Controller
 
     public function reportingwo(Request $req)
     {
+
+        dd($req->all());
+
+        //memisahkan antara button reporting dan button close wo
+
+        //jika klik button Report WO
+        if($req->btnconf == "reportwo"){
+
+        }
+
+        //jika klik button Close WO
+        if($req->btnconf == "closewo"){
+
+        }
 
         $domain = ModelsQxwsa::first();
 

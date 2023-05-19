@@ -90,7 +90,7 @@ class WHSConfirm extends Controller
 
 
         $datalocsupply = DB::table('inp_supply')
-                        ->where('inp_asset_site', '=', $data->asset_site)
+                        ->where('inp_asset_site', '=', $data->wo_site)
                         ->get();
 
         

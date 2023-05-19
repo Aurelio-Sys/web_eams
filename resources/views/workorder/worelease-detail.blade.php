@@ -62,6 +62,7 @@
 
         <input type="hidden" name="hide_wonum" value="{{$data->wo_number}}" />
         <input type="hidden" class="form-control" id="hiddenasset" name="assetcode" value="{{$data->asset_code}}" readonly>
+        <input type="hidden" name="assetsite" value="{{$data->wo_site}}" />
         <div class="modal-header">
         </div>
 

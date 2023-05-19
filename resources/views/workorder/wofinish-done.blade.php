@@ -143,7 +143,7 @@
                 </div>
                 <div class="col-md-3 h-50">
                     <input id="c_duedate" type="text" class="form-control pl-0 col-md-12 c_duedate" style="background:transparent;border:none;text-align:left" name="c_duedate" value="{{$header->wo_due_date}}" readonly/>
-                    <input type="hidden" id="hidden_assetsite" value="{{$header->asset_site}}" />
+                    <input type="hidden" id="hidden_assetsite" value="{{$header->wo_site}}" />
                 </div>
             </div>
 
@@ -426,8 +426,8 @@
 
         <div class="modal-footer">
             <a id="btnclose" class="btn btn-danger" href="/woreport" id="btnback">Back</a>
-            <button type="submit" class="btn btn-dark bt-action" id="btnconf-close" name="btnconf-close" value="closewo">Close WO</button>
-            <button type="submit" class="btn btn-success bt-action" id="btnconf-report" name="btnconf-report" value="reportwo">Report WO</button>
+            <button type="submit" class="btn btn-dark bt-action" id="btnconf-close" name="btnconf" value="closewo">Close WO</button>
+            <button type="submit" class="btn btn-success bt-action" id="btnconf-report" name="btnconf" value="reportwo">Report WO</button>
             <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none; width: 150px !important;">
                 <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
             </button>
@@ -461,7 +461,7 @@
 
     function selectPicker() {
 
-        $('.selectpicker').selectpicker().focus();
+        $('.selectpicker').selectpicker();
 
     }
 
@@ -525,6 +525,8 @@
             $("#detailapp").append(newRow);
 
             // selectRefresh();
+
+            selectPicker();
         });
 
         $("#addrow_ins").on("click", function() {

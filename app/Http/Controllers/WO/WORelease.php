@@ -146,13 +146,13 @@ class WORelease extends Controller
 
                     $ir = DB::table('inv_required')
                         ->where('ir_spare_part', $loopsp['spreq'])
-                        ->where('ir_site', $getAssetSite->asset_site)
+                        ->where('ir_site', $req->assetsite)
                         ->first();
                     if ($ir) {
                         // jika data sudah ada, update record table inv_required
                         DB::table('inv_required')
                             ->where('ir_spare_part', $loopsp['spreq'])
-                            ->where('ir_site', $getAssetSite->asset_site)
+                            ->where('ir_site', $req->assetsite)
                             ->update([
                                 'inv_qty_required' => DB::raw('inv_qty_required + '.$loopsp['qtyrequired']), //inv_qty_required yang lama + inv_qty_required dari wo yang baru di release
                                 'ir_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -161,7 +161,7 @@ class WORelease extends Controller
                         // jika data belum ada, buat data baru
                         DB::table('inv_required')->insert([
                             'ir_spare_part' => $loopsp['spreq'],
-                            'ir_site' => $getAssetSite->asset_site,
+                            'ir_site' => $req->assetsite,
                             'inv_qty_required' => $loopsp['qtyrequired'],
                             'ir_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             'ir_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -181,7 +181,7 @@ class WORelease extends Controller
 
                     //harus ada datanya. ambil data dari table inp_supply untuk kemudian dicheck ke QAD untuk qty on hand yang ada di QAD
                     $supplydata = DB::table('inp_supply')
-                                ->where('inp_asset_site','=', $getAssetSite->asset_site)
+                                ->where('inp_asset_site','=', $req->assetsite)
                                 ->where('inp_avail','=', 'Yes')
                                 ->get();
 
@@ -280,7 +280,7 @@ class WORelease extends Controller
 
                     $getInvRequired = DB::table('inv_required')
                                             ->where('ir_spare_part', '=', $qadData['part'])
-                                            ->where('ir_site','=', $getAssetSite2->asset_site)
+                                            ->where('ir_site','=', $req->assetsite)
                                             ->first();
 
                     if($getInvRequired->inv_qty_required > $qadData['qtyoh']){
