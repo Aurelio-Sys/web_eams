@@ -35,7 +35,7 @@
                     <input id="s_code" type="text" class="form-control" name="s_code"
                     value="" autofocus autocomplete="off"/>
                 </div>
-                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">PM Code</label>
+                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Maintenance Code</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_desc" type="text" class="form-control" name="s_desc"
                     value="" autofocus autocomplete="off"/>
@@ -59,11 +59,11 @@
             <tr>
                 <th width="10%">Asset</th>
                 <th width="25%">Asset Desc</th>
-                <th width="10%">PM Code</th>
-                <th width="25%">PM Desc</th>
-                <th width="10%">Mea</th>
-                <th width="10%">Value</th>
-                <th width="10%">Action</th>  
+                <th width="10%">Mtc Code</th>
+                <th width="25%">Mtc Desc</th>
+                <th width="7%">Mea</th>
+                <th width="7%">Value</th>
+                <th width="7%">Action</th>  
             </tr>
         </thead>
         <tbody>
@@ -98,7 +98,7 @@
                      </div>
                  </div>
                  <div class="form-group row">
-                     <label for="t_pmcode" class="col-md-3 col-form-label text-md-right">PM Code</label>
+                     <label for="t_pmcode" class="col-md-3 col-form-label text-md-right">Maintenance Code</label>
                      <div class="col-md-8">
                         <select class="form-control " id="t_pmcode" name="t_pmcode">
                         <option value="">-- Select Data --</option>
@@ -148,21 +148,21 @@
                      </div>
                   </div>
                   <div class="form-group row">
-                     <label for="t_tol" class="col-md-3 col-form-label text-md-right">Tolerance</label>
+                     <label for="t_tol" class="col-md-3 col-form-label text-md-right">Safety Time</label>
                      <div class="col-md-3">
                            <input type="number" class="form-control" id="t_tol" name="t_tol" autocomplete="off">
                      </div>
                   </div>
                   <div class="form-group row">
-                     <label for="t_start" class="col-md-3 col-form-label text-md-right">Start Date</label>
+                     <label for="t_start" class="col-md-3 col-form-label text-md-right">Last Maintenance <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                      <div class="col-md-3">
-                           <input type="date" class="form-control" id="t_start" name="t_start" autocomplete="off">
+                           <input type="date" class="form-control" id="t_start" name="t_start" autocomplete="off" required>
                      </div>
                   </div>
                   <div class="form-group row">
-                     <label for="t_eng" class="col-md-3 col-form-label text-md-right">Engineer</label>
+                     <label for="t_eng" class="col-md-3 col-form-label text-md-right">Engineer <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                      <div class="col-md-8">
-                        <select class="form-control" multiple size="3" id="t_eng" name="t_eng[]">
+                        <select class="form-control" multiple size="3" id="t_eng" name="t_eng[]" required>
                         @foreach($dataeng as $de)
                         <option value="{{$de->eng_code}}">{{$de->eng_code}} -- {{$de->eng_desc}}</option>
                         @endforeach
@@ -201,10 +201,9 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="te_pmcode" class="col-md-3 col-form-label text-md-right">PM Code</label>
+                    <label for="te_pmcode" class="col-md-3 col-form-label text-md-right">Maintenance Code</label>
                     <div class="col-md-8">
                         <select class="form-control " id="te_pmcode" name="te_pmcode">
-                       <option value="">--</option>
                        @foreach($datapm as $dp)
                        <option value="{{$dp->pmc_code}}">{{$dp->pmc_code}} -- {{$dp->pmc_desc}}</option>
                        @endforeach
@@ -251,21 +250,21 @@
                     </div>
                  </div>
                  <div class="form-group row">
-                    <label for="te_tol" class="col-md-3 col-form-label text-md-right">Tolerance</label>
+                    <label for="te_tol" class="col-md-3 col-form-label text-md-right">Safety Time</label>
                     <div class="col-md-3">
                           <input type="number" class="form-control" id="te_tol" name="te_tol" autocomplete="off">
                     </div>
                  </div>
                  <div class="form-group row">
-                    <label for="te_start" class="col-md-3 col-form-label text-md-right">Start Date</label>
+                    <label for="te_start" class="col-md-3 col-form-label text-md-right">Last Maintenance</label>
                     <div class="col-md-3">
-                          <input type="date" class="form-control" id="te_start" name="te_start" autocomplete="off">
+                          <input type="date" class="form-control" id="te_start" name="te_start" autocomplete="off" readonly>
                     </div>
                  </div>
                  <div class="form-group row">
-                    <label for="te_eng" class="col-md-3 col-form-label text-md-right">Engineer</label>
+                    <label for="te_eng" class="col-md-3 col-form-label text-md-right">Engineer <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-8">
-                       <select class="form-control" multiple size="3" id="te_eng" name="te_eng[]">
+                       <select class="form-control" multiple size="3" id="te_eng" name="te_eng[]" required>
                        </select>
                        <input type="hidden" id="te_pickeng" name="te_pickeng">
                     </div>
@@ -405,7 +404,7 @@
 
          $("#t_eng").select2({
             width : '100%',
-            placeholder : 'Select Skill',
+            placeholder : '',
             maximumSelectionLength : 5,
             closeOnSelect : false,
             allowClear : true,
@@ -414,7 +413,7 @@
 
         function editpickeng(){
             var eng = $('#te_pickeng').val();
-            var a = eng.split(",");
+            var a = eng.split(";");
 
             $.ajax({
                 url:"/pickeng",
@@ -508,6 +507,11 @@
             width : '100%',
             theme : 'bootstrap4',
          });
+
+         $("#te_pmcode").select2({
+          width : '100%',
+          theme : 'bootstrap4',
+       });
 
           $(document).on('change', '#t_mea', function() {
             var mea = $('#t_mea').val();

@@ -46,112 +46,140 @@ class ScheduleCheck extends Command
      */
     public function handle()
     {
-        // Perhitungan untuk type Calendar
-        $datacal = DB::table('pma_asset')
-            ->wherePmaMea('C')
-            ->whereRaw('DATE_ADD(DATE_ADD(pma_start,INTERVAL pma_cal DAY), INTERVAL -pma_tolerance DAY) < curdate()')
-            ->get();
+        $data = DB::table('asset_mstr')
+                    ->where('asset_measure','=','C')
+                    // ->where('asset_code','=','BGN00276')
+                    // querry sch bulan ->whereRaw('DATEDIFF(MONTH, DATEADD(MONTH, asset_cal, asset_last_mtc), GETDATE()) >= - asset_tolerance') // fungsi SQL Server
+                    // query sch bulan ->whereRaw('PERIOD_DIFF(PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal), date_format(now(),"%Y%m")) <= - asset_tolerance') // fungsi MYSQL
+                    ->whereRaw('DATE_ADD(DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY) < curdate()')
+                    ->whereRaw("(asset_on_use is null or asset_on_use = '')")
+                    ->get();
 
-        if($datacal->count() > 0){
-            DB::beginTransaction();
+                    /*  query di sql SSELECT asset_code, asset_cal, asset_last_mtc, asset_tolerance,
+                    DATE_ADD(DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY) as 'seharusnya' FROM `asset_mstr` WHERE asset_active = 'yes' and asset_measure = 'C'
+                    and DATE_ADD(DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY) < curdate(); */
+// dd($data);
+        if($data->count() > 0){
+            foreach($data as $data){
+                // cek repair
+                $repcode1 = "";
+                $repcode2 = "";
+                $repcode3 = "";
+                $repgroup = "";
+                if ($data->asset_repair_type == 'group') {
+                    $repgroup = $data->asset_repair;
+                } else if ($data->asset_repair_type == 'code') {
+                    $a = explode(",", $data->asset_repair);
 
-            try {
-
-                foreach($datacal as $dc){
-                        
-                    // Mencari nomor PM terakhir
-                    $tablern = DB::table('running_mstr')
-                    ->first();
-                    $newyear = Carbon::now()->format('y');
-
-                    if ($tablern->year == $newyear) {
-                        $tempnewrunnbr = strval(intval($tablern->wt_nbr) + 1);
-                        $newtemprunnbr = '';
-
-                        if (strlen($tempnewrunnbr) < 6) {
-                            $newtemprunnbr = str_pad($tempnewrunnbr, 6, '0', STR_PAD_LEFT);
-                        }
-                    } else {
-                        $newtemprunnbr = "000001";
+                    $repcode1 = $a[0];
+                    if(isset($a[1])) {
+                        $repcode2 = $a[1];
                     }
+                    if(isset($a[2])) {
+                        $repcode3 = $a[2];
+                    }
+                } else {
+                    $rep = "";
+                }
+                
+                // Bkin WO
+                $tablern = DB::table('running_mstr')
+                                ->first();
 
-                    $runningnbr = $tablern->wt_prefix . '-' . $newyear . '-' . $newtemprunnbr;
+                // $tempnewrunnbr = strval(intval($tablern->wt_nbr)+1);
+                // $newtemprunnbr = '';
 
-                    // Mencari site asset
-                    $dataasset = DB::table('asset_mstr')
-                        ->whereAssetCode($dc->pma_asset)
+                // if(strlen($tempnewrunnbr) <= 6){
+                // $newtemprunnbr = str_pad($tempnewrunnbr,6,'0',STR_PAD_LEFT);
+                // }
+
+                $newyear = Carbon::now()->format('y');
+
+                if ($tablern->year == $newyear) {
+                    $tempnewrunnbr = strval(intval($tablern->wt_nbr) + 1);
+
+                    $newtemprunnbr = '';
+                    if (strlen($tempnewrunnbr) < 6) {
+                        $newtemprunnbr = str_pad($tempnewrunnbr, 6, '0', STR_PAD_LEFT);
+                    }
+                } else {
+                    $newtemprunnbr = '000001';
+                }
+
+                $runningnbr = $tablern->wt_prefix.'-'.$newyear.'-'.$newtemprunnbr;
+                
+                /* Mencari engineer yang bertugas */
+                if($data->asset_group) {
+                    $dataengpm = DB::table('pm_eng')
+                        ->where('pm_group','=',$data->asset_group)
                         ->first();
 
-                    // Mencari data detail untuk PM Code
-                    $datapmcode = DB::table('pmc_mstr')
-                        ->wherePmcCode($dc->pma_pmcode)
-                        ->first();
-
-                    if($datapmcode) {
-                        $dins = $datapmcode->pmc_ins;
-                        $dspg = $datapmcode->pmc_spg;
-                        $dqcs = $datapmcode->pmc_qcs;
-                    } else {
-                        $dins = null;
-                        $dspg = null;
-                        $dqcs = null;
+                    $arrayeng = [];
+                    foreach(explode(';', $dataengpm->pm_engcode) as $info) {
+                        $arrayeng[] = $info;
                     }
+                }
+                
+                $dataarray = array(
+                    'wo_nbr' => $runningnbr,
+                    'wo_status' => 'plan', //-> A211025
+                    // 'wo_status' => 'open',
+                    'wo_engineer1' => isset($arrayeng[1]) ? $arrayeng[1] : "", //A211025
+                    'wo_engineer2' => isset($arrayeng[2]) ? $arrayeng[2] : "", //A211025
+                    'wo_engineer3' => isset($arrayeng[3]) ? $arrayeng[3] : "", //A211025
+                    'wo_engineer4' => isset($arrayeng[4]) ? $arrayeng[4] : "", //A211025
+                    'wo_engineer5' => isset($arrayeng[5]) ? $arrayeng[5] : "", //A211025
+					'wo_priority' => 'high',
+                    'wo_repair_type' => $data->asset_repair_type,
+                    'wo_repair_group' => $repgroup,
+                    'wo_repair_code1' => $repcode1,
+                    'wo_repair_code2' => $repcode2,
+                    'wo_repair_code3' => $repcode3,
+                    'wo_asset' => $data->asset_code, 
+                    'wo_asset_site' => $data->asset_site,
+                    'wo_asset_loc' => $data->asset_loc,
+					'wo_dept' => 'ENG', // Hardcode
+                    'wo_type'  => 'auto', // Hardcode
+                    'wo_schedule' => Carbon::now('ASIA/JAKARTA')->toDateString(),
+                    'wo_duedate' => Carbon::now('ASIA/JAKARTA')->endOfMonth()->toDateString(),
+                    'wo_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    'wo_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                );
 
-                    if(is_null($dc->pma_leadtime)) {
-                        $dleadtime = 0;
-                    } else {
-                        $dleadtime = $dc->pma_leadtime;
-                    }
+                DB::table('wo_mstr')->insert($dataarray);
 
-                    $dataarray = array(
-                        'wo_number'           => $runningnbr,
-                        'wo_sr_number'          => '',
-                        'wo_asset_code'          => $dc->pma_asset,
-                        'wo_site'             => $dataasset->asset_site,
-                        'wo_type'              => 'PM',
-                        'wo_status'              => 'firm',
-                        'wo_list_engineer'    => $dc->pma_eng, 
-                        'wo_start_date'       => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        'wo_due_date'          => Carbon::now('ASIA/JAKARTA')->addDays($dleadtime),
-                        'wo_mt_code'          => $dc->pma_pmcode, // $req->has('c_mtcode') ? $req->c_mtcode : null,
-                        'wo_ins_code'          => $dins,
-                        'wo_sp_code'          => $dspg,
-                        'wo_qcspec_code'      => $dqcs,
-                        'wo_createdby'          => 'ADMIN',
-                        'wo_department'       => 'ENG',
-                        'wo_system_create'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        'wo_system_update'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(), 
-                    );
+                DB::table('running_mstr')
+                ->update([
+                    'wt_nbr' => $newtemprunnbr,
+                    'year' => $newyear,
+                ]);
 
-                    DB::table('wo_mstr')->insert($dataarray);
-        
-                    DB::table('wo_trans_history')
-                        ->insert([
-                            'wo_number' => $runningnbr,
-                            'wo_action' => 'firm',
-                        ]);
-        
-                    DB::table('running_mstr')
-                        // ->where('wt_nbr', '=', $tablern->wo_nbr)   // ini kenapa pakai where yaaa??
+
+                DB::table('asset_mstr')
+                ->where('asset_code',$data->asset_code)
+                ->update([
+                    'asset_on_use' => $runningnbr,
+                ]);
+                
+                // Kirim Email
+                $assettable = DB::table('asset_mstr')
+                                ->where('asset_code','=',$data->asset_code)
+                                ->first();
+                
+                $asset = $data->asset_code.' - '.$assettable->asset_desc;
+
+                // ditutup dulu email belum di setting EmailScheduleJobs::dispatch($runningnbr,$asset,'1','','','','');
+
+                // Update Table 
+                /* DB::table('asset_mstr')
+                        ->where('asset_measure','=','C')
+                        ->whereRaw('DATEDIFF(DAY, DATEADD(DAY, asset_cal, asset_last_mtc), GETDATE()) >= 0')
                         ->update([
-                            'year' => $newyear,
-                            'wt_nbr' => $newtemprunnbr
+                            'asset_last_mtc' => Carbon::now()->toDateString()
                         ]);
-                    
-                } // END foreach($req->he_wonbr as $he_wonbr)
-                // dd('stop');
-                DB::commit();
-
-            } catch (Exception $err) {
-                DB::rollBack();
-
-                dd($err);
-                toast('Work Order Generated Error, please re-generate again.', 'success');
-                return back();
+                */
             }
         }
-dd('stop');
-        // END Perhitungan untuk type Calendar
 
 
         $data2 = DB::table('asset_mstr')

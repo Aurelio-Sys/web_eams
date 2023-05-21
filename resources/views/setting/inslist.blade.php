@@ -180,6 +180,7 @@
                     </div>
                     <div class="col-md-2">
                        <select class="form-control" id="te_durum" name="te_durum">
+                          <option value="">--</option>
                           @foreach($dataum as $du)
                           <option value="{{$du->um_code}}">{{$du->um_code}} -- {{$du->um_desc}}</option>
                           @endforeach
@@ -299,8 +300,8 @@
           var cols = "";
 
           cols += '<td width="15%"><input type="number" class="form-control" name="t_step[]" min="1" autocomplete="off" required></td>'
-          cols += '<td width="40%"><input type="text" class="form-control" name="t_stepdesc[]" maxlength="255" autocomplete="off" required></td>'
-          cols += '<td width="30%"><input type="text" class="form-control" name="t_ref[]" maxlength="255" autocomplete="off"></td>'
+          cols += '<td width="40%"><textarea class="form-control" name="t_stepdesc[]" maxlength="255" autocomplete="off" required></textarea></td>'
+          cols += '<td width="30%"><textarea class="form-control" name="t_ref[]" maxlength="255" autocomplete="off"></textarea></td>'
           cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
           cols += '</tr>'
           newRow.append(cols);
@@ -321,8 +322,8 @@
           var cols = "";
 
           cols += '<td width="15%"><input type="number" class="form-control" name="te_step[]" min="1" autocomplete="off" required></td>'
-          cols += '<td width="40%"><input type="text" class="form-control" name="te_stepdesc[]" maxlength="255" autocomplete="off" required></td>'
-          cols += '<td width="30%"><input type="text" class="form-control" name="te_ref[]" maxlength="255" autocomplete="off"></td>'
+          cols += '<td width="40%"><textarea class="form-control" name="te_stepdesc[]" maxlength="255" autocomplete="off" required></textarea></td>'
+          cols += '<td width="30%"><textarea class="form-control" name="te_ref[]" maxlength="255" autocomplete="off"></textarea></td>'
           cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
           cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
           cols += '</tr>'

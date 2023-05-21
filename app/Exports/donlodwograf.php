@@ -35,7 +35,7 @@ class donlodwograf implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
     {
         $kondisi = '';
         // if($this->wocreatedate != null ||$this->wocreatedate != '' ){
-        //     $bulan      = date("n",strtotime($this->wocreatedate));
+        //     $bulan      = date("n",ime($this->wocreatedate));
         //     $tahun      = date("Y",strtotime($this->wocreatedate));
 
         //     $kondisi = "month(wo_created_at) = ".$bulan." and year(wo_created_at) = ".$tahun;

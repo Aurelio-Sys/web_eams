@@ -1246,7 +1246,7 @@ class UserChartController extends Controller
 //     }
 
     /* Kebutuhan sparepart */
-    public function needsp(Request $req)
+    public function needspLama(Request $req)  // 2023.05.20Fungsi yang sudah tidak digunakan karena sudah tidak ada repair atau repar group
     {   
         $swo = $req->s_nomorwo;
         $sasset = $req->s_asset;
@@ -1452,6 +1452,122 @@ class UserChartController extends Controller
             ->orderBy('asset_code')
             ->get();
 
+
+        $datasite = DB::table('site_mstrs')
+                        ->where('site_flag','=','yes')
+                        ->get();
+
+        $datasp = DB::table('sp_mstr')
+            ->orderBy('spm_code')
+            ->get();
+
+        return view('report.needsp', ['data' => $datatemp, 'dataasset' => $dataasset, 'datasite' => $datasite,
+            'datasp' => $datasp, 'swo' => $swo, 'sasset' => $sasset, 'sper1' => $sper1,
+            'sper2' => $sper2, 'ssp' => $ssp]);
+    }
+
+    /* Kebutuhan sparepart */
+    public function needsp(Request $req)  
+    {   
+        $swo = $req->s_nomorwo;
+        $sasset = $req->s_asset;
+        $sper1 = $req->s_per1;
+        $sper2 = $req->s_per2;
+        $ssp = $req->s_sp;
+        $seng = $req->s_eng;
+        
+        /* Temp table untuk menampun data spare part dari Wo detail, Wo yang belum ada detailnya, Wo yang belum terbentuk */
+        Schema::create('temp_wo', function ($table) {
+            $table->increments('id');
+            $table->string('temp_wo');
+            $table->string('temp_asset');
+            $table->date('temp_sch_date');
+            $table->date('temp_create_date');
+            $table->string('temp_status');
+            $table->string('temp_sp')->nullable();
+            $table->string('temp_sp_desc')->nullable();
+            $table->decimal('temp_qty_req',10,2)->nullable();
+            $table->decimal('temp_qty_whs',10,2)->nullable();
+            $table->decimal('temp_qty_need',10,2)->nullable();
+            $table->temporary();
+        });
+
+        /* Mencari data sparepart dari wo yang statusnya bukan close atau delete dan tidak mempunyai data detail sparepart dari tabel wo_dets_sp */
+        $data = DB::table('wo_mstr')
+            ->whereNotIn('wo_number', function ($query) {
+                    $query->select('wd_sp_wonumber')
+                        ->from('wo_dets_sp')
+                        ->groupby('wd_sp_wonumber');
+                })
+            ->join('spg_list','spg_code','=','wo_sp_code')
+            ->whereNotIn('wo_status',['closed','delete'])
+            ->orderBy('wo_start_date')
+            ->orderBy('wo_number')
+            ->get();
+
+        foreach($data as $da){
+            DB::table('temp_wo')->insert([
+                'temp_wo' => $da->wo_number,
+                'temp_asset' => $da->wo_asset_code,
+                'temp_create_date' => $da->wo_system_create,
+                'temp_sch_date' => $da->wo_start_date,
+                'temp_status' => $da->wo_status,
+                'temp_sp' => $da->spg_spcode,
+                'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->spg_spcode)->value('spm_desc'),
+                'temp_qty_req' => $da->spg_qtyreq,
+                'temp_qty_whs' => 0,
+                'temp_qty_need' => $da->spg_qtyreq,
+            ]);
+        } 
+        // dd($data);
+        /* Mencari data sparepart yang sudah ada wo detail nya  di tabel wo_dets_sp */
+        $data = DB::table('wo_mstr')
+            ->join('wo_dets_sp','wd_sp_wonumber','=','wo_number')
+            ->whereNotIn('wo_status',['closed','delete'])
+            ->orderBy('wo_start_date')
+            ->orderBy('wo_number')
+            ->get();
+
+        foreach($data as $da){
+            DB::table('temp_wo')->insert([
+                'temp_wo' => $da->wo_number,
+                'temp_asset' => $da->wo_asset_code,
+                'temp_create_date' => $da->wo_system_create,
+                'temp_sch_date' => $da->wo_start_date,
+                'temp_status' => $da->wo_status,
+                'temp_sp' => $da->wd_sp_spcode,
+                'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->wd_sp_spcode)->value('spm_desc'),
+                'temp_qty_req' => $da->wd_sp_required,
+                'temp_qty_whs' => $da->wd_sp_issued,
+                'temp_qty_need' => $da->wd_sp_required - $da->wd_sp_issued, 
+            ]);
+        } 
+
+        $datatemp = DB::table('temp_wo')
+            ->whereNotIn('temp_status',['closed','delete'])
+            ->orderBy('temp_sch_date')
+            ->orderBy('temp_wo');
+
+        if($swo) {
+            $datatemp = $datatemp->where('temp_wo','like','%'.$swo.'%');
+        }
+        if($sasset) {
+            $datatemp = $datatemp->where('temp_asset','=',$sasset);
+        }
+        if($sper1) {
+            $datatemp = $datatemp->whereBetween('temp_create_date',[$sper1,$sper2]);
+        }
+        if($ssp) {
+            $datatemp = $datatemp->where('temp_sp',$ssp);
+        }
+            
+        $datatemp = $datatemp->paginate(10);   
+
+        Schema::dropIfExists('temp_wo');
+
+        $dataasset = DB::table('asset_mstr')
+            ->orderBy('asset_code')
+            ->get();
 
         $datasite = DB::table('site_mstrs')
                         ->where('site_flag','=','yes')

@@ -44,6 +44,7 @@ class PmassetController extends Controller
             ->get();
 
         $datapm = DB::table('pmc_mstr')
+            ->wherePmcType('PM')
             ->orderby('pmc_code')
             ->get();
 
@@ -122,7 +123,7 @@ class PmassetController extends Controller
         if(!is_null($req->t_eng)) {
             $flg = 0;
             foreach ($req->t_eng as $ds) {
-                $eng = $eng . $req->t_eng[$flg] . "," ;
+                $eng = $eng . $req->t_eng[$flg] . ";" ;
                 $flg += 1;
             }
         } 
@@ -138,7 +139,7 @@ class PmassetController extends Controller
                 'pma_meterum' => $req->t_durum,
                 'pma_tolerance' => $req->t_tol,
                 'pma_start' => $req-> t_start,
-                'pma_eng' => $eng,
+                'pma_eng' => substr($eng, 0, -1),
                 'pma_editedby'  => Session::get('username'),
                 'created_at'    => Carbon::now()->toDateTimeString(),
                 'updated_at'    => Carbon::now()->toDateTimeString(),
@@ -179,7 +180,7 @@ class PmassetController extends Controller
      */
     public function update(Request $req)
     {
-        // dd($req->all());
+        dd($req->all());
 
         //cek data dobel, tidak boleh menyimpan data dengan asset dan pmcode yang sudah terdaftar
         $cekdata = DB::table('pma_asset')
@@ -197,7 +198,7 @@ class PmassetController extends Controller
         if(!is_null($req->te_eng)) {
             $flg = 0;
             foreach ($req->te_eng as $ds) {
-                $eng = $eng . $req->te_eng[$flg] . "," ;
+                $eng = $eng . $req->te_eng[$flg] . ";" ;
                 $flg += 1;
             }
         } 
@@ -215,7 +216,7 @@ class PmassetController extends Controller
                 'pma_meterum' => $req->te_durum,
                 'pma_tolerance' => $req->te_tol,
                 'pma_start' => $req-> te_start,
-                'pma_eng' => $eng,
+                'pma_eng' => substr($eng, 0, -1),
                 'pma_editedby'  => Session::get('username'),
                 'created_at'    => Carbon::now()->toDateTimeString(),
             ]);

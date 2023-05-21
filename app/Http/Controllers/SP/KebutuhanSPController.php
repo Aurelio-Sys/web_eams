@@ -36,13 +36,12 @@ class KebutuhanSPController extends Controller
             ->get();
 
         $datawo = DB::table('wo_mstr')
-            ->leftJoin('wo_dets', 'wo_dets_nbr', '=', 'wo_nbr')
-            ->join('asset_mstr', 'asset_code', '=', 'wo_asset')
-            ->leftjoin('sp_mstr', 'wo_dets_sp', '=', 'spm_code')
-            ->where('wo_dets_sp', '<>', '')
-            ->orderBy('wo_schedule');
+            ->join('asset_mstr', 'asset_code', '=', 'wo_asset_code')
+            ->leftJoin('spg_list','spg_code','=','wo_sp_code')
+            ->leftjoin('sp_mstr', 'spm_code', '=', 'spg_spcode')
+            ->where('wo_status', '<>', 'closed');
 
-        if ($request->s_nomorwo) {
+        /* if ($request->s_nomorwo) {
             $datawo->where('wo_nbr', '=', $request->s_nomorwo);
         }
 
@@ -53,7 +52,7 @@ class KebutuhanSPController extends Controller
         if ($request->s_priority) {
             $datawo->where('wo_priority', '=', $request->s_priority);
         }
-
+        */
         $datawo = $datawo->paginate(10);
 
         // dd($datawo);

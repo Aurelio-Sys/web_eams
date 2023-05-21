@@ -29,11 +29,13 @@
                         $datavaluewtprefix = "";
                         $datavaluewdprefix = "";
                         $datavalueboprefix = "";
+                        $datavaluersprefix = "";
                         $datavaluesrnbr = "";
                         $datavaluewonbr = "";
                         $datavaluewtnbr = "";
                         $datavaluewdnbr = "";
                         $datavaluebonbr = "";
+                        $datavaluersnbr = "";
                         $datayear = "";
                     }else{
                         $datavaluesrprefix = $alert->sr_prefix;
@@ -41,11 +43,13 @@
                         $datavaluewtprefix = $alert->wt_prefix;
                         $datavaluewdprefix = $alert->wd_prefix;
                         $datavalueboprefix = $alert->bo_prefix;
+                        $datavaluersprefix = $alert->rs_prefix;
                         $datavaluesrnbr = $alert->sr_nbr;
                         $datavaluewonbr = $alert->wo_nbr;
                         $datavaluewtnbr = $alert->wt_nbr;
                         $datavaluewdnbr = $alert->wd_nbr;
                         $datavaluebonbr = $alert->bo_nbr;
+                        $datavaluersnbr = $alert->rs_nbr;
                         $datayear = $alert->year;
                     }
                     ?>
@@ -99,14 +103,14 @@
                     </div>
 
                     <!-- WO DIRECT -->
-                    <div class="form-group row">
+                    <div class="form-group row" style="display: none;">
                         <label for="wdprefix" class="col-md-3 col-form-label text-md-right">{{ __('Work Order Direct Prefix') }}</label>
                         <div class="col-md-7">
                             <input id="wdprefix" type="text" class="form-control" name="wdprefix" maxlength="2" autocomplete="off"
                             value="<?php echo $datavaluewdprefix; ?>"> 
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row" style="display: none;">
                         <label for="wdnumber" class="col-md-3 col-form-label text-md-right">{{ __('Last Work Order Direct Number') }}</label>
                         <div class="col-md-7">
                             <input id="wdnumber" type="text" class="form-control" autocomplete="off" name="wdnumber" value="<?php echo $datavaluewdnbr; ?>"  maxlength="6">
@@ -114,6 +118,21 @@
                         </div>
                     </div>
 
+                    <!-- REQUEST SPAREPART 2023.05.21 -->
+                    <div class="form-group row">
+                        <label for="rsprefix" class="col-md-3 col-form-label text-md-right">{{ __('Request Sparepart Prefix') }}</label>
+                        <div class="col-md-7">
+                            <input id="rsprefix" type="text" class="form-control" name="rsprefix" maxlength="2" autocomplete="off"
+                            value="<?php echo $datavaluersprefix; ?>"> 
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="rsnumber" class="col-md-3 col-form-label text-md-right">{{ __('Last Request Sparepart Number') }}</label>
+                        <div class="col-md-7">
+                            <input id="rsnumber" type="text" class="form-control" autocomplete="off" name="rsnumber" value="<?php echo $datavaluersnbr; ?>"  maxlength="6">
+                            <span id="errorrs" style="color:red"></span>
+                        </div>
+                    </div>
 
                     <!-- ASSET BOOKING -->
                     <div class="form-group row">
@@ -251,6 +270,30 @@
         return false;
       }else{
         document.getElementById('errorwd').innerHTML = '';
+      }
+    });
+
+    $(document).on('blur', '#rsnumber', function(){
+
+      var isi = document.getElementById("rsnumber").value;
+      var nbr = isi.length;
+
+      var isnum = /^\d+$/.test(isi);
+
+      if(nbr > 6){
+        document.getElementById('errorrs').innerHTML = 'Current Number Must Be 6 Digits';
+        document.getElementById('rsnumber').focus();
+        return false;
+      }else if(nbr < 6){
+        document.getElementById('errorrs').innerHTML = 'Current Number Must Be 6 Digits';
+        document.getElementById('rsnumber').focus();
+        return false;
+      }else if(!isnum){
+        document.getElementById('errorrs').innerHTML = 'Current Number Must Be 6 Digits';
+        document.getElementById('rsnumber').focus();
+        return false;
+      }else{
+        document.getElementById('errorrs').innerHTML = '';
       }
     });
 </script>

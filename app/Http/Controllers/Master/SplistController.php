@@ -25,9 +25,11 @@ class SplistController extends Controller
 
         $data = DB::table('spg_list')
             ->leftJoin('sp_mstr','spm_code','spg_spcode')
-            ->select('sp_mstr.*', 'spg_list.id as transid','spg_code', 'spg_desc', 'spg_spcode', 'spg_qtyreq')
+            // ->select('sp_mstr.*', 'spg_list.id as transid','spg_code', 'spg_desc', 'spg_spcode', 'spg_qtyreq')
+            ->select('spg_list.id as transid','spg_code','spg_desc')
             ->orderBy('spg_code')
-            ->orderBy('spg_spcode');
+            ->orderBy('spg_spcode')
+            ->groupBy('spg_code','spg_desc');
 
         if($s_code) {
             $data = $data->where('spg_code','like','%'.$s_code.'%');

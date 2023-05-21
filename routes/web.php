@@ -737,6 +737,8 @@ Route::group(['middleware' => ['auth']], function() {
 	// PM Confirm
 	Route::get('/pmconf',[PmConfirmController::class, 'index'])->name('pmconf'); 
 	Route::get('/searchlog',[PmConfirmController::class, 'searchlog']); 
+	Route::get('/getdetpmco',[PmConfirmController::class, 'getdetpmco']); 
+	Route::post('/pmtoconf',[PmConfirmController::class, 'update']); 
 });
 
 Auth::routes();
