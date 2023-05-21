@@ -80,14 +80,6 @@
         </select>
       </div>
     </div>
-    <!-- <div class="form-group row">
-          <div class="col-md-2 col-lg-6 my-auto">
-            <input type="checkbox" id="OtherCb"><label for="OtherCb" class="col-form-label ml-2">Other Failure Code</label>
-          </div>
-          <div class="col-md-3 col-sm-12">
-            <textarea type="text" class="form-control" id="otherfailure" name="otherfailure" maxlength="250" autocomplete="off" disabled></textarea>
-          </div>
-        </div> -->
     <div class="form-group row">
       <label class="col-sm-12 col-lg-3 col-form-label">Note <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
       <div class="col-sm-12 col-md-5">

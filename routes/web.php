@@ -418,8 +418,6 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/womaint/getnowo','wocontroller@geteditwoold');
 	route::get('/womaint/getwoinfo',[wocontroller::class, 'geteditwo'])->name('editWO');
 	route::get('/womaint/getfailure','wocontroller@getfailure');
-	route::get('/woapprovalbrowse','wocontroller@woapprovalbrowse'); 
-	route::post('/approvewo','wocontroller@approvewo'); 
 	route::get('/openprint/{wo}','wocontroller@openprint');
 	route::get('/openprint2/{wo}','wocontroller@openprint2');
 	route::get('/wodownloadfile/{wo}','wocontroller@downloadfile');
@@ -429,6 +427,11 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/wojoblist', 'wocontroller@wojoblist')->name('wojoblist');
 	route::post('/editjob', 'wocontroller@editjob');
 	route::get('/wojoblist/pagination', 'wocontroller@wopagingstart');
+
+	//wo approval
+	route::get('/routewo','wocontroller@routewo');
+	route::get('/woapprovalbrowse','wocontroller@woapprovalbrowse'); 
+	route::post('/approvewo','wocontroller@approvewo'); 
 
 	//wo reporting and close
 	route::get('/woreport', 'wocontroller@wocloselist')->name('woreport');
@@ -574,6 +577,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/rptcost', [RptCostController::class, 'index'])->name('rptcost');
 	Route::get('/rptcostview', [RptCostController::class, 'rptcostview'])->name('rptcostview');
 	// Route::get('/yearcost', [RptCostController::class, 'yearcost'])->name('yearcost');
+	
 
 	// Asset Site
 	Route::get('/assetsite', [AssetSiteController::class, 'index']);
@@ -733,6 +737,10 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/whyfile/{id}', [WhyHistController::class, 'whyfile'])->name('whyfile');
 	Route::post('/editwhyhist',[WhyHistController::class, 'update']);
 	Route::post('/delwhyhist', [WhyHistController::class, 'destroy']);
+
+	//tambahan reporting WO
+	Route::get('/getwsasupply', [wocontroller::class, 'getwsasupply']);
+	
 
 	// PM Confirm
 	Route::get('/pmconf',[PmConfirmController::class, 'index'])->name('pmconf'); 

@@ -783,7 +783,7 @@ class ServiceController extends Controller
 
             //jika ada perubahan approval engineer sebelum diapprove oleh engineer
             if ($srmstr->sr_eng_approver != $approver) {
-                dd(1);
+                // dd(1);
                 DB::table('sr_trans_approval_eng')
                     ->where('srta_eng_mstr_id', $srmstr->id)
                     ->update([
@@ -807,7 +807,7 @@ class ServiceController extends Controller
 
             //jika ada perubahan approval engineer setelah diapprove oleh engineer
             if ($srmstr->sr_status_approval == 'Revision from engineer approval') {
-                dd(2);
+                // dd(2);
                 $update->sr_status_approval = 'Waiting for engineer approval';
 
                 DB::table('sr_trans_approval_eng')
@@ -832,7 +832,7 @@ class ServiceController extends Controller
                             'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                         ]);
                 } else {
-                    dd(3);
+                    // dd(3);
                     DB::table('sr_trans_approval_eng_hist')
                         ->insert([
                             'srtah_eng_sr_number' => $srmstr->sr_number,
@@ -842,7 +842,7 @@ class ServiceController extends Controller
                         ]);
                 }
             } elseif ($srmstr->sr_status_approval == 'Revision from department approval') {
-                dd(4);
+                // dd(4);
                 $update->sr_status_approval = 'Waiting for department approval';
 
                 DB::table('sr_trans_approval')
@@ -881,6 +881,7 @@ class ServiceController extends Controller
     public function cancelsr(Request $req)
     {
         $srnbr = $req->c_srnumber;
+        $reason = $req->c_reason;
 
         $srmstr = ServiceReqMaster::where('sr_number', $srnbr)->first();
         // dd($srmstr);
@@ -889,28 +890,55 @@ class ServiceController extends Controller
             ->where('sr_number', '=', $srnbr)
             ->update([
                 'sr_status'       => 'Canceled',
+                'sr_cancel_note'       => $reason,
                 'updated_at'      => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
             ]);
 
         DB::table('service_req_mstr_hist')
             ->insert([
-                'sr_number'       => $srnbr,
-                'sr_fail_type'    => $srmstr->sr_fail_type,
-                'sr_fail_code'    => $srmstr->sr_fail_code,
-                'sr_impact'       => $srmstr->sr_impact,
-                'sr_priority'     => $srmstr->sr_priority,
-                'sr_note'         => $srmstr->sr_note,
-                'sr_req_date'     => $srmstr->sr_req_date,
-                'sr_req_time'     => $srmstr->sr_req_time,
-                'sr_status'       => 'Canceled',
+                'sr_number'         => $srnbr,
+                'sr_fail_type'      => $srmstr->sr_fail_type,
+                'sr_fail_code'      => $srmstr->sr_fail_code,
+                'sr_impact'         => $srmstr->sr_impact,
+                'sr_priority'       => $srmstr->sr_priority,
+                'sr_note'           => $srmstr->sr_note,
+                'sr_cancel_note'    => $reason,
+                'sr_req_date'       => $srmstr->sr_req_date,
+                'sr_req_time'       => $srmstr->sr_req_time,
+                'sr_status'         => 'Canceled',
                 'sr_status_approval'       => 'Canceled',
-                'sr_eng_approver' => $srmstr->sr_eng_approver,
-                'sr_action'       => 'SR Canceled',
+                'sr_eng_approver'   => $srmstr->sr_eng_approver,
+                'sr_action'         => 'SR Canceled',
                 'created_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                 'updated_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                 // 'sr_access'       => 0
             ]);
 
+        $approvaldept = DB::table('sr_trans_approval')->where('srta_mstr_id', $srmstr->id)->get();
+        
+        foreach ($approvaldept as $appr) {
+            if ($appr->srta_status = 'Waiting for department approval') {
+                DB::table('sr_trans_approval')
+                ->where('srta_mstr_id', '=', $srmstr->id)
+                ->update([
+                    'srta_status'     => 'Canceled by user',
+                    'updated_at'      => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
+                ]);
+            }
+        }
+        
+        $approvaleng = DB::table('sr_trans_approval_eng')->where('srta_eng_mstr_id', $srmstr->id)->first();
+        if ($approvaleng->srta_eng_status = 'Waiting for engineer approval') {
+            DB::table('sr_trans_approval_eng')
+            ->where('srta_eng_mstr_id', '=', $srmstr->id)
+            ->update([
+                'srta_eng_status'     => 'Canceled by user',
+                'updated_at'      => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
+            ]);
+        }
+
+
+        DB::commit();
         toast('Service Request ' . $srnbr . ' successfully canceled', 'success');
         return back();
     }
@@ -1338,7 +1366,7 @@ class ServiceController extends Controller
         $dataApprover = DB::table('sr_trans_approval_eng')
             ->leftJoin('users', 'sr_trans_approval_eng.srta_eng_approved_by', '=', 'users.id')
             ->join('dept_mstr', 'sr_trans_approval_eng.srta_eng_dept_approval', '=', 'dept_mstr.dept_code')
-            ->selectRaw('sr_trans_approval_eng.*, users.username, dept_mstr.dept_desc')
+            ->selectRaw('sr_trans_approval_eng.*, users.username, dept_mstr.dept_code')
             ->where('srta_eng_mstr_id', '=', $datasr->id)
             ->get();
         // dd($dataApprover);
@@ -1352,7 +1380,7 @@ class ServiceController extends Controller
             $output .= $key + 1;
             $output .= '</td>';
             $output .= '<td>';
-            $output .= $approver->dept_desc;
+            $output .= $approver->dept_code;
             $output .= '</td>';
             $output .= '<td>';
             $output .= $approver->srta_eng_role_approval;
@@ -1911,7 +1939,6 @@ class ServiceController extends Controller
         $dataapps = DB::table('dept_mstr')
             ->leftjoin('service_req_mstr', 'service_req_mstr.sr_eng_approver', 'dept_mstr.dept_code')
             ->selectRaw('dept_mstr.*, service_req_mstr.*')
-            // ->where('sr_eng_approver', '=', session::get('department'))
             ->get();
 
 
@@ -1928,11 +1955,10 @@ class ServiceController extends Controller
             ->leftjoin('eng_mstr', 'eng_mstr.eng_dept', 'service_req_mstr.sr_eng_approver')
             ->leftjoin('dept_mstr as u1', 'eng_mstr.eng_dept', 'u1.dept_code')
             ->selectRaw('service_req_mstr.* ,
-                asset_mstr.asset_code, asset_mstr.asset_desc, asset_mstr.asset_loc, dept_mstr.dept_desc, users.username, users.name,
+                asset_mstr.asset_code, asset_mstr.asset_desc, asset_mstr.asset_loc, dept_mstr.dept_code, dept_mstr.dept_desc, users.username, users.name,
                 wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.dept_desc as u11,
                 wo_mstr.wo_job_startdate, wo_mstr.wo_job_finishdate, wo_mstr.wo_status, eng_mstr.eng_dept, eng_mstr.eng_desc, wo_mstr.wo_list_engineer,
                 sr_trans_approval.srta_reason, sr_trans_approval_eng.srta_eng_reason, sr_trans_approval.srta_status, sr_trans_approval_eng.srta_eng_status')
-            // ->where('sr_dept', '=', session::get('department'))
             ->orderBy('sr_req_date', 'DESC')
             ->orderBy('sr_number', 'DESC')
             ->groupBy('sr_number');
@@ -1941,8 +1967,6 @@ class ServiceController extends Controller
         /* Jika bukan admin, maka yang muncul adalah approver sesuai login */
         if (Session::get('role') <> 'ADMIN') {
             $data = $data->where('sr_dept', '=', session::get('department'));
-            // $data = $data->where('sr_eng_approver', '=', $kepalaengineer->eng_dept)->get();
-            // dd($data);
         }
 
         $data = $data->paginate(10);
@@ -2145,6 +2169,8 @@ class ServiceController extends Controller
             $datefrom = $req->get('datefrom') == '' ? '2000-01-01' : date($req->get('datefrom'));
             $dateto = $req->get('dateto') == '' ? '3000-01-01' : date($req->get('dateto'));
 
+            // dd($datefrom, $dateto);
+
             $ceksrfile = DB::table(('service_req_upload'))
                 ->get();
 
@@ -2152,7 +2178,7 @@ class ServiceController extends Controller
                 ->get();
             // dd($requestby);
 
-            if ($srnumber == "" && $asset == "" /*&& $priority == ""*/  /*&& $period == "" */ && $status == "" && $requestby == "" && $datefrom == "" && $dateto == "") {
+            if ($srnumber == "" && $asset == "" /*&& $priority == ""*/  /*&& $period == "" */ && $status == "" && $requestby == "" && $datefrom == "2000-01-01" && $dateto == "3000-01-01") {
 
                 $data = DB::table('service_req_mstr')
                     ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_asset')
@@ -2167,13 +2193,21 @@ class ServiceController extends Controller
                     ->leftjoin('eng_mstr', 'eng_mstr.eng_dept', 'service_req_mstr.sr_eng_approver')
                     ->leftjoin('dept_mstr as u1', 'eng_mstr.eng_dept', 'u1.dept_code')
                     ->selectRaw('service_req_mstr.* ,
-            asset_mstr.asset_code, asset_mstr.asset_desc, asset_mstr.asset_loc, dept_mstr.dept_desc, users.username, users.name,
-            wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.dept_desc as u11,
-            wo_mstr.wo_job_startdate, wo_mstr.wo_job_finishdate, wo_mstr.wo_status, wo_mstr.wo_list_engineer, eng_mstr.eng_dept,
-            sr_trans_approval.srta_reason, sr_trans_approval_eng.srta_eng_reason, sr_trans_approval.srta_status, sr_trans_approval_eng.srta_eng_status')
+                    asset_mstr.asset_code, asset_mstr.asset_desc, asset_mstr.asset_loc, dept_mstr.dept_code, dept_mstr.dept_desc, users.username, users.name,
+                    wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.dept_desc as u11,
+                    wo_mstr.wo_job_startdate, wo_mstr.wo_job_finishdate, wo_mstr.wo_status, eng_mstr.eng_dept, eng_mstr.eng_desc, wo_mstr.wo_list_engineer,
+                    sr_trans_approval.srta_reason, sr_trans_approval_eng.srta_eng_reason, sr_trans_approval.srta_status, sr_trans_approval_eng.srta_eng_status')
+                    ->orderBy('sr_req_date', 'DESC')
                     ->orderBy('sr_number', 'DESC')
-                    ->groupBy('sr_number')
-                    ->paginate(10);
+                    ->groupBy('sr_number');
+                // ->get();
+
+                /* Jika bukan admin, maka yang muncul adalah approver sesuai login */
+                if (Session::get('role') <> 'ADMIN') {
+                    $data = $data->where('sr_dept', '=', session::get('department'));
+                }
+
+                $data = $data->paginate(10);
 
                 // dd($data);
 

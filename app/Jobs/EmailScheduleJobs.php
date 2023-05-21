@@ -415,7 +415,7 @@ class EmailScheduleJobs implements ShouldQueue
                     Mail::send(
                         'emailwo',
                         [
-                            'pesan' => 'Service Request has been updated and waiting for department approval',
+                            'pesan' => 'Service Request Updated and waiting for department approval',
                             'note1' => $toemail->sr_number,
                             'note2' => $toemail->sr_asset . '--' . $toemail->asset_desc,
                             'header1' => 'SR Number',
@@ -423,7 +423,7 @@ class EmailScheduleJobs implements ShouldQueue
                         //  'srnote' => $toemail->sr_note,
                         //  'requestby' => $toemail->req_by,
                         function ($message) use ($array_email) {
-                            $message->subject('eAMS - Service Request has been updated');
+                            $message->subject('eAMS - Service Request Updated');
                             // $message->from('tyas@ptimi.co.id');
                             $message->to($array_email);
                         }
@@ -432,7 +432,7 @@ class EmailScheduleJobs implements ShouldQueue
                 foreach ($emailto as $approver) {
                     $user = App\User::where('id', '=', $approver->id)->first();
                     $details = [
-                        'body' => 'Service Request has been updated',
+                        'body' => 'Service Request Updated',
                         'url' => 'srapproval',
                         'nbr' => $srnumber,
                         'note' => 'Please check'
@@ -467,7 +467,7 @@ class EmailScheduleJobs implements ShouldQueue
                     Mail::send(
                         'emailwo',
                         [
-                            'pesan' => 'Service Request has been updated and waiting for engineer approval',
+                            'pesan' => 'Service Request Updated and waiting for engineer approval',
                             'note1' => $toemail->sr_number,
                             'note2' => $toemail->sr_asset . '--' . $toemail->asset_desc,
                             'header1' => 'SR Number',
@@ -475,7 +475,7 @@ class EmailScheduleJobs implements ShouldQueue
                         //  'srnote' => $toemail->sr_note,
                         //  'requestby' => $toemail->req_by,
                         function ($message) use ($array_email) {
-                            $message->subject('eAMS - Service Request has been updated');
+                            $message->subject('eAMS - Service Request Updated');
                             // $message->from('tyas@ptimi.co.id');
                             $message->to($array_email);
                         }
@@ -484,7 +484,7 @@ class EmailScheduleJobs implements ShouldQueue
                 foreach ($emailto as $approver) {
                     $user = App\User::where('id', '=', $approver->id)->first();
                     $details = [
-                        'body' => 'Service Request has been updated and waiting for approval',
+                        'body' => 'Service Request Updated and waiting for approval',
                         'url' => 'srapproval',
                         'nbr' => $srnumber,
                         'note' => 'Please check'
@@ -561,14 +561,9 @@ class EmailScheduleJobs implements ShouldQueue
 
             }
         } else if ($a == 8) { //kirim email ke engineer approver
-            // $tampungarray = $this->tampungarray;
-            // dd($tampungarray);
-            // $countarray1 = count($tampungarray);
             $asset = $this->asset;
             $requestor = $this->requestor;
             $srnumber = $this->srnumber;
-            // $rejectnote = $this->rejectnote;
-            // dd(1);
             $srmstr = DB::table('service_req_mstr')->where('sr_number', $srnumber)->first();
 
             $emailrequestor = DB::table('eng_mstr')
@@ -585,9 +580,7 @@ class EmailScheduleJobs implements ShouldQueue
             }
 
             $emails = substr($emails, 0, strlen($emails) - 1);
-            // dd($emails);
             $array_email = explode(',', $emails);
-            // dd($array_email);
             Mail::send(
                 'emailwo',
                 [
@@ -755,6 +748,99 @@ class EmailScheduleJobs implements ShouldQueue
 
             $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
 
-        }
+        } else if ($a == 11) { //kirim email ke engineer yang bertugas mengerjakan wo ketika work order ditolak/reject
+            $asset = $this->asset;
+            $engineer = $this->requestor;
+            $wonumber = $this->srnumber;
+            // $rejectnote = $this->rejectnote;
+            // dd($engineer);
+
+            $data = DB::table('eng_mstr')
+            ->join('users', 'eng_mstr.eng_code', '=', 'users.username')
+            ->where('username', '=', $engineer)
+            ->where('approver', '=', '1')
+            ->get();
+
+            // dd($data);
+
+            $listto = [];
+            $i = 0;
+
+            if ($data->count() > 0) {
+
+                foreach ($data as $data1) {
+                    $listto[$i] = $data1->eng_email;
+                    $i++;
+                }
+
+                // Kirim Email
+                Mail::send(
+                    'emailrequestor',
+                    [
+                        'pesan' => 'Work Order Rejected',
+                        'note1' => $wonumber,
+                        'note2' => $asset,
+                        'header1' => 'Work Order'
+                    ],
+                    function ($message) use ($wo, $listto) {
+                        $message->subject('eAMS - Work Order Rejected');
+                        // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
+                        $message->to(array_filter($listto));
+                    }
+                );
+
+
+                foreach ($data as $data) {
+                    $user = App\User::where('id', '=', $data->id)->first();
+                    $details = [
+                        'body' => 'Work Order Rejected',
+                        'url' => 'wobrowse',
+                        'nbr' => $wonumber,
+                        'note' => 'Please check'
+
+                    ]; // isi data yang dioper
+
+
+                    $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
+                }
+            }
+        }else if ($a == 12) { //kirim email ke requestor ketika work order di approved dan kembali ke user acceptance
+            $asset = $this->asset;
+            $requestor = $this->requestor;
+            $srnumber = $this->srnumber;
+            // $rejectnote = $this->rejectnote;
+            // dd($requestor);
+            $emailrequestor = DB::table('users')
+                ->where('username', '=', $requestor)
+                ->first();
+            // dd($emailrequestor);
+
+            Mail::send(
+                'emailrequestor',
+                [
+                    'pesan' => 'Work Order Assigned To User Acceptance',
+                    'note1' => $srnumber,
+                    'note2' => $asset,
+                ],
+                function ($message) use ($emailrequestor) {
+                    $message->subject('eAMS - Work Order Assigned To User Acceptance');
+                    // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
+                    $message->to($emailrequestor->email_user);
+                }
+            );
+
+            $user = App\User::where('id', '=', $emailrequestor->id)->first();
+            $details = [
+                'body' => 'Work Order Assigned To User Acceptance',
+                'url' => 'srbrowse',
+                'nbr' => $srnumber,
+                'note' => 'Please check'
+
+            ]; // isi data yang dioper
+
+
+            $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
+
+        } 
     }
 }

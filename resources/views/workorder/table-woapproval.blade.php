@@ -18,14 +18,22 @@
   <td class="foot1" data-label="Priority">{{ $show->wo_priority }}</td>
   <td class="foot1" style="text-align: center;">
     <input type="hidden" name='wonbrr' value="{{$show->wo_number}}">
-    @if($show->wo_status == 'reported')
+    @if($show->getCurrentApprover != null)
     <!-- <button type="button"  class="btn btn-success btn-action jobview" style="width: 100%;">View</button> -->
+    @if($show->getCurrentApprover->wotr_role_approval == session('role') || session('role') == 'ADMIN')
     <a href="javascript:void(0)" class="jobview"><i class="icon-table fas fa-thumbs-up fa-lg">
       </i></a>
     @else
-    <!-- <button type="button" class="btn btn-warning btn-action jobview" style="width: 100%;">View</button> -->
+    <a href="javascript:void(0)" class="jobview"><i class="icon-table fas fa-eye fa-lg">
+      </i></a>
     @endif
-
+    @else
+    <!-- <button type="button"  class="btn btn-success btn-action jobview" style="width: 100%;">View</button> -->
+    <a href="javascript:void(0)" class="jobview"><i class="icon-table fas fa-eye fa-lg">
+      </i></a>
+    @endif
+    <a href="javascript:void(0)" class="route">
+      <i class="icon-table fa fa-info-circle fa-lg"></i></a>
   </td>
   @empty
 <tr>

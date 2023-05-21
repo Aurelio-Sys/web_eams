@@ -3,7 +3,7 @@
 <div class="container-fluid">
   <div class="row mb-2">
     <div class="col-sm-6 mt-2">
-      <h1 class="m-0 text-dark">Service Request Browse</h1>
+      <h1 class="m-0 text-dark">Service Request Maintenance</h1>
     </div><!-- /.col -->
     <!-- <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -218,34 +218,20 @@
   <table class="table table-bordered mt-4 no-footer mini-table" id="dataTable" width="100%" cellspacing="0">
     <thead>
       <tr style="text-align: center;">
-        <!-- <th width="10%">SR Number</th>
-        <th width="10%">WO Number</th>
-        <th width="10%">Aset</th>
-        <th width="15%">Desc</th>
-        <th width="10%">Location</th>
-        <th width="7%">Status</th>
-        <th width="7%">Priority</th>
-        <th width="10%">Department</th>
-        <th width="7%">Req by</th>
-        <th width="7%">Req Date</th>
-        <th width="7%">Req Time</th> -->
-        <!-- <th width = "5%">Aging</th> -->
-        <!-- <th width="7%">Action</th> -->
-
         <th>SR Number</th>
-        <th>WO Number</th>
-        <th>Aset</th>
+        <!-- <th>WO Number</th> -->
+        <th>Asset</th>
         <th>Desc</th>
-        <th>Location</th>
+        <!-- <th>Location</th> -->
         <th>Status</th>
-        <th>Priority</th>
-        <th>Department</th>
+        <!-- <th>Priority</th> -->
+        <!-- <th>Department</th> -->
         <th>Req by</th>
         <th>Req Date</th>
         <th>Req Time</th>
         <th>Action</th>
         <th>Approval</th>
-        <th>Cancel</th>
+        <!-- <th>Cancel</th> -->
       </tr>
     </thead>
     <tbody>
@@ -304,25 +290,6 @@
               <input id="e_status" type="text" class="form-control" name="e_status" autocomplete="off" maxlength="6" readonly style="color:green;font-weight:bold">
             </div>
           </div>
-          <!-- <div class="form-group row justify-content-center">
-            <label for="e_status" class="col-md-5 col-form-label text-md-left">Status Approval</label>
-            <div class="col-md-7">
-              <input id="e_statusappr" type="text" class="form-control" name="e_statusappr" autocomplete="off" maxlength="6" readonly style="font-weight:bold">
-            </div>
-          </div>
-          <div class="form-group row justify-content-center">
-            <label for="e_reason" class="col-md-5 col-form-label text-md-left">Reason Approval</label>
-            <div class="col-md-7">
-              <textarea id="e_reason" type="text" class="form-control" name="e_reason" autocomplete="off" maxlength="6" readonly style="font-weight:bold"></textarea>
-            </div>
-          </div> -->
-          <!-- <div class="form-group row justify-content-center" id="e_rnote">
-            <label for="e_rnote" class="col-md-5 col-form-label text-md-left">Reject Note</label>
-            <div class="col-md-7">
-              <input id="e_renote" type="text" class="form-control" name="e_renote" autocomplete="off" maxlength="6" readonly>
-              <textarea id="e_rnote" class="form-control e_rnote" name="e_rnote" autofocus readonly></textarea>
-            </div>
-          </div> -->
           <div class="form-group row justify-content-center">
             <label for="e_asset" class="col-md-5 col-form-label text-md-left">Asset</label>
             <div class="col-md-7">
@@ -464,13 +431,17 @@
         <div style="display: none;">
           <label for="c_srnumber" class="col-md-4 col-form-label text-md-right">{{ __('SR Number') }}</label>
           <div class="col-md-7">
-            <input id="c_srnumber" type="text" class="form-control" name="c_srnumber" value="" readonly autofocus>
+            <input id="c_srnumber" type="text" class="form-control" name="c_srnumber" value="" readonly>
           </div>
         </div>
 
         <div class="modal-body">
           <span class="col-md-12"><b>Are you sure want to cancel <span id="srnbr"><b></b></span>
               ?</b></span>
+          <!-- <div class="form-group row" id="divnotecancel"> -->
+          <label class="col-md-12 col-form-label">If you are sure, please fill the cancelation reason <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+          <textarea class="form-control" id="c_reason" name="c_reason" autofocus maxlength="150" required></textarea>
+          <!-- </div> -->
         </div>
 
         <div class="modal-footer">
@@ -632,12 +603,11 @@
           <div class="col-md-4">
             <textarea id="sr_failcode" type="text" class="form-control" name="sr_failcode" rows="3" readonly></textarea>
           </div>
-
         </div>
         <div class="form-group row">
           <label for="wostatus" class="col-md-2 col-form-label">SR Status</label>
           <div class="col-md-4">
-            <input id="wostatus" type="text" class="form-control" name="wostatus" readonly />
+            <input id="wostatus" type="text" class="form-control" name="wostatus" style="font-weight: bold;" readonly />
           </div>
           <label for="sr_impact" class="col-md-2 col-form-label">Impact</label>
           <div class="col-md-4">
@@ -645,10 +615,6 @@
           </div>
         </div>
         <div class="form-group row">
-          <!-- <label for="statusapproval" class="col-md-2 col-form-label">SR Status Approval</label>
-          <div class="col-md-4">
-            <input id="statusapproval" type="text" class="form-control" name="statusapproval" readonly>
-          </div> -->
           <label for="approver" class="col-md-2 col-form-label">Engineer Approver</label>
           <div class="col-md-4">
             <input id="approver" type="text" class="form-control" name="approver" readonly />
@@ -657,7 +623,6 @@
           <div class="col-md-4">
             <input id="priority" type="text" class="form-control" name="priority" readonly>
           </div>
-
         </div>
         <div class="form-group row">
           <!-- <label for="reason" class="col-md-2 col-form-label">Reason Approval</label>
@@ -686,23 +651,9 @@
           </div>
         </div>
         <div class="form-group row">
-          <!-- <label for="file" class="col-md-2 col-form-label">Current File</label>
-          <div class="col-md-4">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th>File Name</th>
-                </tr>
-              </thead>
-              <tbody id="listupload">
-
-              </tbody>
-            </table>
-          </div> -->
-
           <label for="englist" class="col-md-2 col-form-label">Engineer List</label>
           <div class="col-md-4">
-            <textarea id="englist" type="text" class="form-control" name="englist" rows="5" readonly></textarea>
+            <textarea id="englist" type="text" class="form-control" name="englist" rows="3" readonly></textarea>
           </div>
           <label for="file" class="col-md-2 col-form-label">Current File</label>
           <div class="col-md-4">
@@ -722,91 +673,16 @@
             <textarea id="rejectnote" type="text" class="form-control" name="rejectnote" readonly></textarea>
           </div> -->
         </div>
-        <!--  A211015                   <div class="form-group row">
-                        <label for="srnumber" class="col-md-5 col-form-label text-md-right">Service Request Number</label>
-                        <div class="col-md-6">
-                            <input id="srnumber" type="text" class="form-control" name="srnumber"
-                            autocomplete="off" autofocus readonly/>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="reqbyname" class="col-md-5 col-form-label text-md-right">Requested by</label>
-                        <div class="col-md-6">
-                            <input id="reqbyname" type="text" class="form-control" autocomplete="off" autofocus readonly/>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="dept" class="col-md-5 col-form-label text-md-right">Department</label>
-                        <div class="col-md-6">
-                            <input id="dept" type="text" class="form-control" name="dept" autocomplete="off" autofocus readonly/>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="assetcode" class="col-md-5 col-form-label text-md-right">Asset Code</label>
-                        <div class="col-md-6">
-                            <input id="assetcode" type="text" class="form-control" name="assetcode" autocomplete="off" autofocus readonly/>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="assetdesc" class="col-md-5 col-form-label text-md-right">Asset Description</label>
-                        <div class="col-md-6">
-                            <input id="assetdesc" type="text" class="form-control" name="assetdesc" autocomplete="off" autofocus readonly/>
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="assetloc" class="col-md-5 col-form-label text-md-right">Location</label>
-                        <div class="col-md-6">
-                            <input id="assetloc" type="text" class="form-control" name="assetloc" autocomplete="off" autofocus readonly/>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="assettype" class="col-md-5 col-form-label text-md-right">Process / Technology</label>
-                        <div class="col-md-6">
-                            <input id="assettype" type="text" class="form-control" name="assettype" autocomplete="off" autofocus readonly/>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="wotype" class="col-md-5 col-form-label text-md-right">Work Order Type</label>
-                        <div class="col-md-6">
-                            <input id="wotype" type="text" class="form-control" name="wotype" autocomplete="off" autofocus readonly/>
-                        </div>
-                    </div>
--->
-
-        <!-- <div class="form-group row">
-          <label for="impact" class="col-md-5 col-form-label text-md-right">Impact</label>
-          <div class="col-md-6">
-            <textarea id="impact" type="text" class="form-control" name="impact" autocomplete="off" rows="5" autofocus readonly></textarea>
+        <div class="form-group row">
+          <label for="srcancelnote" class="col-md-2 col-form-label">SR Cancel Note</label>
+          <div class="col-md-4">
+            <textarea id="srcancelnote" type="text" class="form-control" name="srcancelnote" rows="3" readonly></textarea>
           </div>
-        </div> -->
-        <!--
-                    <div class="form-group row">
-                        <label for="srnote" class="col-md-5 col-form-label text-md-right">Note</label>
-                        <div class="col-md-6">
-                            <textarea id="srnote" type="text" class="form-control" name="srnote" autocomplete="off" autofocus readonly></textarea>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="priority" class="col-md-5 col-form-label text-md-right">Priority</label>
-                        <div class="col-md-6">
-                            <input id="priority" type="text" name="priority" class="form-control" readonly>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="rejectnote" class="col-md-5 col-form-label text-md-right">Reject Note</label>
-                        <div class="col-md-6">
-                          <textarea id="rejectnote" type="text" class="form-control" name="rejectnote" autocomplete="off" autofocus readonly></textarea>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="englist" class="col-md-5 col-form-label text-md-right">Engineer List</label>
-                        <div class="col-md-6">
-                            <textarea id="englist" type="text" class="form-control" name="englist" rows="6" autocomplete="off" autofocus readonly></textarea>
-                        </div>
-                    </div>
-                </div>
- A211015 -->
+          <label for="wocancelnote" class="col-md-2 col-form-label">WO Cancel Note</label>
+          <div class="col-md-4">
+            <textarea id="wocancelnote" type="text" class="form-control" name="wocancelnote" rows="3" readonly></textarea>
+          </div>
+        </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
           <!-- <button type="submit" class="btn btn-danger" name="action" value="reject" id="btnreject">Reject</button>
@@ -1028,6 +904,7 @@
         var approver = $(this).data('approver');
         var reason = $(this).data('reason');
         var engineer = $(this).data('engineer');
+        var srcancelnote = $(this).data('srcancelnote');
 
         var srdate = $(this).data('srdate');
         document.getElementById('srdate').value = srdate;
@@ -1071,7 +948,18 @@
         document.getElementById('wostatus').value = wostatus;
         // document.getElementById('statusapproval').value = statusapproval;
         document.getElementById('approver').value = approver;
+        document.getElementById('srcancelnote').value = srcancelnote;
         // document.getElementById('reason').value = reason;
+
+        if (wostatus == 'Open') {
+          document.getElementById("wostatus").style.color = 'green';
+        } else if (wostatus == 'Inprocess') {
+          document.getElementById("wostatus").style.color = 'orange';
+        } else if (wostatus == 'Revise') {
+          document.getElementById("wostatus").style.color = 'red';
+        } else {
+          document.getElementById("wostatus").style.color = 'black';
+        }
 
         $.ajax({
           url: "/searchimpactdesc",
@@ -1189,7 +1077,7 @@
         var rejectnote = $(this).data('rejectnote');
         var reason = $(this).data('reason');
 
-        console.log(failcode);
+        // console.log(failcode);
 
         // document.getElementById('e_renote').value = rejectnote;
 
@@ -1456,7 +1344,6 @@
 
         document.getElementById('srnbr').innerHTML = srnumber;
         document.getElementById('c_srnumber').value = srnumber;
-
 
       });
 

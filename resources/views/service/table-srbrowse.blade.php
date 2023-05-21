@@ -2,41 +2,21 @@
 <tr>
     <td>{{$show->sr_number}}</td>
 
-    @if($show->wo_number == "")
+    <!-- @if($show->wo_number == "")
     <td>-</td>
     @else
     <td>{{$show->wo_number}}</td>
-    @endif
+    @endif -->
 
     <td>{{$show->sr_asset}}</td>
     <td>{{$show->asset_desc}}</td>
-    <td>{{$show->asset_loc}}</td>
+    <!-- <td>{{$show->asset_loc}}</td> -->
     <!-- <td>{{$show->sr_status}}</td> -->
     <!-- <td>{{is_null($show->wo_status) ? $show->sr_status : $show->wo_status}}</td> -->
     <td>{{$show->sr_status}}</td>
-
-    <!-- @if($show->sr_status == 1)
-    <td>Open</td>
-    @elseif($show->sr_status == 2)
-    <td>Assigned</td>
-    @elseif($show->sr_status == 3)
-    <td>Started</td>
-    @elseif($show->sr_status == 4)
-    <td>Finish</td>
-    @elseif($show->sr_status == 5)
-    <td>Closed</td>
-    @elseif($show->sr_status == 6)
-    <td>Incomplete</td>
-    @elseif($show->sr_status == 7)
-    <td>Waiting QC</td>
-    @elseif($show->sr_status == 8)
-    <td>Reprocess</td>
-    @elseif($show->sr_status == 9)
-    <td>Rejected</td>
-    @endif -->
-    <td>{{$show->sr_priority}}</td>
-    <td>{{$show->dept_desc}}</td>
-    <td>{{$show->name}}</td>
+    <!-- <td>{{$show->sr_priority}}</td> -->
+    <!-- <td>{{$show->dept_desc}}</td> -->
+    <td>{{$show->username}}</td>
 
     <td>{{date('d-m-Y', strtotime($show->sr_req_date))}}</td>
     <td>{{date('H:i', strtotime($show->sr_req_time))}}</td>
@@ -52,7 +32,7 @@
     data-startwo="{{date('d-m-Y', strtotime($show->wo_job_startdate))}}" 
     data-endwo="{{date('d-m-Y', strtotime($show->wo_job_finishdate))}}" data-engineer="{{$show->wo_list_engineer}}"
     data-approver="{{$show->eng_dept}} -- {{$show->u11}}" data-reason="{{is_null($show->srta_eng_reason) ? $show->srta_reason : $show->srta_eng_reason}}"
-    data-wostatus="{{$show->sr_status}}" 
+    data-wostatus="{{$show->sr_status}}" data-srcancelnote="{{$show->sr_cancel_note}}" 
     data-statusapproval="{{is_null($show->srta_eng_status) ? $show->srta_status : $show->srta_eng_status}}"
     data-failtype="{{$show->sr_fail_type}}" data-failcode="{{$show->sr_fail_code}}">
     <i class="icon-table far fa-eye fa-lg"></i></a>
@@ -82,18 +62,8 @@
     data-failtype="{{$show->sr_fail_type}}" data-failcode="{{$show->sr_fail_code}}">
     <i class="icon-table fa fa-edit fa-lg"></i></a>
     @endif
-    </td>
-    <td style="text-align: center;">
-    <a href="javascript:void(0)" class="route" type="button" data-toggle="tooltip" title="Route SR Approval" data-target="#routeModal" data-id="{{$show->id}}" 
-    data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_asset}}" data-assetdesc="{{$show->asset_desc}}" data-srdate="{{$show->sr_req_date}}" data-reqby="{{$show->name}}" 
-    data-srnote="{{$show->sr_note}}" data-priority="{{$show->sr_priority}}" data-deptdesc="{{$show->dept_desc}}" data-reqbyname="{{$show->sr_req_by}}" 
-    data-assetloc="{{$show->loc_desc}}" data-hassetloc="{{$show->asset_loc}}" data-astypedesc="{{$show->astype_desc}}" data-failcode="{{$show->sr_fail_code}}" 
-    data-wotypedescx="{{$show->wotyp_desc}}" data-impactcode="{{$show->sr_impact}}">
-    <i class="icon-table fa fa-info-circle fa-lg"></i>
-    </td>
-    <td style="text-align: center;">
+
     {{--  Cancel SR  --}}
-    @php($session = session('username'))
     @if($show->sr_req_by == $session && $show->sr_status != 'Canceled' && $show->sr_status != 'Inprocess')
     <a href="javascript:void(0)" class="cancelsr" data-toggle="tooltip"  title="Cancel SR"  data-target="#cancelModal" 
     data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_asset}}" data-assetdesc="{{$show->asset_desc}}"
@@ -109,6 +79,19 @@
     <i class="icon-table fas fa-window-close fa-lg"></i></a>
     @endif
     </td>
+    <td style="text-align: center;">
+    <a href="javascript:void(0)" class="route" type="button" data-toggle="tooltip" title="Route SR Approval" data-target="#routeModal" data-id="{{$show->id}}" 
+    data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_asset}}" data-assetdesc="{{$show->asset_desc}}" data-srdate="{{$show->sr_req_date}}" data-reqby="{{$show->name}}" 
+    data-srnote="{{$show->sr_note}}" data-priority="{{$show->sr_priority}}" data-deptdesc="{{$show->dept_desc}}" data-reqbyname="{{$show->sr_req_by}}" 
+    data-assetloc="{{$show->loc_desc}}" data-hassetloc="{{$show->asset_loc}}" data-astypedesc="{{$show->astype_desc}}" data-failcode="{{$show->sr_fail_code}}" 
+    data-wotypedescx="{{$show->wotyp_desc}}" data-impactcode="{{$show->sr_impact}}">
+    <i class="icon-table fa fa-info-circle fa-lg"></i>
+    </td>
+    <!-- <td style="text-align: center;">
+    
+    @php($session = session('username'))
+    
+    </td> -->
 </tr>
 @empty
 <tr>
