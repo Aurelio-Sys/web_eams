@@ -3390,6 +3390,25 @@ class wocontroller extends Controller
         }
     }
 
+    public function viewsp($wonumber){
+        $data = DB::table('wo_mstr')
+            // ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
+            ->join('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+            ->where('wo_mstr.wo_number', '=', $wonumber)
+            ->first();
+
+
+        $wo_sp = DB::table('wo_dets_sp')
+                ->join('sp_mstr','sp_mstr.spm_code','wo_dets_sp.wd_sp_spcode')
+                ->where('wd_sp_wonumber','=', $wonumber)
+                ->groupBy('wd_sp_wonumber','wd_sp_spcode')
+                ->select('*',DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'))
+                ->get();
+            
+
+        return view('workorder.wosparepart-released', compact('data','wo_sp'));
+    }
+
     public function reportingwo(Request $req)
     {
 
