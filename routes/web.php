@@ -740,6 +740,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	//tambahan reporting WO
 	Route::get('/getwsasupply', [wocontroller::class, 'getwsasupply']);
+	Route::get('/getwodetsp', [wocontroller::class, 'getwodetsp']);
 	
 
 	// PM Confirm
