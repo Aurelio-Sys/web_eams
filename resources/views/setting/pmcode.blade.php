@@ -3,7 +3,7 @@
       <div class="container-fluid">
         <div class="row">          
           <div class="col-sm-4">
-            <h1 class="m-0 text-dark">PM Code Maintenance</h1>
+            <h1 class="m-0 text-dark">Maintenance Code</h1>
           </div>    
         </div><!-- /.row -->
         <div class="col-md-12">
@@ -11,7 +11,7 @@
         </div>
         <div class="row">                 
           <div class="col-sm-2">    
-            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">PM Code Create</button>
+            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Maintenance Code Create</button>
           </div><!-- /.col -->  
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
@@ -30,12 +30,12 @@
         <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
         <div class="card card-body bg-black rounded-0">
             <div class="col-12 form-group row">
-                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">PM Code Code</label>
+                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Maintenance Code</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_code" type="text" class="form-control" name="s_code"
                     value="" autofocus autocomplete="off"/>
                 </div>
-                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">PM Code Desc</label>
+                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Maintenance Desc</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
                     <input id="s_desc" type="text" class="form-control" name="s_desc"
                     value="" autofocus autocomplete="off"/>
@@ -57,8 +57,8 @@
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                <th width="15%">PM Code</th>
-                <th width="20%">PM Desc</th>
+                <th width="15%">Maintenance Code</th>
+                <th width="20%">Maintenance Desc</th>
                 <th width="10%">Type</th>
                 <th width="15%">Instruction</th>
                 <th width="15%">Sparepart</th>
@@ -78,7 +78,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">PM Code Create</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Maintenance Code Create</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -87,19 +87,19 @@
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label for="t_code" class="col-md-3 col-form-label text-md-right">PM Code Code <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                        <label for="t_code" class="col-md-3 col-form-label text-md-right">Maintenance Code <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-4">
                             <input type="text" class="form-control" id="t_code" name="t_code" autocomplete="off" maxlength="24" required>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_desc" class="col-md-3 col-form-label text-md-right">PM Code Desc <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                        <label for="t_desc" class="col-md-3 col-form-label text-md-right">Maintenance Desc <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-8">
                             <input type="text" class="form-control" id="t_desc" name="t_desc" autocomplete="off" maxlength="255" required>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_type" class="col-md-3 col-form-label text-md-right">PM Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                        <label for="t_type" class="col-md-3 col-form-label text-md-right">Maintenance Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-4">
                         <select class="form-control " id="t_type" name="t_type" required>
                            <option value="">--</option>
@@ -157,7 +157,7 @@
     <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel">PM Code Modify</h5>
+        <h5 class="modal-title text-center" id="exampleModalLabel">Maintenance Code Modify</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -166,19 +166,19 @@
             {{ csrf_field() }}
             <div class="modal-body">
                 <div class="form-group row">
-                    <label for="te_code" class="col-md-3 col-form-label text-md-right">PM Code Code</label>
+                    <label for="te_code" class="col-md-3 col-form-label text-md-right">Maintenance Code</label>
                     <div class="col-md-4">
                         <input type="text" class="form-control" id="te_code" name="te_code" readonly>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="te_desc" class="col-md-3 col-form-label text-md-right">PM Code Desc <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                    <label for="te_desc" class="col-md-3 col-form-label text-md-right">Maintenance Desc <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-8">
                         <input type="text" class="form-control" id="te_desc" name="te_desc" autocomplete="off" maxlength="255" required>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="te_type" class="col-md-3 col-form-label text-md-right">PM Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                    <label for="te_type" class="col-md-3 col-form-label text-md-right">Maintenance Type <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-4">
                     <select class="form-control " id="te_type" name="te_type" required>
                        <option value="">--</option>
@@ -236,7 +236,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title text-center" id="exampleModalLabel">PM Code Delete</h5>
+            <h5 class="modal-title text-center" id="exampleModalLabel">Maintenance Code Delete</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -245,7 +245,7 @@
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <input type="hidden" id="d_code" name="d_code">
-                    Delete PM Code <b><span id="td_code"></span> -- <span id="td_desc"></span></b> ?
+                    Delete Maintenance Code <b><span id="td_code"></span> -- <span id="td_desc"></span></b> ?
                 </div>
 
                 <div class="modal-footer">

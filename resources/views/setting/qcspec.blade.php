@@ -253,6 +253,24 @@
             document.getElementById('td_desc').innerHTML = desc;
        });
 
+       {{--  Fungsi untuk menampilkan dropdown data operator  --}}
+       cmbop();
+
+       function cmbop() {
+            var test = [];
+
+            test += '<option value="">1</option>';
+            test += '<option value="">2</option>';
+            test += '<option value="">2</option>';
+            test += '<option value="">2</option>';
+            test += '<option value="">2</option>';
+            test += '<option value="">2</option>';
+            test += '<option value="">2</option>';
+            test += '<option value="">2</option>';
+
+            $('#t_op').html('').append(test); 
+       }
+
         $("#addrow").on("click", function() {
 
           var newRow = $("<tr>");
@@ -260,6 +278,7 @@
 
           cols += '<td><input type="text" class="form-control" name="t_spec[]" autocomplete="off" maxlength="255" required></td>';
           cols += '<td><input type="text" class="form-control" name="t_tools[]" autocomplete="off" maxlength="255"></td>';
+          {{--  cols += '<td><select class="form-control t_op" name="t_op[]" id="t_op" required></select></td>';  --}}
           cols += '<td><input type="text" class="form-control" name="t_op[]" autocomplete="off" required></td>';
           cols += '<td><input type="text" class="form-control" name="t_val1[]" autocomplete="off" required></td>';
           cols += '<td><input type="text" class="form-control" name="t_val2[]" autocomplete="off"></td>';

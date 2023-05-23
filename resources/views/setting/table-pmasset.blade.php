@@ -1,7 +1,7 @@
 @forelse($data as $show)
 
 <tr>
-    <td>{{$show->pma_asset}}</td>
+    <td>{{$show->pma_asset}} -- {{$show->pma_id}}</td>
     <td>{{$show->asset_desc}}</td>
     <td>{{$show->pma_pmcode}}</td>
     <td>{{$show->pmc_desc}}</td>

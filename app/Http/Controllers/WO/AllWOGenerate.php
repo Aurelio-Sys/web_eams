@@ -27,6 +27,7 @@ class AllWOGenerate extends Controller
             ->groupBy('pma_asset')
             ->get();
 
+
         return view('workorder.wogenerator-view', compact('dataasset'));
     }
 
@@ -41,18 +42,12 @@ class AllWOGenerate extends Controller
         // Hasil perhitungan preventive disimpan pada tabel PM_TEMP_HIST dan PM_TEMP
         // Belum dilakukan -> PM_TEMP_HIST digunakan untuk menyimpan hasil proses generate dan tidak akan pernah dihapus datanya
         // PM_TEMP digunakan untuk menyimpan hasil proses generate, jika generate ulang maka data yang lama akan dihapus. Yang dihapus sesuai dengan asset dan pmcode dari looping
-        // Schema::dropIfExists('temp_sch');
-        // Schema::create('temp_sch', function ($table) {
-        //     $table->string('tsch_asset');
-        //     $table->string('tsch_pmcode')->nullable();
-        //     $table->date('tsch_date');
-        //     $table->temporary();
-        // });
         
-        // Mencari data dari master PM
+        // Mencari data dari master PM untuk dihitung tanggal preventive nya
         $datapm = DB::table('pma_asset')
             ->orderBy('pma_asset')
-            ->orderBy('pma_mea');
+            ->orderBy('pma_mea')
+            ->orderBy('pma_pmcode');
 
         if($req->asset) {
             $datapm = $datapm->where('pma_asset','=',$req->asset);
@@ -94,7 +89,7 @@ class AllWOGenerate extends Controller
                         } else {
                             $lastmtc = $fromdate;
                         }
-                        
+
                         // Membetuk WO sesuai dengan nilai hari yang dimasukkan
                         while($lastmtc < $todate) {
                             $lastmtc = date_add($lastmtc, date_interval_create_from_date_string(''.$dp->pma_cal.' days'));
@@ -103,15 +98,17 @@ class AllWOGenerate extends Controller
                                 'arr_lastmtc' => $lastmtc->format('Y-m-d'),
                                 'arr_pmcode' => $dp->pma_pmcode,
                             ]);
-                            DB::table('pmt_temp')
-                                ->insert([
-                                    'pmt_asset' => $dp->pma_asset,
-                                    'pmt_pmcode' =>$dp->pma_pmcode,
-                                    'pmt_sch_date' => $lastmtc->format('Y-m-d'),
-                                    'pmt_editedby'  => Session::get('username'),
-                                    'created_at'    => Carbon::now()->toDateTimeString(),
-                                    'updated_at'    => Carbon::now()->toDateTimeString(),
-                                ]);
+                            if($lastmtc <= $todate) {
+                                DB::table('pmt_temp')
+                                    ->insert([
+                                        'pmt_asset' => $dp->pma_asset,
+                                        'pmt_pmcode' =>$dp->pma_pmcode,
+                                        'pmt_sch_date' => $lastmtc->format('Y-m-d'),
+                                        'pmt_editedby'  => Session::get('username'),
+                                        'created_at'    => Carbon::now()->toDateTimeString(),
+                                        'updated_at'    => Carbon::now()->toDateTimeString(),
+                                    ]);
+                            }
                         }
                         break;
                     case "M" : // Untuk Mea Meter
@@ -124,8 +121,10 @@ class AllWOGenerate extends Controller
             // 1111111111111111111111    End Mencari data PM dari data PM Asset Maintenance     1111111111111111111111
 
             // 2222222222222222222222    Mencari data WO yang sudah terbentuk    2222222222222222222222222222222222222
+            // data yang tersimpan pada tabel sementara TEMP_WO akan dibandingkan dengan hasil perhitungan preventive di proses berikutnya
             Schema::dropIfExists('temp_wo');
             Schema::create('temp_wo', function ($table) {
+                $table->bigIncrements('id');
                 $table->string('two_asset');
                 $table->string('two_pmcode')->nullable();
                 $table->string('two_number',24);
@@ -134,10 +133,11 @@ class AllWOGenerate extends Controller
                 $table->temporary();
             });
 
+            // data yang diambil adalah data yang didaftarkan assetnya pada menu Asset Preventive
             $datawo = DB::table('pma_asset')
                 ->join('wo_mstr', function ($join) {
                     $join->on('wo_mstr.wo_asset_code', '=', 'pma_asset.pma_asset') 
-                        ->on('wo_mstr.wo_mt_code', '=', 'pma_asset.pma_pmcode')
+                        // ->on('wo_mstr.wo_mt_code', '=', 'pma_asset.pma_pmcode')
                         ->whereNotIn('wo_status',['closed'])
                         ->whereWoType('PM');     
                 })
@@ -166,108 +166,155 @@ class AllWOGenerate extends Controller
             // 2222222222222222222222222222222       End Mencari data WO    222222222222222222222222222222222
 
             // 33333333333333333333333333        Membandingkan Temporary Schedule dan WO yang sudah terbentuk       33333333333333333333333333
+            // data perbandingan diambil dari hasil perhitungan pertama
             $datasch = DB::table('pmt_temp')
                 ->orderBy('pmt_asset')
                 ->orderBy('pmt_pmcode')
-                ->orderBy('pmt_sch_date')
-                ->get();
+                ->orderBy('pmt_sch_date');
+
+            if($req->asset) {
+                $datasch = $datasch->where('pmt_asset','=',$req->asset);
+            }
+
+            $datasch = $datasch->get();
 
             $tempcrsch = [];
             foreach($datasch as $tsch) {
-                $datawo = DB::table('temp_wo')
-                    ->whereTwoAsset($tsch->pmt_asset)
-                    ->whereTwoPmcode($tsch->pmt_pmcode)
-                    ->whereTwoAvail('No')
-                    ->orderBy('two_date')
-                    ->get();
+                // apabila tanggal yang terbentuk melebihi tanggal inputan, maka data tidak tersimpan
+                if(date_create($tsch->pmt_sch_date) <= $todate) {
 
-                    foreach($datawo as $two) {
-                        $rsltdate = "";
-                        $schdate = date_create($tsch->pmt_sch_date);
-                        $wodate = date_create($two->two_date);
-                        dump($schdate, $wodate);  
-                        if($schdate < $wodate) {        // jika tanggal temporary sch lebih kecil dibandingan dengan tanggal WO yang sudah terbentuk
-                            // jika masuk dalam kondisi ini, yang diambil adalah data temporary sch
+                    // dibandingkan dengan data wo yang telah ditampung sesuai dengan asset dan kodepm
+                    $datawo = DB::table('temp_wo')
+                        ->whereTwoAsset($tsch->pmt_asset)
+                        ->whereTwoPmcode($tsch->pmt_pmcode)
+                        ->whereTwoAvail('No')
+                        ->orderBy('two_date')
+                        ->get();
+
+                    $rsltwo = "";
+                    $rsltwodate = "";
+
+                        foreach($datawo as $two) {
+                            $rsltdate = "";
+                            $schdate = date_create($tsch->pmt_sch_date);
+                            $wodate = date_create($two->two_date);
+                            // dump($schdate, $wodate);  
+                            if($schdate < $wodate) {        // jika tanggal temporary sch lebih kecil dibandingan dengan tanggal WO yang sudah terbentuk
+                                // jika masuk dalam kondisi ini, yang diambil adalah data temporary sch
+                                $rsltdate = $tsch->pmt_sch_date;
+                                $rsltnumber = $tsch->id;
+                                $rsltsource = 'TEMP-PM';
+
+                                array_push($tempcrsch,[
+                                    'ts_asset' => $tsch->pmt_asset,
+                                    'ts_pmcode' => $tsch->pmt_pmcode,
+                                    'td_date' => $rsltdate,
+                                ]);
+
+                                break;
+                            } elseif($schdate >= $wodate) {     //jika tanggal temporary sch lebih besar dibandingkan dengan tanggal WO yang terbentuk
+                                // jika masuk dalam kondisi ini, yang diambil adalah data wo yang sudah terbentuk
+                                // $rsltdate = $two->two_date;
+                                // $rsltnumber = $two->two_number;
+                                $rsltdate = $tsch->pmt_sch_date;
+                                $rsltnumber = $tsch->id;
+                                $rsltwo = $two->two_number;
+                                $rsltwodate = $two->two_date;
+                                $rsltsource = 'WO';
+
+                                DB::table('pml_log')
+                                    ->insert([
+                                        'pml_asset' => $tsch->pmt_asset,
+                                        'pml_pmcode' => $tsch->pmt_pmcode,
+                                        'pml_pm_number' => $tsch->id,
+                                        'pml_pm_date' => $tsch->pmt_sch_date,
+                                        'pml_wo_number' => $two->two_number,
+                                        'pml_wo_date' => $two->two_date,
+                                    ]);
+
+                                // Field avail di update Yes agar tidak dibandingkan lagi pada saat looping berikutnya dari temp-pm
+                                DB::table('temp_wo')
+                                    // ->whereTwoAsset($tsch->pmt_asset)
+                                    // ->whereTwoPmcode($tsch->pmt_pmcode)
+                                    // ->whereTwoDate($two->two_date)
+                                    ->whereId($two->id)
+                                    ->update([
+                                        'two_avail' => 'Yes',
+                                    ]);
+
+                                array_push($tempcrsch,[
+                                    'ts_asset' => $tsch->pmt_asset,
+                                    'ts_pmcode' => $tsch->pmt_pmcode,
+                                    'td_date' => $rsltdate,
+                                ]);
+                                break;
+                            } else {
+                                $rsltdate = "";
+                            }
+                            
+                        } // End    foreach($datawo as $two)
+                        
+                        if($datawo->count() == 0){
+                            // yang masuk pada kondisi ini adalah perhitungan preventive yang tidak ada wo nya
                             $rsltdate = $tsch->pmt_sch_date;
                             $rsltnumber = $tsch->id;
                             $rsltsource = 'TEMP-PM';
-
                             array_push($tempcrsch,[
                                 'ts_asset' => $tsch->pmt_asset,
                                 'ts_pmcode' => $tsch->pmt_pmcode,
-                                'td_date' => $rsltdate,
+                                'td_date' => $tsch->pmt_sch_date,
                             ]);
-
-                            dump('1'); 
-                            break;
-                        } elseif($schdate >= $wodate) {     //jika tanggal temporary sch lebih besar dibandingkan dengan tanggal WO yang terbentuk
-                            // jika masuk dalam kondisi ini, yang diambil adalah data wo yang sudah terbentuk
-                            $rsltdate = $two->two_date;
-                            $rsltnumber = $two->two_number;
-                            $rsltsource = 'WO';
-
-                            DB::table('pml_log')
-                                ->insert([
-                                    'pml_asset' => $tsch->pmt_asset,
-                                    'pml_pmcode' => $tsch->pmt_pmcode,
-                                    'pml_pm_number' => $tsch->id,
-                                    'pml_pm_date' => $tsch->pmt_sch_date,
-                                    'pml_wo_number' => $two->two_number,
-                                    'pml_wo_date' => $two->two_date,
-                                ]);
-
-                            // Field avail di update Yes agar tidak dibandingkan lagi pada saat looping berikutnya dari temp-pm
-                            DB::table('temp_wo')
-                                ->whereTwoAsset($tsch->pmt_asset)
-                                ->whereTwoPmcode($tsch->pmt_pmcode)
-                                ->whereTwoDate($two->two_date)
-                                ->update([
-                                    'two_avail' => 'Yes',
-                                ]);
-
-                            array_push($tempcrsch,[
-                                'ts_asset' => $tsch->pmt_asset,
-                                'ts_pmcode' => $tsch->pmt_pmcode,
-                                'td_date' => $rsltdate,
-                            ]);
-                            dump('2'); 
-                            break;
-                        } else {
-                            $rsltdate = "";
-                            dump('3');
                         }
-                        
-                    } // End    foreach($datawo as $two)
-                    if($datawo->count() == 0){
-                        dump('4');
-                        $rsltdate = $tsch->pmt_sch_date;
-                        $rsltnumber = $tsch->id;
-                        $rsltsource = 'TEMP-PM';
-                        array_push($tempcrsch,[
-                            'ts_asset' => $tsch->pmt_asset,
-                            'ts_pmcode' => $tsch->pmt_pmcode,
-                            'td_date' => $tsch->pmt_sch_date,
-                        ]);
-                    }
 
-                    DB::table('pmo_confirm')
-                        ->insert([
-                            'pmo_asset' => $tsch->pmt_asset,
-                            'pmo_pmcode' => $tsch->pmt_pmcode,
-                            'pmo_sch_date' => $rsltdate,
-                            'pmo_number' => $rsltnumber,
-                            'pmo_source' => $rsltsource,
-                        ]);
+                        // pengecekan apakah sudah ada data yang sama berdasarkan asset, kodepm dan tanggal nya
+                        $cekpmo = DB::table('pmo_confirm')
+                            ->wherePmoAsset($tsch->pmt_asset)
+                            ->wherePmoPmcode($tsch->pmt_pmcode)
+                            ->wherePmoSchDate($rsltdate)
+                            ->count();
+
+                        if($cekpmo == 0) {
+                            DB::table('pmo_confirm')
+                                ->Insert([
+                                    'pmo_asset' => $tsch->pmt_asset,
+                                    'pmo_pmcode' => $tsch->pmt_pmcode,
+                                    'pmo_sch_date' => $rsltdate,  
+                                    'pmo_number' => $rsltnumber,
+                                    'pmo_source' => $rsltsource,
+                                    'pmo_wonumber' => $rsltwo,
+                                    'pmo_wodate' => $rsltwodate,
+                                ]);
+                        }
+                } // END if(date_create($tsch->pmt_sch_date) <= $todate)
+
             } // End    foreach($datasch as $ds)
+            
+            // Menyimpan data WO yang sudah terbentuk namun tidak dibandingan dengan perhitungan PM karena tanggal proses generate PM lebih kecil dari tanggal WO yang terbentuk
+            $datawo = DB::table('temp_wo')
+                ->whereTwoAvail('No')
+                ->orderBy('two_asset')
+                ->orderBy('two_pmcode')
+                ->orderBy('two_date')
+                ->get();
+
+            foreach($datawo as $dw) {
+                DB::table('pmo_confirm')
+                    ->Insert([
+                        'pmo_asset' => $dw->two_asset,
+                        'pmo_pmcode' => $dw->two_pmcode,
+                        'pmo_wodate' => $dw->two_date,  
+                        'pmo_wonumber' => $dw->two_number,
+                        'pmo_source' => 'WO',
+                    ]);
+            }
+
             // 33333333333333333333333333 End Membandingkan Temporary Schedule dan WO yang sudah terbentuk      33333333333333333333333333
     
             $viewwo = collect($tempwo);
             $viewsch = collect($tempsch);
             $viewrslt = collect($tempcrsch);
-            dump($viewsch, $viewwo, $viewrslt);
-            // dump($viewsch);
-            // dd('stop');
-
+            // dump($viewsch, $viewwo, $viewrslt);
+// dd('stop');
             DB::commit();
             toast('Work Order Generated Success', 'success');
             return back();

@@ -362,12 +362,6 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
-                {{--  <li class="nav-item has-treeview">
-                  <a href="{{url('/kebutuhansp')}}" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
-                      <p>Sparepart Usage</p>
-                  </a>
-                </li>  --}}
                 @if(str_contains( Session::get('menu_access'), 'US03'))
                 <li class="nav-item has-treeview">
                   <a href="{{route('viewWOGen')}}" class="nav-link ">
@@ -384,6 +378,14 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
+                @if(str_contains( Session::get('menu_access'), 'US06'))
+                <li class="nav-item has-treeview">
+                  <a href="{{url('/kebutuhansp')}}" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>Sparepart Planning</p>
+                  </a>
+                </li> 
+                @endif
                 @if(str_contains( Session::get('menu_access'), 'US04'))
                 <li class="nav-item has-treeview">
                   <a href="{{route('usbrowse')}}" class="nav-link ">
@@ -392,13 +394,7 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
-                @if(str_contains( Session::get('menu_access'), 'MT30'))
-                  <li class="nav-item">
-                    <a href="/assetmove" class="nav-link">
-                      <p>Asset Movement</p>
-                    </a>
-                  </li>
-                @endif
+                
               </ul>
             </li>
             @endif
@@ -409,7 +405,7 @@ to get the desired effect
               <a href="javascript:void(0)" class="nav-link">
                 <i class="nav-icon fa fa-list-alt"></i>
                 <p>
-                  Another Transaction
+                  Another Transactions
                   <i class="right fas fa-angle-left"></i>
                 </p>
               </a>
@@ -427,6 +423,13 @@ to get the desired effect
                       <p>5 Why Transaction</p>
                   </a>
                 </li>
+                @endif
+                @if(str_contains( Session::get('menu_access'), 'MT30'))
+                  <li class="nav-item">
+                    <a href="/assetmove" class="nav-link">
+                      <p>Asset Movement</p>
+                    </a>
+                  </li>
                 @endif
               </ul>
             </li>
@@ -855,7 +858,7 @@ to get the desired effect
                     @if(str_contains( Session::get('menu_access'), 'MT39'))
                       <li class="nav-item">
                         <a href="/pmcode" class="nav-link">
-                          <p>PM Code Maintenance</p>
+                          <p>Maintenance Code</p>
                         </a>
                       </li>
                     @endif

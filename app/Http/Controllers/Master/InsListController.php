@@ -162,8 +162,8 @@ class InsListController extends Controller
             foreach ($data as $data) {
                 $output .= '<tr>'.
                             '<td><input type="text" class="form-control" name="te_step[]" value="'.$data->ins_step.'"></td>'.
-                            '<td><input type="text" class="form-control" name="te_stepdesc[]" value="'.$data->ins_stepdesc.'"></td>'.
-                            '<td><input type="text" class="form-control" name="te_ref[]" value="'.$data->ins_ref.'"></td>'.
+                            '<td><textarea class="form-control" name="te_stepdesc[]">'.$data->ins_stepdesc.'</textarea></td>'.
+                            '<td><textarea class="form-control" name="te_ref[]">'.$data->ins_ref.'</textarea></td>'.
                             '<td><input type="checkbox" name="cek[]" class="cek" id="cek" value="0">
                             <input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>'.
                             '</tr>';

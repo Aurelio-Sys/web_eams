@@ -67,10 +67,10 @@
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                <th width="15%">Sparepart List Code</th>
-                <th width="20%">Sparepart List Desc</th>
-                <th width="35%">Sparepart Code</th>
-                <th width="15%">Qty Required</th>
+                <th width="25%">Sparepart List Code</th>
+                <th width="60%">Sparepart List Desc</th>
+                {{--  <th width="35%">Sparepart Code</th>
+                <th width="15%">Qty Required</th>  --}}
                 <th width="15%">Action</th>  
             </tr>
         </thead>
@@ -211,7 +211,7 @@
                 <div class="modal-body">
                     <input type="hidden" id="d_code" name="d_code">
                     <input type="hidden" id="d_transid" name="d_transid">
-                    Delete Sparepart List <b><span id="td_code"></span></b> -- with Sparepart <b><span id="td_desc"></span></b> ?
+                    Delete Sparepart List <b><span id="td_code"></span></b> ?
                 </div>
 
                 <div class="modal-footer">
@@ -259,12 +259,13 @@
             var code = $(this).data('code');
             var desc = $(this).data('desc');
             var transid = $(this).data('transid');
-            var spcode = $(this).data('spcode');
+            {{--  var spcode = $(this).data('spcode');  --}}
 
             document.getElementById('d_code').value          = code;
             document.getElementById('d_transid').value = transid;
             document.getElementById('td_code').innerHTML = code;
-            document.getElementById('td_desc').innerHTML = spcode;
+            document.getElementById('td_desc').innerHTML = "";
+            {{--  document.getElementById('td_desc').innerHTML = spcode;  --}}
        });
 
         $("#addrow").on("click", function() {

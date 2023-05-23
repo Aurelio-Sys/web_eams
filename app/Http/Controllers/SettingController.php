@@ -250,7 +250,7 @@ class SettingController extends Controller
             $req->appsr . $req->appwo . $req->invso . $req->invsu .
             $req->cbWoCreatedirect . $req->cbWoMaint . $req->cbWoBrowse . $req->cbWoRelease . $req->cbWoWhsConf . $req->cbWoStart . $req->cbWoReport . $req->cbWoQc . 
             $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbSRapprovaleng .
-            $req->cbUSMT . $req->cbUSmultiMT . $req->cbUSGen . $req->pmconf . $req->cbUSBrowse .
+            $req->cbUSMT . $req->cbUSmultiMT . $req->cbUSGen . $req->pmconf . $req->ksp . $req->cbUSBrowse .
             $req->cbBoas . $req->whyhist . 
             $req->cbRptDet . $req->cbRptCost . $req->cbAssetReport . $req->cbEngReport . $req->cbRptRemsp . 
             $req->cbAssetSchedule . $req->cbRptSchyear . $req->cbEngSchedule . $req->cbRptSpneed . $req->cbBookSchedule;
@@ -316,7 +316,7 @@ class SettingController extends Controller
             $req->e_appsr . $req->e_appwo . $req->e_invso . $req->e_invsu .
             $req->e_cbWoCreatedirect . $req->e_cbWoMaint . $req->e_cbWoBrowse . $req->e_cbWoRelease . $req->e_cbWoWhsConf . $req->e_cbWoStart . $req->e_cbWoReport . $req->e_cbWoQc . 
             $req->e_cbSRcreate . $req->e_cbSRapprove . $req->e_cbSRbrowse . $req->e_cbSRapprovaleng .
-            $req->e_cbUSMT . $req->e_cbUSmultiMT . $req->e_cbUSGen . $req->e_pmconf . $req->e_cbUSBrowse .
+            $req->e_cbUSMT . $req->e_cbUSmultiMT . $req->e_cbUSGen . $req->e_pmconf . $req->e_ksp . $req->e_cbUSBrowse .
             $req->e_cbBoas . $req->e_whyhist . 
             $req->e_cbRptDet . $req->e_cbRptCost . $req->e_cbAssetReport . $req->e_cbEngReport . $req->e_cbRptRemsp . 
             $req->e_cbAssetSchedule . $req->e_cbRptSchyear . $req->e_cbEngSchedule . $req->e_cbRptSpneed . $req->e_cbBookSchedule;
@@ -1834,20 +1834,20 @@ class SettingController extends Controller
             });
 
             /* ini ditutup dulu, nanti dibuka lagi */
-            $domain = ModelsQxwsa::first();
-            $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
+            // $domain = ModelsQxwsa::first();
+            // $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
 
-            if ($datawsa === false) {
-                toast('WSA Failed', 'error')->persistent('Dismiss');
-                return redirect()->back();
-            } else {
-                foreach ($datawsa[0] as $datas) {
-                    DB::table('temp_asset')->insert([
-                        'temp_code' => $datas->t_code,
-                        'temp_desc' => $datas->t_desc,
-                    ]);
-                }
-            } 
+            // if ($datawsa === false) {
+            //     toast('WSA Failed', 'error')->persistent('Dismiss');
+            //     return redirect()->back();
+            // } else {
+            //     foreach ($datawsa[0] as $datas) {
+            //         DB::table('temp_asset')->insert([
+            //             'temp_code' => $datas->t_code,
+            //             'temp_desc' => $datas->t_desc,
+            //         ]);
+            //     }
+            // } 
 
             $dataassetqad = DB::table('temp_asset')
                 ->orderBy('temp_code')
@@ -5973,10 +5973,12 @@ class SettingController extends Controller
         $prefixwt = $req->input('wtprefix');
         $prefixwd = $req->input('wdprefix');
         $prefixbo = $req->input('boprefix');
+        $prefixrs = $req->input('rsprefix');
         $wtnbr = $req->input('wtnumber');
         $wonbr = $req->input('wonbr');
         $wdnbr = $req->input('wdnumber');
         $bonbr = $req->input('bonumber');
+        $rsnbr = $req->input('rsnumber');
         $year = Carbon::now()->format('y');
 
         $data = DB::Table('running_mstr')
@@ -5990,11 +5992,13 @@ class SettingController extends Controller
                         'wt_prefix' => $prefixwt,
                         'wd_prefix' => $prefixwd,
                         'bo_prefix' => $prefixbo,
+                        'rs_prefix' => $prefixrs,
                         'sr_nbr' => $srnbr,
                         'wo_nbr' => $wonbr,
                         'wt_nbr' => $wtnbr,
                         'wd_nbr' => $wdnbr,
                         'bo_nbr' => $bonbr,
+                        'rs_nbr' => $rsnbr,
                         'year' => $year,
                         
                 ]);
@@ -6011,11 +6015,13 @@ class SettingController extends Controller
                     'wt_prefix' => $prefixwt,
                     'wd_prefix' => $prefixwd,
                     'bo_prefix' => $prefixbo,
+                    'rs_prefix' => $prefixrs,
                     'sr_nbr' => $srnbr,
                     'wo_nbr' => $wonbr,
                     'wt_nbr' => $wtnbr,
                     'wd_nbr' => $wdnbr,
                     'bo_nbr' => $bonbr,
+                    'rs_nbr' => $rsnbr,
                     'year' => $year,
                 ]);
 

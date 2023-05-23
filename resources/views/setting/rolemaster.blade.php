@@ -323,10 +323,19 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO PM Generator') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO PM Confirm') }}</label>
               <div class="col-6">
                 <label class="switch" for="pmconf">
                   <input type="checkbox" class="custom-control-input" id="pmconf" name="pmconf" value="US05" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Sparepart Planning') }}</label>
+              <div class="col-6">
+                <label class="switch" for="ksp">
+                  <input type="checkbox" class="custom-control-input" id="ksp" name="ksp" value="US06" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -344,7 +353,7 @@
 			
             <!-- Booking -->
             <h4>
-              <center><strong>Booking Asset</strong></center>
+              <center><strong>Another Transactions</strong></center>
             </h4>
             <hr>
             <div class="form-group row">
@@ -361,6 +370,15 @@
               <div class="col-6">
                 <label class="switch" for="whyhist">
                   <input type="checkbox" class="custom-control-input" id="whyhist" name="whyhist" value="BO02" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Movement ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="SetMove">
+                  <input type="checkbox" class="custom-control-input" id="SetMove" name="SetMove" value="MT30" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -641,15 +659,7 @@
                 </label>
               </div>
             </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Movement ') }}</label>
-              <div class="col-6">
-                <label class="switch" for="SetMove">
-                  <input type="checkbox" class="custom-control-input" id="SetMove" name="SetMove" value="MT30" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
+            
             {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Engineer For PM') }}</label>
               <div class="col-6">
@@ -777,7 +787,7 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('PM Code Maintenance') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Maintenance Code') }}</label>
               <div class="col-6">
                 <label class="switch" for="SetPmcode">
                   <input type="checkbox" class="custom-control-input" id="SetPmcode" name="SetPmcode" value="MT39" />
@@ -1109,6 +1119,15 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Sparepart Planning') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_ksp">
+                  <input type="checkbox" class="custom-control-input" id="e_ksp" name="e_ksp" value="US06" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Usage Browse') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbUSBrowse">
@@ -1121,7 +1140,7 @@
 			
             <!-- Booking -->
             <h4>
-              <center><strong>Booking Asset</strong></center>
+              <center><strong>Another Transactions</strong></center>
             </h4>
             <hr>
             <div class="form-group row">
@@ -1142,6 +1161,16 @@
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Movement ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_SetMove">
+                  <input type="checkbox" class="custom-control-input" id="e_SetMove" name="e_SetMove" value="MT30" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            
 
             <!-- Reports -->
             <h4>
@@ -1418,15 +1447,7 @@
                 </label>
               </div>
             </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Movement ') }}</label>
-              <div class="col-6">
-                <label class="switch" for="e_SetMove">
-                  <input type="checkbox" class="custom-control-input" id="e_SetMove" name="e_SetMove" value="MT30" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
+            
             {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Engineer For PM') }}</label>
               <div class="col-6">
@@ -1554,7 +1575,7 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('PM Code Maintenance') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Maintenance Code') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_SetPmcode">
                   <input type="checkbox" class="custom-control-input" id="e_SetPmcode" name="e_SetPmcode" value="MT39" />
@@ -2102,6 +2123,11 @@
           document.getElementById('e_pmconf').checked = true;
         } else {
           document.getElementById('e_pmconf').checked = false;
+        }
+        if (listmenu.search("US06") >= 0) {
+          document.getElementById('e_ksp').checked = true;
+        } else {
+          document.getElementById('e_ksp').checked = false;
         }
         if (listmenu.search("US04") >= 0) {
           document.getElementById('e_cbUSBrowse').checked = true;
