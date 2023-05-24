@@ -426,6 +426,7 @@ Route::group(['middleware' => ['auth']], function() {
 	
 	//work order start
 	route::get('/wojoblist', 'wocontroller@wojoblist')->name('wojoblist');
+	route::get('/viewwosparepart/{wonumber}', [wocontroller::class, 'viewsp'])->name('viewSP');
 	route::post('/editjob', 'wocontroller@editjob');
 	route::get('/wojoblist/pagination', 'wocontroller@wopagingstart');
 
@@ -741,6 +742,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	//tambahan reporting WO
 	Route::get('/getwsasupply', [wocontroller::class, 'getwsasupply']);
+	Route::get('/getwodetsp', [wocontroller::class, 'getwodetsp']);
 	
 	//Request Sparepart
 	Route::get('/reqsp', [SparepartController::class, 'reqspbrowse'])->name('reqspbrowse');

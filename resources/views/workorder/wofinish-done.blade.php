@@ -155,10 +155,10 @@
                         <thead>
                             <tr>
                                 <th style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</th>
-                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Location & Lot</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Issue</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Required</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Issued</th>
-                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Issue</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Location & Lot</th>
                                 <th style="text-align: center; width: 5% !important; font-weight: bold;">Action</th>
                             </tr>
                         </thead>
@@ -169,11 +169,14 @@
                                     {{$datas->spm_code}} -- {{$datas->spm_desc}}
                                     <input type="hidden" class="hidden_sp" name="hidden_sp[]" value="{{$datas->spm_code}}" />
                                 </td>
-                                <td style="vertical-align: middle; text-align: left;">
-                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" required autocomplete="off">
-                                    <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
-                                    <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
-                                    <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" /> 
+                                @php
+                                    $difference = number_format($datas->wd_sp_required - $datas->wd_sp_issued, 2, '.', '');
+                                    if ($difference < 0) {
+                                        $difference = 0;
+                                    }
+                                @endphp
+                                <td style="vertical-align:middle;text-align:center;">
+                                    <input type="number" class="form-control qtypotong" step="0.01" min="{{ $datas->wd_sp_issued == 0 ? 0 : -$datas->wd_sp_issued }}" name="qtypotong[]" value="{{$difference}}" required />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     {{$datas->wd_sp_required}}
@@ -183,8 +186,11 @@
                                     {{$datas->wd_sp_issued}}
                                     <input type="hidden" class="qtyissued" name="qtyissued[]" value="{{$datas->wd_sp_issued}}" />
                                 </td>
-                                <td style="vertical-align:middle;text-align:center;">
-                                    <input type="number" class="form-control qtypotong" step="0.01" min="{{ $datas->wd_sp_issued == 0 ? 0 : -$datas->wd_sp_issued }}" name="qtypotong[]" value="{{$datas->wd_sp_required}}" required />
+                                <td style="vertical-align: middle; text-align: left;">
+                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" autocomplete="off">
+                                    <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
+                                    <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
+                                    <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" /> 
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
                                 
@@ -192,7 +198,7 @@
                             </tr>
                             
                             @empty                            
-                            
+                            <!--
                             <tr>
                                 <td>
                                     <select style="display: inline-block !important;" class="form-control selectpicker spreq" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="300px">
@@ -203,26 +209,26 @@
                                     </select>
                                     <input type="hidden" class="hidden_sp" name="hidden_sp[]" />
                                 </td>
+                                <td style="vertical-align:middle;text-align:center;">
+                                    <input type="number" class="form-control qtypotong" min="0" step="0.01" name="qtypotong[]" value="0" required />
+                                </td>
                                 <td>
-                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" required autocomplete="off">
+                                    <input type="hidden" name="qtyrequired[]" value="0" />
+                                </td>
+                                <td>
+                                    <input type="hidden" class="qtyissued" name="qtyissued[]" value="0" />
+                                </td>
+                                <td>
+                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" autocomplete="off">
                                     <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
                                     <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
                                     <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />
                                 </td>
-                                <td>
-                                    <!-- qty required -->
-                                    <input type="hidden" name="qtyrequired[]" value="0" />
-                                </td>
-                                <td>
-                                    <!-- qty issued -->
-                                    <input type="hidden" class="qtyissued" name="qtyissued[]" value="0" />
-                                </td>
-                                <td style="vertical-align:middle;text-align:center;">
-                                    <input type="number" class="form-control qtypotong" min="0" step="0.01" name="qtypotong[]" value="0" required />
-                                </td>
                                 <td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>
                                 <input type="hidden" class="op" name="op[]" value="A" />
                             </tr>
+
+                            -->
                             
                             @endforelse
                         </tbody>
@@ -499,10 +505,7 @@
             cols += '</td>';
 
             cols += '<td style="vertical-align:middle;text-align:center;">';
-            cols += '<input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" required autocomplete="off">';
-            cols += '<input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />';
-            cols += '<input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />';
-            cols += '<input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />';
+            cols += '<input type="number" class="form-control qtypotong" min="0" step="0.01" name="qtypotong[]" value="0" required />';
             cols += '</td>';
             
             cols += '<td style="vertical-align:middle;text-align:center;">';
@@ -514,7 +517,10 @@
             cols += '</td>';
 
             cols += '<td style="vertical-align:middle;text-align:center;">';
-            cols += '<input type="number" class="form-control qtypotong" min="0" step="0.01" name="qtypotong[]" value="0" required />';
+            cols += '<input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" autocomplete="off">';
+            cols += '<input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />';
+            cols += '<input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />';
+            cols += '<input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />';
             cols += '</td>';
             
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>';
@@ -667,10 +673,6 @@
             }
 
         });
-    });
-
-
-    $(document).ready(function() {
 
         $("#failurecode").select2({
             width: '100%',
@@ -683,19 +685,24 @@
             multiple: true,
         });
 
-        // if (document.getElementById('argcheck').checked) {
-        //     $('#argcheck').change();
-        // }
-
-        // if (document.getElementById('arccheck').checked) {
-        //     $('#arccheck').change();
-        // }
-
         $('#newedit').submit(function(event) {
             document.getElementById('btnconf-report').style.display = 'none';
             document.getElementById('btnconf-close').style.display = 'none';
             document.getElementById('btnclose').style.display = 'none';
             document.getElementById('btnloading').style.display = '';
+        });
+
+        $(document).on('keyup', '.qtypotong', function() { 
+            var thisrow = $(this);
+            var valueinput = thisrow.val();            
+
+            if(valueinput !== '0'){
+                // console.log('add required');
+                thisrow.closest('tr').find('.loclotfrom').attr('required','required');
+            }else{
+                // console.log('hapus required');
+                thisrow.closest('tr').find('.loclotfrom').removeAttr('required');
+            }
         });
 
         // console.log(wonbr);
@@ -724,135 +731,179 @@
         $(document).on('click', '.loclotfrom', function() { 
             var row = $(this).closest("tr");
             const spcode = row.find(".hidden_sp").val();
+            const qtypotong = row.find(".qtypotong").val();
             const getassetsite = document.getElementById('hidden_assetsite').value;
+            
+            if(qtypotong > 0){
+                //jika qty yang mau diissue bernilai positif
+                $.ajax({
+                    url: '/getwsasupply',
+                    method: 'GET',
+                    data: {
+                        assetsite : getassetsite,
+                        spcode : spcode,
+                    },
+                    success: function(vamp) {
+                        console.log(vamp);
 
-            $.ajax({
-                url: '/getwsasupply',
-                method: 'GET',
-                data: {
-                    assetsite : getassetsite,
-                    spcode : spcode,
-                },
-                success: function(vamp) {
+                        // select elemen HTML tempat menampilkan tabel
+                        const tableContainer = document.getElementById("thistablemodal");
 
-                    // select elemen HTML tempat menampilkan tabel
-                    const tableContainer = document.getElementById("thistablemodal");
+                        // hapus tabel lama (jika ada)
+                        if (tableContainer.hasChildNodes()) {
+                            tableContainer.removeChild(tableContainer.firstChild);
+                        }
 
-                    // hapus tabel lama (jika ada)
-                    if (tableContainer.hasChildNodes()) {
-                        tableContainer.removeChild(tableContainer.firstChild);
+                        // membuat elemen tabel
+                        const table = document.createElement("table");
+                        table.setAttribute("class", "table table-bordered table-hover");
+
+                        // membuat header tabel
+                        const headerRow = document.createElement("tr");
+                        const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "Select"];
+                        headerColumns.forEach((columnTitle) => {
+                            const headerColumn = document.createElement("th");
+                            headerColumn.textContent = columnTitle;
+                            headerRow.appendChild(headerColumn);
+                        });
+                        table.appendChild(headerRow);
+
+                        // membuat baris record untuk setiap objek dalam dataLocLotFrom
+                        vamp.forEach((record) => {
+                            const rowtable = document.createElement("tr");
+                            const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh"];
+                            columns.forEach((columnKey) => {
+                                const column = document.createElement("td");
+                                column.textContent = record[columnKey];
+                                rowtable.appendChild(column);
+                            });
+                            const selectColumn = document.createElement("td");
+                            const selectButton = document.createElement("button");
+                            selectButton.setAttribute("class", "btn btn-primary");
+                            selectButton.textContent = "Select";
+                            selectButton.setAttribute("type", "button");
+                            selectButton.addEventListener("click", function() {
+                                // aksi yang ingin dilakukan saat tombol select diklik
+                                const site = record.t_site;
+                                const loc = record.t_loc;
+                                const lot = record.t_lot;
+                                let qtyoh = record.t_qtyoh;
+                                qtyoh = qtyoh.replace(',', '');
+                                row.find(".hidden_sitefrom").val(site);
+                                row.find(".hidden_locfrom").val(loc);
+                                row.find(".hidden_lotfrom").val(lot);
+
+                                const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
+
+                                row.find(".loclotfrom").val(loclot);
+                                row.find(".loclotfrom").attr('title',loclot);
+
+                                const qtyohold = row.find(".qtypotong").val();
+
+                                //jika lebih besar yang diminta dari pada yg dimiliki di inventory supply maka qty to transfer maks = qty onhand di inv source
+                                if(parseFloat(qtyohold) > parseFloat(qtyoh)){
+                                    row.find(".qtypotong").attr("max", qtyoh).val(qtyoh);
+                                }
+
+                                $('#myModal').modal('hide');
+                            });
+                            selectColumn.appendChild(selectButton);
+                            rowtable.appendChild(selectColumn);
+                            table.appendChild(rowtable);
+                        });
+
+                        // menampilkan tabel pada elemen HTML yang dituju
+                        tableContainer.appendChild(table);
+
+                        // memanggil modal setelah tabel dimuat
+                        $('#myModal').modal('show');
+                        
+
+                    },complete: function(vamp) {
+                        //  $('.modal-backdrop').modal('hide');
+                        // alert($('.modal-backdrop').hasClass('in'));
+
+                        setTimeout(function() {
+                        $('#loadingtable').modal('hide');
+                        }, 500);
+
+                        setTimeout(function() {
+                        $('#viewModal').modal('show');
+                        }, 1000);
+
                     }
+                })
+            
+            }else{
+                //jika qty yang mau dissue bernilai negatif
+                const wonumber = $('#c_wonbr').val();
 
-                    // membuat elemen tabel
-                    const table = document.createElement("table");
-                    table.setAttribute("class", "table table-bordered table-hover");
+                $.ajax({
+                    url: '/getwodetsp',
+                    method: 'GET',
+                    data: {
+                        spcode : spcode,
+                        wonumber : wonumber,
+                    },
+                    success: function(vamp) {
 
-                    // membuat header tabel
-                    const headerRow = document.createElement("tr");
-                    const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "Select"];
-                    headerColumns.forEach((columnTitle) => {
-                        const headerColumn = document.createElement("th");
-                        headerColumn.textContent = columnTitle;
-                        headerRow.appendChild(headerColumn);
-                    });
-                    table.appendChild(headerRow);
+                        // select elemen HTML tempat menampilkan tabel
+                        const tableContainer = document.getElementById("thistablemodal");
 
-                    // membuat baris record untuk setiap objek dalam dataLocLotFrom
-                    vamp.forEach((record) => {
-                        const rowtable = document.createElement("tr");
-                        const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh"];
-                        columns.forEach((columnKey) => {
-                            const column = document.createElement("td");
-                            column.textContent = record[columnKey];
-                            rowtable.appendChild(column);
-                        });
-                        const selectColumn = document.createElement("td");
-                        const selectButton = document.createElement("button");
-                        selectButton.setAttribute("class", "btn btn-primary");
-                        selectButton.textContent = "Select";
-                        selectButton.setAttribute("type", "button");
-                        selectButton.addEventListener("click", function() {
-                            // aksi yang ingin dilakukan saat tombol select diklik
-                            const site = record.t_site;
-                            const loc = record.t_loc;
-                            const lot = record.t_lot;
-                            let qtyoh = record.t_qtyoh;
-                            qtyoh = qtyoh.replace(',', '');
-                            row.find(".hidden_sitefrom").val(site);
-                            row.find(".hidden_locfrom").val(loc);
-                            row.find(".hidden_lotfrom").val(lot);
+                        // hapus tabel lama (jika ada)
+                        if (tableContainer.hasChildNodes()) {
+                            tableContainer.removeChild(tableContainer.firstChild);
+                        }
 
-                            const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
+                        // memanggil modal setelah tabel dimuat
+                        $('#myModal').modal('show');
+                        
 
-                            row.find(".loclotfrom").val(loclot);
-                            row.find(".loclotfrom").attr('title',loclot);
+                    },complete: function(vamp) {
+                        //  $('.modal-backdrop').modal('hide');
+                        // alert($('.modal-backdrop').hasClass('in'));
 
-                            const qtyohold = row.find(".qtypotong").val();
+                        setTimeout(function() {
+                        $('#loadingtable').modal('hide');
+                        }, 500);
 
-                            //jika lebih besar yang diminta dari pada yg dimiliki di inventory supply maka qty to transfer maks = qty onhand di inv source
-                            if(parseFloat(qtyohold) > parseFloat(qtyoh)){
-                                row.find(".qtypotong").attr("max", qtyoh).val(qtyoh);
-                            }
+                        setTimeout(function() {
+                        $('#viewModal').modal('show');
+                        }, 1000);
 
-                            $('#myModal').modal('hide');
-                        });
-                        selectColumn.appendChild(selectButton);
-                        rowtable.appendChild(selectColumn);
-                        table.appendChild(rowtable);
-                    });
-
-                    // menampilkan tabel pada elemen HTML yang dituju
-                    tableContainer.appendChild(table);
-
-                    // memanggil modal setelah tabel dimuat
-                    $('#myModal').modal('show');
-                    
-
-                },complete: function(vamp) {
-                    //  $('.modal-backdrop').modal('hide');
-                    // alert($('.modal-backdrop').hasClass('in'));
-
-                    setTimeout(function() {
-                    $('#loadingtable').modal('hide');
-                    }, 500);
-
-                    setTimeout(function() {
-                    $('#viewModal').modal('show');
-                    }, 1000);
-
-                }
-            })
+                    }
+                })
+            }
         });
 
+        $(document).on('click', '.deleterow', function(e) {
+            var data = $(this).closest('tr').find('.rowval').val();
 
-    
-    });
+            Swal.fire({
+            title: '',
+            text: "Delete File ?",
+            icon: '',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Delete'
+            }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                url: "/delfilewofinish/" + data,
+                success: function(data) {
 
-    $(document).on('click', '.deleterow', function(e) {
-        var data = $(this).closest('tr').find('.rowval').val();
+                    $('#munculgambar').html('').append(data);
+                }
+                })
+            } else {
 
-        Swal.fire({
-        title: '',
-        text: "Delete File ?",
-        icon: '',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Delete'
-        }).then((result) => {
-        if (result.value) {
-            $.ajax({
-            url: "/delfilewofinish/" + data,
-            success: function(data) {
-
-                $('#munculgambar').html('').append(data);
             }
             })
-        } else {
-
-        }
-        })
+        });
     });
+
+    
 
 </script>
 @endsection
