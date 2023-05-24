@@ -742,10 +742,20 @@ Route::group(['middleware' => ['auth']], function() {
 	//tambahan reporting WO
 	Route::get('/getwsasupply', [wocontroller::class, 'getwsasupply']);
 	
-	//Sparepart
+	//Request Sparepart
 	Route::get('/reqsp', [SparepartController::class, 'reqspbrowse'])->name('reqspbrowse');
 	Route::get('/reqspcreate', [SparepartController::class, 'reqspcreate'])->name('reqspcreate');
 	Route::post('/reqspsubmit', [SparepartController::class,'reqspsubmit'])->name('reqspsubmit');
+	Route::get('/reqspeditdet',[SparepartController::class, 'reqspeditdet']);
+	Route::get('/reqspviewdet',[SparepartController::class, 'reqspviewdet']);
+	Route::post('/reqspupdate',[SparepartController::class, 'reqspupdate']);
+	Route::post('/reqspcancel', [SparepartController::class, 'reqspcancel']);
+
+	//Transfer Sparepart
+	Route::get('/trfsp', [SparepartController::class, 'trfspbrowse'])->name('trfspbrowse');
+	Route::get('/trfspdet/{id}', [SparepartController::class, 'trfspdet'])->name('trfspdet');
+	Route::post('/trfspsubmit', [SparepartController::class,'trfspsubmit'])->name('trfspsubmit');
+	Route::get('/gettrfspwsastockfrom', [SparepartController::class, 'gettrfspwsastockfrom']);
 	
 	// PM Confirm
 	Route::get('/pmconf',[PmConfirmController::class, 'index'])->name('pmconf'); 
