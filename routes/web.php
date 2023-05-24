@@ -32,6 +32,7 @@ use App\Http\Controllers\WO\WoQcController;
 use App\Http\Controllers\Usage\UsageBrowseController;
 use App\Http\Controllers\Usage\PmConfirmController;
 use App\Http\Controllers\Other\WhyHistController;
+use App\Http\Controllers\SparepartController;
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
 use Illuminate\Support\Facades\Auth;
@@ -741,7 +742,11 @@ Route::group(['middleware' => ['auth']], function() {
 	//tambahan reporting WO
 	Route::get('/getwsasupply', [wocontroller::class, 'getwsasupply']);
 	
-
+	//Sparepart
+	Route::get('/reqsp', [SparepartController::class, 'reqspbrowse'])->name('reqspbrowse');
+	Route::get('/reqspcreate', [SparepartController::class, 'reqspcreate'])->name('reqspcreate');
+	Route::post('/reqspsubmit', [SparepartController::class,'reqspsubmit'])->name('reqspsubmit');
+	
 	// PM Confirm
 	Route::get('/pmconf',[PmConfirmController::class, 'index'])->name('pmconf'); 
 	Route::get('/searchlog',[PmConfirmController::class, 'searchlog']); 

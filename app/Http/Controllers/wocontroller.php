@@ -3126,6 +3126,7 @@ class wocontroller extends Controller
                     })
                     ->orderby('wo_system_create', 'desc')
                     ->orderBy('wo_mstr.id', 'desc')
+                    ->groupBy('wo_number')
                     ->paginate(10);
                 // dd($data);
                 // }
@@ -3173,6 +3174,7 @@ class wocontroller extends Controller
                             ->where('wo_list_engineer', $dataeng)
                             ->orderby('wo_system_create', 'desc')
                             ->orderBy('wo_mstr.id', 'desc')
+                            ->groupBy('wo_number')
                             ->paginate(10);
                     } else {
 
@@ -3185,6 +3187,7 @@ class wocontroller extends Controller
                             ->where('wo_list_engineer', $dataeng)
                             ->orderby('wo_system_create', 'desc')
                             ->orderBy('wo_mstr.id', 'desc')
+                            ->groupBy('wo_number')
                             ->paginate(10);
                     }
                 }
