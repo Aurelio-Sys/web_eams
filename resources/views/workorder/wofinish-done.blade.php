@@ -94,6 +94,10 @@
         font-size: 12px;
         cursor: pointer;
     }
+
+    input::placeholder {
+        font-weight: bold;
+    }
 </style>
 <div class="row">
     <form class="form-horizontal" id="newedit" method="post" action="/reportingwo" enctype="multipart/form-data">
@@ -143,7 +147,7 @@
                 </div>
                 <div class="col-md-3 h-50">
                     <input id="c_duedate" type="text" class="form-control pl-0 col-md-12 c_duedate" style="background:transparent;border:none;text-align:left" name="c_duedate" value="{{$header->wo_due_date}}" readonly/>
-                    <input type="hidden" id="hidden_assetsite" value="{{$header->wo_site}}" />
+                    <input type="hidden" id="hidden_assetsite" name="hidden_assetsite" value="{{$header->wo_site}}" />
                 </div>
             </div>
 
@@ -187,7 +191,7 @@
                                     <input type="hidden" class="qtyissued" name="qtyissued[]" value="{{$datas->wd_sp_issued}}" />
                                 </td>
                                 <td style="vertical-align: middle; text-align: left;">
-                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" autocomplete="off">
+                                    <input type="text" id="loclotfrom" class="form-control loclotfrom" name="loclotfrom[]" data-toggle="tooltip" autocomplete="off" readonly placeholder="Click Here">
                                     <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
                                     <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
                                     <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" /> 
@@ -254,7 +258,7 @@
                     <table id="createTableIns" class="table table-bordered order-list" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th style="text-align: center; width: 5% !important; font-weight: bold;">Step</th>
+                                <th style="text-align: center; width: 6% !important; font-weight: bold;">Step</th>
                                 <th style="text-align: center; width: 25% !important; font-weight: bold;">Deskripsi</th>
                                 <th style="text-align: center; width: 15% !important; font-weight: bold;">Duration</th>
                                 <th style="text-align: center; width: 20% !important; font-weight: bold;">Engineer</th>
@@ -262,28 +266,33 @@
                             </tr>
                         </thead>
                         <tbody id='detailapp_ins'>
-                            @forelse ( $instruction as $datains )
+                            @forelse ( $instruction as $index => $datains )
                             <tr>
                                 <td style="vertical-align:middle;text-align:left;">
-                                    {{$datains->wd_ins_step}}
+                                    <input type="number" min="0" step="1" class="form-control stepnumber" name="stepnumber[]" value="{{$datains->wd_ins_step}}" readonly />
                                 </td>
                                 <td style="vertical-align: middle; text-align: left;">
-                                    {{$datains->ins_stepdesc}}
-                                    <input type="hidden" class="hidden_inscode" name="hidden_inscode[]" value="" />
-                                    <input type="hidden" class="hidden_insdesc" name="hidden_insdesc[]" value="" />
+                                    {{$datains->wd_ins_stepdesc}}
+                                    <input type="hidden" class="stepdesc" name="stepdesc[]" value="{{$datains->wd_ins_stepdesc}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     <div class="input-group">
-                                        <input type="number" min="0" class="form-control ins_duration" name="ins_duration[]">
+                                        <input type="number" min="0" step="0.01" class="form-control ins_duration" name="ins_duration[]" value="{{$datains->wd_ins_duration != null ? $datains->wd_ins_duration : ''}}">
                                         <div class="input-group-append">
                                             <span class="input-group-text" id="basic-addon2"> {{$datains->um_desc}} </span>
+                                            <input type="hidden" name="durationum[]" value="{{$datains->um_code}}" />
                                         </div>
                                     </div>
                                 </td>
                                 <td style="vertical-align:middle;text-align:right; max-width: 100px !important;">
-                                    <select class="form-control selectpicker ins_list_eng" name="ins_list_eng[]" style="max-width: 100px !important;" multiple data-live-search="true" data-max-options="5" data-size="3" data-dropup-auto="false">
-                                    @foreach ($engineers as $dataeng )
-                                        <option value="{{$dataeng['eng_code']}}">{{$dataeng["eng_code"]}} -- {{$dataeng["eng_desc"]}}</option>
+                                    <select class="form-control selectpicker ins_list_eng" name="ins_list_eng[{{$index}}][option][]" style="max-width: 100px !important;" multiple data-live-search="true" data-max-options="5" data-size="3" data-dropup-auto="false">
+                                    @foreach ($engineers as $dataeng)
+                                        @php
+                                            $engCode = $dataeng['eng_code'];
+                                            $engDesc = $dataeng['eng_desc'];
+                                            $selected = in_array($engCode, explode(';', $datains->wd_ins_engineer)) ? 'selected' : '';
+                                        @endphp
+                                        <option value="{{$engCode}}" {{$selected}}>{{$engCode}} -- {{$engDesc}}</option>
                                     @endforeach
                                     </select>
                                 </td>
@@ -328,6 +337,7 @@
                             <tr>
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$dataqc->wd_qc_qcparam}}
+                                    <input type="hidden" class="qcparam" name="qcparam[]" value="{{$dataqc->wd_qc_qcparam}}" />
                                 </td>
                                 <td style="vertical-align: middle; text-align: left;">
                                     <input type="text" class="form-control resultqc1" name="resultqc1[]" value="" maxlength="250" /> 
@@ -362,13 +372,13 @@
                 <div class="form-group row col-md-12">
                     <label for="c_finishdate" class="col-md-4 col-form-label text-md-left">Finish Date <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-3">
-                        <input id="c_finishdate" type="date" class="form-control c_finishdate" name="c_finishdate" value="" autofocus required>
+                        <input id="c_finishdate" type="date" class="form-control c_finishdate" name="c_finishdate" value="" required>
                     </div>
                 </div>
                 <div class="form-group row col-md-12">
                     <label for="c_finishtime" class="col-md-4 col-form-label text-md-left">Finish Time <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-3">
-                        <input type="time" class="form-control" name="c_finishtime" value="" autofocus required/>
+                        <input type="time" class="form-control" name="c_finishtime" value="" required/>
                     </div>
                 </div>
 
@@ -384,11 +394,25 @@
                 </div>
 
                 <div class="form-group row col-md-12">
-                    <label for="c_note" class="col-md-4 col-form-label text-md-left">Reporting Note <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-                    <div class="col-md-6">
-                        <textarea id="c_note" class="form-control c_note" name="c_note" maxlength="250" autofocus></textarea>
+                    <label for="downtime" class="col-md-4 col-form-label text-md-left">Downtime <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                    <div class="col-md-3">
+                        <input type="number" id="downtime" min="0" class="form-control" name="downtime" required />
+                    </div>
+                    <div class="col-md-3">
+                    <select class="form-control" id="downtime_um" name="downtime_um">
+                        <option value="Minute">Minute</option>
+                        <option value="Hour">Hour</option>
+                    </select>
                     </div>
                 </div>
+
+                <div class="form-group row col-md-12">
+                    <label for="c_note" class="col-md-4 col-form-label text-md-left">Reporting Note <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                    <div class="col-md-6">
+                        <textarea id="c_note" class="form-control c_note" name="c_note" maxlength="250"></textarea>
+                    </div>
+                </div>
+
                 <div class="form-group row col-md-12" id="photodiv">
                     <label class="col-md-4 col-form-label text-md-left">Uploaded File</label>
                     <div class="col-md-7">
@@ -517,7 +541,7 @@
             cols += '</td>';
 
             cols += '<td style="vertical-align:middle;text-align:center;">';
-            cols += '<input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" autocomplete="off">';
+            cols += '<input type="text" id="loclotfrom" class="form-control loclotfrom" name="loclotfrom[]" data-toggle="tooltip" autocomplete="off" readonly placeholder="Click Here">';
             cols += '<input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />';
             cols += '<input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />';
             cols += '<input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />';
@@ -558,19 +582,17 @@
             var cols = "";
 
             cols += '<td style="vertical-align:middle;text-align:center;">';
-            cols += '<input type="number" min="0" class="form-control stepnumber" name="stepnumber[]" />';
+            cols += '<input type="number" min="0" step="1" class="form-control stepnumber" name="stepnumber[]" value="'+lastline+'" readonly />';
             cols += '</td>';
 
             cols += '<td style="vertical-align:middle;text-align:center;">';
             cols += '<textarea type="text" class="form-control stepdesc" name="stepdesc[]" maxlength="250">';
             cols += '</textarea>';
-            cols += '<input type="hidden" class="hidden_inscode" name="hidden_inscode[]" value="" />';
-            cols += '<input type="hidden" class="hidden_insdesc" name="hidden_insdesc[]" value="" />';
             cols += '</td>';
 
             cols += '<td style="vertical-align:middle;text-align:center;">';
             cols += '<div class="input-group">';
-            cols += '<input type="number" min="0" class="form-control ins_duration" id="input-with-select" name="ins_duration[]"/>';
+            cols += '<input type="number" min="0" step="0.01" class="form-control ins_duration" id="input-with-select" name="ins_duration[]"/>';
             cols += '<div class="input-group-append">';
             cols += '<select class="form-control durationum" name="durationum[]">';
             @foreach($um as $dataum)
@@ -582,7 +604,7 @@
             cols += '</td>';
 
             cols += '<td style="max-width: 100px !important; vertical-align:middle;text-align:center;">';
-            cols += '<select class="form-control selectpicker ins_list_eng" name="ins_list_eng[]" style="max-width: 100px !important;" multiple="multiple" data-live-search="true" data-max-options="5" data-size="3" data-dropup-auto="false">';
+            cols += '<select class="form-control selectpicker ins_list_eng" name="ins_list_eng['+ (lastline - 1) +'][option][]" style="max-width: 100px !important;" multiple="multiple" data-live-search="true" data-max-options="5" data-size="3" data-dropup-auto="false">';
             @foreach ($engineers as $dataeng )
             cols += '<option value="{{$dataeng["eng_code"]}}">{{$dataeng["eng_code"]}} -- {{$dataeng["eng_desc"]}}</option>';
             @endforeach
@@ -590,7 +612,6 @@
             cols += '</td>';
 
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>';
-            cols += '<input type="hidden" class="op" name="op[]" value="A" />';
             counter++;
 
             newRow.append(cols);
@@ -624,7 +645,7 @@
             var cols = "";
 
             cols += '<td>';
-            cols += '<input type="text" class="form-control qcparam" name="qcparam[]" maxlength="250" />';
+            cols += '<input type="text" class="form-control qcparam" name="qcparam[]" maxlength="250" required />';
             cols += '</td>';
 
             cols += '<td>';
@@ -632,7 +653,6 @@
             cols += '</td>';
 
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>';
-            cols += '<input type="hidden" class="op" name="op[]" value="A" />';
             counter++;
 
             newRow.append(cols);
@@ -744,7 +764,7 @@
                         spcode : spcode,
                     },
                     success: function(vamp) {
-                        console.log(vamp);
+                        // console.log(vamp);
 
                         // select elemen HTML tempat menampilkan tabel
                         const tableContainer = document.getElementById("thistablemodal");
@@ -788,6 +808,7 @@
                                 const loc = record.t_loc;
                                 const lot = record.t_lot;
                                 let qtyoh = record.t_qtyoh;
+                                
                                 qtyoh = qtyoh.replace(',', '');
                                 row.find(".hidden_sitefrom").val(site);
                                 row.find(".hidden_locfrom").val(loc);
@@ -834,8 +855,8 @@
                     }
                 })
             
-            }else{
-                //jika qty yang mau dissue bernilai negatif
+            }else if (qtypotong < 0){
+                //jika qty yang mau dissue bernilai negatif menandakan bahwa yang sudah diissued ingin dikembalikan lagi dengan receipt unplanned
                 const wonumber = $('#c_wonbr').val();
 
                 $.ajax({
@@ -845,7 +866,7 @@
                         spcode : spcode,
                         wonumber : wonumber,
                     },
-                    success: function(vamp) {
+                    success: function(vimp) {
 
                         // select elemen HTML tempat menampilkan tabel
                         const tableContainer = document.getElementById("thistablemodal");
@@ -855,11 +876,73 @@
                             tableContainer.removeChild(tableContainer.firstChild);
                         }
 
+                        // membuat elemen tabel
+                        const table = document.createElement("table");
+                        table.setAttribute("class", "table table-bordered table-hover");
+
+                        // membuat header tabel
+                        const headerRow = document.createElement("tr");
+                        const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "Select"];
+                        headerColumns.forEach((columnTitle) => {
+                            const headerColumn = document.createElement("th");
+                            headerColumn.textContent = columnTitle;
+                            headerRow.appendChild(headerColumn);
+                        });
+                        table.appendChild(headerRow);
+
+                        // membuat baris record untuk setiap objek dalam dataLocLotFrom
+                        vimp.forEach((record) => {
+                            const rowtable = document.createElement("tr");
+                            const columns = ["wd_sp_spcode", "wd_sp_site_issued", "wd_sp_loc_issued", "wd_sp_lot_issued", "wd_sp_issued"];
+                            columns.forEach((columnKey) => {
+                                const column = document.createElement("td");
+                                column.textContent = record[columnKey];
+                                rowtable.appendChild(column);
+                            });
+                            const selectColumn = document.createElement("td");
+                            const selectButton = document.createElement("button");
+                            selectButton.setAttribute("class", "btn btn-primary");
+                            selectButton.textContent = "Select";
+                            selectButton.setAttribute("type", "button");
+                            selectButton.addEventListener("click", function() {
+                                // aksi yang ingin dilakukan saat tombol select diklik
+                                const site = (record.wd_sp_site_issued != null) ? record.wd_sp_site_issued : '';
+                                const loc = (record.wd_sp_loc_issued != null) ? record.wd_sp_loc_issued : '';
+                                const lot = (record.wd_sp_lot_issued != null) ? record.wd_sp_lot_issued : '';
+
+                                let qtyoh = record.wd_sp_issued;
+                                qtyoh = qtyoh.replace(',', '');
+                                row.find(".hidden_sitefrom").val(site);
+                                row.find(".hidden_locfrom").val(loc);
+                                row.find(".hidden_lotfrom").val(lot);
+
+                                const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
+
+                                row.find(".loclotfrom").val(loclot);
+                                row.find(".loclotfrom").attr('title',loclot);
+
+                                const qtyohold = row.find(".qtypotong").val();
+
+                                //jika lebih besar yang diminta dari pada yg dimiliki di inventory supply maka qty to transfer maks = qty onhand di inv source
+                                if(parseFloat(qtyohold) < parseFloat(qtyoh)){
+                                    row.find(".qtypotong").attr("min", -qtyoh).val(-qtyoh);
+                                }
+
+                                $('#myModal').modal('hide');
+                            });
+                            selectColumn.appendChild(selectButton);
+                            rowtable.appendChild(selectColumn);
+                            table.appendChild(rowtable);
+                        });
+
+                        // menampilkan tabel pada elemen HTML yang dituju
+                        tableContainer.appendChild(table);
+
                         // memanggil modal setelah tabel dimuat
                         $('#myModal').modal('show');
                         
 
-                    },complete: function(vamp) {
+                    },complete: function(vimp) {
                         //  $('.modal-backdrop').modal('hide');
                         // alert($('.modal-backdrop').hasClass('in'));
 
