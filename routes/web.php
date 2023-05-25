@@ -32,6 +32,7 @@ use App\Http\Controllers\WO\WoQcController;
 use App\Http\Controllers\Usage\UsageBrowseController;
 use App\Http\Controllers\Usage\PmConfirmController;
 use App\Http\Controllers\Other\WhyHistController;
+use App\Http\Controllers\SparepartController;
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
 use Illuminate\Support\Facades\Auth;
@@ -743,7 +744,21 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/getwsasupply', [wocontroller::class, 'getwsasupply']);
 	Route::get('/getwodetsp', [wocontroller::class, 'getwodetsp']);
 	
+	//Request Sparepart
+	Route::get('/reqsp', [SparepartController::class, 'reqspbrowse'])->name('reqspbrowse');
+	Route::get('/reqspcreate', [SparepartController::class, 'reqspcreate'])->name('reqspcreate');
+	Route::post('/reqspsubmit', [SparepartController::class,'reqspsubmit'])->name('reqspsubmit');
+	Route::get('/reqspeditdet',[SparepartController::class, 'reqspeditdet']);
+	Route::get('/reqspviewdet',[SparepartController::class, 'reqspviewdet']);
+	Route::post('/reqspupdate',[SparepartController::class, 'reqspupdate']);
+	Route::post('/reqspcancel', [SparepartController::class, 'reqspcancel']);
 
+	//Transfer Sparepart
+	Route::get('/trfsp', [SparepartController::class, 'trfspbrowse'])->name('trfspbrowse');
+	Route::get('/trfspdet/{id}', [SparepartController::class, 'trfspdet'])->name('trfspdet');
+	Route::post('/trfspsubmit', [SparepartController::class,'trfspsubmit'])->name('trfspsubmit');
+	Route::get('/gettrfspwsastockfrom', [SparepartController::class, 'gettrfspwsastockfrom']);
+	
 	// PM Confirm
 	Route::get('/pmconf',[PmConfirmController::class, 'index'])->name('pmconf'); 
 	Route::get('/searchlog',[PmConfirmController::class, 'searchlog']); 
