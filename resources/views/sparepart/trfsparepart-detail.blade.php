@@ -54,7 +54,7 @@
         <div class="modal-body">
             <div class="form-group row">
                 <div class="table-responsive col-lg-12 col-md-12 tag-container" style="overflow-x: auto; display:inline-table; white-space: nowrap; padding:0; text-align:center; position:relative">
-                    <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0" >
+                    <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <td style="text-align: center; width: 5% !important; font-weight: bold;">Spare Part Code</td>
@@ -63,6 +63,7 @@
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Location & Lot From</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Location To</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty to Transfer</td>
+                                <td style="text-align: center; width: 12% !important; font-weight: bold;">Note</td>
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
@@ -79,20 +80,12 @@
                                     {{$spd->req_spd_qty_request}}
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" data-index="{{ $index }}"  required>
+                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" data-index="{{ $index }}" required>
                                     <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
                                     <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
-                                    <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" /> 
+                                    <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
-                                    <!-- <select id="locto" class="form-control locto selectpicker" name="locto[]" data-dropup-auto="false" data-live-search="true" required>
-                                        <option></option> -->
-                                        <?php
-                                        // @foreach ( $datalocsupply as $dtloc  )
-                                        //     <option value="{{$dtloc->inp_loc}}" data-siteto="{{$dtloc->inp_supply_site}}">Site : {{$dtloc->inp_supply_site}} Loc : {{$dtloc->inp_loc}}</option>
-                                        // @endforeach
-                                        ?>
-                                    <!-- </select> -->
                                     {{$spd->req_spd_loc_to}}
                                     <input type="hidden" class="hidden_siteto" name="hidden_siteto[]" value="{{$spd->req_spd_site_to}}" />
                                     <input type="hidden" class="hidden_locto" name="hidden_locto[]" value="{{$spd->req_spd_loc_to}}" />
@@ -100,16 +93,19 @@
                                 <td style="vertical-align: middle; text-align: center;">
                                     <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0" value="{{$spd->req_spd_qty_request}}" step="0.01" required />
                                 </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <textarea type="text" id="notes" class="form-control notes" name="notes[]" rows="2" ></textarea>
+                                </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" style="color: red; text-align: center;" >No Data Available</td>
+                                <td colspan="7" style="color: red; text-align: center;">No Data Available</td>
                             </tr>
                             @endforelse
                         </tbody>
                         <tfoot>
                             <tr>
-                                
+
                             </tr>
                         </tfoot>
                     </table>
@@ -117,9 +113,9 @@
             </div>
         </div>
 
-        <div class="container" style="text-align: center;" >
+        <div class="container" style="text-align: center;">
             <label>
-                <input type="checkbox" id="confirmation-checkbox" required/> Confirm Transfer
+                <input type="checkbox" id="confirmation-checkbox" required /> Confirm Transfer
             </label>
         </div>
 
@@ -141,7 +137,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body" id="thistablemodal">
-                
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -152,9 +148,9 @@
 
 
 <div class="modal fade" id="loadingtable" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <h1 class="animate__animated animate__bounce" style="display:inline;width:100%;text-align:center;color:white;font-size:larger;text-align:center">Loading...</h1>
-  </div>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <h1 class="animate__animated animate__bounce" style="display:inline;width:100%;text-align:center;color:white;font-size:larger;text-align:center">Loading...</h1>
+    </div>
 </div>
 @endsection
 
@@ -169,8 +165,8 @@
     $(document).ready(function() {
 
         // untuk membuat readonly
-        $(".readonly").on('keydown paste focus mousedown', function(e){
-        if(e.keyCode != 9) // ignore tab
+        $(".readonly").on('keydown paste focus mousedown', function(e) {
+            if (e.keyCode != 9) // ignore tab
                 e.preventDefault();
         });
 
@@ -188,7 +184,7 @@
         //     }
         // });
 
-        $(document).on('click', '.loclotfrom', function() { 
+        $(document).on('click', '.loclotfrom', function() {
             var row = $(this).closest("tr");
             const spcode = row.find(".hidden_spcode").val();
 
@@ -196,10 +192,9 @@
                 url: '/gettrfspwsastockfrom',
                 method: 'GET',
                 data: {
-                    spcode : spcode,
+                    spcode: spcode,
                 },
                 success: function(vamp) {
-
                     // select elemen HTML tempat menampilkan tabel
                     const tableContainer = document.getElementById("thistablemodal");
 
@@ -222,74 +217,80 @@
                     });
                     table.appendChild(headerRow);
 
-                    // membuat baris record untuk setiap objek dalam dataLocLotFrom
-                    vamp.forEach((record) => {
-                        const rowtable = document.createElement("tr");
-                        const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh"];
-                        columns.forEach((columnKey) => {
-                            const column = document.createElement("td");
-                            column.textContent = record[columnKey];
-                            rowtable.appendChild(column);
+                    //validasi apakah wsa aktif atau tidak
+                    if (Array.isArray(vamp)) {
+                        // membuat baris record untuk setiap objek dalam dataLocLotFrom
+                        vamp.forEach((record) => {
+                            const rowtable = document.createElement("tr");
+                            const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh"];
+                            columns.forEach((columnKey) => {
+                                const column = document.createElement("td");
+                                column.textContent = record[columnKey];
+                                rowtable.appendChild(column);
+                            });
+                            const selectColumn = document.createElement("td");
+                            const selectButton = document.createElement("button");
+                            selectButton.setAttribute("class", "btn btn-primary");
+                            selectButton.textContent = "Select";
+                            selectButton.setAttribute("type", "button");
+                            selectButton.addEventListener("click", function() {
+                                // aksi yang ingin dilakukan saat tombol select diklik
+                                const site = record.t_site;
+                                const loc = record.t_loc;
+                                const lot = record.t_lot;
+                                const qtyoh = record.t_qtyoh;
+                                row.find(".hidden_sitefrom").val(site);
+                                row.find(".hidden_locfrom").val(loc);
+                                row.find(".hidden_lotfrom").val(lot);
+
+                                const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
+
+                                row.find(".loclotfrom").val(loclot);
+                                row.find(".loclotfrom").attr('title', loclot);
+
+
+                                const qtyohold = row.find(".qtytotransfer").val();
+
+                                //jika lebih besar yang diminta dari pada yg dimiliki di inventory supply maka qty to transfer maks = qty onhand di inv source
+                                if (parseFloat(qtyohold) > parseFloat(qtyoh)) {
+                                    row.find(".qtytotransfer").attr("max", qtyoh).val(qtyoh);
+                                }
+
+                                $('#myModal').modal('hide');
+                            });
+                            selectColumn.appendChild(selectButton);
+                            rowtable.appendChild(selectColumn);
+                            table.appendChild(rowtable);
                         });
-                        const selectColumn = document.createElement("td");
-                        const selectButton = document.createElement("button");
-                        selectButton.setAttribute("class", "btn btn-primary");
-                        selectButton.textContent = "Select";
-                        selectButton.setAttribute("type", "button");
-                        selectButton.addEventListener("click", function() {
-                            // aksi yang ingin dilakukan saat tombol select diklik
-                            const site = record.t_site;
-                            const loc = record.t_loc;
-                            const lot = record.t_lot;
-                            const qtyoh = record.t_qtyoh;
-                            row.find(".hidden_sitefrom").val(site);
-                            row.find(".hidden_locfrom").val(loc);
-                            row.find(".hidden_lotfrom").val(lot);
 
-                            const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
+                        // menampilkan tabel pada elemen HTML yang dituju
+                        tableContainer.appendChild(table);
 
-                            row.find(".loclotfrom").val(loclot);
-                            row.find(".loclotfrom").attr('title',loclot);
-                            
+                        // memanggil modal setelah tabel dimuat
+                        $('#myModal').modal('show');
 
-                            const qtyohold = row.find(".qtytotransfer").val();
+                    } else {
+                        alert('WSA Connection Failed !!!');
+                    }
 
-                            //jika lebih besar yang diminta dari pada yg dimiliki di inventory supply maka qty to transfer maks = qty onhand di inv source
-                            if(parseFloat(qtyohold) > parseFloat(qtyoh)){
-                                row.find(".qtytotransfer").attr("max", qtyoh).val(qtyoh);
-                            }
-
-                            $('#myModal').modal('hide');
-                        });
-                        selectColumn.appendChild(selectButton);
-                        rowtable.appendChild(selectColumn);
-                        table.appendChild(rowtable);
-                    });
-
-                    // menampilkan tabel pada elemen HTML yang dituju
-                    tableContainer.appendChild(table);
-
-                    // memanggil modal setelah tabel dimuat
-                    $('#myModal').modal('show');
-                    
-
-                },complete: function(vamp) {
+                },
+                complete: function(vamp) {
                     //  $('.modal-backdrop').modal('hide');
                     // alert($('.modal-backdrop').hasClass('in'));
 
                     setTimeout(function() {
-                    $('#loadingtable').modal('hide');
+                        $('#loadingtable').modal('hide');
                     }, 500);
 
                     setTimeout(function() {
-                    $('#viewModal').modal('show');
+                        $('#viewModal').modal('show');
                     }, 1000);
 
                 }
             })
         });
 
-        $(document).on('change', 'select.locto', function(){
+        $(document).on('change', 'select.locto', function() {
 
             var row = $(this).closest("tr");
             const locto = row.find(':selected').val();
@@ -298,7 +299,7 @@
 
             row.find('.hidden_siteto').val(siteto);
             row.find('.hidden_locto').val(locto);
-            
+
         });
 
         const confirmationCheckbox = document.getElementById("confirmation-checkbox");

@@ -758,6 +758,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/trfspdet/{id}', [SparepartController::class, 'trfspdet'])->name('trfspdet');
 	Route::post('/trfspsubmit', [SparepartController::class,'trfspsubmit'])->name('trfspsubmit');
 	Route::get('/gettrfspwsastockfrom', [SparepartController::class, 'gettrfspwsastockfrom']);
+	Route::get('/trfspviewdet', [SparepartController::class, 'trfspviewdet']);
 	
 	// PM Confirm
 	Route::get('/pmconf',[PmConfirmController::class, 'index'])->name('pmconf'); 
