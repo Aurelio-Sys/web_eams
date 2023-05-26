@@ -18,33 +18,54 @@ class UsageController extends Controller
 {
     public function index(Request $req){
 
-        $data = DB::table('asset_mstr')
-            ->whereIn('asset_code',function($query) {
-                $query->select('pma_asset')
-                    ->from('pma_asset')
-                    ->whereIn('pma_mea',['M','B'])
-                    ->groupBy('pma_asset');
-            })
-            ->join('asset_site','assite_code','=','asset_site')
-            ->join('asset_loc', function ($join) {
-                $join->on('asset_loc.asloc_site', '=', 'asset_mstr.asset_site')
-                     ->on('asset_loc.asloc_code', '=', 'asset_mstr.asset_loc');
-            })
-            ->whereAssetActive('Yes');
-// dd($data->get());
-        $data = $data->paginate(10);
-        
-        $asset = DB::table('asset_mstr')
-            ->join('asset_site','assite_code','=','asset_site')
-            ->join('asset_loc', function ($join) {
-                $join->on('asset_loc.asloc_site', '=', 'asset_mstr.asset_site')
-                     ->on('asset_loc.asloc_code', '=', 'asset_mstr.asset_loc');
-            })
-            ->whereAssetActive('Yes')
-            ->get();
+        if($req->ajax()){
+            $sort_by   = $req->get('sortby');
+            $sort_type = $req->get('sorttype');
+            $asset  = $req->get('asset');
 
-        return view('schedule.usage',['data' => $data, 'asset' => $asset]);
+            if($asset == ''){
+                $data = DB::table('asset_mstr')
+                            ->leftJoin('asset_site','assite_code','=','asset_site')
+                            ->leftJoin('asset_loc','asloc_code','=','asset_loc')
+                            ->where('asset_measure','=','M')
+                            ->selectRaw('*, asset_mstr.asset_code as "assetcode"')
+                            ->where('asset_active','=','Yes')
+                            ->orderby($sort_by, $sort_type)
+                            ->paginate(10);
+                            
+            }else{
+                $data = DB::table('asset_mstr')
+                            ->leftJoin('asset_site','assite_code','=','asset_site')
+                            ->leftJoin('asset_loc','asloc_code','=','asset_loc')
+                            ->where('asset_measure','=','M')
+                            ->where('asset_mstr.asset_code','=',$asset)
+                            ->selectRaw('*, asset_mstr.asset_code as "assetcode"')
+                            ->where('asset_active','=','Yes')
+                            ->orderby($sort_by, $sort_type)
+                            ->paginate(10);
+            }
+
+            return view('schedule.table-usage', ['data' => $data]);
+        }else{
+            $data = DB::table('asset_mstr')
+                        ->where('asset_measure','=','M')
+                        ->leftJoin('asset_site','assite_code','=','asset_site')
+                        ->leftJoin('asset_loc','asloc_code','=','asset_loc')
+                        ->selectRaw('*, asset_mstr.asset_code as "assetcode"')
+                        ->where('asset_active','=','Yes')
+                        ->orderBy('asset_code')
+                        ->paginate(10);
+
+            $asset = DB::table('asset_mstr')
+                        ->leftJoin('asset_site','assite_code','=','asset_site')
+                        ->leftJoin('asset_loc','asloc_code','=','asset_loc')
+                        ->where('asset_measure','=','M')
+                        ->where('asset_active','=','Yes')
+                        ->orderBy('asset_code')
+                        ->get();
         
+            return view('schedule.usage',['data' => $data, 'asset' => $asset]);
+        }
     }
 
     public function updateusage(Request $req){

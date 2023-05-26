@@ -180,7 +180,7 @@ class PmassetController extends Controller
      */
     public function update(Request $req)
     {
-        dd($req->all());
+        // dd($req->all());
 
         //cek data dobel, tidak boleh menyimpan data dengan asset dan pmcode yang sudah terdaftar
         $cekdata = DB::table('pma_asset')
@@ -209,6 +209,7 @@ class PmassetController extends Controller
             ->where('id',$req->te_pmaid)
             // ->get();
             ->update([
+                'pma_pmcode' => $req->te_pmcode,
                 'pma_leadtime' => $req->te_time,
                 'pma_mea' => $req->te_mea,
                 'pma_cal' => $req->te_cal,

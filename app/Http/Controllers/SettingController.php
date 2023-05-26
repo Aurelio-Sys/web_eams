@@ -615,19 +615,6 @@ class SettingController extends Controller
 
     //untuk load site dari QAD dengan WSA
     public function loadsite(){
-        //update active semua location menjadi No, agar dapat tau data site yang update di QAD
-        DB::table('site_mstrs')
-            ->update([
-                'site_flag' => 'No',
-            ]);
-
-        // delete site yang tersimpan kecuali yang sudah digunakan dalam transaksi
-        $ceksite = DB::table('site_mstrs')
-            ->whereNotIn('site_code',function($query) {
-                $query->select('ir_site')->from('inv_required')->groupBy('ir_site');
-            })
-            ->delete();
-
         $domain = ModelsQxwsa::first();
 
         $sitedata = (new WSAServices())->wsagetsite($domain->wsas_domain);
@@ -636,6 +623,18 @@ class SettingController extends Controller
             toast('WSA Failed', 'error')->persistent('Dismiss');
             return redirect()->back();
         } else {
+            //update active semua location menjadi No, agar dapat tau data site yang update di QAD
+            DB::table('site_mstrs')
+                ->update([
+                    'site_flag' => 'No',
+                ]);
+
+            // delete site yang tersimpan kecuali yang sudah digunakan dalam transaksi
+            $ceksite = DB::table('site_mstrs')
+                ->whereNotIn('site_code',function($query) {
+                    $query->select('ir_site')->from('inv_required')->groupBy('ir_site');
+                })
+                ->delete();
 
             if ($sitedata[1] == "false") {
                 toast('Data Site tidak ditemukan', 'error')->persistent('Dismiss');
@@ -1013,10 +1012,11 @@ class SettingController extends Controller
             if ($code == '' && $desc == '' && $scode == '' && $sdesc == '') {
                 $data = DB::table('loc_mstr')
                     ->join('site_mstrs','site_code','=','loc_site')
-                    ->select('site_code','site_desc','loc_site','loc_code','loc_desc')
+                    ->select('site_code','site_desc','loc_site','loc_code','loc_desc','loc_active')
                     ->orderby('loc_site')
-                    ->orderby('loc_code')
-                    ->paginate(10);
+                    ->orderby('loc_code');
+                   
+                $data = $data->paginate(10);
 
                 return view('setting.table-area', ['data' => $data]);
             } else {
@@ -1060,16 +1060,6 @@ class SettingController extends Controller
     //untuk load location dari QAD dengan WSA
     public function loadloc(){
 
-        //update status active menjadi no terlebih dahulu, agar mengetahui lokasi yang paling update dari qad
-        DB::table("loc_mstr")
-            ->update([
-                'loc_active' => 'No'
-            ]);
-        
-        //hapus data lokasi kecuali lokasi yang sudah ada transaksi -> request transfer, wo transfer, wo finish
-        DB::table('loc_mstr')
-            ->delete();
-
         $domain = ModelsQxwsa::first();
 
         $locdata = (new WSAServices())->wsagetloc($domain->wsas_domain, "");
@@ -1078,6 +1068,16 @@ class SettingController extends Controller
             toast('WSA Failed', 'error')->persistent('Dismiss');
             return redirect()->back();
         } else {
+
+            //update status active menjadi no terlebih dahulu, agar mengetahui lokasi yang paling update dari qad
+            DB::table("loc_mstr")
+            ->update([
+                'loc_active' => 'No'
+            ]);
+            
+            //hapus data lokasi kecuali lokasi yang sudah ada transaksi -> request transfer, wo transfer, wo finish
+            DB::table('loc_mstr')
+                ->delete();
 
             if ($locdata[1] == "false") {
                 toast('Data Location tidak ditemukan', 'error')->persistent('Dismiss');
@@ -3224,6 +3224,7 @@ class SettingController extends Controller
     //untuk paginate Spare Part Master
     public function spmpagination(Request $req)
     {
+        // dd($req->all());
         if ($req->ajax()) {
             $sort_by = $req->get('sortby');
             $sort_group = $req->get('sorttype');
@@ -3232,13 +3233,13 @@ class SettingController extends Controller
             $type = $req->get('type');
             $group = $req->get('group');
 
-            $datatype = DB::table('sp_type')
-                ->orderby('spt_code')
-                ->get();
+            // $datatype = DB::table('sp_type')
+            //     ->orderby('spt_code')
+            //     ->get();
 
-            $datagroup = DB::table('sp_group')
-                ->orderby('spg_code')
-                ->get();
+            // $datagroup = DB::table('sp_group')
+            //     ->orderby('spg_code')
+            //     ->get();
 
             $datasupp = DB::table('supp_mstr')
                 ->orderby('supp_code')
@@ -3247,13 +3248,27 @@ class SettingController extends Controller
             $datasearch = DB::table('sp_mstr')
                     ->orderBy($sort_by, $sort_group)
                     ->get();
+
+            $dataSite = DB::table('site_mstrs')
+                ->get();
+
+            $dataLoc = DB::table('loc_mstr')
+                ->orderby('loc_code')
+                ->get();
       
-            if ($code == '' && $desc == '' && $type == '' && $group == '') {
+            if ($code == '' && $desc == '' /* && $type == '' && $group == '' */) {
                 $data = DB::table('sp_mstr')
-                    ->orderBy($sort_by, $sort_group)
+                    ->leftJoin('site_mstrs','site_code','=','spm_site')
+                    ->leftJoin('loc_mstr', function ($join) {
+                        $join->on('loc_mstr.loc_site', '=', 'sp_mstr.spm_site')
+                            ->on('loc_mstr.loc_code', '=', 'sp_mstr.spm_loc');
+                    })
+                    ->orderby('spm_code')
                     ->paginate(10);
 
-                return view('setting.table-sp-mstr', ['data' => $data, 'datatype' => $datatype, 'datagroup' => $datagroup, 'datasupp' => $datasupp, 'datasearch' => $datasearch]);
+                // return view('setting.table-sp-mstr', ['data' => $data, 'datatype' => $datatype, 'datagroup' => $datagroup, 'datasupp' => $datasupp, 'datasearch' => $datasearch]);
+                return view('setting.table-sp-mstr', ['data' => $data, 'datasupp' => $datasupp,'dataSite' => $dataSite, 
+                'dataLoc' => $dataLoc, 'datasearch' => $datasearch]);
             } else {
                 $kondisi = '';
                 if ($code != '') {
@@ -3266,36 +3281,40 @@ class SettingController extends Controller
                         $kondisi = "spm_desc like '%" . $desc . "%'";
                     }
                 }
-                if ($type != '') {
-                    if ($kondisi != '') {
-                        $kondisi .= " and spm_type like '%" . $type . "%'";
-                    } else {
-                        $kondisi = "spm_type like '%" . $type . "%'";
-                    }
-                }
-                if ($group != '') {
-                    if ($kondisi != '') {
-                        $kondisi .= " and spm_group like '%" . $group . "%'";
-                    } else {
-                        $kondisi = "spm_group like '%" . $group . "%'";
-                    }
-                }
+                // if ($type != '') {
+                //     if ($kondisi != '') {
+                //         $kondisi .= " and spm_type like '%" . $type . "%'";
+                //     } else {
+                //         $kondisi = "spm_type like '%" . $type . "%'";
+                //     }
+                // }
+                // if ($group != '') {
+                //     if ($kondisi != '') {
+                //         $kondisi .= " and spm_group like '%" . $group . "%'";
+                //     } else {
+                //         $kondisi = "spm_group like '%" . $group . "%'";
+                //     }
+                // }
 
                 $data = DB::table('sp_mstr')
-                    ->whereRaw($kondisi)
-                    ->orderBy($sort_by, $sort_group)
+                    ->leftJoin('site_mstrs','site_code','=','spm_site')
+                    ->leftJoin('loc_mstr', function ($join) {
+                        $join->on('loc_mstr.loc_site', '=', 'sp_mstr.spm_site')
+                            ->on('loc_mstr.loc_code', '=', 'sp_mstr.spm_loc');
+                    })
+                    ->whereRaw(($kondisi))
+                    ->orderby('spm_code')
                     ->paginate(10);
 
-                return view('setting.table-sp-mstr', ['data' => $data, 'datatype' => $datatype, 'datagroup' => $datagroup, 'datasupp' => $datasupp, 'datasearch' => $datasearch]);
+                // return view('setting.table-sp-mstr', ['data' => $data, 'datatype' => $datatype, 'datagroup' => $datagroup, 'datasupp' => $datasupp, 'datasearch' => $datasearch]);
+                return view('setting.table-sp-mstr', ['data' => $data, 'datasupp' => $datasupp,'dataSite' => $dataSite, 
+                'dataLoc' => $dataLoc, 'datasearch' => $datasearch]);
             }
         }
     }
 
     public function loadsparepart(Request $req){
         $domain = ModelsQxwsa::first();
-
-        DB::table('sp_mstr')
-            ->delete();
 
         $datasite = DB::table('site_mstrs')
             ->whereSite_flag('Yes')
@@ -3309,6 +3328,8 @@ class SettingController extends Controller
                 toast('WSA Failed', 'error')->persistent('Dismiss');
                 return redirect()->back();
             } else {
+                DB::table('sp_mstr')
+                    ->delete();
 
                 if ($spdata[1] == "false") {
                     // toast('Data Sparepart pada Site ' . $da->site_code . ' tidak ditemukan', 'error')->persistent('Dismiss');

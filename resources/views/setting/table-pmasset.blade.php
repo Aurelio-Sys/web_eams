@@ -1,12 +1,41 @@
 @forelse($data as $show)
 
 <tr>
-    <td>{{$show->pma_asset}} -- {{$show->pma_id}}</td>
+    <td>{{$show->pma_asset}}</td>
     <td>{{$show->asset_desc}}</td>
     <td>{{$show->pma_pmcode}}</td>
     <td>{{$show->pmc_desc}}</td>
     <td>{{$show->pma_mea}}</td>
-    <td>{{$show->pma_cal}}</td>
+    <td style="text-align: right">
+      @switch($show->pma_mea)
+        @case('C')
+            {{$show->pma_cal}}
+            @break
+        @case('M')
+            {{($show->pma_meter == round($show->pma_meter)) ? number_format($show->pma_meter, 0) : number_format($show->pma_meter, 2)}}
+            @break
+        @case('B')
+            {{$show->pma_cal}} / {{$show->pma_meter}}
+            @break
+        @default
+            -
+      @endswitch 
+    </td>
+    <td>
+      @switch($show->pma_mea)
+        @case('C')
+            Days
+            @break
+        @case('M')
+            {{$show->pma_meterum}}
+            @break
+        @case('B')
+            Days / {{$show->pma_meterum}}
+            @break
+        @default
+            -
+        @endswitch 
+    </td>
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal"
         data-asset="{{$show->pma_asset}}" data-pmcode="{{$show->pma_pmcode}}" data-time="{{$show->pma_leadtime}}" 

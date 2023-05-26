@@ -6,8 +6,8 @@
             <h1 class="m-0 text-dark">PM Confirm Maintenance</h1>
           </div>    
         </div><!-- /.row -->
-        <div class="col-md-12">
-          <hr>
+        <div class="col-md-12 m-0">
+            Menu ini digunakan untuk melakukan konfirmasi tanggal transaksi untuk preventive maintenance per asset dan per PM Code.
         </div>
       </div><!-- /.container-fluid -->
 @endsection
@@ -58,10 +58,11 @@
                 <th width="10%">Asset</th>
                 <th width="20%">Desc</th>
                 <th width="10%">PM Code</th>
-                <th width="15%">PM Number</th>
-                <th width="15%">Schedule Date</th>
-                <th width="15%">WO Number</th>
-                <th width="15%">WO Date</th>
+                <th width="30%">PM Desc</th>
+                <th width="10%">PM Number</th>
+                <th width="10%">Schedule Date</th>
+                {{--  <th width="15%">WO Number</th>
+                <th width="15%">WO Date</th>  --}}
                 <th width="10%">Action</th>  
             </tr>
         </thead>
@@ -74,10 +75,11 @@
                     <td>{{$show->pmo_asset}}</td>
                     <td>{{$show->asset_desc}}</td>
                     <td>{{$show->pmo_pmcode}}</td>
+                    <td>{{$show->pmc_desc}}</td>
                     <td class="td_pmnumber">{{$show->pmo_number}}</td>
                     <td class="td_pmdate">@if($show->pmo_sch_date != "0000-00-00") {{$show->pmo_sch_date}} @endif</td>
-                    <td class="td_wonumber">{{$show->pmo_wonumber}}</td>
-                    <td class="td_wodate">@if($show->pmo_wodate != "0000-00-00") {{$show->pmo_wodate}} @endif</td>
+                    {{--  <td class="td_wonumber">{{$show->pmo_wonumber}}</td>
+                    <td class="td_wodate">@if($show->pmo_wodate != "0000-00-00") {{$show->pmo_wodate}} @endif</td>  --}}
 
                     <td>
                         @if($show->pmo_number != "")
@@ -100,13 +102,13 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" style="color:red">
+                    <td colspan="5" style="color:red">
                         <center>No Data Available</center>
                     </td>
                 </tr>
             @endforelse
             <tr>
-            <td colspan="7" style="border: none !important;">
+            <td colspan="5" style="border: none !important;">
                 {{ $data->appends($_GET)->links() }}
             </td>
             </tr>

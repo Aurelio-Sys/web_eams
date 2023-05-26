@@ -24,11 +24,15 @@ class PmConfirmController extends Controller
 
         $data = DB::table('pmo_confirm')
             ->leftJoin('asset_mstr','asset_code','=','pmo_asset')
+            ->leftJoin('pmc_mstr','pmc_code','=','pmo_pmcode')
             // ->leftjoin('pma_asset', function ($join) {
             //     $join->on('pmo_confirm.pmo_asset', '=', 'pma_asset.pma_asset')
             //         ->on('pmo_confirm.pmo_pmcode', '=', 'pma_asset.pma_pmcode');     
             // })
-            ->select('pmo_confirm.*','asset_code','asset_desc')
+            ->select('pmo_confirm.*','asset_code','asset_desc','pmc_desc')
+            ->whereNotIn('pmo_number', function ($query) {
+                $query->select('pml_pm_number')->from('pml_log');
+            })
             ->orderBy('asset_code')
             ->orderBy('pmo_pmcode')
             ->orderBy('id');

@@ -1523,7 +1523,7 @@ class UserChartController extends Controller
         /* Mencari data sparepart yang sudah ada wo detail nya  di tabel wo_dets_sp */
         $data = DB::table('wo_mstr')
             ->join('wo_dets_sp','wd_sp_wonumber','=','wo_number')
-            ->whereNotIn('wo_status',['closed','delete'])
+            ->whereNotIn('wo_status',['closed','delete','canceled'])
             ->orderBy('wo_start_date')
             ->orderBy('wo_number')
             ->get();

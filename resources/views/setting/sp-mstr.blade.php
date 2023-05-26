@@ -475,8 +475,8 @@
 
         document.getElementById('s_code').value = '';
         document.getElementById('s_desc').value = '';
-        document.getElementById('s_type').value = '';
-        document.getElementById('s_group').value = '';
+        {{--  document.getElementById('s_type').value = '';
+        document.getElementById('s_group').value = '';  --}}
         document.getElementById('tmpcode').value = code;
         document.getElementById('tmpdesc').value = desc;
         document.getElementById('tmptype').value = type;
