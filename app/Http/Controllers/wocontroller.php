@@ -2457,7 +2457,29 @@ class wocontroller extends Controller
                         ->where('wo_number','=', $wonumber)
                         ->first();
 
-        // dd($wonumber);
+        // dd($dataheader);
+
+        //ambil data failure code
+        $asfn_det = DB::table('asfn_det')
+            ->where('asfn_asset', '=', $dataheader->asset_group)
+            ->where('asfn_fntype', '=', $dataheader->asset_type)
+            ->count();
+
+        if ($asfn_det > 0) {
+            //jika ada
+
+            $failure = DB::table('fn_mstr')
+                ->leftJoin('asfn_det', 'asfn_det.asfn_fncode', 'fn_mstr.fn_code')
+                ->where('asfn_asset', '=', $dataheader->asset_group)
+                ->where('asfn_fntype', '=', $dataheader->asset_type)
+                ->groupBy('asfn_fncode')
+                ->get();
+        } else {
+            //jika tidak ada
+
+            $failure = DB::table('fn_mstr')
+                ->get();
+        }
 
         // ambil UM
         $um = DB::table('um_mstr')
@@ -2499,11 +2521,7 @@ class wocontroller extends Controller
 
         // ambil data instruction step dari wo_dets_ins
         $datainstruction = DB::table('wo_dets_ins')
-                        ->leftjoin('ins_list', function ($join) {
-                            $join->on('wo_dets_ins.wd_ins_code', '=', 'ins_list.ins_code');
-                            $join->on('wo_dets_ins.wd_ins_step', '=', 'ins_list.ins_step');
-                        })
-                        ->leftJoin('um_mstr','um_mstr.um_code','ins_list.ins_durationum')
+                        ->leftJoin('um_mstr','um_mstr.um_code','wo_dets_ins.wd_ins_durationum')
                         ->where('wd_ins_wonumber','=', $wonumber)
                         ->get();
 
@@ -2521,7 +2539,7 @@ class wocontroller extends Controller
 
         return view('workorder.wofinish-done', ['header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all,
                                                 'instruction' => $datainstruction, 'inslist' => $ins_all, 'um' => $um,
-                                                'engineers' => $engData, 'qcparam' => $dataqcparam]);
+                                                'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure]);
     }
 
     public function getwsasupply(Request $req){
@@ -2583,8 +2601,7 @@ class wocontroller extends Controller
                     ->where('wd_sp_spcode','=', $spcode)
                     ->get();
 
-
-        dd($getDataWoDets);
+        return response()->json($getDataWoDets);
 
     }
 
@@ -3417,12 +3434,11 @@ class wocontroller extends Controller
 
         // dd($req->all());
 
-        //memisahkan antara button reporting dan button close wo
+        // bagian spare part
 
-        //jika klik button Report WO
-        if($req->btnconf == "reportwo"){
-            
-            // bagian spare part
+        DB::beginTransaction();
+
+        try{
 
             //cek jika ada spare part yang digunakan saat reporting dan informasi yang dibutuhkan untuk issued unplanned ke QAD lengkap
             if($req->has('hidden_sp') && $req->has('hidden_sitefrom') && $req->has('hidden_locfrom') && $req->has('hidden_lotfrom') && $req->has('qtyrequired') && $req->has('qtyissued') && $req->has('qtypotong')){
@@ -3452,9 +3468,17 @@ class wocontroller extends Controller
                         ];
 
                         $dataArrayIssued[] = $data;
+
+                        DB::table('inv_required')
+                                ->where('ir_site', '=', $req->hidden_assetsite)
+                                ->where('ir_spare_part','=', $sparepartCode)
+                                ->update([
+                                    'inv_qty_required' => DB::raw('inv_qty_required - ' .$qtyPotong ),
+                                    'ir_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
+                                ]);
                     }
 
-                     //cek jika qty yang diissue dibawag 0 atau minus maka dilakukan receipt unplanned
+                        //cek jika qty yang diissue dibawag 0 atau minus maka dilakukan receipt unplanned
                     if($req->qtypotong[$index] < 0){
 
                         //menampung spare part yang perlu dilakukan receipt unplanned
@@ -3477,60 +3501,85 @@ class wocontroller extends Controller
                         ];
 
                         $dataArrayReceipt[] = $data;
+
+                        DB::table('inv_required')
+                                ->where('ir_site', '=', $req->hidden_assetsite)
+                                ->where('ir_spare_part','=', $sparepartCode)
+                                ->update([
+                                    'inv_qty_required' => DB::raw('inv_qty_required + ' .$qtyPotong ),
+                                    'ir_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
+                                ]);
                     }
 
 
-                    $sparepartCode = $spcode;
-                    $siteFrom = $req->hidden_sitefrom[$index];
-                    $locFrom = $req->hidden_locfrom[$index];
-                    $lotFrom = $req->hidden_lotfrom[$index];
-                    $qtyRequired = $req->qtyrequired[$index];
-                    $qtyIssued = $req->qtyissued[$index];
-                    $qtyPotong = $req->qtypotong[$index];
+                    if($req->qtypotong[$index] != 0){
+                        $sparepartCode = $spcode;
+                        $siteFrom = $req->hidden_sitefrom[$index];
+                        $locFrom = $req->hidden_locfrom[$index];
+                        $lotFrom = $req->hidden_lotfrom[$index];
+                        $qtyRequired = $req->qtyrequired[$index];
+                        $qtyIssued = $req->qtyissued[$index];
+                        $qtyPotong = $req->qtypotong[$index];
 
-                    // dd($qtyIssued);
-                    //update data untuk pertama kali melakukan report
-                    DB::table('wo_dets_sp')
-                        ->where('wd_sp_wonumber','=', $req->c_wonbr)
-                        ->where('wd_sp_spcode', '=', $sparepartCode)
-                        ->where('wd_sp_site_issued','=', null)
-                        ->where('wd_sp_loc_issued','=', null)
-                        ->where('wd_sp_lot_issued','=', null)
-                        ->update([
-                            'wd_sp_issued' => DB::raw('wd_sp_issued + ' . $qtyPotong),
-                            'wd_sp_site_issued' => $siteFrom,
-                            'wd_sp_loc_issued' => $locFrom,
-                            'wd_sp_lot_issued' => $lotFrom,
-                            'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
-                        ]);
+                        // dd($qtyIssued);
+                        //update data untuk pertama kali melakukan report dengan kondisi site,loc,lot issued masih null dan kolom wd_already_issued = false
+                        DB::table('wo_dets_sp')
+                            ->where('wd_sp_wonumber','=', $req->c_wonbr)
+                            ->where('wd_sp_spcode', '=', $sparepartCode)
+                            ->where('wd_sp_issued','=', 0)
+                            ->where('wd_sp_site_issued','=', null)
+                            ->where('wd_sp_loc_issued','=', null)
+                            ->where('wd_sp_lot_issued','=', null)
+                            ->where('wd_already_issued','=', false)
+                            ->update([
+                                'wd_already_issued' => true,
+                                'wd_sp_site_issued' => $siteFrom,
+                                'wd_sp_loc_issued' => $locFrom,
+                                'wd_sp_lot_issued' => $lotFrom,
+                                'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
+                            ]);
 
+                        //jika sudah ada isi untuk field wd_sp_site_issued, wd_sp_loc_issued, wd_sp_lot_issued
+                        DB::table('wo_dets_sp')
+                            ->updateOrInsert([
+                                'wd_sp_wonumber' => $req->c_wonbr,
+                                'wd_sp_spcode' => $sparepartCode,
+                                'wd_sp_site_issued' => $siteFrom,
+                                'wd_sp_loc_issued' => $locFrom,
+                                'wd_sp_lot_issued' => $lotFrom,
+                                'wd_already_issued' => true,
+                            ],[
+                                'wd_sp_spcode' => $sparepartCode,
+                                'wd_sp_issued' => DB::raw('wd_sp_issued + ' . $qtyPotong),
+                                'wd_already_issued' => true,
+                                'wd_sp_site_issued' => $siteFrom,
+                                'wd_sp_loc_issued' => $locFrom,
+                                'wd_sp_lot_issued' => $lotFrom,
+                                'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+                    }
+                    
 
-                    //jika sudah ada isi untuk field wd_sp_site_issued, wd_sp_loc_issued, wd_sp_lot_issued
-                    DB::table('wo_dets_sp')
-                        ->updateOrInsert([
-                            'wd_sp_wonumber' => $req->c_wonbr,
-                            'wd_sp_spcode' => $sparepartCode,
-                            'wd_sp_site_issued' => $siteFrom,
-                            'wd_sp_loc_issued' => $locFrom,
-                            'wd_sp_lot_issued' => $lotFrom
-                        ],[
-                            'wd_sp_spcode' => $sparepartCode,
-                            'wd_sp_required' => $qtyPotong,
-                            'wd_sp_issued' => DB::raw('wd_sp_issued + ' . $qtyPotong),
-                            'wd_sp_site_issued' => $siteFrom,
-                            'wd_sp_loc_issued' => $locFrom,
-                            'wd_sp_lot_issued' => $lotFrom,
-                            'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
-                        ]);
+                    $checkDatas = DB::table('wo_dets_sp')
+                                ->where('wd_sp_wonumber','=', $req->c_wonbr)
+                                ->where('wd_sp_spcode', '=', $spcode)
+                                ->where('wd_sp_required', '>', 0)
+                                ->first();
+                    //proses memotong/mengurangi qty required di table inv_required ketika sudah di issues unplanned
 
-                }          
+                        //cek kondisi jika qty yang required sudah full terissued atau terpotong maka yang dipotong di inv_required sejumlah yang di required wo_dets_sp
+                        // if($checkDatas){
+                        //     if($checkDatas->)
+                        // }
+
+                }
+                
                 
                 // dd($dataArrayIssued,$dataArrayReceipt);
 
                 if (!empty($dataArrayIssued)) {
-                    // dd('jika issue tidak kosong');
 
-                    /* start Qxtend */
+                    /* start Qxtend Issued Unplanned */
 
                     $qxwsa = Qxwsa::first();
 
@@ -3627,7 +3676,6 @@ class wocontroller extends Controller
                                 <lotserial>' . $record['lot_from'] . '</lotserial>
                                 <ordernbr>' . $req->c_wonbr . '</ordernbr>
                             </inventoryIssue>';
-
                     }
 
                     $qdocfooter =   '</dsInventoryIssue>
@@ -3718,6 +3766,8 @@ class wocontroller extends Controller
                             $outputerror .= "&bull;  " . $context . " - " . $desc . "<br>";
                         }
 
+                        DB::rollBack();
+
                         alert()->html('<u><b>Error Response Qxtend</b></u>', "<b>Detail Response Qxtend :</b><br>" . $outputerror . "", 'error')->persistent('Dismiss');
 
                         return redirect()->back();
@@ -3725,8 +3775,8 @@ class wocontroller extends Controller
                 }
 
                 if (!empty($dataArrayReceipt)) {
-                    // dd('jika receipt tidak kosong');
-                    /* start Qxtend */
+                
+                    /* start Qxtend Receipt Unplanned */
 
                     $qxwsa = Qxwsa::first();
 
@@ -3914,6 +3964,7 @@ class wocontroller extends Controller
                             $outputerror .= "&bull;  " . $context . " - " . $desc . "<br>";
                         }
 
+                        DB::rollBack();
                         alert()->html('<u><b>Error Response Qxtend</b></u>', "<b>Detail Response Qxtend :</b><br>" . $outputerror . "", 'error')->persistent('Dismiss');
 
                         return redirect()->back();
@@ -3922,37 +3973,133 @@ class wocontroller extends Controller
 
             }
 
+            //bagian instruction step
 
-            toast('Reporting Successfuly', 'success')->persistent('Dismiss');
+            //cek jika ada step instruksi
+            if($req->has('stepnumber')){
+
+                foreach($req->input('stepnumber') as $index => $stepnumber){
+                    $engineersString = '';
+                    if($req->has('ins_list_eng')){
+                        if(isset($req->ins_list_eng[$index])){
+                            $selectedOptions = $req->ins_list_eng[$index]['option'];
+                            $engineersString = implode(';', $selectedOptions);
+                        }else{
+                            $engineersString = null;
+                        }
+                    }else{
+                        $engineersString = null;
+                    }
+
+
+                    DB::table('wo_dets_ins')
+                    ->updateOrInsert([
+                        'wd_ins_wonumber' => $req->c_wonbr,
+                        'wd_ins_step' => $stepnumber,
+                    ],[
+
+                        'wd_ins_wonumber' => $req->c_wonbr,
+                        'wd_ins_step' => $req->stepnumber[$index],
+                        'wd_ins_stepdesc' => $req->stepdesc[$index],
+                        'wd_ins_duration' => $req->has('ins_duration') ? $req->ins_duration[$index] : null,
+                        'wd_ins_durationum' => $req->has('ins_duration') ? $req->durationum[$index] : null,
+                        'wd_ins_engineer' => $engineersString,
+
+                    ]);
+                }
+
+                
+            }
+
+            //cek jika ada qc parameter
+            if($req->has('qcparam')){
+
+                $checkQcParam = DB::table('wo_dets_qc')
+                                    ->where('wd_qc_wonumber','=', $req->c_wonbr)
+                                    ->exists();
+
+                if($checkQcParam){
+                    //hapus semua kemudian insert baru berdasarkan wo number nya
+                    DB::table('wo_dets_qc')
+                        ->where('wd_qc_wonumber', '=', $req->c_wonbr)
+                        ->delete();
+                }
+
+
+                foreach($req->qcparam as $index => $qcparam){
+
+
+                    //insert baru data qc param untuk wo number tersebut ke dalam table wo_dets_qc
+
+                    DB::table('wo_dets_qc')
+                        ->insert([
+                            'wd_qc_wonumber' => $req->c_wonbr,
+                            'wd_qc_qcparam' => $qcparam,
+                            'wd_qc_result1' => $req->resultqc1[$index],
+                        ]);
+                    
+                }
+            }
+
+            $fclistString = null;
+            if($req->has('failurecode')){
+                $fclist = $req->failurecode;
+                $fclistString = implode(';', $fclist);
+            }
+
+            
+            //bagian footer general
+            $arrayy = [
+                'wo_failure_code' => $fclistString,
+                'wo_job_finishdate' => $req->c_finishdate,
+                'wo_job_finishtime' => $req->c_finishtime,
+                'wo_downtime' => $req->downtime,
+                'wo_downtime_um' => $req->downtime_um,
+                'wo_report_note' => $req->c_note,
+                'wo_actual_finish' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+            ];
+
+            DB::table('wo_mstr')->where('wo_number','=', $req->c_wonbr)->update($arrayy);
+
+
+            //memisahkan antara button reporting dan button close wo
+
+            //jika klik button Report WO
+            if($req->btnconf == "reportwo"){
+                //status wo tidak berubah
+
+                DB::commit();
+                toast('Reporting Successfuly', 'success')->persistent('Dismiss');
+                return redirect()->back();
+            
+            }
+
+            //jika klik button Close WO
+            if($req->btnconf == "closewo"){
+                //status wo berubah
+
+                DB::table('wo_mstr')
+                    ->where('wo_number', '=', $req->c_wonbr)
+                    ->update([
+                        'wo_status' => 'closed',
+                        'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    ]);
+
+                DB::commit();
+                toast('Reporting Successfuly, WO Closed', 'success')->persistent('Dismiss');
+                return redirect()->back();
+            }
+
+        } catch (Exception $err) {
+            
+            DB::rollBack();
+
+            dd($err);
+            toast('Submit Error, please contact Administrator', 'error');
             return redirect()->back();
-            
-
-            // bagian instruction
-
-
-            // bagian qc spec
-
-            
-            //bagian footer general
-
-
-
         }
 
-        //jika klik button Close WO
-        if($req->btnconf == "closewo"){
-            // bagian spare part
-
-
-            // bagian instruction
-
-
-            // bagian qc spec
-
-            
-            //bagian footer general
-        }
-
+        //udah ga dipakai kode dibawah ini sampai kurung tutup function
         $domain = ModelsQxwsa::first();
 
         $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
