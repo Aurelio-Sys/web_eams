@@ -734,20 +734,21 @@
         });
 
         // console.log(wonbr);
+        var wonbr = document.getElementById('c_wonbr').value;
 
-        // $.ajax({
-        //   url: "/imageview",
-        //   data: {
-        //     wonumber: wonbr,
-        //   },
-        //   success: function(data) {
+        $.ajax({
+          url: "/imageview",
+          data: {
+            wonumber: wonbr,
+          },
+          success: function(data) {
 
-        //     /* coding asli ada di backup-20211026 sblm PM attach file, coding aslinya nampilin gambar*/
-        //     //alert('test');
+            /* coding asli ada di backup-20211026 sblm PM attach file, coding aslinya nampilin gambar*/
+            //alert('test');
 
-        //     $('#munculgambar').html('').append(data);
-        //   }
-        // })
+            $('#munculgambar').html('').append(data);
+          }
+        })
         $(document).on('change', 'select.spreq', function() {
             var row = $(this).closest("tr"); 
             const spreqOption = $(this).val();

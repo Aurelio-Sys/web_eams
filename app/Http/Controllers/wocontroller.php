@@ -4061,6 +4061,35 @@ class wocontroller extends Controller
 
             DB::table('wo_mstr')->where('wo_number','=', $req->c_wonbr)->update($arrayy);
 
+            if ($req->has('filenamewo')) {
+                foreach ($req->file('filenamewo') as $upload) {
+                    $filename = $req->c_wonbr . '-' . $upload->getClientOriginalName();
+
+                    // Cek apakah file sudah ada di database
+                    $existingFile = DB::table('wo_report_upload')
+                        ->where('woreport_filename', $filename)
+                        ->where('woreport_wonbr', '=', $req->c_wonbr)
+                        ->count();
+                    if ($existingFile > 0) {
+                        DB::rollBack();
+                        toast('File names cannot be same.', 'error');
+                        return back();
+                    }
+
+                    // Simpan File Upload pada Public
+                    $savepath = public_path('uploadwofinish/');
+                    $upload->move($savepath, $filename);
+
+                    // Simpan ke DB Upload
+                    DB::table('wo_report_upload')
+                        ->insert([
+                            'woreport_wonbr' => $req->c_wonbr,
+                            'woreport_filename' => $filename, //$upload->getClientOriginalName(), //nama file asli
+                            'woreport_wonbr_filepath' => $savepath . $filename,
+                            ]);
+                }
+            }
+
 
             //memisahkan antara button reporting dan button close wo
 
@@ -4087,7 +4116,7 @@ class wocontroller extends Controller
 
                 DB::commit();
                 toast('Reporting Successfuly, WO Closed', 'success')->persistent('Dismiss');
-                return redirect()->back();
+                return redirect()->route('woreport');
             }
 
         } catch (Exception $err) {
@@ -5727,16 +5756,16 @@ class wocontroller extends Controller
     public function downloadwofinish($id)
     {
 
-        $datafile = DB::table('acceptance_image')
-            ->where('accept_img_id', '=', $id)
+        $datafile = DB::table('wo_report_upload')
+            ->where('id', '=', $id)
             ->first();
 
         if ($datafile) {
 
-            $lastindex = strrpos($datafile->file_url, "/");
-            $filename = substr($datafile->file_wonumber . '-' . $datafile->file_name, $lastindex + 1);
+            $lastindex = strrpos($datafile->woreport_wonbr_filepath, "/");
+            $filename = substr($datafile->	woreport_wonbr . '-' . $datafile->woreport_filename, $lastindex + 1);
 
-            return Response::download($datafile->file_url, $datafile->file_name);
+            return Response::download($datafile->woreport_wonbr_filepath, $datafile->woreport_filename);
         } else {
             toast('There is no file', 'error');
             return back();

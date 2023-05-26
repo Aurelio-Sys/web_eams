@@ -2593,8 +2593,8 @@ class ServiceController extends Controller
         //dd($req->all());
         $wonumber = $req->wonumber;
 
-        $gambar = DB::table('acceptance_image')
-            ->where('file_wonumber', '=', $wonumber)
+        $gambar = DB::table('wo_report_upload')
+            ->where('woreport_wonbr', '=', $wonumber)
             ->get();
 
         $output = "";
@@ -2602,8 +2602,8 @@ class ServiceController extends Controller
             $output .= '<tr>
                     <td><a href="#" class="btn deleterow btn-danger"><i class="icon-table fa fa-trash fa-lg"></i></a>
                     &nbsp
-                    <input type="hidden" value="' . $gambar->accept_img_id . '" class="rowval"/>
-                    <td><a href="/downloadwofinish/' . $gambar->accept_img_id . '" target="_blank">' . $gambar->file_name . '</a></td>
+                    <input type="hidden" value="' . $gambar->id . '" class="rowval"/>
+                    <td><a href="/downloadwofinish/' . $gambar->id . '" target="_blank">' . $gambar->woreport_filename . '</a></td>
                 </tr>';
         }
 
