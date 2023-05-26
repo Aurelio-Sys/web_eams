@@ -340,7 +340,7 @@
                                     <input type="hidden" class="qcparam" name="qcparam[]" value="{{$dataqc->wd_qc_qcparam}}" />
                                 </td>
                                 <td style="vertical-align: middle; text-align: left;">
-                                    <input type="text" class="form-control resultqc1" name="resultqc1[]" value="" maxlength="250" /> 
+                                    <input type="text" class="form-control resultqc1" name="resultqc1[]" value="{{$dataqc->wd_qc_result1 != null ? $dataqc->wd_qc_result1 : ''}}" maxlength="250" /> 
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
                                 
@@ -372,13 +372,13 @@
                 <div class="form-group row col-md-12">
                     <label for="c_finishdate" class="col-md-4 col-form-label text-md-left">Finish Date <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-3">
-                        <input id="c_finishdate" type="date" class="form-control c_finishdate" name="c_finishdate" value="" required>
+                        <input id="c_finishdate" type="date" class="form-control c_finishdate" name="c_finishdate" value="{{($header->wo_job_finishdate != null) ? $header->wo_job_finishdate : \Carbon\Carbon::now()->format('Y-m-d')}}" required>
                     </div>
                 </div>
                 <div class="form-group row col-md-12">
                     <label for="c_finishtime" class="col-md-4 col-form-label text-md-left">Finish Time <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-3">
-                        <input type="time" class="form-control" name="c_finishtime" value="" required/>
+                        <input type="time" class="form-control" name="c_finishtime" value="{{($header->wo_job_finishtime != null) ? $header->wo_job_finishtime : \Carbon\Carbon::now()->format('H:i')}}" required/>
                     </div>
                 </div>
 
@@ -386,8 +386,16 @@
                     <label for="failurecode" class="col-md-4 col-form-label my-auto">Failure Code</label>
                     <div class="col-md-5 col-sm-12">
                         
-                        <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple">
+                        <select class="form-control selectpicker" id="failurecode" name="failurecode[]" multiple="multiple">
                             <option></option>
+                            @foreach ( $failure as $fc )
+                                @php
+                                    $fncode = $fc->fn_code;
+                                    $fndesc = $fc->fn_desc;
+                                    $thisselected = in_array($fncode, explode(';', $header->wo_failure_code)) ? 'selected' : '';
+                                @endphp
+                                <option value="{{$fc->fn_code}}" {{$thisselected}}>{{$fc->fn_code}} -- {{$fc->fn_desc}}</option>
+                            @endforeach
                         </select>
 
                     </div>
@@ -396,12 +404,12 @@
                 <div class="form-group row col-md-12">
                     <label for="downtime" class="col-md-4 col-form-label text-md-left">Downtime <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-3">
-                        <input type="number" id="downtime" min="0" class="form-control" name="downtime" required />
+                        <input type="number" id="downtime" min="0" class="form-control" name="downtime" value="{{$header->wo_downtime != null ? $header->wo_downtime : ''}}" required />
                     </div>
                     <div class="col-md-3">
                     <select class="form-control" id="downtime_um" name="downtime_um">
-                        <option value="Minute">Minute</option>
-                        <option value="Hour">Hour</option>
+                        <option value="Minute" {{$header->wo_downtime_um == 'Minute' ? 'selected' : ''}}>Minute</option>
+                        <option value="Hour" {{$header->wo_downtime_um == 'Hour' ? 'selected' : ''}}>Hour</option>
                     </select>
                     </div>
                 </div>
@@ -409,7 +417,7 @@
                 <div class="form-group row col-md-12">
                     <label for="c_note" class="col-md-4 col-form-label text-md-left">Reporting Note <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-6">
-                        <textarea id="c_note" class="form-control c_note" name="c_note" maxlength="250"></textarea>
+                        <textarea id="c_note" class="form-control c_note" name="c_note" maxlength="250">{{($header->wo_report_note != null) ? $header->wo_report_note  : ''}}</textarea>
                     </div>
                 </div>
 
