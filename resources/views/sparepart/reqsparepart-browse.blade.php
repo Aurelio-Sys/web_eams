@@ -13,7 +13,7 @@
 </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-<form action="/worelease" method="GET">
+<form action="/reqsp" method="GET">
     <div class="container-fluid mb-2">
         <div class="row">
             <div class="col-md-12">
@@ -27,29 +27,36 @@
                 <div class="col-12 form-group row">
 
                     <!--FORM Search Disini-->
-                    <label for="s_nomorwo" class="col-md-2 col-form-label text-md-right">{{ __('WO Number') }}</label>
-                    <div class="col-md-4 col-sm-12 mb-2 input-group">
-                        <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="" autofocus autocomplete="off">
+                    <label for="s_nomorrs" class="col-md-2 col-form-label text-md-right">{{ __('RS Number') }}</label>
+                    <div class="col-md-3 col-sm-12 mb-2 input-group">
+                        <input id="s_nomorrs" type="text" class="form-control" name="s_nomorrs" value="" autofocus autocomplete="off">
                     </div>
-                    <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
-                    <div class="col-md-4 col-sm-12 mb-2 input-group">
-                        <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
-                            <option value="">--Select Asset--</option>
-                            <?php
-                            // @foreach($asset1 as $assetsearch)
-                            // <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
-                            // @endforeach
-                            ?>
+                    <label for="s_reqby" class="col-md-2 col-form-label text-md-right">{{ __('Request By') }}</label>
+                    <div class="col-md-3 col-sm-12 mb-2 input-group">
+                        <select id="s_reqby" class="form-control" style="color:black" name="s_reqby" autofocus autocomplete="off">
+                            <option value="">--Select Request By--</option>
+                            @foreach($requestby as $reqby)
+                            <option value="{{$reqby->username}}">{{$reqby->username}}</option>
+                            @endforeach
                         </select>
                     </div>
-
-                    <label for="s_priority" class="col-md-2 col-form-label text-md-right">{{ __('Priority') }}</label>
-                    <div class="col-md-4 col-sm-12 mb-2 input-group">
-                        <select id="s_priority" type="text" class="form-control" name="s_priority">
-                            <option value="">--Select Priority--</option>
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
+                    <div class="col-md-1"></div>
+                    <label for="s_datefrom" class="col-md-2 col-form-label text-md-right">{{ __('Needed Date From') }}</label>
+                    <div class="col-md-3 col-sm-12 mb-2 input-group">
+                        <input id="s_datefrom" type="date" class="form-control" name="s_datefrom" value="" autofocus autocomplete="off">
+                    </div>
+                    <label for="s_daeto" class="col-md-2 col-form-label text-md-right">{{ __('Needed Date To') }}</label>
+                    <div class="col-md-3 col-sm-12 mb-2 input-group">
+                        <input id="s_dateto" type="date" class="form-control" name="s_dateto" value="" autofocus autocomplete="off">
+                    </div>
+                    <div class="col-md-1"></div>
+                    <label for="s_status" class="col-md-2 col-form-label text-md-right">{{ __('Status') }}</label>
+                    <div class="col-md-3 col-sm-12 mb-2 input-group">
+                        <select id="s_status" type="text" class="form-control" name="s_status">
+                            <option value="">--Select Status--</option>
+                            <option value="open">open</option>
+                            <option value="closed">closed</option>
+                            <option value="canceled">canceled</option>
                         </select>
                     </div>
                     <label for="" class="col-md-2 col-form-label text-md-right">{{ __('') }}</label>
@@ -147,7 +154,7 @@
                 </button>
             </div>
             <form class="form-horizontal" method="post" action="/reqspupdate">
-            <!-- <form class="form-horizontal" method="post" action="#"> -->
+                <!-- <form class="form-horizontal" method="post" action="#"> -->
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row" style="margin: 0px 0px 0.8em 0px;">
@@ -197,44 +204,44 @@
 
 <!-- Request Sparepart Cancel -->
 <div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
-  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel">Request Sparepart Cancel</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <input type="hidden" id="statuscancel">
-      <form class="form-horizontal" id="newcancel" method="post" action="reqspcancel" enctype="multipart/form-data">
-        {{csrf_field()}}
+    <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center" id="exampleModalLabel">Request Sparepart Cancel</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <input type="hidden" id="statuscancel">
+            <form class="form-horizontal" id="newcancel" method="post" action="reqspcancel" enctype="multipart/form-data">
+                {{csrf_field()}}
 
-        <div style="display: none;">
-          <label for="c_rsnumber" class="col-md-4 col-form-label text-md-right">{{ __('RS Number') }}</label>
-          <div class="col-md-7">
-            <input id="c_rsnumber" type="text" class="form-control" name="c_rsnumber" value="" readonly>
-          </div>
-        </div>
+                <div style="display: none;">
+                    <label for="c_rsnumber" class="col-md-4 col-form-label text-md-right">{{ __('RS Number') }}</label>
+                    <div class="col-md-7">
+                        <input id="c_rsnumber" type="text" class="form-control" name="c_rsnumber" value="" readonly>
+                    </div>
+                </div>
 
-        <div class="modal-body">
-          <span class="col-md-12"><b>Are you sure want to cancel <span id="rsnbr"><b></b></span>
-              ?</b></span>
-          <!-- <div class="form-group row" id="divnotecancel"> -->
-          <label class="col-md-12 col-form-label">If you are sure, please fill the cancelation reason <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-          <textarea class="form-control" id="c_reason" name="c_reason" autofocus maxlength="150" required></textarea>
-          <!-- </div> -->
-        </div>
+                <div class="modal-body">
+                    <span class="col-md-12"><b>Are you sure want to cancel <span id="rsnbr"><b></b></span>
+                            ?</b></span>
+                    <!-- <div class="form-group row" id="divnotecancel"> -->
+                    <label class="col-md-12 col-form-label">If you are sure, please fill the cancelation reason <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                    <textarea class="form-control" id="c_reason" name="c_reason" autofocus maxlength="150" required></textarea>
+                    <!-- </div> -->
+                </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-info bt-action" id="c_btnclose" data-dismiss="modal">No</button>
-          <button type="submit" class="btn btn-success bt-action" id="c_btnconf">Yes</button>
-          <button type="button" class="btn bt-action" id="c_btnloading" style="display: none;">
-            <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp;Loading
-          </button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info bt-action" id="c_btnclose" data-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-success bt-action" id="c_btnconf">Yes</button>
+                    <button type="button" class="btn bt-action" id="c_btnloading" style="display: none;">
+                        <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp;Loading
+                    </button>
+                </div>
+            </form>
         </div>
-      </form>
     </div>
-  </div>
 </div>
 
 @endsection
@@ -358,9 +365,11 @@
     });
 
     function resetSearch() {
-        $('#s_nomorwo').val('');
-        $('#s_asset').val('');
-        $('#s_priority').val('');
+        $('#s_nomorrs').val('');
+        $('#s_reqby').val('');
+        $('#s_status').val('');
+        $('#s_datefrom').val('');
+        $('#s_dateto').val('');
     }
 
     $(document).ready(function() {
@@ -369,13 +378,18 @@
         let paramString = cur_url.split('?')[1];
         let queryString = new URLSearchParams(paramString);
 
-        let asset = queryString.get('s_asset');
-        let priority = queryString.get('s_priority');
+        let reqby = queryString.get('s_reqby');
+        let status = queryString.get('s_status');
+        let datefrom = queryString.get('s_datefrom');
+        let dateto = queryString.get('s_dateto');
+        // let priority = queryString.get('s_status');
 
-        $('#s_asset').val(asset).trigger('change');
-        $('#s_priority').val(priority).trigger('change');
+        $('#s_reqby').val(reqby).trigger('change');
+        $('#s_status').val(status).trigger('change');
+        $('#s_datefrom').val(datefrom).trigger('change');
+        $('#s_dateto').val(dateto).trigger('change');
 
-        $('#s_asset').select2({
+        $('#s_reqby').select2({
             width: '100%',
             closeOnSelect: true,
             theme: 'bootstrap4',
