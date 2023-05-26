@@ -48,10 +48,7 @@
         <th class="sorting" width="10%">Asset Code</th>
         <th class="sorting" width="20%">Asset Description</th>
         <th class="sorting" width="20%">Location</th>
-        <th class="sorting" width="5%">Mea</th>
         <th class="sorting" width="5%">UM</th>
-        <th class="sorting" width="10%">Last Maint</th>
-        <th class="sorting" width="10%">Next Maint</th>
         <th class="sorting" width="10%">Last Measurement</th>
         <th width="10%">Action</th>
       </tr>

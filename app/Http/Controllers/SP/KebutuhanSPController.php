@@ -37,9 +37,10 @@ class KebutuhanSPController extends Controller
 
         $datawo = DB::table('wo_mstr')
             ->join('asset_mstr', 'asset_code', '=', 'wo_asset_code')
-            ->leftJoin('spg_list','spg_code','=','wo_sp_code')
-            ->leftjoin('sp_mstr', 'spm_code', '=', 'spg_spcode')
-            ->where('wo_status', '<>', 'closed');
+            ->Join('spg_list','spg_code','=','wo_sp_code')
+            ->join('sp_mstr', 'spm_code', '=', 'spg_spcode')
+            ->where('wo_status', '<>', 'closed')
+            ->whereNotNull('wo_sp_code');
 
         /* if ($request->s_nomorwo) {
             $datawo->where('wo_nbr', '=', $request->s_nomorwo);

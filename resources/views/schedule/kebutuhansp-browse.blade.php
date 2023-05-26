@@ -71,15 +71,16 @@
             <table class="table table-bordered mt-0" id="dataTable" cellspacing="0">
                 <thead>
                     <tr style="text-align: center;">
-                        <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="8%">WO Number<span id="name_icon"></span></th>
-                        <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="8%">Status<span id="name_icon"></span></th>
-                        <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="8%">Schedule Date<span id="username_icon"></span></th>
-                        <th class="sorting" data-sorting_type="asc" data-column_name="wo_schedule" width="8%">Due Date<span id="name_icon"></span></th>
-                        <th class="sorting" data-sorting_type="asc" data-column_name="wo_schedule" width="8%">Priority<span id="name_icon"></span></th>
-                        <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="20%">Asset<span id="username_icon"></span></th>
-                        <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="20%">Sparepart<span id="username_icon"></span></th>
-                        <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="8%">Qty Req<span id="username_icon"></span></th>
-                        <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="8%">Qty Conf Whs<span id="username_icon"></span></th>
+                        <th width="8%">WO Number</th>
+                        <th width="8%">Status</th>
+                        <th width="8%">Schedule Date</th>
+                        <th width="8%">Due Date</th>
+                        <th width="8%">Priority</th>
+                        <th width="20%">Asset</th>
+                        <th width="20%">Sparepart</th>
+                        <th width="8%">Qty Req</th>
+                        <th width="8%">Qty Conf Whs</th>
+                        <th width="8%">Qty Needed</th>
                     </tr>
                 </thead>
                 <tbody>

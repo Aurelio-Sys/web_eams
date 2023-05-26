@@ -63,6 +63,7 @@
                 <th width="25%">Mtc Desc</th>
                 <th width="7%">Mea</th>
                 <th width="7%">Value</th>
+                <th width="7%">UM</th>
                 <th width="7%">Action</th>  
             </tr>
         </thead>
@@ -203,11 +204,12 @@
                 <div class="form-group row">
                     <label for="te_pmcode" class="col-md-3 col-form-label text-md-right">Maintenance Code</label>
                     <div class="col-md-8">
-                        <select class="form-control " id="te_pmcode" name="te_pmcode">
-                       @foreach($datapm as $dp)
-                       <option value="{{$dp->pmc_code}}">{{$dp->pmc_code}} -- {{$dp->pmc_desc}}</option>
-                       @endforeach
-                       </select>
+                       <select id="te_pmcode" class="form-control" name="te_pmcode" >
+                        <option value="">--Select Data--</option>
+                        @foreach($datapm as $r)
+                            <option value="{{$r->pmc_code}}">{{$r->pmc_code}} -- {{$r->pmc_code}}</option>
+                        @endforeach
+                    </select>
                     </div>
                  </div>
                  <div class="form-group row">
@@ -330,7 +332,7 @@
            var start = $(this).data('start');
            var eng = $(this).data('eng');
            var pmaid = $(this).data('pmaid');
-       
+
            document.getElementById('te_asset').value = asset;
            document.getElementById('te_pmcode').value = pmcode;
            document.getElementById('te_time').value = time;
@@ -344,6 +346,11 @@
            document.getElementById('te_pmaid').value = pmaid;
            
            editpickeng();
+
+           $("#te_pmcode").select2({
+            width : '100%',
+            theme : 'bootstrap4',
+         });
        });
 
        $(document).on('click', '.deletedata', function(e){
@@ -508,10 +515,6 @@
             theme : 'bootstrap4',
          });
 
-         $("#te_pmcode").select2({
-          width : '100%',
-          theme : 'bootstrap4',
-       });
 
           $(document).on('change', '#t_mea', function() {
             var mea = $('#t_mea').val();

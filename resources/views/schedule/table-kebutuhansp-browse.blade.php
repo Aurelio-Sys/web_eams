@@ -7,6 +7,7 @@
     <td>{{ $do->wo_priority }}</td>
     <td>{{ $do->asset_code }} -- {{ $do->asset_desc }}</td>
     <td>{{ $do->spm_code }} -- {{ $do->spm_desc }}</td>
+    <td>{{ $do->spm_code }} -- {{ $do->spm_desc }}</td>
     <td style="text-align: right"></td>
     <td style="text-align: right"></td>
 </tr>

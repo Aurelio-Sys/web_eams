@@ -31,6 +31,7 @@ use App\Http\Controllers\WO\PMdetsController;
 use App\Http\Controllers\WO\WoQcController;
 use App\Http\Controllers\Usage\UsageBrowseController;
 use App\Http\Controllers\Usage\PmConfirmController;
+use App\Http\Controllers\Usage\PmmssgController;
 use App\Http\Controllers\Other\WhyHistController;
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
@@ -747,6 +748,10 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/searchlog',[PmConfirmController::class, 'searchlog']); 
 	Route::get('/getdetpmco',[PmConfirmController::class, 'getdetpmco']); 
 	Route::post('/pmtoconf',[PmConfirmController::class, 'update']); 
+
+	// PM Notif Message
+	Route::get('/pmmssg',[PmmssgController::class, 'index'])->name('pmmssg'); 
+	Route::post('/chgdatewo',[PmmssgController::class, 'chgdatewo']); 
 });
 
 Auth::routes();

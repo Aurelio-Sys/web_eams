@@ -366,7 +366,7 @@ to get the desired effect
                 <li class="nav-item has-treeview">
                   <a href="{{route('viewWOGen')}}" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>WO PM Generator</p>
+                      <p>PM Generator</p>
                   </a>
                 </li>
                 @endif
@@ -374,13 +374,21 @@ to get the desired effect
                 <li class="nav-item has-treeview">
                   <a href="{{route('pmconf')}}" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>WO PM Confirm</p>
+                      <p>PM Confirm</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'US06'))
                 <li class="nav-item has-treeview">
-                  <a href="{{url('/kebutuhansp')}}" class="nav-link ">
+                  <a href="{{route('pmmssg')}}" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>PM Notif Message</p>
+                  </a>
+                </li>
+                @endif
+                @if(str_contains( Session::get('menu_access'), 'US06'))
+                <li class="nav-item has-treeview">
+                  <a href="{{url('/needsp')}}" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Sparepart Planning</p>
                   </a>
