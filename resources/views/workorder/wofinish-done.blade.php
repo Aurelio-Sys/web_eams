@@ -94,6 +94,10 @@
         font-size: 12px;
         cursor: pointer;
     }
+
+    input::placeholder {
+        font-weight: bold;
+    }
 </style>
 <div class="row">
     <form class="form-horizontal" id="newedit" method="post" action="/reportingwo" enctype="multipart/form-data">
@@ -143,7 +147,7 @@
                 </div>
                 <div class="col-md-3 h-50">
                     <input id="c_duedate" type="text" class="form-control pl-0 col-md-12 c_duedate" style="background:transparent;border:none;text-align:left" name="c_duedate" value="{{$header->wo_due_date}}" readonly/>
-                    <input type="hidden" id="hidden_assetsite" value="{{$header->wo_site}}" />
+                    <input type="hidden" id="hidden_assetsite" name="hidden_assetsite" value="{{$header->wo_site}}" />
                 </div>
             </div>
 
@@ -155,10 +159,10 @@
                         <thead>
                             <tr>
                                 <th style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</th>
-                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Location & Lot</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Issue</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Required</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Issued</th>
-                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Issue</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Location & Lot</th>
                                 <th style="text-align: center; width: 5% !important; font-weight: bold;">Action</th>
                             </tr>
                         </thead>
@@ -169,11 +173,14 @@
                                     {{$datas->spm_code}} -- {{$datas->spm_desc}}
                                     <input type="hidden" class="hidden_sp" name="hidden_sp[]" value="{{$datas->spm_code}}" />
                                 </td>
-                                <td style="vertical-align: middle; text-align: left;">
-                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" required autocomplete="off">
-                                    <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
-                                    <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
-                                    <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" /> 
+                                @php
+                                    $difference = number_format($datas->wd_sp_required - $datas->wd_sp_issued, 2, '.', '');
+                                    if ($difference < 0) {
+                                        $difference = 0;
+                                    }
+                                @endphp
+                                <td style="vertical-align:middle;text-align:center;">
+                                    <input type="number" class="form-control qtypotong" step="0.01" min="{{ $datas->wd_sp_issued == 0 ? 0 : -$datas->wd_sp_issued }}" name="qtypotong[]" value="{{$difference}}" required />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     {{$datas->wd_sp_required}}
@@ -183,8 +190,11 @@
                                     {{$datas->wd_sp_issued}}
                                     <input type="hidden" class="qtyissued" name="qtyissued[]" value="{{$datas->wd_sp_issued}}" />
                                 </td>
-                                <td style="vertical-align:middle;text-align:center;">
-                                    <input type="number" class="form-control qtypotong" step="0.01" min="{{ $datas->wd_sp_issued == 0 ? 0 : -$datas->wd_sp_issued }}" name="qtypotong[]" value="{{$datas->wd_sp_required}}" required />
+                                <td style="vertical-align: middle; text-align: left;">
+                                    <input type="text" id="loclotfrom" class="form-control loclotfrom" name="loclotfrom[]" data-toggle="tooltip" autocomplete="off" readonly placeholder="Click Here">
+                                    <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
+                                    <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
+                                    <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" /> 
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
                                 
@@ -192,7 +202,7 @@
                             </tr>
                             
                             @empty                            
-                            
+                            <!--
                             <tr>
                                 <td>
                                     <select style="display: inline-block !important;" class="form-control selectpicker spreq" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="300px">
@@ -203,26 +213,26 @@
                                     </select>
                                     <input type="hidden" class="hidden_sp" name="hidden_sp[]" />
                                 </td>
+                                <td style="vertical-align:middle;text-align:center;">
+                                    <input type="number" class="form-control qtypotong" min="0" step="0.01" name="qtypotong[]" value="0" required />
+                                </td>
                                 <td>
-                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" required autocomplete="off">
+                                    <input type="hidden" name="qtyrequired[]" value="0" />
+                                </td>
+                                <td>
+                                    <input type="hidden" class="qtyissued" name="qtyissued[]" value="0" />
+                                </td>
+                                <td>
+                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" autocomplete="off">
                                     <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
                                     <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
                                     <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />
                                 </td>
-                                <td>
-                                    <!-- qty required -->
-                                    <input type="hidden" name="qtyrequired[]" value="0" />
-                                </td>
-                                <td>
-                                    <!-- qty issued -->
-                                    <input type="hidden" class="qtyissued" name="qtyissued[]" value="0" />
-                                </td>
-                                <td style="vertical-align:middle;text-align:center;">
-                                    <input type="number" class="form-control qtypotong" min="0" step="0.01" name="qtypotong[]" value="0" required />
-                                </td>
                                 <td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>
                                 <input type="hidden" class="op" name="op[]" value="A" />
                             </tr>
+
+                            -->
                             
                             @endforelse
                         </tbody>
@@ -248,7 +258,7 @@
                     <table id="createTableIns" class="table table-bordered order-list" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th style="text-align: center; width: 5% !important; font-weight: bold;">Step</th>
+                                <th style="text-align: center; width: 6% !important; font-weight: bold;">Step</th>
                                 <th style="text-align: center; width: 25% !important; font-weight: bold;">Deskripsi</th>
                                 <th style="text-align: center; width: 15% !important; font-weight: bold;">Duration</th>
                                 <th style="text-align: center; width: 20% !important; font-weight: bold;">Engineer</th>
@@ -256,28 +266,33 @@
                             </tr>
                         </thead>
                         <tbody id='detailapp_ins'>
-                            @forelse ( $instruction as $datains )
+                            @forelse ( $instruction as $index => $datains )
                             <tr>
                                 <td style="vertical-align:middle;text-align:left;">
-                                    {{$datains->wd_ins_step}}
+                                    <input type="number" min="0" step="1" class="form-control stepnumber" name="stepnumber[]" value="{{$datains->wd_ins_step}}" readonly />
                                 </td>
                                 <td style="vertical-align: middle; text-align: left;">
-                                    {{$datains->ins_stepdesc}}
-                                    <input type="hidden" class="hidden_inscode" name="hidden_inscode[]" value="" />
-                                    <input type="hidden" class="hidden_insdesc" name="hidden_insdesc[]" value="" />
+                                    {{$datains->wd_ins_stepdesc}}
+                                    <input type="hidden" class="stepdesc" name="stepdesc[]" value="{{$datains->wd_ins_stepdesc}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     <div class="input-group">
-                                        <input type="number" min="0" class="form-control ins_duration" name="ins_duration[]">
+                                        <input type="number" min="0" step="0.01" class="form-control ins_duration" name="ins_duration[]" value="{{$datains->wd_ins_duration != null ? $datains->wd_ins_duration : ''}}">
                                         <div class="input-group-append">
                                             <span class="input-group-text" id="basic-addon2"> {{$datains->um_desc}} </span>
+                                            <input type="hidden" name="durationum[]" value="{{$datains->um_code}}" />
                                         </div>
                                     </div>
                                 </td>
                                 <td style="vertical-align:middle;text-align:right; max-width: 100px !important;">
-                                    <select class="form-control selectpicker ins_list_eng" name="ins_list_eng[]" style="max-width: 100px !important;" multiple data-live-search="true" data-max-options="5" data-size="3" data-dropup-auto="false">
-                                    @foreach ($engineers as $dataeng )
-                                        <option value="{{$dataeng['eng_code']}}">{{$dataeng["eng_code"]}} -- {{$dataeng["eng_desc"]}}</option>
+                                    <select class="form-control selectpicker ins_list_eng" name="ins_list_eng[{{$index}}][option][]" style="max-width: 100px !important;" multiple data-live-search="true" data-max-options="5" data-size="3" data-dropup-auto="false">
+                                    @foreach ($engineers as $dataeng)
+                                        @php
+                                            $engCode = $dataeng['eng_code'];
+                                            $engDesc = $dataeng['eng_desc'];
+                                            $selected = in_array($engCode, explode(';', $datains->wd_ins_engineer)) ? 'selected' : '';
+                                        @endphp
+                                        <option value="{{$engCode}}" {{$selected}}>{{$engCode}} -- {{$engDesc}}</option>
                                     @endforeach
                                     </select>
                                 </td>
@@ -322,9 +337,10 @@
                             <tr>
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$dataqc->wd_qc_qcparam}}
+                                    <input type="hidden" class="qcparam" name="qcparam[]" value="{{$dataqc->wd_qc_qcparam}}" />
                                 </td>
                                 <td style="vertical-align: middle; text-align: left;">
-                                    <input type="text" class="form-control resultqc1" name="resultqc1[]" value="" maxlength="250" /> 
+                                    <input type="text" class="form-control resultqc1" name="resultqc1[]" value="{{$dataqc->wd_qc_result1 != null ? $dataqc->wd_qc_result1 : ''}}" maxlength="250" /> 
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
                                 
@@ -356,13 +372,13 @@
                 <div class="form-group row col-md-12">
                     <label for="c_finishdate" class="col-md-4 col-form-label text-md-left">Finish Date <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-3">
-                        <input id="c_finishdate" type="date" class="form-control c_finishdate" name="c_finishdate" value="" autofocus required>
+                        <input id="c_finishdate" type="date" class="form-control c_finishdate" name="c_finishdate" value="{{($header->wo_job_finishdate != null) ? $header->wo_job_finishdate : \Carbon\Carbon::now()->format('Y-m-d')}}" required>
                     </div>
                 </div>
                 <div class="form-group row col-md-12">
                     <label for="c_finishtime" class="col-md-4 col-form-label text-md-left">Finish Time <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-3">
-                        <input type="time" class="form-control" name="c_finishtime" value="" autofocus required/>
+                        <input type="time" class="form-control" name="c_finishtime" value="{{($header->wo_job_finishtime != null) ? $header->wo_job_finishtime : \Carbon\Carbon::now()->format('H:i')}}" required/>
                     </div>
                 </div>
 
@@ -370,19 +386,41 @@
                     <label for="failurecode" class="col-md-4 col-form-label my-auto">Failure Code</label>
                     <div class="col-md-5 col-sm-12">
                         
-                        <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple">
+                        <select class="form-control selectpicker" id="failurecode" name="failurecode[]" multiple="multiple">
                             <option></option>
+                            @foreach ( $failure as $fc )
+                                @php
+                                    $fncode = $fc->fn_code;
+                                    $fndesc = $fc->fn_desc;
+                                    $thisselected = in_array($fncode, explode(';', $header->wo_failure_code)) ? 'selected' : '';
+                                @endphp
+                                <option value="{{$fc->fn_code}}" {{$thisselected}}>{{$fc->fn_code}} -- {{$fc->fn_desc}}</option>
+                            @endforeach
                         </select>
 
                     </div>
                 </div>
 
                 <div class="form-group row col-md-12">
-                    <label for="c_note" class="col-md-4 col-form-label text-md-left">Reporting Note <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
-                    <div class="col-md-6">
-                        <textarea id="c_note" class="form-control c_note" name="c_note" maxlength="250" autofocus></textarea>
+                    <label for="downtime" class="col-md-4 col-form-label text-md-left">Downtime <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                    <div class="col-md-3">
+                        <input type="number" id="downtime" min="0" class="form-control" name="downtime" value="{{$header->wo_downtime != null ? $header->wo_downtime : ''}}" required />
+                    </div>
+                    <div class="col-md-3">
+                    <select class="form-control" id="downtime_um" name="downtime_um">
+                        <option value="Minute" {{$header->wo_downtime_um == 'Minute' ? 'selected' : ''}}>Minute</option>
+                        <option value="Hour" {{$header->wo_downtime_um == 'Hour' ? 'selected' : ''}}>Hour</option>
+                    </select>
                     </div>
                 </div>
+
+                <div class="form-group row col-md-12">
+                    <label for="c_note" class="col-md-4 col-form-label text-md-left">Reporting Note <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                    <div class="col-md-6">
+                        <textarea id="c_note" class="form-control c_note" name="c_note" maxlength="250">{{($header->wo_report_note != null) ? $header->wo_report_note  : ''}}</textarea>
+                    </div>
+                </div>
+
                 <div class="form-group row col-md-12" id="photodiv">
                     <label class="col-md-4 col-form-label text-md-left">Uploaded File</label>
                     <div class="col-md-7">
@@ -499,10 +537,7 @@
             cols += '</td>';
 
             cols += '<td style="vertical-align:middle;text-align:center;">';
-            cols += '<input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" required autocomplete="off">';
-            cols += '<input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />';
-            cols += '<input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />';
-            cols += '<input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />';
+            cols += '<input type="number" class="form-control qtypotong" min="0" step="0.01" name="qtypotong[]" value="0" required />';
             cols += '</td>';
             
             cols += '<td style="vertical-align:middle;text-align:center;">';
@@ -514,7 +549,10 @@
             cols += '</td>';
 
             cols += '<td style="vertical-align:middle;text-align:center;">';
-            cols += '<input type="number" class="form-control qtypotong" min="0" step="0.01" name="qtypotong[]" value="0" required />';
+            cols += '<input type="text" id="loclotfrom" class="form-control loclotfrom" name="loclotfrom[]" data-toggle="tooltip" autocomplete="off" readonly placeholder="Click Here">';
+            cols += '<input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />';
+            cols += '<input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />';
+            cols += '<input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />';
             cols += '</td>';
             
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>';
@@ -552,19 +590,17 @@
             var cols = "";
 
             cols += '<td style="vertical-align:middle;text-align:center;">';
-            cols += '<input type="number" min="0" class="form-control stepnumber" name="stepnumber[]" />';
+            cols += '<input type="number" min="0" step="1" class="form-control stepnumber" name="stepnumber[]" value="'+lastline+'" readonly />';
             cols += '</td>';
 
             cols += '<td style="vertical-align:middle;text-align:center;">';
             cols += '<textarea type="text" class="form-control stepdesc" name="stepdesc[]" maxlength="250">';
             cols += '</textarea>';
-            cols += '<input type="hidden" class="hidden_inscode" name="hidden_inscode[]" value="" />';
-            cols += '<input type="hidden" class="hidden_insdesc" name="hidden_insdesc[]" value="" />';
             cols += '</td>';
 
             cols += '<td style="vertical-align:middle;text-align:center;">';
             cols += '<div class="input-group">';
-            cols += '<input type="number" min="0" class="form-control ins_duration" id="input-with-select" name="ins_duration[]"/>';
+            cols += '<input type="number" min="0" step="0.01" class="form-control ins_duration" id="input-with-select" name="ins_duration[]"/>';
             cols += '<div class="input-group-append">';
             cols += '<select class="form-control durationum" name="durationum[]">';
             @foreach($um as $dataum)
@@ -576,7 +612,7 @@
             cols += '</td>';
 
             cols += '<td style="max-width: 100px !important; vertical-align:middle;text-align:center;">';
-            cols += '<select class="form-control selectpicker ins_list_eng" name="ins_list_eng[]" style="max-width: 100px !important;" multiple="multiple" data-live-search="true" data-max-options="5" data-size="3" data-dropup-auto="false">';
+            cols += '<select class="form-control selectpicker ins_list_eng" name="ins_list_eng['+ (lastline - 1) +'][option][]" style="max-width: 100px !important;" multiple="multiple" data-live-search="true" data-max-options="5" data-size="3" data-dropup-auto="false">';
             @foreach ($engineers as $dataeng )
             cols += '<option value="{{$dataeng["eng_code"]}}">{{$dataeng["eng_code"]}} -- {{$dataeng["eng_desc"]}}</option>';
             @endforeach
@@ -584,7 +620,6 @@
             cols += '</td>';
 
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>';
-            cols += '<input type="hidden" class="op" name="op[]" value="A" />';
             counter++;
 
             newRow.append(cols);
@@ -618,7 +653,7 @@
             var cols = "";
 
             cols += '<td>';
-            cols += '<input type="text" class="form-control qcparam" name="qcparam[]" maxlength="250" />';
+            cols += '<input type="text" class="form-control qcparam" name="qcparam[]" maxlength="250" required />';
             cols += '</td>';
 
             cols += '<td>';
@@ -626,7 +661,6 @@
             cols += '</td>';
 
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>';
-            cols += '<input type="hidden" class="op" name="op[]" value="A" />';
             counter++;
 
             newRow.append(cols);
@@ -667,10 +701,6 @@
             }
 
         });
-    });
-
-
-    $(document).ready(function() {
 
         $("#failurecode").select2({
             width: '100%',
@@ -683,14 +713,6 @@
             multiple: true,
         });
 
-        // if (document.getElementById('argcheck').checked) {
-        //     $('#argcheck').change();
-        // }
-
-        // if (document.getElementById('arccheck').checked) {
-        //     $('#arccheck').change();
-        // }
-
         $('#newedit').submit(function(event) {
             document.getElementById('btnconf-report').style.display = 'none';
             document.getElementById('btnconf-close').style.display = 'none';
@@ -698,21 +720,35 @@
             document.getElementById('btnloading').style.display = '';
         });
 
+        $(document).on('keyup', '.qtypotong', function() { 
+            var thisrow = $(this);
+            var valueinput = thisrow.val();            
+
+            if(valueinput !== '0'){
+                // console.log('add required');
+                thisrow.closest('tr').find('.loclotfrom').attr('required','required');
+            }else{
+                // console.log('hapus required');
+                thisrow.closest('tr').find('.loclotfrom').removeAttr('required');
+            }
+        });
+
         // console.log(wonbr);
+        var wonbr = document.getElementById('c_wonbr').value;
 
-        // $.ajax({
-        //   url: "/imageview",
-        //   data: {
-        //     wonumber: wonbr,
-        //   },
-        //   success: function(data) {
+        $.ajax({
+          url: "/imageview",
+          data: {
+            wonumber: wonbr,
+          },
+          success: function(data) {
 
-        //     /* coding asli ada di backup-20211026 sblm PM attach file, coding aslinya nampilin gambar*/
-        //     //alert('test');
+            /* coding asli ada di backup-20211026 sblm PM attach file, coding aslinya nampilin gambar*/
+            //alert('test');
 
-        //     $('#munculgambar').html('').append(data);
-        //   }
-        // })
+            $('#munculgambar').html('').append(data);
+          }
+        })
         $(document).on('change', 'select.spreq', function() {
             var row = $(this).closest("tr"); 
             const spreqOption = $(this).val();
@@ -724,135 +760,242 @@
         $(document).on('click', '.loclotfrom', function() { 
             var row = $(this).closest("tr");
             const spcode = row.find(".hidden_sp").val();
+            const qtypotong = row.find(".qtypotong").val();
             const getassetsite = document.getElementById('hidden_assetsite').value;
+            
+            if(qtypotong > 0){
+                //jika qty yang mau diissue bernilai positif
+                $.ajax({
+                    url: '/getwsasupply',
+                    method: 'GET',
+                    data: {
+                        assetsite : getassetsite,
+                        spcode : spcode,
+                    },
+                    success: function(vamp) {
+                        // console.log(vamp);
 
-            $.ajax({
-                url: '/getwsasupply',
-                method: 'GET',
-                data: {
-                    assetsite : getassetsite,
-                    spcode : spcode,
-                },
-                success: function(vamp) {
+                        // select elemen HTML tempat menampilkan tabel
+                        const tableContainer = document.getElementById("thistablemodal");
 
-                    // select elemen HTML tempat menampilkan tabel
-                    const tableContainer = document.getElementById("thistablemodal");
+                        // hapus tabel lama (jika ada)
+                        if (tableContainer.hasChildNodes()) {
+                            tableContainer.removeChild(tableContainer.firstChild);
+                        }
 
-                    // hapus tabel lama (jika ada)
-                    if (tableContainer.hasChildNodes()) {
-                        tableContainer.removeChild(tableContainer.firstChild);
+                        // membuat elemen tabel
+                        const table = document.createElement("table");
+                        table.setAttribute("class", "table table-bordered table-hover");
+
+                        // membuat header tabel
+                        const headerRow = document.createElement("tr");
+                        const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "Select"];
+                        headerColumns.forEach((columnTitle) => {
+                            const headerColumn = document.createElement("th");
+                            headerColumn.textContent = columnTitle;
+                            headerRow.appendChild(headerColumn);
+                        });
+                        table.appendChild(headerRow);
+
+                        // membuat baris record untuk setiap objek dalam dataLocLotFrom
+                        vamp.forEach((record) => {
+                            const rowtable = document.createElement("tr");
+                            const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh"];
+                            columns.forEach((columnKey) => {
+                                const column = document.createElement("td");
+                                column.textContent = record[columnKey];
+                                rowtable.appendChild(column);
+                            });
+                            const selectColumn = document.createElement("td");
+                            const selectButton = document.createElement("button");
+                            selectButton.setAttribute("class", "btn btn-primary");
+                            selectButton.textContent = "Select";
+                            selectButton.setAttribute("type", "button");
+                            selectButton.addEventListener("click", function() {
+                                // aksi yang ingin dilakukan saat tombol select diklik
+                                const site = record.t_site;
+                                const loc = record.t_loc;
+                                const lot = record.t_lot;
+                                let qtyoh = record.t_qtyoh;
+                                
+                                qtyoh = qtyoh.replace(',', '');
+                                row.find(".hidden_sitefrom").val(site);
+                                row.find(".hidden_locfrom").val(loc);
+                                row.find(".hidden_lotfrom").val(lot);
+
+                                const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
+
+                                row.find(".loclotfrom").val(loclot);
+                                row.find(".loclotfrom").attr('title',loclot);
+
+                                const qtyohold = row.find(".qtypotong").val();
+
+                                //jika lebih besar yang diminta dari pada yg dimiliki di inventory supply maka qty to transfer maks = qty onhand di inv source
+                                if(parseFloat(qtyohold) > parseFloat(qtyoh)){
+                                    row.find(".qtypotong").attr("max", qtyoh).val(qtyoh);
+                                }
+
+                                $('#myModal').modal('hide');
+                            });
+                            selectColumn.appendChild(selectButton);
+                            rowtable.appendChild(selectColumn);
+                            table.appendChild(rowtable);
+                        });
+
+                        // menampilkan tabel pada elemen HTML yang dituju
+                        tableContainer.appendChild(table);
+
+                        // memanggil modal setelah tabel dimuat
+                        $('#myModal').modal('show');
+                        
+
+                    },complete: function(vamp) {
+                        //  $('.modal-backdrop').modal('hide');
+                        // alert($('.modal-backdrop').hasClass('in'));
+
+                        setTimeout(function() {
+                        $('#loadingtable').modal('hide');
+                        }, 500);
+
+                        setTimeout(function() {
+                        $('#viewModal').modal('show');
+                        }, 1000);
+
                     }
+                })
+            
+            }else if (qtypotong < 0){
+                //jika qty yang mau dissue bernilai negatif menandakan bahwa yang sudah diissued ingin dikembalikan lagi dengan receipt unplanned
+                const wonumber = $('#c_wonbr').val();
 
-                    // membuat elemen tabel
-                    const table = document.createElement("table");
-                    table.setAttribute("class", "table table-bordered table-hover");
+                $.ajax({
+                    url: '/getwodetsp',
+                    method: 'GET',
+                    data: {
+                        spcode : spcode,
+                        wonumber : wonumber,
+                    },
+                    success: function(vimp) {
 
-                    // membuat header tabel
-                    const headerRow = document.createElement("tr");
-                    const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "Select"];
-                    headerColumns.forEach((columnTitle) => {
-                        const headerColumn = document.createElement("th");
-                        headerColumn.textContent = columnTitle;
-                        headerRow.appendChild(headerColumn);
-                    });
-                    table.appendChild(headerRow);
+                        // select elemen HTML tempat menampilkan tabel
+                        const tableContainer = document.getElementById("thistablemodal");
 
-                    // membuat baris record untuk setiap objek dalam dataLocLotFrom
-                    vamp.forEach((record) => {
-                        const rowtable = document.createElement("tr");
-                        const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh"];
-                        columns.forEach((columnKey) => {
-                            const column = document.createElement("td");
-                            column.textContent = record[columnKey];
-                            rowtable.appendChild(column);
+                        // hapus tabel lama (jika ada)
+                        if (tableContainer.hasChildNodes()) {
+                            tableContainer.removeChild(tableContainer.firstChild);
+                        }
+
+                        // membuat elemen tabel
+                        const table = document.createElement("table");
+                        table.setAttribute("class", "table table-bordered table-hover");
+
+                        // membuat header tabel
+                        const headerRow = document.createElement("tr");
+                        const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "Select"];
+                        headerColumns.forEach((columnTitle) => {
+                            const headerColumn = document.createElement("th");
+                            headerColumn.textContent = columnTitle;
+                            headerRow.appendChild(headerColumn);
                         });
-                        const selectColumn = document.createElement("td");
-                        const selectButton = document.createElement("button");
-                        selectButton.setAttribute("class", "btn btn-primary");
-                        selectButton.textContent = "Select";
-                        selectButton.setAttribute("type", "button");
-                        selectButton.addEventListener("click", function() {
-                            // aksi yang ingin dilakukan saat tombol select diklik
-                            const site = record.t_site;
-                            const loc = record.t_loc;
-                            const lot = record.t_lot;
-                            let qtyoh = record.t_qtyoh;
-                            qtyoh = qtyoh.replace(',', '');
-                            row.find(".hidden_sitefrom").val(site);
-                            row.find(".hidden_locfrom").val(loc);
-                            row.find(".hidden_lotfrom").val(lot);
+                        table.appendChild(headerRow);
 
-                            const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
+                        // membuat baris record untuk setiap objek dalam dataLocLotFrom
+                        vimp.forEach((record) => {
+                            const rowtable = document.createElement("tr");
+                            const columns = ["wd_sp_spcode", "wd_sp_site_issued", "wd_sp_loc_issued", "wd_sp_lot_issued", "wd_sp_issued"];
+                            columns.forEach((columnKey) => {
+                                const column = document.createElement("td");
+                                column.textContent = record[columnKey];
+                                rowtable.appendChild(column);
+                            });
+                            const selectColumn = document.createElement("td");
+                            const selectButton = document.createElement("button");
+                            selectButton.setAttribute("class", "btn btn-primary");
+                            selectButton.textContent = "Select";
+                            selectButton.setAttribute("type", "button");
+                            selectButton.addEventListener("click", function() {
+                                // aksi yang ingin dilakukan saat tombol select diklik
+                                const site = (record.wd_sp_site_issued != null) ? record.wd_sp_site_issued : '';
+                                const loc = (record.wd_sp_loc_issued != null) ? record.wd_sp_loc_issued : '';
+                                const lot = (record.wd_sp_lot_issued != null) ? record.wd_sp_lot_issued : '';
 
-                            row.find(".loclotfrom").val(loclot);
-                            row.find(".loclotfrom").attr('title',loclot);
+                                let qtyoh = record.wd_sp_issued;
+                                qtyoh = qtyoh.replace(',', '');
+                                row.find(".hidden_sitefrom").val(site);
+                                row.find(".hidden_locfrom").val(loc);
+                                row.find(".hidden_lotfrom").val(lot);
 
-                            const qtyohold = row.find(".qtypotong").val();
+                                const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
 
-                            //jika lebih besar yang diminta dari pada yg dimiliki di inventory supply maka qty to transfer maks = qty onhand di inv source
-                            if(parseFloat(qtyohold) > parseFloat(qtyoh)){
-                                row.find(".qtypotong").attr("max", qtyoh).val(qtyoh);
-                            }
+                                row.find(".loclotfrom").val(loclot);
+                                row.find(".loclotfrom").attr('title',loclot);
 
-                            $('#myModal').modal('hide');
+                                const qtyohold = row.find(".qtypotong").val();
+
+                                //jika lebih besar yang diminta dari pada yg dimiliki di inventory supply maka qty to transfer maks = qty onhand di inv source
+                                if(parseFloat(qtyohold) < parseFloat(qtyoh)){
+                                    row.find(".qtypotong").attr("min", -qtyoh).val(-qtyoh);
+                                }
+
+                                $('#myModal').modal('hide');
+                            });
+                            selectColumn.appendChild(selectButton);
+                            rowtable.appendChild(selectColumn);
+                            table.appendChild(rowtable);
                         });
-                        selectColumn.appendChild(selectButton);
-                        rowtable.appendChild(selectColumn);
-                        table.appendChild(rowtable);
-                    });
 
-                    // menampilkan tabel pada elemen HTML yang dituju
-                    tableContainer.appendChild(table);
+                        // menampilkan tabel pada elemen HTML yang dituju
+                        tableContainer.appendChild(table);
 
-                    // memanggil modal setelah tabel dimuat
-                    $('#myModal').modal('show');
-                    
+                        // memanggil modal setelah tabel dimuat
+                        $('#myModal').modal('show');
+                        
 
-                },complete: function(vamp) {
-                    //  $('.modal-backdrop').modal('hide');
-                    // alert($('.modal-backdrop').hasClass('in'));
+                    },complete: function(vimp) {
+                        //  $('.modal-backdrop').modal('hide');
+                        // alert($('.modal-backdrop').hasClass('in'));
 
-                    setTimeout(function() {
-                    $('#loadingtable').modal('hide');
-                    }, 500);
+                        setTimeout(function() {
+                        $('#loadingtable').modal('hide');
+                        }, 500);
 
-                    setTimeout(function() {
-                    $('#viewModal').modal('show');
-                    }, 1000);
+                        setTimeout(function() {
+                        $('#viewModal').modal('show');
+                        }, 1000);
 
-                }
-            })
+                    }
+                })
+            }
         });
 
+        $(document).on('click', '.deleterow', function(e) {
+            var data = $(this).closest('tr').find('.rowval').val();
 
-    
-    });
+            Swal.fire({
+            title: '',
+            text: "Delete File ?",
+            icon: '',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Delete'
+            }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                url: "/delfilewofinish/" + data,
+                success: function(data) {
 
-    $(document).on('click', '.deleterow', function(e) {
-        var data = $(this).closest('tr').find('.rowval').val();
+                    $('#munculgambar').html('').append(data);
+                }
+                })
+            } else {
 
-        Swal.fire({
-        title: '',
-        text: "Delete File ?",
-        icon: '',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Delete'
-        }).then((result) => {
-        if (result.value) {
-            $.ajax({
-            url: "/delfilewofinish/" + data,
-            success: function(data) {
-
-                $('#munculgambar').html('').append(data);
             }
             })
-        } else {
-
-        }
-        })
+        });
     });
+
+    
 
 </script>
 @endsection

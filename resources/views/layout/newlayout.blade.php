@@ -432,6 +432,20 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
+                @if(str_contains( Session::get('menu_access'), 'BO03'))
+                <li class="nav-item has-treeview">
+                  <a href="{{url('/reqsp')}}" class="nav-link">
+                      <p>Request Sparepart</p>
+                  </a>
+                </li>
+                @endif
+                @if(str_contains( Session::get('menu_access'), 'BO04'))
+                <li class="nav-item has-treeview">
+                  <a href="{{url('/trfsp')}}" class="nav-link">
+                      <p>Transfer Sparepart</p>
+                  </a>
+                </li>
+                @endif
                 @if(str_contains( Session::get('menu_access'), 'MT30'))
                   <li class="nav-item">
                     <a href="/assetmove" class="nav-link">

@@ -384,6 +384,24 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Request Sparepart') }}</label>
+              <div class="col-6">
+                <label class="switch" for="reqsp">
+                  <input type="checkbox" class="custom-control-input" id="reqsp" name="reqsp" value="BO03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Transfer Sparepart') }}</label>
+              <div class="col-6">
+                <label class="switch" for="trfsp">
+                  <input type="checkbox" class="custom-control-input" id="trfsp" name="trfsp" value="BO04" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Movement ') }}</label>
               <div class="col-6">
                 <label class="switch" for="SetMove">
@@ -1175,6 +1193,24 @@
               <div class="col-6">
                 <label class="switch" for="e_whyhist">
                   <input type="checkbox" class="custom-control-input" id="e_whyhist" name="e_whyhist" value="BO02" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Request Sparepart') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_reqsp">
+                  <input type="checkbox" class="custom-control-input" id="e_reqsp" name="e_reqsp" value="BO03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Transfer Sparepart') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_trfsp">
+                  <input type="checkbox" class="custom-control-input" id="e_trfsp" name="e_trfsp" value="BO04" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -2168,6 +2204,16 @@
           document.getElementById('e_whyhist').checked = true;
         } else {
           document.getElementById('e_whyhist').checked = false;
+        }
+        if (listmenu.search("BO03") >= 0) {
+          document.getElementById('e_reqsp').checked = true;
+        } else {
+          document.getElementById('e_reqsp').checked = false;
+        }
+        if (listmenu.search("BO04") >= 0) {
+          document.getElementById('e_trfsp').checked = true;
+        } else {
+          document.getElementById('e_trfsp').checked = false;
         }
 
         //Report

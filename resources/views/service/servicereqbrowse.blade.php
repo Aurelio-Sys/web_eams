@@ -388,8 +388,6 @@
               <select id="e_approver" name="e_approver" class="form-control" required>
                 <option value="">-- Select Eng Approver --</option>
                 @foreach($dataapp as $da)
-                <!-- <option value="{{$da->eng_dept}}">{{$da->eng_dept}}</option> -->
-                <!-- <option value="{{$da->eng_dept}}">{{$da->eng_dept.' -- '.$da->eng_desc}}</option> -->
                 <option value="{{$da->eng_dept}}">{{$da->eng_dept.' -- '.$da->dept_desc}}</option>
                 @endforeach
               </select>
