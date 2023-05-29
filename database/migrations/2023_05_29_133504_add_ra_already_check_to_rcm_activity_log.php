@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddWoReportNoteToWoMstr extends Migration
+class AddRaAlreadyCheckToRcmActivityLog extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class AddWoReportNoteToWoMstr extends Migration
      */
     public function up()
     {
-        Schema::table('wo_mstr', function (Blueprint $table) {
+        Schema::table('rcm_activity_log', function (Blueprint $table) {
             //
-            $table->longText('wo_report_note')->nullable()->after('wo_downtime_um');
+            $table->boolean('ra_already_check')->default(false)->after('ra_alert_status');
         });
     }
 
@@ -26,9 +26,9 @@ class AddWoReportNoteToWoMstr extends Migration
      */
     public function down()
     {
-        Schema::table('wo_mstr', function (Blueprint $table) {
+        Schema::table('rcm_activity_log', function (Blueprint $table) {
             //
-            $table->dropColumn('wo_report_note');
+            $table->dropColumn('ra_already_check');
         });
     }
 }

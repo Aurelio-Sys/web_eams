@@ -151,6 +151,7 @@ div #munculgambar .gambar:hover{
               <option value="firm">Firm</option>
               <option value="released">Released</option>
               <option value="started">Started</option>
+              <option value="finished">Finished</option>
               <option value="closed">Closed</option>
               <option value="canceled">Canceled</option>
             </select>

@@ -464,7 +464,7 @@
 
         <div class="modal-footer">
             <a id="btnclose" class="btn btn-danger" href="/woreport" id="btnback">Back</a>
-            <button type="submit" class="btn btn-dark bt-action" id="btnconf-close" name="btnconf" value="closewo">Close WO</button>
+            <button type="submit" class="btn btn-dark bt-action" id="btnconf-close" name="btnconf" value="closewo">Finish Report</button>
             <button type="submit" class="btn btn-success bt-action" id="btnconf-report" name="btnconf" value="reportwo">Report WO</button>
             <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none; width: 150px !important;">
                 <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading

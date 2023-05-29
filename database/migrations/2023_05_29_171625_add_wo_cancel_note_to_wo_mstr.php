@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddWoReportNoteToWoMstr extends Migration
+class AddWoCancelNoteToWoMstr extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +15,7 @@ class AddWoReportNoteToWoMstr extends Migration
     {
         Schema::table('wo_mstr', function (Blueprint $table) {
             //
-            $table->longText('wo_report_note')->nullable()->after('wo_downtime_um');
+            $table->string('wo_cancel_note')->nullable()->after('wo_note');
         });
     }
 
@@ -28,7 +28,7 @@ class AddWoReportNoteToWoMstr extends Migration
     {
         Schema::table('wo_mstr', function (Blueprint $table) {
             //
-            $table->dropColumn('wo_report_note');
+            $table->dropColumn('wo_cancel_note');
         });
     }
 }
