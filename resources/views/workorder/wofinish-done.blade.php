@@ -386,7 +386,7 @@
                     <label for="failurecode" class="col-md-4 col-form-label my-auto">Failure Code</label>
                     <div class="col-md-5 col-sm-12">
                         
-                        <select class="form-control selectpicker" id="failurecode" name="failurecode[]" multiple="multiple">
+                        <select class="form-control" id="failurecode" name="failurecode[]" multiple="multiple">
                             <option></option>
                             @foreach ( $failure as $fc )
                                 @php
