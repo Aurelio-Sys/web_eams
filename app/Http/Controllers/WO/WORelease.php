@@ -290,6 +290,8 @@ class WORelease extends Controller
                         //status tetap released walaupun tidak cukup stocknya di supply
                         $not_enough = true;
 
+
+
                         //kasih flag true(1) jika stock di supply tidak cukup supaya menjadi penanda spare part yang perlu dilakukan wo transfer spare part
                         DB::table('wo_dets_sp')
                             ->where('wd_sp_wonumber','=', $requestData['hide_wonum'])
@@ -298,6 +300,18 @@ class WORelease extends Controller
                                 'wd_sp_flag' => true,
                                 'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);                        
+
+                    }else{
+                        DB::table('wo_dets_sp')
+                            ->where('wd_sp_wonumber','=', $requestData['hide_wonum'])
+                            ->where('wd_sp_spcode','=', $qadData['part'])
+                            ->update([
+                                'wd_sp_flag' => false,
+                                'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);   
+
+                        break;
+
 
                     }
                     
@@ -311,7 +325,13 @@ class WORelease extends Controller
                                 'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
 
-                if ($not_enough) {
+
+                $checkTidakCukup = DB::table('wo_dets_sp')
+                            ->where('wd_sp_wonumber', '=', $requestData['hide_wonum'])
+                            ->where('wd_sp_flag','=', true)
+                            ->exists();
+
+                if ($checkTidakCukup) {
                     // Ada spare part yang tidak cukup
                     $wonumber_email = $requestData['hide_wonum'];
 
