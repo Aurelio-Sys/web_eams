@@ -204,6 +204,15 @@
                 </label>
               </div>
             </div>  --}}
+              <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('User Acceptance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbUA">
+                  <input type="checkbox" class="custom-control-input" id="cbUA" name="cbUA" value="SR04" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
 
             <h4>
             <center><strong>Work Order Menu</strong></center>
@@ -1018,6 +1027,16 @@
                 </label>
               </div>
             </div>  --}}
+            
+              <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('User Acceptance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbUA">
+                  <input type="checkbox" class="custom-control-input" id="e_cbUA" name="e_cbUA" value="SR04" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
 
             <h4>
             <center><strong>Work Order Menu</strong></center>
@@ -2155,6 +2174,12 @@
         } else {
           document.getElementById('e_cbUA').checked = false;
         }  --}}
+
+        if (listmenu.search("SR04") >= 0) {
+          document.getElementById('e_cbUA').checked = true;
+        } else {
+          document.getElementById('e_cbUA').checked = false;
+        }
 
 
         // Usage

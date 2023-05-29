@@ -4,13 +4,8 @@
   <div class="row mb-2">
     <div class="col-sm-6 mt-2">
       <h1 class="m-0 text-dark">Service Request Maintenance</h1>
+      <p class="pb-0 m-0">Menu ini berfungsi untuk melakukan view detail maupun status approval, edit, dan cancel pada Service Request</p>
     </div><!-- /.col -->
-    <!-- <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="{{url('/home')}}">Home</a></li>
-              <li class="breadcrumb-item active">Picklist Browse WH</li>
-            </ol>
-          </div>/.col -->
   </div><!-- /.row -->
 </div><!-- /.container-fluid -->
 <!-- <hr> -->
@@ -221,7 +216,7 @@
         <th>SR Number</th>
         <!-- <th>WO Number</th> -->
         <th>Asset</th>
-        <th>Desc</th>
+        <th>Asset Description</th>
         <!-- <th>Location</th> -->
         <th>Status</th>
         <!-- <th>Priority</th> -->
@@ -930,7 +925,6 @@
         document.getElementById('englist').value = eng;
         document.getElementById('reqbyname').value = reqby;
         document.getElementById('srnote').value = srnote;
-        // document.getElementById('rejectnote').value = rejectnote;
         document.getElementById('wonumber').value = wonumber;
         if (startwo != '01-01-1970') {
           document.getElementById('startwo').value = startwo;
@@ -942,12 +936,9 @@
         } else {
           document.getElementById('endwo').value = '';
         }
-        // document.getElementById('action').value = action;
         document.getElementById('wostatus').value = wostatus;
-        // document.getElementById('statusapproval').value = statusapproval;
         document.getElementById('approver').value = approver;
         document.getElementById('srcancelnote').value = srcancelnote;
-        // document.getElementById('reason').value = reason;
 
         if (wostatus == 'Open') {
           document.getElementById("wostatus").style.color = 'green';
@@ -973,7 +964,7 @@
 
             // console.log(desc);
 
-            document.getElementById('sr_impact').value = desc;
+            document.getElementById('sr_impact').value = impact + ' -- ' + desc;
             // }
 
           },
@@ -998,7 +989,7 @@
 
             // console.log(desc);
 
-            document.getElementById('sr_failcode').value = desc;
+            document.getElementById('sr_failcode').value = failcode + ' -- ' + desc;
             // }
 
           },
@@ -1024,7 +1015,7 @@
           },
           success: function(data) {
 
-            document.getElementById('failtype').value = data;
+            document.getElementById('failtype').value = failtype + ' -- ' + data;
             // }
 
           },
@@ -1124,23 +1115,6 @@
         var failcode2 = $(this).data('fc2');
         var failcode3 = $(this).data('fc3');
 
-        // // array failure code
-        // var newarrfc = [];
-        // if (failcode1 != '') {
-        //   newarrfc.push(failcode1);
-        // }
-        // if (failcode2 != '') {
-        //   newarrfc.push(failcode2);
-        // }
-        // if (failcode3 != '') {
-        //   newarrfc.push(failcode3);
-        // }
-
-        // //value multiple failurecode
-        // document.getElementById('e_failurecode').selectedIndex = newarrfc;
-        // $('#e_failurecode').val(newarrfc);
-        // $('#e_failurecode').trigger('change');
-
         // array failurecode
         var newarrfc = [];
         var desc = failcode.split(",");
@@ -1156,8 +1130,6 @@
         document.getElementById('e_failurecode').selectedIndex = newarrfc;
         $('#e_failurecode').val(newarrfc);
         $('#e_failurecode').trigger('change');
-
-
 
         // array impact
         var newarrimp = [];
@@ -1196,66 +1168,6 @@
         document.getElementById('e_status').value = srstat;
         // document.getElementById('failcode').value = faildesclist;
 
-
-        // if(eng1 != ''){
-        //   document.getElementById('engineer1').value = eng1;
-        // }else{
-        //   document.getElementById('engineer1').value = '-';
-        // }
-
-        // if(eng2 != ''){
-        //   // alert('inul');
-        //   document.getElementById('engineer2').value = eng2;
-        // }else{
-        //   // alert('kosong')
-        //   document.getElementById('engineer2').value = '-';
-        // }
-
-        // if(eng3 != ''){
-        //   document.getElementById('engineer3').value = eng3;
-        // }else{
-        //   document.getElementById('engineer3').value = '-';
-        // }
-
-
-        // if(eng4 != ''){
-        //   document.getElementById('engineer4').value = eng4;
-        // }else{
-        //   document.getElementById('engineer4').value = '-';
-        // }
-
-        // if(eng5 != ''){
-        //   document.getElementById('engineer5').value = eng5;
-        // }else{
-        //   document.getElementById('engineer5').value = '-';
-        // }
-
-        // alert(assetdesc);
-
-        // $.ajax({
-        //   url: "/searchimpactdesc",
-        //   data: {
-        //     impact: impact,
-        //   },
-        //   success: function(data) {
-        //     // console.log(data);
-
-        //     var imp_desc = data;
-
-        //     var desc = imp_desc.replaceAll(",", "\n");
-
-        //     // console.log(desc);
-
-        //     document.getElementById('e_impact').value = desc;
-        //     // }
-
-        //   },
-        //   statusCode: {
-        //     500: function() {
-        //       document.getElementById('e_impact').value = "";
-        //     }
-        //   }
-        // })
 
         $.ajax({
           url: "/listupload/" + srnumber,
@@ -1403,13 +1315,11 @@
         var srnumber = $('#tmpsrnumber').val();
         var srasset = $('#tmpasset').val();
         var srstatus = $('#tmpstatus').val();
-        var srpriority = $('#tmppriority').val();
-        // var srperiod = $('#tmpperiod').val();
         var srreq = $('#tmpuser').val();
         var srdatefrom = $('#tmpdatefrom').val();
         var srdateto = $('#tmpdateto').val();
 
-        console.log(srnumber, srasset, srstatus, /*srpriority, srperiod,*/ srreq, srdatefrom, srdateto);
+        // console.log(srnumber, srasset, srstatus, /*srpriority, srperiod,*/ srreq, srdatefrom, srdateto);
 
         window.open("/donlodsr?srnumber=" + srnumber + "&asset=" + srasset + "&status=" + srstatus + /*"&priority=" + srpriority + "&period=" + srperiod +*/ "&reqby=" + srreq + "&datefrom=" + srdatefrom + "&dateto=" + srdateto, '_blank');
       });

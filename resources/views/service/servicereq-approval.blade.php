@@ -4,13 +4,8 @@
   <div class="row mb-2">
     <div class="col-sm-6 mt-2">
       <h1 class="m-0 text-dark">Service Request Approval</h1>
+      <p class="pb-0 m-0">Menu ini berfungsi untuk melakukan approval department</p>
     </div><!-- /.col -->
-    <!-- <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="{{url('/home')}}">Home</a></li>
-              <li class="breadcrumb-item active">Picklist Browse WH</li>
-            </ol>
-          </div>/.col -->
   </div><!-- /.row -->
 </div><!-- /.container-fluid -->
 <!-- <hr> -->
@@ -144,13 +139,12 @@
         <th width="15%">Note</th>
         <th width="7%">Action</th> -->
         <th>SR Number</th>
-        <th>WO Number</th>
-        <th>Aset</th>
-        <th>Desc</th>
-        <th>Location</th>
-        <th>Status</th>
+        <th>Asset</th>
+        <th>Asset Description</th>
+        <!-- <th>Location</th> -->
+        <!-- <th>Status</th> -->
         <th>Priority</th>
-        <th>Department</th>
+        <!-- <th>Department</th> -->
         <th>Req by</th>
         <th>Req Date</th>
         <th>Req Time</th>
@@ -386,12 +380,6 @@
               <input id="v_h_assetloc" type="hidden" name="v_h_assetloc" />
             </div>
           </div>
-          <!-- <div class="form-group row">
-                        <label for="assettype" class="col-md-5 col-form-label text-md-left">Process / Technology</label>
-                        <div class="col-md-7">
-                            <input id="assettype" type="text" class="form-control" name="assettype" autocomplete="off" autofocus readonly/>
-                        </div>
-                    </div> -->
           <div class="form-group row col-md-12">
             <label for="v_srnote" class="col-md-5 col-form-label text-md-left">Note</label>
             <div class="col-md-7">
@@ -417,47 +405,24 @@
             <label for="v_wotype" class="col-md-5 col-form-label text-md-left">Failure Type</label>
             <div class="col-md-7">
               <input id="v_wotype" type="text" class="form-control" name="v_wotype" autocomplete="off" readonly />
-              <!-- <select class="form-control wotype" name="wotype" id="wotype">
-                <option value="">Select Failure Type</option>
-                @foreach($wotypes as $wotype)
-                <option value="{{$wotype->wotyp_code}}">{{$wotype->wotyp_code}} - {{$wotype->wotyp_desc}}</option>
-                @endforeach
-              </select> -->
             </div>
           </div>
           <div class="form-group row col-md-12">
             <label for="v_failcode" class="col-md-5 col-form-label text-md-left">Failure Code</label>
             <div class="col-md-7">
               <textarea id="v_failcode" type="text" class="form-control" name="v_failcode" rows="3" readonly></textarea>
-              <!-- <select class="form-control fclist" name="fclist[]" id="fclist" multiple="multiple">
-                <option value=""></option>
-                @foreach($fcodes as $fcode)
-                <option value="{{$fcode->fn_code}}">{{$fcode->fn_code}} - {{$fcode->fn_desc}}</option>
-                @endforeach
-              </select> -->
             </div>
           </div>
           <div class="form-group row col-md-12">
             <label for="v_impact" class="col-md-5 col-form-label text-md-left">Impact</label>
             <div class="col-md-7">
               <textarea id="v_impact" type="text" class="form-control" name="v_impact" autocomplete="off" rows="3" readonly></textarea>
-              <!-- <select class="form-control impact" name="impact[]" id="impact" multiple="multiple">
-                <option value=""></option>
-                @foreach($impacts as $impact)
-                <option value="{{$impact->imp_code}}">{{$impact->imp_code}} - {{$impact->imp_desc}}</option>
-                @endforeach
-              </select> -->
             </div>
           </div>
           <div class="form-group row col-md-12">
             <label for="v_priority" class="col-md-5 col-form-label text-md-left">Priority</label>
             <div class="col-md-7">
               <input id="v_priority" type="text" name="v_priority" class="form-control" readonly>
-              <!-- <select class="form-control priority" name="priority" id="priority">
-                <option value='low'>Low</option>
-                <option value='medium'>Medium</option>
-                <option value='high'>High</option>
-              </select> -->
             </div>
           </div>
           <div class="form-group row col-md-12">
@@ -913,13 +878,19 @@
           // console.log(data);
 
           var imp_desc = data;
+          var imp_code = impact;
+          var delimiter = ",";
 
-          var desc = imp_desc.replaceAll(",", "\n");
+          var desc = imp_desc.split(delimiter);
+          var coded = imp_code.split(delimiter);
 
-          // console.log(desc);
+          let results = "";
 
-          document.getElementById('impact').value = desc;
-          // }
+          for (let i = 0; i < Math.min(desc.length, coded.length); i++) {
+            results += coded[i] + ' -- ' + desc[i] + '\n';
+          }
+          
+          document.getElementById('impact').value = results;
 
         },
         statusCode: {
@@ -938,18 +909,44 @@
           // console.log(data);
 
           var fail_desc = data;
+          var fail_code = failcode;
+          var delimiter = ",";
 
-          var desc = fail_desc.replaceAll(",", "\n");
+          var desc = fail_desc.split(delimiter);
+          var coded = fail_code.split(delimiter);
 
-          // console.log(desc);
+          let results = "";
 
-          document.getElementById('failcode').value = desc;
-          // }
+          for (let i = 0; i < Math.min(desc.length, coded.length); i++) {
+            results += coded[i] + ' -- ' + desc[i] + '\n';
+          }
+          
+          document.getElementById('failcode').value = results;
 
         },
         statusCode: {
           500: function() {
             document.getElementById('failcode').value = "";
+          }
+        }
+      })
+
+      $.ajax({
+        url: "/searchfailtype",
+        data: {
+          failtype: wotype,
+        },
+        success: function(data) {
+
+
+          document.getElementById('wotype').value = wotype + ' -- ' + data;
+
+          // }
+
+        },
+        statusCode: {
+          500: function() {
+            document.getElementById('wotype').value = "";
           }
         }
       })
@@ -969,36 +966,16 @@
           // --
         }
       }
-      document.getElementById('wotype').value = wotype;
       document.getElementById('impactcode1').value = impactcode1;
       document.getElementById('assetloc').value = assetloc;
       document.getElementById('h_assetsite').value = hassetsite;
       document.getElementById('h_assetloc').value = hassetloc;
 
-      // document.getElementById('failurecode1').value = failurecode1;
-      // document.getElementById('failurecode2').value = failurecode2;
-      // document.getElementById('failurecode3').value = failurecode3;
       document.getElementById('srnote').value = srnote;
       document.getElementById('hiddenreq').value = reqby;
       document.getElementById('priority').value = priority;
       document.getElementById('dept').value = dept;
       document.getElementById('hiddendeptcode').value = deptcode;
-      // document.getElementById('reqbyname').value = reqbyname;
-      // document.getElementById('fclist').value = fail_list;
-
-      //value multiple failurecode
-      // document.getElementById('fclist').selectedIndex = newarrfc;
-      // $('#fclist').val(newarrfc);
-      // $('#fclist').trigger('change');
-
-      //value multiple impact
-      // document.getElementById('impact').selectedIndex = newarrimp;
-      // $('#impact').val(newarrimp);
-      // $('#impact').trigger('change');
-
-      document.getElementById('tmpfail1').value = failcode1;
-      document.getElementById('tmpfail2').value = failcode2;
-      document.getElementById('tmpfail3').value = failcode3;
 
       // $('#wotype').select2({
       //   theme: 'bootstrap4',
@@ -1046,9 +1023,6 @@
       var failcode = $(this).data('failcode');
       var id = $(this).data('id');
       var reason = $(this).data('reason');
-      // alert(priority);
-      // var fail_list = fail1 + '\n' + fail2 + '\n' + fail3;
-      // console.log(wotype, impact);
 
       // array impact
       var newarrimp = [];
@@ -1089,13 +1063,19 @@
           // console.log(data);
 
           var imp_desc = data;
+          var imp_code = impact;
+          var delimiter = ",";
 
-          var desc = imp_desc.replaceAll(",", "\n");
+          var desc = imp_desc.split(delimiter);
+          var coded = imp_code.split(delimiter);
 
-          // console.log(desc);
+          let results = "";
 
-          document.getElementById('v_impact').value = desc;
-          // }
+          for (let i = 0; i < Math.min(desc.length, coded.length); i++) {
+            results += coded[i] + ' -- ' + desc[i] + '\n';
+          }
+          
+          document.getElementById('v_impact').value = results;
 
         },
         statusCode: {
@@ -1114,12 +1094,19 @@
           // console.log(data);
 
           var fail_desc = data;
+          var fail_code = failcode;
+          var delimiter = ",";
 
-          var desc = fail_desc.replaceAll(",", "\n");
+          var desc = fail_desc.split(delimiter);
+          var coded = fail_code.split(delimiter);
 
-          // console.log(desc);
+          let results = "";
 
-          document.getElementById('v_failcode').value = desc;
+          for (let i = 0; i < Math.min(desc.length, coded.length); i++) {
+            results += coded[i] + ' -- ' + desc[i] + '\n';
+          }
+          
+          document.getElementById('v_failcode').value = results;
           // }
 
         },
@@ -1137,7 +1124,7 @@
         },
         success: function(data) {
 
-          document.getElementById('v_wotype').value = data;
+          document.getElementById('v_wotype').value = wotype + ' -- ' + data;
           // }
 
         },
@@ -1157,67 +1144,16 @@
       document.getElementById('v_assetdesc').value = assetdesc;
       document.getElementById('v_reason').value = reason;
       document.getElementById('v_reqbyname').value = reqby;
-      // console.log(document.getElementById('idsr').value);
-      {
-        {
-          // --document.getElementById('assettype').value = astype;
-          // --
-        }
-      }
-      console.log(wotype);
       document.getElementById('v_wotype').value = wotype;
       document.getElementById('v_impactcode1').value = impactcode1;
       document.getElementById('v_assetloc').value = assetloc;
       document.getElementById('v_h_assetsite').value = hassetsite;
       document.getElementById('v_h_assetloc').value = hassetloc;
-
-      // document.getElementById('failurecode1').value = failurecode1;
-      // document.getElementById('failurecode2').value = failurecode2;
-      // document.getElementById('failurecode3').value = failurecode3;
       document.getElementById('v_srnote').value = srnote;
       document.getElementById('v_hiddenreq').value = reqby;
       document.getElementById('v_priority').value = priority;
       document.getElementById('v_dept').value = dept;
       document.getElementById('v_hiddendeptcode').value = deptcode;
-      // document.getElementById('v_reqbyname').value = reqbyname;
-      document.getElementById('v_reason').value = reason;
-      // document.getElementById('fclist').value = fail_list;
-      // console.log(reqbyname);
-
-      //value multiple failurecode
-      // document.getElementById('fclist').selectedIndex = newarrfc;
-      // $('#fclist').val(newarrfc);
-      // $('#fclist').trigger('change');
-
-      //value multiple impact
-      // document.getElementById('impact').selectedIndex = newarrimp;
-      // $('#impact').val(newarrimp);
-      // $('#impact').trigger('change');
-
-      document.getElementById('tmpfail1').value = failcode1;
-      document.getElementById('tmpfail2').value = failcode2;
-      document.getElementById('tmpfail3').value = failcode3;
-
-      // $('#wotype').select2({
-      //   theme: 'bootstrap4',
-      //   width: '100%',
-      //   // wotype,
-      // });
-
-      // $('#fclist').select2({
-      //   placeholder: "Select Failure Code",
-      //   width: '100%',
-      //   closeOnSelect: false,
-      //   allowClear: true,
-      //   maximumSelectionLength: 3,
-      // });
-
-      // $('#impact').select2({
-      //   placeholder: "Select Value",
-      //   width: '100%',
-      //   closeOnSelect: false,
-      //   allowClear: true,
-      // });
 
     });
 
@@ -1225,117 +1161,9 @@
       $('#routeModal').modal('show');
 
       var srnumber = $(this).data('srnumber');
-      var srdate = $(this).data('srdate');
       var assetcode = $(this).data('assetcode');
-      var assetdesc = $(this).data('assetdesc');
-      var srnote = $(this).data('srnote');
-      var reqby = $(this).data('reqby');
-      var priority = $(this).data('priority');
-      var dept = $(this).data('deptdesc');
-      var deptcode = $(this).data('deptcode');
       var reqbyname = $(this).data('reqbyname');
-      var wotype = $(this).data('wotypedescx');
-      var impact = $(this).data('impactcode');
-      // alert(impact);
-      var assetloc = $(this).data('assetloc');
-      var hassetsite = $(this).data('hassetsite');
-      var hassetloc = $(this).data('hassetloc');
-      var astype = $(this).data('astypedesc');
-      var impactcode1 = $(this).data('impactcode');
-      var failcode = $(this).data('failcode');
-      var id = $(this).data('id');
-      var reason = $(this).data('reason');
 
-      var failcode1 = $(this).data('fc1');
-      var failcode2 = $(this).data('fc2');
-      var failcode3 = $(this).data('fc3');
-
-      // var fail_list = fail1 + '\n' + fail2 + '\n' + fail3;
-
-      // array failure code
-      var newarrfc = [];
-      if (failcode1 != '') {
-        newarrfc.push(failcode1);
-      }
-      if (failcode2 != '') {
-        newarrfc.push(failcode2);
-      }
-      if (failcode3 != '') {
-        newarrfc.push(failcode3);
-      }
-
-
-      // array impact
-      var newarrimp = [];
-      var desc = impact.split(",");
-      if (desc != null) {
-        for (var i = 0; i <= (desc.length - 1); i++) {
-          if (desc[i] != '') {
-            newarrimp.push(desc[i]);
-          }
-        }
-      }
-
-      $.ajax({
-        url: "/listupload/" + srnumber,
-        success: function(data) {
-          // console.log(data);
-          $('#listupload').html('').append(data);
-        }
-      })
-
-      $.ajax({
-        url: "/searchimpactdesc",
-        data: {
-          impact: impact,
-        },
-        success: function(data) {
-          // console.log(data);
-
-          var imp_desc = data;
-
-          var desc = imp_desc.replaceAll(",", "\n");
-
-          // console.log(desc);
-
-          document.getElementById('impact').value = desc;
-          // }
-
-        },
-        statusCode: {
-          500: function() {
-            document.getElementById('impact').value = "";
-          }
-        }
-      })
-
-      $.ajax({
-        url: "/searchfailcode",
-        data: {
-          failcode: failcode,
-        },
-        success: function(data) {
-          // console.log(data);
-
-          var fail_desc = data;
-
-          var desc = fail_desc.replaceAll(",", "\n");
-
-          // console.log(desc);
-
-          document.getElementById('failcode').value = desc;
-          // }
-
-        },
-        statusCode: {
-          500: function() {
-            document.getElementById('failcode').value = "";
-          }
-        }
-      })
-
-
-      // alert(impactcode1);
       document.getElementById('m_route_ppnumber').value = srnumber;
       document.getElementById('m_route_requested_by').value = reqbyname;
       document.getElementById('m_route_asset').value = assetcode;

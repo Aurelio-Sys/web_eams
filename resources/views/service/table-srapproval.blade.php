@@ -4,27 +4,13 @@
 @php($session = session('role'))
 <tr>
   <td>{{$show->sr_number}}</td>
-  <!-- <td>{{$show->asset_code}} -- {{$show->asset_desc}}</td>
-    <td>{{$show->asset_loc}}</td>
-    <td>{{$show->sr_priority}}</td>
-    <td>{{$show->name}}</td>
-    <td>{{$show->sr_req_date}}</td>
-    <td>{{$show->sr_note}}</td> -->
-  @if($show->wo_number == "")
-  <td>-</td>
-  @else
-  <td>{{$show->wo_number}}</td>
-  @endif
-
   <td>{{$show->sr_asset}}</td>
   <td>{{$show->asset_desc}}</td>
-  <td>{{$show->asset_loc}}</td>
-  <td>{{is_null($show->wo_status) ? $show->sr_status : $show->wo_status}}</td>
-
+  <!-- <td>{{$show->asset_loc}}</td> -->
+  <!-- <td>{{ $show->sr_status}}</td> -->
   <td>{{$show->sr_priority}}</td>
-  <td>{{$show->dept_desc}}</td>
+  <!-- <td>{{$show->dept_desc}}</td> -->
   <td>{{$show->name}}</td>
-
   <td>{{date('d-m-Y', strtotime($show->sr_req_date))}}</td>
   <td>{{date('H:i', strtotime($show->sr_req_time))}}</td>
 

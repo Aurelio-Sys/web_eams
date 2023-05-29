@@ -215,6 +215,14 @@ to get the desired effect
                   </a>
                 </li>
                 @endif  --}}
+                  @if(str_contains( Session::get('menu_access'), 'SR04'))
+                <li class="nav-item">
+                  <a href="/useracceptance" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>User Acceptance</p>
+                  </a>
+                </li>
+                @endif
               </ul>
             </li>
             @endif

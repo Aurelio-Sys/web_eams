@@ -2636,7 +2636,7 @@ class wocontroller extends Controller
 
                 $data = WOMaster::query()
                     ->with(['getCurrentApprover'])
-                    ->where('wo_status', '=', 'reported')
+                    ->where('wo_status', '=', 'finished')
                     ->whereHas('getWOTransAppr', function ($q) {
                         $q->where('wotr_status', '=', 'waiting for approval');
                         $q->orWhere('wotr_status', '=', 'approved');
@@ -2647,8 +2647,8 @@ class wocontroller extends Controller
                     ->leftjoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
                     ->leftjoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
                     // ->where(function ($status) {
-                    //     //status reported --> setelah selesai melakukan wo reporting
-                    //     $status->where('wo_status', '=', 'reported');
+                    //     //status finished --> setelah selesai melakukan wo reporting
+                    //     $status->where('wo_status', '=', 'finished');
                     //     //hal ini dilakukan sementara karena wo trans sudah mulai terbuat saat proses SR convert to WO (finalizenya wo trans approval akan terbuat saat wo reporting)
                     //     //kalo statusnya null berarti belum bisa approve (perubahan status null -> waiting for approval pada saat wo reporting)
                     //     $status->orWhere('wotr_status', '=', 'waiting for approval');
@@ -2668,7 +2668,7 @@ class wocontroller extends Controller
                     ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
                     ->join('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                     ->where(function ($status) {
-                        $status->where('wo_status', '=', 'reported'); //status reported --> setelah selesai melakukan wo reporting
+                        $status->where('wo_status', '=', 'finished'); //status finished --> setelah selesai melakukan wo reporting
                     })
                     ->groupBy('asset_code')
                     ->orderBy('asset_code')
@@ -2689,7 +2689,7 @@ class wocontroller extends Controller
                     //jika user yg login adalah approver WO
                     $data = WOMaster::query()
                         ->with(['getCurrentApprover'])
-                        ->where('wo_status', '=', 'reported')
+                        ->where('wo_status', '=', 'finished')
                         ->whereHas('getWOTransAppr', function ($q) {
                             $q->where('wotr_status', '=', 'waiting for approval');
                             $q->orWhere('wotr_status', '=', 'approved');
@@ -2700,8 +2700,8 @@ class wocontroller extends Controller
                         ->leftjoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
                         ->leftjoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
                         // ->where(function ($status) {
-                        //     //status reported --> setelah selesai melakukan wo reporting
-                        //     $status->where('wo_status', '=', 'reported');
+                        //     //status finished --> setelah selesai melakukan wo reporting
+                        //     $status->where('wo_status', '=', 'finished');
                         //     //hal ini dilakukan sementara karena wo trans sudah mulai terbuat saat proses SR convert to WO (finalizenya wo trans approval akan terbuat saat wo reporting)
                         //     //kalo statusnya null berarti belum bisa approve (perubahan status null -> waiting for approval pada saat wo reporting)
                         //     $status->orWhere('wotr_status', '=', 'waiting for approval');
@@ -2721,7 +2721,7 @@ class wocontroller extends Controller
                         ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
                         ->join('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                         ->where(function ($status) {
-                            $status->where('wo_status', '=', 'reported'); //status reported --> setelah selesai melakukan wo reporting
+                            $status->where('wo_status', '=', 'finished'); //status finished --> setelah selesai melakukan wo reporting
                         })
                         ->groupBy('asset_code')
                         ->orderBy('asset_code')
@@ -3015,7 +3015,7 @@ class wocontroller extends Controller
             DB::table('wo_mstr')
                 ->where('id', '=', $idwo)
                 ->update([
-                    'wo_status' => 'reported', //status tetap reported
+                    'wo_status' => 'finished', //status tetap finished
                     'wo_system_update' => Carbon::now()->toDateTimeString(),
                 ]);
 

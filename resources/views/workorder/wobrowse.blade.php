@@ -154,6 +154,7 @@ div #munculgambar .gambar:hover{
               <option value="finished">Finished</option>
               <option value="closed">Closed</option>
               <option value="canceled">Canceled</option>
+              <option value="acceptance">Acceptance</option>
             </select>
           </div>
           <label for="" class="col-md-1 col-form-label text-md-left">{{ __('') }}</label>

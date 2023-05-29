@@ -17,6 +17,10 @@
         -moz-box-sizing: border-box;
         box-sizing: border-box;
     }
+
+    input::placeholder {
+        font-weight: bold;
+    }
 </style>
 <div class="row">
     <div class="form-group row col-md-12">
@@ -80,7 +84,7 @@
                                     {{$spd->req_spd_qty_request}}
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" data-index="{{ $index }}" required>
+                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" data-index="{{ $index }}" readonly required placeholder="Click Here">
                                     <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
                                     <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
                                     <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />

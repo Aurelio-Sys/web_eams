@@ -4,7 +4,8 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-sm-6">
-      <h1 class="m-0 text-dark">Service Request Create</h1>
+      <h1 class="m-0 p-0 text-dark">Service Request Create</h1>
+      <p class="pb-0 m-0">Menu ini berfungsi untuk membuat Service Request</p>
     </div><!-- /.col -->
   </div><!-- /.row -->
 </div><!-- /.container-fluid -->

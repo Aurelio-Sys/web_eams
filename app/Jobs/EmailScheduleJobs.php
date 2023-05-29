@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Schema;
 use Carbon\Carbon;
 use PDF;
 use App;
+use Illuminate\Support\Facades\Auth\Authenticatable;
 
 class EmailScheduleJobs implements ShouldQueue
 {
@@ -149,7 +150,6 @@ class EmailScheduleJobs implements ShouldQueue
             // dd($list2);
         } else if ($a == 3) { //kirim email ke department/engineer approval ketika user submit service request
             $srnumber = $this->srnumber;
-            // dd($srnumber);
 
             $toemail = DB::table('service_req_mstr')
                 ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_asset')
@@ -158,23 +158,6 @@ class EmailScheduleJobs implements ShouldQueue
                 ->first();
 
             $srdeptapprover = DB::table('sr_approver_mstr')->where('sr_approver_dept', $toemail->sr_dept)->get();
-            // dd($srdeptapprover);
-
-            //cek departemen dan role approval yg sesuai dengan user yg login
-            // if (Session::get('role') <> 'ADMIN') {
-            //     //jika user bukan admin
-            //     $srdeptapprover = DB::table('sr_trans_approval')
-            //         ->where('srta_dept_approval', $toemail->sr_dept)
-            //         ->where('srta_mstr_id', $toemail->id)
-            //         ->where('srta_role_approval', $user->role_user)
-            //         ->first();
-            // } else {
-            //     //jika user adalah admin
-            //     $srdeptapprover = DB::table('sr_trans_approval')
-            //         ->where('srta_dept_approval', $srmstr->sr_dept)
-            //         ->where('srta_mstr_id', $idsr)
-            //         ->first();
-            // }
 
             if (count($srdeptapprover) > 1) {
                 //kirim email ke department approver
@@ -192,13 +175,13 @@ class EmailScheduleJobs implements ShouldQueue
                 $emails = '';
 
                 foreach ($emailto as $email) {
-                    $emails .= $email->eng_email . ',';
+                    $emails .= $email->email_user . ',';
                 }
 
                 $emails = substr($emails, 0, strlen($emails) - 1);
-                // dd($emails);
+
                 $array_email = explode(',', $emails);
-                // dd($emailto);
+
                 if ($emailto->count())
                     //kirim email ke kepala engineer
                     Mail::send(
@@ -209,8 +192,7 @@ class EmailScheduleJobs implements ShouldQueue
                             'note2' => $toemail->sr_asset . '--' . $toemail->asset_desc,
                             'header1' => 'SR Number',
                         ],
-                        //  'srnote' => $toemail->sr_note,
-                        //  'requestby' => $toemail->req_by,
+                        
                         function ($message) use ($array_email) {
                             $message->subject('eAMS - New Service Request');
                             // $message->from('tyas@ptimi.co.id');
@@ -285,14 +267,6 @@ class EmailScheduleJobs implements ShouldQueue
 
                 }
             }
-
-            // $approverto = DB::table('eng_mstr')
-            //     ->join('users', 'eng_mstr.eng_code', '=', 'users.username')
-            //     ->where('approver', '=', 1)
-            //     ->where('eng_active', '=', 'Yes')
-            //     ->where('eng_code', '=', $toemail->sr_approver,)
-            //     ->get();
-
 
         } else if ($a == 4) { //kirim email ke requestor ketika service request ditolak/reject oleh department
             // $tampungarray = $this->tampungarray;
@@ -497,28 +471,17 @@ class EmailScheduleJobs implements ShouldQueue
                 }
             }
         } else if ($a == 7) { //kirim email ketika service request di approved dan kirim ke approver selanjutnya
-            // $tampungarray = $this->tampungarray;
-            // dd($tampungarray);
-            // $countarray1 = count($tampungarray);
+            
             $asset = $this->asset;
             $requestor = $this->requestor;
             $srnumber = $this->srnumber;
-            // $rejectnote = $this->rejectnote;
+            $approver = $this->tampungarray;
             // dd(1);
             $srmstr = DB::table('service_req_mstr')->where('sr_number', $srnumber)->first();
 
-            $srtransapproval = DB::table('sr_trans_approval')
-                // ->where('srta_dept_approval', $srmstr->sr_dept)
-                ->where('srta_mstr_id', $srmstr->id)
-                ->first();
-
-            $nextapprover = DB::table('sr_trans_approval')->where('srta_mstr_id', $srtransapproval->srta_mstr_id)
-                ->where('srta_sequence', '>', $srtransapproval->srta_sequence)
-                ->first();
-
             $emailrequestor = DB::table('users')
-                ->where('dept_user', '=', $nextapprover->srta_dept_approval)
-                ->where('role_user', '=', $nextapprover->srta_role_approval)
+                ->where('dept_user', '=', $approver->srta_dept_approval)
+                ->where('role_user', '=', $approver->srta_role_approval)
                 ->get();
 
             $emails = '';
@@ -600,7 +563,7 @@ class EmailScheduleJobs implements ShouldQueue
                 $user = App\User::where('id', '=', $approver->id)->first();
                 $details = [
                     'body' => 'Service Request Waiting For Engineer Approval',
-                    'url' => 'srapproval',
+                    'url' => 'srapprovaleng',
                     'nbr' => $srnumber,
                     'note' => 'Please check'
 

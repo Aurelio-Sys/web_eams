@@ -4,13 +4,8 @@
   <div class="row mb-2">
     <div class="col-sm-6 mt-2">
       <h1 class="m-0 text-dark">Service Request Approval Engineer</h1>
+      <p class="pb-0 m-0">Menu ini berfungsi untuk melakukan approval engineer</p>
     </div><!-- /.col -->
-    <!-- <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="{{url('/home')}}">Home</a></li>
-              <li class="breadcrumb-item active">Picklist Browse WH</li>
-            </ol>
-          </div>/.col -->
   </div><!-- /.row -->
 </div><!-- /.container-fluid -->
 <!-- <hr> -->
@@ -122,14 +117,25 @@
   <table class="table table-bordered mt-4 no-footer mini-table" id="dataTable" width="100%" cellspacing="0">
     <thead>
       <tr style="text-align: center;">
-        <th width="10%">SR Number</th>
+        <!-- <th width="10%">SR Number</th>
         <th width="25%">Asset</th>
         <th width="10%">Location</th>
         <th width="7%">Priority</th>
         <th width="10%">Req by</th>
         <th width="7%">Req Date</th>
         <th width="15%">Note</th>
-        <th width="7%">Action</th>
+        <th width="7%">Action</th> -->
+        <th>SR Number</th>
+        <th>Asset</th>
+        <th>Asset Description</th>
+        <!-- <th>Location</th> -->
+        <!-- <th>Status</th> -->
+        <th>Priority</th>
+        <!-- <th>Department</th> -->
+        <th>Req by</th>
+        <th>Req Date</th>
+        <th>Req Time</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
