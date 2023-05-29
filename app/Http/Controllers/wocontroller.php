@@ -1367,6 +1367,14 @@ class wocontroller extends Controller
                         ->first();
 
                     if ($checksr->wo_sr_number !== "") {
+                        DB::table('wo_mstr')
+                        ->where('wo_number', '=', $req->tmp_wonbr)
+                        ->where('wo_status', '=', 'firm')
+                        ->update([
+                            'wo_cancel_note' => $req->notecancel,
+                            'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
+
                         //ubah status sr
                         DB::table('service_req_mstr')
                             ->where('sr_number', '=', $checksr->wo_sr_number)
@@ -1535,6 +1543,14 @@ class wocontroller extends Controller
                             ->first();
     
                         if ($checksr->wo_sr_number !== "") {
+                            DB::table('wo_mstr')
+                                ->where('wo_number', '=', $req->tmp_wonbr)
+                                ->where('wo_status', '=', 'released')
+                                ->update([
+                                    'wo_cancel_note' => $req->notecancel,
+                                    'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                ]);
+
                             //ubah status sr
                             DB::table('service_req_mstr')
                                 ->where('sr_number', '=', $checksr->wo_sr_number)
