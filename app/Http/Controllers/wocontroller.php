@@ -2418,6 +2418,17 @@ class wocontroller extends Controller
 
         // dd($currwo);
 
+        // check apakah wo berasal dari SR
+        // variable tampung sr note
+        $srnote = '';
+        if($currwo->wo_sr_number != ""){
+            $getSRInfo = DB::table('service_req_mstr')
+                        ->where('sr_number','=', $currwo->wo_sr_number)
+                        ->first();
+
+            $srnote = $getSRInfo->sr_note;
+        }
+
         if ($currwo->wo_failure_type !== null) {
             $getFailTypeDesc = DB::table('wotyp_mstr')
                 ->select('wotyp_desc')
@@ -2528,6 +2539,7 @@ class wocontroller extends Controller
             'inslist' => $getInslistDesc,
             'splist' => $getSPlistDesc,
             'qcslist' => $getQClistDesc,
+            'sr_note' => $srnote,
         ]);
     }
     

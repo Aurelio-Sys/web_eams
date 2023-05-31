@@ -151,6 +151,12 @@
               </div>
             </div>
             <div class="form-group row justify-content-center">
+              <label for="v_srnote" class="col-md-5 col-form-label text-md-left">SR Note</label>
+              <div class="col-md-7">
+                <textarea id="v_srnote" readonly class="form-control" name="v_srnote" value="{{ old('v_srnote') }}" autofocus></textarea>
+              </div>
+            </div>
+            <div class="form-group row justify-content-center">
               <label for="v_creator" class="col-md-5 col-form-label text-md-left">Requested By</label>
               <div class="col-md-7">
                 <input id="v_creator" readonly class="form-control" name="v_creator" value="{{ old('v_creator') }}" autofocus>
@@ -439,6 +445,8 @@
           var spcodedesc = vamp.splist ? vamp.splist.spg_desc : '';
           var qccode = vamp.wo_master.wo_qcspec_code ? vamp.wo_master.wo_qcspec_code : '';
           var qccodedesc = vamp.qcslist ? vamp.qcslist.qcs_desc : '';
+          var priority = vamp.wo_master.wo_priority;
+          var srnote = vamp.sr_note;
 
           // console.log(vamp);
 
@@ -513,6 +521,8 @@
           document.getElementById('v_inslist').value = inscode + ' - ' + inscodedesc;
           document.getElementById('v_splist').value = spcode + ' - ' + spcodedesc;
           document.getElementById('v_qclist').value = qccode + ' - ' + qccodedesc;
+          document.getElementById('v_priority').value = priority;
+          document.getElementById('v_srnote').value = srnote;
           // document.getElementById('v_mtcby').value       = mtcby;
 
           if ($('#loadingtable').hasClass('show')) {
