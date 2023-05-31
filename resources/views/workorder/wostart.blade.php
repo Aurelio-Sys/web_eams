@@ -3,14 +3,15 @@
 @section('content-header')
 <div class="container-fluid">
   <div class="row mb-2">
-    <div class="col-sm-6 mt-2">
+    <div class="col-sm-8 mt-2">
       <h1 class="m-0 text-dark">Work Order Start</h1>
+      <p class="pb-0 m-0">Menu ini berfungsi untuk memulai pengerjaan work order oleh engineer</p>
     </div><!-- /.col -->
-    <div class="col-sm-6">
-      <ol class="breadcrumb float-sm-right">
+    <div class="col-sm-4">
+      <!-- <ol class="breadcrumb float-sm-right">
         <li class="breadcrumb-item"><a href="{{url('/home')}}">Home</a></li>
         <li class="breadcrumb-item active">Work Order Start</li>
-      </ol>
+      </ol> -->
     </div><!-- /.col -->
   </div><!-- /.row -->
 </div><!-- /.container-fluid -->
@@ -275,6 +276,14 @@
                 <input id="v_duedate" readonly type="date" class="form-control" name="v_duedate" value="{{ old('e_duedate') }}" autofocus readonly>
               </div>
             </div>
+            <div class="form-group row justify-content-center">
+              <label class="col-md-5 col-form-label text-md-left">Uploaded File</label>
+              <div class="col-md-7">
+                <div id="munculgambar_view">
+
+                </div>
+              </div>
+            </div>
             <div id="divstartdate" class="form-group row justify-content-center">
               <label for="v_startdate" class="col-md-5 col-form-label text-md-left">Start Date</label>
               <div class="col-md-7">
@@ -412,6 +421,7 @@
           var assetcode = vamp.wo_master.wo_asset_code;
           var assetdesc = vamp.asset.asset_desc;
           var assetloc = vamp.asset.asset_loc;
+          var assetloc_desc = vamp.asset.asloc_desc;
           var failuretype_code = vamp.wo_master.wo_failure_type !== null ? vamp.wo_master.wo_failure_type : '';
           var failuretype_desc = vamp.failure_type.wotyp_desc ? vamp.failure_type.wotyp_desc : '';
           var note = vamp.wo_master.wo_note;
@@ -487,7 +497,7 @@
           document.getElementById('v_nowo').value = wonumber;
           document.getElementById('v_asset').value = assetcode;
           document.getElementById('v_assetdesc').value = assetdesc;
-          document.getElementById('v_loc').value = assetloc;
+          document.getElementById('v_loc').value = assetloc + ' - ' + assetloc_desc;
           document.getElementById('v_wottype').value = failuretype_code + ' - ' + failuretype_desc;
           document.getElementById('v_fclist').value = combineFailure.join('\n');
           document.getElementById('v_impact').value = combineImpact.join('\n');
@@ -518,6 +528,17 @@
 
             $('#viewModal').modal('show');
           }, 1000);
+        }
+      })
+
+      $.ajax({
+        url: "/imageviewonly_woimaint",
+        data: {
+          wonumber: wonbr,
+        },
+        success: function(data) {
+
+          $('#munculgambar_view').html('').append(data);
         }
       })
     });

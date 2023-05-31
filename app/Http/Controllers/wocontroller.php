@@ -1147,6 +1147,36 @@ class wocontroller extends Controller
 
             DB::table('wo_mstr')->insert($dataarray);
 
+            if ($req->has('c_uploadfile')) {
+
+                foreach ($req->file('c_uploadfile') as $upload) {
+                    $filename = $runningnbr . '-' . $upload->getClientOriginalName();
+
+                    // Cek apakah file sudah ada di database
+                    $existingFile = DB::table('womaint_upload')
+                        ->where('womaint_filename', $filename)
+                        ->where('womaint_wonbr', '=', $runningnbr)
+                        ->count();
+                    if ($existingFile > 0) {
+                        DB::rollBack();
+                        toast('File names cannot be same.', 'error');
+                        return back();
+                    }
+
+                    // Simpan File Upload pada Public
+                    $savepath = public_path('uploadwomaint/');
+                    $upload->move($savepath, $filename);
+
+                    // Simpan ke DB Upload
+                    DB::table('womaint_upload')
+                        ->insert([
+                            'womaint_wonbr' => $runningnbr,
+                            'womaint_filename' => $filename, //$upload->getClientOriginalName(), //nama file asli
+                            'womaint_wonbr_filepath' => $savepath . $filename,
+                            ]);
+                }
+            }
+
             DB::table('wo_trans_history')
                 ->insert([
                     'wo_number' => $runningnbr,
@@ -1324,8 +1354,39 @@ class wocontroller extends Controller
                     'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                 ]);
 
+
+            if ($req->has('e_uploadfile')) {
+
+                foreach ($req->file('e_uploadfile') as $upload) {
+                    $filename =  $req->e_nowo . '-' . $upload->getClientOriginalName();
+
+                    // Cek apakah file sudah ada di database
+                    $existingFile = DB::table('womaint_upload')
+                        ->where('womaint_filename', $filename)
+                        ->where('womaint_wonbr', '=', $req->e_nowo)
+                        ->count();
+                    if ($existingFile > 0) {
+                        DB::rollBack();
+                        toast('File names cannot be same.', 'error');
+                        return back();
+                    }
+
+                    // Simpan File Upload pada Public
+                    $savepath = public_path('uploadwomaint/');
+                    $upload->move($savepath, $filename);
+
+                    // Simpan ke DB Upload
+                    DB::table('womaint_upload')
+                        ->insert([
+                            'womaint_wonbr' =>$req->e_nowo,
+                            'womaint_filename' => $filename, //$upload->getClientOriginalName(), //nama file asli
+                            'womaint_wonbr_filepath' => $savepath . $filename,
+                            ]);
+                }
+            }
+
             DB::commit();
-            toast('WO ' . $req->e_nowo . ' successfully updated', 'success');
+            toast('' . $req->e_nowo . ' successfully updated', 'success');
             return redirect()->route('womaint');
         } catch (Exception $e) {
             DB::rollBack();
@@ -2367,7 +2428,8 @@ class wocontroller extends Controller
 
         if ($currwo->wo_asset_code !== null) {
             $getAssetDesc = DB::table('asset_mstr')
-                ->select('asset_desc', 'asset_loc', 'asset_group')
+                ->select('asset_desc', 'asset_loc', 'asset_group','asloc_desc')
+                ->join('asset_loc','asset_loc.asloc_code','asset_mstr.asset_loc')
                 ->where('asset_code', '=', $currwo->wo_asset_code)
                 ->first();
         } else {
@@ -5840,7 +5902,7 @@ class wocontroller extends Controller
         if ($datafile) {
 
             $lastindex = strrpos($datafile->woreport_wonbr_filepath, "/");
-            $filename = substr($datafile->	woreport_wonbr . '-' . $datafile->woreport_filename, $lastindex + 1);
+            $filename = substr($datafile->woreport_wonbr . '-' . $datafile->woreport_filename, $lastindex + 1);
 
             return Response::download($datafile->woreport_wonbr_filepath, $datafile->woreport_filename);
         } else {
@@ -5852,27 +5914,27 @@ class wocontroller extends Controller
     public function delfilewofinish($id)
     {
 
-        $data1 = DB::table('acceptance_image')
-            ->where('accept_img_id', $id)
+        $data1 = DB::table('wo_report_upload')
+            ->where('id','=',$id)
             ->first();
 
         if ($data1) {
-            $lastindex = strrpos($data1->file_url, "/");
-            $filename = substr($data1->file_url, $lastindex + 1);
+            $lastindex = strrpos($data1->woreport_wonbr_filepath, "/");
+            $filename = substr($data1->woreport_wonbr_filepath, $lastindex + 1);
 
             $filename = public_path('/uploadwofinish/' . $filename);
 
             if (File::exists($filename)) {
                 File::delete($filename);
 
-                DB::table('acceptance_image')
-                    ->where('accept_img_id', $id)
+                DB::table('wo_report_upload')
+                    ->where('id', $id)
                     ->delete();
             }
         }
 
-        $gambar = DB::table('acceptance_image')
-            ->where('file_wonumber', '=', $data1->file_wonumber)
+        $gambar = DB::table('wo_report_upload')
+            ->where('woreport_wonbr', '=', $data1->woreport_wonbr)
             ->get();
 
         $output = "";
@@ -5880,8 +5942,8 @@ class wocontroller extends Controller
             $output .= '<tr>
                     <td><a href="#" class="btn deleterow btn-danger"><i class="icon-table fa fa-trash fa-lg"></i></a>
                     &nbsp
-                    <input type="hidden" value="' . $gambar->accept_img_id . '" class="rowval"/>
-                    <td><a href="/downloadwofinish/' . $gambar->accept_img_id . '" target="_blank">' . $gambar->file_name . '</a></td>
+                    <input type="hidden" value="' . $gambar->id . '" class="rowval"/>
+                    <td><a href="/downloadwofinish/' . $gambar->id . '" target="_blank">' . $gambar->woreport_filename . '</a></td>
                 </tr>';
         }
 
@@ -6282,6 +6344,103 @@ class wocontroller extends Controller
             // 'optionfailtype' => $outputtype,
             'optionfailcode' => $outputcode,
         ]);
+    }
+
+    public function imageview_womaint(Request $req){
+        $wonumber = $req->wonumber;
+
+        $gambar = DB::table('womaint_upload')
+            ->where('womaint_wonbr', '=', $wonumber)
+            ->get();
+
+        $output = "";
+        foreach ($gambar as $gambar) {
+            $output .= '<tr>
+                    <td><a href="#" class="btn deleterow btn-danger"><i class="icon-table fa fa-trash fa-lg"></i></a>
+                    &nbsp
+                    <input type="hidden" value="' . $gambar->id . '" class="rowval"/>
+                    <td><a href="/downloadwomaint/' . $gambar->id . '" target="_blank">' . $gambar->womaint_filename . '</a></td>
+                </tr>';
+        }
+
+        //return response()->json($gambar);
+        return response($output);
+    }
+
+    public function delfilewomaint($id)
+    {
+
+        $data1 = DB::table('womaint_upload')
+            ->where('id', $id)
+            ->first();
+
+        if ($data1) {
+            $lastindex = strrpos($data1->womaint_wonbr_filepath, "/");
+            $filename = substr($data1->womaint_wonbr_filepath, $lastindex + 1);
+
+            $filename = public_path('/uploadwomaint/' . $filename);
+
+            if (File::exists($filename)) {
+                File::delete($filename);
+
+                DB::table('womaint_upload')
+                    ->where('id', $id)
+                    ->delete();
+            }
+        }
+
+        $gambar = DB::table('womaint_upload')
+            ->where('womaint_wonbr', '=', $data1->womaint_wonbr)
+            ->get();
+
+        $output = "";
+        foreach ($gambar as $gambar) {
+            $output .= '<tr>
+                    <td><a href="#" class="btn deleterow btn-danger"><i class="icon-table fa fa-trash fa-lg"></i></a>
+                    &nbsp
+                    <input type="hidden" value="' . $gambar->id . '" class="rowval"/>
+                    <td><a href="/downloadwomaint/' . $gambar->id . '" target="_blank">' . $gambar->womaint_filename . '</a></td>
+                </tr>';
+        }
+
+        return response($output);
+    }
+
+    public function downloadwomaint($id)
+    {
+
+        $datafile = DB::table('womaint_upload')
+            ->where('id', '=', $id)
+            ->first();
+
+        if ($datafile) {
+
+            $lastindex = strrpos($datafile->womaint_wonbr_filepath, "/");
+            $filename = substr($datafile->womaint_wonbr . '-' . $datafile->womaint_filename, $lastindex + 1);
+
+            return Response::download($datafile->womaint_wonbr_filepath, $datafile->womaint_filename);
+        } else {
+            toast('There is no file', 'error');
+            return back();
+        }
+    }
+
+    public function imageviewonly_woimaint(Request $req){
+        $wonumber = $req->wonumber;
+
+        $gambar = DB::table('womaint_upload')
+            ->where('womaint_wonbr', '=', $wonumber)
+            ->get();
+
+        $output = "";
+        foreach ($gambar as $gambar) {
+            $output .= '<tr>
+                    <td><a href="/downloadwomaint/' . $gambar->id . '" target="_blank">' . $gambar->womaint_filename . '</a></td>
+                </tr>';
+        }
+
+        //return response()->json($gambar);
+        return response($output);
     }
 }
 //tanggal betulin 24 may 2021 - 1553
