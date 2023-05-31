@@ -1985,7 +1985,7 @@ div #munculgambar .gambar:hover{
             data: { pmc_type: wotype },
             success: function(response) {
                 // Manipulasi data di sini
-                console.log(response);
+                // console.log(response);
 
                 var select = $('#e_mtcode');
                 select.empty();
@@ -2198,7 +2198,7 @@ div #munculgambar .gambar:hover{
         // ambil value dari input radio yang dipilih
         var selectedValue = $('input[name="cwotype"]:checked').val();
 
-        console.log(selectedValue);
+        // console.log(selectedValue);
 
         $.ajax({
             url: '/filtermaintcode',
@@ -2206,7 +2206,7 @@ div #munculgambar .gambar:hover{
             data: { pmc_type: selectedValue },
             success: function(response) {
                 // Manipulasi data di sini
-                console.log(response);
+                // console.log(response);
 
                 var select = $('#c_mtcode');
                 select.empty();

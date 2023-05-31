@@ -2624,7 +2624,7 @@ class ServiceController extends Controller
                     <td><a href="#" class="btn deleterow btn-danger"><i class="icon-table fa fa-trash fa-lg"></i></a>
                     &nbsp
                     <input type="hidden" value="' . $gambar->id . '" class="rowval"/>
-                    <td><a href="/downloadwofinish/' . $gambar->id . '" target="_blank">' . $gambar->woreport_filename . '</a></td>
+                    <td><a href="/'. $gambar->woreport_wonbr_filepath . '" target="_blank">' . $gambar->woreport_filename . '</a></td>
                 </tr>';
         }
 
