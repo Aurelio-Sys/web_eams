@@ -257,6 +257,8 @@ class WORelease extends Controller
                 
                     $result[$part][$site]['qtyoh'] += $qtyoh;
                 }
+
+                // dd($result);
                 
 
                 //hasil pengelompokan/grouping by part dan site data QAD kemudian ditampung dalam $output
@@ -268,9 +270,9 @@ class WORelease extends Controller
                     }
                 }
 
-                //mulai membandingkan data antara data di table inv_required (web) dengan qty tersedia dari data QAD ($output)
+                // dd($output);
 
-                $not_enough = false; //penanda jika tidak cukup nantik akan berubah jadi true. defaultnya adalah false
+                //mulai membandingkan data antara data di table inv_required (web) dengan qty tersedia dari data QAD ($output)
 
                 //ambil data dari table inv_required
                 foreach($output as $qadData){
@@ -285,37 +287,61 @@ class WORelease extends Controller
 
                     if($getInvRequired->inv_qty_required > $qadData['qtyoh']){
 
-                        //jika qty di qad supply tidak cukup, kirim notifikasi email ke warehouse
-                        //nantinya warehouse akan melakukan transfer dari source ke supply
-                        //status tetap released walaupun tidak cukup stocknya di supply
-                        $not_enough = true;
 
-
-
-                        //kasih flag true(1) jika stock di supply tidak cukup supaya menjadi penanda spare part yang perlu dilakukan wo transfer spare part
-                        DB::table('wo_dets_sp')
-                            ->where('wd_sp_wonumber','=', $requestData['hide_wonum'])
-                            ->where('wd_sp_spcode','=', $qadData['part'])
-                            ->update([
-                                'wd_sp_flag' => true,
-                                'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                            ]);                        
+                        $datasFilter[] = [
+                            'sp_code' => $qadData['part'],
+                            'not_enough' => true,
+                        ]; 
+                   
 
                     }else{
-                        DB::table('wo_dets_sp')
-                            ->where('wd_sp_wonumber','=', $requestData['hide_wonum'])
-                            ->where('wd_sp_spcode','=', $qadData['part'])
-                            ->update([
-                                'wd_sp_flag' => false,
-                                'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                            ]);   
 
-                        break;
+                        $datasFilter[] = [
+                            'sp_code' => $qadData['part'],
+                            'not_enough' => false,
+                        ]; 
 
 
                     }
                     
                 }
+
+                // dd($datasFilter);
+
+                // Mengubah data array menjadi koleksi Laravel
+                $collection = new Collection($datasFilter);
+
+                // Mengelompokkan data berdasarkan SP code
+                $groupedData = $collection->groupBy('sp_code');
+
+                //Filter dengan prioritas adalah lokasi yang cukup stoknya
+                $outputResultFilter = $groupedData->map(function ($group) {
+                    $hasFalseCondition = $group->contains('not_enough', false);
+
+                    if ($hasFalseCondition) {
+                        return [
+                            'sp_code' => $group->first()['sp_code'],
+                            'not_enough' => false,
+                        ];
+                    } else {
+                        return [
+                            'sp_code' => $group->first()['sp_code'],
+                            'not_enough' => true,
+                        ];
+                    }
+                })->values()->all();
+
+                foreach($outputResultFilter as $thisResult){
+                    DB::table('wo_dets_sp')
+                            ->where('wd_sp_wonumber','=', $requestData['hide_wonum'])
+                            ->where('wd_sp_spcode','=', $thisResult['sp_code'])
+                            ->update([
+                                'wd_sp_flag' => $thisResult['not_enough'],
+                                'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);   
+                }
+
+
 
                 //perubahaan status dan kirim email harus diluar looping diatas atau ga bisa dobel kirim email
                 DB::table('wo_mstr')
@@ -393,7 +419,7 @@ class WORelease extends Controller
 
                     DB::commit();
 
-                    toast('Work order released successfully, work order transfer is required', 'success')->autoClose(10000);
+                    toast('Work order released successfully, work order transfer is required for '.$requestData['hide_wonum'].'', 'success')->autoClose(10000);
                     return redirect()->route('browseRelease');
                     
                 }else{
@@ -452,7 +478,7 @@ class WORelease extends Controller
 
                     DB::commit();
 
-                    toast('WO Successfuly Released !', 'success')->autoClose(10000);
+                    toast('WO Successfuly Released for '.$requestData['hide_wonum'].' !', 'success')->autoClose(10000);
                     return redirect()->route('browseRelease');
 
                 }
@@ -521,7 +547,7 @@ class WORelease extends Controller
 
                 DB::commit();
 
-                toast('WO Successfuly Released !', 'success')->autoClose(10000);
+                toast('WO Successfuly Released for '.$requestData['hide_wonum'].' !', 'success')->autoClose(10000);
                 return redirect()->route('browseRelease');
 
                 

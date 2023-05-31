@@ -34,6 +34,7 @@ use Svg\Tag\Rect;
 use App\Jobs\EmailScheduleJobs;
 use App;
 use App\Exports\ViewExport2;
+use App\Jobs\SendNotifWoFinish;
 use App\Jobs\SendWorkOrderCanceledNotification;
 use App\Models\Qxwsa;
 use App\Services\WSAServices;
@@ -4208,20 +4209,60 @@ class wocontroller extends Controller
             }
 
             //jika klik button Close WO
-            if ($req->btnconf == "closewo") {
-                //status wo berubah
+            if($req->btnconf == "closewo"){
 
-                DB::table('wo_mstr')
+                //cek jika wo memerlukan step approval
+                $checkApprover = DB::table('wo_approver_mstr')
+                                ->exists();
+
+                // dd($checkApprover);
+                
+                if($checkApprover){
+                    //jika ada settingan approver
+
+                    //ambil role approver order paling pertama untuk dikirimkan email notifikasi
+                    $getFirstApprover = DB::table('wo_approver_mstr')
+                                    ->orderBy('wo_approver_order', 'ASC')
+                                    ->first();
+
+                    // dd($getFirstApprover);
+
+                    SendNotifWoFinish::dispatch($req->c_wonbr, $getFirstApprover->wo_approver_role);
+
+                    //status wo berubah
+
+                    DB::table('wo_mstr')
                     ->where('wo_number', '=', $req->c_wonbr)
                     ->update([
                         'wo_status' => 'finished',
                         'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                     ]);
 
-                DB::commit();
-                toast('Reporting Successfuly, WO Closed', 'success')->persistent('Dismiss');
-                return redirect()->route('woreport');
+
+
+                    DB::commit();
+                    toast('Work Order '.$req->c_wonbr.' Status: Finished', 'success')->persistent('Dismiss');
+                    return redirect()->route('woreport');
+                }else{
+                    //jika tidak ada settingan approver
+
+                    DB::table('wo_mstr')
+                    ->where('wo_number', '=', $req->c_wonbr)
+                    ->update([
+                        'wo_status' => 'closed',
+                        'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    ]);
+
+
+
+                    DB::commit();
+                    toast('Work Order '.$req->c_wonbr.' Status: Closed', 'success')->persistent('Dismiss');
+                    return redirect()->route('woreport');
+                }
+
+                
             }
+
         } catch (Exception $err) {
 
             DB::rollBack();
