@@ -1,5 +1,9 @@
 @forelse($datas as $show)
-@php($session = session('role'))
+@php($session_role = session('role'))
+@php($session_dept = session('department'))
+<?php
+// dd($session_role);
+?>
 <tr>
     <td>{{$show->sr_number}}</td>
     <td>{{$show->asset_code}}</td>
@@ -11,7 +15,7 @@
     <td>{{date('H:i', strtotime($show->sr_req_time))}}</td>
     
     <td style="text-align: center;">
-    @if($show->sr_status_approval == 'Waiting for engineer approval' || $session == 'ADMIN')
+    @if($show->srta_eng_status == 'Waiting for engineer approval')
     <a href="javascript:void(0)" class="approvaleng" type="button" data-toggle="tooltip" title="Service Request Approval" 
     data-target="#viewModal" data-idsr="{{$show->id}}" data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_asset}}" 
     data-assetdesc="{{$show->asset_desc}}" data-srdate="{{$show->sr_req_date}}"

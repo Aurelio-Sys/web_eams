@@ -892,6 +892,13 @@ to get the desired effect
                         </a>
                       </li>
                     @endif
+                    @if(str_contains( Session::get('menu_access'), 'MT48'))
+                      <li class="nav-item">
+                        <a href="/notmssg" class="nav-link">
+                          <p>Message Maintenance</p>
+                        </a>
+                      </li>
+                    @endif
                     @if(str_contains( Session::get('menu_access'), 'MT43'))
                       <li class="nav-item">
                         <a href="/rcmmstr" class="nav-link">

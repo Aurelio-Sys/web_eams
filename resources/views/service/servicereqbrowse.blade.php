@@ -449,6 +449,7 @@
   </div>
 </div>
 
+<!-- Modal Route -->
 <div class="modal fade" id="routeModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
@@ -618,11 +619,6 @@
           </div>
         </div>
         <div class="form-group row">
-          <!-- <label for="reason" class="col-md-2 col-form-label">Reason Approval</label>
-          <div class="col-md-4">
-            <input id="reason" type="text" class="form-control" name="reason" readonly />
-          </div> -->
-
           <label for="startwo" class="col-md-2 col-form-label">WO Start Date</label>
           <div class="col-md-4">
             <input id="startwo" readonly type="text" class="form-control" name="startwo">
@@ -631,7 +627,6 @@
           <div class="col-md-4">
             <input id="srdate" type="text" class="form-control" name="srdate" autocomplete="off" readonly />
           </div>
-
         </div>
         <div class="form-group row">
           <label for="endwo" class="col-md-2 col-form-label">WO Finish Date</label>
@@ -684,69 +679,559 @@
       </div>
     </div>
   </div>
+</div>
 
-  @endsection
+@endsection
 
 
-  @section('scripts')
-  <script type="text/javascript">
-    $(document).ready(function() {
-      /* $("#s_asset").select2({
-        width: '100%',
-        theme: 'bootstrap4',
-      }); */
+@section('scripts')
+<script type="text/javascript">
+  $(document).ready(function() {
+    /* $("#s_asset").select2({
+      width: '100%',
+      theme: 'bootstrap4',
+    }); */
 
-      $('#s_datefrom').datepicker({
-        dateFormat: 'yy-mm-dd'
-      });
+    $('#s_datefrom').datepicker({
+      dateFormat: 'yy-mm-dd'
+    });
 
-      $('#s_dateto').datepicker({
-        dateFormat: 'yy-mm-dd'
-      });
+    $('#s_dateto').datepicker({
+      dateFormat: 'yy-mm-dd'
+    });
+
+    $("#s_user").select2({
+      width: '100%',
+      // placeholder : "Select User",
+      theme: 'bootstrap4',
+    });
+
+    $(".select2bs4").select2({
+      width: '100%',
+      theme: 'bootstrap4',
+    });
+
+
+    $("#enjiners").select2({
+      width: '100%',
+      placeholder: "Select Engineer",
+      maximumSelectionLength: 5,
+      closeOnSelect: false,
+      allowClear: true,
+      // theme : 'bootstrap4'
+    });
+
+    $("#e_wottype").select2({
+      width: '100%',
+      // theme : 'bootstrap4',
+      allowClear: true,
+      placeholder: 'Select Failure Type',
+
+    });
+
+    $("#e_approver").select2({
+      width: '100%',
+      // theme : 'bootstrap4',
+      allowClear: true,
+      placeholder: 'Select Approver',
+
+    });
+
+    $("#e_failurecode").select2({
+      width: '100%',
+      placeholder: "Select Failure Code",
+      theme: "bootstrap4",
+      allowClear: true,
+      maximumSelectionLength: 3,
+      closeOnSelect: false,
+      allowClear: true,
+      multiple: true,
+    });
+
+    $('#e_impact').select2({
+      placeholder: "Select Impact",
+      width: '100%',
+      closeOnSelect: false,
+      allowClear: true,
+      theme: 'bootstrap4',
+    });
+
+    function fetch_data(page, srnumber, asset, /*priority /*period*/ status, requestby, datefrom, dateto) {
+      $.ajax({
+        url: "/srbrowse/searchsr?page=" + page + "&srnumber=" + srnumber + "&asset=" + asset + /*"&priority=" + priority + /* "&period=" + period + */ "&status=" + status + "&requestby=" + requestby + "&datefrom=" + datefrom + "&dateto=" + dateto,
+        success: function(data) {
+          // console.log(data);
+          $('tbody').html('');
+          $('tbody').html(data);
+        }
+      })
+    }
+
+
+    $(document).on('click', '#btnsearch', function() {
+      var srnumber = $('#s_servicenbr').val();
+      var asset = $('#s_asset').val();
+      var priority = $('#s_priority').val();
+      /*  var period = $('#s_period').val(); */
+      var status = $('#s_status').val();
+      var requestby = $('#s_user').val();
+      var datefrom = $('#s_datefrom').val();
+      var dateto = $('#s_dateto').val();
+      // alert(1);
+      // var column_name = $('#hidden_column_name').val();
+      // var sort_type = $('#hidden_sort_type').val();
+      var page = 1;
+
+      // console.log(srnumber, asset);
+
+      document.getElementById('tmpsrnumber').value = srnumber;
+      document.getElementById('tmpasset').value = asset;
+      // document.getElementById('tmppriority').value = priority;
+      /*document.getElementById('tmpperiod').value = period; */
+      document.getElementById('tmpstatus').value = status;
+      document.getElementById('tmpuser').value = requestby;
+      document.getElementById('tmpdatefrom').value = datefrom;
+      document.getElementById('tmpdateto').value = dateto;
+
+      fetch_data(page, srnumber, asset, /*priority*/ /*period*/ status, requestby, datefrom, dateto);
+
+    });
+
+
+    $(document).on('click', '.pagination a', function(event) {
+      event.preventDefault();
+      var page = $(this).attr('href').split('page=')[1];
+      $('#hidden_page').val(page);
+      var column_name = $('#hidden_column_name').val();
+      var sort_type = $('#hidden_sort_type').val();
+
+      var srnumber = $('#tmpsrnumber').val();
+      var asset = $('#tmpasset').val();
+      // var priority = $('#tmppriority').val();
+      /*var period = $('#tmpperiod').val();*/
+      var status = $('#tmpstatus').val();
+      var requestby = $('#tmpuser').val();
+      var datefrom = $('#s_datefrom').val();
+      var dateto = $('#s_dateto').val();
+
+      fetch_data(page, srnumber, asset, /*priority*/ /*period*/ status, requestby, datefrom, dateto);
+    });
+
+    $(document).on('click', '#btnrefresh', function() {
+      var srnumber = '';
+      var asset = '';
+      var priority = '';
+      /*var period = ''; */
+      var status = '';
+      var requestby = '';
+      var datefrom = '';
+      var dateto = '';
+      var page = 1;
+
+      // alert(1);
+      document.getElementById('s_servicenbr').value = '';
+      document.getElementById('s_asset').value = '';
+      // document.getElementById('s_priority').value = '';
+      /*document.getElementById('s_period').value = '';*/
+      document.getElementById('s_status').value = '';
+      document.getElementById('s_user').value = '';
+      document.getElementById('s_datefrom').value = '';
+      document.getElementById('s_dateto').value = '';
+      document.getElementById('tmpsrnumber').value = srnumber;
+      document.getElementById('tmpasset').value = asset;
+      document.getElementById('tmppriority').value = priority;
+      /*document.getElementById('tmpperiod').value = period;*/
+      document.getElementById('tmpstatus').value = status;
+      document.getElementById('tmpuser').value = requestby;
+      document.getElementById('tmpdatefrom').value = datefrom;
+      document.getElementById('tmpdateto').value = dateto;
+
+      fetch_data(page, srnumber, asset /*priority*/ /*period*/ , status, requestby, datefrom, dateto);
+
+      // $("#s_asset").select2({
+      //   width: '100%',
+      //   // placeholder : "Select Asset",
+      //   theme: 'bootstrap4',
+      //   asset,
+      // });
 
       $("#s_user").select2({
         width: '100%',
         // placeholder : "Select User",
         theme: 'bootstrap4',
+        requestby,
       });
 
-      $(".select2bs4").select2({
-        width: '100%',
+
+    });
+
+    $(document).on('click', '.view', function() {
+
+      $('#viewModal').modal('show');
+
+      var srnumber = $(this).data('srnumber');
+      var assetcode = $(this).data('assetcode');
+      var assetdesc = $(this).data('assetdesc');
+      var dept = $(this).data('dept');
+      var assetloc = $(this).data('assetloc');
+      var astype = $(this).data('astypedesc');
+      var srnote = $(this).data('srnote');
+      var reqby = $(this).data('reqby');
+      var priority = $(this).data('priority');
+      var rejectnote = $(this).data('rejectnote');
+      var reqbyname = $(this).data('reqbyname');
+      var wotype = $(this).data('wotypedesc');
+      var impact = $(this).data('impactcode');
+      var wonumber = $(this).data('wonumber');
+      var startwo = $(this).data('startwo');
+      var endwo = $(this).data('endwo');
+      var action = $(this).data('action');
+      var wostatus = $(this).data('wostatus');
+      var statusapproval = $(this).data('statusapproval');
+      var failtype = $(this).data('failtype');
+      var failcode = $(this).data('failcode');
+      var approver = $(this).data('approver');
+      var reason = $(this).data('reason');
+      var engineer = $(this).data('engineer');
+      var srcancelnote = $(this).data('srcancelnote');
+
+      var srdate = $(this).data('srdate');
+      document.getElementById('srdate').value = srdate;
+      var srtime = $(this).data('srtime');
+      document.getElementById('srtime').value = srtime;
+
+      var eng1 = $(this).data('eng1');
+      var eng2 = $(this).data('eng2');
+      var eng3 = $(this).data('eng3');
+      var eng4 = $(this).data('eng4');
+      var eng5 = $(this).data('eng5');
+
+      var englist = eng1 + '\n' + eng2 + '\n' + eng3 + '\n' + eng4 + '\n' + eng5;
+
+      var fail1 = $(this).data('faildesc1');
+      var fail2 = $(this).data('faildesc2');
+      var fail3 = $(this).data('faildesc3');
+
+      var faildesclist = fail1 + '\n' + fail2 + '\n' + fail3;
+
+      // console.log(englist);
+
+      var eng = engineer.replaceAll(";", "\n");
+
+      document.getElementById('englist').value = eng;
+      document.getElementById('reqbyname').value = reqby;
+      document.getElementById('srnote').value = srnote;
+      document.getElementById('wonumber').value = wonumber;
+      if (startwo != '01-01-1970') {
+        document.getElementById('startwo').value = startwo;
+      } else {
+        document.getElementById('startwo').value = '';
+      }
+      if (endwo != '01-01-1970') {
+        document.getElementById('endwo').value = endwo;
+      } else {
+        document.getElementById('endwo').value = '';
+      }
+      document.getElementById('wostatus').value = wostatus;
+      document.getElementById('approver').value = approver;
+      document.getElementById('srcancelnote').value = srcancelnote;
+
+      if (wostatus == 'Open') {
+        document.getElementById("wostatus").style.color = 'green';
+      } else if (wostatus == 'Inprocess') {
+        document.getElementById("wostatus").style.color = 'orange';
+      } else if (wostatus == 'Revise') {
+        document.getElementById("wostatus").style.color = 'red';
+      } else {
+        document.getElementById("wostatus").style.color = 'black';
+      }
+
+      $.ajax({
+        url: "/searchimpactdesc",
+        data: {
+          impact: impact,
+        },
+        success: function(data) {
+          // console.log(data);
+
+          var imp_desc = data;
+          var imp_code = impact;
+          var delimiter = ",";
+
+          var desc = imp_desc.split(delimiter);
+          var coded = imp_code.split(delimiter);
+
+          let results = "";
+
+          for (let i = 0; i < Math.min(desc.length, coded.length); i++) {
+            results += coded[i] + ' -- ' + desc[i] + '\n';
+          }
+
+          document.getElementById('sr_impact').value = results;
+          // }
+
+        },
+        statusCode: {
+          500: function() {
+            document.getElementById('sr_impact').value = "";
+          }
+        }
+      })
+
+      $.ajax({
+        url: "/searchfailcode",
+        data: {
+          failcode: failcode,
+        },
+        success: function(data) {
+          // console.log(data);
+
+          var fail_desc = data;
+          var fail_code = failcode;
+          var delimiter = ",";
+
+          var desc = fail_desc.split(delimiter);
+          var coded = fail_code.split(delimiter);
+
+          let results = "";
+
+          for (let i = 0; i < Math.min(desc.length, coded.length); i++) {
+            results += coded[i] + ' -- ' + desc[i] + '\n';
+          }
+
+          document.getElementById('sr_failcode').value = results;
+
+        },
+        statusCode: {
+          500: function() {
+            document.getElementById('sr_failcode').value = "";
+          }
+        }
+      })
+
+      $.ajax({
+        url: "/listupload/" + srnumber,
+        success: function(data) {
+          // console.log(data);
+          $('#srlistupload').html('').append(data);
+        }
+      })
+
+      $.ajax({
+        url: "/searchfailtype",
+        data: {
+          failtype: failtype,
+        },
+        success: function(data) {
+
+          document.getElementById('failtype').value = failtype + ' -- ' + data;
+          // }
+
+        },
+        statusCode: {
+          500: function() {
+            document.getElementById('failtype').value = "";
+          }
+        }
+      })
+
+
+      document.getElementById('srnumber').value = srnumber;
+      document.getElementById('assetcode').value = assetcode;
+      document.getElementById('assetdesc').value = assetdesc;
+      document.getElementById('dept').value = dept;
+      document.getElementById('assetloc').value = assetloc;
+
+      document.getElementById('hiddenreq').value = reqby;
+      document.getElementById('priority').value = priority;
+
+    });
+
+    $(document).on('click', '.editsr', function() {
+
+      $('#editModal').modal('show');
+
+      var srnumber = $(this).data('srnumber');
+      var assetcode = $(this).data('assetcode');
+      var assetdesc = $(this).data('assetdesc');
+      var dept = $(this).data('dept');
+      var assetloc = $(this).data('assetloc');
+      var astype = $(this).data('astypedesc');
+      var srnote = $(this).data('srnote');
+      var reqby = $(this).data('reqby');
+      var priority = $(this).data('priority');
+      var reqbyname = $(this).data('reqbyname');
+      var wotype = $(this).data('wotypecode');
+      var impact = $(this).data('impactcode');
+      var wonumber = $(this).data('wonumber');
+      var startwo = $(this).data('startwo');
+      var endwo = $(this).data('endwo');
+      var action = $(this).data('action');
+      var wostatus = $(this).data('wostatus');
+      var statusapproval = $(this).data('statusapproval');
+      var failtype = $(this).data('failtype');
+      var failcode = $(this).data('failcode');
+      var approver = $(this).data('approver');
+      var rejectnote = $(this).data('rejectnote');
+      var reason = $(this).data('reason');
+
+      // console.log(failcode);
+
+      // document.getElementById('e_renote').value = rejectnote;
+
+      if (wostatus == 'Open') {
+        var srstat = 'Open';
+        document.getElementById("e_status").style.color = 'green';
+      } else if (wostatus == 'Inprocess') {
+        var srstat = 'Inprocess';
+        document.getElementById("e_status").style.color = 'green';
+      } else {
+        var srstat = 'Revise';
+        document.getElementById("e_status").style.color = 'red';
+      }
+
+      var srdate = $(this).data('srdate');
+      // var srdt = new Date(srdate).toISOString().slice(0, 10);
+      document.getElementById('e_date').value = srdate;
+      // console.log(rejectnote);
+      // console.log(document.getElementById('e_rnote').value);
+
+      var srtime = $(this).data('srtime');
+      document.getElementById('e_time').value = srtime;
+
+      var eng1 = $(this).data('eng1');
+      var eng2 = $(this).data('eng2');
+      var eng3 = $(this).data('eng3');
+      var eng4 = $(this).data('eng4');
+      var eng5 = $(this).data('eng5');
+
+      var englist = eng1 + '\n' + eng2 + '\n' + eng3 + '\n' + eng4 + '\n' + eng5;
+
+      // var fail1 = $(this).data('faildesc1');
+      // var fail2 = $(this).data('faildesc2');
+      // var fail3 = $(this).data('faildesc3');
+
+      // var faildesclist = fail1 + '\n' + fail2 + '\n' + fail3;
+
+      var failcode1 = $(this).data('fc1');
+      var failcode2 = $(this).data('fc2');
+      var failcode3 = $(this).data('fc3');
+
+      // array failurecode
+      var newarrfc = [];
+      var desc = failcode.split(",");
+      if (desc != null) {
+        for (var i = 0; i <= (desc.length - 1); i++) {
+          if (desc[i] != '') {
+            newarrfc.push(desc[i]);
+          }
+        }
+      }
+
+      //value multiple failcode
+      document.getElementById('e_failurecode').selectedIndex = newarrfc;
+      $('#e_failurecode').val(newarrfc);
+      $('#e_failurecode').trigger('change');
+
+      // array impact
+      var newarrimp = [];
+      var desc = impact.split(",");
+      // console.log(desc);
+      if (desc != null) {
+        for (var i = 0; i <= (desc.length - 1); i++) {
+          if (desc[i] != '') {
+            newarrimp.push(desc[i]);
+          }
+        }
+      }
+
+      //value multiple impact
+      document.getElementById('e_impact').selectedIndex = newarrimp;
+      $('#e_impact').val(newarrimp);
+      $('#e_impact').trigger('change');
+
+      // console.log(document.getElementById('e_impact').value);
+
+      document.getElementById('englist').value = englist;
+      document.getElementById('e_req').value = reqby;
+      document.getElementById('e_note').value = srnote;
+      document.getElementById('e_nowo').value = wonumber;
+      if (startwo != '01-01-1970') {
+        document.getElementById('startwo').value = startwo;
+      } else {
+        document.getElementById('startwo').value = '';
+      }
+      if (endwo != '01-01-1970') {
+        document.getElementById('endwo').value = endwo;
+      } else {
+        document.getElementById('endwo').value = '';
+      }
+      // document.getElementById('action').value = action;
+      document.getElementById('e_status').value = srstat;
+      // document.getElementById('failcode').value = faildesclist;
+
+
+      $.ajax({
+        url: "/listupload/" + srnumber,
+        success: function(data) {
+          // console.log(data);
+          $('#elistupload').html('').append(data);
+        }
+      })
+
+      // $.ajax({
+      //   url: "/searchfailtype",
+      //   data: {
+      //     failtype: failtype,
+      //   },
+      //   success: function(data) {
+      //     console.log(data);
+      //     document.getElementById('e_wottype').value = data;
+      //     // }
+
+      //   },
+      //   statusCode: {
+      //     500: function() {
+      //       document.getElementById('e_wottype').value = "";
+      //     }
+      //   }
+      // })
+
+
+      document.getElementById('e_nosr').value = srnumber;
+      document.getElementById('e_asset').value = assetcode + ' - ' + assetdesc;
+      document.getElementById('assetdesc').value = assetdesc;
+      document.getElementById('e_dept').value = dept;
+      document.getElementById('assetloc').value = assetloc;
+      // document.getElementById('assettype').value = astype;
+      document.getElementById('e_wottype').value = failtype;
+      document.getElementById('e_approver').value = approver;
+      // document.getElementById('e_reason').value = reason;
+      // console.log(approver);
+      // console.log(document.getElementById('e_approver').value);
+
+      // console.log(document.getElementById('e_wottype'));
+
+      document.getElementById('hiddenreq').value = reqby;
+      document.getElementById('e_priority').value = priority;
+
+      $('#e_wottype').select2({
         theme: 'bootstrap4',
+        width: '100%',
       });
 
-
-      $("#enjiners").select2({
+      $('#e_approver').select2({
+        theme: 'bootstrap4',
         width: '100%',
-        placeholder: "Select Engineer",
-        maximumSelectionLength: 5,
+      });
+
+      $('#e_failurecode').select2({
+        placeholder: "Select Failure Code",
+        width: '100%',
         closeOnSelect: false,
         allowClear: true,
-        // theme : 'bootstrap4'
-      });
-
-      $("#e_wottype").select2({
-        width: '100%',
-        // theme : 'bootstrap4',
-        allowClear: true,
-        placeholder: 'Select Failure Type',
-
-      });
-
-      $("#e_approver").select2({
-        width: '100%',
-        // theme : 'bootstrap4',
-        allowClear: true,
-        placeholder: 'Select Approver',
-
-      });
-
-      $("#e_failurecode").select2({
-        width: '100%',
-        placeholder: "Select Failure Code",
-        theme: "bootstrap4",
-        allowClear: true,
         maximumSelectionLength: 3,
+        maximumSelectionLength: 5,
         closeOnSelect: false,
         allowClear: true,
         multiple: true,
@@ -757,572 +1242,89 @@
         width: '100%',
         closeOnSelect: false,
         allowClear: true,
-        theme: 'bootstrap4',
+        maximumSelectionLength: 3,
       });
 
-      function fetch_data(page, srnumber, asset, /*priority /*period*/ status, requestby, datefrom, dateto) {
-        $.ajax({
-          url: "/srbrowse/searchsr?page=" + page + "&srnumber=" + srnumber + "&asset=" + asset + /*"&priority=" + priority + /* "&period=" + period + */ "&status=" + status + "&requestby=" + requestby + "&datefrom=" + datefrom + "&dateto=" + dateto,
-          success: function(data) {
-            // console.log(data);
-            $('tbody').html('');
-            $('tbody').html(data);
-          }
-        })
-      }
-
-
-      $(document).on('click', '#btnsearch', function() {
-        var srnumber = $('#s_servicenbr').val();
-        var asset = $('#s_asset').val();
-        var priority = $('#s_priority').val();
-        /*  var period = $('#s_period').val(); */
-        var status = $('#s_status').val();
-        var requestby = $('#s_user').val();
-        var datefrom = $('#s_datefrom').val();
-        var dateto = $('#s_dateto').val();
-        // alert(1);
-        // var column_name = $('#hidden_column_name').val();
-        // var sort_type = $('#hidden_sort_type').val();
-        var page = 1;
-
-        // console.log(srnumber, asset);
-
-        document.getElementById('tmpsrnumber').value = srnumber;
-        document.getElementById('tmpasset').value = asset;
-        // document.getElementById('tmppriority').value = priority;
-        /*document.getElementById('tmpperiod').value = period; */
-        document.getElementById('tmpstatus').value = status;
-        document.getElementById('tmpuser').value = requestby;
-        document.getElementById('tmpdatefrom').value = datefrom;
-        document.getElementById('tmpdateto').value = dateto;
-
-        fetch_data(page, srnumber, asset, /*priority*/ /*period*/ status, requestby, datefrom, dateto);
-
-      });
-
-
-      $(document).on('click', '.pagination a', function(event) {
-        event.preventDefault();
-        var page = $(this).attr('href').split('page=')[1];
-        $('#hidden_page').val(page);
-        var column_name = $('#hidden_column_name').val();
-        var sort_type = $('#hidden_sort_type').val();
-
-        var srnumber = $('#tmpsrnumber').val();
-        var asset = $('#tmpasset').val();
-        // var priority = $('#tmppriority').val();
-        /*var period = $('#tmpperiod').val();*/
-        var status = $('#tmpstatus').val();
-        var requestby = $('#tmpuser').val();
-        var datefrom = $('#s_datefrom').val();
-        var dateto = $('#s_dateto').val();
-
-        fetch_data(page, srnumber, asset, /*priority*/ /*period*/ status, requestby, datefrom, dateto);
-      });
-
-      $(document).on('click', '#btnrefresh', function() {
-        var srnumber = '';
-        var asset = '';
-        var priority = '';
-        /*var period = ''; */
-        var status = '';
-        var requestby = '';
-        var datefrom = '';
-        var dateto = '';
-        var page = 1;
-
-        // alert(1);
-        document.getElementById('s_servicenbr').value = '';
-        document.getElementById('s_asset').value = '';
-        // document.getElementById('s_priority').value = '';
-        /*document.getElementById('s_period').value = '';*/
-        document.getElementById('s_status').value = '';
-        document.getElementById('s_user').value = '';
-        document.getElementById('s_datefrom').value = '';
-        document.getElementById('s_dateto').value = '';
-        document.getElementById('tmpsrnumber').value = srnumber;
-        document.getElementById('tmpasset').value = asset;
-        document.getElementById('tmppriority').value = priority;
-        /*document.getElementById('tmpperiod').value = period;*/
-        document.getElementById('tmpstatus').value = status;
-        document.getElementById('tmpuser').value = requestby;
-        document.getElementById('tmpdatefrom').value = datefrom;
-        document.getElementById('tmpdateto').value = dateto;
-
-        fetch_data(page, srnumber, asset /*priority*/ /*period*/ , status, requestby, datefrom, dateto);
-
-        // $("#s_asset").select2({
-        //   width: '100%',
-        //   // placeholder : "Select Asset",
-        //   theme: 'bootstrap4',
-        //   asset,
-        // });
-
-        $("#s_user").select2({
-          width: '100%',
-          // placeholder : "Select User",
-          theme: 'bootstrap4',
-          requestby,
-        });
-
-
-      });
-
-      $(document).on('click', '.view', function() {
-
-        $('#viewModal').modal('show');
-
-        var srnumber = $(this).data('srnumber');
-        var assetcode = $(this).data('assetcode');
-        var assetdesc = $(this).data('assetdesc');
-        var dept = $(this).data('dept');
-        var assetloc = $(this).data('assetloc');
-        var astype = $(this).data('astypedesc');
-        var srnote = $(this).data('srnote');
-        var reqby = $(this).data('reqby');
-        var priority = $(this).data('priority');
-        var rejectnote = $(this).data('rejectnote');
-        var reqbyname = $(this).data('reqbyname');
-        var wotype = $(this).data('wotypedesc');
-        var impact = $(this).data('impactcode');
-        var wonumber = $(this).data('wonumber');
-        var startwo = $(this).data('startwo');
-        var endwo = $(this).data('endwo');
-        var action = $(this).data('action');
-        var wostatus = $(this).data('wostatus');
-        var statusapproval = $(this).data('statusapproval');
-        var failtype = $(this).data('failtype');
-        var failcode = $(this).data('failcode');
-        var approver = $(this).data('approver');
-        var reason = $(this).data('reason');
-        var engineer = $(this).data('engineer');
-        var srcancelnote = $(this).data('srcancelnote');
-
-        var srdate = $(this).data('srdate');
-        document.getElementById('srdate').value = srdate;
-        var srtime = $(this).data('srtime');
-        document.getElementById('srtime').value = srtime;
-
-        var eng1 = $(this).data('eng1');
-        var eng2 = $(this).data('eng2');
-        var eng3 = $(this).data('eng3');
-        var eng4 = $(this).data('eng4');
-        var eng5 = $(this).data('eng5');
-
-        var englist = eng1 + '\n' + eng2 + '\n' + eng3 + '\n' + eng4 + '\n' + eng5;
-
-        var fail1 = $(this).data('faildesc1');
-        var fail2 = $(this).data('faildesc2');
-        var fail3 = $(this).data('faildesc3');
-
-        var faildesclist = fail1 + '\n' + fail2 + '\n' + fail3;
-
-        // console.log(englist);
-
-        var eng = engineer.replaceAll(";", "\n");
-
-        document.getElementById('englist').value = eng;
-        document.getElementById('reqbyname').value = reqby;
-        document.getElementById('srnote').value = srnote;
-        document.getElementById('wonumber').value = wonumber;
-        if (startwo != '01-01-1970') {
-          document.getElementById('startwo').value = startwo;
-        } else {
-          document.getElementById('startwo').value = '';
-        }
-        if (endwo != '01-01-1970') {
-          document.getElementById('endwo').value = endwo;
-        } else {
-          document.getElementById('endwo').value = '';
-        }
-        document.getElementById('wostatus').value = wostatus;
-        document.getElementById('approver').value = approver;
-        document.getElementById('srcancelnote').value = srcancelnote;
-
-        if (wostatus == 'Open') {
-          document.getElementById("wostatus").style.color = 'green';
-        } else if (wostatus == 'Inprocess') {
-          document.getElementById("wostatus").style.color = 'orange';
-        } else if (wostatus == 'Revise') {
-          document.getElementById("wostatus").style.color = 'red';
-        } else {
-          document.getElementById("wostatus").style.color = 'black';
-        }
-
-        $.ajax({
-          url: "/searchimpactdesc",
-          data: {
-            impact: impact,
-          },
-          success: function(data) {
-            // console.log(data);
-
-            var imp_desc = data;
-
-            var desc = imp_desc.replaceAll(",", "\n");
-
-            // console.log(desc);
-
-            document.getElementById('sr_impact').value = impact + ' -- ' + desc;
-            // }
-
-          },
-          statusCode: {
-            500: function() {
-              document.getElementById('sr_impact').value = "";
-            }
-          }
-        })
-
-        $.ajax({
-          url: "/searchfailcode",
-          data: {
-            failcode: failcode,
-          },
-          success: function(data) {
-            // console.log(data);
-
-            var fail_desc = data;
-
-            var desc = fail_desc.replaceAll(",", "\n");
-
-            // console.log(desc);
-
-            document.getElementById('sr_failcode').value = failcode + ' -- ' + desc;
-            // }
-
-          },
-          statusCode: {
-            500: function() {
-              document.getElementById('sr_failcode').value = "";
-            }
-          }
-        })
-
-        $.ajax({
-          url: "/listupload/" + srnumber,
-          success: function(data) {
-            // console.log(data);
-            $('#srlistupload').html('').append(data);
-          }
-        })
-
-        $.ajax({
-          url: "/searchfailtype",
-          data: {
-            failtype: failtype,
-          },
-          success: function(data) {
-
-            document.getElementById('failtype').value = failtype + ' -- ' + data;
-            // }
-
-          },
-          statusCode: {
-            500: function() {
-              document.getElementById('failtype').value = "";
-            }
-          }
-        })
-
-
-        document.getElementById('srnumber').value = srnumber;
-        document.getElementById('assetcode').value = assetcode;
-        document.getElementById('assetdesc').value = assetdesc;
-        document.getElementById('dept').value = dept;
-        document.getElementById('assetloc').value = assetloc;
-
-        document.getElementById('hiddenreq').value = reqby;
-        document.getElementById('priority').value = priority;
-
-      });
-
-      $(document).on('click', '.editsr', function() {
-
-        $('#editModal').modal('show');
-
-        var srnumber = $(this).data('srnumber');
-        var assetcode = $(this).data('assetcode');
-        var assetdesc = $(this).data('assetdesc');
-        var dept = $(this).data('dept');
-        var assetloc = $(this).data('assetloc');
-        var astype = $(this).data('astypedesc');
-        var srnote = $(this).data('srnote');
-        var reqby = $(this).data('reqby');
-        var priority = $(this).data('priority');
-        var reqbyname = $(this).data('reqbyname');
-        var wotype = $(this).data('wotypecode');
-        var impact = $(this).data('impactcode');
-        var wonumber = $(this).data('wonumber');
-        var startwo = $(this).data('startwo');
-        var endwo = $(this).data('endwo');
-        var action = $(this).data('action');
-        var wostatus = $(this).data('wostatus');
-        var statusapproval = $(this).data('statusapproval');
-        var failtype = $(this).data('failtype');
-        var failcode = $(this).data('failcode');
-        var approver = $(this).data('approver');
-        var rejectnote = $(this).data('rejectnote');
-        var reason = $(this).data('reason');
-
-        // console.log(failcode);
-
-        // document.getElementById('e_renote').value = rejectnote;
-
-        if (wostatus == 'Open') {
-          var srstat = 'Open';
-          document.getElementById("e_status").style.color = 'green';
-        } else if (wostatus == 'Inprocess') {
-          var srstat = 'Inprocess';
-          document.getElementById("e_status").style.color = 'green';
-        } else {
-          var srstat = 'Revise';
-          document.getElementById("e_status").style.color = 'red';
-        }
-
-        // document.getElementById("e_statusappr").value = statusapproval;
-        // if (rejectnote == '') {
-        //   document.getElementById("e_rnote").style.display = 'none';
-        // } else {
-        //   document.getElementById("e_rnote").style.display = '';
-        // }
-
-        var srdate = $(this).data('srdate');
-        // var srdt = new Date(srdate).toISOString().slice(0, 10);
-        document.getElementById('e_date').value = srdate;
-        // console.log(rejectnote);
-        // console.log(document.getElementById('e_rnote').value);
-
-        var srtime = $(this).data('srtime');
-        document.getElementById('e_time').value = srtime;
-
-        var eng1 = $(this).data('eng1');
-        var eng2 = $(this).data('eng2');
-        var eng3 = $(this).data('eng3');
-        var eng4 = $(this).data('eng4');
-        var eng5 = $(this).data('eng5');
-
-        var englist = eng1 + '\n' + eng2 + '\n' + eng3 + '\n' + eng4 + '\n' + eng5;
-
-        // var fail1 = $(this).data('faildesc1');
-        // var fail2 = $(this).data('faildesc2');
-        // var fail3 = $(this).data('faildesc3');
-
-        // var faildesclist = fail1 + '\n' + fail2 + '\n' + fail3;
-
-        var failcode1 = $(this).data('fc1');
-        var failcode2 = $(this).data('fc2');
-        var failcode3 = $(this).data('fc3');
-
-        // array failurecode
-        var newarrfc = [];
-        var desc = failcode.split(",");
-        if (desc != null) {
-          for (var i = 0; i <= (desc.length - 1); i++) {
-            if (desc[i] != '') {
-              newarrfc.push(desc[i]);
-            }
-          }
-        }
-
-        //value multiple failcode
-        document.getElementById('e_failurecode').selectedIndex = newarrfc;
-        $('#e_failurecode').val(newarrfc);
-        $('#e_failurecode').trigger('change');
-
-        // array impact
-        var newarrimp = [];
-        var desc = impact.split(",");
-        // console.log(desc);
-        if (desc != null) {
-          for (var i = 0; i <= (desc.length - 1); i++) {
-            if (desc[i] != '') {
-              newarrimp.push(desc[i]);
-            }
-          }
-        }
-
-        //value multiple impact
-        document.getElementById('e_impact').selectedIndex = newarrimp;
-        $('#e_impact').val(newarrimp);
-        $('#e_impact').trigger('change');
-
-        // console.log(document.getElementById('e_impact').value);
-
-        document.getElementById('englist').value = englist;
-        document.getElementById('e_req').value = reqby;
-        document.getElementById('e_note').value = srnote;
-        document.getElementById('e_nowo').value = wonumber;
-        if (startwo != '01-01-1970') {
-          document.getElementById('startwo').value = startwo;
-        } else {
-          document.getElementById('startwo').value = '';
-        }
-        if (endwo != '01-01-1970') {
-          document.getElementById('endwo').value = endwo;
-        } else {
-          document.getElementById('endwo').value = '';
-        }
-        // document.getElementById('action').value = action;
-        document.getElementById('e_status').value = srstat;
-        // document.getElementById('failcode').value = faildesclist;
-
-
-        $.ajax({
-          url: "/listupload/" + srnumber,
-          success: function(data) {
-            // console.log(data);
-            $('#elistupload').html('').append(data);
-          }
-        })
-
-        // $.ajax({
-        //   url: "/searchfailtype",
-        //   data: {
-        //     failtype: failtype,
-        //   },
-        //   success: function(data) {
-        //     console.log(data);
-        //     document.getElementById('e_wottype').value = data;
-        //     // }
-
-        //   },
-        //   statusCode: {
-        //     500: function() {
-        //       document.getElementById('e_wottype').value = "";
-        //     }
-        //   }
-        // })
-
-
-        document.getElementById('e_nosr').value = srnumber;
-        document.getElementById('e_asset').value = assetcode + ' - ' + assetdesc;
-        document.getElementById('assetdesc').value = assetdesc;
-        document.getElementById('e_dept').value = dept;
-        document.getElementById('assetloc').value = assetloc;
-        // document.getElementById('assettype').value = astype;
-        document.getElementById('e_wottype').value = failtype;
-        document.getElementById('e_approver').value = approver;
-        // document.getElementById('e_reason').value = reason;
-        // console.log(approver);
-        // console.log(document.getElementById('e_approver').value);
-
-        // console.log(document.getElementById('e_wottype'));
-
-        document.getElementById('hiddenreq').value = reqby;
-        document.getElementById('e_priority').value = priority;
-
-        $('#e_wottype').select2({
-          theme: 'bootstrap4',
-          width: '100%',
-        });
-
-        $('#e_approver').select2({
-          theme: 'bootstrap4',
-          width: '100%',
-        });
-
-        $('#e_failurecode').select2({
-          placeholder: "Select Failure Code",
-          width: '100%',
-          closeOnSelect: false,
-          allowClear: true,
-          maximumSelectionLength: 3,
-          maximumSelectionLength: 5,
-          closeOnSelect: false,
-          allowClear: true,
-          multiple: true,
-        });
-
-        $('#e_impact').select2({
-          placeholder: "Select Impact",
-          width: '100%',
-          closeOnSelect: false,
-          allowClear: true,
-          maximumSelectionLength: 3,
-        });
-
-      });
-
-      $(document).on('click', '.cancelsr', function() {
-
-        $('#cancelModal').modal('show');
-
-        var srnumber = $(this).data('srnumber');
-        var assetcode = $(this).data('assetcode');
-
-        document.getElementById('srnbr').innerHTML = srnumber;
-        document.getElementById('c_srnumber').value = srnumber;
-
-      });
-
-      $(document).on('click', '.route', function() {
-        $('#routeModal').modal('show');
-
-        var srnumber = $(this).data('srnumber');
-        var srdate = $(this).data('srdate');
-        var assetcode = $(this).data('assetcode');
-        var assetdesc = $(this).data('assetdesc');
-        var srnote = $(this).data('srnote');
-        var reqby = $(this).data('reqby');
-        var priority = $(this).data('priority');
-        var dept = $(this).data('deptdesc');
-        var deptcode = $(this).data('deptcode');
-        var reqbyname = $(this).data('reqbyname');
-        var wotype = $(this).data('wotypedescx');
-        var impact = $(this).data('impactcode');
-        // alert(impact);
-        var assetloc = $(this).data('assetloc');
-        var hassetsite = $(this).data('hassetsite');
-        var hassetloc = $(this).data('hassetloc');
-        var astype = $(this).data('astypedesc');
-        var impactcode1 = $(this).data('impactcode');
-        var failcode = $(this).data('failcode');
-        var id = $(this).data('id');
-        var reason = $(this).data('reason');
-
-        // alert(impactcode1);
-        document.getElementById('m_route_ppnumber').value = srnumber;
-        document.getElementById('m_route_requested_by').value = reqbyname;
-        document.getElementById('m_route_asset').value = assetcode;
-
-        $.ajax({
-          type: "GET",
-          url: "/routesr",
-          data: {
-            sr_number: srnumber
-          },
-          success: function(data) {
-            $('#bodyroute').html(data);
-          }
-        });
-
-        $.ajax({
-          type: "GET",
-          url: "/routesreng",
-          data: {
-            sr_number: srnumber
-          },
-          success: function(data) {
-            $('#bodyroutex').html(data);
-          }
-        });
-
-      });
-
-      $(document).on('click', '#btnexcel', function() {
-        var srnumber = $('#tmpsrnumber').val();
-        var srasset = $('#tmpasset').val();
-        var srstatus = $('#tmpstatus').val();
-        var srreq = $('#tmpuser').val();
-        var srdatefrom = $('#tmpdatefrom').val();
-        var srdateto = $('#tmpdateto').val();
-
-        // console.log(srnumber, srasset, srstatus, /*srpriority, srperiod,*/ srreq, srdatefrom, srdateto);
-
-        window.open("/donlodsr?srnumber=" + srnumber + "&asset=" + srasset + "&status=" + srstatus + /*"&priority=" + srpriority + "&period=" + srperiod +*/ "&reqby=" + srreq + "&datefrom=" + srdatefrom + "&dateto=" + srdateto, '_blank');
-      });
     });
-  </script>
-  @endsection
+
+    $(document).on('click', '.cancelsr', function() {
+
+      $('#cancelModal').modal('show');
+
+      var srnumber = $(this).data('srnumber');
+      var assetcode = $(this).data('assetcode');
+
+      document.getElementById('srnbr').innerHTML = srnumber;
+      document.getElementById('c_srnumber').value = srnumber;
+
+    });
+
+    $(document).on('click', '.route', function() {
+      $('#routeModal').modal('show');
+
+      var srnumber = $(this).data('srnumber');
+      var srdate = $(this).data('srdate');
+      var assetcode = $(this).data('assetcode');
+      var assetdesc = $(this).data('assetdesc');
+      var srnote = $(this).data('srnote');
+      var reqby = $(this).data('reqby');
+      var priority = $(this).data('priority');
+      var dept = $(this).data('deptdesc');
+      var deptcode = $(this).data('deptcode');
+      var reqbyname = $(this).data('reqbyname');
+      var wotype = $(this).data('wotypedescx');
+      var impact = $(this).data('impactcode');
+      // alert(impact);
+      var assetloc = $(this).data('assetloc');
+      var hassetsite = $(this).data('hassetsite');
+      var hassetloc = $(this).data('hassetloc');
+      var astype = $(this).data('astypedesc');
+      var impactcode1 = $(this).data('impactcode');
+      var failcode = $(this).data('failcode');
+      var id = $(this).data('id');
+      var reason = $(this).data('reason');
+
+      // alert(impactcode1);
+      document.getElementById('m_route_ppnumber').value = srnumber;
+      document.getElementById('m_route_requested_by').value = reqbyname;
+      document.getElementById('m_route_asset').value = assetcode;
+
+      $.ajax({
+        type: "GET",
+        url: "/routesr",
+        data: {
+          sr_number: srnumber
+        },
+        success: function(data) {
+          $('#bodyroute').html(data);
+        }
+      });
+
+      $.ajax({
+        type: "GET",
+        url: "/routesreng",
+        data: {
+          sr_number: srnumber
+        },
+        success: function(data) {
+          $('#bodyroutex').html(data);
+        }
+      });
+
+    });
+
+    $(document).on('click', '#btnexcel', function() {
+      var srnumber = $('#tmpsrnumber').val();
+      var srasset = $('#tmpasset').val();
+      var srstatus = $('#tmpstatus').val();
+      var srreq = $('#tmpuser').val();
+      var srdatefrom = $('#tmpdatefrom').val();
+      var srdateto = $('#tmpdateto').val();
+
+      // console.log(srnumber, srasset, srstatus, /*srpriority, srperiod,*/ srreq, srdatefrom, srdateto);
+
+      window.open("/donlodsr?srnumber=" + srnumber + "&asset=" + srasset + "&status=" + srstatus + /*"&priority=" + srpriority + "&period=" + srperiod +*/ "&reqby=" + srreq + "&datefrom=" + srdatefrom + "&dateto=" + srdateto, '_blank');
+    });
+  });
+</script>
+@endsection
