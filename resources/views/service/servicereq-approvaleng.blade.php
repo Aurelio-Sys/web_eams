@@ -887,7 +887,7 @@
       $.ajax({
         url: "/srapproval/searchapprovaleng?page=" + page + "&srnumber=" + srnumber + "&asset=" + asset + "&priority=" + priority,
         success: function(data) {
-          console.log(data);
+          // console.log(data);
           $('tbody').html('');
           $('tbody').html(data);
         }
@@ -1185,7 +1185,7 @@
 
           },
           error: function(xhr, status, error) {
-            console.error(error);
+            // console.error(error);
           }
         });
       });
@@ -1289,7 +1289,7 @@
           failcode: failcode,
         },
         success: function(data) {
-          console.log(data);
+          // console.log(data);
 
           var fail_desc = data;
 
@@ -1474,7 +1474,7 @@
 
           },
           error: function(xhr, status, error) {
-            console.error(error);
+            // console.error(error);
           }
         });
       });

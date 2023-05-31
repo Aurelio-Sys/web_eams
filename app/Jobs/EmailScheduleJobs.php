@@ -804,6 +804,62 @@ class EmailScheduleJobs implements ShouldQueue
 
             $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
 
-        } 
+        } else if ($a == 13) { //kirim email ke engineer yang bertugas mengerjakan wo ketika work order ditolak/reject
+            $asset = $this->asset;
+            $engineer = $this->requestor;
+            $wonumber = $this->srnumber;
+            // $rejectnote = $this->rejectnote;
+            dd($wonumber);
+
+            $data = DB::table('eng_mstr')
+            ->join('users', 'eng_mstr.eng_code', '=', 'users.username')
+            ->where('username', '=', $engineer)
+            ->where('approver', '=', '1')
+            ->get();
+
+            // dd($data);
+
+            $listto = [];
+            $i = 0;
+
+            if ($data->count() > 0) {
+
+                foreach ($data as $data1) {
+                    $listto[$i] = $data1->eng_email;
+                    $i++;
+                }
+
+                // Kirim Email
+                Mail::send(
+                    'emailrequestor',
+                    [
+                        'pesan' => 'Work Order Rejected from User Acceptance',
+                        'note1' => $wonumber,
+                        'note2' => $asset,
+                        'header1' => 'Work Order'
+                    ],
+                    function ($message) use ($wo, $listto) {
+                        $message->subject('eAMS - Work Order Rejected from User Acceptance');
+                        // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
+                        $message->to(array_filter($listto));
+                    }
+                );
+
+
+                foreach ($data as $data) {
+                    $user = App\User::where('id', '=', $data->id)->first();
+                    $details = [
+                        'body' => 'Work Order Rejected from User Acceptance',
+                        'url' => 'wojoblist',
+                        'nbr' => $wonumber,
+                        'note' => 'Please check'
+
+                    ]; // isi data yang dioper
+
+
+                    $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
+                }
+            }
+        }
     }
 }
