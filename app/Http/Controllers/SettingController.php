@@ -246,7 +246,7 @@ class SettingController extends Controller
 
         $access = $req->dept . $req->Skill . $req->Eng . $req->RoleMaint . $req->EngGroup . $req->cbRunning . $req->SetWsa . $req->SetFntype . $req->Fn . $req->SetImp . 
             $req->Astype . $req->Asgroup . $req->Supp . $req->SetAssetsite . $req->SetAssetloc . $req->Asset . $req->Aspar . $req->SetMove . $req->SetEngpm . $req->SetUm . $req->SetAsfn . $req->pmasset . 
-            $req->Spt . $req->Spg . $req->SetSpsite . $req->SetSploc . $req->Spm . $req->Rep . $req->SetRepgroup . $req->SetIns . $req->SetSplist . $req->qcspec . $req->SetPmcode . $req->rcmmstr .
+            $req->Spt . $req->Spg . $req->SetSpsite . $req->SetSploc . $req->Spm . $req->Rep . $req->SetRepgroup . $req->SetIns . $req->SetSplist . $req->qcspec . $req->SetPmcode . $req->notmssg . $req->rcmmstr .
             $req->appsr . $req->appwo . $req->invso . $req->invsu .
             $req->cbWoCreatedirect . $req->cbWoMaint . $req->cbWoBrowse . $req->cbWoRelease . $req->cbWoWhsConf . $req->cbWoStart . $req->cbWoReport . $req->cbWoQc . 
             $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbSRapprovaleng .
@@ -312,7 +312,7 @@ class SettingController extends Controller
     {
         $access = $req->e_dept . $req->e_Skill . $req->e_Eng . $req->e_RoleMaint . $req->e_EngGroup . $req->e_cbRunning . $req->e_SetWsa . $req->e_SetFntype . $req->e_Fn . $req->e_SetImp . 
             $req->e_Astype . $req->e_Asgroup . $req->e_Supp . $req->e_SetAssetsite . $req->e_SetAssetloc . $req->e_Asset . $req->e_Aspar . $req->e_SetMove . $req->e_SetEngpm . $req->e_SetUm . $req->e_SetAsfn . $req->e_pmasset . 
-            $req->e_Spt . $req->e_Spg . $req->e_SetSpsite . $req->e_SetSploc . $req->e_Spm . $req->e_Rep . $req->e_SetRepgroup . $req->e_SetIns . $req->e_SetSplist . $req->e_qcspec . $req->e_SetPmcode . $req->e_rcmmstr .
+            $req->e_Spt . $req->e_Spg . $req->e_SetSpsite . $req->e_SetSploc . $req->e_Spm . $req->e_Rep . $req->e_SetRepgroup . $req->e_SetIns . $req->e_SetSplist . $req->e_qcspec . $req->e_SetPmcode . $req->e_notmssg . $req->e_rcmmstr .
             $req->e_appsr . $req->e_appwo . $req->e_invso . $req->e_invsu .
             $req->e_cbWoCreatedirect . $req->e_cbWoMaint . $req->e_cbWoBrowse . $req->e_cbWoRelease . $req->e_cbWoWhsConf . $req->e_cbWoStart . $req->e_cbWoReport . $req->e_cbWoQc . 
             $req->e_cbSRcreate . $req->e_cbSRapprove . $req->e_cbSRbrowse . $req->e_cbSRapprovaleng .

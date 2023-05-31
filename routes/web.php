@@ -17,6 +17,7 @@ use App\Http\Controllers\Master\AppSrController;
 use App\Http\Controllers\Master\AppWoController;
 use App\Http\Controllers\Master\InvSoController;
 use App\Http\Controllers\Master\InvSuController;
+use App\Http\Controllers\Master\NotmssgController;
 use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\Report\RemainSpController;
@@ -770,6 +771,10 @@ Route::group(['middleware' => ['auth']], function() {
 	// PM Notif Message
 	Route::get('/pmmssg',[PmmssgController::class, 'index'])->name('pmmssg'); 
 	Route::post('/chgdatewo',[PmmssgController::class, 'chgdatewo']); 
+
+	// Master Notifikasi
+	Route::get('/notmssg',[NotmssgController::class, 'index']); 
+	Route::post('/createmsg',[NotmssgController::class, 'store']); 
 });
 
 Auth::routes();

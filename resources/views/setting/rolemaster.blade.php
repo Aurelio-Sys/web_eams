@@ -832,6 +832,15 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Message Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="notmssg">
+                  <input type="checkbox" class="custom-control-input" id="notmssg" name="notmssg" value="MT48" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Routine Check Maintenance') }}</label>
               <div class="col-6">
                 <label class="switch" for="rcmmstr">
@@ -1657,6 +1666,15 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Message Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_notmssg">
+                  <input type="checkbox" class="custom-control-input" id="e_notmssg" name="e_notmssg" value="MT48" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Routine Check Maintenance') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_rcmmstr">
@@ -2028,6 +2046,11 @@
           document.getElementById('e_pmasset').checked = false;
         }
         if (listmenu.search("MT39") >= 0) {
+          document.getElementById('e_SetPmcode').checked = true;
+        } else {
+          document.getElementById('e_SetPmcode').checked = false;
+        }
+        if (listmenu.search("MT48") >= 0) {
           document.getElementById('e_SetPmcode').checked = true;
         } else {
           document.getElementById('e_SetPmcode').checked = false;
