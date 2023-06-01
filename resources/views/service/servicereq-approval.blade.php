@@ -861,7 +861,7 @@
       }
 
       $.ajax({
-        url: "/listupload/" + srnumber,
+        url: "/listuploadview/" + srnumber,
         success: function(data) {
           // console.log(data);
           $('#listupload').html('').append(data);
@@ -1046,7 +1046,7 @@
       }
 
       $.ajax({
-        url: "/listupload/" + srnumber,
+        url: "/listuploadview/" + srnumber,
         success: function(data) {
           // console.log(data);
           $('#listupload').html('').append(data);

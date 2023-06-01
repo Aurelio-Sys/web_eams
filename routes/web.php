@@ -517,9 +517,11 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/useracceptance/search', 'ServiceController@useracceptancesearch');
 	route::get('/downloadfile/{id}', 'ServiceController@downloadfile');
 	route::get('/listupload/{id}', 'ServiceController@listupload')->name('listupload');
+	route::get('/listuploadview/{id}', 'ServiceController@listuploadview')->name('listuploadview');
 	route::get('/srdownloadfile/{sr}','ServiceController@downloadfilezip');
 	route::get('/srprint/{sr}','ServiceController@srprint');
 	route::post('/editsr','ServiceController@editsr'); 
+	route::get('/deleteuploadsr/{id}', 'ServiceController@deleteuploadsr');
 
 	// Setting
 	route::get('/runningmstr', 'SettingController@runningmstr');

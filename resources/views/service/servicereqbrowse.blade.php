@@ -1010,7 +1010,7 @@
       })
 
       $.ajax({
-        url: "/listupload/" + srnumber,
+        url: "/listuploadview/" + srnumber,
         success: function(data) {
           // console.log(data);
           $('#srlistupload').html('').append(data);
@@ -1170,6 +1170,42 @@
       document.getElementById('e_status').value = srstat;
       // document.getElementById('failcode').value = faildesclist;
 
+      $(document).on('click', '.deleterow', function(e) {
+        var data = $(this).closest('tr').find('.rowval').val();
+
+        swal.fire({
+          // position: 'top-end',
+          icon: 'warning',
+          title: "This file will be deleted forever, are you sure ?",
+          // toast: true,
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'Cancel'
+        }).then((result) => {
+          if (result.isConfirmed) {
+
+            Swal.fire(
+              'Deleted Success!',
+              'Your file has been deleted',
+              'success'
+            );
+
+            $.ajax({
+              url: "/deleteuploadsr/" + data,
+              success: function(data) {
+
+                $('#elistupload').html('').append(data);
+              }
+            })
+
+          }
+        })
+
+
+      });
 
       $.ajax({
         url: "/listupload/" + srnumber,

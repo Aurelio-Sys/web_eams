@@ -1,4 +1,7 @@
 @forelse($datas as $show)
+<?php
+// dd($show->sr_req_by);
+?>
 <tr>
     <td>{{$show->sr_number}}</td>
     <td>{{$show->sr_asset}}</td>
@@ -41,7 +44,8 @@
 
     {{--  Edit SR  --}}
     @php($session = session('username'))
-    @if($show->sr_req_by == $session && $show->sr_status != 'Canceled' && $show->sr_status != 'Inprocess' && $show->srta_status != 'Approved' || $show->srta_eng_status != 'Approved')
+    @if($show->sr_req_by == $session && $show->sr_status != 'Canceled' && $show->sr_status != 'Inprocess' && 
+    ($show->srta_status != 'Approved' && $show->srta_status != 'Canceled by user' || $show->srta_eng_status != 'Approved' && $show->srta_eng_status != 'Canceled by user'))
     <a href="javascript:void(0)" class="editsr" data-toggle="tooltip"  title="Edit SR"  data-target="#editModal" 
     data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_asset}}" data-assetdesc="{{$show->asset_desc}}"
     data-reqby="{{$show->name}}" data-srnote="{{$show->sr_note}}" data-priority="{{$show->sr_priority}}" data-impact="{{$show->sr_impact}}"
