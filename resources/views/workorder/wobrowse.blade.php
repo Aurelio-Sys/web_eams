@@ -789,6 +789,16 @@ div #munculgambar .gambar:hover{
           </div>
         </div>
         <div class="form-group row">
+          <label for="v_srnote" class="col-md-2 col-form-label text-md-left">SR Note</label>
+          <div class="col-md-4">
+            <textarea id="v_srnote" readonly class="form-control" name="v_srnote" value="{{ old('v_srnote') }}" autofocus></textarea>
+          </div>
+          <!-- <label for="v_dept" class="col-md-2 col-form-label text-md-left">Department</label>
+          <div class="col-md-4">
+            <input id="v_dept" readonly class="form-control" name="v_dept" value="{{ old('v_dept') }}" autofocus>
+          </div> -->
+        </div>
+        <div class="form-group row">
           <label for="v_asset" class="col-md-2 col-form-label text-md-left">Asset Code</label>
           <div class="col-md-4">
             <input type="text" readonly id="v_asset" type="text" class="form-control v_asset" name="v_asset" autofocus>
@@ -1635,6 +1645,7 @@ div #munculgambar .gambar:hover{
         var wonumber = wonbr;
         var srnumber = vamp.wo_master.wo_sr_number;
         var assetcode = vamp.wo_master.wo_asset_code;
+        var srnote = vamp.sr_note;
         var assetdesc = vamp.asset.asset_desc;
         var assetloc = vamp.asset.asset_loc;
         var assetloc_desc = vamp.asset.asloc_desc;
@@ -1680,6 +1691,7 @@ div #munculgambar .gambar:hover{
         document.getElementById('v_duedate').value = duedate;
         document.getElementById('v_creator').value = createdby;
         document.getElementById('v_dept').value = department;
+        document.getElementById('v_srnote').value = srnote;
 
 
         
