@@ -3092,7 +3092,7 @@ class wocontroller extends Controller
             DB::table('wo_mstr')
                 ->where('id', '=', $idwo)
                 ->update([
-                    'wo_status' => 'finished', //status tetap finished
+                    'wo_status' => 'started', //status berganti jadi started supaya bisa di edit
                     'wo_system_update' => Carbon::now()->toDateTimeString(),
                 ]);
 
@@ -3142,7 +3142,7 @@ class wocontroller extends Controller
 
             // DB::commit();
             toast('Work order ' . $womstr->wo_number . ' has been rejected', 'success');
-            return redirect()->route('womaint');
+            return redirect()->route('woreport');
         }
     }
 
@@ -4248,6 +4248,18 @@ class wocontroller extends Controller
                         'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                     ]);
 
+                    $womstr = DB::table('wo_mstr')->where('wo_number', $req->c_wonbr)->first();
+
+                    //update status wo approval
+                    DB::table('wo_trans_approval')
+                    ->where('wotr_mstr_id', '=', $womstr->id)
+                    ->update([
+                        'wotr_status' => 'waiting for approval',
+                        'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    ]);
+
+                    //insert wo approval hist
+                    // DB::table('wo_trans_approval_hist')
 
 
                     DB::commit();
