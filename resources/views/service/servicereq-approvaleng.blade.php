@@ -249,6 +249,10 @@
             <div class="col-md-7">
               <!-- <textarea id="fclist" type="text" class="form-control" name="fclist" rows="3"></textarea> -->
               <select class="form-control fclist" name="fclist[]" id="fclist" multiple="multiple">
+                <option></option>
+                @foreach($fcodes as $fcshow)
+                <option value="{{$fcshow->fn_code}}">{{$fcshow->fn_code}} -- {{$fcshow->fn_desc}}</option>
+                @endforeach
               </select>
             </div>
           </div>
@@ -261,7 +265,7 @@
               <select class="form-control impact" name="impact[]" id="impact" multiple="multiple">
                 <option value=""></option>
                 @foreach($impacts as $impact)
-                <option value="{{$impact->imp_code}}">{{$impact->imp_code}} - {{$impact->imp_desc}}</option>
+                <option value="{{$impact->imp_code}}">{{$impact->imp_code}} -- {{$impact->imp_desc}}</option>
                 @endforeach
               </select>
             </div>
@@ -551,7 +555,7 @@
           <div class="form-group row col-md-12">
             <label for="v_enjiners" class="col-md-5 col-form-label text-md-left">Engineer (Max. 5) <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-7">
-            <textarea id="v_enjiners" type="text" class="form-control" name="v_enjiners" autocomplete="off" rows="3" readonly></textarea>
+              <textarea id="v_enjiners" type="text" class="form-control" name="v_enjiners" autocomplete="off" rows="3" readonly></textarea>
               <!-- <select id="v_enjiners" name="v_enjiners[]" class="form-control" multiple="multiple" required>
                 <option value="">--Select Engineer--</option>
               </select> -->
@@ -582,49 +586,49 @@
             <label for="v_mtcode" class="col-md-5 col-form-label text-md-left">Maintenance Code</label>
             <div class="col-md-7">
             <input id="v_mtcode" type="text" name="v_mtcode" class="form-control" readonly> -->
-              <!-- <select id="v_mtcode" name="v_mtcode" class="form-control">
+          <!-- <select id="v_mtcode" name="v_mtcode" class="form-control">
                 <option></option>
                 @foreach($maintenancelist as $mt)
                 <option value="{{$mt->pmc_code}}">{{$mt->pmc_code}} -- {{$mt->pmc_desc}}</option>
                 @endforeach
               </select> -->
-            <!-- </div>
+          <!-- </div>
           </div>
           <div class="form-group row col-md-12">
             <label for="v_inslist" class="col-md-5 col-form-label text-md-left">Instruction List</label>
             <div class="col-md-7">
             <input id="v_inslist" type="text" name="v_inslist" class="form-control" readonly> -->
-              <!-- <select id="v_inslist" name="v_inslist" class="form-control">
+          <!-- <select id="v_inslist" name="v_inslist" class="form-control">
                 <option></option>
                 @foreach ($inslist as $ins)
                 <option value="{{$ins->ins_code}}">{{$ins->ins_code}} -- {{$ins->ins_desc}}</option>
                 @endforeach
               </select> -->
-            <!-- </div>
+          <!-- </div>
           </div>
           <div class="form-group row col-md-12">
             <label for="v_splist" class="col-md-5 col-form-label text-md-left">Instruction Spare Part</label>
             <div class="col-md-7">
             <input id="v_splist" type="text" name="v_splist" class="form-control" readonly> -->
-              <!-- <select id="v_splist" name="v_splist" class="form-control">
+          <!-- <select id="v_splist" name="v_splist" class="form-control">
                 <option></option>
                 @foreach ($splist as $sp)
                 <option value="{{$sp->spg_code}}">{{$sp->spg_code}} -- {{$sp->spg_desc}}</option>
                 @endforeach
               </select> -->
-            <!-- </div>
+          <!-- </div>
           </div> -->
           <!-- <div class="form-group row col-md-12">
             <label for="v_qclist" class="col-md-5 col-form-label text-md-left">Instruction QC</label>
             <div class="col-md-7">
             <input id="v_qclist" type="text" name="v_qclist" class="form-control" readonly> -->
-              <!-- <select id="v_qclist" name="v_qclist" class="form-control">
+          <!-- <select id="v_qclist" name="v_qclist" class="form-control">
                 <option></option>
                 @foreach ($qclist as $qc)
                 <option value="{{$qc->qcs_code}}">{{$qc->qcs_code}} -- {{$qc->qcs_desc}}</option>
                 @endforeach
               </select> -->
-            <!-- </div>
+          <!-- </div>
           </div> -->
           <!-- <div class="form-group row col-md-12">
             <label for="v_rejectreason" class="col-md-5 col-form-label text-md-left">Reason</label>
@@ -979,28 +983,6 @@
       var impactcode1 = $(this).data('impactcode');
       var id = $(this).data('idsr');
 
-      // var fail1 = $(this).data('failcode1');
-      // var fail2 = $(this).data('failcode2');
-      // var fail3 = $(this).data('failcode3');
-
-      var failcode1 = $(this).data('fc1');
-      var failcode2 = $(this).data('fc2');
-      var failcode3 = $(this).data('fc3');
-
-      // var fail_list = fail1 + '\n' + fail2 + '\n' + fail3;
-
-      // array failure code
-      // var newarrfc = [];
-      // if (failcode1 != '') {
-      //   newarrfc.push(failcode1);
-      // }
-      // if (failcode2 != '') {
-      //   newarrfc.push(failcode2);
-      // }
-      // if (failcode3 != '') {
-      //   newarrfc.push(failcode3);
-      // }
-
       // array failurecode
       var newarrfc = [];
       var desc = failcode.split(",");
@@ -1008,6 +990,7 @@
         for (var i = 0; i <= (desc.length - 1); i++) {
           if (desc[i] != '') {
             newarrfc.push(desc[i]);
+            // console.log(newarrfc);
           }
         }
       }
@@ -1024,7 +1007,7 @@
       }
 
       $.ajax({
-        url: "/listupload/" + srnumber,
+        url: "/listuploadview/" + srnumber,
         success: function(data) {
           // console.log(data);
           $('#listupload').html('').append(data);
@@ -1267,12 +1250,20 @@
           // console.log(data);
 
           var imp_desc = data;
+          var imp_code = impact;
+          var delimiter = ",";
 
-          var desc = imp_desc.replaceAll(",", "\n");
+          var desc = imp_desc.split(delimiter);
+          var coded = imp_code.split(delimiter);
 
-          // console.log(desc);
+          let results = "";
 
-          document.getElementById('v_impact').value = desc;
+          for (let i = 0; i < Math.min(desc.length, coded.length); i++) {
+            results += coded[i] + ' -- ' + desc[i] + '\n';
+          }
+
+          document.getElementById('v_impact').value = results;
+
           // }
 
         },
@@ -1292,12 +1283,20 @@
           // console.log(data);
 
           var fail_desc = data;
+          var fail_code = failcode;
+          var delimiter = ",";
 
-          var desc = fail_desc.replaceAll(",", "\n");
+          var desc = fail_desc.split(delimiter);
+          var coded = fail_code.split(delimiter);
 
-          // console.log(desc);
+          let results = "";
 
-          document.getElementById('v_fclist').value = desc;
+          for (let i = 0; i < Math.min(desc.length, coded.length); i++) {
+            results += coded[i] + ' -- ' + desc[i] + '\n';
+          }
+
+          document.getElementById('v_fclist').value = results;
+
           // }
 
         },
@@ -1315,7 +1314,7 @@
         },
         success: function(data) {
 
-          document.getElementById('v_wotype').value = data;
+          document.getElementById('v_wotype').value = wotype + ' -- ' + data;
           // }
 
         },
@@ -1327,7 +1326,7 @@
       })
 
       $.ajax({
-        url: "/listupload/" + srnumber,
+        url: "/listuploadview/" + srnumber,
         success: function(data) {
           // console.log(data);
           $('#v_listupload').html('').append(data);

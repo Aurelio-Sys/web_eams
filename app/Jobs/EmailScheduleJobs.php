@@ -560,7 +560,7 @@ class EmailScheduleJobs implements ShouldQueue
             $requestor = $this->requestor;
             $srnumber = $this->srnumber;
             $approver = $this->tampungarray;
-            $role = $this->tampungarray;
+            $role = $this->roleapprover;
             // dd($approver);
 
             $srmstr = DB::table('service_req_mstr')->where('sr_number', $srnumber)->first();
@@ -636,6 +636,8 @@ class EmailScheduleJobs implements ShouldQueue
                 'note' => 'Please check'
 
             ]; // isi data yang dioper
+
+            $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel 
 
         } else if ($a == 1) {
             $wo = $this->wo;
