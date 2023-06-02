@@ -332,12 +332,13 @@ class ServiceController extends Controller
 
                         // Simpan File Upload pada Public
                         $savepath = public_path('uploadasset/');
+                        $filepath = 'uploadasset/';
                         $upload->move($savepath, $filename);
 
                         // Simpan ke DB Upload
                         DB::table('service_req_upload')
                             ->insert([
-                                'filepath' => $savepath . $filename,
+                                'filepath' => $filepath . $filename,
                                 'sr_number' => $runningnbr,
                                 'created_at' => Carbon::now()->toDateTimeString(),
                                 'updated_at' => Carbon::now()->toDateTimeString(),
@@ -706,7 +707,7 @@ class ServiceController extends Controller
         $note = $req->e_note;
         $reqdate = $req->e_date;
         $reqtime = $req->e_time;
-        $uploadfile = $req->hasFile('filename');
+        $uploadfile = $req->filename ? $req->filename : [];
         $approver = $req->e_approver;
         // dd($srnbr, $wotype, $failcode, $impact, $priority, $note, $reqdate, $reqtime, $uploadfile);
         // dd($approver);
@@ -718,19 +719,19 @@ class ServiceController extends Controller
 
                 // Simpan File Upload pada Public
                 $savepath = public_path('uploadasset/');
+                $filepath = 'uploadasset/';
                 $upload->move($savepath, $filename);
 
                 // Simpan ke DB Upload
                 DB::table('service_req_upload')
                     ->insert([
-                        'filepath' => $savepath . $filename,
+                        'filepath' => $filepath . $filename,
                         'sr_number' => $srnbr,
                         'created_at' => Carbon::now()->toDateTimeString(),
                         'updated_at' => Carbon::now()->toDateTimeString(),
                     ]);
             }
 
-            toast('Service Request ' . $srnbr . ' successfully updated', 'success');
         }
 
         //impact
@@ -773,6 +774,10 @@ class ServiceController extends Controller
         $runningnbr = $srmstr->sr_number;
 
         $update = ServiceReqMaster::where('sr_number', $srnbr)->first();
+        $updatefile = DB::table('service_req_upload')->where('sr_number', $srnbr)->get();
+        $currentfile = count($uploadfile) + count($updatefile);
+        $countupdatefile = count($updatefile);
+        // dd($currentfile);
         $update->sr_fail_type = $wotype;
         $update->sr_fail_code = $newfailcode;
         $update->sr_impact = $newimpact;
@@ -782,7 +787,7 @@ class ServiceController extends Controller
         $update->sr_req_time = $reqtime;
         $update->sr_eng_approver = $approver;
         // dd($update);
-        if ($update->isDirty()) {
+        if ($update->isDirty() || $currentfile != $countupdatefile) {
             //kalo ada update
             $update->sr_status = 'Open';
             $update->updated_at = Carbon::now('ASIA/JAKARTA')->toDateTimeString();
@@ -878,7 +883,7 @@ class ServiceController extends Controller
             toast('Service Request ' . $srnbr . ' successfully updated', 'success');
         } else {
             // kalo belum update
-            toast('Service Request ' . $srnbr . ' has not been updated', 'error');
+            toast('Service Request ' . $srnbr . ' has not been changed', 'error');
         }
 
 
@@ -973,6 +978,7 @@ class ServiceController extends Controller
         $asset = $srmstr->asset_code . ' -- ' . $srmstr->asset_desc;
         $srnumber = $srmstr->sr_number;
         $requestor = $srmstr->sr_req_by;
+        $roleapprover = $user->role_user;
 
         //cek departemen dan role approval yg sesuai dengan user yg login
         if (Session::get('role') <> 'ADMIN') {
@@ -1124,7 +1130,7 @@ class ServiceController extends Controller
                 //nanti dibuka EmailScheduleJobs::dispatch($wo,$asset,$a,'',$requestor,$srnumber,$rejectnote);
 
                 //kirim email ke user
-                EmailScheduleJobs::dispatch('', $asset, '4', '', $requestor, $srnumber, '');
+                EmailScheduleJobs::dispatch('', $asset, '4', '', $requestor, $srnumber, $roleapprover);
 
                 toast('Service Request ' . $req->srnumber . '  Rejected Successfully ', 'success');
                 return back();
@@ -1235,7 +1241,7 @@ class ServiceController extends Controller
                         ]);
 
                     //kirim email ke engineer approver
-                    EmailScheduleJobs::dispatch('', $asset, '8', '', $requestor, $srnumber, '');
+                    EmailScheduleJobs::dispatch('', $asset, '8', '', $requestor, $srnumber, $roleapprover);
                 } else {
                     // dd('notnull');
                     $tampungarray = $nextapprover;
@@ -1262,7 +1268,7 @@ class ServiceController extends Controller
                             ]);
 
                         //kirim email ke approver selanjutnya
-                        EmailScheduleJobs::dispatch('', $asset, '7', $tampungarray, $requestor, $srnumber, '');
+                        EmailScheduleJobs::dispatch('', $asset, '7', $tampungarray, $requestor, $srnumber, $roleapprover);
                     } else {
                         //jika user adalah admin langsung ke engineer approver
                         DB::table('service_req_mstr')
@@ -1302,7 +1308,7 @@ class ServiceController extends Controller
                             ]);
 
                         //kirim email ke engineer approver
-                        EmailScheduleJobs::dispatch('', $asset, '8', '', $requestor, $srnumber, '');
+                        EmailScheduleJobs::dispatch('', $asset, '8', '', $requestor, $srnumber, $roleapprover);
                     }
 
                     DB::table('sr_trans_approval_hist')
@@ -1431,7 +1437,7 @@ class ServiceController extends Controller
                 $output .= '</tr>';
                 // }
             }
-        }else{
+        } else {
             $output .= '<tr>';
             $output .= '<td colspan="12" style="color:red">';
             $output .= '<center> Need approval department first </center>';
@@ -1439,7 +1445,7 @@ class ServiceController extends Controller
             $output .= '</tr>';
         }
 
-        
+
 
         return response($output);
     }
@@ -2172,9 +2178,90 @@ class ServiceController extends Controller
 
             $output .=  '<tr>
                             <td> 
-                            <a href="/downloadfile/' . $data->id . '" target="_blank">' . $filename . '</a> 
+                            <a href="/' . $data->filepath . '" target="_blank">' . $filename . '</a> 
+                            </td>
+                            <td>
+                            <a href="#" class="btn deleterow btn-danger">
+                            <i class="icon-table fa fa-trash fa-lg"></i>
+                            </a>
+                            <input type="hidden" value="' . $data->id . '" class="rowval"/>
                             </td>
                             <input type="hidden" value="' . $data->id . '" class="rowval"/>
+                        </tr>';
+        }
+
+        return response($output);
+    }
+
+    public function listuploadview($id)
+    {
+        // dd($id);
+
+        $data = DB::table('service_req_upload')
+            ->where('sr_number', $id)
+            ->get();
+        // dd($data);
+
+        $output = '';
+        foreach ($data as $data) {
+
+            $lastindex = strrpos($data->filepath, "/");
+            $filename = substr($data->filepath, $lastindex + 1);
+
+
+            $output .=  '<tr>
+                            <td> 
+                            <a href="/' . $data->filepath . '" target="_blank">' . $filename . '</a> 
+                            </td>
+                            <input type="hidden" value="' . $data->id . '" class="rowval"/>
+                        </tr>';
+        }
+
+        return response($output);
+    }
+
+    public function deleteuploadsr($id)
+    {
+        $data = DB::table('service_req_upload')
+            ->where('id', $id)
+            ->first();
+
+        if ($data) {
+            $lastindex = strrpos($data->filepath, "/");
+            $filename = substr($data->filepath, $lastindex + 1);
+
+            $filename = public_path('/uploadasset/' . $filename);
+
+            if (File::exists($filename)) {
+                File::delete($filename);
+
+                DB::table('service_req_upload')
+                    ->where('id', $id)
+                    ->delete();
+            }
+        }
+
+        $data = DB::table('service_req_upload')
+            ->where('sr_number', $data->sr_number)
+            ->get();
+
+        $output = '';
+        foreach ($data as $data) {
+
+            $lastindex = strrpos($data->filepath, "/");
+            $filename = substr($data->filepath, $lastindex + 1);
+
+
+            $output .=  '<tr>
+                            <td> 
+                            <a href="/' . $data->id . '" target="_blank">' . $filename . '</a> 
+                            </td>
+                            <td>
+                            <a href="#" class="btn deleterow btn-danger">
+                            <i class="icon-table fa fa-trash fa-lg"></i>
+                            </a>
+                            <input type="hidden" value="' . $data->id . '" class="rowval"/>
+                            </td>
                         </tr>';
         }
 
@@ -2492,9 +2579,9 @@ class ServiceController extends Controller
         $acceptance = $req->sracceptance;
 
         $srmstr = DB::table('service_req_mstr')
-        ->join('wo_mstr', 'wo_mstr.wo_number', 'service_req_mstr.wo_number')
-        ->join('asset_mstr', 'asset_mstr.asset_code', '=', 'service_req_mstr.sr_asset')
-        ->where('sr_number', $srnumber)->first();
+            ->join('wo_mstr', 'wo_mstr.wo_number', 'service_req_mstr.wo_number')
+            ->join('asset_mstr', 'asset_mstr.asset_code', '=', 'service_req_mstr.sr_asset')
+            ->where('sr_number', $srnumber)->first();
 
         $asset = $srmstr->asset_code . ' -- ' . $srmstr->asset_desc;
         $requestor = $srmstr->wo_engineer_list;
@@ -2624,7 +2711,7 @@ class ServiceController extends Controller
                     <td><a href="#" class="btn deleterow btn-danger"><i class="icon-table fa fa-trash fa-lg"></i></a>
                     &nbsp
                     <input type="hidden" value="' . $gambar->id . '" class="rowval"/>
-                    <td><a href="/downloadwofinish/' . $gambar->id . '" target="_blank">' . $gambar->woreport_filename . '</a></td>
+                    <td><a href="/' . $gambar->woreport_wonbr_filepath . '" target="_blank">' . $gambar->woreport_filename . '</a></td>
                 </tr>';
         }
 

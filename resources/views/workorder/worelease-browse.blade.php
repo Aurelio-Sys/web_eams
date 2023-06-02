@@ -2,8 +2,15 @@
 @section('content-header')
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-9">
+        <div class="col-sm-8">
             <h1 class="m-0 text-dark">Work Order Release Browse</h1>
+            <p class="pb-0 m-0">Menu ini berfungsi untuk menentukan spare part yang akan digunakan di Work Order</p>
+        </div><!-- /.col -->
+        <div class="col-sm-4">
+            <!-- <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="{{url('/home')}}">Home</a></li>
+                <li class="breadcrumb-item active">Work Order Release</li>
+            </ol> -->
         </div><!-- /.col -->
     </div><!-- /.row -->
 </div><!-- /.container-fluid -->

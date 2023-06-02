@@ -425,7 +425,10 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/openprint2/{wo}','wocontroller@openprint2');
 	route::get('/wodownloadfile/{wo}','wocontroller@downloadfile');
 	route::get('/wobrowseopen', 'wocontroller@wobrowseopen'); //tyas, link dari Home 
-	
+	route::get('/imageview_womaint', [wocontroller::class, 'imageview_womaint']);
+	route::get('/delfilewomaint/{id}', [wocontroller::class, 'delfilewomaint']);
+	route::get('/downloadwomaint/{id}', [wocontroller::class, 'downloadwomaint']);
+	route::get('/imageviewonly_woimaint', [wocontroller::class, 'imageviewonly_woimaint']);
 	//work order start
 	route::get('/wojoblist', 'wocontroller@wojoblist')->name('wojoblist');
 	route::get('/viewwosparepart/{wonumber}', [wocontroller::class, 'viewsp'])->name('viewSP');
@@ -514,9 +517,11 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/useracceptance/search', 'ServiceController@useracceptancesearch');
 	route::get('/downloadfile/{id}', 'ServiceController@downloadfile');
 	route::get('/listupload/{id}', 'ServiceController@listupload')->name('listupload');
+	route::get('/listuploadview/{id}', 'ServiceController@listuploadview')->name('listuploadview');
 	route::get('/srdownloadfile/{sr}','ServiceController@downloadfilezip');
 	route::get('/srprint/{sr}','ServiceController@srprint');
 	route::post('/editsr','ServiceController@editsr'); 
+	route::get('/deleteuploadsr/{id}', 'ServiceController@deleteuploadsr');
 
 	// Setting
 	route::get('/runningmstr', 'SettingController@runningmstr');

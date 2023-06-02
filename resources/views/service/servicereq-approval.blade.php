@@ -394,7 +394,7 @@
                     <th>File Name</th>
                   </tr>
                 </thead>
-                <tbody id="listupload">
+                <tbody id="v_listupload">
 
                 </tbody>
               </table>
@@ -861,7 +861,7 @@
       }
 
       $.ajax({
-        url: "/listupload/" + srnumber,
+        url: "/listuploadview/" + srnumber,
         success: function(data) {
           // console.log(data);
           $('#listupload').html('').append(data);
@@ -1046,10 +1046,10 @@
       }
 
       $.ajax({
-        url: "/listupload/" + srnumber,
+        url: "/listuploadview/" + srnumber,
         success: function(data) {
           // console.log(data);
-          $('#listupload').html('').append(data);
+          $('#v_listupload').html('').append(data);
         }
       })
 

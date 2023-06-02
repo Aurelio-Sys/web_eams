@@ -3,14 +3,15 @@
 @section('content-header')
 <div class="container-fluid">
   <div class="row mb-2">
-    <div class="col-sm-6 mt-2">
+    <div class="col-sm-8 mt-2">
       <h1 class="m-0 text-dark">Work Order Start</h1>
+      <p class="pb-0 m-0">Menu ini berfungsi untuk memulai pengerjaan work order oleh engineer</p>
     </div><!-- /.col -->
-    <div class="col-sm-6">
-      <ol class="breadcrumb float-sm-right">
+    <div class="col-sm-4">
+      <!-- <ol class="breadcrumb float-sm-right">
         <li class="breadcrumb-item"><a href="{{url('/home')}}">Home</a></li>
         <li class="breadcrumb-item active">Work Order Start</li>
-      </ol>
+      </ol> -->
     </div><!-- /.col -->
   </div><!-- /.row -->
 </div><!-- /.container-fluid -->
@@ -150,6 +151,12 @@
               </div>
             </div>
             <div class="form-group row justify-content-center">
+              <label for="v_srnote" class="col-md-5 col-form-label text-md-left">SR Note</label>
+              <div class="col-md-7">
+                <textarea id="v_srnote" readonly class="form-control" name="v_srnote" value="{{ old('v_srnote') }}" autofocus></textarea>
+              </div>
+            </div>
+            <div class="form-group row justify-content-center">
               <label for="v_creator" class="col-md-5 col-form-label text-md-left">Requested By</label>
               <div class="col-md-7">
                 <input id="v_creator" readonly class="form-control" name="v_creator" value="{{ old('v_creator') }}" autofocus>
@@ -273,6 +280,14 @@
               <label for="v_duedate" class="col-md-5 col-form-label text-md-left">Due Date</label>
               <div class="col-md-7">
                 <input id="v_duedate" readonly type="date" class="form-control" name="v_duedate" value="{{ old('e_duedate') }}" autofocus readonly>
+              </div>
+            </div>
+            <div class="form-group row justify-content-center">
+              <label class="col-md-5 col-form-label text-md-left">Uploaded File</label>
+              <div class="col-md-7">
+                <div id="munculgambar_view">
+
+                </div>
               </div>
             </div>
             <div id="divstartdate" class="form-group row justify-content-center">
@@ -412,6 +427,7 @@
           var assetcode = vamp.wo_master.wo_asset_code;
           var assetdesc = vamp.asset.asset_desc;
           var assetloc = vamp.asset.asset_loc;
+          var assetloc_desc = vamp.asset.asloc_desc;
           var failuretype_code = vamp.wo_master.wo_failure_type !== null ? vamp.wo_master.wo_failure_type : '';
           var failuretype_desc = vamp.failure_type.wotyp_desc ? vamp.failure_type.wotyp_desc : '';
           var note = vamp.wo_master.wo_note;
@@ -429,6 +445,8 @@
           var spcodedesc = vamp.splist ? vamp.splist.spg_desc : '';
           var qccode = vamp.wo_master.wo_qcspec_code ? vamp.wo_master.wo_qcspec_code : '';
           var qccodedesc = vamp.qcslist ? vamp.qcslist.qcs_desc : '';
+          var priority = vamp.wo_master.wo_priority;
+          var srnote = vamp.sr_note;
 
           // console.log(vamp);
 
@@ -487,7 +505,7 @@
           document.getElementById('v_nowo').value = wonumber;
           document.getElementById('v_asset').value = assetcode;
           document.getElementById('v_assetdesc').value = assetdesc;
-          document.getElementById('v_loc').value = assetloc;
+          document.getElementById('v_loc').value = assetloc + ' - ' + assetloc_desc;
           document.getElementById('v_wottype').value = failuretype_code + ' - ' + failuretype_desc;
           document.getElementById('v_fclist').value = combineFailure.join('\n');
           document.getElementById('v_impact').value = combineImpact.join('\n');
@@ -503,6 +521,8 @@
           document.getElementById('v_inslist').value = inscode + ' - ' + inscodedesc;
           document.getElementById('v_splist').value = spcode + ' - ' + spcodedesc;
           document.getElementById('v_qclist').value = qccode + ' - ' + qccodedesc;
+          document.getElementById('v_priority').value = priority;
+          document.getElementById('v_srnote').value = srnote;
           // document.getElementById('v_mtcby').value       = mtcby;
 
           if ($('#loadingtable').hasClass('show')) {
@@ -518,6 +538,17 @@
 
             $('#viewModal').modal('show');
           }, 1000);
+        }
+      })
+
+      $.ajax({
+        url: "/imageviewonly_woimaint",
+        data: {
+          wonumber: wonbr,
+        },
+        success: function(data) {
+
+          $('#munculgambar_view').html('').append(data);
         }
       })
     });

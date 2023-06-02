@@ -5,6 +5,7 @@
   <div class="row">
     <div class="col-sm-9">
       <h1 class="m-0 text-dark">Work Order Maintenance</h1>
+      <p class="pb-0 m-0">Menu ini berfungsi untuk melakukan create, edit, view dan cancel Work Order</p>
     </div><!-- /.col -->
     <div class="col-sm-3">
       <button class="btn btn-block btn-primary createnewwo" data-toggle="modal" data-target="#createModal">
@@ -154,7 +155,6 @@ div #munculgambar .gambar:hover{
               <option value="finished">Finished</option>
               <option value="closed">Closed</option>
               <option value="canceled">Canceled</option>
-              <option value="acceptance">Acceptance</option>
             </select>
           </div>
           <label for="" class="col-md-1 col-form-label text-md-left">{{ __('') }}</label>
@@ -230,7 +230,7 @@ div #munculgambar .gambar:hover{
         </button>
       </div>
       <div class="modal-body">
-        <form class="form-horizontal" id="new" method="post" action="createwo" autocomplete="off">
+        <form class="form-horizontal" id="new" method="post" action="createwo" autocomplete="off" enctype="multipart/form-data">
           {{ csrf_field()}}
           <div class="form-group row col-md-12">
             <label for="c_asset" class="col-md-5 col-form-label text-md-left">Asset<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
@@ -395,6 +395,12 @@ div #munculgambar .gambar:hover{
               </select>
             </div>
           </div>
+          <div class="form-group row col-md-12" id="photodiv">
+            <label for="c_uploadfile" class="col-md-5 col-form-label text-md-left">Upload File</label>
+            <div class="col-md-7">
+              <input type="file" class="form-control" id="c_uploadfile" name="c_uploadfile[]" multiple>
+            </div>
+          </div>
       </div>
       <!-- </div> -->
       <div class="modal-footer">
@@ -419,7 +425,7 @@ div #munculgambar .gambar:hover{
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form class="form-horizontal" id="newedit" method="post" action="editwo">
+      <form class="form-horizontal" id="newedit" method="post" action="editwo" enctype="multipart/form-data" >
         {{ csrf_field() }}
         <input type="hidden" id="counter" value=0>
         <input type="hidden" id="counterfail" value=0>
@@ -552,6 +558,20 @@ div #munculgambar .gambar:hover{
                   <option value="{{$qc->qcs_code}}">{{$qc->qcs_code}} -- {{$qc->qcs_desc}}</option>
                 @endforeach
               </select>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center" id="photodiv">
+            <label class="col-md-5 col-form-label text-md-left">Uploaded File</label>
+            <div class="col-md-7">
+              <div id="munculgambar_edit">
+
+              </div>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center" id="photodiv">
+            <label for="e_uploadfile" class="col-md-5 col-form-label text-md-left">Upload File</label>
+            <div class="col-md-7">
+              <input type="file" class="form-control" id="e_uploadfile" name="e_uploadfile[]" multiple>
             </div>
           </div>
         </div>
@@ -769,6 +789,16 @@ div #munculgambar .gambar:hover{
           </div>
         </div>
         <div class="form-group row">
+          <label for="v_srnote" class="col-md-2 col-form-label text-md-left">SR Note</label>
+          <div class="col-md-4">
+            <textarea id="v_srnote" readonly class="form-control" name="v_srnote" value="{{ old('v_srnote') }}" autofocus></textarea>
+          </div>
+          <!-- <label for="v_dept" class="col-md-2 col-form-label text-md-left">Department</label>
+          <div class="col-md-4">
+            <input id="v_dept" readonly class="form-control" name="v_dept" value="{{ old('v_dept') }}" autofocus>
+          </div> -->
+        </div>
+        <div class="form-group row">
           <label for="v_asset" class="col-md-2 col-form-label text-md-left">Asset Code</label>
           <div class="col-md-4">
             <input type="text" readonly id="v_asset" type="text" class="form-control v_asset" name="v_asset" autofocus>
@@ -817,6 +847,14 @@ div #munculgambar .gambar:hover{
             <div class="col-md-4">
               <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
             </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-md-2 col-form-label text-md-left">Uploaded File</label>
+          <div class="col-md-4">
+            <div id="munculgambar_view">
+
+            </div>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -1607,8 +1645,10 @@ div #munculgambar .gambar:hover{
         var wonumber = wonbr;
         var srnumber = vamp.wo_master.wo_sr_number;
         var assetcode = vamp.wo_master.wo_asset_code;
+        var srnote = vamp.sr_note;
         var assetdesc = vamp.asset.asset_desc;
         var assetloc = vamp.asset.asset_loc;
+        var assetloc_desc = vamp.asset.asloc_desc;
         var failuretype_code = vamp.wo_master.wo_failure_type !== null ? vamp.wo_master.wo_failure_type : '';
         var failuretype_desc = vamp.failure_type.wotyp_desc ? vamp.failure_type.wotyp_desc : '';
         var note = vamp.wo_master.wo_note;
@@ -1640,7 +1680,7 @@ div #munculgambar .gambar:hover{
         document.getElementById('v_nowo').value = wonumber;
         document.getElementById('v_asset').value = assetcode;
         document.getElementById('v_assetdesc').value = assetdesc;
-        document.getElementById('v_loc').value = assetloc;
+        document.getElementById('v_loc').value = assetloc + ' - ' + assetloc_desc;
         document.getElementById('v_wottype').value = failuretype_code + ' - ' + failuretype_desc;
         document.getElementById('v_fclist').value = combineFailure.join('\n');
         document.getElementById('v_impact').value = combineImpact.join('\n');
@@ -1651,6 +1691,7 @@ div #munculgambar .gambar:hover{
         document.getElementById('v_duedate').value = duedate;
         document.getElementById('v_creator').value = createdby;
         document.getElementById('v_dept').value = department;
+        document.getElementById('v_srnote').value = srnote;
 
 
         
@@ -1668,6 +1709,17 @@ div #munculgambar .gambar:hover{
           $('#viewModal').modal('show');
         }, 1000);
 
+      }
+    })
+
+    $.ajax({
+      url: "/imageviewonly_woimaint",
+      data: {
+        wonumber: wonbr,
+      },
+      success: function(data) {
+
+        $('#munculgambar_view').html('').append(data);
       }
     })
   });
@@ -1945,7 +1997,7 @@ div #munculgambar .gambar:hover{
             data: { pmc_type: wotype },
             success: function(response) {
                 // Manipulasi data di sini
-                console.log(response);
+                // console.log(response);
 
                 var select = $('#e_mtcode');
                 select.empty();
@@ -2126,6 +2178,17 @@ div #munculgambar .gambar:hover{
 
           }
         })
+
+        $.ajax({
+          url: "/imageview_womaint",
+          data: {
+            wonumber: wonbr,
+          },
+          success: function(data) {
+
+            $('#munculgambar_edit').html('').append(data);
+          }
+        })
       });
 
       $("#c_startdate").change(function() {
@@ -2147,7 +2210,7 @@ div #munculgambar .gambar:hover{
         // ambil value dari input radio yang dipilih
         var selectedValue = $('input[name="cwotype"]:checked').val();
 
-        console.log(selectedValue);
+        // console.log(selectedValue);
 
         $.ajax({
             url: '/filtermaintcode',
@@ -2155,7 +2218,7 @@ div #munculgambar .gambar:hover{
             data: { pmc_type: selectedValue },
             success: function(response) {
                 // Manipulasi data di sini
-                console.log(response);
+                // console.log(response);
 
                 var select = $('#c_mtcode');
                 select.empty();
@@ -2352,7 +2415,29 @@ div #munculgambar .gambar:hover{
           });
       });
 
+      $(document).on('click', '.deleterow', function(e) {
+            var data = $(this).closest('tr').find('.rowval').val();
 
+            Swal.fire({
+            title: '',
+            text: "Delete File ?",
+            icon: '',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Delete'
+            }).then((result) => {
+              if (result.value) {
+                  $.ajax({
+                  url: "/delfilewomaint/" + data,
+                  success: function(data) {
+
+                      $('#munculgambar_edit').html('').append(data);
+                  }
+                  })
+              }
+            })
+        });
 
   });
   $(document).on('click', '.reopen', function() {
