@@ -2578,7 +2578,6 @@ class wocontroller extends Controller
         $um = DB::table('um_mstr')
                 ->get();
 
-
         // ambil data deskripsi engineer
         $listeng_wo = $dataheader->wo_list_engineer;
 
@@ -2616,9 +2615,8 @@ class wocontroller extends Controller
         $datainstruction = DB::table('wo_dets_ins')
                         ->leftJoin('um_mstr','um_mstr.um_code','wo_dets_ins.wd_ins_durationum')
                         ->where('wd_ins_wonumber','=', $wonumber)
+                        ->orderBy('wd_ins_step', 'ASC')
                         ->get();
-
-        // dd($datainstruction);
 
         // ambil semua step instruction dari ins_list
         $ins_all = DB::table('ins_list')
@@ -3525,8 +3523,6 @@ class wocontroller extends Controller
     public function reportingwo(Request $req)
     {
 
-        // dd($req->all());
-
         // bagian spare part
 
         DB::beginTransaction();
@@ -4149,6 +4145,8 @@ class wocontroller extends Controller
                         ->insert([
                             'wd_qc_wonumber' => $req->c_wonbr,
                             'wd_qc_qcparam' => $qcparam,
+                            'wd_qc_qcoperator' => $req->qcoperator[$index],
+                            'wd_qc_qcum' => $req->qcum[$index],
                             'wd_qc_result1' => $req->resultqc1[$index],
                         ]);
                     
@@ -4212,9 +4210,13 @@ class wocontroller extends Controller
             if($req->btnconf == "reportwo"){
                 //status wo tidak berubah
 
+                DB::table('wo_mstr')->where('wo_number','=', $req->c_wonbr)->update([
+                    'wo_editstatus' => true,
+                ]);
+
                 DB::commit();
                 toast('Reporting Successfuly', 'success')->persistent('Dismiss');
-                return redirect()->back();
+                return redirect()->route('woreport');
             
             }
 

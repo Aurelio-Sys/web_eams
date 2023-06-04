@@ -79,6 +79,38 @@ class WORelease extends Controller
             ->where('wo_mstr.id', '=', $id)
             ->first();
 
+        //ambil data failure type 
+        if ($data->wo_failure_type !== null) {
+            $getFailTypeDesc = DB::table('wotyp_mstr')
+                ->select('wotyp_desc')
+                ->where('wotyp_code', '=', $data->wo_failure_type)
+                ->first();
+        } else {
+            $getFailTypeDesc = '';
+        }
+
+        //ambil data failure code
+        $listFailDesc = [];
+
+        if ($data->wo_failure_code !== null) {
+            $listFailCode = explode(';', $data->wo_failure_code);
+
+
+
+            foreach ($listFailCode as $failcode) {
+                $getFailDesc = DB::table('fn_mstr')
+                    ->select('fn_desc')
+                    ->where('fn_code', '=', $failcode)
+                    ->first();
+
+                $failure = array('fn_code' => $failcode, 'fn_desc' => $getFailDesc->fn_desc);
+
+                array_push($listFailDesc, $failure);
+            }
+        } else {
+            $getFailDesc = '';
+        }
+
         $sp_all = DB::table('sp_mstr')
                 ->select('spm_code','spm_desc', 'spm_um','spm_site','spm_loc','spm_lot')
                 ->where('spm_active','=', 'Yes')
@@ -99,7 +131,7 @@ class WORelease extends Controller
             $wo_sp = collect([]);
         }
 
-        return view('workorder.worelease-detail', compact('data','sp_all', 'wo_sp'));
+        return view('workorder.worelease-detail', compact('data','sp_all', 'wo_sp', 'getFailTypeDesc', 'listFailDesc'));
     }
 
     public function submitrelease(Request $req)
@@ -384,6 +416,7 @@ class WORelease extends Controller
                                     'wd_ins_code' => $ins->ins_code,
                                     'wd_ins_stepdesc' => $ins->ins_stepdesc,
                                     'wd_ins_duration' => $ins->ins_duration,
+                                    'wd_ins_durationum' => $ins->ins_durationum,
                                     'wd_ins_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                     'wd_ins_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 ]);
@@ -402,6 +435,8 @@ class WORelease extends Controller
                                 ->insert([
                                     'wd_qc_wonumber' => $requestData['hide_wonum'],
                                     'wd_qc_qcparam' => $qcspec->qcs_spec,
+                                    'wd_qc_qcoperator' => $qcspec->qcs_op,
+                                    'wd_qc_qcum' => $qcspec->qcs_um,
                                     'wd_qc_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                     'wd_qc_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 ]);
@@ -461,6 +496,8 @@ class WORelease extends Controller
                                 ->insert([
                                     'wd_qc_wonumber' => $requestData['hide_wonum'],
                                     'wd_qc_qcparam' => $qcspec->qcs_spec,
+                                    'wd_qc_qcoperator' => $qcspec->qcs_op,
+                                    'wd_qc_qcum' => $qcspec->qcs_um,
                                     'wd_qc_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                     'wd_qc_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 ]);
@@ -530,6 +567,8 @@ class WORelease extends Controller
                             ->insert([
                                 'wd_qc_wonumber' => $requestData['hide_wonum'],
                                 'wd_qc_qcparam' => $qcspec->qcs_spec,
+                                'wd_qc_qcoperator' => $qcspec->qcs_op,
+                                'wd_qc_qcum' => $qcspec->qcs_um,
                                 'wd_qc_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 'wd_qc_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);

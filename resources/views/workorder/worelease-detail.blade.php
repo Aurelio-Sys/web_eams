@@ -21,30 +21,48 @@
 <div class="row">
     <div class="form-group row col-md-12">
         <label class="col-md-2 col-form-label text-md-right">Work Order</label>
-        <div class="col-md-2">
+        <div class="col-md-4">
             <input type="text" class="form-control" id="wo_num" name="wo_num" value="{{$data->wo_number}}" readonly>
         </div>
-        <label class="col-md-1 col-form-label text-md-right">Asset</label>
-        <div class="col-md-3">
-            <input type="text" class="form-control" id="asset" name="asset" value="{{$data->asset_code}} - {{$data->asset_desc}}" readonly>
-        </div>
-        <label class="col-md-2 col-form-label text-md-right">Start Date</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" id="start_date" name="start_date" value="{{$data->wo_start_date}}" readonly>
+        <label class="col-md-2 col-form-label text-md-right">SR Number</label>
+        <div class="col-md-4">
+            <input type="text" class="form-control" id="sr_num" name="sr_num" value="{{$data->wo_sr_number != null ? $data->wo_sr_number : '-'}}" readonly>
         </div>
     </div>
     <div class="form-group row col-md-12">
-        <label class="col-md-2 col-form-label text-md-right">SR Number</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" id="sr_num" name="sr_num" value="{{$data->wo_sr_number != null ? $data->wo_sr_number : '-'}}" readonly>
-        </div>
-        <label class="col-md-1 col-form-label text-md-right">Priority</label>
-        <div class="col-md-3">
-            <input type="text" class="form-control" id="prior" name="prior" value="{{$data->wo_priority}}" readonly>
+        <label class="col-md-2 col-form-label text-md-right">Start Date</label>
+        <div class="col-md-4">
+            <input type="text" class="form-control" id="start_date" name="start_date" value="{{$data->wo_start_date}}" readonly>
         </div>
         <label class="col-md-2 col-form-label text-md-right">Due Date</label>
-        <div class="col-md-2">
+        <div class="col-md-4">
             <input type="text" class="form-control" id="duedate" name="duedate" value="{{$data->wo_due_date}}" readonly>
+        </div>
+    </div>
+    <div class="form-group row col-md-12">
+        <label class="col-md-2 col-form-label text-md-right">Asset</label>
+        <div class="col-md-4">
+            <input type="text" class="form-control" id="asset" name="asset" value="{{$data->asset_code}} - {{$data->asset_desc}}" readonly>
+        </div>
+        <label class="col-md-2 col-form-label text-md-right">Priority</label>
+        <div class="col-md-4">
+            <input type="text" class="form-control" id="prior" name="prior" value="{{$data->wo_priority}}" readonly>
+        </div>
+    </div>
+    <div class="form-group row col-md-12">
+        <label class="col-md-2 col-form-label text-md-right">Failure Type</label>
+        <div class="col-md-4">
+            <input type="text" class="form-control" id="failtype" value="{{ is_object($getFailTypeDesc) ? $getFailTypeDesc->wotyp_desc : '' }}" readonly />
+        </div>
+        <label class="col-md-2 col-form-label text-md-right">Failure Code</label>
+        <div class="col-md-4">
+            <textarea class="form-control" id="failcode" rows="5" readonly>{!! implode(PHP_EOL, array_map(function ($item) { return $item['fn_code'].' -- '.$item['fn_desc']; }, $listFailDesc)) !!}</textarea>
+        </div>
+    </div>
+    <div class="form-group row col-md-12">
+        <label class="col-md-2 col-form-label text-md-right">Note</label>
+        <div class="col-md-4">
+            <textarea class="form-control" id="wonote" readonly>{{$data->wo_note}}</textarea>
         </div>
     </div>
 </div>
@@ -107,7 +125,7 @@
                             
                             <tr>
                                 <td>
-                                    <select name="spreq[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="200px" autofocus>
+                                    <select name="spreq[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="200px" autofocus required>
                                         <option value=""> -- Select Spare Part -- </option>
                                         @foreach($sp_all as $da)
                                         <option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>
@@ -116,7 +134,7 @@
                                 </td>
 
                                 <td>
-                                    <input type="number" class="form-control qtystandard" name="qtystandard[]" step="1" min="0" required />
+                                    <input type="hidden" class="form-control qtystandard" name="qtystandard[]" step="1" min="0" value="0" />
                                 </td>
 
                                 <td>
@@ -187,7 +205,7 @@
             var cols = "";
 
             cols += '<td>';
-            cols += '<select name="spreq[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus >';
+            cols += '<select name="spreq[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
             cols += '<option value = ""> -- Select Data -- </option>';
             @foreach($sp_all as $da)
             cols += '<option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
@@ -196,7 +214,7 @@
             cols += '</td>';
 
             cols += '<td>';
-            cols += '<input type="number" class="form-control qtystandard" name="qtystandard[]" step="1" min="0" required />';
+            cols += '<input type="hidden" class="form-control qtystandard" name="qtystandard[]" step="1" min="0" value="0" />';
             cols += '</td>';
 
             cols += '<td>';
@@ -258,6 +276,12 @@
             } else {
                 $(this).closest("tr").find('.tick').val(0);
             }
+        });
+
+        $('#submit').submit(function(event) {
+            document.getElementById('btnback').style.display = 'none';
+            document.getElementById('btnconf').style.display = 'none';
+            document.getElementById('btnloading').style.display = '';
         });
     });
 </script>

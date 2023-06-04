@@ -10,7 +10,7 @@
   <input type="hidden" name='wotypee' value="{{$show->wo_type}}"> 
   @if($show->wo_status == 'started')
     <!-- <button type="button" class="btn btn-success btn-action jobview" style="width: 80%;">View</button> -->
-    <a class="btn btn-success btn-action" href="{{route('reportingWO', $show->wo_number)}}" title="Report WO"><i class="fas fa-check-square"></i></a>
+    <a class="btn btn-success btn-action" href="{{route('reportingWO', $show->wo_number)}}" title="{{$show->wo_editstatus == true ? 'Edit Report WO' : 'Report WO'}}"><i class="{{$show->wo_editstatus == true ? 'fas fa-file-signature' : 'fas fa-check-square'}}"></i></a>
   
   @endif
 

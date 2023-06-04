@@ -73,6 +73,28 @@ class WHSConfirm extends Controller
         return view('workorder.whsconfirm-browse', ['asset1' => $asset1, 'data' => $data]);
     }
 
+    public function searchWO (Request $req){
+        $data = DB::table('wo_mstr')
+                    ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority','wd_sp_flag')
+                    ->join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber','wo_mstr.wo_number')
+                    ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+                    ->where('wo_status', 'released')
+                    ->where('wd_sp_flag','=', 1)
+                    ->where('wo_number','=', $req->wo_number)
+                    ->groupBy('wo_number')
+                    ->first();
+            
+        if($data == null){
+            //kalau tidak ada datanya
+            alert()->error('Error', 'Data not found')->persistent('Dismiss');
+            return redirect()->back();
+        }else{
+            //kalau ada datanya
+            return redirect()->route('WhsconfDetail', ['id' => $data->wo_number]);
+        }
+        
+    }
+
     public function detailwhs($id)
     {
 

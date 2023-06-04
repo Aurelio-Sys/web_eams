@@ -566,6 +566,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// WHS Confirm
 	Route::get('/wotransfer', [WHSConfirm::class, 'browse'])->name('browseWhconfirm');
+	Route::post('/search', [WHSConfirm::class, 'searchWO'])->name('search');
 	Route::get('/wotransfer/detailwhs/{id}', [WHSConfirm::class, 'detailwhs'])->name('WhsconfDetail');
 	Route::post('/whssubmit', [WHSConfirm::class,'whssubmit'])->name('WhsconfSubmit');
 	Route::get('/searchlot', [WHSConfirm::class, 'searchlot'])->name('searchlot');

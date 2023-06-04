@@ -562,11 +562,10 @@ div #munculgambar .gambar:hover{
           </div>
           <div class="form-group row justify-content-center" id="photodiv">
             <label class="col-md-5 col-form-label text-md-left">Uploaded File</label>
-            <div class="col-md-7">
-              <div id="munculgambar_edit">
-
+              <div class="col-md-7" style="overflow-x: auto;">
+                <table class="table table-bordered" style="width: 100%; max-width: 100%;" id="munculgambar_edit">
+                </table>
               </div>
-            </div>
           </div>
           <div class="form-group row justify-content-center" id="photodiv">
             <label for="e_uploadfile" class="col-md-5 col-form-label text-md-left">Upload File</label>
@@ -850,10 +849,9 @@ div #munculgambar .gambar:hover{
         </div>
         <div class="form-group row">
           <label class="col-md-2 col-form-label text-md-left">Uploaded File</label>
-          <div class="col-md-4">
-            <div id="munculgambar_view">
-
-            </div>
+          <div class="col-md-4" style="overflow-x: auto;">
+            <table class="table table-bordered" style="width: 100%; max-width: 100%;" id="munculgambar_view">
+            </table>  
           </div>
         </div>
       </div>
@@ -1006,10 +1004,8 @@ div #munculgambar .gambar:hover{
           </div>
           <div class="form-group row justify-content-center" id="photodiv">
             <label for="v_reportnote" class="col-md-5 col-form-label text-md-left">Uploaded File</label>
-            <div class="col-md-7">
-              <div id="munculgambar">
+            <div class="col-md-7" id="munculgambar_edit">
 
-              </div>
             </div>
           </div>
           <div class="form-group row justify-content-center">

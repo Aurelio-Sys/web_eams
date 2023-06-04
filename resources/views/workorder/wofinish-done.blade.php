@@ -153,16 +153,16 @@
 
             <!-- Spare Part -->
             
-            <div style="border: 1px solid black; padding-top: 5%; padding-bottom: 5%; padding-left: 5%; padding-right: 5%;">
+            <div style="border: 1px solid black; padding-top: 5%; padding-bottom: 5%; padding-left: 2%; padding-right: 2%;">
                 <div class="table-responsive tag-container" style="overflow-x: auto; display:inline-block; white-space: nowrap; padding:0; text-align:center; position:relative">
                     <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</th>
+                                <th style="text-align: center; width: 5% !important; font-weight: bold;">Required</th>
+                                <th style="text-align: center; width: 5% !important; font-weight: bold;">Issued</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Issue</th>
-                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Required</th>
-                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Issued</th>
-                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Location & Lot</th>
+                                <th style="text-align: center; width: 18% !important; font-weight: bold;">Location & Lot</th>
                                 <th style="text-align: center; width: 5% !important; font-weight: bold;">Action</th>
                             </tr>
                         </thead>
@@ -179,9 +179,6 @@
                                         $difference = 0;
                                     }
                                 @endphp
-                                <td style="vertical-align:middle;text-align:center;">
-                                    <input type="number" class="form-control qtypotong" step="0.01" min="{{ $datas->wd_sp_issued == 0 ? 0 : -$datas->wd_sp_issued }}" name="qtypotong[]" value="{{$difference}}" required />
-                                </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     {{$datas->wd_sp_required}}
                                     <input type="hidden" name="qtyrequired[]" value="{{$datas->wd_sp_required}}" />
@@ -189,6 +186,9 @@
                                 <td style="vertical-align:middle;text-align:right;">
                                     {{$datas->wd_sp_issued}}
                                     <input type="hidden" class="qtyissued" name="qtyissued[]" value="{{$datas->wd_sp_issued}}" />
+                                </td>
+                                <td style="vertical-align:middle;text-align:center;">
+                                    <input type="number" class="form-control qtypotong" step="0.01" min="{{ $datas->wd_sp_issued == 0 ? 0 : -$datas->wd_sp_issued }}" name="qtypotong[]" value="{{$difference}}" required />
                                 </td>
                                 <td style="vertical-align: middle; text-align: left;">
                                     <input type="text" id="loclotfrom" class="form-control loclotfrom" name="loclotfrom[]" data-toggle="tooltip" autocomplete="off" readonly placeholder="Click Here">
@@ -253,7 +253,7 @@
 
             <!-- Instruction WO -->
 
-            <div style="border: 1px solid black; margin-top: 5% !important; padding-top: 5%; padding-bottom: 5%; padding-left: 5%; padding-right: 5%;">
+            <div style="border: 1px solid black; margin-top: 5% !important; padding-top: 5%; padding-bottom: 5%; padding-left: 2%; padding-right: 2%;">
                 <div class="table-responsive tag-container" style="overflow-x: auto; display:inline-block; white-space: nowrap; padding:0; text-align:center; position:relative">
                     <table id="createTableIns" class="table table-bordered order-list" width="100%" cellspacing="0">
                         <thead>
@@ -322,13 +322,14 @@
 
             <!-- Qc Spec -->
 
-            <div style="border: 1px solid black; margin-top: 5% !important; padding-top: 5%; padding-bottom: 5%; padding-left: 5%; padding-right: 5%;">
+            <div style="border: 1px solid black; margin-top: 5% !important; padding-top: 5%; padding-bottom: 5%; padding-left: 2%; padding-right: 2%;">
                 <div class="table-responsive tag-container" style="overflow-x: auto; display:inline-block; white-space: nowrap; padding:0; text-align:center; position:relative">
                     <table id="createTableQc" class="table table-bordered order-list" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th style="text-align: center; width: 15% !important; font-weight: bold;">QC Parameter</th>
                                 <th style="text-align: center; width: 20% !important; font-weight: bold;">Result</th>
+                                <th style="text-align: center; width: 5% !important; font-weight: bold;">UM</th>
                                 <th style="text-align: center; width: 5% !important; font-weight: bold;">Action</th>
                             </tr>
                         </thead>
@@ -338,9 +339,13 @@
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$dataqc->wd_qc_qcparam}}
                                     <input type="hidden" class="qcparam" name="qcparam[]" value="{{$dataqc->wd_qc_qcparam}}" />
+                                    <input type="hidden" class="qcoperator" name="qcoperator[]" value="{{$dataqc->wd_qc_qcoperator}}" />
                                 </td>
                                 <td style="vertical-align: middle; text-align: left;">
-                                    <input type="text" class="form-control resultqc1" name="resultqc1[]" value="{{$dataqc->wd_qc_result1 != null ? $dataqc->wd_qc_result1 : ''}}" maxlength="250" /> 
+                                    <input type="{{ in_array($dataqc->wd_qc_qcoperator, ['<', '>', '=', '<=', '>=']) ? 'number' : 'text' }}" class="form-control resultqc1" name="resultqc1[]" value="{{$dataqc->wd_qc_result1 != null ? $dataqc->wd_qc_result1 : ''}}" maxlength="250" autocomplete="off" /> 
+                                </td>
+                                <td style="vertical-align: middle; text-align: left;">
+                                    <input type="text" class="form-control qcum" name="qcum[]" value="{{$dataqc->wd_qc_qcum != null ? $dataqc->wd_qc_qcum : ''}}" maxlength="250" readonly /> 
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
                                 
@@ -462,10 +467,15 @@
             <input type="hidden" id="repairtypenow" name="repairpartnow" />
         </div>
 
+        <div class="container" style="text-align: center;" >
+            <input type="hidden" name="btnconf" value="reportwo">
+            <input type="checkbox" id="finishCheckbox" value="reportwo">    
+            <label for="finishCheckbox">Finish Report?</label>
+        </div>
+
         <div class="modal-footer">
             <a id="btnclose" class="btn btn-danger" href="/woreport" id="btnback">Back</a>
-            <button type="submit" class="btn btn-dark bt-action" id="btnconf-close" name="btnconf" value="closewo">Finish Report</button>
-            <button type="submit" class="btn btn-success bt-action" id="btnconf-report" name="btnconf" value="reportwo">Report WO</button>
+            <button type="submit" class="btn btn-success bt-action" id="btnconf-submit">Submit</button>
             <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none; width: 150px !important;">
                 <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
             </button>
@@ -473,7 +483,7 @@
     </form>
 </div>
 
-
+<!-- pop up untuk menampilkan location from data qad -->
 <div id="myModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -504,6 +514,16 @@
     }
 
     $(document).ready(function() {
+        $('#finishCheckbox').change(function() {
+            // Mengubah nilai elemen hidden berdasarkan status checkbox
+            if ($(this).is(':checked')) {
+                $('input[name="btnconf"]').val('closewo');
+            } else {
+                $('input[name="btnconf"]').val('reportwo');
+            }
+        });
+
+
         $("#addrow").on("click", function() {
 
             // var line = document.getElementById('line').value;
@@ -535,10 +555,6 @@
             cols += '</select>';
             cols += '<input type="hidden" class="hidden_sp" name="hidden_sp[]" />';
             cols += '</td>';
-
-            cols += '<td style="vertical-align:middle;text-align:center;">';
-            cols += '<input type="number" class="form-control qtypotong" min="0" step="0.01" name="qtypotong[]" value="0" required />';
-            cols += '</td>';
             
             cols += '<td style="vertical-align:middle;text-align:center;">';
             cols += '<input type="hidden" name="qtyrequired[]" value="0" />';
@@ -546,6 +562,10 @@
             
             cols += '<td style="vertical-align:middle;text-align:center;">';
             cols += '<input type="hidden" class="qtyissued" name="qtyissued[]" value="0" />';
+            cols += '</td>';
+
+            cols += '<td style="vertical-align:middle;text-align:center;">';
+            cols += '<input type="number" class="form-control qtypotong" min="0" step="0.01" name="qtypotong[]" value="0" required />';
             cols += '</td>';
 
             cols += '<td style="vertical-align:middle;text-align:center;">';
@@ -653,11 +673,17 @@
             var cols = "";
 
             cols += '<td>';
-            cols += '<input type="text" class="form-control qcparam" name="qcparam[]" maxlength="250" required />';
+            cols += '<input type="text" class="form-control qcparam" name="qcparam[]" maxlength="250" required autocomplete="off" />';
+            cols += '</td>';
+
+            cols += '<input type="hidden" class="qcoperator" name="qcoperator[]" value="free" />';
+
+            cols += '<td>';
+            cols += '<input type="text" class="form-control resultqc1" name="resultqc1[]" value="" maxlength="250" autocomplete="off" />';
             cols += '</td>';
 
             cols += '<td>';
-            cols += '<input type="text" class="form-control resultqc1" name="resultqc1[]" value="" maxlength="250" />';
+            cols += '<input type="text" class="form-control qcum" name="qcum[]" maxlength="250" autocomplete="off" />';
             cols += '</td>';
 
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>';
@@ -714,8 +740,7 @@
         });
 
         $('#newedit').submit(function(event) {
-            document.getElementById('btnconf-report').style.display = 'none';
-            document.getElementById('btnconf-close').style.display = 'none';
+            document.getElementById('btnconf-submit').style.display = 'none';
             document.getElementById('btnclose').style.display = 'none';
             document.getElementById('btnloading').style.display = '';
         });
