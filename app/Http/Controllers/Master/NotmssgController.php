@@ -45,7 +45,7 @@ class NotmssgController extends Controller
      */
     public function store(Request $req)
     {
-        dd($req->all());
+        // dd($req->all());
         $flg = 0;
         foreach($req->t_id as $t_id){
             DB::table('msg_mstr')

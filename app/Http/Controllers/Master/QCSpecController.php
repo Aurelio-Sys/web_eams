@@ -40,7 +40,11 @@ class QCSpecController extends Controller
             ->orderBy('qcs_spec')
             ->get();
 
-        return view('setting.qcspec', compact('data','datadet'));
+        $dataopt = DB::table('opt_mstr')
+            ->orderBy('id')
+            ->get();
+
+        return view('setting.qcspec', compact('data','datadet','dataopt'));
     }
 
     /**
@@ -145,12 +149,24 @@ class QCSpecController extends Controller
                 ->orderBy('qcs_spec')
                 ->get();
 
+            $dataopt = DB::table('opt_mstr')
+                ->orderBy('id')
+                ->get();
+
             $output = '';
             foreach ($data as $data) {
                 $output .= '<tr>'.
                             '<td><input type="text" class="form-control" name="te_spec[]" value="'.$data->qcs_spec.'"></td>'.
                             '<td><input type="text" class="form-control" name="te_tools[]" value="'.$data->qcs_tools.'"></td>'.
-                            '<td><input type="text" class="form-control" name="te_op[]" value="'.$data->qcs_op.'"></td>'.
+                            // '<td><input type="text" class="form-control" name="te_op[]" value="'.$data->qcs_op.'"></td>'.
+                            '<td><select class="form-control te_op" name="te_op[]" required>';
+                
+                foreach($dataopt as $do) {
+                    $selected = ($do->id === $data->qcs_op) ? "selected" : "";
+                    $output .= '<option value="'.$do->id.'" '.$selected.'>'.$do->opt_desc.'</option>';
+                }
+
+                $output .=  '</select></td>'.
                             '<td><input type="text" class="form-control" name="te_val1[]" value="'.$data->qcs_val1.'"></td>'.
                             '<td><input type="text" class="form-control" name="te_val2[]" value="'.$data->qcs_val2.'"></td>'.
                             '<td><input type="text" class="form-control" name="te_um[]" value="'.$data->qcs_um.'"></td>'.

@@ -26,8 +26,8 @@
                <td>{{$show->msg_condition}}</td>
                <td>{{$show->msg_code}}</td>
                <td>
-                  <input type="text" class="form-control" name="t_desc" id="t_desc" value="{{$show->msg_desc}}">
-                  <input type="hidden" name="t_id" id="t_id" value="{{$show->id}}">
+                  <input type="text" class="form-control" name="t_desc[]" id="t_desc" value="{{$show->msg_desc}}" autocomplete="off">
+                  <input type="hidden" name="t_id[]" id="t_id" value="{{$show->id}}">
                </td>
             </tr>
             @empty

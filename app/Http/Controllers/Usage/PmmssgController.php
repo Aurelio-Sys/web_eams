@@ -23,7 +23,8 @@ class PmmssgController extends Controller
 
         $data = DB::table('pml_log')
             ->leftJoin('asset_mstr','asset_code','=','pml_asset')
-            ->select('pml_log.*','asset_code','asset_desc')
+            ->leftJoin('msg_mstr','msg_code','=','pml_message')
+            ->select('pml_log.*','asset_code','asset_desc','msg_desc')
             ->orderBy('pml_asset')
             ->orderBy('pml_pmcode');
 
@@ -67,9 +68,17 @@ class PmmssgController extends Controller
                     'wo_system_update' => Carbon::now()->toDateTimeString(),
                 ]);
 
+            // Melakukan update data di pml_log agar browse berubah datanya sesuai WO
+            DB::table('pml_log')
+                ->whereId($req->d_code)
+                ->update([
+                    'pml_message' => "NF006",
+                    'pml_wo_date' => $data->pml_pm_date,
+                ]);
+
             DB::commit();
             toast('Work Order Updated Success', 'success');
-            return back();
+            return redirect()->route('pmmssg');
         } catch (Exception $err) {
             DB::rollBack();
 

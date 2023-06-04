@@ -3,7 +3,7 @@
       <div class="container-fluid">
         <div class="row">          
           <div class="col-sm-4">
-            <h1 class="m-0 text-dark">Sparepart Needs</h1>
+            <h1 class="m-0 text-dark">Generate Sparepart Demand</h1>
           </div>    
         </div><!-- /.row -->
         <div class="col-md-12">
@@ -98,17 +98,17 @@
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                <th width="10%">No WO</th>
+                {{--  <th width="10%">No WO</th>
                 <th width="10%">Asset</th>
                 <th width="15%">Desc Asset</th>
-                <th width="7%">Create Date</th>
+                <th width="7%">Create Date</th>  --}}
                 <th width="7%">Sch Date</th>
-                <th width="5%">Status</th>
+                {{--  <th width="5%">Status</th>  --}}
                 <th width="10%">Sparepart</th>
                 <th width="15%">Desc</th>  
                 <th width="7%">Qty Req</th>  
-                <th width="7%">Qty Whs</th>  
-                <th width="7%">Qty Needed</th>  
+                {{--  <th width="7%">Qty Whs</th>  
+                <th width="7%">Qty Needed</th>    --}}
             </tr>
         </thead>
         <tbody>

@@ -278,8 +278,13 @@
 
           cols += '<td><input type="text" class="form-control" name="t_spec[]" autocomplete="off" maxlength="255" required></td>';
           cols += '<td><input type="text" class="form-control" name="t_tools[]" autocomplete="off" maxlength="255"></td>';
-          {{--  cols += '<td><select class="form-control t_op" name="t_op[]" id="t_op" required></select></td>';  --}}
-          cols += '<td><input type="text" class="form-control" name="t_op[]" autocomplete="off" required></td>';
+          cols += '<td><select class="form-control t_op" name="t_op[]" required>';
+          cols += '<option value=""></option>'
+          @foreach ($dataopt as $do)
+            cols += '<option value="{{$do->id}}"> {{$do->opt_desc}} </option>';          
+          @endforeach
+          cols += '</select></td>'
+          {{--  cols += '<td><input type="text" class="form-control" name="t_op[]" autocomplete="off" required></td>';  --}}
           cols += '<td><input type="text" class="form-control" name="t_val1[]" autocomplete="off" required></td>';
           cols += '<td><input type="text" class="form-control" name="t_val2[]" autocomplete="off"></td>';
           cols += '<td><input type="text" class="form-control" name="t_um[]" autocomplete="off"></td>';
@@ -304,7 +309,13 @@
 
           cols += '<td><input type="text" class="form-control" name="te_spec[]" autocomplete="off" maxlength="255" required></td>';
           cols += '<td><input type="text" class="form-control" name="te_tools[]" autocomplete="off" maxlength="255"></td>';
-          cols += '<td><input type="text" class="form-control" name="te_op[]" autocomplete="off" maxlength="255" required></td>';
+          cols += '<td><select class="form-control te_op" name="te_op[]" required>';
+          cols += '<option value=""></option>'
+          @foreach ($dataopt as $do)
+            cols += '<option value="{{$do->id}}"> {{$do->opt_desc}} </option>';          
+          @endforeach
+          cols += '</select></td>'
+          {{--  cols += '<td><input type="text" class="form-control" name="te_op[]" autocomplete="off" maxlength="255" required></td>';  --}}
           cols += '<td><input type="text" class="form-control" name="te_val1[]" autocomplete="off" maxlength="255" required></td>';
           cols += '<td><input type="text" class="form-control" name="te_val2[]" autocomplete="off"></td>';
           cols += '<td><input type="text" class="form-control" name="te_um[]" autocomplete="off"></td>';

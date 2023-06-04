@@ -1476,7 +1476,7 @@ class UserChartController extends Controller
         $ssp = $req->s_sp;
         $seng = $req->s_eng;
         
-        /* Temp table untuk menampun data spare part dari Wo detail, Wo yang belum ada detailnya, Wo yang belum terbentuk */
+        /* Temp table untuk menampung data spare part dari Wo detail, Wo yang belum ada detailnya, Wo yang belum terbentuk */
         Schema::create('temp_wo', function ($table) {
             $table->increments('id');
             $table->string('temp_wo');
@@ -1519,7 +1519,7 @@ class UserChartController extends Controller
                 'temp_qty_need' => $da->spg_qtyreq,
             ]);
         } 
-        // dd($data);
+        
         /* Mencari data sparepart yang sudah ada wo detail nya  di tabel wo_dets_sp */
         $data = DB::table('wo_mstr')
             ->join('wo_dets_sp','wd_sp_wonumber','=','wo_number')
@@ -1545,8 +1545,10 @@ class UserChartController extends Controller
 
         $datatemp = DB::table('temp_wo')
             ->whereNotIn('temp_status',['closed','delete'])
+            ->selectRaw('temp_sch_date,temp_sp,temp_sp_desc,sum(temp_qty_req) as sumreq')
             ->orderBy('temp_sch_date')
-            ->orderBy('temp_wo');
+            ->orderBy('temp_sp')
+            ->groupBy('temp_sch_date','temp_sp');
 
         if($swo) {
             $datatemp = $datatemp->where('temp_wo','like','%'.$swo.'%');

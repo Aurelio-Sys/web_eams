@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-9">
-            <h1 class="m-0 text-dark">Generate Work Order</h1>
+            <h1 class="m-0 text-dark">Generate PM Planning</h1>
             <br>
         </div><!-- /.col -->
     </div><!-- /.row -->

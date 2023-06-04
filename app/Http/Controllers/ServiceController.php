@@ -2573,7 +2573,7 @@ class ServiceController extends Controller
 
     public function acceptance(Request $req)
     {
-        dd($req->all());
+        // dd($req->all());
         $srnumber = $req->srnumber;
         $wonumber = $req->wonumber;
         $acceptance = $req->sracceptance;

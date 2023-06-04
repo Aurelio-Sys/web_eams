@@ -59,10 +59,8 @@
                 <th width="20%">Desc</th>
                 <th width="10%">PM Code</th>
                 <th width="30%">PM Desc</th>
-                <th width="10%">PM Number</th>
                 <th width="10%">Schedule Date</th>
-                {{--  <th width="15%">WO Number</th>
-                <th width="15%">WO Date</th>  --}}
+                <th width="10%">Due Date</th>
                 <th width="10%">Action</th>  
             </tr>
         </thead>
@@ -70,16 +68,20 @@
             <!-- untuk isi table -->
             {{--  @include('schedule.table-pmconf')  --}}
             @forelse($data as $show)
-
+                @if(is_null($show->pma_leadtime))
+                    @php($leadtime = 0)
+                @else
+                    @php($leadtime = $show->pma_leadtime)
+                @endif
+                @php($tglakhir = date_add(date_create($show->pmo_sch_date), date_interval_create_from_date_string(''.$leadtime.' days')))
                 <tr>
                     <td>{{$show->pmo_asset}}</td>
                     <td>{{$show->asset_desc}}</td>
                     <td>{{$show->pmo_pmcode}}</td>
                     <td>{{$show->pmc_desc}}</td>
-                    <td class="td_pmnumber">{{$show->pmo_number}}</td>
                     <td class="td_pmdate">@if($show->pmo_sch_date != "0000-00-00") {{$show->pmo_sch_date}} @endif</td>
-                    {{--  <td class="td_wonumber">{{$show->pmo_wonumber}}</td>
-                    <td class="td_wodate">@if($show->pmo_wodate != "0000-00-00") {{$show->pmo_wodate}} @endif</td>  --}}
+                    <td> {{date_format($tglakhir,"Y-m-d")}} </td>
+                    {{--  <td class="td_pmnumber">{{$show->pmo_number}}</td>  --}}
 
                     <td>
                         @if($show->pmo_number != "")
@@ -377,12 +379,12 @@
                             row.find(".cek").prop("checked", true);
 
                             // Mengubah warna text yang dipilih menjadi biru
-                            row.find(".td_pmdate, .td_pmnumber").each(function() {
+                            {{--  row.find(".td_pmdate, .td_pmnumber").each(function() {
                                 $(this).css({
                                   "color": "blue",
                                   "font-weight": "bold"
                                 });
-                            });
+                            });  --}}
 
                             // Mengembalikan text lain yang tidak terpilih menjadi hitam
                             row.find(".td_wodate, .td_wonumber").each(function() {
@@ -430,12 +432,12 @@
                             });
 
                             // Mengembalikan text lain yang tidak terpilih menjadi hitam
-                            row.find(".td_pmdate, .td_pmnumber").each(function() {
+                            {{--  row.find(".td_pmdate, .td_pmnumber").each(function() {
                                 $(this).css({
                                     "color": "black",
                                     "font-weight": "normal"
                                 });
-                            });
+                            });  --}}
 
                             $('#editModal').modal('hide');
                         });

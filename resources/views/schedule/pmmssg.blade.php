@@ -3,7 +3,7 @@
       <div class="container-fluid">
         <div class="row">          
           <div class="col-sm-4">
-            <h1 class="m-0 text-dark">PM Confirm Maintenance</h1>
+            <h1 class="m-0 text-dark">PM Action Message</h1>
           </div>    
         </div><!-- /.row -->
         <div class="col-md-12">
@@ -72,16 +72,16 @@
             @forelse($data as $show)
 
                 <tr>
-                  <td>No</td>  
-                  <td>{{$show->pml_message}} </td>  
+                  <td>{{$show->pml_message}}</td>  
+                  <td>{{$show->msg_desc}} </td>  
                   <td>{{$show->pml_asset}} </td>  
                   <td>{{$show->asset_desc}} </td>  
                   <td>{{$show->pml_pmcode}} </td>   
                   <td>{{$show->pml_wo_number}} </td>  
-                  <td>{{$show->pml_wo_date}} </td>  
-                  <td>{{$show->pml_pm_date}} </td>  
+                  <td>{{date('d-m-Y',strtotime($show->pml_wo_date))}} </td>  
+                  <td>{{date('d-m-Y',strtotime($show->pml_pm_date))}} </td>  
                   <td>
-                     @if($show->pml_message != 'Status WO bukan Firm.' && $show->pml_message != 'WO untuk PM telah terbentuk.')
+                     @if($show->pml_message != 'NF004' && $show->pml_message != 'NF005' && $show->pml_message != 'NF006')
                      <a href="javascript:void(0)" class="deletedata btn btn-primary" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal" 
                      data-transid="{{$show->id}}" data-wodate="{{ date("d-m-Y",strtotime($show->pml_wo_date)) }}" 
                      data-pmdate="{{ date("d-m-Y",strtotime($show->pml_pm_date))}}">Action</a>

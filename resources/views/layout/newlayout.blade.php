@@ -374,7 +374,7 @@ to get the desired effect
                 <li class="nav-item has-treeview">
                   <a href="{{route('viewWOGen')}}" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>PM Generator</p>
+                      <p>PM Planning</p>
                   </a>
                 </li>
                 @endif
@@ -390,7 +390,7 @@ to get the desired effect
                 <li class="nav-item has-treeview">
                   <a href="{{route('pmmssg')}}" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>PM Notif Message</p>
+                      <p>PM Action Message</p>
                   </a>
                 </li>
                 @endif

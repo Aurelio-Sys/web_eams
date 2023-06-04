@@ -87,7 +87,7 @@ class AllWOGenerate extends Controller
 
                     if($ceklastmtc < $fromdate) {
                         $lastmtc = $fromdate;
-                        $messege = "PM terlambat terbentuk";
+                        $messege = "NF003";
                     // } elseif(date_create($dp->pma_start) > $fromdate) {
                     } elseif($ceklastmtc > $fromdate) {
                         $lastmtc = $ceklastmtc;
@@ -209,19 +209,19 @@ class AllWOGenerate extends Controller
 // dump($two->two_number, $two->two_asset, $two->two_pmcode,  $tsch->pmt_asset, $tsch->pmt_pmcode);
                         switch (true) {
                             case($two->two_status != "firm") :
-                                $mssg = "Status WO bukan Firm.";
+                                $mssg = "NF004";
                                 break;
                             case($tsch->pmt_message != "") :
                                 $mssg = $tsch->pmt_message;
                                 break; 
                             case($tsch->pmt_sch_date < $two->two_date) :
-                                $mssg = "Percepat tanggal.";
+                                $mssg = "NF002";
                                 break;
                             case($tsch->pmt_sch_date > $two->two_date) :
-                                $mssg = "Perlambat tanggal.";
+                                $mssg = "NF001";
                                 break;
                             case($tsch->pmt_sch_date = $two->two_date) :
-                                $mssg = "WO untuk PM telah terbentuk.";
+                                $mssg = "NF005";
                                 break;
                             default :
                                 $mssg = "-";
