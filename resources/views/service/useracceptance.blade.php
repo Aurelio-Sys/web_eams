@@ -496,7 +496,7 @@ A2110114 : menampilkan data detail SR dan WO sebelum user accept
     })
 
     $.ajax({
-      url: "/listupload/" + srnumber,
+      url: "/listuploadview/" + srnumber,
       success: function(data) {
         // console.log(data);
         $('#srlistupload').html('').append(data);
