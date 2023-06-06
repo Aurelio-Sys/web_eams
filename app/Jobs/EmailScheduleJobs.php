@@ -643,9 +643,11 @@ class EmailScheduleJobs implements ShouldQueue
             $wo = $this->wo;
             $asset = $this->asset;
             $flag = $this->a;
+            $engineer = $this->tampungarray;
 
             $data = DB::table('eng_mstr')
                 ->join('users', 'eng_mstr.eng_code', '=', 'users.username')
+                ->where('eng_code', '=', $engineer)
                 ->where('approver', '=', '1')
                 ->get();
 
@@ -926,6 +928,62 @@ class EmailScheduleJobs implements ShouldQueue
                     $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
                 }
             }
+        } else if ($a == 14) { //kirim email ketika work order di approved dan kirim ke approver selanjutnya
+
+            $asset = $this->asset;
+            $wonumber = $this->srnumber;
+            $approver = $this->tampungarray;
+            $role = $this->roleapprover;
+            $womstr = DB::table('wo_mstr')->where('wo_number', $wonumber)->first();
+            // dd($wonumber);
+
+            $emailrequestor = DB::table('users')
+                ->where('dept_user', '=', $approver->wotr_dept_approval)
+                ->where('role_user', '=', $approver->wotr_role_approval)
+                ->get();
+
+            $emails = '';
+
+            foreach ($emailrequestor as $email) {
+                $emails .= $email->email_user . ',';
+            }
+
+            $emails = substr($emails, 0, strlen($emails) - 1);
+            // dd($emails);
+            $array_email = explode(',', $emails);
+            // dd($array_email);
+            Mail::send(
+                'emailwo',
+                [
+                    'pesan' => 'Work Order Waiting For Approval',
+                    'note1' => $wonumber,
+                    'note2' => $asset,
+                    'header1' => 'WO Number',
+                ],
+                function ($message) use ($array_email) {
+                    $message->subject('eAMS - Work Order Waiting For Approval');
+                    // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
+                    $message->to($array_email);
+                }
+            );
+
+            foreach ($emailrequestor as $approver) {
+                $user = App\User::where('id', '=', $approver->id)->first();
+                $details = [
+                    'body' => 'Work Order Waiting For Approval',
+                    'url' => 'woapprovalbrowse',
+                    'nbr' => $wonumber,
+                    'note' => 'Please check'
+
+                ]; // isi data yang dioper
+
+                $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel                
+
+            }
+
+                  
+
+
         }
     }
 }

@@ -21,7 +21,7 @@
     @if($show->getCurrentApprover != null)
     <!-- <button type="button"  class="btn btn-success btn-action jobview" style="width: 100%;">View</button> -->
     @if($show->getCurrentApprover->wotr_role_approval == session('role') || session('role') == 'ADMIN')
-    <a href="javascript:void(0)" class="jobview"><i class="icon-table fas fa-thumbs-up fa-lg">
+    <a href="{{route('approvalWO', $show->wo_number)}}"><i class="icon-table fas fa-thumbs-up fa-lg">
       </i></a>
     @else
     <a href="javascript:void(0)" class="jobview"><i class="icon-table fas fa-eye fa-lg">

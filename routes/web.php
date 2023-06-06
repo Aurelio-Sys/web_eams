@@ -439,6 +439,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/routewo','wocontroller@routewo');
 	route::get('/woapprovalbrowse','wocontroller@woapprovalbrowse'); 
 	route::post('/approvewo','wocontroller@approvewo'); 
+	route::get('/woapprovaldetail/{wonumber}', [wocontroller::class, 'woapprovaldetail'])->name('approvalWO');
 
 	//wo reporting and close
 	route::get('/woreport', 'wocontroller@wocloselist')->name('woreport');

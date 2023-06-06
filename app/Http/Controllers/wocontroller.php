@@ -1174,7 +1174,69 @@ class wocontroller extends Controller
                             'womaint_wonbr' => $runningnbr,
                             'womaint_filename' => $filename, //$upload->getClientOriginalName(), //nama file asli
                             'womaint_wonbr_filepath' => $filepath . $filename,
+                        ]);
+                }
+            }
+
+            //get wo dan sr mstr
+            $womstr = DB::table('wo_mstr')->where('wo_number', $runningnbr)->first();
+
+            //cek departemen approval
+            $woapprover = DB::table('wo_approver_mstr')->where('id', '>', 0)->get();
+
+            if (count($woapprover) > 0) {
+                for ($i = 0; $i < count($woapprover); $i++) {
+                    $nextroleapprover = $woapprover[$i]->wo_approver_role;
+                    $nextseqapprover = $woapprover[$i]->wo_approver_order;
+
+                    //jika lewat approval QC, department dikosongkan
+                    if ($woapprover[$i]->wo_approver_role == 'QCA') {
+                        //input ke wo trans approval jika ada approval
+                        DB::table('wo_trans_approval')
+                            ->insert([
+                                'wotr_mstr_id' => $womstr->id,
+                                'wotr_sr_number' => $womstr->wo_sr_number,
+                                'wotr_role_approval' => $nextroleapprover,
+                                'wotr_sequence' => $nextseqapprover,
+                                'created_at' => Carbon::now()->toDateTimeString(),
                             ]);
+
+                        //input ke wo trans approval hist jika ada approval department
+                        DB::table('wo_trans_approval_hist')
+                            ->insert([
+                                'wotrh_wo_number' => $womstr->wo_number,
+                                'wotrh_sr_number' => $womstr->wo_sr_number,
+                                'wotrh_role_approval' => $nextroleapprover,
+                                'wotrh_sequence' => $nextseqapprover,
+                                'wotrh_status' => 'WO created',
+                                'created_at' => Carbon::now()->toDateTimeString(),
+                                'updated_at' => Carbon::now()->toDateTimeString(),
+                            ]);
+                    } else {
+                        //input ke wo trans approval jika ada approval
+                        DB::table('wo_trans_approval')
+                            ->insert([
+                                'wotr_mstr_id' => $womstr->id,
+                                'wotr_sr_number' => $womstr->wo_sr_number,
+                                'wotr_dept_approval' => session()->get('department'),
+                                'wotr_role_approval' => $nextroleapprover,
+                                'wotr_sequence' => $nextseqapprover,
+                                'created_at' => Carbon::now()->toDateTimeString(),
+                            ]);
+
+                        //input ke wo trans approval hist jika ada approval department
+                        DB::table('wo_trans_approval_hist')
+                            ->insert([
+                                'wotrh_wo_number' => $womstr->wo_number,
+                                'wotrh_sr_number' => $womstr->wo_sr_number,
+                                'wotrh_dept_approval' => session()->get('department'),
+                                'wotrh_role_approval' => $nextroleapprover,
+                                'wotrh_sequence' => $nextseqapprover,
+                                'wotrh_status' => 'WO created',
+                                'created_at' => Carbon::now()->toDateTimeString(),
+                                'updated_at' => Carbon::now()->toDateTimeString(),
+                            ]);
+                    }
                 }
             }
 
@@ -1196,7 +1258,9 @@ class wocontroller extends Controller
 
             $asset = $req->c_asset . ' - ' . $assettable->asset_desc;
 
-            EmailScheduleJobs::dispatch($runningnbr, $asset, '1', '', '', '', '');
+            $tampungarray = $womstr->wo_list_engineer;
+
+            EmailScheduleJobs::dispatch($runningnbr, $asset, '1', $tampungarray, '', '', '');
 
             DB::commit();
             toast($runningnbr . ' Successfuly Created !', 'success');
@@ -1380,10 +1444,10 @@ class wocontroller extends Controller
                     // Simpan ke DB Upload
                     DB::table('womaint_upload')
                         ->insert([
-                            'womaint_wonbr' =>$req->e_nowo,
+                            'womaint_wonbr' => $req->e_nowo,
                             'womaint_filename' => $filename, //$upload->getClientOriginalName(), //nama file asli
                             'womaint_wonbr_filepath' => $filepath . $filename,
-                            ]);
+                        ]);
                 }
             }
 
@@ -1409,15 +1473,15 @@ class wocontroller extends Controller
             //lakukan pengecekan apakah dia status firm atau released
             if ($req->tmp_wostatus == 'firm') {
 
-                if($req->thisbutton == "btncancel"){
+                if ($req->thisbutton == "btncancel") {
                     //cancel wo ketika status masih firm
                     DB::table('wo_mstr')
-                    ->where('wo_number', '=', $req->tmp_wonbr)
-                    ->where('wo_status', '=', 'firm')
-                    ->update([
-                        'wo_status' => 'canceled',
-                        'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                    ]);
+                        ->where('wo_number', '=', $req->tmp_wonbr)
+                        ->where('wo_status', '=', 'firm')
+                        ->update([
+                            'wo_status' => 'canceled',
+                            'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
 
                     DB::table('wo_trans_history')
                         ->insert([
@@ -1432,12 +1496,12 @@ class wocontroller extends Controller
 
                     if ($checksr->wo_sr_number !== "") {
                         DB::table('wo_mstr')
-                        ->where('wo_number', '=', $req->tmp_wonbr)
-                        ->where('wo_status', '=', 'firm')
-                        ->update([
-                            'wo_cancel_note' => $req->notecancel,
-                            'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        ]);
+                            ->where('wo_number', '=', $req->tmp_wonbr)
+                            ->where('wo_status', '=', 'firm')
+                            ->update([
+                                'wo_cancel_note' => $req->notecancel,
+                                'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
 
                         //ubah status sr
                         DB::table('service_req_mstr')
@@ -1456,8 +1520,8 @@ class wocontroller extends Controller
 
                         //ambil data sr untuk diinsert ke table service_req_mstr_hist
                         $getdatasr = DB::table('service_req_mstr')
-                                        ->where('sr_number', '=', $checksr->wo_sr_number)
-                                        ->first();
+                            ->where('sr_number', '=', $checksr->wo_sr_number)
+                            ->first();
 
                         DB::table('service_req_mstr_hist')
                             ->insert([
@@ -1465,12 +1529,12 @@ class wocontroller extends Controller
                                 'wo_number' => $getdatasr->wo_number,
                                 'sr_dept' => $getdatasr->sr_dept,
                                 'sr_asset' => $getdatasr->sr_asset,
-                                'sr_eng_approver' =>$getdatasr->sr_eng_approver,
+                                'sr_eng_approver' => $getdatasr->sr_eng_approver,
                                 'sr_note' => $getdatasr->sr_note,
                                 'sr_status' => 'Open',
                                 'sr_status_approval' => $getdatasr->sr_status_approval,
                                 'sr_req_by' => $getdatasr->sr_req_by,
-                                'sr_req_date'=> $getdatasr->sr_req_date,
+                                'sr_req_date' => $getdatasr->sr_req_date,
                                 'sr_req_time' => $getdatasr->sr_req_time,
                                 'sr_fail_type' => $getdatasr->sr_fail_type,
                                 'sr_fail_code' => $getdatasr->sr_fail_code,
@@ -1485,10 +1549,7 @@ class wocontroller extends Controller
                     DB::commit();
                     toast('Work Order ' . $req->tmp_wonbr . ' Successfuly Canceled!', 'success');
                     return back();
-
-
-
-                }elseif($req->thisbutton == "btndelete"){
+                } elseif ($req->thisbutton == "btndelete") {
                     //delete wo saat status masih firm
 
                     DB::table('wo_trans_history')
@@ -1520,8 +1581,8 @@ class wocontroller extends Controller
 
                         //ambil data sr untuk diinsert ke table service_req_mstr_hist
                         $getdatasr = DB::table('service_req_mstr')
-                                        ->where('sr_number', '=', $checksr->wo_sr_number)
-                                        ->first();
+                            ->where('sr_number', '=', $checksr->wo_sr_number)
+                            ->first();
 
                         DB::table('service_req_mstr_hist')
                             ->insert([
@@ -1529,12 +1590,12 @@ class wocontroller extends Controller
                                 'wo_number' => $req->tmp_wonbr,
                                 'sr_dept' => $getdatasr->sr_dept,
                                 'sr_asset' => $getdatasr->sr_asset,
-                                'sr_eng_approver' =>$getdatasr->sr_eng_approver,
+                                'sr_eng_approver' => $getdatasr->sr_eng_approver,
                                 'sr_note' => $getdatasr->sr_note,
                                 'sr_status' => 'Open',
                                 'sr_status_approval' => $getdatasr->sr_status_approval,
                                 'sr_req_by' => $getdatasr->sr_req_by,
-                                'sr_req_date'=> $getdatasr->sr_req_date,
+                                'sr_req_date' => $getdatasr->sr_req_date,
                                 'sr_req_time' => $getdatasr->sr_req_time,
                                 'sr_fail_type' => $getdatasr->sr_fail_type,
                                 'sr_fail_code' => $getdatasr->sr_fail_code,
@@ -1548,7 +1609,7 @@ class wocontroller extends Controller
 
                     //hapus data wo
                     DB::table('wo_mstr')
-                        ->where('wo_number','=', $req->tmp_wonbr)
+                        ->where('wo_number', '=', $req->tmp_wonbr)
                         ->delete();
 
                     DB::table('wo_dets_sp')
@@ -1556,21 +1617,18 @@ class wocontroller extends Controller
                         ->delete();
 
                     DB::table('wo_dets_qc')
-                        ->where('wd_qc_wonumber','=', $req->tmp_wonbr)
+                        ->where('wd_qc_wonumber', '=', $req->tmp_wonbr)
                         ->delete();
 
                     DB::table('wo_dets_ins')
-                        ->where('wd_ins_wonumber','=', $req->tmp_wonbr)
+                        ->where('wd_ins_wonumber', '=', $req->tmp_wonbr)
                         ->delete();
 
 
                     DB::commit();
                     toast('Work Order ' . $req->tmp_wonbr . ' Successfuly Deleted!', 'success');
                     return back();
-                    
                 }
-
-                
             } elseif ($req->tmp_wostatus == 'released') {
                 //jika status wo sudah released
 
@@ -1585,27 +1643,27 @@ class wocontroller extends Controller
                     return back();
                 } else {
                     //jika status wo sudah released dan belum ada transaksi maka status wo bisa diubah menjadi cancel
-                    if($req->thisbutton == "btncancel"){
+                    if ($req->thisbutton == "btncancel") {
                         //cancel wo ketika status masih firm
                         DB::table('wo_mstr')
-                        ->where('wo_number', '=', $req->tmp_wonbr)
-                        ->where('wo_status', '=', 'released')
-                        ->update([
-                            'wo_status' => 'canceled',
-                            'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        ]);
-    
+                            ->where('wo_number', '=', $req->tmp_wonbr)
+                            ->where('wo_status', '=', 'released')
+                            ->update([
+                                'wo_status' => 'canceled',
+                                'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+
                         DB::table('wo_trans_history')
                             ->insert([
                                 'wo_number' => $req->tmp_wonbr,
                                 'wo_action' => 'canceled',
                             ]);
-    
+
                         //check apakah wo berasal dari sr ? jika ya, ubah status sr jadi open
                         $checksr = DB::table('wo_mstr')
                             ->where('wo_number', '=', $req->tmp_wonbr)
                             ->first();
-    
+
                         if ($checksr->wo_sr_number !== "") {
                             DB::table('wo_mstr')
                                 ->where('wo_number', '=', $req->tmp_wonbr)
@@ -1622,31 +1680,31 @@ class wocontroller extends Controller
                                     'sr_status' => 'Open',
                                     'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 ]);
-    
+
                             //kirim notifikasi ke pembuat sr
                             $thiswonumber = $checksr->wo_number;
                             $thissrnumber = $checksr->wo_sr_number;
                             $thisnotecancel = $req->notecancel;
                             SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
-    
-    
+
+
                             //ambil data sr untuk diinsert ke table service_req_mstr_hist
                             $getdatasr = DB::table('service_req_mstr')
-                                            ->where('sr_number', '=', $checksr->wo_sr_number)
-                                            ->first();
-    
+                                ->where('sr_number', '=', $checksr->wo_sr_number)
+                                ->first();
+
                             DB::table('service_req_mstr_hist')
                                 ->insert([
                                     'sr_number' => $getdatasr->sr_number,
                                     'wo_number' => $getdatasr->wo_number,
                                     'sr_dept' => $getdatasr->sr_dept,
                                     'sr_asset' => $getdatasr->sr_asset,
-                                    'sr_eng_approver' =>$getdatasr->sr_eng_approver,
+                                    'sr_eng_approver' => $getdatasr->sr_eng_approver,
                                     'sr_note' => $getdatasr->sr_note,
                                     'sr_status' => 'Open',
                                     'sr_status_approval' => $getdatasr->sr_status_approval,
                                     'sr_req_by' => $getdatasr->sr_req_by,
-                                    'sr_req_date'=> $getdatasr->sr_req_date,
+                                    'sr_req_date' => $getdatasr->sr_req_date,
                                     'sr_req_time' => $getdatasr->sr_req_time,
                                     'sr_fail_type' => $getdatasr->sr_fail_type,
                                     'sr_fail_code' => $getdatasr->sr_fail_code,
@@ -1657,27 +1715,24 @@ class wocontroller extends Controller
                                     'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 ]);
                         }
-    
+
                         DB::commit();
                         toast('Work Order ' . $req->tmp_wonbr . ' Successfuly Canceled!', 'success');
                         return back();
-    
-    
-    
-                    }elseif($req->thisbutton == "btndelete"){
+                    } elseif ($req->thisbutton == "btndelete") {
                         //delete wo saat status masih firm
-    
+
                         DB::table('wo_trans_history')
                             ->insert([
                                 'wo_number' => $req->tmp_wonbr,
                                 'wo_action' => 'deleted',
                             ]);
-    
+
                         //check apakah wo berasal dari sr ? jika ya, ubah status sr jadi open
                         $checksr = DB::table('wo_mstr')
                             ->where('wo_number', '=', $req->tmp_wonbr)
                             ->first();
-    
+
                         if ($checksr->wo_sr_number !== "") {
                             //ubah status sr
                             DB::table('service_req_mstr')
@@ -1687,30 +1742,30 @@ class wocontroller extends Controller
                                     'wo_number' => null, //dibuat null jika wo akan didelete
                                     'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 ]);
-    
+
                             //kirim notifikasi ke pembuat sr
                             $thiswonumber = $checksr->wo_number;
                             $thissrnumber = $checksr->wo_sr_number;
                             $thisnotecancel = $req->notecancel;
                             SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
-    
+
                             //ambil data sr untuk diinsert ke table service_req_mstr_hist
                             $getdatasr = DB::table('service_req_mstr')
-                                            ->where('sr_number', '=', $checksr->wo_sr_number)
-                                            ->first();
-    
+                                ->where('sr_number', '=', $checksr->wo_sr_number)
+                                ->first();
+
                             DB::table('service_req_mstr_hist')
                                 ->insert([
                                     'sr_number' => $getdatasr->sr_number,
                                     'wo_number' => $req->tmp_wonbr,
                                     'sr_dept' => $getdatasr->sr_dept,
                                     'sr_asset' => $getdatasr->sr_asset,
-                                    'sr_eng_approver' =>$getdatasr->sr_eng_approver,
+                                    'sr_eng_approver' => $getdatasr->sr_eng_approver,
                                     'sr_note' => $getdatasr->sr_note,
                                     'sr_status' => 'Open',
                                     'sr_status_approval' => $getdatasr->sr_status_approval,
                                     'sr_req_by' => $getdatasr->sr_req_by,
-                                    'sr_req_date'=> $getdatasr->sr_req_date,
+                                    'sr_req_date' => $getdatasr->sr_req_date,
                                     'sr_req_time' => $getdatasr->sr_req_time,
                                     'sr_fail_type' => $getdatasr->sr_fail_type,
                                     'sr_fail_code' => $getdatasr->sr_fail_code,
@@ -1721,29 +1776,28 @@ class wocontroller extends Controller
                                     'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 ]);
                         }
-    
+
                         //hapus data wo
                         DB::table('wo_mstr')
-                            ->where('wo_number','=', $req->tmp_wonbr)
+                            ->where('wo_number', '=', $req->tmp_wonbr)
                             ->delete();
-    
+
                         DB::table('wo_dets_sp')
                             ->where('wd_sp_wonumber')
                             ->delete();
-    
+
                         DB::table('wo_dets_qc')
-                            ->where('wd_qc_wonumber','=', $req->tmp_wonbr)
+                            ->where('wd_qc_wonumber', '=', $req->tmp_wonbr)
                             ->delete();
-    
+
                         DB::table('wo_dets_ins')
-                            ->where('wd_ins_wonumber','=', $req->tmp_wonbr)
+                            ->where('wd_ins_wonumber', '=', $req->tmp_wonbr)
                             ->delete();
-    
-    
+
+
                         DB::commit();
                         toast('Work Order ' . $req->tmp_wonbr . ' Successfuly Deleted!', 'success');
                         return back();
-                        
                     }
                 }
             } else {
@@ -1751,7 +1805,6 @@ class wocontroller extends Controller
                 toast('work order cannot be cancelled because its status is not firm or released.', 'error');
                 return back();
             }
-
         } catch (Exception $e) {
             DB::rollBack();
 
@@ -2421,10 +2474,10 @@ class wocontroller extends Controller
         // check apakah wo berasal dari SR
         // variable tampung sr note
         $srnote = '';
-        if($currwo->wo_sr_number != ""){
+        if ($currwo->wo_sr_number != "") {
             $getSRInfo = DB::table('service_req_mstr')
-                        ->where('sr_number','=', $currwo->wo_sr_number)
-                        ->first();
+                ->where('sr_number', '=', $currwo->wo_sr_number)
+                ->first();
 
             $srnote = $getSRInfo->sr_note;
         }
@@ -2441,8 +2494,8 @@ class wocontroller extends Controller
 
         if ($currwo->wo_asset_code !== null) {
             $getAssetDesc = DB::table('asset_mstr')
-                ->select('asset_desc', 'asset_loc', 'asset_group','asloc_desc')
-                ->join('asset_loc','asset_loc.asloc_code','asset_mstr.asset_loc')
+                ->select('asset_desc', 'asset_loc', 'asset_group', 'asloc_desc')
+                ->join('asset_loc', 'asset_loc.asloc_code', 'asset_mstr.asset_loc')
                 ->where('asset_code', '=', $currwo->wo_asset_code)
                 ->first();
         } else {
@@ -2542,13 +2595,14 @@ class wocontroller extends Controller
             'sr_note' => $srnote,
         ]);
     }
-    
-    public function woreportingdetail($wonumber){
+
+    public function woreportingdetail($wonumber)
+    {
         //ambil data untuk header wo report detail
         $dataheader = DB::table('wo_mstr')
-                        ->leftJoin('asset_mstr','asset_mstr.asset_code','wo_mstr.wo_asset_code')
-                        ->where('wo_number','=', $wonumber)
-                        ->first();
+            ->leftJoin('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+            ->where('wo_number', '=', $wonumber)
+            ->first();
 
         // dd($dataheader);
 
@@ -2576,7 +2630,7 @@ class wocontroller extends Controller
 
         // ambil UM
         $um = DB::table('um_mstr')
-                ->get();
+            ->get();
 
         // ambil data deskripsi engineer
         $listeng_wo = $dataheader->wo_list_engineer;
@@ -2585,48 +2639,49 @@ class wocontroller extends Controller
 
         $engData = array();
 
-        foreach($listeng_wo as $datalisteng){
+        foreach ($listeng_wo as $datalisteng) {
 
             $engdesc = DB::table('eng_mstr')
                 ->where('eng_code', '=', $datalisteng)
                 ->first()->eng_desc;
-            
+
             $engData[] = array('eng_code' => $datalisteng, 'eng_desc' => $engdesc);
         }
 
 
         //ambil data spare part dari wo_dets_sp
         $datasparepart = DB::table('wo_dets_sp')
-                        ->join('sp_mstr','sp_mstr.spm_code','wo_dets_sp.wd_sp_spcode')
-                        ->where('wd_sp_wonumber','=', $wonumber)
-                        ->groupBy('wd_sp_wonumber','wd_sp_spcode')
-                        ->select('*',DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'))
-                        ->get();
-                        
+            ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
+            ->where('wd_sp_wonumber', '=', $wonumber)
+            ->groupBy('wd_sp_wonumber', 'wd_sp_spcode')
+            ->select('*', DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'))
+            ->get();
+
         // dd($datasparepart);
 
         // ambil semua data spare part
         $sp_all = DB::table('sp_mstr')
-                        ->select('spm_code','spm_desc', 'spm_um','spm_site','spm_loc','spm_lot')
-                        ->where('spm_active','=', 'Yes')
-                        ->get();
+            ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
+            ->where('spm_active', '=', 'Yes')
+            ->get();
 
         // ambil data instruction step dari wo_dets_ins
         $datainstruction = DB::table('wo_dets_ins')
                         ->leftJoin('um_mstr','um_mstr.um_code','wo_dets_ins.wd_ins_durationum')
                         ->where('wd_ins_wonumber','=', $wonumber)
-                        ->orderBy('wd_ins_step', 'ASC')
                         ->get();
+
+        // dd($datainstruction);
 
         // ambil semua step instruction dari ins_list
         $ins_all = DB::table('ins_list')
-                        ->select('ins_code', 'ins_desc', 'ins_duration','ins_durationum','ins_manpower','ins_step','ins_stepdesc','ins_ref')
-                        ->get();
+            ->select('ins_code', 'ins_desc', 'ins_duration', 'ins_durationum', 'ins_manpower', 'ins_step', 'ins_stepdesc', 'ins_ref')
+            ->get();
 
 
         $dataqcparam = DB::table('wo_dets_qc')
-                        ->where('wd_qc_wonumber','=', $wonumber)
-                        ->get();
+            ->where('wd_qc_wonumber', '=', $wonumber)
+            ->get();
 
         return view('workorder.wofinish-done', ['header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all,
                                                 'instruction' => $datainstruction, 'inslist' => $ins_all, 'um' => $um,
@@ -2639,14 +2694,14 @@ class wocontroller extends Controller
 
         //ambil data dari tabel inp_supply berdasarkan asset site nya
         $getSource = DB::table('inp_supply')
-                        ->where('inp_asset_site','=', $assetsite)
-                        ->get();
+            ->where('inp_asset_site', '=', $assetsite)
+            ->get();
 
         $data = [];
 
-        foreach($getSource as $invsource){
+        foreach ($getSource as $invsource) {
             //ini ambil wsa ke qad ld_det untuk inventory supply. masih menggunakan WSA yang sama dengan saat mengambil qad ld_det inventory source. perbedaannya ini diambil dari table inp_supply
-            $qadsourcedata = (new WSAServices())->wsagetsource($spcode,$invsource->inp_supply_site,$invsource->inp_loc);
+            $qadsourcedata = (new WSAServices())->wsagetsource($spcode, $invsource->inp_supply_site, $invsource->inp_loc);
 
             if ($qadsourcedata === false) {
                 toast('WSA Connection Failed', 'error')->persistent('Dismiss');
@@ -2656,12 +2711,12 @@ class wocontroller extends Controller
                 // jika hasil WSA ke QAD tidak ditemukan
                 if ($qadsourcedata[1] !== "false") {
 
-                     // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
-                
+                    // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+
                     $resultWSA = $qadsourcedata[0];
-    
+
                     //kumpulkan hasilnya ke dalam 1 array sebagai penampung list location dan lot from
-                    foreach($resultWSA as $thisresult){
+                    foreach ($resultWSA as $thisresult) {
                         array_push($data, [
                             't_domain' => (string) $thisresult->t_domain,
                             't_part' => (string) $thisresult->t_part,
@@ -2671,29 +2726,24 @@ class wocontroller extends Controller
                             't_qtyoh' => number_format((float) $thisresult->t_qtyoh, 2),
                         ]);
                     }
-
                 }
-
-
-               
-                
             }
         }
 
         return response()->json($data);
     }
 
-    public function getwodetsp(Request $req){
+    public function getwodetsp(Request $req)
+    {
         $wonumber = $req->get('wonumber');
         $spcode = $req->get('spcode');
 
         $getDataWoDets = DB::table('wo_dets_sp')
-                    ->where('wd_sp_wonumber', '=', $wonumber)
-                    ->where('wd_sp_spcode','=', $spcode)
-                    ->get();
+            ->where('wd_sp_wonumber', '=', $wonumber)
+            ->where('wd_sp_spcode', '=', $spcode)
+            ->get();
 
         return response()->json($getDataWoDets);
-
     }
 
     public function woapprovalbrowse(Request $req)
@@ -2750,11 +2800,20 @@ class wocontroller extends Controller
                     ->get();
             } else {
                 $user_role = Session()->get('role');
+                $user_dept = Session()->get('department');
 
                 //ambil data approval wo
-                $woapprover = DB::table('wo_approver_mstr')
-                    ->where('wo_approver_role', $user_role)
-                    ->get();
+                if ($user_role == 'QCA') {
+                    //jika rolenya qc maka gausah difilter departemennya
+                    $woapprover = DB::table('wo_trans_approval')
+                        ->where('wotr_role_approval', $user_role)
+                        ->get();
+                } else {
+                    $woapprover = DB::table('wo_trans_approval')
+                        ->where('wotr_role_approval', $user_role)
+                        ->where('wotr_dept_approval', $user_dept)
+                        ->get();
+                }
                 // dd($woapprover);
 
                 if (count($woapprover) == 0) {
@@ -2825,13 +2884,16 @@ class wocontroller extends Controller
         $womstr = DB::table('wo_mstr')
             ->where('wo_mstr.id', $idwo)
             ->join('asset_mstr', 'asset_mstr.asset_code', '=', 'wo_mstr.wo_asset_code')
-            ->join('service_req_mstr', 'service_req_mstr.sr_number', '=', 'wo_mstr.wo_sr_number')
+            ->leftJoin('service_req_mstr', 'service_req_mstr.sr_number', '=', 'wo_mstr.wo_sr_number')
             ->selectRaw('wo_mstr.*, asset_mstr.asset_code, asset_mstr.asset_desc, service_req_mstr.sr_req_by')
             ->first();
 
+        // dd($womstr);
+
         $asset = $womstr->asset_code . ' -- ' . $womstr->asset_desc;
         $srnumber = $womstr->wo_number;
-        $requestor = $womstr->wo_list_engineer;
+        
+        $roleapprover = $user->role_user;
 
         //cek role user yg login
         if (Session::get('role') <> 'ADMIN') {
@@ -2856,11 +2918,11 @@ class wocontroller extends Controller
         $prevapprover = DB::table('wo_trans_approval')->where('wotr_mstr_id', $woapprover->wotr_mstr_id)
             ->where('wotr_sequence', '<', $woapprover->wotr_sequence)
             ->first();
-        // dd($nextapprover);
+        // dd(is_null($prevapprover));
 
         //wo approved
         $wotransapproved = [
-            'wotr_dept_approval' => $user->dept_user,
+            // 'wotr_dept_approval' => $user->dept_user,
             'wotr_status'      => 'approved',
             'wotr_reason'      => $reason,
             'wotr_approved_by' => $user->id,
@@ -2880,7 +2942,7 @@ class wocontroller extends Controller
 
         //wo rejected
         $wotransreject = [
-            'wotr_dept_approval'    => $user->dept_user,
+            // 'wotr_dept_approval' => $user->dept_user,
             'wotr_status'      => 'revision',
             'wotr_reason'      => $reason,
             'wotr_approved_by' => $user->id,
@@ -2900,7 +2962,7 @@ class wocontroller extends Controller
 
         if ($req->action == 'approve') {
 
-            $srnumber = $womstr->wo_sr_number;
+            $srnumber = $womstr->wo_sr_number ? $womstr->wo_sr_number : $womstr->wo_number;
             $requestor = $womstr->sr_req_by;
 
             //jika next approver null
@@ -2997,6 +3059,9 @@ class wocontroller extends Controller
             } else {
                 //jika next approval not null
 
+                $tampungarray = $nextapprover;
+                // $requestor = $womstr->sr_req_by;
+
                 //cek apakah approver admin atau bukan
                 if (Session::get('role') <> 'ADMIN') {
                     //jika user bukan admin, hanya tingkatan yang rolenya sama yang akan menjadi approved
@@ -3020,6 +3085,9 @@ class wocontroller extends Controller
                             'wo_action' => 'approval',
                             'system_update' => Carbon::now()->toDateTimeString(),
                         ]);
+
+                    //email terikirm ke approver selanjutnya
+                    EmailScheduleJobs::dispatch('', $asset, '14', $tampungarray, '', $srnumber, $roleapprover);
                 } else {
                     // dd(2);
                     //jika user adalah admin, maka semua approval (approval bertingkat) akan menjadi approved
@@ -3083,9 +3151,10 @@ class wocontroller extends Controller
 
             // DB::commit();
             toast('Work order ' . $womstr->wo_number . ' approved successfuly', 'success');
-            return redirect()->route('womaint');
+            return redirect()->back();
         } else {
             //REJECT
+            $requestor = $womstr->wo_list_engineer;
 
             DB::table('wo_mstr')
                 ->where('id', '=', $idwo)
@@ -3105,7 +3174,7 @@ class wocontroller extends Controller
                 //kondisi hanya 1 approver atau approver terakhir
 
                 //jika user bukan admin dan hanya 1 approver
-                if ($prevapprover->isEmpty() && Session::get('role') <> 'ADMIN') {
+                if (is_null($prevapprover) && Session::get('role') <> 'ADMIN') {
                     // dd('1 approver');
                     DB::table('wo_trans_approval')
                         ->where('wotr_mstr_id', '=', $idwo)
@@ -3140,7 +3209,7 @@ class wocontroller extends Controller
 
             // DB::commit();
             toast('Work order ' . $womstr->wo_number . ' has been rejected', 'success');
-            return redirect()->route('woreport');
+            return redirect()->back();
         }
     }
 
@@ -3438,13 +3507,13 @@ class wocontroller extends Controller
     public function wocloselist(Request $request)
     {      //route : woreport      blade : workorder.woclose
         $engineer = DB::table('users')
-                    ->join('roles', 'users.role_user', 'roles.role_code')
-                    ->where('role_desc', '=', 'Engineer')
-                    ->get();
+            ->join('roles', 'users.role_user', 'roles.role_code')
+            ->where('role_desc', '=', 'Engineer')
+            ->get();
 
         $asset1 = DB::table('asset_mstr')
-                    ->where('asset_active', '=', 'Yes')
-                    ->get();
+            ->where('asset_active', '=', 'Yes')
+            ->get();
 
         if (strpos(Session::get('menu_access'), 'WO03') !== false) {
 
@@ -3457,32 +3526,29 @@ class wocontroller extends Controller
                     })
                     ->orderBy('wo_status', 'desc')
                     ->orderBy('wo_mstr.id', 'desc');
-
-                
             } else {
                 $username = Session::get('username');
 
                 $data = DB::table('wo_mstr')
-                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                     ->where(function ($status) {
                         $status->where('wo_status', '=', 'started');
                     })
-                    ->where(function ($query) use ($username){
-                        $query->where('wo_list_engineer', '=', $username.';')
-                        ->orWhere('wo_list_engineer', 'LIKE', $username.';%')
-                        ->orWhere('wo_list_engineer', 'LIKE', '%;'.$username.';%')
-                        ->orWhere('wo_list_engineer', 'LIKE', '%;'.$username)
-                        ->orWhere('wo_list_engineer', '=', $username);
+                    ->where(function ($query) use ($username) {
+                        $query->where('wo_list_engineer', '=', $username . ';')
+                            ->orWhere('wo_list_engineer', 'LIKE', $username . ';%')
+                            ->orWhere('wo_list_engineer', 'LIKE', '%;' . $username . ';%')
+                            ->orWhere('wo_list_engineer', 'LIKE', '%;' . $username)
+                            ->orWhere('wo_list_engineer', '=', $username);
                     })
                     ->orderBy('wo_status', 'desc')
                     ->orderBy('wo_mstr.wo_id', 'desc');
-                    
             }
 
             if ($request->s_nomorwo) {
-                $data->where('wo_number', 'like', '%'.$request->s_nomorwo.'%');
+                $data->where('wo_number', 'like', '%' . $request->s_nomorwo . '%');
             }
-    
+
             if ($request->s_asset) {
                 $data->where('wo_asset_code', '=', $request->s_asset);
             }
@@ -3501,7 +3567,8 @@ class wocontroller extends Controller
         }
     }
 
-    public function viewsp($wonumber){
+    public function viewsp($wonumber)
+    {
         $data = DB::table('wo_mstr')
             // ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
             ->join('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
@@ -3510,14 +3577,14 @@ class wocontroller extends Controller
 
 
         $wo_sp = DB::table('wo_dets_sp')
-                ->join('sp_mstr','sp_mstr.spm_code','wo_dets_sp.wd_sp_spcode')
-                ->where('wd_sp_wonumber','=', $wonumber)
-                ->groupBy('wd_sp_wonumber','wd_sp_spcode')
-                ->select('*',DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'))
-                ->get();
-            
+            ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
+            ->where('wd_sp_wonumber', '=', $wonumber)
+            ->groupBy('wd_sp_wonumber', 'wd_sp_spcode')
+            ->select('*', DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'))
+            ->get();
 
-        return view('workorder.wosparepart-released', compact('data','wo_sp'));
+
+        return view('workorder.wosparepart-released', compact('data', 'wo_sp'));
     }
 
     public function reportingwo(Request $req)
@@ -3527,10 +3594,10 @@ class wocontroller extends Controller
 
         DB::beginTransaction();
 
-        try{
+        try {
 
             //cek jika ada spare part yang digunakan saat reporting dan informasi yang dibutuhkan untuk issued unplanned ke QAD lengkap
-            if($req->has('hidden_sp') && $req->has('hidden_sitefrom') && $req->has('hidden_locfrom') && $req->has('hidden_lotfrom') && $req->has('qtyrequired') && $req->has('qtyissued') && $req->has('qtypotong')){
+            if ($req->has('hidden_sp') && $req->has('hidden_sitefrom') && $req->has('hidden_locfrom') && $req->has('hidden_lotfrom') && $req->has('qtyrequired') && $req->has('qtyissued') && $req->has('qtypotong')) {
                 // $domain = ModelsQxwsa::first();
 
                 // $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
@@ -3550,13 +3617,13 @@ class wocontroller extends Controller
                 // }
 
                 // dd($tempCost);
-                
-                
+
+
                 $dataArrayIssued = []; //penampungngan data yg mau diissued unplanned
                 $dataArrayReceipt = []; //penampungan data yang mau direceipt unplanned
-                foreach($req->hidden_sp as $index => $spcode){
+                foreach ($req->hidden_sp as $index => $spcode) {
                     //cek jika qty yang diissue lebih dari 0 maka dilakukan issued unplanned
-                    if($req->qtypotong[$index] > 0){
+                    if ($req->qtypotong[$index] > 0) {
 
                         //menampung spare part yang perlu dilakukan issued unplanned
                         $sparepartCode = $spcode;
@@ -3580,16 +3647,16 @@ class wocontroller extends Controller
                         $dataArrayIssued[] = $data;
 
                         DB::table('inv_required')
-                                ->where('ir_site', '=', $req->hidden_assetsite)
-                                ->where('ir_spare_part','=', $sparepartCode)
-                                ->update([
-                                    'inv_qty_required' => DB::raw('inv_qty_required - ' .$qtyPotong ),
-                                    'ir_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
-                                ]);
+                            ->where('ir_site', '=', $req->hidden_assetsite)
+                            ->where('ir_spare_part', '=', $sparepartCode)
+                            ->update([
+                                'inv_qty_required' => DB::raw('inv_qty_required - ' . $qtyPotong),
+                                'ir_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
+                            ]);
                     }
 
-                        //cek jika qty yang diissue dibawag 0 atau minus maka dilakukan receipt unplanned
-                    if($req->qtypotong[$index] < 0){
+                    //cek jika qty yang diissue dibawag 0 atau minus maka dilakukan receipt unplanned
+                    if ($req->qtypotong[$index] < 0) {
 
                         //menampung spare part yang perlu dilakukan receipt unplanned
                         $sparepartCode = $spcode;
@@ -3613,16 +3680,16 @@ class wocontroller extends Controller
                         $dataArrayReceipt[] = $data;
 
                         DB::table('inv_required')
-                                ->where('ir_site', '=', $req->hidden_assetsite)
-                                ->where('ir_spare_part','=', $sparepartCode)
-                                ->update([
-                                    'inv_qty_required' => DB::raw('inv_qty_required + ' .$qtyPotong ),
-                                    'ir_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
-                                ]);
+                            ->where('ir_site', '=', $req->hidden_assetsite)
+                            ->where('ir_spare_part', '=', $sparepartCode)
+                            ->update([
+                                'inv_qty_required' => DB::raw('inv_qty_required + ' . $qtyPotong),
+                                'ir_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
+                            ]);
                     }
 
 
-                    if($req->qtypotong[$index] != 0){
+                    if ($req->qtypotong[$index] != 0) {
                         $sparepartCode = $spcode;
                         $siteFrom = $req->hidden_sitefrom[$index];
                         $locFrom = $req->hidden_locfrom[$index];
@@ -3634,13 +3701,13 @@ class wocontroller extends Controller
                         // dd($qtyIssued);
                         //update data untuk pertama kali melakukan report dengan kondisi site,loc,lot issued masih null dan kolom wd_already_issued = false
                         DB::table('wo_dets_sp')
-                            ->where('wd_sp_wonumber','=', $req->c_wonbr)
+                            ->where('wd_sp_wonumber', '=', $req->c_wonbr)
                             ->where('wd_sp_spcode', '=', $sparepartCode)
-                            ->where('wd_sp_issued','=', 0)
-                            ->where('wd_sp_site_issued','=', null)
-                            ->where('wd_sp_loc_issued','=', null)
-                            ->where('wd_sp_lot_issued','=', null)
-                            ->where('wd_already_issued','=', false)
+                            ->where('wd_sp_issued', '=', 0)
+                            ->where('wd_sp_site_issued', '=', null)
+                            ->where('wd_sp_loc_issued', '=', null)
+                            ->where('wd_sp_lot_issued', '=', null)
+                            ->where('wd_already_issued', '=', false)
                             ->update([
                                 'wd_already_issued' => true,
                                 'wd_sp_site_issued' => $siteFrom,
@@ -3658,7 +3725,7 @@ class wocontroller extends Controller
                                 'wd_sp_loc_issued' => $locFrom,
                                 'wd_sp_lot_issued' => $lotFrom,
                                 'wd_already_issued' => true,
-                            ],[
+                            ], [
                                 'wd_sp_spcode' => $sparepartCode,
                                 'wd_sp_issued' => DB::raw('wd_sp_issued + ' . $qtyPotong),
                                 'wd_already_issued' => true,
@@ -3668,23 +3735,23 @@ class wocontroller extends Controller
                                 'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
                     }
-                    
+
 
                     $checkDatas = DB::table('wo_dets_sp')
-                                ->where('wd_sp_wonumber','=', $req->c_wonbr)
-                                ->where('wd_sp_spcode', '=', $spcode)
-                                ->where('wd_sp_required', '>', 0)
-                                ->first();
+                        ->where('wd_sp_wonumber', '=', $req->c_wonbr)
+                        ->where('wd_sp_spcode', '=', $spcode)
+                        ->where('wd_sp_required', '>', 0)
+                        ->first();
                     //proses memotong/mengurangi qty required di table inv_required ketika sudah di issues unplanned
 
-                        //cek kondisi jika qty yang required sudah full terissued atau terpotong maka yang dipotong di inv_required sejumlah yang di required wo_dets_sp
-                        // if($checkDatas){
-                        //     if($checkDatas->)
-                        // }
+                    //cek kondisi jika qty yang required sudah full terissued atau terpotong maka yang dipotong di inv_required sejumlah yang di required wo_dets_sp
+                    // if($checkDatas){
+                    //     if($checkDatas->)
+                    // }
 
                 }
-                
-                
+
+
                 // dd($dataArrayIssued,$dataArrayReceipt);
 
                 if (!empty($dataArrayIssued)) {
@@ -3778,7 +3845,7 @@ class wocontroller extends Controller
                     $qdocBody = '';
                     foreach ($dataArrayIssued as $record) {
 
-                            $qdocBody .= ' <inventoryIssue>
+                        $qdocBody .= ' <inventoryIssue>
                                 <ptPart>' . $record['sparepart_code'] . '</ptPart>
                                 <lotserialQty>' . $record['qty_potong'] . '</lotserialQty>
                                 <site>' . $record['site_from'] . '</site>
@@ -3885,7 +3952,7 @@ class wocontroller extends Controller
                 }
 
                 if (!empty($dataArrayReceipt)) {
-                
+
                     /* start Qxtend Receipt Unplanned */
 
                     $qxwsa = Qxwsa::first();
@@ -3975,7 +4042,7 @@ class wocontroller extends Controller
                     $qdocBody = '';
                     foreach ($dataArrayReceipt as $record) {
 
-                            $qdocBody .= ' <inventoryReceipt>
+                        $qdocBody .= ' <inventoryReceipt>
                                 <ptPart>' . $record['sparepart_code'] . '</ptPart>
                                 <lotserialQty>' . abs($record['qty_potong']) . '</lotserialQty>
                                 <site>' . $record['site_from'] . '</site>
@@ -3983,7 +4050,6 @@ class wocontroller extends Controller
                                 <lotserial>' . $record['lot_from'] . '</lotserial>
                                 <ordernbr>' . $req->c_wonbr . '</ordernbr>
                             </inventoryReceipt>';
-
                     }
 
                     $qdocfooter =   '</dsInventoryReceipt>
@@ -4080,55 +4146,52 @@ class wocontroller extends Controller
                         return redirect()->back();
                     }
                 }
-
             }
 
             //bagian instruction step
 
             //cek jika ada step instruksi
-            if($req->has('stepnumber')){
+            if ($req->has('stepnumber')) {
 
-                foreach($req->input('stepnumber') as $index => $stepnumber){
+                foreach ($req->input('stepnumber') as $index => $stepnumber) {
                     $engineersString = '';
-                    if($req->has('ins_list_eng')){
-                        if(isset($req->ins_list_eng[$index])){
+                    if ($req->has('ins_list_eng')) {
+                        if (isset($req->ins_list_eng[$index])) {
                             $selectedOptions = $req->ins_list_eng[$index]['option'];
                             $engineersString = implode(';', $selectedOptions);
-                        }else{
+                        } else {
                             $engineersString = null;
                         }
-                    }else{
+                    } else {
                         $engineersString = null;
                     }
 
 
                     DB::table('wo_dets_ins')
-                    ->updateOrInsert([
-                        'wd_ins_wonumber' => $req->c_wonbr,
-                        'wd_ins_step' => $stepnumber,
-                    ],[
+                        ->updateOrInsert([
+                            'wd_ins_wonumber' => $req->c_wonbr,
+                            'wd_ins_step' => $stepnumber,
+                        ], [
 
-                        'wd_ins_wonumber' => $req->c_wonbr,
-                        'wd_ins_step' => $req->stepnumber[$index],
-                        'wd_ins_stepdesc' => $req->stepdesc[$index],
-                        'wd_ins_duration' => $req->has('ins_duration') ? $req->ins_duration[$index] : null,
-                        'wd_ins_durationum' => $req->has('ins_duration') ? $req->durationum[$index] : null,
-                        'wd_ins_engineer' => $engineersString,
+                            'wd_ins_wonumber' => $req->c_wonbr,
+                            'wd_ins_step' => $req->stepnumber[$index],
+                            'wd_ins_stepdesc' => $req->stepdesc[$index],
+                            'wd_ins_duration' => $req->has('ins_duration') ? $req->ins_duration[$index] : null,
+                            'wd_ins_durationum' => $req->has('ins_duration') ? $req->durationum[$index] : null,
+                            'wd_ins_engineer' => $engineersString,
 
-                    ]);
+                        ]);
                 }
-
-                
             }
 
             //cek jika ada qc parameter
-            if($req->has('qcparam')){
+            if ($req->has('qcparam')) {
 
                 $checkQcParam = DB::table('wo_dets_qc')
-                                    ->where('wd_qc_wonumber','=', $req->c_wonbr)
-                                    ->exists();
+                    ->where('wd_qc_wonumber', '=', $req->c_wonbr)
+                    ->exists();
 
-                if($checkQcParam){
+                if ($checkQcParam) {
                     //hapus semua kemudian insert baru berdasarkan wo number nya
                     DB::table('wo_dets_qc')
                         ->where('wd_qc_wonumber', '=', $req->c_wonbr)
@@ -4136,7 +4199,7 @@ class wocontroller extends Controller
                 }
 
 
-                foreach($req->qcparam as $index => $qcparam){
+                foreach ($req->qcparam as $index => $qcparam) {
 
 
                     //insert baru data qc param untuk wo number tersebut ke dalam table wo_dets_qc
@@ -4149,17 +4212,16 @@ class wocontroller extends Controller
                             'wd_qc_qcum' => $req->qcum[$index],
                             'wd_qc_result1' => $req->resultqc1[$index],
                         ]);
-                    
                 }
             }
 
             $fclistString = null;
-            if($req->has('failurecode')){
+            if ($req->has('failurecode')) {
                 $fclist = $req->failurecode;
                 $fclistString = implode(';', $fclist);
             }
 
-            
+
             //bagian footer general
             $arrayy = [
                 'wo_failure_code' => $fclistString,
@@ -4171,7 +4233,7 @@ class wocontroller extends Controller
                 'wo_actual_finish' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
             ];
 
-            DB::table('wo_mstr')->where('wo_number','=', $req->c_wonbr)->update($arrayy);
+            DB::table('wo_mstr')->where('wo_number', '=', $req->c_wonbr)->update($arrayy);
 
             if ($req->has('filenamewo')) {
                 foreach ($req->file('filenamewo') as $upload) {
@@ -4199,7 +4261,7 @@ class wocontroller extends Controller
                             'woreport_wonbr' => $req->c_wonbr,
                             'woreport_filename' => $filename, //$upload->getClientOriginalName(), //nama file asli
                             'woreport_wonbr_filepath' => $filepath . $filename,
-                            ]);
+                        ]);
                 }
             }
 
@@ -4207,7 +4269,7 @@ class wocontroller extends Controller
             //memisahkan antara button reporting dan button close wo
 
             //jika klik button Report WO
-            if($req->btnconf == "reportwo"){
+            if ($req->btnconf == "reportwo") {
                 //status wo tidak berubah
 
                 DB::table('wo_mstr')->where('wo_number','=', $req->c_wonbr)->update([
@@ -4221,21 +4283,21 @@ class wocontroller extends Controller
             }
 
             //jika klik button Close WO
-            if($req->btnconf == "closewo"){
+            if ($req->btnconf == "closewo") {
 
                 //cek jika wo memerlukan step approval
                 $checkApprover = DB::table('wo_approver_mstr')
-                                ->exists();
+                    ->exists();
 
                 // dd($checkApprover);
-                
-                if($checkApprover){
+
+                if ($checkApprover) {
                     //jika ada settingan approver
 
                     //ambil role approver order paling pertama untuk dikirimkan email notifikasi
                     $getFirstApprover = DB::table('wo_approver_mstr')
-                                    ->orderBy('wo_approver_order', 'ASC')
-                                    ->first();
+                        ->orderBy('wo_approver_order', 'ASC')
+                        ->first();
 
                     // dd($getFirstApprover);
 
@@ -4244,51 +4306,68 @@ class wocontroller extends Controller
                     //status wo berubah
 
                     DB::table('wo_mstr')
-                    ->where('wo_number', '=', $req->c_wonbr)
-                    ->update([
-                        'wo_status' => 'finished',
-                        'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                    ]);
+                        ->where('wo_number', '=', $req->c_wonbr)
+                        ->update([
+                            'wo_status' => 'finished',
+                            'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
 
+                    //get wo dan sr mstr
                     $womstr = DB::table('wo_mstr')->where('wo_number', $req->c_wonbr)->first();
 
-                    //update status wo approval
-                    DB::table('wo_trans_approval')
-                    ->where('wotr_mstr_id', '=', $womstr->id)
-                    ->update([
-                        'wotr_status' => 'waiting for approval',
-                        'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                    ]);
+                    //cek departemen approval
+                    $woapprover = DB::table('wo_approver_mstr')->where('id', '>', 0)->get();
 
-                    //insert wo approval hist
-                    // DB::table('wo_trans_approval_hist')
+                    if (count($woapprover) > 0) {
+                        for ($i = 0; $i < count($woapprover); $i++) {
+                            $nextroleapprover = $woapprover[$i]->wo_approver_role;
+                            $nextseqapprover = $woapprover[$i]->wo_approver_order;
 
+                            //update status wo approval
+                            DB::table('wo_trans_approval')
+                                ->where('wotr_mstr_id', '=', $womstr->id)
+                                ->update([
+                                    'wotr_status' => 'waiting for approval',
+                                    'wotr_reason' => null,
+                                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                ]);
+
+                            //input ke wo trans approval hist jika ada approval department
+                            DB::table('wo_trans_approval_hist')
+                                ->insert([
+                                    'wotrh_wo_number' => $womstr->wo_number,
+                                    'wotrh_sr_number' => $womstr->wo_sr_number,
+                                    'wotrh_role_approval' => $nextroleapprover,
+                                    'wotrh_sequence' => $nextseqapprover,
+                                    'wotrh_status' => 'WO ready for approval',
+                                    'created_at' => Carbon::now()->toDateTimeString(),
+                                    'updated_at' => Carbon::now()->toDateTimeString(),
+                                ]);
+                        }
+                    }
 
                     DB::commit();
-                    toast('Work Order '.$req->c_wonbr.' Status: Finished', 'success')->persistent('Dismiss');
+                    toast('Work Order ' . $req->c_wonbr . ' Status: Finished', 'success')->persistent('Dismiss');
                     return redirect()->route('woreport');
-                }else{
+                } else {
                     //jika tidak ada settingan approver
 
                     DB::table('wo_mstr')
-                    ->where('wo_number', '=', $req->c_wonbr)
-                    ->update([
-                        'wo_status' => 'closed',
-                        'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                    ]);
+                        ->where('wo_number', '=', $req->c_wonbr)
+                        ->update([
+                            'wo_status' => 'closed',
+                            'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
 
 
 
                     DB::commit();
-                    toast('Work Order '.$req->c_wonbr.' Status: Closed', 'success')->persistent('Dismiss');
+                    toast('Work Order ' . $req->c_wonbr . ' Status: Closed', 'success')->persistent('Dismiss');
                     return redirect()->route('woreport');
                 }
-
-                
             }
-
         } catch (Exception $err) {
-            
+
             DB::rollBack();
 
             dd($err);
@@ -4454,8 +4533,6 @@ class wocontroller extends Controller
 
                 //jika tidak ada spare part 
                 if ($cekstatus == 0 || $ceksp == 0) {
-
-                    
                 }
             }
 
@@ -5944,7 +6021,7 @@ class wocontroller extends Controller
     {
 
         $data1 = DB::table('wo_report_upload')
-            ->where('id','=',$id)
+            ->where('id', '=', $id)
             ->first();
 
         if ($data1) {
@@ -6375,7 +6452,8 @@ class wocontroller extends Controller
         ]);
     }
 
-    public function imageview_womaint(Request $req){
+    public function imageview_womaint(Request $req)
+    {
         $wonumber = $req->wonumber;
 
         $gambar = DB::table('womaint_upload')
@@ -6388,7 +6466,7 @@ class wocontroller extends Controller
                     <td><a href="#" class="btn deleterow btn-danger"><i class="icon-table fa fa-trash fa-lg"></i></a>
                     &nbsp
                     <input type="hidden" value="' . $gambar->id . '" class="rowval"/>
-                    <td><a href="'.$gambar->womaint_wonbr_filepath.'" target="_blank">' . $gambar->womaint_filename . '</a></td>
+                    <td><a href="' . $gambar->womaint_wonbr_filepath . '" target="_blank">' . $gambar->womaint_filename . '</a></td>
                 </tr>';
         }
 
@@ -6428,7 +6506,7 @@ class wocontroller extends Controller
                     <td><a href="#" class="btn deleterow btn-danger"><i class="icon-table fa fa-trash fa-lg"></i></a>
                     &nbsp
                     <input type="hidden" value="' . $gambar->id . '" class="rowval"/>
-                    <td><a href="'.$gambar->womaint_wonbr_filepath.'" target="_blank">' . $gambar->womaint_filename . '</a></td>
+                    <td><a href="' . $gambar->womaint_wonbr_filepath . '" target="_blank">' . $gambar->womaint_filename . '</a></td>
                 </tr>';
         }
 
@@ -6454,7 +6532,8 @@ class wocontroller extends Controller
         }
     }
 
-    public function imageviewonly_woimaint(Request $req){
+    public function imageviewonly_woimaint(Request $req)
+    {
         $wonumber = $req->wonumber;
 
         $gambar = DB::table('womaint_upload')
@@ -6464,7 +6543,7 @@ class wocontroller extends Controller
         $output = "";
         foreach ($gambar as $gambar) {
             $output .= '<tr>
-                    <td><a href="'.$gambar->womaint_wonbr_filepath.'" target="_blank">' . $gambar->womaint_filename . '</a></td>
+                    <td><a href="' . $gambar->womaint_wonbr_filepath . '" target="_blank">' . $gambar->womaint_filename . '</a></td>
                 </tr>';
         }
 
