@@ -696,7 +696,7 @@
 
         $("#failurecode").select2({
             width: '100%',
-            placeholder: "Select Failure Code",
+            // placeholder: "Select Failure Code",
             theme: "bootstrap4",
             allowClear: true,
             maximumSelectionLength: 3,
