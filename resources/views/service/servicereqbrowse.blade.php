@@ -1173,36 +1173,56 @@
       $(document).on('click', '.deleterow', function(e) {
         var data = $(this).closest('tr').find('.rowval').val();
 
-        swal.fire({
-          // position: 'top-end',
-          icon: 'warning',
-          title: "This file will be deleted forever, are you sure ?",
-          // toast: true,
-          showConfirmButton: true,
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes',
-          cancelButtonText: 'Cancel'
-        }).then((result) => {
-          if (result.isConfirmed) {
+        Swal.fire({
+            title: '',
+            text: "Delete File ?",
+            icon: '',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Delete'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                  $.ajax({
+                  url: "/deleteuploadsr/" + data,
+                  success: function(data) {
 
-            Swal.fire(
-              'Deleted Success!',
-              'Your file has been deleted',
-              'success'
-            );
-
-            $.ajax({
-              url: "/deleteuploadsr/" + data,
-              success: function(data) {
-
-                $('#elistupload').html('').append(data);
+                      $('#elistupload').html('').append(data);
+                  }
+                  })
               }
             })
 
-          }
-        })
+        // swal.fire({
+        //   // position: 'top-end',
+        //   icon: 'warning',
+        //   title: "This file will be deleted forever, are you sure ?",
+        //   // toast: true,
+        //   showConfirmButton: true,
+        //   showCancelButton: true,
+        //   confirmButtonColor: '#3085d6',
+        //   cancelButtonColor: '#d33',
+        //   confirmButtonText: 'Yes',
+        //   cancelButtonText: 'Cancel'
+        // }).then((result) => {
+        //   if (result.isConfirmed) {
+
+        //     Swal.fire(
+        //       'Deleted Success!',
+        //       'Your file has been deleted',
+        //       'success'
+        //     );
+
+        //     $.ajax({
+        //       url: "/deleteuploadsr/" + data,
+        //       success: function(data) {
+
+        //         $('#elistupload').html('').append(data);
+        //       }
+        //     })
+
+        //   }
+        // })
 
 
       });

@@ -65,7 +65,7 @@ class EmailScheduleJobs implements ShouldQueue
             $countarray1 = count($tampungarray);
             $requestor = $this->requestor;
             $srnumber = $this->srnumber;
-            $rejectnote = $this->rejectnote;
+            // $rejectnote = $this->rejectnote;
 
             $list2 = [];
 

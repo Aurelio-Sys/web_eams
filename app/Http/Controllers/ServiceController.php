@@ -707,7 +707,8 @@ class ServiceController extends Controller
         $note = $req->e_note;
         $reqdate = $req->e_date;
         $reqtime = $req->e_time;
-        $uploadfile = $req->filename ? $req->filename : [];
+        // $uploadfile = $req->filename ? $req->filename : [];
+        $currentfile = DB::table('service_req_upload')->where('sr_number', $srnbr)->get();
         $approver = $req->e_approver;
         // dd($srnbr, $wotype, $failcode, $impact, $priority, $note, $reqdate, $reqtime, $uploadfile);
         // dd($approver);
@@ -775,9 +776,9 @@ class ServiceController extends Controller
 
         $update = ServiceReqMaster::where('sr_number', $srnbr)->first();
         $updatefile = DB::table('service_req_upload')->where('sr_number', $srnbr)->get();
-        $currentfile = count($uploadfile) + count($updatefile);
+        $countcurrentfile = count($currentfile);
         $countupdatefile = count($updatefile);
-        // dd($currentfile);
+        dd($countcurrentfile, $countupdatefile);
         $update->sr_fail_type = $wotype;
         $update->sr_fail_code = $newfailcode;
         $update->sr_impact = $newimpact;
@@ -787,7 +788,7 @@ class ServiceController extends Controller
         $update->sr_req_time = $reqtime;
         $update->sr_eng_approver = $approver;
         // dd($update);
-        if ($update->isDirty() || $currentfile != $countupdatefile) {
+        if ($update->isDirty() || $countcurrentfile != $countupdatefile) {
             //kalo ada update
             $update->sr_status = 'Open';
             $update->updated_at = Carbon::now('ASIA/JAKARTA')->toDateTimeString();
@@ -1759,10 +1760,11 @@ class ServiceController extends Controller
                 $srnumber = $req->srnumber;
                 $rejectnote = $req->rejectreason;
                 $asset = $req->assetcode . ' -- ' . $req->assetdesc;
+                // dd($rejectnote);
 
                 // dd($wo,$asset,$a,$tampungarray,$requestor,$srnumber,$rejectnote);
                 //nanti kirim email ke engineer dan requestor 
-                EmailScheduleJobs::dispatch($wo, $asset, $a, $tampungarray, $requestor, $srnumber, $rejectnote);
+                EmailScheduleJobs::dispatch($wo, $asset, $a, $tampungarray, $requestor, $srnumber, '');
 
                 toast('Service Request ' . $req->srnumber . '  Approved to Work Order ' . $runningnbr . ' ', 'success');
                 return back();
@@ -2541,7 +2543,7 @@ class ServiceController extends Controller
             ->leftjoin('wotyp_mstr', 'wotyp_mstr.wotyp_code', 'service_req_mstr.sr_fail_type')
             ->join('users', 'users.username', 'service_req_mstr.sr_req_by')  //B211014
             ->join('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
-            ->leftjoin('wo_mstr', 'wo_mstr.wo_number', 'service_req_mstr.wo_number')
+            ->leftjoin('wo_mstr', 'wo_mstr.wo_sr_number', 'service_req_mstr.sr_number')
             ->leftjoin('sr_trans_approval', 'sr_trans_approval.srta_mstr_id', 'service_req_mstr.id')
             ->leftjoin('sr_trans_approval_eng', 'sr_trans_approval_eng.srta_eng_mstr_id', 'service_req_mstr.id')
             ->leftjoin('eng_mstr', 'eng_mstr.eng_dept', 'service_req_mstr.sr_eng_approver')
@@ -2566,7 +2568,7 @@ class ServiceController extends Controller
 
         $datasset = DB::table('asset_mstr')
             ->get();
-        //dd($datas);
+        // dd($data);
 
         return view('service.useracceptance', ['dataua' => $data, 'asset' => $datasset]);
     }
