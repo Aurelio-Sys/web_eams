@@ -437,7 +437,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	//wo approval
 	route::get('/routewo','wocontroller@routewo');
-	route::get('/woapprovalbrowse','wocontroller@woapprovalbrowse'); 
+	route::get('/woapprovalbrowse','wocontroller@woapprovalbrowse')->name('woapprovalbrowse'); 
 	route::post('/approvewo','wocontroller@approvewo'); 
 	route::get('/woapprovaldetail/{wonumber}', [wocontroller::class, 'woapprovaldetail'])->name('approvalWO');
 

@@ -2688,6 +2688,104 @@ class wocontroller extends Controller
                                                 'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure]);
     }
 
+    public function woapprovaldetail($wonumber)
+    {
+        //ambil data untuk header wo report detail
+        $dataheader = DB::table('wo_mstr')
+            ->leftJoin('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+            ->where('wo_number', '=', $wonumber)
+            ->first();
+
+        // dd($dataheader);
+
+        $idwo = DB::table('wo_mstr')->where('wo_number', '=', $wonumber)
+        ->selectRaw('id')
+        ->first();
+
+        // dd($idwo);
+
+        //ambil data failure code
+        $asfn_det = DB::table('asfn_det')
+            ->where('asfn_asset', '=', $dataheader->asset_group)
+            ->where('asfn_fntype', '=', $dataheader->asset_type)
+            ->count();
+
+        if ($asfn_det > 0) {
+            //jika ada
+
+            $failure = DB::table('fn_mstr')
+                ->leftJoin('asfn_det', 'asfn_det.asfn_fncode', 'fn_mstr.fn_code')
+                ->where('asfn_asset', '=', $dataheader->asset_group)
+                ->where('asfn_fntype', '=', $dataheader->asset_type)
+                ->groupBy('asfn_fncode')
+                ->get();
+        } else {
+            //jika tidak ada
+
+            $failure = DB::table('fn_mstr')
+                ->get();
+        }
+
+        // ambil UM
+        $um = DB::table('um_mstr')
+            ->get();
+
+        // ambil data deskripsi engineer
+        $listeng_wo = $dataheader->wo_list_engineer;
+
+        $listeng_wo = explode(';', $listeng_wo);
+
+        $engData = array();
+
+        foreach ($listeng_wo as $datalisteng) {
+
+            $engdesc = DB::table('eng_mstr')
+                ->where('eng_code', '=', $datalisteng)
+                ->first()->eng_desc;
+
+            $engData[] = array('eng_code' => $datalisteng, 'eng_desc' => $engdesc);
+        }
+
+
+        //ambil data spare part dari wo_dets_sp
+        $datasparepart = DB::table('wo_dets_sp')
+            ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
+            ->where('wd_sp_wonumber', '=', $wonumber)
+            ->groupBy('wd_sp_wonumber', 'wd_sp_spcode')
+            ->select('*', DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'))
+            ->get();
+
+        // dd($datasparepart);
+
+        // ambil semua data spare part
+        $sp_all = DB::table('sp_mstr')
+            ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
+            ->where('spm_active', '=', 'Yes')
+            ->get();
+
+        // ambil data instruction step dari wo_dets_ins
+        $datainstruction = DB::table('wo_dets_ins')
+                        ->leftJoin('um_mstr','um_mstr.um_code','wo_dets_ins.wd_ins_durationum')
+                        ->where('wd_ins_wonumber','=', $wonumber)
+                        ->get();
+
+        // dd($datainstruction);
+
+        // ambil semua step instruction dari ins_list
+        $ins_all = DB::table('ins_list')
+            ->select('ins_code', 'ins_desc', 'ins_duration', 'ins_durationum', 'ins_manpower', 'ins_step', 'ins_stepdesc', 'ins_ref')
+            ->get();
+
+
+        $dataqcparam = DB::table('wo_dets_qc')
+            ->where('wd_qc_wonumber', '=', $wonumber)
+            ->get();
+
+        return view('workorder.woapproval-detail', ['header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all,
+                                                'instruction' => $datainstruction, 'inslist' => $ins_all, 'um' => $um, 'idwo' => $idwo, 
+                                                'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure]);
+    }
+
     public function getwsasupply(Request $req){
         $assetsite = $req->get('assetsite');
         $spcode = $req->get('spcode');
@@ -2878,6 +2976,8 @@ class wocontroller extends Controller
         $idwo = $req->idwo;
         $reason = $req->v_reason;
 
+        // dd($idwo, $reason);
+
         $user = FacadesAuth::user();
 
         //ambil data WO
@@ -2978,7 +3078,7 @@ class wocontroller extends Controller
                     DB::table('wo_trans_approval_hist')
                         ->insert($wotransapprovedhist);
 
-                    if (is_null($womstr->wo_sr_number)) {
+                    if ($womstr->wo_sr_number == "") {
                         //jika wo tidak memiliki sr number 
                         DB::table('wo_mstr')
                             ->where('id', '=', $idwo)
@@ -3021,7 +3121,7 @@ class wocontroller extends Controller
                     DB::table('wo_trans_approval_hist')
                         ->insert($wotransapprovedhist);
 
-                    if (is_null($womstr->wo_sr_number)) {
+                    if ($womstr->wo_sr_number == "") {
                         //jika wo tidak memiliki sr number 
                         DB::table('wo_mstr')
                             ->where('id', '=', $idwo)
@@ -3098,21 +3198,8 @@ class wocontroller extends Controller
                     DB::table('wo_trans_approval_hist')
                         ->insert($wotransapprovedhist);
 
-                    DB::table('wo_mstr')
-                        ->where('id', '=', $idwo)
-                        ->update([
-                            'wo_status' => 'closed',
-                            'wo_system_update' => Carbon::now()->toDateTimeString(),
-                        ]);
 
-                    DB::table('wo_trans_history')
-                        ->insert([
-                            'wo_number' => $womstr->wo_number,
-                            'wo_action' => 'closed',
-                            'system_update' => Carbon::now()->toDateTimeString(),
-                        ]);
-
-                    if (is_null($womstr->wo_sr_number)) {
+                    if ($womstr->wo_sr_number == "") {
                         //jika wo tidak memiliki sr number 
                         DB::table('wo_mstr')
                             ->where('id', '=', $idwo)
@@ -3151,7 +3238,7 @@ class wocontroller extends Controller
 
             // DB::commit();
             toast('Work order ' . $womstr->wo_number . ' approved successfuly', 'success');
-            return redirect()->back();
+            return redirect()->route('woapprovalbrowse');
         } else {
             //REJECT
             $requestor = $womstr->wo_list_engineer;
@@ -3209,7 +3296,7 @@ class wocontroller extends Controller
 
             // DB::commit();
             toast('Work order ' . $womstr->wo_number . ' has been rejected', 'success');
-            return redirect()->back();
+            return redirect()->route('woapprovalbrowse');
         }
     }
 
