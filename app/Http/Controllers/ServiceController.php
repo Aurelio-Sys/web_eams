@@ -732,7 +732,6 @@ class ServiceController extends Controller
                         'updated_at' => Carbon::now()->toDateTimeString(),
                     ]);
             }
-
         }
 
         //impact
@@ -1715,27 +1714,54 @@ class ServiceController extends Controller
                         $nextroleapprover = $woapprover[$i]->wo_approver_role;
                         $nextseqapprover = $woapprover[$i]->wo_approver_order;
 
-                        //input ke wo trans approval jika ada approval
-                        DB::table('wo_trans_approval')
-                            ->insert([
-                                'wotr_mstr_id' => $womstr->id,
-                                'wotr_sr_number' => $womstr->wo_sr_number,
-                                'wotr_role_approval' => $nextroleapprover,
-                                'wotr_sequence' => $nextseqapprover,
-                                'created_at' => Carbon::now()->toDateTimeString(),
-                            ]);
+                        //jika lewat approval QC, department dikosongkan
+                        if ($woapprover[$i]->wo_approver_role == 'QCA') {
+                            //input ke wo trans approval jika ada approval
+                            DB::table('wo_trans_approval')
+                                ->insert([
+                                    'wotr_mstr_id' => $womstr->id,
+                                    'wotr_sr_number' => $womstr->wo_sr_number,
+                                    'wotr_role_approval' => $nextroleapprover,
+                                    'wotr_sequence' => $nextseqapprover,
+                                    'created_at' => Carbon::now()->toDateTimeString(),
+                                ]);
 
-                        //input ke wo trans approval hist jika ada approval department
-                        DB::table('wo_trans_approval_hist')
-                            ->insert([
-                                'wotrh_wo_number' => $womstr->wo_number,
-                                'wotrh_sr_number' => $womstr->wo_sr_number,
-                                'wotrh_role_approval' => $nextroleapprover,
-                                'wotrh_sequence' => $nextseqapprover,
-                                'wotrh_status' => 'WO created',
-                                'created_at' => Carbon::now()->toDateTimeString(),
-                                'updated_at' => Carbon::now()->toDateTimeString(),
-                            ]);
+                            //input ke wo trans approval hist jika ada approval department
+                            DB::table('wo_trans_approval_hist')
+                                ->insert([
+                                    'wotrh_wo_number' => $womstr->wo_number,
+                                    'wotrh_sr_number' => $womstr->wo_sr_number,
+                                    'wotrh_role_approval' => $nextroleapprover,
+                                    'wotrh_sequence' => $nextseqapprover,
+                                    'wotrh_status' => 'WO created',
+                                    'created_at' => Carbon::now()->toDateTimeString(),
+                                    'updated_at' => Carbon::now()->toDateTimeString(),
+                                ]);
+                        } else {
+                            //input ke wo trans approval jika ada approval
+                            DB::table('wo_trans_approval')
+                                ->insert([
+                                    'wotr_mstr_id' => $womstr->id,
+                                    'wotr_sr_number' => $womstr->wo_sr_number,
+                                    'wotr_dept_approval' => session()->get('department'),
+                                    'wotr_role_approval' => $nextroleapprover,
+                                    'wotr_sequence' => $nextseqapprover,
+                                    'created_at' => Carbon::now()->toDateTimeString(),
+                                ]);
+
+                            //input ke wo trans approval hist jika ada approval department
+                            DB::table('wo_trans_approval_hist')
+                                ->insert([
+                                    'wotrh_wo_number' => $womstr->wo_number,
+                                    'wotrh_sr_number' => $womstr->wo_sr_number,
+                                    'wotrh_dept_approval' => session()->get('department'),
+                                    'wotrh_role_approval' => $nextroleapprover,
+                                    'wotrh_sequence' => $nextseqapprover,
+                                    'wotrh_status' => 'WO created',
+                                    'created_at' => Carbon::now()->toDateTimeString(),
+                                    'updated_at' => Carbon::now()->toDateTimeString(),
+                                ]);
+                        }
                     }
                 }
 
@@ -2586,7 +2612,8 @@ class ServiceController extends Controller
             ->where('sr_number', $srnumber)->first();
 
         $asset = $srmstr->asset_code . ' -- ' . $srmstr->asset_desc;
-        $requestor = $srmstr->wo_engineer_list;
+        $requestor = $srmstr->wo_list_engineer;
+        // dd($srmstr);
 
         switch ($req->input('action')) {
             case 'complete':

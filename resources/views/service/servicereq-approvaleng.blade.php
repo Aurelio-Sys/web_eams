@@ -274,7 +274,7 @@
             <label for="priority" class="col-md-5 col-form-label text-md-left">Priority <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-7">
               <!-- <input id="priority" type="text" name="priority" class="form-control"> -->
-              <select class="form-control priority" name="priority" id="priority">
+              <select class="form-control priority" name="priority" id="priority" required>
                 <option value='low'>Low</option>
                 <option value='medium'>Medium</option>
                 <option value='high'>High</option>
