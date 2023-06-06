@@ -9,7 +9,7 @@
           <!-- <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{url('/home')}}">Home</a></li>
-              <li class="breadcrumb-item active">Asset Usage Reporting</li>
+              <li class="breadcrumb-item active">Asset Measurement Reporting</li>
             </ol>
           </div>/.col -->
         </div><!-- /.row -->

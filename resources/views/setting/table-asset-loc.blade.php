@@ -25,6 +25,6 @@
 @endforelse
 <tr>
   <td colspan="4" style="border: none !important;">
-    {{ $data->links() }}
+    {{ $data->appends($_GET)->links() }}
   </td>
 </tr>

@@ -49,6 +49,7 @@ class UsageController extends Controller
 
     public function updateusage(Request $req){
 		
+        dd($req->all());
         $checkdata = DB::table('asset_mstr')
                     ->where('asset_code','=',$req->e_asset)
                     ->first();

@@ -277,7 +277,7 @@
           cols += '<select id="t_scode" class="form-control selectpicker" name="t_scode[]" data-live-search="true" required>';
           cols += '<option value = ""> -- Select Data -- </option>'  
           @foreach($datasp as $ds)
-          cols += '<option value="{{$ds->spm_code}}"> {{$ds->spm_code}} </option>';
+          cols += '<option value="{{$ds->spm_code}}"> {{$ds->spm_code}} -- {{$ds->spm_desc}} </option>';
           @endforeach
           cols += '</td>';
           cols += '<td width="40%"><input type="text" class="form-control t_sdesc" name="t_sdesc[]" readonly></td>'
@@ -324,7 +324,7 @@
           cols += '<select id="t_scode" class="form-control selectpicker te_scode" name="te_scode[]" data-live-search="true" required>';
           cols += '<option value = ""> -- Select Data -- </option>'  
           @foreach($datasp as $ds)
-          cols += '<option value="{{$ds->spm_code}}"> {{$ds->spm_code}} </option>';
+          cols += '<option value="{{$ds->spm_code}}"> {{$ds->spm_code}} -- {{$ds->spm_desc}} </option>';
           @endforeach
           cols += '</td>';
           cols += '<td width="40%"><input type="text" class="form-control te_sdesc" name="te_sdesc[]" readonly></td>'

@@ -358,7 +358,7 @@ to get the desired effect
                 <li class="nav-item has-treeview">
                   <a href="/usagemt" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>Asset PM Calculate</p>
+                      <p>Asset Measurement Reporting</p>
                   </a>
                 </li>
                 @endif
