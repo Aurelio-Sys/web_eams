@@ -2667,9 +2667,9 @@ class wocontroller extends Controller
 
         // ambil data instruction step dari wo_dets_ins
         $datainstruction = DB::table('wo_dets_ins')
-                        ->leftJoin('um_mstr','um_mstr.um_code','wo_dets_ins.wd_ins_durationum')
-                        ->where('wd_ins_wonumber','=', $wonumber)
-                        ->get();
+            ->leftJoin('um_mstr', 'um_mstr.um_code', 'wo_dets_ins.wd_ins_durationum')
+            ->where('wd_ins_wonumber', '=', $wonumber)
+            ->get();
 
         // dd($datainstruction);
 
@@ -2683,9 +2683,11 @@ class wocontroller extends Controller
             ->where('wd_qc_wonumber', '=', $wonumber)
             ->get();
 
-        return view('workorder.wofinish-done', ['header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all,
-                                                'instruction' => $datainstruction, 'inslist' => $ins_all, 'um' => $um,
-                                                'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure]);
+        return view('workorder.wofinish-done', [
+            'header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all,
+            'instruction' => $datainstruction, 'inslist' => $ins_all, 'um' => $um,
+            'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure
+        ]);
     }
 
     public function woapprovaldetail($wonumber)
@@ -2699,8 +2701,8 @@ class wocontroller extends Controller
         // dd($dataheader);
 
         $idwo = DB::table('wo_mstr')->where('wo_number', '=', $wonumber)
-        ->selectRaw('id')
-        ->first();
+            ->selectRaw('id')
+            ->first();
 
         // dd($idwo);
 
@@ -2765,9 +2767,9 @@ class wocontroller extends Controller
 
         // ambil data instruction step dari wo_dets_ins
         $datainstruction = DB::table('wo_dets_ins')
-                        ->leftJoin('um_mstr','um_mstr.um_code','wo_dets_ins.wd_ins_durationum')
-                        ->where('wd_ins_wonumber','=', $wonumber)
-                        ->get();
+            ->leftJoin('um_mstr', 'um_mstr.um_code', 'wo_dets_ins.wd_ins_durationum')
+            ->where('wd_ins_wonumber', '=', $wonumber)
+            ->get();
 
         // dd($datainstruction);
 
@@ -2781,12 +2783,15 @@ class wocontroller extends Controller
             ->where('wd_qc_wonumber', '=', $wonumber)
             ->get();
 
-        return view('workorder.woapproval-detail', ['header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all,
-                                                'instruction' => $datainstruction, 'inslist' => $ins_all, 'um' => $um, 'idwo' => $idwo, 
-                                                'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure]);
+        return view('workorder.woapproval-detail', [
+            'header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all,
+            'instruction' => $datainstruction, 'inslist' => $ins_all, 'um' => $um, 'idwo' => $idwo,
+            'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure
+        ]);
     }
 
-    public function getwsasupply(Request $req){
+    public function getwsasupply(Request $req)
+    {
         $assetsite = $req->get('assetsite');
         $spcode = $req->get('spcode');
 
@@ -2992,8 +2997,13 @@ class wocontroller extends Controller
 
         $asset = $womstr->asset_code . ' -- ' . $womstr->asset_desc;
         $srnumber = $womstr->wo_number;
-        
+
         $roleapprover = $user->role_user;
+
+        $woapprovermstr = DB::table('wo_approver_mstr')->get();
+
+        $countwoapprover = count($woapprovermstr);
+        // dd($countwoapprover);
 
         //cek role user yg login
         if (Session::get('role') <> 'ADMIN') {
@@ -3065,176 +3075,215 @@ class wocontroller extends Controller
             $srnumber = $womstr->wo_sr_number ? $womstr->wo_sr_number : $womstr->wo_number;
             $requestor = $womstr->sr_req_by;
 
-            //jika next approver null
-            if (is_null($nextapprover)) {
-                //cek apakah approver admin atau bukan
-                if (Session::get('role') <> 'ADMIN') {
-                    //jika user bukan admin, hanya tingkatan yang rolenya sama yang akan menjadi approved
-                    DB::table('wo_trans_approval')
-                        ->where('wotr_mstr_id', '=', $idwo)
-                        ->where('wotr_role_approval', '=', $user->role_user)
-                        ->update($wotransapproved);
+            if ($countwoapprover != 0) {
+                //jika next approver null
+                if (is_null($nextapprover)) {
+                    //cek apakah approver admin atau bukan
+                    if (Session::get('role') <> 'ADMIN') {
+                        //jika user bukan admin, hanya tingkatan yang rolenya sama yang akan menjadi approved
+                        DB::table('wo_trans_approval')
+                            ->where('wotr_mstr_id', '=', $idwo)
+                            ->where('wotr_role_approval', '=', $user->role_user)
+                            ->update($wotransapproved);
 
-                    DB::table('wo_trans_approval_hist')
-                        ->insert($wotransapprovedhist);
+                        DB::table('wo_trans_approval_hist')
+                            ->insert($wotransapprovedhist);
 
-                    if ($womstr->wo_sr_number == "") {
-                        //jika wo tidak memiliki sr number 
-                        DB::table('wo_mstr')
-                            ->where('id', '=', $idwo)
-                            ->update([
-                                'wo_status' => 'closed',
-                                'wo_system_update' => Carbon::now()->toDateTimeString(),
-                            ]);
+                        if ($womstr->wo_sr_number == "") {
+                            //jika wo tidak memiliki sr number 
+                            DB::table('wo_mstr')
+                                ->where('id', '=', $idwo)
+                                ->update([
+                                    'wo_status' => 'closed',
+                                    'wo_system_update' => Carbon::now()->toDateTimeString(),
+                                ]);
 
-                        DB::table('wo_trans_history')
-                            ->insert([
-                                'wo_number' => $womstr->wo_number,
-                                'wo_action' => 'closed',
-                                'system_update' => Carbon::now()->toDateTimeString(),
-                            ]);
+                            DB::table('wo_trans_history')
+                                ->insert([
+                                    'wo_number' => $womstr->wo_number,
+                                    'wo_action' => 'closed',
+                                    'system_update' => Carbon::now()->toDateTimeString(),
+                                ]);
+                        } else {
+                            //jika wo memiliki sr number akan kembali ke user acceptance dan wo di close oleh user
+                            DB::table('wo_mstr')
+                                ->where('id', '=', $idwo)
+                                ->update([
+                                    'wo_status' => 'acceptance',
+                                    'wo_system_update' => Carbon::now()->toDateTimeString(),
+                                ]);
+
+                            DB::table('wo_trans_history')
+                                ->insert([
+                                    'wo_number' => $womstr->wo_number,
+                                    'wo_action' => 'acceptance',
+                                    'system_update' => Carbon::now()->toDateTimeString(),
+                                ]);
+
+                            //email terikirm ke user yang membuat SR
+                            EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
+                        }
                     } else {
-                        //jika wo memiliki sr number akan kembali ke user acceptance dan wo di close oleh user
-                        DB::table('wo_mstr')
-                            ->where('id', '=', $idwo)
-                            ->update([
-                                'wo_status' => 'acceptance',
-                                'wo_system_update' => Carbon::now()->toDateTimeString(),
-                            ]);
+                        //jika user adalah admin, maka semua approval (approval bertingkat) akan menjadi approved
+                        DB::table('wo_trans_approval')
+                            ->where('wotr_mstr_id', '=', $idwo)
+                            ->update($wotransapproved);
 
-                        DB::table('wo_trans_history')
-                            ->insert([
-                                'wo_number' => $womstr->wo_number,
-                                'wo_action' => 'acceptance',
-                                'system_update' => Carbon::now()->toDateTimeString(),
-                            ]);
+                        DB::table('wo_trans_approval_hist')
+                            ->insert($wotransapprovedhist);
 
-                        //email terikirm ke user yang membuat SR
-                        EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
+                        if ($womstr->wo_sr_number == "") {
+                            //jika wo tidak memiliki sr number 
+                            DB::table('wo_mstr')
+                                ->where('id', '=', $idwo)
+                                ->update([
+                                    'wo_status' => 'closed',
+                                    'wo_system_update' => Carbon::now()->toDateTimeString(),
+                                ]);
+
+                            DB::table('wo_trans_history')
+                                ->insert([
+                                    'wo_number' => $womstr->wo_number,
+                                    'wo_action' => 'closed',
+                                    'system_update' => Carbon::now()->toDateTimeString(),
+                                ]);
+                        } else {
+                            //jika wo memiliki sr number akan kembali ke user acceptance dan wo di close oleh user
+                            DB::table('wo_mstr')
+                                ->where('id', '=', $idwo)
+                                ->update([
+                                    'wo_status' => 'acceptance',
+                                    'wo_system_update' => Carbon::now()->toDateTimeString(),
+                                ]);
+
+                            DB::table('wo_trans_history')
+                                ->insert([
+                                    'wo_number' => $womstr->wo_number,
+                                    'wo_action' => 'acceptance',
+                                    'system_update' => Carbon::now()->toDateTimeString(),
+                                ]);
+
+                            //email terikirm ke user yang membuat SR
+                            EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
+                        }
                     }
                 } else {
-                    //jika user adalah admin, maka semua approval (approval bertingkat) akan menjadi approved
-                    DB::table('wo_trans_approval')
-                        ->where('wotr_mstr_id', '=', $idwo)
-                        ->update($wotransapproved);
+                    //jika next approval not null
 
-                    DB::table('wo_trans_approval_hist')
-                        ->insert($wotransapprovedhist);
+                    $tampungarray = $nextapprover;
+                    // $requestor = $womstr->sr_req_by;
 
-                    if ($womstr->wo_sr_number == "") {
-                        //jika wo tidak memiliki sr number 
+                    //cek apakah approver admin atau bukan
+                    if (Session::get('role') <> 'ADMIN') {
+                        //jika user bukan admin, hanya tingkatan yang rolenya sama yang akan menjadi approved
+                        DB::table('wo_trans_approval')
+                            ->where('wotr_mstr_id', '=', $idwo)
+                            ->where('wotr_role_approval', '=', $user->role_user)
+                            ->update($wotransapproved);
+
+                        DB::table('wo_trans_approval_hist')
+                            ->insert($wotransapprovedhist);
+
                         DB::table('wo_mstr')
                             ->where('id', '=', $idwo)
                             ->update([
-                                'wo_status' => 'closed',
                                 'wo_system_update' => Carbon::now()->toDateTimeString(),
                             ]);
 
                         DB::table('wo_trans_history')
                             ->insert([
                                 'wo_number' => $womstr->wo_number,
-                                'wo_action' => 'closed',
+                                'wo_action' => 'approval',
                                 'system_update' => Carbon::now()->toDateTimeString(),
                             ]);
+
+                        //email terikirm ke approver selanjutnya
+                        EmailScheduleJobs::dispatch('', $asset, '14', $tampungarray, '', $srnumber, $roleapprover);
                     } else {
-                        //jika wo memiliki sr number akan kembali ke user acceptance dan wo di close oleh user
-                        DB::table('wo_mstr')
-                            ->where('id', '=', $idwo)
-                            ->update([
-                                'wo_status' => 'acceptance',
-                                'wo_system_update' => Carbon::now()->toDateTimeString(),
-                            ]);
+                        // dd(2);
+                        //jika user adalah admin, maka semua approval (approval bertingkat) akan menjadi approved
+                        DB::table('wo_trans_approval')
+                            ->where('wotr_mstr_id', '=', $idwo)
+                            ->update($wotransapproved);
 
-                        DB::table('wo_trans_history')
-                            ->insert([
-                                'wo_number' => $womstr->wo_number,
-                                'wo_action' => 'acceptance',
-                                'system_update' => Carbon::now()->toDateTimeString(),
-                            ]);
+                        DB::table('wo_trans_approval_hist')
+                            ->insert($wotransapprovedhist);
 
-                        //email terikirm ke user yang membuat SR
-                        EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
+
+                        if ($womstr->wo_sr_number == "") {
+                            //jika wo tidak memiliki sr number 
+                            DB::table('wo_mstr')
+                                ->where('id', '=', $idwo)
+                                ->update([
+                                    'wo_status' => 'closed',
+                                    'wo_system_update' => Carbon::now()->toDateTimeString(),
+                                ]);
+
+                            DB::table('wo_trans_history')
+                                ->insert([
+                                    'wo_number' => $womstr->wo_number,
+                                    'wo_action' => 'closed',
+                                    'system_update' => Carbon::now()->toDateTimeString(),
+                                ]);
+                        } else {
+                            //jika wo memiliki sr number akan kembali ke user acceptance dan wo di close oleh user
+                            DB::table('wo_mstr')
+                                ->where('id', '=', $idwo)
+                                ->update([
+                                    'wo_status' => 'acceptance',
+                                    'wo_system_update' => Carbon::now()->toDateTimeString(),
+                                ]);
+
+                            DB::table('wo_trans_history')
+                                ->insert([
+                                    'wo_number' => $womstr->wo_number,
+                                    'wo_action' => 'acceptance',
+                                    'system_update' => Carbon::now()->toDateTimeString(),
+                                ]);
+
+                            //email terikirm ke user yang membuat SR
+                            EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
+                        }
                     }
                 }
-            } else {
-                //jika next approval not null
-
-                $tampungarray = $nextapprover;
-                // $requestor = $womstr->sr_req_by;
-
-                //cek apakah approver admin atau bukan
-                if (Session::get('role') <> 'ADMIN') {
-                    //jika user bukan admin, hanya tingkatan yang rolenya sama yang akan menjadi approved
-                    DB::table('wo_trans_approval')
-                        ->where('wotr_mstr_id', '=', $idwo)
-                        ->where('wotr_role_approval', '=', $user->role_user)
-                        ->update($wotransapproved);
-
-                    DB::table('wo_trans_approval_hist')
-                        ->insert($wotransapprovedhist);
-
+            }else{
+                if ($womstr->wo_sr_number == "") {
+                    //jika wo tidak memiliki sr number 
                     DB::table('wo_mstr')
                         ->where('id', '=', $idwo)
                         ->update([
+                            'wo_status' => 'closed',
                             'wo_system_update' => Carbon::now()->toDateTimeString(),
                         ]);
 
                     DB::table('wo_trans_history')
                         ->insert([
                             'wo_number' => $womstr->wo_number,
-                            'wo_action' => 'approval',
+                            'wo_action' => 'closed',
+                            'system_update' => Carbon::now()->toDateTimeString(),
+                        ]);
+                } else {
+                    //jika wo memiliki sr number akan kembali ke user acceptance dan wo di close oleh user
+                    DB::table('wo_mstr')
+                        ->where('id', '=', $idwo)
+                        ->update([
+                            'wo_status' => 'acceptance',
+                            'wo_system_update' => Carbon::now()->toDateTimeString(),
+                        ]);
+
+                    DB::table('wo_trans_history')
+                        ->insert([
+                            'wo_number' => $womstr->wo_number,
+                            'wo_action' => 'acceptance',
                             'system_update' => Carbon::now()->toDateTimeString(),
                         ]);
 
-                    //email terikirm ke approver selanjutnya
-                    EmailScheduleJobs::dispatch('', $asset, '14', $tampungarray, '', $srnumber, $roleapprover);
-                } else {
-                    // dd(2);
-                    //jika user adalah admin, maka semua approval (approval bertingkat) akan menjadi approved
-                    DB::table('wo_trans_approval')
-                        ->where('wotr_mstr_id', '=', $idwo)
-                        ->update($wotransapproved);
-
-                    DB::table('wo_trans_approval_hist')
-                        ->insert($wotransapprovedhist);
-
-
-                    if ($womstr->wo_sr_number == "") {
-                        //jika wo tidak memiliki sr number 
-                        DB::table('wo_mstr')
-                            ->where('id', '=', $idwo)
-                            ->update([
-                                'wo_status' => 'closed',
-                                'wo_system_update' => Carbon::now()->toDateTimeString(),
-                            ]);
-
-                        DB::table('wo_trans_history')
-                            ->insert([
-                                'wo_number' => $womstr->wo_number,
-                                'wo_action' => 'closed',
-                                'system_update' => Carbon::now()->toDateTimeString(),
-                            ]);
-                    } else {
-                        //jika wo memiliki sr number akan kembali ke user acceptance dan wo di close oleh user
-                        DB::table('wo_mstr')
-                            ->where('id', '=', $idwo)
-                            ->update([
-                                'wo_status' => 'acceptance',
-                                'wo_system_update' => Carbon::now()->toDateTimeString(),
-                            ]);
-
-                        DB::table('wo_trans_history')
-                            ->insert([
-                                'wo_number' => $womstr->wo_number,
-                                'wo_action' => 'acceptance',
-                                'system_update' => Carbon::now()->toDateTimeString(),
-                            ]);
-
-                        //email terikirm ke user yang membuat SR
-                        EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
-                    }
+                    //email terikirm ke user yang membuat SR
+                    EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
                 }
             }
+
+
 
             // DB::commit();
             toast('Work order ' . $womstr->wo_number . ' approved successfuly', 'success');
@@ -4359,14 +4408,13 @@ class wocontroller extends Controller
             if ($req->btnconf == "reportwo") {
                 //status wo tidak berubah
 
-                DB::table('wo_mstr')->where('wo_number','=', $req->c_wonbr)->update([
+                DB::table('wo_mstr')->where('wo_number', '=', $req->c_wonbr)->update([
                     'wo_editstatus' => true,
                 ]);
 
                 DB::commit();
                 toast('Reporting Successfuly', 'success')->persistent('Dismiss');
                 return redirect()->route('woreport');
-            
             }
 
             //jika klik button Close WO
