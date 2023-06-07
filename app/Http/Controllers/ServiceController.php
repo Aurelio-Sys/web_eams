@@ -777,7 +777,6 @@ class ServiceController extends Controller
         $updatefile = DB::table('service_req_upload')->where('sr_number', $srnbr)->get();
         $countcurrentfile = count($currentfile);
         $countupdatefile = count($updatefile);
-        dd($countcurrentfile, $countupdatefile);
         $update->sr_fail_type = $wotype;
         $update->sr_fail_code = $newfailcode;
         $update->sr_impact = $newimpact;
