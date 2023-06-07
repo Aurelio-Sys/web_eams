@@ -2210,7 +2210,7 @@ class SettingController extends Controller
 
         DB::table('asset_upload')
             ->whereAssetCode($req->d_code)
-            ->delet();
+            ->delete();
 
         toast('Deleted Asset Successfully.', 'success');
         return back();
