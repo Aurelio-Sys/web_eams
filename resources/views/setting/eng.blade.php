@@ -522,7 +522,6 @@
             $.ajax({
                 url:"/engrole2?code=" + code + "&acc=" + acc,
                 success:function(data){
-                    console.log(data);
                     $('#te_role').html('').append(data);
                 }
             }) 
@@ -534,7 +533,6 @@
                 $.ajax({
                     url:"/searchlocsp2?site=" + site  + "&&loc=" + loc ,
                     success:function(data){
-                        console.log(data);
                         $('#te_loc').html('').append(data);
                     }
                 }) 
@@ -586,7 +584,6 @@
             $.ajax({
                 url:"engmaster/pagination?page="+page+"&sorttype="+sort_type+"&sortby="+sort_by+"&code="+code+"&desc="+desc+"&dept="+dept+"&role="+role,
                 success:function(data){
-                    console.log(data);
 
                     $('tbody').html('');
                     $('tbody').html(data);
@@ -690,7 +687,6 @@
                   document.getElementById('t_code').value = '';
                   document.getElementById('t_code').focus();
                 }
-                console.log(data);
               }
             })
              
@@ -777,7 +773,6 @@
             $.ajax({
                 url:"/engrole?code="+acc,
                 success:function(data){
-                    console.log(data);
                     $('#t_role').html('').append(data);
                 }
             }) 
@@ -789,7 +784,6 @@
             $.ajax({
                 url:"/engrole?code="+acc,
                 success:function(data){
-                    console.log(data);
                     $('#te_role').html('').append(data);
                 }
             }) 
@@ -857,7 +851,6 @@
               $.ajax({
                   url:"/searchlocsp?t_site="+site,
                   success:function(data){
-                      console.log(data);
                       $('#t_loc').html('').append(data);
                   }
               }) 
@@ -869,7 +862,6 @@
               $.ajax({
                   url:"/searchlocsp?t_site="+site,
                   success:function(data){
-                      console.log(data);
                       $('#te_loc').html('').append(data);
                   }
               }) 

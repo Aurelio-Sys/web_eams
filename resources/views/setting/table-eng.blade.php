@@ -76,7 +76,7 @@
 </tr>
 @endforelse
 <tr>
-  <td style="border: none !important;">
+  <td tyle="border: none !important;" colspan="7">
     {{ $datauser->links() }}
   </td>
 </tr>
