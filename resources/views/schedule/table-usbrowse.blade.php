@@ -3,8 +3,8 @@
     <td>{{$show->asset_code}}</td>
     <td>{{$show->asset_desc}}</td>
     <td>{{$show->us_asset_site}} - {{$show->asloc_desc}}</td>
-    <td style="text-align: right">{{number_format($show->asset_meter,0)}}</td>
-    <td style="text-align: center">{{$show->us_mea_um}}</td>
+    <td style="text-align: right">{{number_format($show->pma_meter,0)}}</td>
+    <td style="text-align: center">{{$show->pma_meterum}}</td>
     <td>{{date('d-m-Y',strtotime($show->us_date))}}</td>
     <td>{{date('H:i',strtotime($show->us_time))}}</td>
     <td style="text-align: right">{{number_format($show->us_last_mea,0)}}</td>

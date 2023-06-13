@@ -975,7 +975,7 @@ class wocontroller extends Controller
     public function filtermaintcode(Request $req)
     {
         $datafilter = DB::table('pmc_mstr')
-            ->where('pmc_type', '=', $req->pmc_type)
+            // ->where('pmc_type', '=', $req->pmc_type)
             ->get();
 
         return response()->json($datafilter);
@@ -3121,7 +3121,7 @@ class wocontroller extends Controller
                                 ]);
 
                             //email terikirm ke user yang membuat SR
-                            EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
+                            // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
                         }
                     } else {
                         //jika user adalah admin, maka semua approval (approval bertingkat) akan menjadi approved
@@ -3164,7 +3164,7 @@ class wocontroller extends Controller
                                 ]);
 
                             //email terikirm ke user yang membuat SR
-                            EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
+                            // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
                         }
                     }
                 } else {
@@ -3198,7 +3198,7 @@ class wocontroller extends Controller
                             ]);
 
                         //email terikirm ke approver selanjutnya
-                        EmailScheduleJobs::dispatch('', $asset, '14', $tampungarray, '', $srnumber, $roleapprover);
+                        // EmailScheduleJobs::dispatch('', $asset, '14', $tampungarray, '', $srnumber, $roleapprover);
                     } else {
                         // dd(2);
                         //jika user adalah admin, maka semua approval (approval bertingkat) akan menjadi approved
@@ -3242,7 +3242,7 @@ class wocontroller extends Controller
                                 ]);
 
                             //email terikirm ke user yang membuat SR
-                            EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
+                            // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
                         }
                     }
                 }
@@ -3279,7 +3279,7 @@ class wocontroller extends Controller
                         ]);
 
                     //email terikirm ke user yang membuat SR
-                    EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
+                    // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
                 }
             }
 
@@ -3341,7 +3341,7 @@ class wocontroller extends Controller
             }
 
             //email terkirim ke wo list engineer
-            EmailScheduleJobs::dispatch('', $asset, '11', '', $requestor, $srnumber, '');
+            // EmailScheduleJobs::dispatch('', $asset, '11', '', $requestor, $srnumber, '');
 
             // DB::commit();
             toast('Work order ' . $womstr->wo_number . ' has been rejected', 'success');
@@ -3478,52 +3478,22 @@ class wocontroller extends Controller
                     ->get();
             } else {
                 $user = Session()->get('username');
-                // dd($user);
-                $datawo = DB::table('wo_mstr')
-                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
-                    ->where(function ($status) {
-                        $status->where('wo_status', '=', 'released');
-                        $status->orWhere('wo_status', '=', 'started');
-                    })
-                    ->get();
 
-                $data = [];
+                $data = DB::table('wo_mstr')
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+                ->where(function ($status) {
+                            $status->where('wo_status', '=', 'released');
+                            $status->orWhere('wo_status', '=', 'started');
+                        })
+                ->where(function ($query) use ($user) {
+                    $query->where('wo_list_engineer', '=', $user . ';')
+                        ->orWhere('wo_list_engineer', 'LIKE', $user . ';%')
+                        ->orWhere('wo_list_engineer', 'LIKE', '%;' . $user . ';%')
+                        ->orWhere('wo_list_engineer', 'LIKE', '%;' . $user)
+                        ->orWhere('wo_list_engineer', '=', $user);
+                })
+                ->paginate(10);
 
-                foreach ($datawo as $value) {
-                    $dataeng = $value->wo_list_engineer;
-                    $arrayeng = explode(';', $dataeng);
-                    // dd($arrayeng);
-                    if (in_array($user, $arrayeng)) {
-
-                        //jika user yg login adalah engineer di wo tersebut
-                        $data = DB::table('wo_mstr')
-                            ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
-                            ->where(function ($status) {
-                                $status->where('wo_status', '=', 'released');
-                                $status->orWhere('wo_status', '=', 'started');
-                            })
-                            ->where('wo_list_engineer', $dataeng)
-                            ->orderby('wo_system_create', 'desc')
-                            ->orderBy('wo_mstr.id', 'desc')
-                            ->groupBy('wo_number')
-                            ->paginate(10);
-                    } else {
-
-                        //jika user yg login bukan engineer di wo tersebut
-                        $data = DB::table('wo_mstr')
-                            ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
-                            ->where(function ($status) {
-                                $status->where('wo_status', '=', 'nostatus');
-                            })
-                            ->where('wo_list_engineer', $dataeng)
-                            ->orderby('wo_system_create', 'desc')
-                            ->orderBy('wo_mstr.id', 'desc')
-                            ->groupBy('wo_number')
-                            ->paginate(10);
-                    }
-                }
-
-                // dd($data);
                 $engineer = DB::table('users')
                     ->join('roles', 'users.role_user', 'roles.role_code')
                     ->where('role_desc', '=', 'Engineer')
@@ -3678,7 +3648,7 @@ class wocontroller extends Controller
                             ->orWhere('wo_list_engineer', '=', $username);
                     })
                     ->orderBy('wo_status', 'desc')
-                    ->orderBy('wo_mstr.wo_id', 'desc');
+                    ->orderBy('wo_mstr.id', 'desc');
             }
 
             if ($request->s_nomorwo) {
@@ -3948,12 +3918,12 @@ class wocontroller extends Controller
                         <qcom:ttContext>
                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                             <qcom:propertyName>username</qcom:propertyName>
-                            <qcom:propertyValue>mfg</qcom:propertyValue>
+                            <qcom:propertyValue/>
                         </qcom:ttContext>
                         <qcom:ttContext>
                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                             <qcom:propertyName>password</qcom:propertyName>
-                            <qcom:propertyValue></qcom:propertyValue>
+                            <qcom:propertyValue/>
                         </qcom:ttContext>
                         <qcom:ttContext>
                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -4145,12 +4115,12 @@ class wocontroller extends Controller
                         <qcom:ttContext>
                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                             <qcom:propertyName>username</qcom:propertyName>
-                            <qcom:propertyValue>mfg</qcom:propertyValue>
+                            <qcom:propertyValue/>
                         </qcom:ttContext>
                         <qcom:ttContext>
                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                             <qcom:propertyName>password</qcom:propertyName>
-                            <qcom:propertyValue></qcom:propertyValue>
+                            <qcom:propertyValue/>
                         </qcom:ttContext>
                         <qcom:ttContext>
                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>

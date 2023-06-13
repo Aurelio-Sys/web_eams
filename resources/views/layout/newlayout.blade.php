@@ -372,7 +372,7 @@ to get the desired effect
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'US03'))
                 <li class="nav-item has-treeview">
-                  <a href="{{route('viewWOGen')}}" class="nav-link ">
+                  <a href="/viewwogenerator" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>PM Planning</p>
                   </a>
@@ -380,7 +380,7 @@ to get the desired effect
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'US05'))
                 <li class="nav-item has-treeview">
-                  <a href="{{route('pmconf')}}" class="nav-link ">
+                  <a href="/pmconf" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>PM Confirm</p>
                   </a>
@@ -388,7 +388,7 @@ to get the desired effect
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'US06'))
                 <li class="nav-item has-treeview">
-                  <a href="{{route('pmmssg')}}" class="nav-link ">
+                  <a href="/pmmssg" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>PM Action Message</p>
                   </a>

@@ -479,8 +479,8 @@
           document.getElementById('adownload').href = urldownload;
 
           if (wotype == 'PM') {
-            document.getElementById('divdonload').style.display = '';
-            document.getElementById('divcancel').style.display = 'none'; // A211027
+            document.getElementById('divdonload').style.display = 'none';
+            document.getElementById('divcancel').style.display = ''; // A211027
           } else {
             document.getElementById('divdonload').style.display = 'none';
             document.getElementById('divcancel').style.display = ''; // A211027

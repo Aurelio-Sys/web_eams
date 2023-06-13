@@ -49,35 +49,35 @@ class UsageController extends Controller
 
     public function updateusage(Request $req){
 		
-        dd($req->all());
+        // dd($req->all());
         $checkdata = DB::table('asset_mstr')
                     ->where('asset_code','=',$req->e_asset)
                     ->first();
 
         if($checkdata){
-            if(is_null($checkdata->asset_last_usage)){
-                DB::table('asset_mstr')
-                    ->where('asset_code','=',$req->e_asset)
-                    ->update([
-                            'asset_last_usage' => $req->e_current,
-                            'asset_last_usage_mtc' => $req->e_current,
-                    ]);
-            }else{
-                $nextusage = $checkdata->asset_last_usage + $checkdata->asset_meter;
+            // if(is_null($checkdata->asset_last_usage)){
+            //     DB::table('asset_mstr')
+            //         ->where('asset_code','=',$req->e_asset)
+            //         ->update([
+            //                 'asset_last_usage' => $req->e_current,
+            //                 'asset_last_usage_mtc' => $req->e_current,
+            //         ]);
+            // }else{
+            //     $nextusage = $checkdata->asset_last_usage + $checkdata->asset_meter;
 
-                DB::table('asset_mstr')
-                ->where('asset_code','=',$req->e_asset)
-                ->update([
-                        'asset_last_usage_mtc' => $req->e_current,
-                ]);
-            }
+            //     DB::table('asset_mstr')
+            //     ->where('asset_code','=',$req->e_asset)
+            //     ->update([
+            //             'asset_last_usage_mtc' => $req->e_current,
+            //     ]);
+            // }
 
             /* Menyimpan data transaksi pengukuran asset */
             DB::table('us_hist')->insert([
                 'us_asset' => $checkdata->asset_code,
                 'us_asset_site' => $checkdata->asset_site,
                 'us_asset_loc' => $checkdata->asset_loc,
-                'us_mea_um' => $checkdata->asset_mea_um,
+                // 'us_mea_um' => $checkdata->asset_mea_um,
                 'us_date' => $req->e_date,
                 'us_time' => $req->e_time,
                 'us_last_mea' => $req->e_current,

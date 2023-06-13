@@ -744,6 +744,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// 5 Why Transaction
 	Route::get('/whyhist',[WhyHistController::class, 'index']); 
+	Route::get('/searchwoasset',[WhyHistController::class, 'searchwoasset']); 
 	Route::post('/createwhyhist',[WhyHistController::class, 'store']);
 	route::get('/whyfile/{id}', [WhyHistController::class, 'whyfile'])->name('whyfile');
 	Route::post('/editwhyhist',[WhyHistController::class, 'update']);

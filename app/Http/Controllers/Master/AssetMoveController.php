@@ -86,7 +86,7 @@ class AssetMoveController extends Controller
                 'asmove_date'   => $request->t_date,               
                 'created_at'    => Carbon::now()->toDateTimeString(),
                 'updated_at'    => Carbon::now()->toDateTimeString(),
-                'edited_by'     => Session::get('username'),
+                // 'edited_by'     => Session::get('username'),
         ]);
 
         DB::table('asset_mstr')
@@ -96,7 +96,7 @@ class AssetMoveController extends Controller
                 'asset_loc' => $request->t_toloc,
                 'created_at'    => Carbon::now()->toDateTimeString(),
                 'updated_at'    => Carbon::now()->toDateTimeString(),
-                'edited_by'     => Session::get('username'),
+                // 'edited_by'     => Session::get('username'),
             ]);
 
         toast('Asset Movement Successfully.', 'success');

@@ -78,8 +78,11 @@ class WHSConfirm extends Controller
                     ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority','wd_sp_flag')
                     ->join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber','wo_mstr.wo_number')
                     ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
-                    ->where('wo_status', 'released')
-                    ->where('wd_sp_flag','=', 1)
+                    ->where(function ($status) {
+                        $status->where('wo_status', '=', 'released');
+                        $status->orWhere('wo_status', '=', 'started');
+                    })
+                    // ->where('wd_sp_flag','=', 1)
                     ->where('wo_number','=', $req->wo_number)
                     ->groupBy('wo_number')
                     ->first();
@@ -261,12 +264,12 @@ class WHSConfirm extends Controller
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                     <qcom:propertyName>username</qcom:propertyName>
-                    <qcom:propertyValue>mfg</qcom:propertyValue>
+                    <qcom:propertyValue/>
                     </qcom:ttContext>
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                     <qcom:propertyName>password</qcom:propertyName>
-                    <qcom:propertyValue></qcom:propertyValue>
+                    <qcom:propertyValue/>
                     </qcom:ttContext>
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>

@@ -2333,6 +2333,8 @@ div #munculgambar .gambar:hover{
       $('#e_mtcode').on('change', function() {
           // alert('ganti');
           let selectedValue = $(this).val();
+
+          console.log(selectedValue);
           $.ajax({
               url: '/searchic',
               method: 'GET',
