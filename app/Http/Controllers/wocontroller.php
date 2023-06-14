@@ -3689,6 +3689,95 @@ class wocontroller extends Controller
             ->select('*', DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'))
             ->get();
 
+        $datalocsupply = DB::table('inp_supply')
+            ->where('inp_asset_site', '=', $data->wo_site)
+            ->where('inp_avail', '=', 'Yes')
+            ->get();
+
+        
+        $datatemp = [];
+        $datatemp_required = [];
+        foreach($wo_sp as $spdet){
+            
+
+            //ambil data qty supply di qad
+            foreach($datalocsupply as $invsupply){
+                //wsa ambil data ke qad
+                $qadsupplydata = (new WSAServices())->wsagetsupply($spdet->wd_sp_spcode,$invsupply->inp_supply_site,$invsupply->inp_loc);
+
+                if ($qadsupplydata === false) {
+
+                    DB::rollBack();
+                    toast('WSA Connection Failed', 'error')->persistent('Dismiss');
+                    return redirect()->back();
+                } else {
+
+                    // jika hasil WSA ke QAD tidak ditemukan
+                    if ($qadsupplydata[1] !== "false") {
+                        // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+                    
+                        $resultWSA = $qadsupplydata[0];
+                        
+                        $t_domain = (string) $resultWSA[0]->t_domain;
+                        $t_part = (string) $resultWSA[0]->t_part;
+                        $t_site = (string) $resultWSA[0]->t_site;
+                        $t_loc = (string) $resultWSA[0]->t_loc;
+                        $t_qtyoh = (string) $resultWSA[0]->t_qtyoh;
+
+                        array_push($datatemp, [
+                            't_domain' => $t_domain,
+                            't_part' => $t_part,
+                            't_site' => $t_site,
+                            't_loc' => $t_loc,
+                            't_qtyoh' => $t_qtyoh,
+                        ]);
+                    }else{
+                        $wsa = ModelsQxwsa::first();
+                        $domain = $wsa->wsas_domain;
+
+                        array_push($datatemp, [
+                            't_domain' => $domain,
+                            't_part' => $spdet->wd_sp_spcode,
+                            't_site' => $invsupply->inp_supply_site,
+                            't_loc' => $invsupply->inp_loc,
+                            't_qtyoh' => 0,
+                        ]);
+
+                    }
+                }
+
+            }
+
+            //ambil data qty inv required
+            $invreqdata = DB::table('inv_required')
+                    ->where('ir_spare_part','=', $spdet->wd_sp_spcode)
+                    ->where('ir_site', '=', $data->wo_site)
+                    ->first();
+            
+            array_push($datatemp_required, [
+                't_spcode' => $invreqdata->ir_spare_part,
+                't_asset_site' => $invreqdata->ir_site,
+                't_total_req' => $invreqdata->inv_qty_required,
+            ]);
+            
+        }
+
+        //proses pengelompokan berdasarkan part dan site sehingga didapat total qty onhand untuk part per site nya data QAD
+        foreach ($datatemp as $item) {
+            $part = $item['t_part'];
+            $site = $item['t_site'];
+            $qtyoh = $item['t_qtyoh'];
+        
+            if (!isset($result[$part])) {
+                $result[$part] = [
+                    'part' => $part,
+                    'qtyoh' => 0,
+                ];
+            }
+        
+            $result[$part]['qtyoh'] += $qtyoh;
+        }
+
 
         return view('workorder.wosparepart-released', compact('data', 'wo_sp'));
     }
