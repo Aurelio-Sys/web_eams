@@ -86,10 +86,39 @@
                                     {{$datas->spm_code}} -- {{$datas->spm_desc}}
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    {{number_format($datas->wd_sp_required,2)}}
-                                </td>
-                                <td style="vertical-align:middle;text-align:center;">
+                                @php
+                                    $tSpcode = $datas->wd_sp_spcode;
+                                    $tAssetSite = $data->wo_site;
 
+                                    $tTotalReq = null;
+
+                                    foreach ($datatemp_required as $totreq) {
+                                        if ($totreq['t_spcode'] === $tSpcode && $totreq['t_asset_site'] === $tAssetSite) {
+                                            $tTotalReq = $totreq['t_total_req'];
+                                            break;
+                                        }
+                                    }
+                                @endphp
+                                {{ $tTotalReq }}
+                                </td>
+                                <td style="vertical-align:middle;text-align:right;">
+                                @php
+
+                                    $tSpcode = $datas->wd_sp_spcode;
+
+                                    $tTotalStock = null;
+
+                                    foreach ($result as $totstock) {
+                                        if ($totstock['part'] === $tSpcode) {
+                                            $tTotalStock = $totstock['qtyoh'];
+                                            break;
+                                        }
+                                    }
+                                @endphp
+                                {{number_format($tTotalStock, 2)}}
+                                </td>
+                                <td style="vertical-align:middle;text-align:right;">
+                                    {{number_format($datas->wd_sp_required,2)}}
                                 </td>
                             </tr>
                             

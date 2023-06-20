@@ -950,7 +950,7 @@
                                 row.find(".hidden_locfrom").val(loc);
                                 row.find(".hidden_lotfrom").val(lot);
 
-                                const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
+                                const loclot = `${site}, ${loc}, ${lot}`;
 
                                 row.find(".loclotfrom").val(loclot);
                                 row.find(".loclotfrom").attr('title',loclot);

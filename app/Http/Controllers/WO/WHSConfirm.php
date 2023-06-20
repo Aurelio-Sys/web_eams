@@ -183,7 +183,7 @@ class WHSConfirm extends Controller
             
         }
 
-        //proses pengelompokan berdasarkan part dan site sehingga didapat total qty onhand untuk part per site nya data QAD
+        //proses pengelompokan berdasarkan part sehingga didapat total qty onhand untuk part di data QAD
         foreach ($datatemp as $item) {
             $part = $item['t_part'];
             $site = $item['t_site'];

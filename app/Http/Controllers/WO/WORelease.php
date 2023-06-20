@@ -380,6 +380,7 @@ class WORelease extends Controller
                             ->where('wo_number','=', $requestData['hide_wonum'])
                             ->update([
                                 'wo_status' => 'released',
+                                'wo_releasedby' => Session::get('username'),
                                 'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
 
@@ -526,6 +527,7 @@ class WORelease extends Controller
                     ->where('wo_number','=', $requestData['hide_wonum'])
                     ->update([
                         'wo_status' => 'released',
+                        'wo_releasedby' => Session::get('username'),
                         'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                     ]);
 

@@ -952,4 +952,162 @@ class SparepartController extends Controller
             return redirect()->route('trfspbrowse');
         }
     }
+
+    public function accutransfer(Request $req){
+        $databrowseaccu = DB::table('inv_required')
+                        ->select('ir_site','assite_desc','ir_spare_part','spm_desc','inv_qty_required')
+                        ->join('asset_site','asset_site.assite_code','inv_required.ir_site')
+                        ->join('sp_mstr','sp_mstr.spm_code','ir_spare_part')    
+                        ->get();
+
+        $datasite = DB::table('asset_site')
+                    ->get();
+
+        $datasp = DB::table('sp_mstr')
+                    ->get();
+
+        return view('sparepart.accutrfsparepart', compact('databrowseaccu','datasite','datasp'));
+    }
+
+    public function searchaccutrf(Request $req){
+        // dd($req->all());
+
+        $site = $req->site_search;
+        $sparepart = $req->spsearch;
+
+        $datalocsupply = DB::table('inp_supply')
+                        ->where('inp_avail', '=', 'Yes')
+                        ->get();
+
+        $data_assetsite = DB::table('asset_site')
+                        ->get();
+
+        $data_sp = DB::table('sp_mstr')
+                        ->where('spm_active', '=', 'Yes')
+                        ->get();
+
+        $datainvreq = DB::table('inv_required');
+
+        if($site){
+            $datainvreq->where('ir_site','=', $site);
+        }
+
+        if($sparepart){
+            $datainvreq->where('ir_spare_part','=', $sparepart);
+        }
+
+        $datainvreq = $datainvreq->get();
+
+        if($datainvreq->isNotEmpty()){
+            $datatemp = [];
+            foreach($datainvreq as $dt){
+                $datainvsupp = DB::table('inp_supply')
+                                ->where('inp_asset_site','=', $dt->ir_site)
+                                ->get();
+
+                // dd($datainvsupp);
+
+                foreach($datainvsupp as $dtsupp){
+
+                    $qadsupplydata = (new WSAServices())->wsagetsupply($dt->ir_spare_part,$dtsupp->inp_supply_site,$dtsupp->inp_loc);
+
+                    if ($qadsupplydata === false) {
+
+                        DB::rollBack();
+                        toast('WSA Connection Failed', 'error')->persistent('Dismiss');
+                        return redirect()->back();
+                    } else {
+
+                        // jika hasil WSA ke QAD tidak ditemukan
+                        if ($qadsupplydata[1] !== "false") {
+                            // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+                        
+                            $resultWSA = $qadsupplydata[0];
+                            
+                            $t_domain = (string) $resultWSA[0]->t_domain;
+                            $t_part = (string) $resultWSA[0]->t_part;
+                            $t_site = (string) $resultWSA[0]->t_site;
+                            $t_loc = (string) $resultWSA[0]->t_loc;
+                            $t_qtyoh = (float) $resultWSA[0]->t_qtyoh;
+
+                            array_push($datatemp, [
+                                't_domain' => $t_domain,
+                                't_siteasset' => $dt->ir_site,
+                                't_part' => $t_part,
+                                't_site' => $t_site,
+                                't_loc' => $t_loc,
+                                't_qtyoh' => $t_qtyoh,
+                                't_qtyreq' => $dt->inv_qty_required
+                            ]);
+                        }else{
+
+                            $wsa = ModelsQxwsa::first();
+                            $domain = $wsa->wsas_domain;
+
+                            array_push($datatemp, [
+                                't_domain' => $domain,
+                                't_siteasset' => $dt->ir_site,
+                                't_part' => $dt->ir_spare_part,
+                                't_site' => $dtsupp->inp_supply_site,
+                                't_loc' => $dtsupp->inp_loc,
+                                't_qtyoh' => 0,
+                                't_qtyreq' => $dt->inv_qty_required
+                            ]);
+
+                        }
+                    }
+                }
+            }
+
+            // dd($datatemp);
+            
+            $grouped = collect($datatemp)->groupBy('t_siteasset')->toArray();
+
+            // dd($grouped);
+
+            foreach ($grouped as $siteasset => $group) {
+                $output[$siteasset] = collect($group)->groupBy('t_part')->map(function ($items) {
+                    return [
+                        't_domain' => $items[0]['t_domain'],
+                        't_siteasset' => $items[0]['t_siteasset'],
+                        't_part' => $items[0]['t_part'],
+                        't_qtyoh' => $items->sum('t_qtyoh'),
+                        't_qtyreq' => $items[0]['t_qtyreq'],
+                    ];
+                })->toArray();
+            }
+
+            $collection = collect($output);
+            // Metode flatten(1) digunakan untuk menggabungkan array kedalam satu tingkat. 
+            //Kemudian, metode values() digunakan untuk mengindeks ulang array hasilnya.
+            $flattenedData = $collection->flatten(1)->values();
+
+            $output = $flattenedData->toArray();
+
+            // dd($output);
+            
+            return view('sparepart.accutrfsparepart-detail', compact('output','datalocsupply','data_assetsite','data_sp'));
+        }else{
+
+            toast('Data Not Found', 'error');
+            return redirect()->back();
+        }
+    }
+
+    public function submitaccutrf(Request $req){
+        dd($req->all());
+
+        DB::beginTransaction();
+
+        try{
+
+
+
+        } catch (Exception $e){
+            dd($e);
+            DB::rollBack();
+            toast('Transfer failed', 'error');
+            return redirect()->back();
+        }
+    }
 }

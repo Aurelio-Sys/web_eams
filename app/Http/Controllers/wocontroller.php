@@ -1608,6 +1608,12 @@ class wocontroller extends Controller
                     }
 
                     //hapus data wo
+
+                    //harus hapus data wo yang terkait di table wo_trans_approval terlebih dahulu
+                    DB::table('wo_trans_approval')
+                            ->where('wotr_mstr_id','=', $checksr->id)
+                            ->delete();
+
                     DB::table('wo_mstr')
                         ->where('wo_number', '=', $req->tmp_wonbr)
                         ->delete();
@@ -3762,7 +3768,7 @@ class wocontroller extends Controller
             
         }
 
-        //proses pengelompokan berdasarkan part dan site sehingga didapat total qty onhand untuk part per site nya data QAD
+        //proses pengelompokan berdasarkan part sehingga didapat total qty onhand untuk part nya data QAD
         foreach ($datatemp as $item) {
             $part = $item['t_part'];
             $site = $item['t_site'];
@@ -3778,8 +3784,7 @@ class wocontroller extends Controller
             $result[$part]['qtyoh'] += $qtyoh;
         }
 
-
-        return view('workorder.wosparepart-released', compact('data', 'wo_sp'));
+        return view('workorder.wosparepart-released', compact('data', 'wo_sp','datatemp_required','result'));
     }
 
     public function reportingwo(Request $req)

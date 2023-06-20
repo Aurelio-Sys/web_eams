@@ -455,9 +455,16 @@ to get the desired effect
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'MT30'))
-                  <li class="nav-item">
+                  <li class="nav-item has-treeview">
                     <a href="/assetmove" class="nav-link">
                       <p>Asset Movement</p>
+                    </a>
+                  </li>
+                @endif
+                @if(str_contains( Session::get('menu_access'), 'BO05'))
+                  <li class="nav-item has-treeview">
+                    <a href="/accutransfer" class="nav-link">
+                      <p>Accumulative Sparepart Transfer</p>
                     </a>
                   </li>
                 @endif

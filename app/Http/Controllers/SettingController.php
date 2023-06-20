@@ -253,7 +253,8 @@ class SettingController extends Controller
             $req->cbUSMT . $req->cbUSmultiMT . $req->cbUSGen . $req->pmconf . $req->ksp . $req->cbUSBrowse .
             $req->cbBoas . $req->whyhist . $req->reqsp . $req->trfsp . $req->cbUA .
             $req->cbRptDet . $req->cbRptCost . $req->cbAssetReport . $req->cbEngReport . $req->cbRptRemsp . 
-            $req->cbAssetSchedule . $req->cbRptSchyear . $req->cbEngSchedule . $req->cbRptSpneed . $req->cbBookSchedule;
+            $req->cbAssetSchedule . $req->cbRptSchyear . $req->cbEngSchedule . $req->cbRptSpneed . $req->cbBookSchedule .
+            $req->accutrf;
         
 
         $this->validate($req, [
@@ -319,7 +320,8 @@ class SettingController extends Controller
             $req->e_cbUSMT . $req->e_cbUSmultiMT . $req->e_cbUSGen . $req->e_pmconf . $req->e_ksp . $req->e_cbUSBrowse .
             $req->e_cbBoas . $req->e_whyhist . $req->e_reqsp . $req->e_trfsp . $req->e_cbUA .
             $req->e_cbRptDet . $req->e_cbRptCost . $req->e_cbAssetReport . $req->e_cbEngReport . $req->e_cbRptRemsp . 
-            $req->e_cbAssetSchedule . $req->e_cbRptSchyear . $req->e_cbEngSchedule . $req->e_cbRptSpneed . $req->e_cbBookSchedule;
+            $req->e_cbAssetSchedule . $req->e_cbRptSchyear . $req->e_cbEngSchedule . $req->e_cbRptSpneed . $req->e_cbBookSchedule .
+            $req->e_accutrf;
         
 
         DB::table("roles")
