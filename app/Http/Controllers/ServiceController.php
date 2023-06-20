@@ -289,6 +289,8 @@ class ServiceController extends Controller
                 ->where('dept_code', '=', session::get('department'))
                 ->first();
 
+                // dd($runnumber);
+
             $newyear = Carbon::now()->format('y');
 
             if ($runnumber->dept_running_nbr == null) {
@@ -309,6 +311,8 @@ class ServiceController extends Controller
             }
 
             $runningnbr = $running->sr_prefix . '-' . session::get('department') . '-' . $newyear . '-' . $newtemprunnbr;
+
+            // dump($runningnbr);
 
             $cekData = DB::table('service_req_mstr')
                 ->where('sr_number', '=', $runningnbr)

@@ -16,8 +16,12 @@ class AssetLocController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $req)
     {
+        $s_code = $req->s_code;
+        $s_desc = $req->s_desc;
+        $ss_code = $req->ss_code;
+        $ss_desc = $req->ss_desc;
         /* if (strpos(Session::get('menu_access'), 'MT04') !== false) { */
             $dataSite = DB::table('asset_site')
                 ->get();
@@ -25,8 +29,22 @@ class AssetLocController extends Controller
             $data = DB::table('asset_loc')
                 ->join('asset_site','assite_code','=','asloc_site')
                 ->orderby('asloc_site')
-                ->orderby('asloc_code')
-                ->paginate(10);
+                ->orderby('asloc_code');
+            
+            if($s_code) {
+                $data = $data->where('asloc_site','like','%'.$s_code.'%');
+            }
+            if($s_desc) {
+                $data = $data->where('assite_desc','like','%'.$s_desc.'%');
+            }
+            if($ss_code) {
+                $data = $data->where('asloc_code','like','%'.$ss_code.'%');
+            }
+            if($ss_desc) {
+                $data = $data->where('asloc_desc','like','%'.$ss_desc.'%');
+            }
+
+            $data = $data->paginate(10);
 
             return view('setting.asset-loc', ['data' => $data, 'dataSite' => $dataSite]);
         /* } else {

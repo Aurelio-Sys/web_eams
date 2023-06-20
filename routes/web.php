@@ -596,7 +596,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/editassetsite', [AssetSiteController::class, 'edit']);
 	Route::post('/deleteassetsite', [AssetSiteController::class, 'destroy']);
 
-	// Asset Locaation
+	// Asset Location
 	Route::get('/assetloc', [AssetLocController::class, 'index']);
 	Route::post('/createaassetloc', [AssetLocController::class, 'store']);
 	Route::post('/editassetloc', [AssetLocController::class, 'update']);
@@ -744,6 +744,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// 5 Why Transaction
 	Route::get('/whyhist',[WhyHistController::class, 'index']); 
+	Route::get('/searchwoasset',[WhyHistController::class, 'searchwoasset']); 
 	Route::post('/createwhyhist',[WhyHistController::class, 'store']);
 	route::get('/whyfile/{id}', [WhyHistController::class, 'whyfile'])->name('whyfile');
 	Route::post('/editwhyhist',[WhyHistController::class, 'update']);

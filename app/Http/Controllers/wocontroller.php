@@ -975,7 +975,7 @@ class wocontroller extends Controller
     public function filtermaintcode(Request $req)
     {
         $datafilter = DB::table('pmc_mstr')
-            ->where('pmc_type', '=', $req->pmc_type)
+            // ->where('pmc_type', '=', $req->pmc_type)
             ->get();
 
         return response()->json($datafilter);
@@ -3121,7 +3121,7 @@ class wocontroller extends Controller
                                 ]);
 
                             //email terikirm ke user yang membuat SR
-                            EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
+                            // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
                         }
                     } else {
                         //jika user adalah admin, maka semua approval (approval bertingkat) akan menjadi approved
@@ -3164,7 +3164,7 @@ class wocontroller extends Controller
                                 ]);
 
                             //email terikirm ke user yang membuat SR
-                            EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
+                            // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
                         }
                     }
                 } else {
@@ -3198,7 +3198,7 @@ class wocontroller extends Controller
                             ]);
 
                         //email terikirm ke approver selanjutnya
-                        EmailScheduleJobs::dispatch('', $asset, '14', $tampungarray, '', $srnumber, $roleapprover);
+                        // EmailScheduleJobs::dispatch('', $asset, '14', $tampungarray, '', $srnumber, $roleapprover);
                     } else {
                         // dd(2);
                         //jika user adalah admin, maka semua approval (approval bertingkat) akan menjadi approved
@@ -3242,7 +3242,7 @@ class wocontroller extends Controller
                                 ]);
 
                             //email terikirm ke user yang membuat SR
-                            EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
+                            // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
                         }
                     }
                 }
@@ -3279,7 +3279,7 @@ class wocontroller extends Controller
                         ]);
 
                     //email terikirm ke user yang membuat SR
-                    EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
+                    // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
                 }
             }
 
@@ -3341,7 +3341,7 @@ class wocontroller extends Controller
             }
 
             //email terkirim ke wo list engineer
-            EmailScheduleJobs::dispatch('', $asset, '11', '', $requestor, $srnumber, '');
+            // EmailScheduleJobs::dispatch('', $asset, '11', '', $requestor, $srnumber, '');
 
             // DB::commit();
             toast('Work order ' . $womstr->wo_number . ' has been rejected', 'success');
@@ -3478,52 +3478,22 @@ class wocontroller extends Controller
                     ->get();
             } else {
                 $user = Session()->get('username');
-                // dd($user);
-                $datawo = DB::table('wo_mstr')
-                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
-                    ->where(function ($status) {
-                        $status->where('wo_status', '=', 'released');
-                        $status->orWhere('wo_status', '=', 'started');
-                    })
-                    ->get();
 
-                $data = [];
+                $data = DB::table('wo_mstr')
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+                ->where(function ($status) {
+                            $status->where('wo_status', '=', 'released');
+                            $status->orWhere('wo_status', '=', 'started');
+                        })
+                ->where(function ($query) use ($user) {
+                    $query->where('wo_list_engineer', '=', $user . ';')
+                        ->orWhere('wo_list_engineer', 'LIKE', $user . ';%')
+                        ->orWhere('wo_list_engineer', 'LIKE', '%;' . $user . ';%')
+                        ->orWhere('wo_list_engineer', 'LIKE', '%;' . $user)
+                        ->orWhere('wo_list_engineer', '=', $user);
+                })
+                ->paginate(10);
 
-                foreach ($datawo as $value) {
-                    $dataeng = $value->wo_list_engineer;
-                    $arrayeng = explode(';', $dataeng);
-                    // dd($arrayeng);
-                    if (in_array($user, $arrayeng)) {
-
-                        //jika user yg login adalah engineer di wo tersebut
-                        $data = DB::table('wo_mstr')
-                            ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
-                            ->where(function ($status) {
-                                $status->where('wo_status', '=', 'released');
-                                $status->orWhere('wo_status', '=', 'started');
-                            })
-                            ->where('wo_list_engineer', $dataeng)
-                            ->orderby('wo_system_create', 'desc')
-                            ->orderBy('wo_mstr.id', 'desc')
-                            ->groupBy('wo_number')
-                            ->paginate(10);
-                    } else {
-
-                        //jika user yg login bukan engineer di wo tersebut
-                        $data = DB::table('wo_mstr')
-                            ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
-                            ->where(function ($status) {
-                                $status->where('wo_status', '=', 'nostatus');
-                            })
-                            ->where('wo_list_engineer', $dataeng)
-                            ->orderby('wo_system_create', 'desc')
-                            ->orderBy('wo_mstr.id', 'desc')
-                            ->groupBy('wo_number')
-                            ->paginate(10);
-                    }
-                }
-
-                // dd($data);
                 $engineer = DB::table('users')
                     ->join('roles', 'users.role_user', 'roles.role_code')
                     ->where('role_desc', '=', 'Engineer')
@@ -3678,7 +3648,7 @@ class wocontroller extends Controller
                             ->orWhere('wo_list_engineer', '=', $username);
                     })
                     ->orderBy('wo_status', 'desc')
-                    ->orderBy('wo_mstr.wo_id', 'desc');
+                    ->orderBy('wo_mstr.id', 'desc');
             }
 
             if ($request->s_nomorwo) {
@@ -3718,6 +3688,95 @@ class wocontroller extends Controller
             ->groupBy('wd_sp_wonumber', 'wd_sp_spcode')
             ->select('*', DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'))
             ->get();
+
+        $datalocsupply = DB::table('inp_supply')
+            ->where('inp_asset_site', '=', $data->wo_site)
+            ->where('inp_avail', '=', 'Yes')
+            ->get();
+
+        
+        $datatemp = [];
+        $datatemp_required = [];
+        foreach($wo_sp as $spdet){
+            
+
+            //ambil data qty supply di qad
+            foreach($datalocsupply as $invsupply){
+                //wsa ambil data ke qad
+                $qadsupplydata = (new WSAServices())->wsagetsupply($spdet->wd_sp_spcode,$invsupply->inp_supply_site,$invsupply->inp_loc);
+
+                if ($qadsupplydata === false) {
+
+                    DB::rollBack();
+                    toast('WSA Connection Failed', 'error')->persistent('Dismiss');
+                    return redirect()->back();
+                } else {
+
+                    // jika hasil WSA ke QAD tidak ditemukan
+                    if ($qadsupplydata[1] !== "false") {
+                        // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+                    
+                        $resultWSA = $qadsupplydata[0];
+                        
+                        $t_domain = (string) $resultWSA[0]->t_domain;
+                        $t_part = (string) $resultWSA[0]->t_part;
+                        $t_site = (string) $resultWSA[0]->t_site;
+                        $t_loc = (string) $resultWSA[0]->t_loc;
+                        $t_qtyoh = (string) $resultWSA[0]->t_qtyoh;
+
+                        array_push($datatemp, [
+                            't_domain' => $t_domain,
+                            't_part' => $t_part,
+                            't_site' => $t_site,
+                            't_loc' => $t_loc,
+                            't_qtyoh' => $t_qtyoh,
+                        ]);
+                    }else{
+                        $wsa = ModelsQxwsa::first();
+                        $domain = $wsa->wsas_domain;
+
+                        array_push($datatemp, [
+                            't_domain' => $domain,
+                            't_part' => $spdet->wd_sp_spcode,
+                            't_site' => $invsupply->inp_supply_site,
+                            't_loc' => $invsupply->inp_loc,
+                            't_qtyoh' => 0,
+                        ]);
+
+                    }
+                }
+
+            }
+
+            //ambil data qty inv required
+            $invreqdata = DB::table('inv_required')
+                    ->where('ir_spare_part','=', $spdet->wd_sp_spcode)
+                    ->where('ir_site', '=', $data->wo_site)
+                    ->first();
+            
+            array_push($datatemp_required, [
+                't_spcode' => $invreqdata->ir_spare_part,
+                't_asset_site' => $invreqdata->ir_site,
+                't_total_req' => $invreqdata->inv_qty_required,
+            ]);
+            
+        }
+
+        //proses pengelompokan berdasarkan part dan site sehingga didapat total qty onhand untuk part per site nya data QAD
+        foreach ($datatemp as $item) {
+            $part = $item['t_part'];
+            $site = $item['t_site'];
+            $qtyoh = $item['t_qtyoh'];
+        
+            if (!isset($result[$part])) {
+                $result[$part] = [
+                    'part' => $part,
+                    'qtyoh' => 0,
+                ];
+            }
+        
+            $result[$part]['qtyoh'] += $qtyoh;
+        }
 
 
         return view('workorder.wosparepart-released', compact('data', 'wo_sp'));
@@ -3948,12 +4007,12 @@ class wocontroller extends Controller
                         <qcom:ttContext>
                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                             <qcom:propertyName>username</qcom:propertyName>
-                            <qcom:propertyValue>mfg</qcom:propertyValue>
+                            <qcom:propertyValue/>
                         </qcom:ttContext>
                         <qcom:ttContext>
                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                             <qcom:propertyName>password</qcom:propertyName>
-                            <qcom:propertyValue></qcom:propertyValue>
+                            <qcom:propertyValue/>
                         </qcom:ttContext>
                         <qcom:ttContext>
                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -4145,12 +4204,12 @@ class wocontroller extends Controller
                         <qcom:ttContext>
                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                             <qcom:propertyName>username</qcom:propertyName>
-                            <qcom:propertyValue>mfg</qcom:propertyValue>
+                            <qcom:propertyValue/>
                         </qcom:ttContext>
                         <qcom:ttContext>
                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                             <qcom:propertyName>password</qcom:propertyName>
-                            <qcom:propertyValue></qcom:propertyValue>
+                            <qcom:propertyValue/>
                         </qcom:ttContext>
                         <qcom:ttContext>
                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>

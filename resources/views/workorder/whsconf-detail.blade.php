@@ -56,7 +56,7 @@
     </div>
 </div>
 
-<div class="table-responsive col-lg-12 col-md-12">
+<div class="col-lg-12 col-md-12">
     <form action="/whssubmit" method="post" id="submit">
         {{ method_field('post') }}
         {{ csrf_field() }}
@@ -66,7 +66,7 @@
         <div class="modal-header">
         </div>
 
-        <div class="modal-body">
+        <div class="table-responsive modal-body">
             <div class="form-group row">
                 <div class="table-responsive col-lg-12 col-md-12 tag-container" style="overflow-x: auto; display:inline-table; white-space: nowrap; padding:0; text-align:center; position:relative">
                     <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0" >
@@ -75,6 +75,8 @@
                                 <td style="text-align: center; width: 5% !important; font-weight: bold;">Spare Part Code</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Spare Part Desc</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty Required</td>
+                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Total Required</td>
+                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Supply Stock</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Location & Lot From</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Location To</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty to Transfer</td>
@@ -92,6 +94,39 @@
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$spd->wd_sp_required}}
+                                </td>
+                                <td style="vertical-align:middle;text-align:left;">
+                                @php
+
+                                    $tSpcode = $spd->wd_sp_spcode;
+                                    $tAssetSite = $data->wo_site;
+
+                                    $tTotalReq = null;
+
+                                    foreach ($datatemp_required as $totreq) {
+                                        if ($totreq['t_spcode'] === $tSpcode && $totreq['t_asset_site'] === $tAssetSite) {
+                                            $tTotalReq = $totreq['t_total_req'];
+                                            break;
+                                        }
+                                    }
+                                @endphp
+                                {{ $tTotalReq }}
+                                </td>
+                                <td style="vertical-align:middle;text-align:left;">
+                                @php
+
+                                    $tSpcode = $spd->wd_sp_spcode;
+
+                                    $tTotalStock = null;
+
+                                    foreach ($result as $totstock) {
+                                        if ($totstock['part'] === $tSpcode) {
+                                            $tTotalStock = $totstock['qtyoh'];
+                                            break;
+                                        }
+                                    }
+                                @endphp
+                                {{number_format($tTotalStock, 2)}}
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" data-index="{{ $index }}"  required>

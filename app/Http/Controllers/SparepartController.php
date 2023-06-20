@@ -212,11 +212,12 @@ class SparepartController extends Controller
         $rsnumber = $req->code;
         if ($req->ajax()) {
 
-            $data = DB::table('req_sparepart')
+            $datas = DB::table('req_sparepart')
                 ->join('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
                 ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
                 ->where('req_sp_number', $rsnumber)
+                ->groupBy('req_sp_number')
                 ->get();
 
             $sp_all = DB::table('sp_mstr')
@@ -227,7 +228,7 @@ class SparepartController extends Controller
             $loc_to = DB::table('inp_supply')->get();
 
             $output = '';
-            foreach ($data as $data) {
+            foreach ($datas as $data) {
                 $output .= '<tr>';
                 $output .= '<td>';
                 $output .= '<select name="te_spreq[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" required>';
@@ -253,7 +254,7 @@ class SparepartController extends Controller
                 $output .= '</tr>';
             }
 
-            // dd($output);
+            // dd($data);
 
             return response($output);
         }
@@ -270,6 +271,7 @@ class SparepartController extends Controller
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
                 ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
                 ->where('req_sp_number', $rsnumber)
+                ->groupBy('req_sp_number')
                 ->get();
             // dd($data);
 
@@ -509,8 +511,10 @@ class SparepartController extends Controller
             ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
             ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
             ->where('req_spd_mstr_id', $data->id)
+            ->groupBy('req_spd_mstr_id')
             ->get();
 
+            // dd($sparepart_detail);
         $datalocsupply = DB::table('inp_supply')
             ->get();
 
@@ -533,6 +537,7 @@ class SparepartController extends Controller
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
                 ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
                 ->where('req_sp_number', $rsnumber)
+                ->groupBy('req_sp_number')
                 ->get();
             // dd($data);
 
@@ -747,12 +752,12 @@ class SparepartController extends Controller
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                     <qcom:propertyName>username</qcom:propertyName>
-                    <qcom:propertyValue>mfg</qcom:propertyValue>
+                    <qcom:propertyValue/>
                     </qcom:ttContext>
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                     <qcom:propertyName>password</qcom:propertyName>
-                    <qcom:propertyValue></qcom:propertyValue>
+                    <qcom:propertyValue/>
                     </qcom:ttContext>
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -905,7 +910,7 @@ class SparepartController extends Controller
                 /* jika response sukses atau warning maka menyimpan data jika sudah di transferr ke qad*/
                 $rsnumber = $req->hide_rsnum;
                 //kirim notifikasi kepada para engineer yg mengerjakan wo tersebut bahwa spare part yg tidak cukup sudah ditransfer ke inventory supply
-                SendNotifWarehouseToUser::dispatch($rsnumber);
+                // SendNotifWarehouseToUser::dispatch($rsnumber);
             } else {
 
                 //jika qtend mengembalikan pesan error 

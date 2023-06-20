@@ -72,9 +72,10 @@
                     <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</th>
+                                <th style="text-align: center; width: 20% !important; font-weight: bold;">Spare Part</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Total Required</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Total Supply</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Qty Required</th>
-                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Status Spare Part</th>
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
@@ -88,11 +89,7 @@
                                     {{number_format($datas->wd_sp_required,2)}}
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
-                                    @if ($datas->wd_sp_flag == 1)
-                                        not ready
-                                    @else
-                                        ready
-                                    @endif
+
                                 </td>
                             </tr>
                             

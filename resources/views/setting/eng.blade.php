@@ -77,28 +77,32 @@
     </div>
 </div>
 
-<div class="table-responsive col-12">
-    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-        <thead>
-            <tr>
-                <th width="10%">ID</th>
-                <th width="25%">User Name</th>
-                <th width="15%">Department</th>
-                <th width="10%">Access As</th>
-                <th width="10%">Role</th>
-                <th width="10%">Active</th>
-                <th width="10%">Approver</th>
-                <th width="10%">Action</th>  
-            </tr>
-        </thead>
-        <tbody>
-            <!-- untuk isi table -->
-            @include('setting.table-eng')
-        </tbody>
-    </table>
-    <input type="hidden" name="hidden_page" id="hidden_page" value="1"/>
-    <input type="hidden" name="hidden_column_name" id="hidden_column_name" value="eng_code"/>
-    <input type="hidden" name="hidden_sort_type" id="hidden_sort_type" value="asc" />
+<div class="table-responsive">
+    
+    <div class="table-responsive col-12" style="overflow-x: auto; display:inline-table; white-space: nowrap; padding:0; text-align:center; position:relative">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+                    <th width="10%">ID</th>
+                    <th width="25%">User Name</th>
+                    <th width="25%">Email</th>
+                    <th width="15%">Department</th>
+                    <th width="10%">Access As</th>
+                    <th width="10%">Role</th>
+                    <th width="10%">Active</th>
+                    <th width="10%">Approver</th>
+                    <th width="10%">Action</th>  
+                </tr>
+            </thead>
+            <tbody>
+                <!-- untuk isi table -->
+                @include('setting.table-eng')
+            </tbody>
+        </table>
+        <input type="hidden" name="hidden_page" id="hidden_page" value="1"/>
+        <input type="hidden" name="hidden_column_name" id="hidden_column_name" value="eng_code"/>
+        <input type="hidden" name="hidden_sort_type" id="hidden_sort_type" value="asc" />
+    </div>
 </div>
 
 <!-- Modal Create -->
@@ -522,7 +526,6 @@
             $.ajax({
                 url:"/engrole2?code=" + code + "&acc=" + acc,
                 success:function(data){
-                    console.log(data);
                     $('#te_role').html('').append(data);
                 }
             }) 
@@ -534,7 +537,6 @@
                 $.ajax({
                     url:"/searchlocsp2?site=" + site  + "&&loc=" + loc ,
                     success:function(data){
-                        console.log(data);
                         $('#te_loc').html('').append(data);
                     }
                 }) 
@@ -586,7 +588,6 @@
             $.ajax({
                 url:"engmaster/pagination?page="+page+"&sorttype="+sort_type+"&sortby="+sort_by+"&code="+code+"&desc="+desc+"&dept="+dept+"&role="+role,
                 success:function(data){
-                    console.log(data);
 
                     $('tbody').html('');
                     $('tbody').html(data);
@@ -690,7 +691,6 @@
                   document.getElementById('t_code').value = '';
                   document.getElementById('t_code').focus();
                 }
-                console.log(data);
               }
             })
              
@@ -777,7 +777,6 @@
             $.ajax({
                 url:"/engrole?code="+acc,
                 success:function(data){
-                    console.log(data);
                     $('#t_role').html('').append(data);
                 }
             }) 
@@ -789,7 +788,6 @@
             $.ajax({
                 url:"/engrole?code="+acc,
                 success:function(data){
-                    console.log(data);
                     $('#te_role').html('').append(data);
                 }
             }) 
@@ -857,7 +855,6 @@
               $.ajax({
                   url:"/searchlocsp?t_site="+site,
                   success:function(data){
-                      console.log(data);
                       $('#t_loc').html('').append(data);
                   }
               }) 
@@ -869,7 +866,6 @@
               $.ajax({
                   url:"/searchlocsp?t_site="+site,
                   success:function(data){
-                      console.log(data);
                       $('#te_loc').html('').append(data);
                   }
               }) 

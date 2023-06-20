@@ -110,7 +110,7 @@
                                     <input type="hidden" name="qtystandard[]" value="{{$datas->spg_qtyreq}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
-                                    <input type="number" class="form-control" step="1" min="0" name="qtyrequired[]" value="{{$datas->spg_qtyreq}}" required />
+                                    <input type="number" class="form-control" step="0.01" min="0.00" name="qtyrequired[]" value="{{$datas->spg_qtyreq}}" required />
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
                                     <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete">
@@ -218,7 +218,7 @@
             cols += '</td>';
 
             cols += '<td>';
-            cols += '<input type="number" class="form-control qtyrequired" name="qtyrequired[]" step="1" min="0" required />';
+            cols += '<input type="number" class="form-control qtyrequired" name="qtyrequired[]" step="0.01" min="0.00" required />';
             cols += '</td>';
 
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';

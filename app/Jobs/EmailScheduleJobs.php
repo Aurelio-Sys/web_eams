@@ -673,7 +673,7 @@ class EmailScheduleJobs implements ShouldQueue
                     function ($message) use ($wo, $listto) {
                         $message->subject('eAMS - New Work Order');
                         // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
-                        $message->to(array_filter($listto));
+                        $message->to('tommy@ptimi.co.id');
                     }
                 );
 

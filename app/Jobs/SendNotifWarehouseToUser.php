@@ -66,7 +66,7 @@ class SendNotifWarehouseToUser implements ShouldQueue
             'rsnumber' => $rsnumber,
         ], function ($message) use ($getemail, $rsnumber) {
             $message->subject('eAMS - Sparepart Transfer Success for ' . $rsnumber . '');
-            $message->to($getemail);
+            $message->to($getemail->email_user);
         });
     }
 }

@@ -47,6 +47,7 @@
 <tr>
     <td>{{$show->username}}</td>
     <td>{{$show->name}}</td>
+    <td>{{$show->email_user}}</td>
     <td>{{$descdept}} </td>
     <td>{{$show->access}} </td>
     <td>{{$show->role_user}}</td>
@@ -76,7 +77,7 @@
 </tr>
 @endforelse
 <tr>
-  <td style="border: none !important;">
+  <td tyle="border: none !important;" colspan="10">
     {{ $datauser->links() }}
   </td>
 </tr>

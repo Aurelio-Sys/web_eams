@@ -2044,6 +2044,8 @@ div #munculgambar .gambar:hover{
           },
           success: function(vamp) {
 
+            console.log(vamp);
+
             var wonumber = vamp.wo_master.wo_number;
             var srnumber = vamp.wo_master.wo_sr_number;
             var ewottype = vamp.wo_master.wo_failure_type;
@@ -2331,6 +2333,8 @@ div #munculgambar .gambar:hover{
       $('#e_mtcode').on('change', function() {
           // alert('ganti');
           let selectedValue = $(this).val();
+
+          console.log(selectedValue);
           $.ajax({
               url: '/searchic',
               method: 'GET',

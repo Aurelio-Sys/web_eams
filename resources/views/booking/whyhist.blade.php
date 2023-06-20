@@ -104,11 +104,12 @@
                     <div class="form-group row">
                         <label for="t_wo" class="col-md-2 col-form-label text-md-right">WO Number</label>
                         <div class="col-md-9">
-                           <select class="form-control" id="t_wo" name="t_wo">
-                              <option value=""></option>
+                           {{--  <select class="form-control" id="t_wo" name="t_wo">  --}}
+                           <select id="t_wo" class="form-control" name="t_wo">
+                              {{--  <option value=""></option>
                               @foreach($datawo as $dw)
                               <option value="{{$dw->wo_number}}">{{$dw->wo_number}}</option>
-                              @endforeach
+                              @endforeach  --}}
                            </select>
                         </div>
                     </div>
@@ -358,7 +359,17 @@
          theme : 'bootstrap4',
         });
 
-        
+        $(document).on('change', '#t_asset', function() {
+          var code = $('#t_asset').val();
+
+            $.ajax({
+                url:"/searchwoasset?code="+code,
+                success:function(data){
+                    console.log(data);
+                    $('#t_wo').html('').append(data);
+                }
+            }) 
+        });
 
     </script>
 

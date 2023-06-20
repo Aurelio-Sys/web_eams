@@ -67,6 +67,27 @@ class WhyHistController extends Controller
         //
     }
 
+    //untuk mencari wo berdasarkan asset yang diinputkan
+    public function searchwoasset(Request $req)
+    {
+        if ($req->ajax()) {
+            $code = $req->get('code');
+      
+            $data = DB::table('wo_mstr')
+                    ->where('wo_asset_code','=',$code)
+                    ->get();
+
+            $output = '<option value="" >Select</option>';
+            foreach($data as $data){
+
+                $output .= '<option value="'.$data->wo_number.'" >'.$data->wo_number.'</option>';
+                           
+            }
+
+            return response($output);
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *

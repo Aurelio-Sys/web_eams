@@ -409,7 +409,7 @@
                 <div class="form-group row col-md-12">
                     <label for="downtime" class="col-md-4 col-form-label text-md-left">Downtime <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-3">
-                        <input type="number" id="downtime" min="0" class="form-control" name="downtime" value="{{$header->wo_downtime != null ? $header->wo_downtime : ''}}" required />
+                        <input type="number" id="downtime" min="0" class="form-control" name="downtime" value="{{$header->wo_downtime != null ? $header->wo_downtime : 0}}" required />
                     </div>
                     <div class="col-md-3">
                     <select class="form-control" id="downtime_um" name="downtime_um">

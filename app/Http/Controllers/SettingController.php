@@ -1834,20 +1834,20 @@ class SettingController extends Controller
             });
 
             /* ini ditutup dulu, nanti dibuka lagi */
-            // $domain = ModelsQxwsa::first();
-            // $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
+            $domain = ModelsQxwsa::first();
+            $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
 
-            // if ($datawsa === false) {
-            //     toast('WSA Failed', 'error')->persistent('Dismiss');
-            //     return redirect()->back();
-            // } else {
-            //     foreach ($datawsa[0] as $datas) {
-            //         DB::table('temp_asset')->insert([
-            //             'temp_code' => $datas->t_code,
-            //             'temp_desc' => $datas->t_desc,
-            //         ]);
-            //     }
-            // } 
+            if ($datawsa === false) {
+                toast('WSA Failed', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+                foreach ($datawsa[0] as $datas) {
+                    DB::table('temp_asset')->insert([
+                        'temp_code' => $datas->t_code,
+                        'temp_desc' => $datas->t_desc,
+                    ]);
+                }
+            } 
 
             $dataassetqad = DB::table('temp_asset')
                 ->orderBy('temp_code')
@@ -2210,7 +2210,7 @@ class SettingController extends Controller
 
         DB::table('asset_upload')
             ->whereAssetCode($req->d_code)
-            ->delet();
+            ->delete();
 
         toast('Deleted Asset Successfully.', 'success');
         return back();

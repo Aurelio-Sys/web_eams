@@ -78,8 +78,11 @@ class WHSConfirm extends Controller
                     ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority','wd_sp_flag')
                     ->join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber','wo_mstr.wo_number')
                     ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
-                    ->where('wo_status', 'released')
-                    ->where('wd_sp_flag','=', 1)
+                    ->where(function ($status) {
+                        $status->where('wo_status', '=', 'released');
+                        $status->orWhere('wo_status', '=', 'started');
+                    })
+                    // ->where('wd_sp_flag','=', 1)
                     ->where('wo_number','=', $req->wo_number)
                     ->groupBy('wo_number')
                     ->first();
@@ -109,20 +112,99 @@ class WHSConfirm extends Controller
                             ->where('wd_sp_wonumber','=',$id)
                             ->get();
 
-
-
         $datalocsupply = DB::table('inp_supply')
                         ->where('inp_asset_site', '=', $data->wo_site)
+                        ->where('inp_avail', '=', 'Yes')
                         ->get();
+        $datatemp = [];
+        $datatemp_required = [];
+        foreach($sparepart_detail as $spdet){
+            
 
-        
-        
+            //ambil data qty supply di qad
+            foreach($datalocsupply as $invsupply){
+                //wsa ambil data ke qad
+                $qadsupplydata = (new WSAServices())->wsagetsupply($spdet->wd_sp_spcode,$invsupply->inp_supply_site,$invsupply->inp_loc);
 
+                if ($qadsupplydata === false) {
+
+                    DB::rollBack();
+                    toast('WSA Connection Failed', 'error')->persistent('Dismiss');
+                    return redirect()->back();
+                } else {
+
+                    // jika hasil WSA ke QAD tidak ditemukan
+                    if ($qadsupplydata[1] !== "false") {
+                        // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+                    
+                        $resultWSA = $qadsupplydata[0];
+                        
+                        $t_domain = (string) $resultWSA[0]->t_domain;
+                        $t_part = (string) $resultWSA[0]->t_part;
+                        $t_site = (string) $resultWSA[0]->t_site;
+                        $t_loc = (string) $resultWSA[0]->t_loc;
+                        $t_qtyoh = (string) $resultWSA[0]->t_qtyoh;
+
+                        array_push($datatemp, [
+                            't_domain' => $t_domain,
+                            't_part' => $t_part,
+                            't_site' => $t_site,
+                            't_loc' => $t_loc,
+                            't_qtyoh' => $t_qtyoh,
+                        ]);
+                    }else{
+                        $wsa = ModelsQxwsa::first();
+                        $domain = $wsa->wsas_domain;
+
+                        array_push($datatemp, [
+                            't_domain' => $domain,
+                            't_part' => $spdet->wd_sp_spcode,
+                            't_site' => $invsupply->inp_supply_site,
+                            't_loc' => $invsupply->inp_loc,
+                            't_qtyoh' => 0,
+                        ]);
+
+                    }
+                }
+
+            }
+
+            //ambil data qty inv required
+            $invreqdata = DB::table('inv_required')
+                    ->where('ir_spare_part','=', $spdet->wd_sp_spcode)
+                    ->where('ir_site', '=', $data->wo_site)
+                    ->first();
+            
+            array_push($datatemp_required, [
+                't_spcode' => $invreqdata->ir_spare_part,
+                't_asset_site' => $invreqdata->ir_site,
+                't_total_req' => $invreqdata->inv_qty_required,
+            ]);
+            
+        }
+
+        //proses pengelompokan berdasarkan part dan site sehingga didapat total qty onhand untuk part per site nya data QAD
+        foreach ($datatemp as $item) {
+            $part = $item['t_part'];
+            $site = $item['t_site'];
+            $qtyoh = $item['t_qtyoh'];
+        
+            if (!isset($result[$part])) {
+                $result[$part] = [
+                    'part' => $part,
+                    'qtyoh' => 0,
+                ];
+            }
+        
+            $result[$part]['qtyoh'] += $qtyoh;
+        }                
 
         return view('workorder.whsconf-detail', compact(
             'data',
             'sparepart_detail',
-            'datalocsupply'
+            'datalocsupply',
+            'datatemp_required',
+            'result',
         ));
     }
 
@@ -261,12 +343,12 @@ class WHSConfirm extends Controller
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                     <qcom:propertyName>username</qcom:propertyName>
-                    <qcom:propertyValue>mfg</qcom:propertyValue>
+                    <qcom:propertyValue/>
                     </qcom:ttContext>
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                     <qcom:propertyName>password</qcom:propertyName>
-                    <qcom:propertyValue></qcom:propertyValue>
+                    <qcom:propertyValue/>
                     </qcom:ttContext>
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>

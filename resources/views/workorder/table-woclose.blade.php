@@ -39,6 +39,6 @@
 @endforelse
 <tr>
   <td style="border: none !important;">
-    {{ $data->links() }}
+    {{ $data->appends($_GET)->links() }}
   </td>
 </tr>

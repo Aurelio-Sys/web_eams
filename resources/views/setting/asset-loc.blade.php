@@ -31,6 +31,7 @@
 </div><!-- /.container-fluid -->
 @endsection
 @section('content')
+<form action="/assetloc" method="GET">
 <!-- Bagian Searching -->
 <div class="container-fluid mb-2">
     <div class="row">
@@ -76,6 +77,7 @@
         </div>
     </div>
 </div>
+</form>
 <div class="col-md-12">
     <hr>
 </div>
@@ -253,98 +255,7 @@
         $('#post_title_icon').html('');
     }
 
-    function fetch_data(page, sort_type, sort_by, code, desc, scode, sdesc) {
-        $.ajax({
-            url: "areamaster/pagination?page=" + page + "&sorttype=" + sort_type + "&sortby=" + sort_by + "&code=" + code + "&desc=" + desc + "&scode=" + scode + "&sdesc=" + sdesc,
-            success: function(data) {
-                console.log(data);
-                $('tbody').html('');
-                $('tbody').html(data);
-            }
-        })
-    }
-
-    $(document).on('click', '#btnsearch', function() {
-        var code = $('#s_code').val();
-        var desc = $('#s_desc').val();
-        var scode = $('#ss_code').val();
-        var sdesc = $('#ss_desc').val();
-
-        var column_name = $('#hidden_column_name').val();
-        var sort_type = $('#hidden_sort_type').val();
-        var page = 1;
-
-        document.getElementById('tmpcode').value = code;
-        document.getElementById('tmpdesc').value = desc;
-        document.getElementById('tmpscode').value = scode;
-        document.getElementById('tmpscode').value = sdesc;
-
-        fetch_data(page, sort_type, column_name, code, desc, scode, sdesc);
-    });
-
-    $(document).on('click', '.sorting', function() {
-        var column_name = $(this).data('column_name');
-        var order_type = $(this).data('sorting_type');
-        var reverse_order = '';
-        if (order_type == 'asc') {
-            $(this).data('sorting_type', 'desc');
-            reverse_order = 'desc';
-            clear_icon();
-            $('#' + column_name + '_icon').html('<span class="glyphicon glyphicon-triangle-bottom"></span>');
-        }
-        if (order_type == 'desc') {
-            $(this).data('sorting_type', 'asc');
-            reverse_order = 'asc';
-            clear_icon();
-            $('#' + column_name + '_icon').html('<span class="glyphicon glyphicon-triangle-top"></span>');
-        }
-        $('#hidden_column_name').val(column_name);
-        $('#hidden_sort_type').val(reverse_order);
-        var page = $('#hidden_page').val();
-        var code = $('#s_code').val();
-        var desc = $('#s_desc').val();
-        var scode = $('#ss_code').val();
-        var sdesc = $('#ss_desc').val();
-        fetch_data(page, sort_type, column_name, code, desc, scode, sdesc);
-    });
-
-
-    $(document).on('click', '.pagination a', function(event) {
-        event.preventDefault();
-        var page = $(this).attr('href').split('page=')[1];
-        $('#hidden_page').val(page);
-        var column_name = $('#hidden_column_name').val();
-        var sort_type = $('#hidden_sort_type').val();
-        var code = $('#s_code').val();
-        var desc = $('#s_desc').val();
-        var scode = $('#ss_code').val();
-        var sdesc = $('#ss_desc').val();
-        fetch_data(page, sort_type, column_name, code, desc, scode, sdesc);
-    });
-
-    $(document).on('click', '#btnrefresh', function() {
-
-        var code = '';
-        var desc = '';
-        var scode = '';
-        var sdesc = '';
-
-        var column_name = $('#hidden_column_name').val();
-        var sort_type = $('#hidden_sort_type').val();
-        var page = 1;
-
-        document.getElementById('tmpcode').value = code;
-        document.getElementById('tmpdesc').value = desc;
-        document.getElementById('tmpscode').value = scode;
-        document.getElementById('tmpscode').value = sdesc;
-
-        document.getElementById('s_code').value = code;
-        document.getElementById('s_desc').value = desc;
-        document.getElementById('ss_code').value = scode;
-        document.getElementById('ss_desc').value = sdesc;
-
-        fetch_data(page, sort_type, column_name, code, desc, scode, sdesc);
-    });
+    
 
     $(document).on('change', '#t_locationid', function() {
 
