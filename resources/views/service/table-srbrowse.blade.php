@@ -44,7 +44,8 @@
 
     {{--  Edit SR  --}}
     @php($session = session('username'))
-    @if($show->sr_req_by == $session && $show->sr_status != 'Canceled' && $show->sr_status != 'Inprocess' && 
+    @php($cfile = $ceksrfile->where('sr_number','=',$show->sr_number)->count())
+    @if($show->sr_req_by == $session && $show->sr_status != 'Canceled' && $show->sr_status != 'Inprocess' && $show->sr_status != 'Closed' && $show->sr_status != 'Acceptance' &&
     ($show->srta_status != 'Approved' && $show->srta_status != 'Canceled by user' || $show->srta_eng_status != 'Approved' && $show->srta_eng_status != 'Canceled by user'))
     <a href="javascript:void(0)" class="editsr" data-toggle="tooltip"  title="Edit SR"  data-target="#editModal" 
     data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_asset}}" data-assetdesc="{{$show->asset_desc}}"
@@ -56,7 +57,7 @@
     data-endwo="{{date('d-m-Y', strtotime($show->wo_job_finishdate))}}" 
     data-approver="{{$show->sr_eng_approver}}" data-reason="{{is_null($show->srta_eng_reason) ? $show->srta_reason : $show->srta_eng_reason}}"
     data-wostatus="{{$show->sr_status}}" data-statusapproval="{{is_null($show->srta_eng_status) ? $show->srta_status : $show->srta_eng_status}}"
-    data-failtype="{{$show->sr_fail_type}}" data-failcode="{{$show->sr_fail_code}}">
+    data-failtype="{{$show->sr_fail_type}}" data-failcode="{{$show->sr_fail_code}}" data-cfile="{{$cfile}}">
     <i class="icon-table fa fa-edit fa-lg"></i></a>
     @endif
 
