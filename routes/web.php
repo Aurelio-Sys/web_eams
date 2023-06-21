@@ -786,7 +786,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/createmsg',[NotmssgController::class, 'store']);
 	
 	//akumulatif spare part transfer menu
-	Route::get('/accutransfer', [SparepartController::class, 'accutransfer']);
+	Route::get('/accutransfer', [SparepartController::class, 'accutransfer'])->name('accuTransBrw');
 	Route::get('/searchaccutrf', [SparepartController::class, 'searchaccutrf']);
 	Route::post('/submitaccutrf', [SparepartController::class, 'submitaccutrf']);
 });

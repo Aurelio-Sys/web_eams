@@ -99,7 +99,9 @@
                                     <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0" value="0" step="0.01" required />
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
-                                    <input type="checkbox" class=""custom-control custom-checkbox" name="checkbox[]" value="N">
+                                    <!-- <input type="checkbox" class=""custom-control custom-checkbox" name="checkbox[]" value="N"> -->
+                                    <input type="hidden" value="N" name="hide_check[]" class="hide_check" />
+                                    <input class="transferchecker" type="checkbox" name="transferchecker[]" />
                                 </td>
                             </tr>
                             @empty
@@ -164,10 +166,28 @@
 
     $(document).ready(function() {
 
+        $(document).on('click','.transferchecker',function(){
+            var checkbox = $(this), // Selected or current checkbox
+            value = checkbox.val(); // Value of checkbox
+
+            if (checkbox.is(':checked')) {
+                $(this).closest("tr").find('.hide_check').val('Y');
+                $(this).closest('tr').find('.loclotfrom').prop('required', true);
+                $(this).closest('tr').find('.locto').prop('required', true);
+            } else {
+                $(this).closest("tr").find('.hide_check').val('N');
+                $(this).closest('tr').find('.loclotfrom').prop('required', false);
+                $(this).closest('tr').find('.locto').prop('required', false);
+            }
+
+        });
+
         $('body').on('change', 'input[name="checkbox[]"]', function() {
             // Periksa apakah checkbox dicentang atau tidak
             if ($(this).is(':checked')) {
                 $(this).val('Y'); // Ubah nilai checkbox menjadi "Y"
+                $(this).closest('tr').find('.loclotfrom').prop('required', true);
+                $(this).closest('tr').find('.locto').prop('required', true);
             } else {
                 $(this).val('N'); // Ubah nilai checkbox menjadi "N"
             }
