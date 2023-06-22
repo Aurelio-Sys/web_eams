@@ -142,19 +142,23 @@ div #munculgambar .gambar:hover{
           <div class="col-md-4 col-sm-12 mb-2 input-group">
             <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
               <option value="">--Select Asset--</option>
+              @foreach ( $asset1 as $assetsearch )
+                <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
+              @endforeach
             </select>
           </div>
           <label for="s_status" class="col-md-2 col-form-label text-md-left">{{ __('Work Order Status') }}</label>
           <div class="col-md-3 col-sm-12 mb-2 input-group">
             <select id="s_status" type="text" class="form-control" name="s_status">
               <option value="">--Select Status--</option>
-              <option value="plan">Plan</option>
+              <!-- <option value="plan">Plan</option> -->
               <option value="firm">Firm</option>
               <option value="released">Released</option>
               <option value="started">Started</option>
               <option value="finished">Finished</option>
               <option value="closed">Closed</option>
               <option value="canceled">Canceled</option>
+              <option value="acceptance">Acceptance</option>
             </select>
           </div>
           <label for="" class="col-md-1 col-form-label text-md-left">{{ __('') }}</label>
@@ -170,6 +174,9 @@ div #munculgambar .gambar:hover{
           <div class="col-md-3 col-sm-12 mb-2 input-group">
             <select id="s_engineer" type="text" class="form-control" name="s_engineer">
               <option value="">--Select Engineer--</option>
+              @foreach ( $user as $engineersearch )
+                <option value="{{$engineersearch->eng_code}}">{{$engineersearch->eng_code}} -- {{$engineersearch->eng_desc}}</option>
+              @endforeach
             </select>
           </div>
           <label for="" class="col-md-3 col-form-label text-md-right">{{ __('') }}</label>

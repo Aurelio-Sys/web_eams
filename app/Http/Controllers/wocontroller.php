@@ -3449,6 +3449,9 @@ class wocontroller extends Controller
 
             $qclist = DB::table('qcs_list')->groupBy('qcs_code')->get();
 
+            $wodet_sp = DB::table('wo_dets_sp')
+                        ->get();
+
             if (Session::get('role') == 'ADMIN') {
 
                 $data = DB::table('wo_mstr')
@@ -3516,11 +3519,11 @@ class wocontroller extends Controller
                     ->get();
             }
             if ($req->ajax()) {
-                return view('workorder.table-wostart', ['data' => $data]);
+                return view('workorder.table-wostart', ['data' => $data, 'wodet_sp' => $wodet_sp]);
             } else {
                 return view('workorder.wostart', [
                     'data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'maintenancelist' => $maintenance, 'inslist' => $inslist, 'splist' => $splist,
-                    'qclist' => $qclist
+                    'qclist' => $qclist, 'wodet_sp' => $wodet_sp
                 ]);
             }
         } else {

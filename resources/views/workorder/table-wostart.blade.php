@@ -20,10 +20,22 @@
   <input type="hidden" name='wonbrr' value="{{$show->wo_number}}"> 
   @if($show->wo_status == 'released')
     <button type="button"  class="btn btn-success btn-action jobview" style="width: 50%;">View</button>
-    <a class="btn btn-info" href="{{route('viewSP', $show->wo_number)}}" title="View Spare Part"><i class="fas fa-list-ol"></i></a>
+    @php
+      $cekviewsparepart = $wodet_sp->where('wd_sp_wonumber','=', $show->wo_number)->first();
+    @endphp
+
+      @if ($cekviewsparepart != null)
+        <a class="btn btn-info" href="{{route('viewSP', $show->wo_number)}}" title="View Spare Part"><i class="fas fa-list-ol"></i></a>
+      @endif
+    
     @else
     <button type="button"  class="btn btn-warning btn-action jobview" style="width: 50%;">View</button>
-    <a class="btn btn-info" href="{{route('viewSP', $show->wo_number)}}" title="View Spare Part"><i class="fas fa-list-ol"></i></a>
+      @php
+        $cekviewsparepart = $wodet_sp->where('wd_sp_wonumber','=', $show->wo_number)->first();
+      @endphp
+      @if ($cekviewsparepart != null)
+        <a class="btn btn-info" href="{{route('viewSP', $show->wo_number)}}" title="View Spare Part"><i class="fas fa-list-ol"></i></a>
+      @endif
   @endif
     
   </td>
