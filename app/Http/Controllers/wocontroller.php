@@ -4715,7 +4715,7 @@ class wocontroller extends Controller
                 ]);
 
                 DB::commit();
-                toast('Reporting Successfuly', 'success')->persistent('Dismiss');
+                toast('Reporting '.$req->c_wonbr.' Successfuly', 'success')->persistent('Dismiss');
                 return redirect()->route('woreport');
             }
 
