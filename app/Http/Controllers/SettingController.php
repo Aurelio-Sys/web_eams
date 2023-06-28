@@ -3345,7 +3345,7 @@ class SettingController extends Controller
                             $sp->spm_dom = $datas->t_dom;
                             $sp->spm_site = $datas->t_site;
                             $sp->spm_code = $datas->t_spcode;
-                            $sp->spm_desc = $datas->t_spname;
+                            $sp->spm_desc = str_replace('"', '', rtrim($datas->t_spname));
                             $sp->spm_um = $datas->t_spum;
                             $sp->spm_loc = $datas->t_loc;
                             $sp->spm_lot = $datas->t_lotser;
