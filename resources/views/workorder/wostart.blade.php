@@ -219,7 +219,7 @@
             <div class="form-group row justify-content-center">
               <label for="v_mtcode" class="col-md-5 col-form-label text-md-left">Maintenance Code</label>
               <div class="col-md-7">
-              <input id="v_mtcode" type="text" class="form-control" name="v_mtcode" value="{{ old('v_mtcode') }}" autofocus readonly>
+                <input id="v_mtcode" type="text" class="form-control" name="v_mtcode" value="{{ old('v_mtcode') }}" autofocus readonly>
                 <!-- <select id="c_mtcode" name="c_mtcode" class="form-control" readonly>
                   <option></option>
                   @foreach($maintenancelist as $mt)
@@ -231,7 +231,7 @@
             <div class="form-group row justify-content-center">
               <label for="v_inslist" class="col-md-5 col-form-label text-md-left">Instruction List</label>
               <div class="col-md-7">
-              <input id="v_inslist" type="text" class="form-control" name="v_inslist" value="{{ old('v_inslist') }}" autofocus readonly>
+                <input id="v_inslist" type="text" class="form-control" name="v_inslist" value="{{ old('v_inslist') }}" autofocus readonly>
                 <!-- <select id="c_inslist" name="c_inslist" class="form-control">
                   <option></option>
                   @foreach ($inslist as $ins)
@@ -243,7 +243,7 @@
             <div class="form-group row justify-content-center">
               <label for="v_splist" class="col-md-5 col-form-label text-md-left">Instruction Spare Part</label>
               <div class="col-md-7">
-              <input id="v_splist" type="text" class="form-control" name="v_splist" value="{{ old('v_splist') }}" autofocus readonly>
+                <input id="v_splist" type="text" class="form-control" name="v_splist" value="{{ old('v_splist') }}" autofocus readonly>
                 <!-- <select id="c_splist" name="c_splist" class="form-control">
                   <option></option>
                   @foreach ($splist as $sp)
@@ -255,7 +255,7 @@
             <div class="form-group row justify-content-center">
               <label for="v_qclist" class="col-md-5 col-form-label text-md-left">Instruction QC</label>
               <div class="col-md-7">
-              <input id="v_qclist" type="text" class="form-control" name="v_qclist" value="{{ old('v_qclist') }}" autofocus readonly>
+                <input id="v_qclist" type="text" class="form-control" name="v_qclist" value="{{ old('v_qclist') }}" autofocus readonly>
                 <!-- <select id="c_qclist" name="c_qclist" class="form-control">
                   <option></option>
                   @foreach ($qclist as $qc)
@@ -283,7 +283,24 @@
               </div>
             </div>
             <div class="form-group row justify-content-center">
-              <label class="col-md-5 col-form-label text-md-left">Uploaded File</label>
+              <label class="col-md-5 col-form-label text-md-left">SR Uploaded File</label>
+              <div class="col-md-7">
+                <!-- <div id="munculgambar_view_sr">
+                </div> -->
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>File Name</th>
+                    </tr>
+                  </thead>
+                  <tbody id="munculgambar_view_sr">
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="form-group row justify-content-center">
+              <label class="col-md-5 col-form-label text-md-left">WO Uploaded File</label>
               <div class="col-md-7">
                 <div id="munculgambar_view">
 
@@ -302,7 +319,7 @@
                 <input id="v_starttime" type="time" class="form-control" name="v_starttime" value="{{ \Carbon\Carbon::now()->format('H:i') }}" autofocus>
               </div>
             </div>
-            <div id="divreprocessreason" class="form-group row justify-content-center" style="display: none;">
+            <div id="divreprocessreason" class="form-group row justify-content-center">
               <label for="v_rejectreason" class="col-md-5 col-form-label text-md-left">Reprocess Reason</label>
               <div class="col-md-7">
                 <textarea id="v_rejectreason" class="form-control" rows="3" readonly></textarea>
@@ -412,6 +429,7 @@
     // });
     $(document).on('click', '.jobview', function() {
       var wonbr = $(this).closest('tr').find('input[name="wonbrr"]').val();
+      var srnumber = $(this).closest('tr').find('input[name="srnbrr"]').val();
       // $('#loadingtable').modal('hide');
       $('#loadingtable').modal('show');
       var counter = document.getElementById('v_counter');
@@ -447,8 +465,7 @@
           var qccodedesc = vamp.qcslist ? vamp.qcslist.qcs_desc : '';
           var priority = vamp.wo_master.wo_priority;
           var srnote = vamp.sr_note;
-
-          // console.log(vamp);
+          var deptdesc = vamp.dept_desc.dept_desc;
 
           let combineFailure = [];
 
@@ -493,6 +510,7 @@
             document.getElementById('e_btnchgstatus2').style.display = 'none';
             document.getElementById('checkboxaban').style.display = 'none';
             document.getElementById('labelcheck').style.display = 'none';
+            document.getElementById('divreprocessreason').style.display = 'none';
           } else {
             document.getElementById('divstartdate').style.display = 'none';
             document.getElementById('divstarttime').style.display = 'none';
@@ -500,6 +518,7 @@
             document.getElementById('e_btnchgstatus2').style.display = '';
             document.getElementById('checkboxaban').style.display = '';
             document.getElementById('labelcheck').style.display = '';
+            document.getElementById('divreprocessreason').style.display = 'none';
           }
 
           document.getElementById('v_nowo').value = wonumber;
@@ -515,7 +534,7 @@
           document.getElementById('v_startdate').value = startdate;
           document.getElementById('v_duedate').value = duedate;
           document.getElementById('v_creator').value = createdby;
-          document.getElementById('v_dept').value = department;
+          document.getElementById('v_dept').value = department + ' - ' + deptdesc;
           document.getElementById('statuswo').value = status;
           document.getElementById('v_mtcode').value = maintcode + ' - ' + maintcodedesc;
           document.getElementById('v_inslist').value = inscode + ' - ' + inscodedesc;
@@ -551,6 +570,15 @@
           $('#munculgambar_view').html('').append(data);
         }
       })
+
+      $.ajax({
+        url: "/listuploadview/" + srnumber,
+        success: function(data) {
+          // console.log(data);
+          $('#munculgambar_view_sr').html('').append(data);
+        }
+      })
+
     });
     $(document).on('click', '#btnsearch', function() {
       var wonumber = $('#s_nomorwo').val();

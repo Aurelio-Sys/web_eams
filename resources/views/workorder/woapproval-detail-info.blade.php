@@ -439,10 +439,21 @@
                     </div>
                 </div>
                 <div class="form-group row col-md-12">
-                    <!-- <label class="col-md-12 col-form-label text-md-center"><b>Completed</b></label> -->
                     <label for="v_reason" class="col-md-4 col-form-label text-md-left">Reason</label>
                     <div class="col-md-6">
-                        <textarea id="v_reason" name="v_reason" class="form-control" rows="3"></textarea>
+                        <textarea id="v_reason" name="v_reason" class="form-control" rows="3" readonly>{{$approver->wotr_reason ? $approver->wotr_reason : ''}}</textarea>
+                    </div>
+                </div>
+                <div class="form-group row col-md-12">
+                    <label for="v_message" class="col-md-4 col-form-label text-md-left">eAMS Message</label>
+                    <div class="col-md-6" id="v_message">
+                        @if($approver->wotr_status == 'approved')
+                        <p style="font-weight: bold;color:green;margin-top:5px">{{'this wo has been approved by ' . $approver->username}}</p>
+                        @elseif($approver->wotr_status == 'revision')
+                        <p style="font-weight: bold;color:red;margin-top:5px">{{'this wo has been rejected by ' . $approver->username}}</p>
+                        @else
+                        <p style="font-weight: bold;color:navy;margin-top:5px">please wait the previous approver to do approval</p>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -473,11 +484,11 @@
 
         <div class="modal-footer">
             <a id="btnclose" class="btn btn-info" href="/woapprovalbrowse" id="btnback">Back</a>
-              <button type="submit" class="btn btn-danger" name="action" value="reject" id="btnreject">Reject</button>
+              <!-- <button type="submit" class="btn btn-danger" name="action" value="reject" id="btnreject">Reject</button>
               <button type="submit" class="btn btn-success" name="action" value="approve" id="btnapprove">Approve</button>
             <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none; width: 150px !important;">
                 <i class="fas fa-spinner fa-spin"></i> &nbsp;Saving
-            </button>
+            </button> -->
         </div>
     </form>
 </div>
@@ -747,6 +758,10 @@
         // console.log(wonbr);
         var wonbr = document.getElementById('c_wonbr').value;
         var srnumber = document.getElementById('c_srnbr').value;
+
+        // var message = '<?php echo ($approver->wotr_approved_by != null) ? "this wo has been " . $approver->wotr_status : "please wait the previous approver to do approval"; ?>';
+
+        // $('#v_message').text(message);
 
         $.ajax({
             url: "/imageview",

@@ -1475,6 +1475,7 @@ class wocontroller extends Controller
 
                 if ($req->thisbutton == "btncancel") {
                     //cancel wo ketika status masih firm
+
                     DB::table('wo_mstr')
                         ->where('wo_number', '=', $req->tmp_wonbr)
                         ->where('wo_status', '=', 'firm')
@@ -1494,10 +1495,11 @@ class wocontroller extends Controller
                         ->where('wo_number', '=', $req->tmp_wonbr)
                         ->first();
 
-                    if ($checksr->wo_sr_number !== "") {
+                    if ($checksr->wo_sr_number != "") {
+
                         DB::table('wo_mstr')
                             ->where('wo_number', '=', $req->tmp_wonbr)
-                            ->where('wo_status', '=', 'firm')
+                            // ->where('wo_status', '=', 'firm')
                             ->update([
                                 'wo_cancel_note' => $req->notecancel,
                                 'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -1610,13 +1612,23 @@ class wocontroller extends Controller
                     //hapus data wo
 
                     //harus hapus data wo yang terkait di table wo_trans_approval terlebih dahulu
-                    DB::table('wo_trans_approval')
-                            ->where('wotr_mstr_id','=', $checksr->id)
+                    $relatedAppr = DB::table('wo_trans_approval')
+                        ->where('wotr_mstr_id', '=', $checksr->id)
+                        ->exists();   //pengecekan apakah ada relasi wo trans approval ke wo mstr
+
+                    if ($relatedAppr == true) { //jika ada maka dapat menghapus data di wo trans approval terlebih dahulu
+                        DB::table('wo_trans_approval')
+                            ->where('wotr_mstr_id', '=', $checksr->id)
                             ->delete();
 
-                    DB::table('wo_mstr')
-                        ->where('wo_number', '=', $req->tmp_wonbr)
-                        ->delete();
+                        DB::table('wo_mstr')
+                            ->where('wo_number', '=', $req->tmp_wonbr)
+                            ->delete();
+                    } else {  //jika tidak maka dapat langsung menghapus data wo mstr
+                        DB::table('wo_mstr')
+                            ->where('wo_number', '=', $req->tmp_wonbr)
+                            ->delete();
+                    }
 
                     DB::table('wo_dets_sp')
                         ->where('wd_sp_wonumber')
@@ -1784,6 +1796,10 @@ class wocontroller extends Controller
                         }
 
                         //hapus data wo
+                        DB::table('wo_trans_approval')
+                            ->where('wotr_mstr_id', '=', $checksr->id)
+                            ->delete();
+                            
                         DB::table('wo_mstr')
                             ->where('wo_number', '=', $req->tmp_wonbr)
                             ->delete();
@@ -2149,6 +2165,7 @@ class wocontroller extends Controller
             }
         }
     }
+
     public function wopagingstart(Request $req)
     {
         // dd('aaa');
@@ -2218,35 +2235,21 @@ class wocontroller extends Controller
                 if ($wonumber == '' and $asset == '' and $status == '' and $priority == '') {
 
                     $user = Session()->get('username');
-                    // dd($user);
-                    $datawo = DB::table('wo_mstr')
+
+                    $data = DB::table('wo_mstr')
                         ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                         ->where(function ($status) {
                             $status->where('wo_status', '=', 'released');
                             $status->orWhere('wo_status', '=', 'started');
                         })
-                        ->get();
-
-                    $data = [];
-
-                    foreach ($datawo as $value) {
-                        $dataeng = $value->wo_list_engineer;
-                        $arrayeng = explode(';', $dataeng);
-                        // dd($arrayeng);
-                        if (in_array($user, $arrayeng)) {
-
-                            $data = DB::table('wo_mstr')
-                                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
-                                ->where(function ($status) {
-                                    $status->where('wo_status', '=', 'released');
-                                    $status->orWhere('wo_status', '=', 'started');
-                                })
-                                ->where('wo_list_engineer', $dataeng)
-                                ->orderby('wo_system_create', 'desc')
-                                ->orderBy('wo_mstr.id', 'desc')
-                                ->paginate(10);
-                        }
-                    }
+                        ->where(function ($query) use ($user) {
+                            $query->where('wo_list_engineer', '=', $user . ';')
+                                ->orWhere('wo_list_engineer', 'LIKE', $user . ';%')
+                                ->orWhere('wo_list_engineer', 'LIKE', '%;' . $user . ';%')
+                                ->orWhere('wo_list_engineer', 'LIKE', '%;' . $user)
+                                ->orWhere('wo_list_engineer', '=', $user);
+                        })
+                        ->paginate(10);
 
                     return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
                 } else {
@@ -2268,36 +2271,21 @@ class wocontroller extends Controller
                     }
 
                     $user = Session()->get('username');
-                    // dd($user);
-                    $datawo = DB::table('wo_mstr')
+
+                    $data = DB::table('wo_mstr')
                         ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                         ->where(function ($status) {
                             $status->where('wo_status', '=', 'released');
                             $status->orWhere('wo_status', '=', 'started');
                         })
-                        ->get();
-
-                    $data = [];
-
-                    foreach ($datawo as $value) {
-                        $dataeng = $value->wo_list_engineer;
-                        $arrayeng = explode(';', $dataeng);
-                        // dd($arrayeng);
-                        if (in_array($user, $arrayeng)) {
-
-                            $data = DB::table('wo_mstr')
-                                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
-                                ->where(function ($status) {
-                                    $status->where('wo_status', '=', 'released');
-                                    $status->orWhere('wo_status', '=', 'started');
-                                })
-                                ->where('wo_list_engineer', $dataeng)
-                                ->whereRaw($kondisi)
-                                ->orderby('wo_system_create', 'desc')
-                                ->orderBy('wo_mstr.id', 'desc')
-                                ->paginate(10);
-                        }
-                    }
+                        ->where(function ($query) use ($user) {
+                            $query->where('wo_list_engineer', '=', $user . ';')
+                                ->orWhere('wo_list_engineer', 'LIKE', $user . ';%')
+                                ->orWhere('wo_list_engineer', 'LIKE', '%;' . $user . ';%')
+                                ->orWhere('wo_list_engineer', 'LIKE', '%;' . $user)
+                                ->orWhere('wo_list_engineer', '=', $user);
+                        })
+                        ->paginate(10);
                     // dd($data);
                     // dd($_SERVER['REQUEST_URI']);                
                     return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
@@ -2305,6 +2293,136 @@ class wocontroller extends Controller
             }
         }
     }
+
+    public function woapprovalpaging(Request $req)
+    {
+        // dd('aaa');
+        //   dd($req->get('woperiod'));
+        //  dd(Carbon::today()->subDay(2));
+        if ($req->ajax()) {
+            $sort_by   = $req->get('sortby');
+            $sort_type = $req->get('sorttype');
+            $wonumber  = $req->get('wonumber');
+            $asset     = $req->get('woasset');
+            $status    = $req->get('wostatus');
+            $priority  = $req->get('wopriority');
+            // $period    = $req->get('woperiod');
+            // dd($req->all());
+
+            $usernow = DB::table('users')
+                ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+                // ->select('approver')
+                ->where('username', '=', session()->get('username'))
+                ->get();
+
+            // dd($usernow);
+
+            if ($wonumber == '' and $asset == '' and $status == '' and $priority == '') {
+                $data = WOMaster::query()
+                    ->with(['getCurrentApprover'])
+                    // ->where('wo_status', '=', 'finished')
+                    // ->orWhere('wo_status', '=', 'started')
+                    ->whereHas('getWOTransAppr', function ($q) {
+                        $q->where('wotr_status', '=', 'waiting for approval');
+                        $q->orWhere('wotr_status', '=', 'approved');
+                        $q->orWhere('wotr_status', '=', 'revision');
+                        $q->where('wo_status', '=', 'finished');
+                        $q->orWhere('wo_status', '=', 'started');
+                    });
+                $data = $data
+                    ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+                    // ->leftjoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
+                    // ->leftjoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
+                    // ->where(function ($status) {
+                    //     //status finished --> setelah selesai melakukan wo reporting
+                    //     $status->where('wo_status', '=', 'finished');
+                    //     //hal ini dilakukan sementara karena wo trans sudah mulai terbuat saat proses SR convert to WO (finalizenya wo trans approval akan terbuat saat wo reporting)
+                    //     //kalo statusnya null berarti belum bisa approve (perubahan status null -> waiting for approval pada saat wo reporting)
+                    //     $status->orWhere('wotr_status', '=', 'waiting for approval');
+                    // })
+                    ->selectRaw('wo_mstr.*, asset_mstr.asset_code, asset_mstr.asset_desc, wotr_status, wotr_reason, wotr_dept_approval')
+                    ->orderby('wo_system_create', 'desc')
+                    ->orderBy('wo_mstr.id', 'desc')
+                    ->groupBy('wo_mstr.wo_number');
+
+                if (Session::get('role') <> 'ADMIN' && Session::get('role') <> 'QCA') {
+                    $data = $data->join('wo_trans_approval', function ($join) {
+                        $join->on('wo_mstr.id', '=', 'wo_trans_approval.wotr_mstr_id')
+                            ->where('wotr_dept_approval', '=', Session::get('department'))
+                            ->where('wotr_role_approval', '=', Session::get('role'))
+                            ->where('wo_department', Session::get('department'));
+                    });
+                    // dd(1);
+                } else {
+                    $data = $data->join('wo_trans_approval', 'wo_trans_approval.wotr_mstr_id', 'wo_mstr.id');
+                    // dd(2);
+                }
+
+                $data = $data->paginate(10);
+                // dd($data);
+
+                return view('workorder.table-woapproval', ['data' => $data, 'usernow' => $usernow]);
+            } else {
+                $kondisi = "wo_mstr.id > 0";
+
+                if ($wonumber != '') {
+                    $kondisi .= " and wo_number LIKE '%" . $wonumber . "%'";
+                    // dd($kondisi);
+                }
+                if ($asset != '') {
+                    // $kondisi .= " and asset_code LIKE '%" . $asset . "%'";
+                    $kondisi .= " AND (asset_code LIKE '%" . $asset . "%' OR asset_desc LIKE '%" . $asset . "%')";
+                }
+                if ($status != '') {
+                    $kondisi .= " and wotr_status ='" . $status . "'";
+                }
+                if ($priority != '') {
+                    $kondisi .= " and wo_priority = '" . $priority . "'";
+                }
+
+                $data = WOMaster::query()
+                    ->with(['getCurrentApprover'])
+                    // ->where('wo_status', '=', 'finished')
+                    // ->where('wo_status', '=', 'started')
+                    ->whereHas('getWOTransAppr', function ($q) {
+                        $q->where('wotr_status', '=', 'waiting for approval');
+                        $q->orWhere('wotr_status', '=', 'approved');
+                        $q->orWhere('wotr_status', '=', 'revision');
+                        $q->where('wo_status', '=', 'finished');
+                        $q->orWhere('wo_status', '=', 'started');
+                    });
+                $data = $data
+                    ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+                    ->leftjoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
+                    ->leftjoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
+                    ->selectRaw('wo_mstr.*, asset_mstr.asset_code, asset_mstr.asset_desc, wotr_status, wotr_reason, wotr_dept_approval')
+                    ->whereRaw($kondisi)
+                    ->orderby('wo_system_create', 'desc')
+                    ->orderBy('wo_mstr.id', 'desc')
+                    ->groupBy('wo_mstr.wo_number');
+
+                if (Session::get('role') <> 'ADMIN' && Session::get('role') <> 'QCA') {
+                    $data = $data->join('wo_trans_approval', function ($join) {
+                        $join->on('wo_mstr.id', '=', 'wo_trans_approval.wotr_mstr_id')
+                            ->where('wotr_dept_approval', '=', Session::get('department'))
+                            ->where('wotr_role_approval', '=', Session::get('role'))
+                            ->where('wo_department', Session::get('department'));
+                    });
+
+                    // dd(1);
+                } else {
+                    $data = $data->join('wo_trans_approval', 'wo_trans_approval.wotr_mstr_id', 'wo_mstr.id');
+                    // dd(4);
+                }
+
+                $data = $data->paginate(10);
+                // dd($data);
+                // dd($_SERVER['REQUEST_URI']);                
+                return view('workorder.table-woapproval', ['data' => $data, 'usernow' => $usernow]);
+            }
+        }
+    }
+
     public function wopagingreport(Request $req)
     {
         // dd('aaa');
@@ -2480,12 +2598,14 @@ class wocontroller extends Controller
         // check apakah wo berasal dari SR
         // variable tampung sr note
         $srnote = '';
+        $rejectreason = '';
         if ($currwo->wo_sr_number != "") {
             $getSRInfo = DB::table('service_req_mstr')
                 ->where('sr_number', '=', $currwo->wo_sr_number)
                 ->first();
 
             $srnote = $getSRInfo->sr_note;
+            $rejectreason = $getSRInfo->sr_acceptance_note;
         }
 
         if ($currwo->wo_failure_type !== null) {
@@ -2587,6 +2707,11 @@ class wocontroller extends Controller
             ->where('qcs_code', '=', $currwo->wo_qcspec_code)
             ->first();
 
+        $getDeptDesc = DB::table('dept_mstr')
+            ->select('dept_code', 'dept_desc')
+            ->where('dept_code', '=', $currwo->wo_department)
+            ->first();
+
         return response()->json([
             'wo_master' => $currwo,
             'asset' => $getAssetDesc,
@@ -2599,6 +2724,8 @@ class wocontroller extends Controller
             'splist' => $getSPlistDesc,
             'qcslist' => $getQClistDesc,
             'sr_note' => $srnote,
+            'dept_desc' => $getDeptDesc,
+            'sr_acceptance_note' => $rejectreason,
         ]);
     }
 
@@ -2796,6 +2923,120 @@ class wocontroller extends Controller
         ]);
     }
 
+    public function woapprovaldetailinfo($wonumber)
+    {
+        //ambil data untuk header wo report detail
+        $dataheader = DB::table('wo_mstr')
+            ->leftJoin('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+            ->where('wo_number', '=', $wonumber)
+            ->first();
+
+        // dd($dataheader);
+
+        $idwo = DB::table('wo_mstr')->where('wo_number', '=', $wonumber)
+            ->selectRaw('id')
+            ->first();
+
+        $wo = DB::table('wo_mstr')->where('wo_number', '=', $wonumber)
+            // ->selectRaw('id')
+            ->first();
+
+        // dd($idwo);
+
+        //ambil data failure code
+        $asfn_det = DB::table('asfn_det')
+            ->where('asfn_asset', '=', $dataheader->asset_group)
+            ->where('asfn_fntype', '=', $dataheader->asset_type)
+            ->count();
+
+        if ($asfn_det > 0) {
+            //jika ada
+
+            $failure = DB::table('fn_mstr')
+                ->leftJoin('asfn_det', 'asfn_det.asfn_fncode', 'fn_mstr.fn_code')
+                ->where('asfn_asset', '=', $dataheader->asset_group)
+                ->where('asfn_fntype', '=', $dataheader->asset_type)
+                ->groupBy('asfn_fncode')
+                ->get();
+        } else {
+            //jika tidak ada
+
+            $failure = DB::table('fn_mstr')
+                ->get();
+        }
+
+        // ambil UM
+        $um = DB::table('um_mstr')
+            ->get();
+
+        // ambil data deskripsi engineer
+        $listeng_wo = $dataheader->wo_list_engineer;
+
+        $listeng_wo = explode(';', $listeng_wo);
+
+        $engData = array();
+
+        foreach ($listeng_wo as $datalisteng) {
+
+            $engdesc = DB::table('eng_mstr')
+                ->where('eng_code', '=', $datalisteng)
+                ->first()->eng_desc;
+
+            $engData[] = array('eng_code' => $datalisteng, 'eng_desc' => $engdesc);
+        }
+
+
+        //ambil data spare part dari wo_dets_sp
+        $datasparepart = DB::table('wo_dets_sp')
+            ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
+            ->where('wd_sp_wonumber', '=', $wonumber)
+            ->groupBy('wd_sp_wonumber', 'wd_sp_spcode')
+            ->select('*', DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'))
+            ->get();
+
+        // dd($datasparepart);
+
+        // ambil semua data spare part
+        $sp_all = DB::table('sp_mstr')
+            ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
+            ->where('spm_active', '=', 'Yes')
+            ->get();
+
+        // ambil data instruction step dari wo_dets_ins
+        $datainstruction = DB::table('wo_dets_ins')
+            ->leftJoin('um_mstr', 'um_mstr.um_code', 'wo_dets_ins.wd_ins_durationum')
+            ->where('wd_ins_wonumber', '=', $wonumber)
+            ->get();
+
+        // dd($datainstruction);
+
+        // ambil semua step instruction dari ins_list
+        $ins_all = DB::table('ins_list')
+            ->select('ins_code', 'ins_desc', 'ins_duration', 'ins_durationum', 'ins_manpower', 'ins_step', 'ins_stepdesc', 'ins_ref')
+            ->get();
+
+
+        $dataqcparam = DB::table('wo_dets_qc')
+            ->where('wd_qc_wonumber', '=', $wonumber)
+            ->get();
+
+
+
+        $approver = DB::table('wo_trans_approval')
+            ->leftJoin('users', 'users.id', 'wo_trans_approval.wotr_approved_by')
+            ->where('wotr_mstr_id', $wo->id)
+            ->where('wotr_role_approval', session()->get('role'))
+            ->first();
+
+        // dd($approver);
+
+        return view('workorder.woapproval-detail-info', [
+            'header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all,
+            'instruction' => $datainstruction, 'inslist' => $ins_all, 'um' => $um, 'idwo' => $idwo,
+            'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure, 'approver' => $approver
+        ]);
+    }
+
     public function getwsasupply(Request $req)
     {
         $assetsite = $req->get('assetsite');
@@ -2864,113 +3105,58 @@ class wocontroller extends Controller
                 ->first();
             // dd($usernow);
 
-            if (Session::get('role') == 'ADMIN') {
+            $data = WOMaster::query()
+                ->with(['getCurrentApprover'])
+                ->whereHas('getWOTransAppr', function ($q) {
+                    $q->where('wotr_status', '=', 'waiting for approval');
+                    $q->orWhere('wotr_status', '=', 'approved');
+                    $q->orWhere('wotr_status', '=', 'revision');
+                    $q->where('wo_status', '=', 'finished');
+                    $q->orWhere('wo_status', '=', 'started');
+                });
+            $data = $data
+                ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+                ->leftjoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
+                ->leftjoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
+                // ->where(function ($status) {
+                //     //status finished --> setelah selesai melakukan wo reporting
+                //     $status->where('wo_status', '=', 'finished');
+                //     //hal ini dilakukan sementara karena wo trans sudah mulai terbuat saat proses SR convert to WO (finalizenya wo trans approval akan terbuat saat wo reporting)
+                //     //kalo statusnya null berarti belum bisa approve (perubahan status null -> waiting for approval pada saat wo reporting)
+                //     $status->orWhere('wotr_status', '=', 'waiting for approval');
+                // })
+                ->selectRaw('wo_mstr.*, asset_mstr.asset_code, asset_mstr.asset_desc, wotr_status, wotr_reason, wotr_dept_approval')
+                ->orderby('wo_system_create', 'desc')
+                ->orderBy('wo_mstr.id', 'desc')
+                ->groupBy('wo_mstr.wo_number');
 
-                // $data = WOMaster::query()->with('getCurrentApprover');
-
-                $data = WOMaster::query()
-                    ->with(['getCurrentApprover'])
-                    ->where('wo_status', '=', 'finished')
-                    ->whereHas('getWOTransAppr', function ($q) {
-                        $q->where('wotr_status', '=', 'waiting for approval');
-                        $q->orWhere('wotr_status', '=', 'approved');
-                        $q->orWhere('wotr_status', '=', 'revision');
-                    });
-                $data = $data
-                    ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
-                    ->leftjoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
-                    ->leftjoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
-                    // ->where(function ($status) {
-                    //     //status finished --> setelah selesai melakukan wo reporting
-                    //     $status->where('wo_status', '=', 'finished');
-                    //     //hal ini dilakukan sementara karena wo trans sudah mulai terbuat saat proses SR convert to WO (finalizenya wo trans approval akan terbuat saat wo reporting)
-                    //     //kalo statusnya null berarti belum bisa approve (perubahan status null -> waiting for approval pada saat wo reporting)
-                    //     $status->orWhere('wotr_status', '=', 'waiting for approval');
-                    // })
-                    ->selectRaw('wo_mstr.*, asset_mstr.asset_code, asset_mstr.asset_desc')
-                    ->orderby('wo_system_create', 'desc')
-                    ->orderBy('wo_mstr.id', 'desc')
-                    ->groupBy('wo_mstr.wo_number')
-                    ->paginate(10);
-                // dd($data);   
-
-                $engineer = DB::table('users')
-                    ->join('roles', 'users.role_user', 'roles.role_code')
-                    ->where('role_desc', '=', 'Engineer')
-                    ->get();
-                $asset = DB::table('wo_mstr')
-                    ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
-                    ->join('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
-                    ->where(function ($status) {
-                        $status->where('wo_status', '=', 'finished'); //status finished --> setelah selesai melakukan wo reporting
-                    })
-                    ->groupBy('asset_code')
-                    ->orderBy('asset_code')
-                    ->get();
+            if (Session::get('role') <> 'ADMIN' && Session::get('role') <> 'QCA') {
+                $data = $data->join('wo_trans_approval', function ($join) {
+                    $join->on('wo_mstr.id', '=', 'wo_trans_approval.wotr_mstr_id')
+                        ->where('wotr_dept_approval', '=', Session::get('department'))
+                        ->where('wotr_role_approval', '=', Session::get('role'))
+                        ->where('wo_department', Session::get('department'));
+                });
             } else {
-                $user_role = Session()->get('role');
-                $user_dept = Session()->get('department');
-
-                //ambil data approval wo
-                if ($user_role == 'QCA') {
-                    //jika rolenya qc maka gausah difilter departemennya
-                    $woapprover = DB::table('wo_trans_approval')
-                        ->where('wotr_role_approval', $user_role)
-                        ->get();
-                } else {
-                    $woapprover = DB::table('wo_trans_approval')
-                        ->where('wotr_role_approval', $user_role)
-                        ->where('wotr_dept_approval', $user_dept)
-                        ->get();
-                }
-                // dd($woapprover);
-
-                if (count($woapprover) == 0) {
-                    //jika user yg login bukan approver WO
-                    return view('service.accessdenied');
-                } else {
-                    //jika user yg login adalah approver WO
-                    $data = WOMaster::query()
-                        ->with(['getCurrentApprover'])
-                        ->where('wo_status', '=', 'finished')
-                        ->whereHas('getWOTransAppr', function ($q) {
-                            $q->where('wotr_status', '=', 'waiting for approval');
-                            $q->orWhere('wotr_status', '=', 'approved');
-                            $q->orWhere('wotr_status', '=', 'revision');
-                        });
-                    $data = $data
-                        ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
-                        ->leftjoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
-                        ->leftjoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
-                        // ->where(function ($status) {
-                        //     //status finished --> setelah selesai melakukan wo reporting
-                        //     $status->where('wo_status', '=', 'finished');
-                        //     //hal ini dilakukan sementara karena wo trans sudah mulai terbuat saat proses SR convert to WO (finalizenya wo trans approval akan terbuat saat wo reporting)
-                        //     //kalo statusnya null berarti belum bisa approve (perubahan status null -> waiting for approval pada saat wo reporting)
-                        //     $status->orWhere('wotr_status', '=', 'waiting for approval');
-                        // })
-                        ->selectRaw('wo_mstr.*, asset_mstr.asset_code, asset_mstr.asset_desc')
-                        ->orderby('wo_system_create', 'desc')
-                        ->orderBy('wo_mstr.id', 'desc')
-                        ->groupBy('wo_mstr.wo_number')
-                        ->paginate(10);
-                    // dd($data);
-
-                    $engineer = DB::table('users')
-                        ->join('roles', 'users.role_user', 'roles.role_code')
-                        ->where('role_desc', '=', 'Engineer')
-                        ->get();
-                    $asset = DB::table('wo_mstr')
-                        ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
-                        ->join('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
-                        ->where(function ($status) {
-                            $status->where('wo_status', '=', 'finished'); //status finished --> setelah selesai melakukan wo reporting
-                        })
-                        ->groupBy('asset_code')
-                        ->orderBy('asset_code')
-                        ->get();
-                }
+                $data = $data->join('wo_trans_approval', 'wo_trans_approval.wotr_mstr_id', 'wo_mstr.id');
             }
+
+            $data = $data->paginate(10);
+
+            $engineer = DB::table('users')
+                ->join('roles', 'users.role_user', 'roles.role_code')
+                ->where('role_desc', '=', 'Engineer')
+                ->get();
+            $asset = DB::table('wo_mstr')
+                ->selectRaw('MIN(asset_desc) as asset_desc, MIN(asset_code) as asset_code')
+                ->join('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+                ->where(function ($status) {
+                    $status->where('wo_status', '=', 'finished'); //status finished --> setelah selesai melakukan wo reporting
+                    $status->orWhere('wo_status', '=', 'started'); //status finished --> setelah selesai melakukan wo reporting
+                })
+                ->groupBy('asset_code')
+                ->orderBy('asset_code')
+                ->get();
             if ($req->ajax()) {
                 return view('workorder.table-woapproval', ['data' => $data]);
             } else {
@@ -2999,7 +3185,7 @@ class wocontroller extends Controller
             ->selectRaw('wo_mstr.*, asset_mstr.asset_code, asset_mstr.asset_desc, service_req_mstr.sr_req_by')
             ->first();
 
-        // dd($womstr);
+        $srmstr = DB::table('service_req_mstr')->where('wo_number', $womstr->wo_number)->first();
 
         $asset = $womstr->asset_code . ' -- ' . $womstr->asset_desc;
         $srnumber = $womstr->wo_number;
@@ -3012,7 +3198,7 @@ class wocontroller extends Controller
         // dd($countwoapprover);
 
         //cek role user yg login
-        if (Session::get('role') <> 'ADMIN') {
+        if (Session::get('role') <> 'ADMIN' && Session::get('role') <> 'QCA') {
             //jika user bukan admin
             $woapprover = DB::table('wo_trans_approval')
                 ->where('wotr_mstr_id', $idwo)
@@ -3076,6 +3262,30 @@ class wocontroller extends Controller
             'updated_at' => Carbon::now()->toDateTimeString(),
         ];
 
+        $srupdate = [
+            'sr_status' => 'Acceptance',
+            'sr_status_approval' => 'waiting for acceptance',
+            'updated_at' => Carbon::now()->toDateTimeString(),
+        ];
+
+        $srupdatehist = [
+            'sr_number'         => $srmstr->sr_number,
+            'sr_fail_type'      => $srmstr->sr_fail_type,
+            'sr_fail_code'      => $srmstr->sr_fail_code,
+            'sr_impact'         => $srmstr->sr_impact,
+            'sr_priority'       => $srmstr->sr_priority,
+            'sr_note'           => $srmstr->sr_note,
+            'sr_cancel_note'    => $reason,
+            'sr_req_date'       => $srmstr->sr_req_date,
+            'sr_req_time'       => $srmstr->sr_req_time,
+            'sr_status'         => 'Acceptance',
+            'sr_status_approval' => 'User acceptance',
+            'sr_eng_approver'   => $srmstr->sr_eng_approver,
+            'sr_action'         => 'SR needs to user acceptance',
+            'created_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+            'updated_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+        ];
+
         if ($req->action == 'approve') {
 
             $srnumber = $womstr->wo_sr_number ? $womstr->wo_sr_number : $womstr->wo_number;
@@ -3126,6 +3336,13 @@ class wocontroller extends Controller
                                     'system_update' => Carbon::now()->toDateTimeString(),
                                 ]);
 
+                            DB::table('service_req_mstr')
+                                ->where('sr_number', '=', $womstr->wo_sr_number)
+                                ->update($srupdate);
+
+                            DB::table('service_req_mstr_hist')
+                                ->insert($srupdatehist);
+
                             //email terikirm ke user yang membuat SR
                             // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
                         }
@@ -3168,6 +3385,13 @@ class wocontroller extends Controller
                                     'wo_action' => 'acceptance',
                                     'system_update' => Carbon::now()->toDateTimeString(),
                                 ]);
+
+                            DB::table('service_req_mstr')
+                                ->where('sr_number', '=', $womstr->wo_sr_number)
+                                ->update($srupdate);
+
+                            DB::table('service_req_mstr_hist')
+                                ->insert($srupdatehist);
 
                             //email terikirm ke user yang membuat SR
                             // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
@@ -3247,12 +3471,19 @@ class wocontroller extends Controller
                                     'system_update' => Carbon::now()->toDateTimeString(),
                                 ]);
 
+                            DB::table('service_req_mstr')
+                                ->where('sr_number', '=', $womstr->wo_sr_number)
+                                ->update($srupdate);
+
+                            DB::table('service_req_mstr_hist')
+                                ->insert($srupdatehist);
+
                             //email terikirm ke user yang membuat SR
                             // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
                         }
                     }
                 }
-            }else{
+            } else {
                 if ($womstr->wo_sr_number == "") {
                     //jika wo tidak memiliki sr number 
                     DB::table('wo_mstr')
@@ -3283,6 +3514,13 @@ class wocontroller extends Controller
                             'wo_action' => 'acceptance',
                             'system_update' => Carbon::now()->toDateTimeString(),
                         ]);
+
+                    DB::table('service_req_mstr')
+                        ->where('sr_number', '=', $womstr->wo_sr_number)
+                        ->update($srupdate);
+
+                    DB::table('service_req_mstr_hist')
+                        ->insert($srupdatehist);
 
                     //email terikirm ke user yang membuat SR
                     // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
@@ -3379,7 +3617,7 @@ class wocontroller extends Controller
                 $output .= $key + 1;
                 $output .= '</td>';
                 $output .= '<td>';
-                $output .= $approver->dept_user;
+                $output .= $approver->wotr_dept_approval != null ? $approver->wotr_dept_approval : $approver->dept_user;
                 $output .= '</td>';
                 $output .= '<td>';
                 $output .= $approver->wotr_role_approval;
@@ -3486,19 +3724,19 @@ class wocontroller extends Controller
                 $user = Session()->get('username');
 
                 $data = DB::table('wo_mstr')
-                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
-                ->where(function ($status) {
-                            $status->where('wo_status', '=', 'released');
-                            $status->orWhere('wo_status', '=', 'started');
-                        })
-                ->where(function ($query) use ($user) {
-                    $query->where('wo_list_engineer', '=', $user . ';')
-                        ->orWhere('wo_list_engineer', 'LIKE', $user . ';%')
-                        ->orWhere('wo_list_engineer', 'LIKE', '%;' . $user . ';%')
-                        ->orWhere('wo_list_engineer', 'LIKE', '%;' . $user)
-                        ->orWhere('wo_list_engineer', '=', $user);
-                })
-                ->paginate(10);
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+                    ->where(function ($status) {
+                        $status->where('wo_status', '=', 'released');
+                        $status->orWhere('wo_status', '=', 'started');
+                    })
+                    ->where(function ($query) use ($user) {
+                        $query->where('wo_list_engineer', '=', $user . ';')
+                            ->orWhere('wo_list_engineer', 'LIKE', $user . ';%')
+                            ->orWhere('wo_list_engineer', 'LIKE', '%;' . $user . ';%')
+                            ->orWhere('wo_list_engineer', 'LIKE', '%;' . $user)
+                            ->orWhere('wo_list_engineer', '=', $user);
+                    })
+                    ->paginate(10);
 
                 $engineer = DB::table('users')
                     ->join('roles', 'users.role_user', 'roles.role_code')
@@ -3700,16 +3938,16 @@ class wocontroller extends Controller
             ->where('inp_avail', '=', 'Yes')
             ->get();
 
-        
+
         $datatemp = [];
         $datatemp_required = [];
-        foreach($wo_sp as $spdet){
-            
+        foreach ($wo_sp as $spdet) {
+
 
             //ambil data qty supply di qad
-            foreach($datalocsupply as $invsupply){
+            foreach ($datalocsupply as $invsupply) {
                 //wsa ambil data ke qad
-                $qadsupplydata = (new WSAServices())->wsagetsupply($spdet->wd_sp_spcode,$invsupply->inp_supply_site,$invsupply->inp_loc);
+                $qadsupplydata = (new WSAServices())->wsagetsupply($spdet->wd_sp_spcode, $invsupply->inp_supply_site, $invsupply->inp_loc);
 
                 if ($qadsupplydata === false) {
 
@@ -3721,9 +3959,9 @@ class wocontroller extends Controller
                     // jika hasil WSA ke QAD tidak ditemukan
                     if ($qadsupplydata[1] !== "false") {
                         // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
-                    
+
                         $resultWSA = $qadsupplydata[0];
-                        
+
                         $t_domain = (string) $resultWSA[0]->t_domain;
                         $t_part = (string) $resultWSA[0]->t_part;
                         $t_site = (string) $resultWSA[0]->t_site;
@@ -3737,7 +3975,7 @@ class wocontroller extends Controller
                             't_loc' => $t_loc,
                             't_qtyoh' => $t_qtyoh,
                         ]);
-                    }else{
+                    } else {
                         $wsa = ModelsQxwsa::first();
                         $domain = $wsa->wsas_domain;
 
@@ -3748,24 +3986,21 @@ class wocontroller extends Controller
                             't_loc' => $invsupply->inp_loc,
                             't_qtyoh' => 0,
                         ]);
-
                     }
                 }
-
             }
 
             //ambil data qty inv required
             $invreqdata = DB::table('inv_required')
-                    ->where('ir_spare_part','=', $spdet->wd_sp_spcode)
-                    ->where('ir_site', '=', $data->wo_site)
-                    ->first();
-            
+                ->where('ir_spare_part', '=', $spdet->wd_sp_spcode)
+                ->where('ir_site', '=', $data->wo_site)
+                ->first();
+
             array_push($datatemp_required, [
                 't_spcode' => $invreqdata->ir_spare_part,
                 't_asset_site' => $invreqdata->ir_site,
                 't_total_req' => $invreqdata->inv_qty_required,
             ]);
-            
         }
 
         //proses pengelompokan berdasarkan part sehingga didapat total qty onhand untuk part nya data QAD
@@ -3773,18 +4008,18 @@ class wocontroller extends Controller
             $part = $item['t_part'];
             $site = $item['t_site'];
             $qtyoh = $item['t_qtyoh'];
-        
+
             if (!isset($result[$part])) {
                 $result[$part] = [
                     'part' => $part,
                     'qtyoh' => 0,
                 ];
             }
-        
+
             $result[$part]['qtyoh'] += $qtyoh;
         }
 
-        return view('workorder.wosparepart-released', compact('data', 'wo_sp','datatemp_required','result'));
+        return view('workorder.wosparepart-released', compact('data', 'wo_sp', 'datatemp_required', 'result'));
     }
 
     public function reportingwo(Request $req)
@@ -4528,7 +4763,6 @@ class wocontroller extends Controller
                                 ->update([
                                     'wotr_status' => 'waiting for approval',
                                     'wotr_reason' => null,
-                                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 ]);
 
                             //input ke wo trans approval hist jika ada approval department

@@ -6,7 +6,7 @@
     @else
     <td>{{$show->wo_number}}</td>
     @endif
-    <td>{{$show->asset_desc}}</td>
+    <td>{{$show->asset_code}} -- {{$show->asset_desc}}</td>
     <!-- <td>{{$show->dept_desc}}</td> -->
     <td>{{$show->wo_status}}</td>
     <td>{{$show->sr_priority}}</td>
