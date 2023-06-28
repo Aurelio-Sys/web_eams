@@ -599,7 +599,7 @@ class ServiceController extends Controller
         if ($kepalaengineer) {
 
             //jika yg login user adalah spvsr
-            if ($engineer_approver != null) {
+            if ($engineer_approver != null || Session::get('role') == 'ADMIN') {
                 $data = DB::table('service_req_mstr')
                     ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_asset')
                     ->leftJoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
@@ -649,6 +649,7 @@ class ServiceController extends Controller
                     ->orderBy('sr_req_date', 'DESC')
                     ->orderBy('sr_number', 'DESC')
                     ->groupBy('sr_number');
+                    
             }
 
             $data = $data->paginate(10);
