@@ -687,6 +687,10 @@
           <div class="col-md-4">
             <textarea id="srcancelnote" type="text" class="form-control" name="srcancelnote" rows="3" readonly></textarea>
           </div>
+          <label for="accnote" class="col-md-2 col-form-label">User Acceptance Note</label>
+          <div class="col-md-4">
+            <textarea id="accnote" type="text" class="form-control" name="accnote" rows="3" readonly></textarea>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
@@ -911,6 +915,8 @@
       var reason = $(this).data('reason');
       var engineer = $(this).data('engineer');
       var srcancelnote = $(this).data('srcancelnote');
+      var wocancelnote = $(this).data('wocancelnote');
+      var accnote = $(this).data('accnote');
       var reason = $(this).data('reason');
 
       var srdate = $(this).data('srdate');
@@ -953,6 +959,7 @@
       document.getElementById('wostatus').value = wostatus;
       document.getElementById('approver').value = approver;
       document.getElementById('srcancelnote').value = srcancelnote;
+      document.getElementById('wocancelnote').value = wocancelnote;
 
       if (wostatus == 'Open') {
         document.getElementById("wostatus").style.color = 'green';
@@ -1060,6 +1067,7 @@
       document.getElementById('dept').value = dept;
       document.getElementById('assetloc').value = assetloc;
       document.getElementById('srreason').value = reason;
+      document.getElementById('accnote').value = accnote;
 
       document.getElementById('hiddenreq').value = reqby;
       document.getElementById('priority').value = priority;

@@ -439,8 +439,10 @@ Route::group(['middleware' => ['auth']], function() {
 	//wo approval
 	route::get('/routewo','wocontroller@routewo');
 	route::get('/woapprovalbrowse','wocontroller@woapprovalbrowse')->name('woapprovalbrowse'); 
+	route::get('/woapprovalbrowse/pagination','wocontroller@woapprovalpaging')->name('woapprovalpaging'); 
 	route::post('/approvewo','wocontroller@approvewo'); 
 	route::get('/woapprovaldetail/{wonumber}', [wocontroller::class, 'woapprovaldetail'])->name('approvalWO');
+	route::get('/woapprovaldetail-info/{wonumber}', [wocontroller::class, 'woapprovaldetailinfo'])->name('approvalWOInfo');
 
 	//wo reporting and close
 	route::get('/woreport', 'wocontroller@wocloselist')->name('woreport');
@@ -516,7 +518,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/donlodsr','ServiceController@donlodsr'); //tyas, excel SR
 	route::get('/useracceptance', 'ServiceController@useracceptance'); 
 	route::post('/acceptance', 'ServiceController@acceptance');
-	route::get('/useracceptance/search', 'ServiceController@useracceptancesearch');
+	route::get('/useracceptance/search', 'ServiceController@searchuseracc');
 	route::get('/downloadfile/{id}', 'ServiceController@downloadfile');
 	route::get('/listupload/{id}', 'ServiceController@listupload')->name('listupload');
 	route::get('/listuploadview/{id}', 'ServiceController@listuploadview')->name('listuploadview');

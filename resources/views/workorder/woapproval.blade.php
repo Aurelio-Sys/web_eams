@@ -53,12 +53,13 @@
         </div>
       </div>
       <div class="col-12 form-group row">
-        <label for="s_status" class="col-md-3 col-form-label text-md-left">{{ __('Work Order Status') }}</label>
+        <label for="s_status" class="col-md-3 col-form-label text-md-left">{{ __('Status Approval') }}</label>
         <div class="col-md-3 col-sm-12 mb-2 input-group">
           <select id="s_status" type="text" class="form-control" name="s_status">
-            <option value="">--Select Status--</option>
-            <option value="released">Released</option>
-            <option value="started">Started</option>
+            <option value="">--Select Status Approval--</option>
+            <option value="waiting for approval">Waiting for approval</option>
+            <option value="approved">Approved</option>
+            <option value="revision">Revision</option>
           </select>
         </div>
         <!-- <label for="" class="col-md-2 col-form-label text-md-left">{{ __('') }}</label> -->
@@ -104,11 +105,14 @@
     <table class="table table-bordered mini-table mt-4" id="dataTable" width="100%" cellspacing="0">
       <thead>
         <tr style="text-align: center;">
-          <th>Work Order Number</th>
-          <th>Asset</th>
-          <th>Status</th>
-          <th>Priority</th>
-          <th>Action</th>
+          <th width="9%">WO Number</th>
+          <th width="33%">Asset</th>
+          <th width="12%">Status Approval</th>
+          <th width="5%">Priority</th>
+          <th width="10%">Released by</th>
+          <th width="10%">Finished date</th>
+          <th width="10%">Finished time</th>
+          <th width="5%">Action</th>
         </tr>
       </thead>
       <tbody>
@@ -379,9 +383,9 @@
 
     function fetch_data(page, sort_type, sort_by, wonumber, woasset, wostatus, wopriority) {
       $.ajax({
-        url: "/wojoblist/pagination?page=" + page + "&sorttype=" + sort_type + "&sortby=" + sort_by + "&wonumber=" + wonumber + "&woasset=" + woasset + "&wostatus=" + wostatus + "&wopriority=" + wopriority,
+        url: "/woapprovalbrowse/pagination?page=" + page + "&sorttype=" + sort_type + "&sortby=" + sort_by + "&wonumber=" + wonumber + "&woasset=" + woasset + "&wostatus=" + wostatus + "&wopriority=" + wopriority,
         success: function(data) {
-          console.log(data);
+          // console.log(data);
           $('tbody').html('');
           $('tbody').html(data);
         }

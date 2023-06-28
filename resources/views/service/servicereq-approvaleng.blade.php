@@ -281,6 +281,7 @@
             <div class="col-md-7">
               <!-- <input id="priority" type="text" name="priority" class="form-control"> -->
               <select class="form-control priority" name="priority" id="priority" required>
+                <option value=''>Select Priority</option>
                 <option value='low'>Low</option>
                 <option value='medium'>Medium</option>
                 <option value='high'>High</option>

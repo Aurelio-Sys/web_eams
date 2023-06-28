@@ -97,7 +97,7 @@ A2110114 : menampilkan data detail SR dan WO sebelum user accept
 
 <!-- modal picking warehouse -->
 <!-- <input type="hidden" id="sessionusernow" name="sessionusernow" value="{{Session::get('username')}}"> -->
-<form action="/reqsp" method="GET">
+<!-- <form action="/useracceptance/search" method="GET"> -->
   <div class="container-fluid mb-2">
     <div class="row">
       <div class="col-md-12">
@@ -111,23 +111,25 @@ A2110114 : menampilkan data detail SR dan WO sebelum user accept
         <div class="col-12 form-group row">
 
           <!--FORM Search Disini-->
-          <label for="s_nomorrs" class="col-md-2 col-form-label text-md-right">{{ __('RS Number') }}</label>
+          <label for="s_nomorsr" class="col-md-3 col-form-label text-md-left">{{ __('SR Number') }}</label>
           <div class="col-md-3 col-sm-12 mb-2 input-group">
-            <input id="s_nomorrs" type="text" class="form-control" name="s_nomorrs" value="" autofocus autocomplete="off">
+            <input id="s_nomorsr" type="text" class="form-control" name="s_nomorsr" value="" autofocus autocomplete="off" placeholder="Search SR Number">
           </div>
-          <label for="s_reqby" class="col-md-2 col-form-label text-md-right">{{ __('Request By') }}</label>
+          <label for="s_nomorwo" class="col-md-2 col-form-label text-md-right">{{ __('WO Number') }}</label>
           <div class="col-md-3 col-sm-12 mb-2 input-group">
-            <select id="s_reqby" class="form-control" style="color:black" name="s_reqby" autofocus autocomplete="off">
-              <option value="">--Select Request By--</option>
-              <?php
-              // @foreach($requestby as $reqby)
-              // <option value="{{$reqby->username}}">{{$reqby->username}}</option>
-              // @endforeach
-              ?>
+            <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="" autofocus autocomplete="off" placeholder="Search WO Number">
+          </div>
+          <label for="s_status" class="col-md-2 col-form-label text-md-right" style="display: none;">{{ __('Status') }}</label>
+          <div class="col-md-3 col-sm-12 mb-2 input-group" style="display: none;">
+            <select id="s_status" type="text" class="form-control" name="s_status">
+              <option value="">--Select Status--</option>
+              <option value="waiting for acceptance">acceptance</option>
+              <option value="acceptance approved">closed</option>
+              <option value="acceptance revision">revision</option>
             </select>
           </div>
           <div class="col-md-1"></div>
-          <label for="s_datefrom" class="col-md-2 col-form-label text-md-right">{{ __('Needed Date From') }}</label>
+          <label for="s_datefrom" class="col-md-3 col-form-label text-md-left">{{ __('Needed Date From') }}</label>
           <div class="col-md-3 col-sm-12 mb-2 input-group">
             <input id="s_datefrom" type="date" class="form-control" name="s_datefrom" value="" autofocus autocomplete="off">
           </div>
@@ -136,14 +138,9 @@ A2110114 : menampilkan data detail SR dan WO sebelum user accept
             <input id="s_dateto" type="date" class="form-control" name="s_dateto" value="" autofocus autocomplete="off">
           </div>
           <div class="col-md-1"></div>
-          <label for="s_status" class="col-md-2 col-form-label text-md-right">{{ __('Status') }}</label>
+          <label for="s_asset" class="col-md-3 col-form-label text-md-left">{{ __('Asset') }}</label>
           <div class="col-md-3 col-sm-12 mb-2 input-group">
-            <select id="s_status" type="text" class="form-control" name="s_status">
-              <option value="">--Select Status--</option>
-              <option value="open">open</option>
-              <option value="closed">closed</option>
-              <option value="canceled">canceled</option>
-            </select>
+            <input id="s_asset" type="text" class="form-control" name="s_asset" value="" autofocus autocomplete="off" placeholder="Search Asset">
           </div>
           <label for="" class="col-md-2 col-form-label text-md-right">{{ __('') }}</label>
           <div class="col-md-2 col-sm-12 mb-2 input-group">
@@ -157,9 +154,12 @@ A2110114 : menampilkan data detail SR dan WO sebelum user accept
     </div>
   </div>
   <input type="hidden" id="tmpsrnumber" />
+  <input type="hidden" id="tmpwonumber" />
   <input type="hidden" id="tmpasset" />
-  <input type="hidden" id="tmppriority" />
-</form>
+  <input type="hidden" id="tmpstatus" />
+  <input type="hidden" id="tmpdatefrom" />
+  <input type="hidden" id="tmpdateto" />
+<!-- </form> -->
 
 <div class="table-responsive col-12">
   <table class="table table-bordered mt-4 no-footer mini-table" id="dataTable" width="100%" cellspacing="0">
@@ -197,142 +197,142 @@ A2110114 : menampilkan data detail SR dan WO sebelum user accept
       </div>
       <form class="form-horizontal" id="approval" method="post" action="/acceptance" enctype="multipart/form-data">
         {{ csrf_field() }}
-      <div class="modal-body">
-        <input type="hidden" id="hiddenreq" name="hiddenreq" />
-        <div class="form-group row">
-          <label for="srnumber" class="col-md-2 col-form-label">SR Number</label>
-          <div class="col-md-4">
-            <input id="srnumber" type="text" class="form-control" name="srnumber" readonly />
+        <div class="modal-body">
+          <input type="hidden" id="hiddenreq" name="hiddenreq" />
+          <div class="form-group row">
+            <label for="srnumber" class="col-md-2 col-form-label">SR Number</label>
+            <div class="col-md-4">
+              <input id="srnumber" type="text" class="form-control" name="srnumber" readonly />
+            </div>
+            <label for="assetcode" class="col-md-2 col-form-label">Asset Code</label>
+            <div class="col-md-4">
+              <input id="assetcode" type="text" class="form-control" name="assetcode" readonly />
+            </div>
           </div>
-          <label for="assetcode" class="col-md-2 col-form-label">Asset Code</label>
-          <div class="col-md-4">
-            <input id="assetcode" type="text" class="form-control" name="assetcode" readonly />
+          <div class="form-group row">
+            <label for="wonumber" class="col-md-2 col-form-label">WO Number</label>
+            <div class="col-md-4">
+              <input id="wonumber" type="text" class="form-control" name="wonumber" readonly />
+            </div>
+            <label for="assetdesc" class="col-md-2 col-form-label">Asset Desc</label>
+            <div class="col-md-4">
+              <textarea id="assetdesc" type="text" class="form-control" name="assetdesc" rows="3" readonly></textarea>
+            </div>
           </div>
-        </div>
-        <div class="form-group row">
-          <label for="wonumber" class="col-md-2 col-form-label">WO Number</label>
-          <div class="col-md-4">
-            <input id="wonumber" type="text" class="form-control" name="wonumber" readonly />
+          <div class="form-group row">
+            <label for="dept" class="col-md-2 col-form-label">Department</label>
+            <div class="col-md-4">
+              <input id="dept" type="text" class="form-control" name="dept" readonly />
+            </div>
+            <label for="assetloc" class="col-md-2 col-form-label">Asset Location</label>
+            <div class="col-md-4">
+              <input id="assetloc" type="text" class="form-control" name="assetloc" readonly />
+            </div>
           </div>
-          <label for="assetdesc" class="col-md-2 col-form-label">Asset Desc</label>
-          <div class="col-md-4">
-            <textarea id="assetdesc" type="text" class="form-control" name="assetdesc" rows="3" readonly></textarea>
+          <div class="form-group row">
+            <label for="reqbyname" class="col-md-2 col-form-label">Requested by</label>
+            <div class="col-md-4">
+              <input id="reqbyname" name="reqbyname" type="text" class="form-control" readonly />
+            </div>
+            <label for="failtype" class="col-md-2 col-form-label">Failure Type</label>
+            <div class="col-md-4">
+              <input id="failtype" type="text" class="form-control" name="failtype" readonly />
+            </div>
           </div>
-        </div>
-        <div class="form-group row">
-          <label for="dept" class="col-md-2 col-form-label">Department</label>
-          <div class="col-md-4">
-            <input id="dept" type="text" class="form-control" name="dept" readonly />
+          <div class="form-group row">
+            <label for="srnote" class="col-md-2 col-form-label">SR Note</label>
+            <div class="col-md-4">
+              <textarea id="srnote" type="text" class="form-control" name="srnote" rows="3" readonly></textarea>
+            </div>
+            <label for="sr_failcode" class="col-md-2 col-form-label">Failure Code</label>
+            <div class="col-md-4">
+              <textarea id="sr_failcode" type="text" class="form-control" name="sr_failcode" rows="3" readonly></textarea>
+            </div>
           </div>
-          <label for="assetloc" class="col-md-2 col-form-label">Asset Location</label>
-          <div class="col-md-4">
-            <input id="assetloc" type="text" class="form-control" name="assetloc" readonly />
+          <div class="form-group row">
+            <label for="wostatus" class="col-md-2 col-form-label">SR Status</label>
+            <div class="col-md-4">
+              <input id="wostatus" type="text" class="form-control" name="wostatus" style="font-weight: bold;" readonly />
+            </div>
+            <label for="sr_impact" class="col-md-2 col-form-label">Impact</label>
+            <div class="col-md-4">
+              <textarea id="sr_impact" type="text" class="form-control" name="sr_impact" autocomplete="off" rows="3" autofocus readonly></textarea>
+            </div>
           </div>
-        </div>
-        <div class="form-group row">
-          <label for="reqbyname" class="col-md-2 col-form-label">Requested by</label>
-          <div class="col-md-4">
-            <input id="reqbyname" name="reqbyname" type="text" class="form-control" readonly />
+          <div class="form-group row">
+            <label for="approver" class="col-md-2 col-form-label">Engineer Approver</label>
+            <div class="col-md-4">
+              <input id="approver" type="text" class="form-control" name="approver" readonly />
+            </div>
+            <label for="priority" class="col-md-2 col-form-label">Priority</label>
+            <div class="col-md-4">
+              <input id="priority" type="text" class="form-control" name="priority" readonly>
+            </div>
           </div>
-          <label for="failtype" class="col-md-2 col-form-label">Failure Type</label>
-          <div class="col-md-4">
-            <input id="failtype" type="text" class="form-control" name="failtype" readonly />
+          <div class="form-group row">
+            <label for="startwo" class="col-md-2 col-form-label">WO Start Date</label>
+            <div class="col-md-4">
+              <input id="startwo" readonly type="text" class="form-control" name="startwo">
+            </div>
+            <label for="srdate" class="col-md-2 col-form-label">Request Date</label>
+            <div class="col-md-4">
+              <input id="srdate" type="text" class="form-control" name="srdate" autocomplete="off" readonly />
+            </div>
           </div>
-        </div>
-        <div class="form-group row">
-          <label for="srnote" class="col-md-2 col-form-label">SR Note</label>
-          <div class="col-md-4">
-            <textarea id="srnote" type="text" class="form-control" name="srnote" rows="3" readonly></textarea>
+          <div class="form-group row">
+            <label for="endwo" class="col-md-2 col-form-label">WO Finish Date</label>
+            <div class="col-md-4">
+              <input id="endwo" type="text" class="form-control" name="endwo" readonly>
+            </div>
+            <label for="srtime" class="col-md-2 col-form-label">Request Time</label>
+            <div class="col-md-4">
+              <input id="srtime" type="text" class="form-control" name="srtime" autocomplete="off" readonly />
+            </div>
           </div>
-          <label for="sr_failcode" class="col-md-2 col-form-label">Failure Code</label>
-          <div class="col-md-4">
-            <textarea id="sr_failcode" type="text" class="form-control" name="sr_failcode" rows="3" readonly></textarea>
-          </div>
-        </div>
-        <div class="form-group row">
-          <label for="wostatus" class="col-md-2 col-form-label">SR Status</label>
-          <div class="col-md-4">
-            <input id="wostatus" type="text" class="form-control" name="wostatus" style="font-weight: bold;" readonly />
-          </div>
-          <label for="sr_impact" class="col-md-2 col-form-label">Impact</label>
-          <div class="col-md-4">
-            <textarea id="sr_impact" type="text" class="form-control" name="sr_impact" autocomplete="off" rows="3" autofocus readonly></textarea>
-          </div>
-        </div>
-        <div class="form-group row">
-          <label for="approver" class="col-md-2 col-form-label">Engineer Approver</label>
-          <div class="col-md-4">
-            <input id="approver" type="text" class="form-control" name="approver" readonly />
-          </div>
-          <label for="priority" class="col-md-2 col-form-label">Priority</label>
-          <div class="col-md-4">
-            <input id="priority" type="text" class="form-control" name="priority" readonly>
-          </div>
-        </div>
-        <div class="form-group row">
-          <label for="startwo" class="col-md-2 col-form-label">WO Start Date</label>
-          <div class="col-md-4">
-            <input id="startwo" readonly type="text" class="form-control" name="startwo">
-          </div>
-          <label for="srdate" class="col-md-2 col-form-label">Request Date</label>
-          <div class="col-md-4">
-            <input id="srdate" type="text" class="form-control" name="srdate" autocomplete="off" readonly />
-          </div>
-        </div>
-        <div class="form-group row">
-          <label for="endwo" class="col-md-2 col-form-label">WO Finish Date</label>
-          <div class="col-md-4">
-            <input id="endwo" type="text" class="form-control" name="endwo" readonly>
-          </div>
-          <label for="srtime" class="col-md-2 col-form-label">Request Time</label>
-          <div class="col-md-4">
-            <input id="srtime" type="text" class="form-control" name="srtime" autocomplete="off" readonly />
-          </div>
-        </div>
-        <div class="form-group row">
-          <label for="englist" class="col-md-2 col-form-label">Engineer List</label>
-          <div class="col-md-4">
-            <textarea id="englist" type="text" class="form-control" name="englist" rows="3" readonly></textarea>
-          </div>
-          <label for="file" class="col-md-2 col-form-label">Current File</label>
-          <div class="col-md-4">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th>File Name</th>
-                </tr>
-              </thead>
-              <tbody id="srlistupload">
+          <div class="form-group row">
+            <label for="englist" class="col-md-2 col-form-label">Engineer List</label>
+            <div class="col-md-4">
+              <textarea id="englist" type="text" class="form-control" name="englist" rows="3" readonly></textarea>
+            </div>
+            <label for="file" class="col-md-2 col-form-label">Current File</label>
+            <div class="col-md-4">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>File Name</th>
+                  </tr>
+                </thead>
+                <tbody id="srlistupload">
 
-              </tbody>
-            </table>
-          </div>
-          <!-- <label for="rejectnote" class="col-md-2 col-form-label">Reject Note</label>
+                </tbody>
+              </table>
+            </div>
+            <!-- <label for="rejectnote" class="col-md-2 col-form-label">Reject Note</label>
           <div class="col-md-4">
             <textarea id="rejectnote" type="text" class="form-control" name="rejectnote" readonly></textarea>
           </div> -->
-        </div>
-        <div class="form-group row">
-          <label for="woreportnote" class="col-md-2 col-form-label">WO Reporting Note</label>
-          <div class="col-md-10">
-            <textarea id="woreportnote" type="text" class="form-control" name="woreportnote" rows="3" readonly></textarea>
           </div>
-        </div>
-        <div class="form-group row">
-          <label for="sracceptance" class="col-md-2 col-form-label">Acceptance Reason</label>
-          <div class="col-md-10">
-            <textarea id="sracceptance" type="text" class="form-control" name="sracceptance" rows="3"></textarea>
+          <div class="form-group row">
+            <label for="woreportnote" class="col-md-2 col-form-label">WO Reporting Note</label>
+            <div class="col-md-10">
+              <textarea id="woreportnote" type="text" class="form-control" name="woreportnote" rows="3" readonly></textarea>
+            </div>
           </div>
-        </div>
-        <div class="modal-footer">
-        <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
+          <div class="form-group row">
+            <label for="sracceptance" class="col-md-2 col-form-label">Acceptance Reason</label>
+            <div class="col-md-10">
+              <textarea id="sracceptance" type="text" class="form-control" name="sracceptance" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
             <button type="submit" class="btn btn-danger" name="action" value="incomplete" id="btnreject">Reject</button>
             <button type="submit" class="btn btn-success" name="action" value="complete" id="btnapprove">Approve</button>
             <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
               <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
             </button>
+          </div>
         </div>
-      </div>
       </form>
     </div>
   </div>
@@ -632,17 +632,17 @@ A2110114 : menampilkan data detail SR dan WO sebelum user accept
   $(document).ready(function() {
     // submit();
 
-    $("#s_asset").select2({
-      width: '100%',
-      placeholder: "Select Asset",
-      theme: 'bootstrap4',
-    });
+    // $("#s_asset").select2({
+    //   width: '100%',
+    //   placeholder: "Select Asset",
+    //   theme: 'bootstrap4',
+    // });
 
-    function fetch_data(page, srnumber, asset, priority) {
+    function fetch_data(page, srnumber, wonumber, asset, status, datefrom, dateto) {
       $.ajax({
-        url: "/useracceptance/search?page=" + page + "&srnumber=" + srnumber + "&asset=" + asset + "&priority=" + priority,
+        url: "/useracceptance/search?page=" + page + "&srnumber=" + srnumber + "&wonumber=" + wonumber + "&asset=" + asset + "&status=" + status + "&datefrom =" + datefrom + "&dateto=" + dateto, 
         success: function(data) {
-          console.log(data);
+          // console.log(data);
           $('tbody').html('');
           $('tbody').html(data);
         }
@@ -651,20 +651,26 @@ A2110114 : menampilkan data detail SR dan WO sebelum user accept
 
 
     $(document).on('click', '#btnsearch', function() {
-      var srnumber = $('#s_servicenbr').val();
+      var srnumber = $('#s_nomorsr').val();
+      var wonumber = $('#s_nomorwo').val();
       var asset = $('#s_asset').val();
-      var priority = $('#s_priority').val();
+      var status = $('#s_status').val();
+      var datefrom = $('#s_datefrom').val();
+      var dateto = $('#s_dateto').val();
 
       // var column_name = $('#hidden_column_name').val();
       // var sort_type = $('#hidden_sort_type').val();
       var page = 1;
 
       document.getElementById('tmpsrnumber').value = srnumber;
+      document.getElementById('tmpwonumber').value = wonumber;
       document.getElementById('tmpasset').value = asset;
-      document.getElementById('tmppriority').value = priority;
+      document.getElementById('tmpstatus').value = status;
+      document.getElementById('tmpdatefrom').value = datefrom;
+      document.getElementById('tmpdateto').value = dateto;
 
 
-      fetch_data(page, srnumber, asset, priority);
+      fetch_data(page, srnumber, wonumber, asset, status, datefrom, dateto);
     });
 
 
@@ -675,37 +681,48 @@ A2110114 : menampilkan data detail SR dan WO sebelum user accept
       var column_name = $('#hidden_column_name').val();
       var sort_type = $('#hidden_sort_type').val();
 
-      var srnumber = $('#tmpsrnumber').val();
-      var asset = $('#tmpasset').val();
-      var priority = $('#tmppriority').val();
+      var srnumber = $('#s_nomorsr').val();
+      var wonumber = $('#s_nomorwo').val();
+      var asset = $('#s_asset').val();
+      var status = $('#s_status').val();
+      var datefrom = $('#s_datefrom').val();
+      var dateto = $('#s_dateto').val();
 
-
-      fetch_data(page, srnumber, asset, priority);
+      fetch_data(page, srnumber, wonumber, asset, status, datefrom, dateto);
     });
 
     $(document).on('click', '#btnrefresh', function() {
       var srnumber = '';
+      var wonumber = '';
       var asset = '';
-      var priority = '';
+      var status = '';
+      var datefrom = '';
+      var dateto = '';
       var page = 1;
 
-      document.getElementById('s_servicenbr').value = '';
+      document.getElementById('s_nomorsr').value = ''; 
+      document.getElementById('s_nomorwo').value = ''; 
       document.getElementById('s_asset').value = '';
-      document.getElementById('s_priority').value = '';
+      document.getElementById('s_status').value = '';
+      document.getElementById('s_datefrom').value = '';
+      document.getElementById('s_dateto').value = '';
 
       document.getElementById('tmpsrnumber').value = srnumber;
+      document.getElementById('tmpwonumber').value = wonumber;
       document.getElementById('tmpasset').value = asset;
-      document.getElementById('tmppriority').value = priority;
+      document.getElementById('tmpstatus').value = status;
+      document.getElementById('tmpdatefrom').value = datefrom;
+      document.getElementById('tmpdateto').value = dateto;
 
 
-      fetch_data(page, srnumber, asset, priority);
+      fetch_data(page, srnumber, wonumber, asset, status, datefrom, dateto);
 
-      $("#s_asset").select2({
-        width: '100%',
-        placeholder: "Select Asset",
-        theme: 'bootstrap4',
-        asset,
-      });
+      // $("#s_asset").select2({
+      //   width: '100%',
+      //   placeholder: "Select Asset",
+      //   theme: 'bootstrap4',
+      //   asset,
+      // });
     });
 
 

@@ -855,11 +855,36 @@ div #munculgambar .gambar:hover{
             </div>
         </div>
         <div class="form-group row">
-          <label class="col-md-2 col-form-label text-md-left">Uploaded File</label>
+          <label class="col-md-2 col-form-label text-md-left">SR Uploaded File</label>
+          <div class="col-md-4" style="overflow-x: auto;">
+            <!-- <table class="table table-bordered" style="width: 100%; max-width: 100%;" id="munculgambar_view_sr">
+            </table> -->
+            <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>File Name</th>
+                  </tr>
+                </thead>
+                <tbody id="munculgambar_view_sr">
+
+                </tbody>
+              </table>  
+          </div>
+          <label class="col-md-2 col-form-label text-md-left">WO Uploaded File</label>
           <div class="col-md-4" style="overflow-x: auto;">
             <table class="table table-bordered" style="width: 100%; max-width: 100%;" id="munculgambar_view">
             </table>  
           </div>
+        </div>
+        <div class="form-group row">
+            <label for="v_rejectreason" class="col-md-2 col-form-label text-md-left">User Acceptance Note</label>
+            <div class="col-md-4">
+              <textarea id="v_rejectreason" readonly type="text" class="form-control" name="v_rejectreason" value="{{ old('v_rejectreason') }}" rows="2" autofocus></textarea>
+            </div>
+            <!-- <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
+            <div class="col-md-4">
+              <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
+            </div> -->
         </div>
       </div>
       <div class="modal-footer">
@@ -1628,6 +1653,7 @@ div #munculgambar .gambar:hover{
   $(document).on('click', '.viewwo', function() {
     $('#loadingtable').modal('show');
     var wonbr = $(this).data('wonumber');
+    var srnumber = $(this).data('srnumber');
     var btnendel1 = document.getElementById("btndeleteen1");
     var btnendel2 = document.getElementById("btndeleteen2");
     var btnendel3 = document.getElementById("btndeleteen3");
@@ -1659,8 +1685,8 @@ div #munculgambar .gambar:hover{
         var duedate = vamp.wo_master.wo_due_date;
         var createdby = vamp.wo_master.wo_createdby;
         var department = vamp.wo_master.wo_department ? vamp.wo_master.wo_department : '';
+        var rejectreason = vamp.sr_acceptance_note ? vamp.sr_acceptance_note : '';
 
-        
         let combineFailure = [];
 
         vamp.failurecode.forEach(function(failure) {
@@ -1695,9 +1721,7 @@ div #munculgambar .gambar:hover{
         document.getElementById('v_creator').value = createdby;
         document.getElementById('v_dept').value = department;
         document.getElementById('v_srnote').value = srnote;
-
-
-        
+        document.getElementById('v_rejectreason').value = rejectreason;
         
 
       },complete: function(vamp) {
@@ -1725,6 +1749,14 @@ div #munculgambar .gambar:hover{
         $('#munculgambar_view').html('').append(data);
       }
     })
+
+    $.ajax({
+        url: "/listuploadview/" + srnumber,
+        success: function(data) {
+          // console.log(data);
+          $('#munculgambar_view_sr').html('').append(data);
+        }
+      })
   });
   // flag tunggu semua menu
 

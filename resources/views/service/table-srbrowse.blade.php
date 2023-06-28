@@ -28,9 +28,9 @@
     data-startwo="{{date('d-m-Y', strtotime($show->wo_job_startdate))}}" 
     data-endwo="{{date('d-m-Y', strtotime($show->wo_job_finishdate))}}" data-engineer="{{$show->wo_list_engineer}}"
     data-approver="{{$show->eng_dept}} -- {{$show->u11}}" data-reason="{{is_null($show->srta_eng_reason) ? $show->srta_reason : $show->srta_eng_reason}}"
-    data-wostatus="{{$show->sr_status}}" data-srcancelnote="{{$show->sr_cancel_note}}" 
+    data-wostatus="{{$show->sr_status}}" data-srcancelnote="{{$show->sr_cancel_note}}" data-wocancelnote="{{$show->wo_cancel_note}}" 
     data-statusapproval="{{is_null($show->srta_eng_status) ? $show->srta_status : $show->srta_eng_status}}"
-    data-failtype="{{$show->sr_fail_type}}" data-failcode="{{$show->sr_fail_code}}">
+    data-failtype="{{$show->sr_fail_type}}" data-failcode="{{$show->sr_fail_code}}" data-accnote="{{$show->sr_acceptance_note}}">
     <i class="icon-table far fa-eye fa-lg"></i></a>
    
     {{--  Jika tidak ada file upload, icon tidak muncul  --}}
@@ -62,7 +62,7 @@
     @endif
 
     {{--  Cancel SR  --}}
-    @if($show->sr_req_by == $session && $show->sr_status != 'Canceled' && $show->sr_status != 'Inprocess')
+    @if($show->sr_req_by == $session && $show->sr_status != 'Canceled' && $show->sr_status != 'Inprocess' && $show->sr_status != 'Acceptance' && $show->sr_status != 'Closed')
     <a href="javascript:void(0)" class="cancelsr" data-toggle="tooltip"  title="Cancel SR"  data-target="#cancelModal" 
     data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_asset}}" data-assetdesc="{{$show->asset_desc}}"
     data-reqby="{{$show->name}}" data-srnote="{{$show->sr_note}}" data-priority="{{$show->sr_priority}}" data-impact="{{$show->sr_impact}}"
@@ -100,6 +100,6 @@
 @endforelse
 <tr>
   <td colspan="11" style="border: none !important;" colspan="5">
-    {{ $datas->links() }}
+    {{ $datas->appends($_GET)->links() }}
   </td>
 </tr>
