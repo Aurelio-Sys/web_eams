@@ -72,9 +72,10 @@
                     <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</th>
+                                <th style="text-align: center; width: 20% !important; font-weight: bold;">Spare Part</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Total Required</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Total Supply</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Qty Required</th>
-                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Status Spare Part</th>
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
@@ -85,14 +86,39 @@
                                     {{$datas->spm_code}} -- {{$datas->spm_desc}}
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    {{number_format($datas->wd_sp_required,2)}}
+                                @php
+                                    $tSpcode = $datas->wd_sp_spcode;
+                                    $tAssetSite = $data->wo_site;
+
+                                    $tTotalReq = null;
+
+                                    foreach ($datatemp_required as $totreq) {
+                                        if ($totreq['t_spcode'] === $tSpcode && $totreq['t_asset_site'] === $tAssetSite) {
+                                            $tTotalReq = $totreq['t_total_req'];
+                                            break;
+                                        }
+                                    }
+                                @endphp
+                                {{ $tTotalReq }}
                                 </td>
-                                <td style="vertical-align:middle;text-align:center;">
-                                    @if ($datas->wd_sp_flag == 1)
-                                        not ready
-                                    @else
-                                        ready
-                                    @endif
+                                <td style="vertical-align:middle;text-align:right;">
+                                @php
+
+                                    $tSpcode = $datas->wd_sp_spcode;
+
+                                    $tTotalStock = null;
+
+                                    foreach ($result as $totstock) {
+                                        if ($totstock['part'] === $tSpcode) {
+                                            $tTotalStock = $totstock['qtyoh'];
+                                            break;
+                                        }
+                                    }
+                                @endphp
+                                {{number_format($tTotalStock, 2)}}
+                                </td>
+                                <td style="vertical-align:middle;text-align:right;">
+                                    {{number_format($datas->wd_sp_required,2)}}
                                 </td>
                             </tr>
                             

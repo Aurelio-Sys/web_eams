@@ -20,7 +20,7 @@
   <td>{{ $show->wo_system_create }}</td>
   <td>{{$show->wo_createdby}}</td>
   <td>
-    <a href="javascript:void(0)" class="viewwo" data-toggle="tooltip"  title="View WO" data-wonumber="{{$show->wo_number}}">
+    <a href="javascript:void(0)" class="viewwo" data-toggle="tooltip"  title="View WO" data-wonumber="{{$show->wo_number}}" data-srnumber="{{$show->wo_sr_number}}">
       <i class="icon-table fa fa-eye fa-lg"></i>
     </a>
     @if ( $show->wo_status !== 'closed' && $show->wo_status !== 'canceled' )

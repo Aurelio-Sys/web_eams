@@ -8,6 +8,13 @@
     <td>{{$show->sr_number}}</td>
     <td>{{$show->asset_code}}</td>
     <td>{{$show->asset_desc}}</td>
+    @if( $show->srta_eng_status == 'Revision from engineer approval')
+    <td> Rejected </td>
+    @elseif ($show->srta_eng_status == 'Waiting for engineer approval')
+    <td> Waiting for approval </td>
+    @else
+    <td> Approved </td>
+    @endif
     <!-- <td>{{$show->asset_loc}}</td> -->
     <td>{{$show->sr_priority}}</td>
     <td>{{$show->username}}</td>
@@ -34,7 +41,10 @@
     data-deptdesc="{{$show->dept_desc}}" data-deptcode="{{$show->dept_code}}" data-reqbyname="{{$show->sr_req_by}}" 
     data-assetloc="{{$show->asloc_desc}}" data-hassetloc="{{$show->asset_loc}}" data-hassetsite="{{$show->asset_site}}"
     data-astypedesc="{{$show->astype_desc}}" data-failcode="{{$show->sr_fail_code}}" data-engineer="{{$show->wo_list_engineer}}"
-    data-wotypedescx="{{$show->wotyp_code}}" data-impactcode="{{$show->sr_impact}}">
+    data-wotypedescx="{{$show->wotyp_code}}" data-impactcode="{{$show->sr_impact}}" data-status="{{$show->srta_eng_status}}" 
+    data-reason="{{$show->srta_eng_reason}}" data-wonote="{{$show->wo_note}}" data-engineer="{{$show->wo_list_engineer}}"
+    data-wostart="{{$show->wo_start_date}}" data-wodue="{{$show->wo_due_date}}" data-womtc="{{$show->wo_mt_code}}"
+    data-woinsc="{{$show->wo_ins_code}}" data-wospc="{{$show->wo_sp_code}}" data-woqcs="{{$show->wo_qcspec_code}}">
     <i class="icon-table fas fa-eye fa-lg">
     </i></a>
     @endif

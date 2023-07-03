@@ -212,11 +212,12 @@ class SparepartController extends Controller
         $rsnumber = $req->code;
         if ($req->ajax()) {
 
-            $data = DB::table('req_sparepart')
+            $datas = DB::table('req_sparepart')
                 ->join('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
                 ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
                 ->where('req_sp_number', $rsnumber)
+                ->groupBy('req_sp_number')
                 ->get();
 
             $sp_all = DB::table('sp_mstr')
@@ -227,7 +228,7 @@ class SparepartController extends Controller
             $loc_to = DB::table('inp_supply')->get();
 
             $output = '';
-            foreach ($data as $data) {
+            foreach ($datas as $data) {
                 $output .= '<tr>';
                 $output .= '<td>';
                 $output .= '<select name="te_spreq[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" required>';
@@ -253,7 +254,7 @@ class SparepartController extends Controller
                 $output .= '</tr>';
             }
 
-            // dd($output);
+            // dd($data);
 
             return response($output);
         }
@@ -270,6 +271,7 @@ class SparepartController extends Controller
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
                 ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
                 ->where('req_sp_number', $rsnumber)
+                ->groupBy('req_sp_number')
                 ->get();
             // dd($data);
 
@@ -509,8 +511,10 @@ class SparepartController extends Controller
             ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
             ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
             ->where('req_spd_mstr_id', $data->id)
+            ->groupBy('req_spd_mstr_id')
             ->get();
 
+            // dd($sparepart_detail);
         $datalocsupply = DB::table('inp_supply')
             ->get();
 
@@ -533,6 +537,7 @@ class SparepartController extends Controller
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
                 ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
                 ->where('req_sp_number', $rsnumber)
+                ->groupBy('req_sp_number')
                 ->get();
             // dd($data);
 
@@ -747,12 +752,12 @@ class SparepartController extends Controller
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                     <qcom:propertyName>username</qcom:propertyName>
-                    <qcom:propertyValue>mfg</qcom:propertyValue>
+                    <qcom:propertyValue/>
                     </qcom:ttContext>
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                     <qcom:propertyName>password</qcom:propertyName>
-                    <qcom:propertyValue></qcom:propertyValue>
+                    <qcom:propertyValue/>
                     </qcom:ttContext>
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -905,7 +910,7 @@ class SparepartController extends Controller
                 /* jika response sukses atau warning maka menyimpan data jika sudah di transferr ke qad*/
                 $rsnumber = $req->hide_rsnum;
                 //kirim notifikasi kepada para engineer yg mengerjakan wo tersebut bahwa spare part yg tidak cukup sudah ditransfer ke inventory supply
-                SendNotifWarehouseToUser::dispatch($rsnumber);
+                // SendNotifWarehouseToUser::dispatch($rsnumber);
             } else {
 
                 //jika qtend mengembalikan pesan error 
@@ -945,6 +950,462 @@ class SparepartController extends Controller
             DB::rollBack();
             toast('Confirm Failed', 'error');
             return redirect()->route('trfspbrowse');
+        }
+    }
+
+    public function accutransfer(Request $req){
+        $databrowseaccu = DB::table('inv_required')
+                        ->select('ir_site','assite_desc','ir_spare_part','spm_desc','inv_qty_required')
+                        ->join('asset_site','asset_site.assite_code','inv_required.ir_site')
+                        ->join('sp_mstr','sp_mstr.spm_code','ir_spare_part')    
+                        ->get();
+
+        $datasite = DB::table('asset_site')
+                    ->get();
+
+        $datasp = DB::table('sp_mstr')
+                    ->get();
+
+        return view('sparepart.accutrfsparepart', compact('databrowseaccu','datasite','datasp'));
+    }
+
+    public function searchaccutrf(Request $req){
+        // dd($req->all());
+
+        $site = $req->site_search;
+        $sparepart = $req->spsearch;
+
+        $datalocsupply = DB::table('inp_supply')
+                        ->where('inp_avail', '=', 'Yes')
+                        ->get();
+
+        $data_assetsite = DB::table('asset_site')
+                        ->get();
+
+        $data_sp = DB::table('sp_mstr')
+                        ->where('spm_active', '=', 'Yes')
+                        ->get();
+
+        $datainvreq = DB::table('inv_required');
+
+        if($site){
+            $datainvreq->where('ir_site','=', $site);
+        }
+
+        if($sparepart){
+            $datainvreq->where('ir_spare_part','=', $sparepart);
+        }
+
+        $datainvreq = $datainvreq->get();
+
+        if($datainvreq->isNotEmpty()){
+            $datatemp = [];
+            foreach($datainvreq as $dt){
+                $datainvsupp = DB::table('inp_supply')
+                                ->where('inp_asset_site','=', $dt->ir_site)
+                                ->get();
+
+                // dd($datainvsupp);
+
+                foreach($datainvsupp as $dtsupp){
+
+                    $qadsupplydata = (new WSAServices())->wsagetsupply($dt->ir_spare_part,$dtsupp->inp_supply_site,$dtsupp->inp_loc);
+
+                    if ($qadsupplydata === false) {
+
+                        DB::rollBack();
+                        toast('WSA Connection Failed', 'error')->persistent('Dismiss');
+                        return redirect()->back();
+                    } else {
+
+                        // jika hasil WSA ke QAD tidak ditemukan
+                        if ($qadsupplydata[1] !== "false") {
+                            // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+                        
+                            $resultWSA = $qadsupplydata[0];
+                            
+                            $t_domain = (string) $resultWSA[0]->t_domain;
+                            $t_part = (string) $resultWSA[0]->t_part;
+                            $t_site = (string) $resultWSA[0]->t_site;
+                            $t_loc = (string) $resultWSA[0]->t_loc;
+                            $t_qtyoh = (float) $resultWSA[0]->t_qtyoh;
+
+                            array_push($datatemp, [
+                                't_domain' => $t_domain,
+                                't_siteasset' => $dt->ir_site,
+                                't_part' => $t_part,
+                                't_site' => $t_site,
+                                't_loc' => $t_loc,
+                                't_qtyoh' => $t_qtyoh,
+                                't_qtyreq' => $dt->inv_qty_required
+                            ]);
+                        }else{
+
+                            $wsa = ModelsQxwsa::first();
+                            $domain = $wsa->wsas_domain;
+
+                            array_push($datatemp, [
+                                't_domain' => $domain,
+                                't_siteasset' => $dt->ir_site,
+                                't_part' => $dt->ir_spare_part,
+                                't_site' => $dtsupp->inp_supply_site,
+                                't_loc' => $dtsupp->inp_loc,
+                                't_qtyoh' => 0,
+                                't_qtyreq' => $dt->inv_qty_required
+                            ]);
+
+                        }
+                    }
+                }
+            }
+
+            // dd($datatemp);
+            
+            $grouped = collect($datatemp)->groupBy('t_siteasset')->toArray();
+
+            // dd($grouped);
+
+            foreach ($grouped as $siteasset => $group) {
+                $output[$siteasset] = collect($group)->groupBy('t_part')->map(function ($items) {
+                    return [
+                        't_domain' => $items[0]['t_domain'],
+                        't_siteasset' => $items[0]['t_siteasset'],
+                        't_part' => $items[0]['t_part'],
+                        't_qtyoh' => $items->sum('t_qtyoh'),
+                        't_qtyreq' => $items[0]['t_qtyreq'],
+                    ];
+                })->toArray();
+            }
+
+            $collection = collect($output);
+            // Metode flatten(1) digunakan untuk menggabungkan array kedalam satu tingkat. 
+            //Kemudian, metode values() digunakan untuk mengindeks ulang array hasilnya.
+            $flattenedData = $collection->flatten(1)->values();
+
+            $output = $flattenedData->toArray();
+
+            // dd($output);
+            
+            return view('sparepart.accutrfsparepart-detail', compact('output','datalocsupply','data_assetsite','data_sp'));
+        }else{
+
+            toast('Data Not Found', 'error');
+            return redirect()->back();
+        }
+    }
+
+    public function submitaccutrf(Request $req){
+        // dd($req->all());
+
+        Schema::dropIfExists('temp_table');
+        Schema::create('temp_table', function ($table) {
+            $table->string('t_part');
+            $table->string('t_site');
+            $table->string('t_loc')->nullable();
+            $table->string('t_lot')->nullable();
+            $table->decimal('t_qtyoh', 10, 2);
+            $table->temporary();
+        });
+
+        foreach($req->hide_check as $key => $thischeck){
+            if($thischeck != 'N'){
+
+                $getActualStockSource = (new WSAServices())->wsacekstoksource($req->spcode_hidden[$key],$req->hidden_sitefrom[$key],$req->hidden_locfrom[$key],$req->hidden_lotfrom[$key]);
+
+                if ($getActualStockSource === false) {
+                    toast('WSA Connection Failed', 'error')->persistent('Dismiss');
+                    return redirect()->back();
+                } else {
+
+                    // jika hasil WSA ke QAD tidak ditemukan
+                    if ($getActualStockSource[1] == "false") {
+                        toast('Something went wrong with the data', 'error')->persistent('Dismiss');
+                        return redirect()->back();
+                    }
+
+
+                    // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+                    
+                    $resultWSA = $getActualStockSource[0];
+    
+                    //kumpulkan hasilnya ke dalam 1 array sebagai penampung list location dan lot from
+                    foreach($resultWSA as $thisresult){
+                        DB::table('temp_table')
+                            ->insert([
+                                't_part' => $thisresult->t_part,
+                                't_site' => $thisresult->t_site,
+                                't_loc' => $thisresult->t_loc,
+                                't_lot' => $thisresult->t_lot,
+                                't_qtyoh' => $thisresult->t_qtyoh,
+                            ]);
+                    }
+                    
+                }
+
+
+            }
+        }
+
+        $dataStockQAD = DB::table('temp_table')
+        ->get();
+
+        Schema::dropIfExists('temp_table');
+
+        DB::beginTransaction();
+
+        try{
+
+            $notEnough = "";
+            foreach($req->qtytotransfer as $index => $qtytotransfer){
+                foreach($dataStockQAD as $source){
+                    if($req->spcode_hidden[$index] == $source->t_part && $req->hidden_sitefrom[$index] == $source->t_site && $req->hidden_locfrom[$index] == $source->t_loc && $req->hidden_lotfrom[$index] == $source->t_lot){
+                        if(floatval($req->qtytotransfer[$index]) > floatval($source->t_qtyoh)){
+                            //jika tidak cukup berikan alert
+                            // dump($source->t_qtyoh);
+                            $notEnough .= $req->hidden_spcode[$index] . ", ";
+                        }
+                    }
+                }
+            }
+            
+            if ($notEnough != "") {
+                $notEnough = rtrim($notEnough, ", "); // hapus koma terakhir
+                alert()->html('<u><b>Alert!</b></u>',"<b>The qty to be transferred does not have sufficient stock for the following spare part code :</b><br>".$notEnough."",'error')->persistent('Dismiss');
+                return redirect()->back();
+            }
+
+
+            /* Qxtend Transfer Single Item */
+            $qxwsa = ModelsQxwsa::first();
+
+            // Var Qxtend
+            $qxUrl          = $qxwsa->qx_url; // Edit Here
+
+            $qxRcv          = $qxwsa->qx_rcv;
+
+            $timeout        = 0;
+
+            $domain         = $qxwsa->wsas_domain;
+
+            // XML Qextend ** Edit Here
+
+            // dd($qxRcv);
+
+            $qdocHead = '  
+            <soapenv:Envelope xmlns="urn:schemas-qad-com:xml-services"
+            xmlns:qcom="urn:schemas-qad-com:xml-services:common"
+            xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing">
+            <soapenv:Header>
+                <wsa:Action/>
+                <wsa:To>urn:services-qad-com:'.$qxRcv.'</wsa:To>
+                <wsa:MessageID>urn:services-qad-com::'.$qxRcv.'</wsa:MessageID>
+                <wsa:ReferenceParameters>
+                <qcom:suppressResponseDetail>true</qcom:suppressResponseDetail>
+                </wsa:ReferenceParameters>
+                <wsa:ReplyTo>
+                <wsa:Address>urn:services-qad-com:</wsa:Address>
+                </wsa:ReplyTo>
+            </soapenv:Header>
+            <soapenv:Body>
+                <transferInvSingleItem>
+                <qcom:dsSessionContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>domain</qcom:propertyName>
+                    <qcom:propertyValue>'.$domain.'</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>scopeTransaction</qcom:propertyName>
+                    <qcom:propertyValue>true</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>version</qcom:propertyName>
+                    <qcom:propertyValue>ERP3_1</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>mnemonicsRaw</qcom:propertyName>
+                    <qcom:propertyValue>false</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>username</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>password</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>action</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>entity</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>email</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>emailLevel</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                </qcom:dsSessionContext>
+                <dsItem>';
+
+            $qdocBody = '';
+            
+            /* bisa foreach per item dari sini */
+
+            foreach($req->qtytotransfer as $index => $qtyfromweb){
+                if($qtyfromweb > 0 ){ //jika qty to transfer yang diisi user dari menu wo transfer lebih dari 0, baru lakukan qxtend transfer single item
+                    $qdocBody .= '<item>
+                            <part>'.$req->spcode_hidden[$index].'</part>
+                            <itemDetail>
+                                <lotserialQty>'.$qtyfromweb.'</lotserialQty>
+                                <siteFrom>'.$req->hidden_sitefrom[$index].'</siteFrom>
+                                <locFrom>'.$req->hidden_locfrom[$index].'</locFrom>
+                                <lotserFrom>'.$req->hidden_lotfrom[$index].'</lotserFrom>
+                                <siteTo>'.$req->hidden_siteto[$index].'</siteTo>
+                                <locTo>'.$req->hidden_locto[$index].'</locTo>
+                            </itemDetail>
+                        </item>';
+
+
+                        DB::table('accum_hist')
+                            ->insert([
+                                'accum_asset_site' => $req->siteasset_hidden[$index],
+                                'accum_sparepart' => $req->spcode_hidden[$index],
+                                'accum_sitefrom' => $req->hidden_sitefrom[$index],
+                                'accum_locfrom' => $req->hidden_locfrom[$index],
+                                'accum_lotfrom' => $req->hidden_lotfrom[$index],
+                                'accum_locto' => $req->hidden_locto[$index],
+                                'accum_siteto' => $req->hidden_siteto[$index],
+                                'accum_qtytransfer' => $qtyfromweb,
+                                'accum_transferredby' => Session::get('username'),
+                            ]);
+                }
+            }
+            
+            // <rmks>'.$dqx->wo_dets_nbr.'</rmks>
+            /* endforeach disini */
+            // dd($qdocBody);
+            $qdocfooter =   '</dsItem>
+                            </transferInvSingleItem>
+                        </soapenv:Body>
+                    </soapenv:Envelope>';
+
+            $qdocRequest = $qdocHead . $qdocBody . $qdocfooter;
+
+            // dd($qdocRequest);
+            
+            $curlOptions = array(
+                CURLOPT_URL => $qxUrl,
+                CURLOPT_CONNECTTIMEOUT => $timeout,        // in seconds, 0 = unlimited / wait indefinitely.
+                CURLOPT_TIMEOUT => $timeout + 120, // The maximum number of seconds to allow cURL functions to execute. must be greater than CURLOPT_CONNECTTIMEOUT
+                CURLOPT_HTTPHEADER => $this->httpHeader($qdocRequest),
+                CURLOPT_POSTFIELDS => preg_replace("/\s+/", " ", $qdocRequest),
+                CURLOPT_POST => true,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => false
+            );
+
+            $getInfo = '';
+            $httpCode = 0;
+            $curlErrno = 0;
+            $curlError = '';
+
+
+            $qdocResponse = '';
+
+            $curl = curl_init();
+            if ($curl) {
+                curl_setopt_array($curl, $curlOptions);
+                $qdocResponse = curl_exec($curl);           // sending qdocRequest here, the result is qdocResponse.
+                //
+                $curlErrno = curl_errno($curl);
+                $curlError = curl_error($curl);
+                $first = true;
+                foreach (curl_getinfo($curl) as $key => $value) {
+                    if (gettype($value) != 'array') {
+                        if (!$first) $getInfo .= ", ";
+                        $getInfo = $getInfo . $key . '=>' . $value;
+                        $first = false;
+                        if ($key == 'http_code') $httpCode = $value;
+                    }
+                }
+                curl_close($curl);
+            }
+
+            if (is_bool($qdocResponse)) {
+
+                DB::rollBack();
+                toast('Something Wrong with Qxtend', 'error');
+                /* jika qxtend servicenya mati */
+            }
+            $xmlResp = simplexml_load_string($qdocResponse);
+            $xmlResp->registerXPathNamespace('soapenv', 'urn:schemas-qad-com:xml-services:common');
+            $qdocFault = '';
+            $qdocFault = $xmlResp->xpath('//soapenv:faultstring');
+            // dd($qdocFault);
+
+            if(!empty($qdocFault)){
+                DB::rollBack();
+
+                $qdocFault = (string) $xmlResp->xpath('//soapenv:faultstring')[0];
+
+                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$qdocFault."",'error')->persistent('Dismiss');
+                return redirect()->back();
+            }
+
+            $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
+            $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
+
+
+
+            if ($qdocResult == "success" or $qdocResult == "warning") {
+                /* jika response sukses atau warning maka menyimpan data jika sudah di transferr ke qad*/
+                $wonumber = $req->hide_wonum;
+            } else {
+
+                //jika qtend mengembalikan pesan error 
+
+                DB::rollBack();
+                $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
+                $outputerror = '';
+                foreach ($xmlResp->xpath('//ns3:temp_err_msg') as $temp_err_msg) {
+                    $context = $temp_err_msg->xpath('./ns3:tt_msg_context')[0];
+                    $desc = $temp_err_msg->xpath('./ns3:tt_msg_desc')[0];
+                    $outputerror .= "&bull;  ".$context . " - " . $desc . "<br>";
+                }
+
+                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$outputerror."",'error')->persistent('Dismiss');
+                return redirect()->back();
+                /* jika qxtend response error */
+            }
+
+            DB::commit();
+
+            toast('Accumulative Transfer Successfuly !', 'success');
+            return redirect()->route('accuTransBrw');
+
+
+
+        } catch (Exception $e){
+            dd($e);
+            DB::rollBack();
+            toast('Transfer failed', 'error');
+            return redirect()->back();
         }
     }
 }

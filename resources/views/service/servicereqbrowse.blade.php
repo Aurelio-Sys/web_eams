@@ -104,8 +104,8 @@
             <option value="Revise">Revise</option>
             <option value="Inprocess">Inprocess</option>
             <option value="Canceled">Canceled</option>
-            <!-- <option value="Closed">Closed</option> -->
-            <!-- <option value="Completed">Completed</option> -->
+            <option value="Acceptance">Acceptance</option>
+            <option value="Closed">Closed</option>
           </select>
         </div>
         <!-- <label for="s_priority" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Priority') }}</label>
@@ -286,6 +286,12 @@
             </div>
           </div>
           <div class="form-group row justify-content-center">
+            <label for="e_reason" class="col-md-5 col-form-label text-md-left">Approval Reason</label>
+            <div class="col-md-7">
+              <textarea id="e_reason" type="text" class="form-control" name="e_reason" autocomplete="off" rows="3" readonly></textarea>
+            </div>
+          </div>
+          <div class="form-group row justify-content-center">
             <label for="e_asset" class="col-md-5 col-form-label text-md-left">Asset</label>
             <div class="col-md-7">
               <!-- <input id="e_asset" type="text" class="form-control e_asset"> -->
@@ -353,7 +359,7 @@
           <div class="form-group row justify-content-center">
             <label for="e_time" class="col-md-5 col-form-label text-md-left">Request Time</label>
             <div class="col-md-7">
-              <input type="time" class="form-control" id="e_time" name="e_time" value="<?php echo date("H:i"); ?>">
+              <input type="time" class="form-control" id="e_time" name="e_time">
             </div>
           </div>
           <div class="form-group row">
@@ -394,7 +400,7 @@
           <!-- <button type="button" class="btn btn-danger bt-action mr-auto e_btnadd" id="e_addeng">Add Engineer</button>
           <button type="button" class="btn btn-warning bt-action mr-auto e_btnaddfai" id="e_addfai" style="display:none"><b>Add Failure Code</b></button> -->
           <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-success bt-action" id="e_btnconf">Save</button>
+          <button type="submit" class="btn btn-success bt-action" id="e_btnconf" disabled>Save</button>
           <button type="button" class="btn btn-block btn-info" id="e_btnloading" style="display:none">
             <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
           </button>
@@ -609,13 +615,25 @@
           </div>
         </div>
         <div class="form-group row">
+          <label for="srreason" class="col-md-2 col-form-label">SR Approval Reason</label>
+          <div class="col-md-4">
+            <textarea id="srreason" type="text" class="form-control" name="srreason" rows="3" readonly></textarea>
+          </div>
+
+          <label for="priority" class="col-md-2 col-form-label">Priority</label>
+          <div class="col-md-4">
+            <input id="priority" type="text" class="form-control" name="priority" readonly>
+          </div>
+        </div>
+        <div class="form-group row">
           <label for="approver" class="col-md-2 col-form-label">Engineer Approver</label>
           <div class="col-md-4">
             <input id="approver" type="text" class="form-control" name="approver" readonly />
           </div>
-          <label for="priority" class="col-md-2 col-form-label">Priority</label>
+
+          <label for="srdate" class="col-md-2 col-form-label">Request Date</label>
           <div class="col-md-4">
-            <input id="priority" type="text" class="form-control" name="priority" readonly>
+            <input id="srdate" type="text" class="form-control" name="srdate" autocomplete="off" readonly />
           </div>
         </div>
         <div class="form-group row">
@@ -623,9 +641,10 @@
           <div class="col-md-4">
             <input id="startwo" readonly type="text" class="form-control" name="startwo">
           </div>
-          <label for="srdate" class="col-md-2 col-form-label">Request Date</label>
+
+          <label for="srtime" class="col-md-2 col-form-label">Request Time</label>
           <div class="col-md-4">
-            <input id="srdate" type="text" class="form-control" name="srdate" autocomplete="off" readonly />
+            <input id="srtime" type="text" class="form-control" name="srtime" autocomplete="off" readonly />
           </div>
         </div>
         <div class="form-group row">
@@ -633,16 +652,7 @@
           <div class="col-md-4">
             <input id="endwo" type="text" class="form-control" name="endwo" readonly>
           </div>
-          <label for="srtime" class="col-md-2 col-form-label">Request Time</label>
-          <div class="col-md-4">
-            <input id="srtime" type="text" class="form-control" name="srtime" autocomplete="off" readonly />
-          </div>
-        </div>
-        <div class="form-group row">
-          <label for="englist" class="col-md-2 col-form-label">Engineer List</label>
-          <div class="col-md-4">
-            <textarea id="englist" type="text" class="form-control" name="englist" rows="3" readonly></textarea>
-          </div>
+
           <label for="file" class="col-md-2 col-form-label">Current File</label>
           <div class="col-md-4">
             <table class="table table-bordered">
@@ -662,13 +672,24 @@
           </div> -->
         </div>
         <div class="form-group row">
+          <label for="englist" class="col-md-2 col-form-label">Engineer List</label>
+          <div class="col-md-4">
+            <textarea id="englist" type="text" class="form-control" name="englist" rows="3" readonly></textarea>
+          </div>
+
+          <label for="wocancelnote" class="col-md-2 col-form-label">WO Cancel Note</label>
+          <div class="col-md-4">
+            <textarea id="wocancelnote" type="text" class="form-control" name="wocancelnote" rows="3" readonly></textarea>
+          </div>
+        </div>
+        <div class="form-group row">
           <label for="srcancelnote" class="col-md-2 col-form-label">SR Cancel Note</label>
           <div class="col-md-4">
             <textarea id="srcancelnote" type="text" class="form-control" name="srcancelnote" rows="3" readonly></textarea>
           </div>
-          <label for="wocancelnote" class="col-md-2 col-form-label">WO Cancel Note</label>
+          <label for="accnote" class="col-md-2 col-form-label">User Acceptance Note</label>
           <div class="col-md-4">
-            <textarea id="wocancelnote" type="text" class="form-control" name="wocancelnote" rows="3" readonly></textarea>
+            <textarea id="accnote" type="text" class="form-control" name="accnote" rows="3" readonly></textarea>
           </div>
         </div>
         <div class="modal-footer">
@@ -894,6 +915,9 @@
       var reason = $(this).data('reason');
       var engineer = $(this).data('engineer');
       var srcancelnote = $(this).data('srcancelnote');
+      var wocancelnote = $(this).data('wocancelnote');
+      var accnote = $(this).data('accnote');
+      var reason = $(this).data('reason');
 
       var srdate = $(this).data('srdate');
       document.getElementById('srdate').value = srdate;
@@ -919,7 +943,7 @@
       var eng = engineer.replaceAll(";", "\n");
 
       document.getElementById('englist').value = eng;
-      document.getElementById('reqbyname').value = reqby;
+      document.getElementById('reqbyname').value = reqbyname;
       document.getElementById('srnote').value = srnote;
       document.getElementById('wonumber').value = wonumber;
       if (startwo != '01-01-1970') {
@@ -935,6 +959,7 @@
       document.getElementById('wostatus').value = wostatus;
       document.getElementById('approver').value = approver;
       document.getElementById('srcancelnote').value = srcancelnote;
+      document.getElementById('wocancelnote').value = wocancelnote;
 
       if (wostatus == 'Open') {
         document.getElementById("wostatus").style.color = 'green';
@@ -1041,6 +1066,8 @@
       document.getElementById('assetdesc').value = assetdesc;
       document.getElementById('dept').value = dept;
       document.getElementById('assetloc').value = assetloc;
+      document.getElementById('srreason').value = reason;
+      document.getElementById('accnote').value = accnote;
 
       document.getElementById('hiddenreq').value = reqby;
       document.getElementById('priority').value = priority;
@@ -1074,8 +1101,7 @@
       var approver = $(this).data('approver');
       var rejectnote = $(this).data('rejectnote');
       var reason = $(this).data('reason');
-
-      // console.log(failcode);
+      var cfile = $(this).data('cfile');
 
       // document.getElementById('e_renote').value = rejectnote;
 
@@ -1150,10 +1176,8 @@
       $('#e_impact').val(newarrimp);
       $('#e_impact').trigger('change');
 
-      // console.log(document.getElementById('e_impact').value);
-
       document.getElementById('englist').value = englist;
-      document.getElementById('e_req').value = reqby;
+      document.getElementById('e_req').value = reqbyname;
       document.getElementById('e_note').value = srnote;
       document.getElementById('e_nowo').value = wonumber;
       if (startwo != '01-01-1970') {
@@ -1166,63 +1190,32 @@
       } else {
         document.getElementById('endwo').value = '';
       }
-      // document.getElementById('action').value = action;
+
       document.getElementById('e_status').value = srstat;
-      // document.getElementById('failcode').value = faildesclist;
 
       $(document).on('click', '.deleterow', function(e) {
         var data = $(this).closest('tr').find('.rowval').val();
 
         Swal.fire({
-            title: '',
-            text: "Delete File ?",
-            icon: '',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Delete'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                  $.ajax({
-                  url: "/deleteuploadsr/" + data,
-                  success: function(data) {
-
-                      $('#elistupload').html('').append(data);
-                  }
-                  })
+          title: '',
+          text: "This file will be deleted forever, are you sure ?",
+          icon: '',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Delete'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            $.ajax({
+              url: "/deleteuploadsr/" + data,
+              success: function(data) {
+                //supaya button save tidak disable
+                e_btnconf.disabled = false;
+                $('#elistupload').html('').append(data);
               }
             })
-
-        // swal.fire({
-        //   // position: 'top-end',
-        //   icon: 'warning',
-        //   title: "This file will be deleted forever, are you sure ?",
-        //   // toast: true,
-        //   showConfirmButton: true,
-        //   showCancelButton: true,
-        //   confirmButtonColor: '#3085d6',
-        //   cancelButtonColor: '#d33',
-        //   confirmButtonText: 'Yes',
-        //   cancelButtonText: 'Cancel'
-        // }).then((result) => {
-        //   if (result.isConfirmed) {
-
-        //     Swal.fire(
-        //       'Deleted Success!',
-        //       'Your file has been deleted',
-        //       'success'
-        //     );
-
-        //     $.ajax({
-        //       url: "/deleteuploadsr/" + data,
-        //       success: function(data) {
-
-        //         $('#elistupload').html('').append(data);
-        //       }
-        //     })
-
-        //   }
-        // })
+          }
+        })
 
 
       });
@@ -1230,46 +1223,125 @@
       $.ajax({
         url: "/listupload/" + srnumber,
         success: function(data) {
-          // console.log(data);
           $('#elistupload').html('').append(data);
         }
       })
-
-      // $.ajax({
-      //   url: "/searchfailtype",
-      //   data: {
-      //     failtype: failtype,
-      //   },
-      //   success: function(data) {
-      //     console.log(data);
-      //     document.getElementById('e_wottype').value = data;
-      //     // }
-
-      //   },
-      //   statusCode: {
-      //     500: function() {
-      //       document.getElementById('e_wottype').value = "";
-      //     }
-      //   }
-      // })
-
 
       document.getElementById('e_nosr').value = srnumber;
       document.getElementById('e_asset').value = assetcode + ' - ' + assetdesc;
       document.getElementById('assetdesc').value = assetdesc;
       document.getElementById('e_dept').value = dept;
       document.getElementById('assetloc').value = assetloc;
-      // document.getElementById('assettype').value = astype;
       document.getElementById('e_wottype').value = failtype;
       document.getElementById('e_approver').value = approver;
-      // document.getElementById('e_reason').value = reason;
-      // console.log(approver);
-      // console.log(document.getElementById('e_approver').value);
-
-      // console.log(document.getElementById('e_wottype'));
-
+      document.getElementById('e_reason').value = reason;
       document.getElementById('hiddenreq').value = reqby;
       document.getElementById('e_priority').value = priority;
+
+      // Mengambil semua value default
+      var inputDate = document.getElementById('e_date');
+      var inputTime = document.getElementById('e_time');
+      var inputFailType = $("#e_wottype");
+      var inputPriority = $("#e_priority");
+      var inputFailCode = $("#e_failurecode");
+      var inputImpact = $("#e_impact");
+      var inputNote = $("#e_note");
+      var inputApprover = $("#e_approver");
+      var inputFileName = document.getElementById('filename');
+      // console.log(inputFileName);
+
+      inputDate.addEventListener("input", function() {
+        var valueDate = inputDate.value;
+        if (srdate != valueDate) {
+          e_btnconf.disabled = false;
+        } else {
+          e_btnconf.disabled = true;
+        }
+      })
+
+      inputTime.addEventListener("input", function() {
+        var valueTime = inputTime.value;
+        var substrtime = srtime.substr(0,5);
+        if (substrtime != valueTime) {
+          e_btnconf.disabled = false;
+        } else {
+          e_btnconf.disabled = true;
+        }
+      })
+
+      inputFailType.on("change", function() {
+        var selectedValue = inputFailType.val();
+         if (failtype != selectedValue) {
+          e_btnconf.disabled = false;
+        }else{
+          e_btnconf.disabled = true;
+        }
+      });
+
+      inputPriority.on("change", function() {
+        var selectedValue = inputPriority.val();
+         if (priority != selectedValue) {
+          e_btnconf.disabled = false;
+        }else{
+          e_btnconf.disabled = true;
+        }
+      });
+
+      inputFailCode.on("change", function() {
+        var selectedValue = inputFailCode.val();
+         if (failcode != selectedValue) {
+          e_btnconf.disabled = false;
+        }else{
+          e_btnconf.disabled = true;
+        }
+      });
+
+      inputImpact.on("change", function() {
+        var selectedValue = inputImpact.val();
+         if (impact != selectedValue) {
+          e_btnconf.disabled = false;
+        }else{
+          e_btnconf.disabled = true;
+        }
+      });
+
+      inputNote.on("input", function() {
+        var selectedValue = inputNote.val();
+         if (srnote != selectedValue) {
+          e_btnconf.disabled = false;
+        }else{
+          e_btnconf.disabled = true;
+        }
+      });
+
+      inputApprover.on("change", function() {
+        var selectedValue = inputApprover.val();
+         if (approver != selectedValue) {
+          e_btnconf.disabled = false;
+        }else{
+          e_btnconf.disabled = true;
+        }
+      });
+
+      inputFileName.addEventListener("change", function() {
+        var valueFile = inputFileName.value;
+        // console.log(cfile);
+        var fileArray = [];
+        if (valueFile != '') {
+          var array = fileArray.push(valueFile);
+        }else{
+          var array = fileArray.pop();
+        }
+
+        if (array == undefined) {
+          e_btnconf.disabled = true;
+        } else if(cfile != array.length) {
+          e_btnconf.disabled = false;
+        }else{
+          e_btnconf.disabled = true;
+
+        }
+      })
 
       $('#e_wottype').select2({
         theme: 'bootstrap4',
@@ -1300,6 +1372,7 @@
         allowClear: true,
         maximumSelectionLength: 3,
       });
+
 
     });
 

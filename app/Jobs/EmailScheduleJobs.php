@@ -673,7 +673,7 @@ class EmailScheduleJobs implements ShouldQueue
                     function ($message) use ($wo, $listto) {
                         $message->subject('eAMS - New Work Order');
                         // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
-                        $message->to(array_filter($listto));
+                        $message->to('tommy@ptimi.co.id');
                     }
                 );
 
@@ -682,7 +682,7 @@ class EmailScheduleJobs implements ShouldQueue
                     $user = App\User::where('id', '=', $data->id)->first();
                     $details = [
                         'body' => 'There is new WO for you',
-                        'url' => 'wobrowse',
+                        'url' => 'womaint',
                         'nbr' => $wo,
                         'note' => 'Please check'
 
@@ -733,7 +733,7 @@ class EmailScheduleJobs implements ShouldQueue
                     $user = App\User::where('id', '=', $data->id)->first();
                     $details = [
                         'body' => 'There is new WO that created directly',
-                        'url' => 'wobrowse',
+                        'url' => 'womaint',
                         'nbr' => $wo,
                         'note' => 'Please check'
 

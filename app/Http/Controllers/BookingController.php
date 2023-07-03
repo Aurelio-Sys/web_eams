@@ -40,7 +40,7 @@ class BookingController extends Controller
         $newyear = Carbon::now()->format('y');
 
         if (is_null($codeBook)) {
-            $noBook = "BO'.$newyear.'000001";
+            $noBook = "BO" . $newyear . "000001";
         } else {
             $noBook = $qBook->bo_prefix . $qBook->year . str_pad($qBook->bo_nbr + 1, 6, '0', STR_PAD_LEFT);
         }

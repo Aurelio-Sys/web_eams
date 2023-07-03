@@ -36,7 +36,7 @@
         <a href="javascript:void(0)" class="appdata" id='appdata' data-toggle="tooltip"  title="Booking Approval" data-target="#approveModal"
             data-code="{{$show->book_code}}" data-asset="{{$show->book_asset}}" 
             data-start="{{date('Y-m-d  H:i', strtotime($show->book_start))}}" data-end="{{date('Y-m-d  H:i', strtotime($show->book_end))}}"
-            data-by="{{$show->edited_by}}" data-desc="{{$show->asset_desc}}"
+            data-by="{{$show->book_edited_by}}" data-desc="{{$show->asset_desc}}"
             data-note="{{$show->book_note}}" data-allday="{{$show->book_allday}}">
             <i class="icon-table fas fa-thumbs-up fa-lg"></i></a>
         &ensp; 

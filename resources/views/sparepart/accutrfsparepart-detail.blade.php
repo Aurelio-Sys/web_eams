@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-9">
-            <h1 class="m-0 text-dark">Work Order Transfer Detail</h1>
+            <h1 class="m-0 text-dark">Accumulative Sparepart Transfer Detail</h1>
         </div><!-- /.col -->
     </div><!-- /.row -->
 </div><!-- /.container-fluid -->
@@ -18,37 +18,6 @@
         box-sizing: border-box;
     }
 </style>
-<div class="row">
-    <div class="form-group row col-md-12">
-        <label class="col-md-2 col-form-label text-md-right">Work Order</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" id="wo_num" name="wo_num" value="{{$data->wo_number}}" readonly>
-        </div>
-        <label class="col-md-1 col-form-label text-md-right">Asset</label>
-        <div class="col-md-3">
-            <input type="text" class="form-control" id="asset" name="asset" value="{{$data->asset_desc}}" readonly>
-        </div>
-        <label class="col-md-2 col-form-label text-md-right">Start Date</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" id="start_date" name="start_date" value="{{$data->wo_start_date}}" readonly>
-        </div>
-    </div>
-    <div class="form-group row col-md-12">
-        <label class="col-md-2 col-form-label text-md-right">SR Number</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" id="sr_num" name="sr_num" value="{{$data->wo_sr_number != null ? $data->wo_sr_number : '-'}}" readonly>
-        </div>
-        <label class="col-md-1 col-form-label text-md-right">Priority</label>
-        <div class="col-md-3">
-            <input type="text" class="form-control" id="prior" name="prior" value="{{$data->wo_priority}}" readonly>
-        </div>
-        <label class="col-md-2 col-form-label text-md-right">Due Date</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" id="duedate" name="duedate" value="{{$data->wo_due_date}}" readonly>
-            <input type="hidden" id="hidden_assetsite" value="{{$data->wo_site}}" />
-        </div>
-    </div>
-</div>
 
 <div class="row mt-2">
     <div class="row col-md-12">
@@ -57,11 +26,9 @@
 </div>
 
 <div class="col-lg-12 col-md-12">
-    <form action="/whssubmit" method="post" id="submit">
+    <form action="/submitaccutrf" method="post" id="submit">
         {{ method_field('post') }}
         {{ csrf_field() }}
-
-        <input type="hidden" name="hide_wonum" value="{{$data->wo_number}}" />
 
         <div class="modal-header">
         </div>
@@ -72,80 +39,69 @@
                     <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0" >
                         <thead>
                             <tr>
-                                <td style="text-align: center; width: 5% !important; font-weight: bold;">Spare Part Code</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Spare Part Desc</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty Required</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Total Required</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Supply Stock</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Location & Lot From</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Location To</td>
-                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty to Transfer</td>
+                                <th style="text-align: center; width: 5% !important; font-weight: bold;">Asset Site</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Spare Part</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Total Required</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Total Supply</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Location & Lot From</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Location To</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Qty to Transfer</th>
+                                <th style="text-align: center; width: 5% !important; font-weight: bold;">Action</th>
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
-                            @forelse ( $sparepart_detail as $index => $spd )
+                            @forelse ( $output as $index => $spd )
                             <tr>
                                 <td style="vertical-align:middle;text-align:left;">
-                                    {{$spd->wd_sp_spcode}}
-                                    <input type="hidden" class="hidden_spcode" name="hidden_spcode[]" value="{{$spd->wd_sp_spcode}}" />
+                                    @php
+                                        $getdesc_assetsite = $data_assetsite->where('assite_code','=', $spd['t_siteasset'])->first();
+
+                                        $assetsite_desc = $getdesc_assetsite->assite_desc;
+                                    @endphp
+
+                                    {{$spd['t_siteasset']}} -- {{$assetsite_desc}}
+                                    <input type="hidden" class="siteasset_hidden" name="siteasset_hidden[]" value="{{$spd['t_siteasset']}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
-                                    {{$spd->spm_desc}}
+                                    @php
+                                        $getdesc_sp = $data_sp->where('spm_code','=', $spd['t_part'])->first();
+
+                                        $sp_desc = $getdesc_sp->spm_desc;
+                                    @endphp
+                                    {{$spd['t_part']}} -- {{$sp_desc}}
+                                    <input type="hidden" class="spcode_hidden" name="spcode_hidden[]" value="{{$spd['t_part']}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
-                                    {{$spd->wd_sp_required}}
+                                    {{$spd['t_qtyreq']}}
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
-                                @php
-
-                                    $tSpcode = $spd->wd_sp_spcode;
-                                    $tAssetSite = $data->wo_site;
-
-                                    $tTotalReq = null;
-
-                                    foreach ($datatemp_required as $totreq) {
-                                        if ($totreq['t_spcode'] === $tSpcode && $totreq['t_asset_site'] === $tAssetSite) {
-                                            $tTotalReq = $totreq['t_total_req'];
-                                            break;
-                                        }
-                                    }
-                                @endphp
-                                {{ $tTotalReq }}
-                                </td>
-                                <td style="vertical-align:middle;text-align:left;">
-                                @php
-
-                                    $tSpcode = $spd->wd_sp_spcode;
-
-                                    $tTotalStock = null;
-
-                                    foreach ($result as $totstock) {
-                                        if ($totstock['part'] === $tSpcode) {
-                                            $tTotalStock = $totstock['qtyoh'];
-                                            break;
-                                        }
-                                    }
-                                @endphp
-                                {{number_format($tTotalStock, 2)}}
+                                    {{number_format($spd['t_qtyoh'],2)}}
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" data-index="{{ $index }}"  required placeholder="Click Here">
+                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" data-index="{{ $index }}" placeholder="Click Here">
                                     <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
                                     <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
                                     <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" /> 
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    <select id="locto" class="form-control locto selectpicker" name="locto[]" data-dropup-auto="false" data-live-search="true" required>
+                                    <select id="locto" class="form-control locto selectpicker" name="locto[]" data-dropup-auto="false" data-live-search="true">
                                         <option></option>
                                         @foreach ( $datalocsupply as $dtloc  )
-                                            <option value="{{$dtloc->inp_loc}}" data-siteto="{{$dtloc->inp_supply_site}}">{{$dtloc->inp_supply_site}}, {{$dtloc->inp_loc}}</option>
+                                            @if($dtloc->inp_asset_site == $spd['t_siteasset'])
+                                                <option value="{{$dtloc->inp_loc}}" data-siteto="{{$dtloc->inp_supply_site}}">{{$dtloc->inp_supply_site}}, {{$dtloc->inp_loc}}</option>
+                                            @endif
                                         @endforeach
                                     </select>
                                     <input type="hidden" class="hidden_siteto" name="hidden_siteto[]" value="" />
                                     <input type="hidden" class="hidden_locto" name="hidden_locto[]" value="" />
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
-                                    <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0" value="{{$spd->wd_sp_required}}" step="0.01" required />
+                                    <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0" value="0" step="0.01" required />
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <!-- <input type="checkbox" class=""custom-control custom-checkbox" name="checkbox[]" value="N"> -->
+                                    <input type="hidden" value="N" name="hide_check[]" class="hide_check" />
+                                    <input class="transferchecker" type="checkbox" name="transferchecker[]" />
                                 </td>
                             </tr>
                             @empty
@@ -154,11 +110,6 @@
                             </tr>
                             @endforelse
                         </tbody>
-                        <tfoot>
-                            <tr>
-                                
-                            </tr>
-                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -215,6 +166,61 @@
 
     $(document).ready(function() {
 
+        $(document).on('click','.transferchecker',function(){
+            var checkbox = $(this), // Selected or current checkbox
+            value = checkbox.val(); // Value of checkbox
+
+            if (checkbox.is(':checked')) {
+                $(this).closest("tr").find('.hide_check').val('Y');
+                $(this).closest('tr').find('.loclotfrom').prop('required', true);
+                $(this).closest('tr').find('.locto').prop('required', true);
+            } else {
+                $(this).closest("tr").find('.hide_check').val('N');
+                $(this).closest('tr').find('.loclotfrom').prop('required', false);
+                $(this).closest('tr').find('.locto').prop('required', false);
+            }
+
+        });
+
+        $('body').on('change', 'input[name="checkbox[]"]', function() {
+            // Periksa apakah checkbox dicentang atau tidak
+            if ($(this).is(':checked')) {
+                $(this).val('Y'); // Ubah nilai checkbox menjadi "Y"
+                $(this).closest('tr').find('.loclotfrom').prop('required', true);
+                $(this).closest('tr').find('.locto').prop('required', true);
+            } else {
+                $(this).val('N'); // Ubah nilai checkbox menjadi "N"
+            }
+        });
+
+        $('#site_search').select2({
+            placeholder: 'Select Asset Site',
+            width: '100%',
+            theme: 'bootstrap4',
+            allowClear: true,
+            closeOnSelect: true,
+            templateSelection: function (data, container) {
+                // Memotong teks opsi menjadi 20 karakter
+                var text = data.text.slice(0, 20);
+                // Mengembalikan teks opsi yang sudah dipotong dan menambahkan tanda elipsis
+                return text + (data.text.length > 20 ? '...' : '');
+            }
+        });
+
+        $('#spsearch').select2({
+            placeholder: 'Select Asset Site',
+            width: '100%',
+            theme: 'bootstrap4',
+            allowClear: true,
+            closeOnSelect: true,
+            templateSelection: function (data, container) {
+                // Memotong teks opsi menjadi 20 karakter
+                var text = data.text.slice(0, 20);
+                // Mengembalikan teks opsi yang sudah dipotong dan menambahkan tanda elipsis
+                return text + (data.text.length > 20 ? '...' : '');
+            }
+        });
+
         // untuk membuat readonly
         $(".readonly").on('keydown paste focus mousedown', function(e){
         if(e.keyCode != 9) // ignore tab
@@ -235,10 +241,47 @@
         //     }
         // });
 
+
+        $('#searchbtn').click(function() {
+            var siteSearchValue = $('#site_search').val();
+            var spSearchValue = $('#spsearch').val();
+
+            $.ajax({
+                url: '/searchaccutrf',
+                type: 'GET',
+                data: {
+                    site_search: siteSearchValue,
+                    spsearch: spSearchValue
+                },
+                success: function(response) {
+                    var html = '';
+                    // Buat struktur tabel dengan menggunakan data response
+                    // dan tambahkan ke dalam elemen tbody dengan id 'detailapp'
+                    // sesuaikan dengan struktur data dan penempatan di tabel Anda
+                    // response.forEach(function(data) {
+                    //     html += '<tr>';
+                    //     html += '<td>' + data.asset_site + '</td>';
+                    //     html += '<td>' + data.spare_part + '</td>';
+                    //     html += '<td>' + data.total_required + '</td>';
+                    //     html += '<td>' + data.total_supply + '</td>';
+                    //     html += '<td>' + data.location_lot_from + '</td>';
+                    //     html += '<td>' + data.location_to + '</td>';
+                    //     html += '<td>' + data.qty_to_transfer + '</td>';
+                    //     html += '</tr>';
+                    // });
+
+                    // $('#detailapp').html(html);
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+
         $(document).on('click', '.loclotfrom', function() { 
             var row = $(this).closest("tr");
-            const spcode = row.find(".hidden_spcode").val();
-            const getassetsite = document.getElementById('hidden_assetsite').value;
+            const spcode = row.find(".spcode_hidden").val();
+            const getassetsite = row.find('.siteasset_hidden').val();
 
             $.ajax({
                 url: '/getwsastockfrom',
@@ -295,7 +338,7 @@
                             row.find(".hidden_locfrom").val(loc);
                             row.find(".hidden_lotfrom").val(lot);
 
-                            const loclot = `${site}, ${loc}, ${lot}`;
+                            const loclot = `${site},${loc},${lot}`;
 
                             row.find(".loclotfrom").val(loclot);
                             row.find(".loclotfrom").attr('title',loclot);
@@ -306,6 +349,8 @@
                             //jika lebih besar yang diminta dari pada yg dimiliki di inventory supply maka qty to transfer maks = qty onhand di inv source
                             if(parseFloat(qtyohold) > parseFloat(qtyoh)){
                                 row.find(".qtytotransfer").attr("max", qtyoh).val(qtyoh);
+                            }else{
+                                row.find(".qtytotransfer").attr("max", qtyoh);
                             }
 
                             $('#myModal').modal('hide');

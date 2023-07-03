@@ -253,7 +253,8 @@ class SettingController extends Controller
             $req->cbUSMT . $req->cbUSmultiMT . $req->cbUSGen . $req->pmconf . $req->ksp . $req->cbUSBrowse .
             $req->cbBoas . $req->whyhist . $req->reqsp . $req->trfsp . $req->cbUA .
             $req->cbRptDet . $req->cbRptCost . $req->cbAssetReport . $req->cbEngReport . $req->cbRptRemsp . 
-            $req->cbAssetSchedule . $req->cbRptSchyear . $req->cbEngSchedule . $req->cbRptSpneed . $req->cbBookSchedule;
+            $req->cbAssetSchedule . $req->cbRptSchyear . $req->cbEngSchedule . $req->cbRptSpneed . $req->cbBookSchedule .
+            $req->accutrf;
         
 
         $this->validate($req, [
@@ -319,7 +320,8 @@ class SettingController extends Controller
             $req->e_cbUSMT . $req->e_cbUSmultiMT . $req->e_cbUSGen . $req->e_pmconf . $req->e_ksp . $req->e_cbUSBrowse .
             $req->e_cbBoas . $req->e_whyhist . $req->e_reqsp . $req->e_trfsp . $req->e_cbUA .
             $req->e_cbRptDet . $req->e_cbRptCost . $req->e_cbAssetReport . $req->e_cbEngReport . $req->e_cbRptRemsp . 
-            $req->e_cbAssetSchedule . $req->e_cbRptSchyear . $req->e_cbEngSchedule . $req->e_cbRptSpneed . $req->e_cbBookSchedule;
+            $req->e_cbAssetSchedule . $req->e_cbRptSchyear . $req->e_cbEngSchedule . $req->e_cbRptSpneed . $req->e_cbBookSchedule .
+            $req->e_accutrf;
         
 
         DB::table("roles")
@@ -1846,20 +1848,20 @@ class SettingController extends Controller
             });
 
             /* ini ditutup dulu, nanti dibuka lagi */
-            // $domain = ModelsQxwsa::first();
-            // $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
+            $domain = ModelsQxwsa::first();
+            $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
 
-            // if ($datawsa === false) {
-            //     toast('WSA Failed', 'error')->persistent('Dismiss');
-            //     return redirect()->back();
-            // } else {
-            //     foreach ($datawsa[0] as $datas) {
-            //         DB::table('temp_asset')->insert([
-            //             'temp_code' => $datas->t_code,
-            //             'temp_desc' => $datas->t_desc,
-            //         ]);
-            //     }
-            // } 
+            if ($datawsa === false) {
+                toast('WSA Failed', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+                foreach ($datawsa[0] as $datas) {
+                    DB::table('temp_asset')->insert([
+                        'temp_code' => $datas->t_code,
+                        'temp_desc' => $datas->t_desc,
+                    ]);
+                }
+            } 
 
             $dataassetqad = DB::table('temp_asset')
                 ->orderBy('temp_code')
@@ -3355,7 +3357,7 @@ class SettingController extends Controller
                             $sp->spm_dom = $datas->t_dom;
                             $sp->spm_site = $datas->t_site;
                             $sp->spm_code = $datas->t_spcode;
-                            $sp->spm_desc = $datas->t_spname;
+                            $sp->spm_desc = str_replace('"', '', rtrim($datas->t_spname));
                             $sp->spm_um = $datas->t_spum;
                             $sp->spm_loc = $datas->t_loc;
                             $sp->spm_lot = $datas->t_lotser;

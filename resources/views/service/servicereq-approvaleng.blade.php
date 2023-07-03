@@ -4,7 +4,7 @@
   <div class="row mb-2">
     <div class="col-sm-6 mt-2">
       <h1 class="m-0 text-dark">Service Request Approval Engineer</h1>
-      <p class="pb-0 m-0">Menu ini berfungsi untuk melakukan approval engineer</p>
+      <p class="pb-0 m-0">Menu ini berfungsi untuk melakukan approval supervisor engineer</p>
     </div><!-- /.col -->
   </div><!-- /.row -->
 </div><!-- /.container-fluid -->
@@ -75,7 +75,7 @@
             @endforeach
           </select> -->
         </div>
-        <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('Asset Code') }}</label>
+        <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('Asset Description') }}</label>
         <div class="col-md-3 col-sm-4 mb-2 input-group">
           <!-- <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
             <option value="">--Select Asset--</option>
@@ -83,7 +83,7 @@
             <option value="{{$show->asset_desc}}">{{$show->asset_desc}}</option>
             @endforeach
           </select> -->
-          <input id="s_asset" type="text" class="form-control" name="s_asset" value="" autofocus autocomplete="off" placeholder="Search Asset Desc">
+          <input id="s_asset" type="text" class="form-control" name="s_asset" value="" autofocus autocomplete="off" placeholder="Search Asset Description">
         </div>
       </div>
       <div class="col-12 form-group row">
@@ -97,7 +97,16 @@
             <option value="high">High</option>
           </select>
         </div>
-        <label for="s_period" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('') }}</label>
+        <!-- <label for="s_period" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('') }}</label> -->
+        <label for="s_status" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('Status') }}</label>
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+          <select id="s_status" name="s_status" class="form-control" value="" autofocus autocomplete="off">
+            <option value="">--Select Status--</option>
+            <option value="Waiting for engineer approval">Waiting for approval</option>
+            <option value="Approved">Approved</option>
+            <option value="Revision from engineer approval">Rejected</option>
+          </select>
+        </div>
         <div class="col-md-3 col-sm-4 mb-2 input-group">
           <input type="button" class="btn btn-primary" id="btnsearch" value="Search" style="float:right" />
           <button type="button" class="btn btn-primary ml-2" id="btnrefresh"><i class="fas fa-redo-alt"></i></button>
@@ -111,6 +120,7 @@
 <input type="hidden" id="tmpasset" />
 <input type="hidden" id="tmppriority" />
 <input type="hidden" id="tmpperiod" />
+<input type="hidden" id="tmpstatus" />
 
 <!-- table picklist -->
 <div class="table-responsive col-12">
@@ -128,6 +138,7 @@
         <th>SR Number</th>
         <th>Asset</th>
         <th>Asset Description</th>
+        <th>Status Approval</th>
         <!-- <th>Location</th> -->
         <!-- <th>Status</th> -->
         <th>Priority</th>
@@ -147,6 +158,7 @@
   <input type="hidden" name="hidden_sort_type" id="hidden_sort_type" value="asc" />
 </div>
 
+<!-- Modal Approval -->
 <div class="modal fade" id="viewModal" role="dialog" aria-hidden="true" data-backdrop="static">
   <div class="modal-dialog modal-md" role="document">
     <div class="modal-content">
@@ -205,12 +217,6 @@
               <input id="h_assetloc" type="hidden" name="h_assetloc" />
             </div>
           </div>
-          <!-- <div class="form-group row">
-                        <label for="assettype" class="col-md-5 col-form-label text-md-left">Process / Technology</label>
-                        <div class="col-md-7">
-                            <input id="assettype" type="text" class="form-control" name="assettype" autocomplete="off" autofocus readonly/>
-                        </div>
-                    </div> -->
           <div class="form-group row col-md-12">
             <label for="srnote" class="col-md-5 col-form-label text-md-left">SR Note</label>
             <div class="col-md-7">
@@ -275,6 +281,7 @@
             <div class="col-md-7">
               <!-- <input id="priority" type="text" name="priority" class="form-control"> -->
               <select class="form-control priority" name="priority" id="priority" required>
+                <option value=''>Select Priority</option>
                 <option value='low'>Low</option>
                 <option value='medium'>Medium</option>
                 <option value='high'>High</option>
@@ -343,7 +350,7 @@
             </div>
           </div>
           <div class="form-group row col-md-12">
-            <label for="wonote" class="col-md-5 col-form-label text-md-left">Note</label>
+            <label for="wonote" class="col-md-5 col-form-label text-md-left">Note for Work Order</label>
             <div class="col-md-7">
               <textarea id="wonote" type="text" class="form-control" name="wonote" maxlength="250" autocomplete="off" autofocus></textarea>
               <span id="alert3" style="color: red; font-weight: 200;"></span>
@@ -422,6 +429,7 @@
 </div>
 </div>
 
+<!-- Modal View -->
 <div class="modal fade" id="viewApprModal" role="dialog" aria-hidden="true" data-backdrop="static">
   <div class="modal-dialog modal-md" role="document">
     <div class="modal-content">
@@ -461,6 +469,18 @@
             </div>
           </div>
           <div class="form-group row col-md-12">
+            <label for="v_status" class="col-md-5 col-form-label text-md-left">Approval Status</label>
+            <div class="col-md-7">
+              <input id="v_status" type="text" class="form-control" name="v_status" autocomplete="off" maxlength="6" readonly style="color:green;font-weight:bold">
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
+            <label for="v_reason" class="col-md-5 col-form-label text-md-left">Approval Reason</label>
+            <div class="col-md-7">
+              <textarea id="v_reason" type="text" class="form-control" name="v_reason" autocomplete="off" rows="2" readonly></textarea>
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
             <label for="v_assetcode" class="col-md-5 col-form-label text-md-left">Asset Code</label>
             <div class="col-md-7">
               <input id="v_assetcode" type="text" class="form-control" name="v_assetcode" autocomplete="off" autofocus readonly />
@@ -473,7 +493,7 @@
             </div>
           </div>
           <div class="form-group row col-md-12">
-            <label for="v_assetloc" class="col-md-5 col-form-label text-md-left">Location</label>
+            <label for="v_assetloc" class="col-md-5 col-form-label text-md-left">Asset Location</label>
             <div class="col-md-7">
               <input id="v_assetloc" type="text" class="form-control" name="v_assetloc" autocomplete="off" autofocus readonly />
               <input id="v_h_assetsite" type="hidden" name="v_h_assetsite" />
@@ -576,60 +596,60 @@
             </div>
           </div>
           <div class="form-group row col-md-12">
-            <label for="v_wonote" class="col-md-5 col-form-label text-md-left">Note</label>
+            <label for="v_wonote" class="col-md-5 col-form-label text-md-left">Note for Work Order</label>
             <div class="col-md-7">
               <textarea id="v_wonote" type="text" class="form-control" name="v_wonote" maxlength="250" autocomplete="off" readonly></textarea>
-              <span id="alert3" style="color: red; font-weight: 200;"></span>
+              <!-- <span id="alert3" style="color: red; font-weight: 200;"></span> -->
             </div>
           </div>
-          <!-- <div class="form-group row col-md-12">
+          <div class="form-group row col-md-12">
             <label for="v_mtcode" class="col-md-5 col-form-label text-md-left">Maintenance Code</label>
             <div class="col-md-7">
-            <input id="v_mtcode" type="text" name="v_mtcode" class="form-control" readonly> -->
-          <!-- <select id="v_mtcode" name="v_mtcode" class="form-control">
+              <input id="v_mtcode" type="text" name="v_mtcode" class="form-control" readonly>
+              <!-- <select id="v_mtcode" name="v_mtcode" class="form-control">
                 <option></option>
                 @foreach($maintenancelist as $mt)
                 <option value="{{$mt->pmc_code}}">{{$mt->pmc_code}} -- {{$mt->pmc_desc}}</option>
                 @endforeach
               </select> -->
-          <!-- </div>
+            </div>
           </div>
           <div class="form-group row col-md-12">
             <label for="v_inslist" class="col-md-5 col-form-label text-md-left">Instruction List</label>
             <div class="col-md-7">
-            <input id="v_inslist" type="text" name="v_inslist" class="form-control" readonly> -->
-          <!-- <select id="v_inslist" name="v_inslist" class="form-control">
+              <input id="v_inslist" type="text" name="v_inslist" class="form-control" readonly>
+              <!-- <select id="v_inslist" name="v_inslist" class="form-control">
                 <option></option>
                 @foreach ($inslist as $ins)
                 <option value="{{$ins->ins_code}}">{{$ins->ins_code}} -- {{$ins->ins_desc}}</option>
                 @endforeach
               </select> -->
-          <!-- </div>
+            </div>
           </div>
           <div class="form-group row col-md-12">
             <label for="v_splist" class="col-md-5 col-form-label text-md-left">Instruction Spare Part</label>
             <div class="col-md-7">
-            <input id="v_splist" type="text" name="v_splist" class="form-control" readonly> -->
-          <!-- <select id="v_splist" name="v_splist" class="form-control">
+              <input id="v_splist" type="text" name="v_splist" class="form-control" readonly>
+              <!-- <select id="v_splist" name="v_splist" class="form-control">
                 <option></option>
                 @foreach ($splist as $sp)
                 <option value="{{$sp->spg_code}}">{{$sp->spg_code}} -- {{$sp->spg_desc}}</option>
                 @endforeach
               </select> -->
-          <!-- </div>
-          </div> -->
-          <!-- <div class="form-group row col-md-12">
+            </div>
+          </div>
+          <div class="form-group row col-md-12">
             <label for="v_qclist" class="col-md-5 col-form-label text-md-left">Instruction QC</label>
             <div class="col-md-7">
-            <input id="v_qclist" type="text" name="v_qclist" class="form-control" readonly> -->
-          <!-- <select id="v_qclist" name="v_qclist" class="form-control">
+              <input id="v_qclist" type="text" name="v_qclist" class="form-control" readonly>
+              <!-- <select id="v_qclist" name="v_qclist" class="form-control">
                 <option></option>
                 @foreach ($qclist as $qc)
                 <option value="{{$qc->qcs_code}}">{{$qc->qcs_code}} -- {{$qc->qcs_desc}}</option>
                 @endforeach
               </select> -->
-          <!-- </div>
-          </div> -->
+            </div>
+          </div>
           <!-- <div class="form-group row col-md-12">
             <label for="v_rejectreason" class="col-md-5 col-form-label text-md-left">Reason</label>
             <div class="col-md-7">
@@ -813,83 +833,38 @@
 
     $(document).on('click', '#btnreject', function(event) {
       var rejectreason = document.getElementById('rejectreason').value;
-      var enjiners = document.getElementById('enjiners').value;
-      var scheduledate = document.getElementById('scheduledate').value;
-      var duedate = document.getElementById('duedate').value;
-      // event.preventDefault();
-      // $('#approvaleng')
-      // alert(1);
 
       if (rejectreason == "") {
         // alert('masuk reject');
+        $("#priority").attr('required', false);
         $("#enjiners").attr('required', false);
         $("#scheduledate").attr('required', false);
         $("#duedate").attr('required', false);
-        $("#repaircode").attr('required', false);
-        $("#rad_repgroup1").attr('required', false);
-        // document.getElementById("alert3").innerHTML = 'Please fill out reason reject';
         $("#rejectreason").attr('required', true);
-      } else {
-        // alert('masuk sini');
-        $("#enjiners").attr('required', false);
-        $("#scheduledate").attr('required', false);
-        $("#duedate").attr('required', false);
-        $("#repaircode").attr('required', false);
-        $("#rad_repgroup1").attr('required', false);
-        // document.getElementById("alert3").innerHTML = 'Please fill out reason reject';
-        // $("#rejectreason").attr('required', true);
-
-        $('#approvaleng').submit();
-
       }
 
     });
 
     $(document).on('click', '#btnapprove', function(event) {
-      var rejectreason = document.getElementById('rejectreason').value;
+      var priority = document.getElementById('priority').value;
       var enjiners = document.getElementById('enjiners').value;
       var scheduledate = document.getElementById('scheduledate').value;
       var duedate = document.getElementById('duedate').value;
-      var pilihgrup = document.getElementById('rad_repgroup1').checked;
-      var pilihcode = document.getElementById('rad_repgroup2').checked;
-      // event.preventDefault();
-      // $('#approvaleng')
-      // alert(pilihgrup);
-      // alert(pilihcode);
 
-      if (enjiners == "" || scheduledate == "" || duedate == "" || (pilihgrup == false && pilihcode == false)) {
-        // alert('ada yg kosong');
+      if (priority == "" || enjiners == "" || scheduledate == "" || duedate == "") {
+        $("#priority").attr('required', true);
         $("#enjiners").attr('required', true);
         $("#scheduledate").attr('required', true);
         $("#duedate").attr('required', true);
-        $("#rad_repgroup1").attr('required', true);
-        // $("#repaircode").attr('required', true);
-        // document.getElementById("alert3").innerHTML = 'Please fill out reason reject';
-        // $("#rejectreason").attr('required', false);
-      } else {
-        if (pilihgrup) {
-          // alert('pilihgrup');
-          $("#repgroup").attr('required', true);
-          $("#repaircode").attr('required', false);
-          // $('#approvaleng').submit();
-          // event.preventDefault();
-        } else {
-          // alert('pilihcode');
-          $("#repaircode").attr('required', true);
-          $("#repgroup").attr('required', false);
-          // $('#approvaleng').submit();
-          // event.preventDefault();
-        }
-        // $("#rad_repgroup1").attr('required',true);
-
+        $("#rejectreason").attr('required', false);
       }
 
     });
 
 
-    function fetch_data(page, srnumber, asset, priority) {
+    function fetch_data(page, srnumber, asset, priority, status) {
       $.ajax({
-        url: "/srapproval/searchapprovaleng?page=" + page + "&srnumber=" + srnumber + "&asset=" + asset + "&priority=" + priority,
+        url: "/srapproval/searchapprovaleng?page=" + page + "&srnumber=" + srnumber + "&asset=" + asset + "&priority=" + priority + "&status=" + status,
         success: function(data) {
           // console.log(data);
           $('tbody').html('');
@@ -903,6 +878,7 @@
       var srnumber = $('#s_servicenbr').val();
       var asset = $('#s_asset').val();
       var priority = $('#s_priority').val();
+      var status = $('#s_status').val();
       // var column_name = $('#hidden_column_name').val();
       // var sort_type = $('#hidden_sort_type').val();
       var page = 1;
@@ -910,8 +886,9 @@
       document.getElementById('tmpsrnumber').value = srnumber;
       document.getElementById('tmpasset').value = asset;
       document.getElementById('tmppriority').value = priority;
+      document.getElementById('tmpstatus').value = status;
 
-      fetch_data(page, srnumber, asset, priority);
+      fetch_data(page, srnumber, asset, priority, status);
     });
 
 
@@ -925,24 +902,28 @@
       var srnumber = $('#tmpsrnumber').val();
       var asset = $('#tmpasset').val();
       var priority = $('#tmppriority').val();
+      var status = $('#tmpstatus').val();
 
-      fetch_data(page, srnumber, asset, priority);
+      fetch_data(page, srnumber, asset, priority, status);
     });
 
     $(document).on('click', '#btnrefresh', function() {
       var srnumber = '';
       var asset = '';
       var priority = '';
+      var status = '';
       var page = 1;
 
       document.getElementById('s_servicenbr').value = '';
       document.getElementById('s_asset').value = '';
       document.getElementById('s_priority').value = '';
+      document.getElementById('s_status').value = '';
       document.getElementById('tmpsrnumber').value = srnumber;
       document.getElementById('tmpasset').value = asset;
       document.getElementById('tmppriority').value = priority;
+      document.getElementById('tmpstatus').value = status;
 
-      fetch_data(page, srnumber, asset, priority);
+      fetch_data(page, srnumber, asset, priority, status);
 
       // $("#s_asset").select2({
       //   width: '100%',
@@ -1233,13 +1214,22 @@
       var wotype = $(this).data('wotypedescx');
       var impact = $(this).data('impactcode');
       var failcode = $(this).data('failcode');
-      // alert(impact);
       var assetloc = $(this).data('assetloc');
       var hassetsite = $(this).data('hassetsite');
       var hassetloc = $(this).data('hassetloc');
       var astype = $(this).data('astypedesc');
       var impactcode1 = $(this).data('impactcode');
       var id = $(this).data('idsr');
+      var status = $(this).data('status');
+      var reason = $(this).data('reason');
+      var wonote = $(this).data('wonote');
+      var engineer = $(this).data('engineer');
+      var wostart = $(this).data('wostart');
+      var wodue = $(this).data('wodue');
+      var womtc = $(this).data('womtc');
+      var woinsc = $(this).data('woinsc');
+      var wospc = $(this).data('wospc');
+      var woqcs = $(this).data('woqcs');
 
       $.ajax({
         url: "/searchimpactdesc",
@@ -1333,7 +1323,29 @@
         }
       })
 
-      // alert(impactcode1);
+      var newarrfc = [];
+      var desc = engineer.split(";");
+      if (desc != null) {
+        for (var i = 0; i <= (desc.length - 1); i++) {
+          if (desc[i] != '') {
+            newarrfc.push(desc[i]) + '\n';
+          }
+        }
+      }
+
+      if (wostart != '01-01-1970') {
+        document.getElementById('v_scheduledate').value = wostart;
+      } else {
+        document.getElementById('v_scheduledate').value = '';
+      }
+
+      if (wodue != '01-01-1970') {
+        document.getElementById('v_duedate').value = wodue;
+      } else {
+        document.getElementById('v_duedate').value = '';
+      }
+
+      document.getElementById('v_enjiners').value = newarrfc.join('\n');
       document.getElementById('v_idsr').value = id;
       document.getElementById('v_srnumber').value = srnumber;
       document.getElementById('v_srdate').value = srdate;
@@ -1357,6 +1369,23 @@
       document.getElementById('v_dept').value = dept;
       // document.getElementById('v_hiddendeptcode').value = deptcode;
       document.getElementById('v_reqbyname').value = reqbyname;
+      document.getElementById('v_status').value = status;
+      document.getElementById('v_reason').value = reason;
+      document.getElementById('v_wonote').value = wonote;
+      document.getElementById('v_mtcode').value = womtc;
+      document.getElementById('v_inslist').value = woinsc;
+      document.getElementById('v_splist').value = wospc;
+      document.getElementById('v_qclist').value = woqcs;
+
+      if (status == 'Revision from engineer approval') {
+        document.getElementById("v_status").style.color = 'red';
+        document.getElementById("v_status").value = 'Rejected';
+      } else if (status == 'Waiting for engineer approval') {
+        document.getElementById("v_status").value = 'Waiting for approval';
+      }else{
+        document.getElementById("v_status").value = 'Approved';
+
+      }
 
       $(document).on('change', '#wotype', function() {
         // console.log('masuk');

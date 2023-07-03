@@ -37,6 +37,7 @@ use App\Http\Controllers\Other\WhyHistController;
 use App\Http\Controllers\SparepartController;
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
+use Illuminate\Routing\Route as RoutingRoute;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Master\QxWsaMTController;
@@ -438,8 +439,10 @@ Route::group(['middleware' => ['auth']], function() {
 	//wo approval
 	route::get('/routewo','wocontroller@routewo');
 	route::get('/woapprovalbrowse','wocontroller@woapprovalbrowse')->name('woapprovalbrowse'); 
+	route::get('/woapprovalbrowse/pagination','wocontroller@woapprovalpaging')->name('woapprovalpaging'); 
 	route::post('/approvewo','wocontroller@approvewo'); 
 	route::get('/woapprovaldetail/{wonumber}', [wocontroller::class, 'woapprovaldetail'])->name('approvalWO');
+	route::get('/woapprovaldetail-info/{wonumber}', [wocontroller::class, 'woapprovaldetailinfo'])->name('approvalWOInfo');
 
 	//wo reporting and close
 	route::get('/woreport', 'wocontroller@wocloselist')->name('woreport');
@@ -515,7 +518,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/donlodsr','ServiceController@donlodsr'); //tyas, excel SR
 	route::get('/useracceptance', 'ServiceController@useracceptance'); 
 	route::post('/acceptance', 'ServiceController@acceptance');
-	route::get('/useracceptance/search', 'ServiceController@useracceptancesearch');
+	route::get('/useracceptance/search', 'ServiceController@searchuseracc');
 	route::get('/downloadfile/{id}', 'ServiceController@downloadfile');
 	route::get('/listupload/{id}', 'ServiceController@listupload')->name('listupload');
 	route::get('/listuploadview/{id}', 'ServiceController@listuploadview')->name('listuploadview');
@@ -744,6 +747,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// 5 Why Transaction
 	Route::get('/whyhist',[WhyHistController::class, 'index']); 
+	Route::get('/searchwoasset',[WhyHistController::class, 'searchwoasset']); 
 	Route::post('/createwhyhist',[WhyHistController::class, 'store']);
 	route::get('/whyfile/{id}', [WhyHistController::class, 'whyfile'])->name('whyfile');
 	Route::post('/editwhyhist',[WhyHistController::class, 'update']);
@@ -781,7 +785,12 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// Master Notifikasi
 	Route::get('/notmssg',[NotmssgController::class, 'index']); 
-	Route::post('/createmsg',[NotmssgController::class, 'store']); 
+	Route::post('/createmsg',[NotmssgController::class, 'store']);
+	
+	//akumulatif spare part transfer menu
+	Route::get('/accutransfer', [SparepartController::class, 'accutransfer'])->name('accuTransBrw');
+	Route::get('/searchaccutrf', [SparepartController::class, 'searchaccutrf']);
+	Route::post('/submitaccutrf', [SparepartController::class, 'submitaccutrf']);
 });
 
 Auth::routes();

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Hashing\BcryptHasher;
 
 use Auth;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
 
 class LoginController extends Controller
 {
@@ -92,14 +93,14 @@ class LoginController extends Controller
     {
         $request->session()->regenerate();
 
-        $previous_session = Auth::User()->session_id;
+        $previous_session = FacadesAuth::User()->session_id;
         if ($previous_session) {
-            \Session::getHandler()->destroy($previous_session);
+            Session::getHandler()->destroy($previous_session);
         }
 
-        Auth::user()->session_id = \Session::getId();
+        FacadesAuth::user()->session_id = Session::getId();
         
-        Auth::user()->save();
+        FacadesAuth::user()->save();
         $this->clearLoginAttempts($request);
         // session_destroy();
         // dd(session()->all());

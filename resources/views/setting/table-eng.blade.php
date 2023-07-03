@@ -47,6 +47,7 @@
 <tr>
     <td>{{$show->username}}</td>
     <td>{{$show->name}}</td>
+    <td>{{$show->email_user}}</td>
     <td>{{$descdept}} </td>
     <td>{{$show->access}} </td>
     <td>{{$show->role_user}}</td>

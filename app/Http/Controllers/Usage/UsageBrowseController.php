@@ -22,10 +22,13 @@ class UsageBrowseController extends Controller
 
         $dataus = DB::table('us_hist')
             ->selectRaw('asset_code,asset_desc,us_asset_site,asloc_desc,us_mea_um,us_date,us_time,
-                us_last_mea,us_hist.edited_by,us_hist.created_at,us_no_pm,asset_meter')
+                us_last_mea,us_hist.edited_by,us_hist.created_at,us_no_pm,pma_meter,pma_meterum')
+                // us_last_mea,us_hist.edited_by,us_hist.created_at,us_no_pm,asset_meter')
             ->Join('asset_mstr','asset_code','=','us_asset')
             ->Join('asset_site','assite_code','=','us_asset_site')
             ->Join('asset_loc','asloc_code','=','us_asset_loc')
+            ->join('pma_asset','pma_asset','=','asset_code')
+            ->wherePmaMea('M')
             ->orderBy('us_date','desc')
             ->orderBy('us_asset');
 
@@ -38,7 +41,7 @@ class UsageBrowseController extends Controller
         $dataasset = DB::table('asset_mstr')
             ->leftJoin('asset_site','assite_code','=','asset_site')
             ->leftJoin('asset_loc','asloc_code','=','asset_loc')
-            ->where('asset_measure','=','M')
+            // ->where('asset_measure','=','M')
             ->orderBy('asset_code')
             ->get();
 
