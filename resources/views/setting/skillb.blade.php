@@ -3,7 +3,7 @@
       <div class="container-fluid">
         <div class="row">          
           <div class="col-sm-4">
-            <h1 class="m-0 text-dark">Enginer Skills Maintenance</h1>
+            <h1 class="m-0 text-dark">Engineer Skills Maintenance</h1>
           </div>    
         </div><!-- /.row -->
         <div class="col-md-12">

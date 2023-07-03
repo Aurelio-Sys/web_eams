@@ -10,8 +10,8 @@
 <tr>
     <td>{{$show->asset_code}}</td>
     <td>{{$show->asset_desc}}</td>
-    <td>{{$show->astype_desc}}</td>
-    <td>{{$show->asgroup_desc}}</td>
+    <td>{{$show->astype_code}} -- {{$show->astype_desc}}</td>
+    <td>{{$show->asgroup_code}} -- {{$show->asgroup_desc}}</td>
     <td>{{$show->asset_site}} : {{$descloc}}  </td>
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal"

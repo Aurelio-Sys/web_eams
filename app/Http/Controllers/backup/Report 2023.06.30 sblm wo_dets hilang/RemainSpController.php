@@ -27,12 +27,12 @@ class RemainSpController extends Controller
         $ssp = $request->s_sp;
         $seng = $request->s_eng;
 // dd($sper1);
-        $dataremsp = DB::table('wo_dets_sp')
-            ->join('wo_mstr','wo_number','=','wd_sp_wonumber')
-            ->join('sp_mstr','spm_code','=','wd_sp_spcode')
-            ->join('asset_mstr','asset_code','=','wo_asset_code')
+        $dataremsp = DB::table('wo_dets')
+            ->join('wo_mstr','wo_nbr','=','wo_dets_nbr')
+            ->join('sp_mstr','spm_code','=','wo_dets_sp')
+            ->join('asset_mstr','asset_code','=','wo_asset')
             // ->where('wo_status','=','finish')
-            ->where('wd_sp_required','>','wd_sp_issued');
+            ->where('wo_dets_sp_qty','>','wo_dets_qty_used');
 
         // dd($dataremsp->get());
 

@@ -14,9 +14,9 @@
     <td>{{$show->asset_desc}}</td>
     <td>{{$show->pmo_pmcode}}</td>
     <td> @if($show->pmo_source == "TEMP-PM") PM{{$show->pmo_number}} @else PM{{$dtemppm}} @endif </td>
-    <td> @if($show->pmo_source == "TEMP-PM") {{$show->pmo_sch_date}} @else {{$dtempdate}} @endif</td>
+    <td> @if($show->pmo_source == "TEMP-PM") {{date('d-m-y', strtotime($show->pmo_sch_date))}} @else {{date('d-m-y', strtotime($dtempdate))}} @endif</td>
     <td> @if($show->pmo_source == "WO") {{$show->pmo_number}} @endif</td>
-    <td> @if($show->pmo_source == "WO") {{$show->pmo_sch_date}} @endif</td>
+    <td> @if($show->pmo_source == "WO") {{date('d-m-y', strtotime($show->pmo_sch_date))}} @endif</td>
     <td>
          <input type="checkbox" name="te_conf" id="te_conf" >
 

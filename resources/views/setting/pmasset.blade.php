@@ -112,7 +112,7 @@
                   <div class="form-group row">
                      <label for="t_time" class="col-md-3 col-form-label text-md-right">Lead Time</label>
                      <div class="col-md-3">
-                           <input type="number" class="form-control" id="t_time" name="t_time" autocomplete="off" min="0">
+                           <input type="number" class="form-control" id="t_time" name="t_time" autocomplete="off" step="0.01">
                      </div>
                      <label for="t_time" class="col-md-2 col-form-label text-md-left">Days</label>
                   </div>
@@ -215,7 +215,7 @@
                  <div class="form-group row">
                     <label for="te_time" class="col-md-3 col-form-label text-md-right">Lead Time</label>
                     <div class="col-md-3">
-                          <input type="number" class="form-control" id="te_time" name="te_time" autocomplete="off" min="0">
+                          <input type="number" class="form-control" id="te_time" name="te_time" autocomplete="off" step="0.01">
                     </div>
                     <label for="t_time" class="col-md-2 col-form-label text-md-left">Days</label>
                  </div>

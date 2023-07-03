@@ -1767,28 +1767,16 @@ class SettingController extends Controller
                 ->orderby('asset_code');
     
             if($s_code) {
-                $data = $data->where(function($query) use ($s_code) {
-                    $query->where('asset_code','like','%'.$s_code.'%')
-                    ->orwhere('asset_desc','like','%'.$s_code.'%');
-                });
+                $data = $data->where('asset_code','like','%'.$s_code.'%');
             }
             if($s_loc) {
-                $data = $data->where(function($query) use ($s_loc) {
-                    $query->where('asloc_code','like','%'.$s_loc.'%')
-                    ->orwhere('asloc_desc','like','%'.$s_loc.'%');
-                });
+                $data = $data->where('asset_loc','like','%'.$s_loc.'%');
             }
             if($s_type) {
-                $data = $data->where(function($query) use ($s_type) {
-                    $query->where('astype_code','like','%'.$s_type.'%')
-                    ->orwhere('astype_desc','like','%'.$s_type.'%');
-                });
+                $data = $data->where('asset_type','like','%'.$s_type.'%');
             }
             if($s_group) {
-                $data = $data->where(function($query) use ($s_group) {
-                    $query->where('asgroup_code','like','%'.$s_group.'%')
-                    ->orwhere('asgroup_desc','like','%'.$s_group.'%');
-                });
+                $data = $data->where('asset_group','like','%'.$s_group.'%');
             }
             
             $data = $data->paginate(10);
@@ -2455,7 +2443,7 @@ class SettingController extends Controller
         $stype    = $req->stype;
         $sgroup    = $req->sgroup;
 
-        return Excel::download(new AssetExport($sasset,$sloc,$stype,$sgroup), 'EAMS Master Asset.xlsx');
+        return Excel::download(new AssetExport($sasset,$sloc,$stype,$sgroup), 'Asset.xlsx');
     }
 /* End Asset Master */
 
@@ -5307,29 +5295,6 @@ class SettingController extends Controller
     public function engmaster(Request $req)
     {   
         if (strpos(Session::get('menu_access'), 'MT01') !== false) {
-            $s_code = $req->s_code;
-            $s_desc = $req->s_desc;
-            $s_dept = $req->s_dept;
-            $s_role = $req->s_role;
-
-            $datauser = DB::table('users')
-                ->orderby('username');
-
-            if($s_code) {
-                $datauser = $datauser->where('username','like','%'.$s_code.'%');
-            }
-            if($s_desc) {
-                $datauser = $datauser->where('name','like','%'.$s_desc.'%');
-            }
-            if($s_dept) {
-                $datauser = $datauser->where('dept_user','like','%'.$s_dept.'%');
-            }
-            if($s_role) {
-                $datauser = $datauser->where('role_user','like','%'.$s_role.'%');
-            }
-
-            $datauser = $datauser->paginate(10);
-
             $data = DB::table('eng_mstr')
                 ->orderby('eng_code')
                 ->get();
@@ -5345,6 +5310,10 @@ class SettingController extends Controller
             $dataskill = DB::table('skill_mstr')
                 ->orderby('skill_desc')
                 ->get();
+
+            $datauser = DB::table('users')
+                ->orderby('username')
+                ->paginate(10);
 
             $datasite = DB::table('site_mstrs')
                 ->orderBy('site_code')

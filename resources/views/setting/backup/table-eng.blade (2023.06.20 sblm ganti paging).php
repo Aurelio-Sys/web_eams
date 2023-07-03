@@ -75,9 +75,8 @@
     </td>
 </tr>
 @endforelse
-
 <tr>
-  <td colspan="8" style="border: none !important;">
-    {{ $datauser->appends($_GET)->links() }}
+  <td style="border: none !important;">
+    {{ $datauser->links() }}
   </td>
 </tr>

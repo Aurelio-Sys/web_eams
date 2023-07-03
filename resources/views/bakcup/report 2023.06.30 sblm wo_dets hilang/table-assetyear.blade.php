@@ -2,10 +2,8 @@
 <tr>
     <td>{{$show->asset_code}}</td>
     <td>{{$show->asset_desc}}</td>
-    {{--  <td>{{$show->asset_last_mtc}}</td>  --}}
-    <td>-</td>
-    {{--  <td>{{$show->asset_measure}} - {{$show->asset_cal}}</td>  --}}
-    <td>-</td>
+    <td>{{$show->asset_last_mtc}}</td>
+    <td>{{$show->asset_measure}} - {{$show->asset_cal}}</td>
     @foreach (range(1,12) as $count)
         {{--  @php(dd($datatemp))  --}}
         <td style="text-align:center">
