@@ -84,6 +84,7 @@
             <tr>
                 <th width="10%">ID</th>
                 <th width="25%">User Name</th>
+                <th width="15%">Email</th>
                 <th width="15%">Department</th>
                 <th width="10%">Access As</th>
                 <th width="10%">Role</th>
