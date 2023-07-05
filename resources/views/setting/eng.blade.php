@@ -83,7 +83,8 @@
         <thead>
             <tr>
                 <th width="10%">ID</th>
-                <th width="25%">User Name</th>
+                <th width="15%">User Name</th>
+                <th width="10%">Email</th>
                 <th width="15%">Department</th>
                 <th width="10%">Access As</th>
                 <th width="10%">Role</th>
@@ -580,12 +581,6 @@
             $('#id_icon').html('');
             $('#post_title_icon').html('');
        }
-
-       function fetch_data(page, sort_type, sort_by, code, desc, dept, role){
-            $.ajax({
-                url:"engmaster/pagination?page="+page+"&sorttype="+sort_type+"&sortby="+sort_by+"&code="+code+"&desc="+desc+"&dept="+dept+"&role="+role,
-                success:function(data){
-                    console.log(data);
 
         $(document).on('change','#t_code',function(){
             var code = $('#t_code').val();
