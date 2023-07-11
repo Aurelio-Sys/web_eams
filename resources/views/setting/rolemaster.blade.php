@@ -153,6 +153,21 @@
               <center><strong>Role Permissions</strong></center>
             </h3>
             <br/>
+            <!-- Routine Check -->
+            <h4>
+            <center><strong>Routine Check</strong></center>
+            </h4>
+            <hr>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('My Routine Check') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbRCBrowse">
+                  <input type="checkbox" class="custom-control-input" id="cbRCBrowse" name="cbRCBrowse" value="RC01" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+
             <!-- Service Request -->
             <h4>
             <center><strong>Service Request Menu</strong></center>
@@ -204,7 +219,7 @@
                 </label>
               </div>
             </div>  --}}
-              <div class="form-group row">
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('User Acceptance') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbUA">
@@ -994,6 +1009,21 @@
               <center><strong>Role Permissions</strong></center>
             </h3>
             <br>
+
+            <!-- Routine Check -->
+            <h4>
+            <center><strong>Routine Check</strong></center>
+            </h4>
+            <hr>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('My Routine Check') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbRCBrowse">
+                  <input type="checkbox" class="custom-control-input" id="e_cbRCBrowse" name="e_cbRCBrowse" value="RC01" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
 
             <h4>
             <center><strong>Service Request Menu</strong></center>
@@ -2337,6 +2367,13 @@
           document.getElementById('e_cbBookSchedule').checked = true;
         } else {
           document.getElementById('e_cbBookSchedule').checked = false;
+        }
+
+        //Routine Check Main
+        if (listmenu.search("RC01") >= 0) {
+          document.getElementById('e_cbRCBrowse').checked = true;
+        } else {
+          document.getElementById('e_cbRCBrowse').checked = false;
         }
 
 

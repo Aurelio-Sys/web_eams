@@ -11,7 +11,7 @@
   <link rel="icon" type="image/gif/jpg" href="images/imgheadxx.png">
   <link rel="stylesheet" href="{{url('assets/css/bootstrap-select.min.css')}}">
   <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="{{url('plugins/fontawesome-free/css/all.min.css')}}">
+  <link rel="stylesheet" href="{{url('plugins/fontawesome-free/css/all.css')}}">
 
 
   <!-- IonIcons -->
@@ -163,6 +163,15 @@ to get the desired effect
             <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
             <!-- <li class="nav-header">SETTING</li> -->
+
+            @if(str_contains( Session::get('menu_access'), 'RC01'))
+            <li class="nav-item ">
+              <a href="/myroutine" class="nav-link ">
+                <i class="nav-icon fas fa-user-clock"></i>
+                  <p>My Routine Check</p>
+              </a>
+            </li>
+            @endif
 
             @if(str_contains( Session::get('menu_access'), 'SR'))
             <li class="nav-item has-treeview">

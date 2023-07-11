@@ -34,6 +34,7 @@ use App\Http\Controllers\Usage\UsageBrowseController;
 use App\Http\Controllers\Usage\PmConfirmController;
 use App\Http\Controllers\Usage\PmmssgController;
 use App\Http\Controllers\Other\WhyHistController;
+use App\Http\Controllers\Routine\RoutineCheckController;
 use App\Http\Controllers\SparepartController;
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
@@ -791,6 +792,9 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/accutransfer', [SparepartController::class, 'accutransfer'])->name('accuTransBrw');
 	Route::get('/searchaccutrf', [SparepartController::class, 'searchaccutrf']);
 	Route::post('/submitaccutrf', [SparepartController::class, 'submitaccutrf']);
+
+	//my routine check browse
+	Route::get('/myroutine', [RoutineCheckController::class, 'myroutinebrowse']);
 });
 
 Auth::routes();

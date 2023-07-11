@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class routineCheck extends Command
 {
@@ -49,6 +50,18 @@ class routineCheck extends Command
             $interval_hours = $datas->rcm_interval;
             $Interval_minutes = $interval_hours * 60;
 
+            //ambil list engineer dari engineer group
+            $detail_enggroup = DB::table('egr_mstr')
+                            ->where('egr_code', '=', $datas->rcm_eng)
+                            ->get();
+
+            $listeng = '';
+            foreach ($detail_enggroup as $datasegr){
+                $listeng .= $datasegr->egr_eng.';';
+            }
+
+
+
             for($time = $start_schedule; $time <= $end_schedule; $time += $Interval_minutes * 60){
                 $activityTime = date('H:i', $time);
 
@@ -56,7 +69,7 @@ class routineCheck extends Command
                     'ra_asset_code' => $datas->rcm_asset,
                     'ra_qcs_code' => $datas->rcm_qcs,
                     'ra_schedule_time' => $activityTime,
-                    'ra_eng_group' => $datas->rcm_eng,
+                    'ra_eng_list' => $listeng,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
@@ -64,5 +77,7 @@ class routineCheck extends Command
 
 
         }
+
+        Log::channel('customlog')->info('Mulai Proses Create Routine Check');
     }
 }
