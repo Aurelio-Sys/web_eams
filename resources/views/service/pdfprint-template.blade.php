@@ -106,7 +106,7 @@
               <p style="margin:0;padding:0;font-size:12px"><b>Failure Type </b></p>
             </td>
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
-              <p style="margin-top: 0px; font-size:12px;">: {{$srmstr->sr_wotype}} -- {{$srmstr->wotyp_desc}}</p>
+              {{--  <p style="margin-top: 0px; font-size:12px;">: {{$srmstr->sr_wotype}} -- {{$srmstr->wotyp_desc}}</p>  --}}
             </td>
           </tr>
           <tr style="line-height: 2px;">
@@ -198,9 +198,9 @@
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
               <p style="margin-top: -2px; font-size:12px">
                 @if($womstr != null)
-                : {{$srmstr->sr_date}} & {{date('H:i', strtotime($srmstr->sr_time))}} / {{date('d-m-y', strtotime($womstr->wo_created_at))}} & {{date('H:i', strtotime($womstr->wo_created_at))}}
+                : {{$srmstr->sr_req_date}} & {{date('H:i', strtotime($srmstr->sr_req_time))}} / {{date('d-m-y', strtotime($womstr->wo_start_date))}} & {{date('H:i', strtotime($womstr->wo_created_at))}}
                 @else
-                : {{$srmstr->sr_date}} & {{date('H:i', strtotime($srmstr->sr_time))}} /
+                : {{$srmstr->sr_req_date}} & {{date('H:i', strtotime($srmstr->sr_req_time))}} /
                 @endif
               </p>
             </td>
@@ -218,7 +218,7 @@
               <p style="margin-top: 0px; font-size:12px"><b>Nama & No. Mesin &nbsp;</b></p>
             </td>
             <td style="border-top:0px solid;border-right:0px">
-              <p style="margin-top: 0px; font-size:12px">: {{$srmstr->asset_desc}} & {{$srmstr->sr_assetcode}}</p>
+              <p style="margin-top: 0px; font-size:12px">: {{$srmstr->asset_desc}} & {{$srmstr->sr_asset}}</p>
             </td>
           </tr>
         </table>
@@ -236,7 +236,7 @@
     <tr>
       <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0px; border-top:0.5px solid; border-bottom:2px solid; width:350px">
         <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diusulkan oleh,</span></p>
-        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->req_by}}</p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->sr_req_by}}</p>
       </td>
       <td colspan="2" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
         <p style=" margin-bottom:5px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Penanggung Jawab,</span></p>
