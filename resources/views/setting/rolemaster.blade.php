@@ -236,7 +236,7 @@
                 </label>
               </div>
             </div> 
-            {{--  <div class="form-group row">
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Browse') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbWoBrowse">
@@ -244,7 +244,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>  --}}
+            </div>
             <!-- <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Create') }}</label>
               <div class="col-6">
@@ -1078,7 +1078,7 @@
                 </label>
               </div>
             </div> 
-            {{--  <div class="form-group row">
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Browse') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbWoBrowse">
@@ -1086,7 +1086,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>  --}}
+            </div>
             <!-- <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Create') }}</label>
               <div class="col-6">
@@ -2147,11 +2147,11 @@
         } else {
           document.getElementById('e_cbWoMaint').checked = false;
         }
-        {{--  if (listmenu.search("WO05") >= 0) {
+        if (listmenu.search("WO05") >= 0) {
           document.getElementById('e_cbWoBrowse').checked = true;
         } else {
           document.getElementById('e_cbWoBrowse').checked = false;
-        }  --}}
+        }
         {{--  if (listmenu.search("WO04") >= 0) {
            document.getElementById('e_cbWoCreate').checked = true;
         } else {

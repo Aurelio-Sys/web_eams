@@ -265,7 +265,6 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
-                {{-- Browse menggunakan WO Maintenance, diatur hak aksesnya
                 @if(str_contains( Session::get('menu_access'), 'WO05'))
                 <li class="nav-item ">
                   <a href="/wobrowse" class="nav-link ">
@@ -273,7 +272,7 @@ to get the desired effect
                       <p>Work Order Browse</p>
                   </a>
                 </li>  
-                @endif--}}
+                @endif
                 @if(str_contains( Session::get('menu_access'), 'WO09'))
                 <li class="nav-item ">
                   <a href="/worelease" class="nav-link ">
