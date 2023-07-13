@@ -51,11 +51,12 @@
                         value="" autofocus autocomplete="off"/>
                     </div>
                     <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
-                    <div class="col-md-2 col-sm-4 mb-2 input-group">
-                        <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
-                    </div>
-                    <div class="col-md-2 col-sm-4 mb-2 input-group">
-                        <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
+                    <div class="col-md-8 col-sm-8 mb-8 input-group">
+                        <button class="btn btn-block btn-primary  col-md-3" id="btnsearch" style="float:right"/>Search</button>
+                        &nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-block btn-primary  col-md-1" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
+                        &nbsp;&nbsp;&nbsp;
+                        <input type="button" class="btn btn-block btn-primary  col-md-3" id="btnexcel" value="Export to Excel" style="float:right" />
                     </div>
                 </div>
             </div>
@@ -487,7 +488,7 @@
            var assetimg    = '/uploadassetimage/' +$(this).data('assetimg');
            var uploadname = upload.substring(upload.lastIndexOf('/') + 1,upload.length);
             //   console.log(uploadname);
-
+            
             $.ajax({
                 url:"/setlistupload/" + code,
                 success: function(data) {
@@ -555,7 +556,11 @@
                 group
             });
 
-            
+            $("#te_um").select2({
+                width : '100%',
+                theme : 'bootstrap4',
+                type
+            });
        });
 
        $(document).on('click', '.deletedata', function(e){

@@ -19,6 +19,7 @@
 @endsection
 
 @section('content')
+<form action="/engmaster" method="GET">
 <!-- Bagian Searching -->
 <div class="container-fluid mb-2">
     <div class="row">
@@ -45,7 +46,7 @@
             <div class="col-12 form-group row">
                 <label for="s_dept" class="col-md-2 col-sm-2 col-form-label text-md-right">Department</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
-                    <select id="s_dept" class="form-control" name="s_dept" required>
+                    <select id="s_dept" class="form-control" name="s_dept">
                         <option value="">--Select Data--</option>
                         @foreach($dataeng as $de)
                         <option value="{{$de->dept_code}}">{{$de->dept_code}} -- {{$de->dept_desc}}</option>
@@ -63,7 +64,7 @@
                 </div>
                 <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
                 <div class="col-md-2 col-sm-4 mb-2 input-group">
-                    <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search"/> 
+                    <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
                 </div>
                 <div class="col-md-2 col-sm-4 mb-2 input-group">
                     <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
@@ -76,33 +77,30 @@
         </div>
     </div>
 </div>
-
-<div class="table-responsive">
-    
-    <div class="table-responsive col-12" style="overflow-x: auto; display:inline-table; white-space: nowrap; padding:0; text-align:center; position:relative">
-        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-            <thead>
-                <tr>
-                    <th width="10%">ID</th>
-                    <th width="25%">User Name</th>
-                    <th width="25%">Email</th>
-                    <th width="15%">Department</th>
-                    <th width="10%">Access As</th>
-                    <th width="10%">Role</th>
-                    <th width="10%">Active</th>
-                    <th width="10%">Approver</th>
-                    <th width="10%">Action</th>  
-                </tr>
-            </thead>
-            <tbody>
-                <!-- untuk isi table -->
-                @include('setting.table-eng')
-            </tbody>
-        </table>
-        <input type="hidden" name="hidden_page" id="hidden_page" value="1"/>
-        <input type="hidden" name="hidden_column_name" id="hidden_column_name" value="eng_code"/>
-        <input type="hidden" name="hidden_sort_type" id="hidden_sort_type" value="asc" />
-    </div>
+</form>
+<div class="table-responsive col-12">
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th width="10%">ID</th>
+                <th width="15%">User Name</th>
+                <th width="10%">Email</th>
+                <th width="15%">Department</th>
+                <th width="10%">Access As</th>
+                <th width="10%">Role</th>
+                <th width="10%">Active</th>
+                <th width="10%">Approver</th>
+                <th width="10%">Action</th>  
+            </tr>
+        </thead>
+        <tbody>
+            <!-- untuk isi table -->
+            @include('setting.table-eng')
+        </tbody>
+    </table>
+    <input type="hidden" name="hidden_page" id="hidden_page" value="1"/>
+    <input type="hidden" name="hidden_column_name" id="hidden_column_name" value="eng_code"/>
+    <input type="hidden" name="hidden_sort_type" id="hidden_sort_type" value="asc" />
 </div>
 
 <!-- Modal Create -->
@@ -123,7 +121,7 @@
                             <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-6">
                             <input id="t_code" type="text" class="form-control" name="t_code"
-                            autocomplete="off" autofocus maxlength="10" required pattern="{0,8}" title="Maks.10" value="{{ old('t_code') }}"/>
+                            autocomplete="off" autofocus maxlength="10" required pattern="(^\S{3,10}$)" title="Min 3, Max 10 Character and Must not contain spaces" value="{{ old('t_code') }}"/>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -583,102 +581,6 @@
             $('#id_icon').html('');
             $('#post_title_icon').html('');
        }
-
-       function fetch_data(page, sort_type, sort_by, code, desc, dept, role){
-            $.ajax({
-                url:"engmaster/pagination?page="+page+"&sorttype="+sort_type+"&sortby="+sort_by+"&code="+code+"&desc="+desc+"&dept="+dept+"&role="+role,
-                success:function(data){
-
-                    $('tbody').html('');
-                    $('tbody').html(data);
-                }
-            })
-        }
-
-        $(document).on('click', '#btnsearch', function(){
-
-            var code = $('#s_code').val();
-            var desc = $('#s_desc').val();
-            var dept = $('#s_dept').val();
-            var role = $('#s_role').val();
-
-            var column_name = $('#hidden_column_name').val();
-			var sort_type = $('#hidden_sort_type').val();
-            var page = 1;
-            
-            document.getElementById('tmpcode').value = code;
-            document.getElementById('tmpdesc').value = desc;
-            document.getElementById('tmpdept').value = dept;
-            document.getElementById('tmprole').value = role;
-
-            fetch_data(page, sort_type, column_name, code, desc, dept, role);
-        });
-
-       $(document).on('click', '.sorting', function(){
-			var column_name = $(this).data('column_name');
-			var order_type = $(this).data('sorting_type');
-			var reverse_order = '';
-			if(order_type == 'asc')
-			{
-			$(this).data('sorting_type', 'desc');
-			reverse_order = 'desc';
-			clear_icon();
-			$('#'+column_name+'_icon').html('<span class="glyphicon glyphicon-triangle-bottom"></span>');
-			}
-			if(order_type == 'desc')
-			{
-			$(this).data('sorting_type', 'asc');
-			reverse_order = 'asc';
-			clear_icon();
-			$('#'+column_name+'_icon').html('<span class="glyphicon glyphicon-triangle-top"></span>');
-			}
-			$('#hidden_column_name').val(column_name);
-			$('#hidden_sort_type').val(reverse_order);
-            var page = $('#hidden_page').val();
-            var code = $('#s_code').val();
-            var desc = $('#s_desc').val();
-            var dept = $('#s_dept').val();
-            var role = $('#s_role').val();
-			fetch_data(page, reverse_order, column_name, code, desc, dept, role);
-     	});
-       
-       
-       $(document).on('click', '.pagination a', function(event){
-            event.preventDefault();
-            var page = $(this).attr('href').split('page=')[1];
-            $('#hidden_page').val(page);
-            var reverse_order = 'asc';
-            var column_name = $('#hidden_column_name').val();
-            var sort_type = $('#hidden_sort_type').val();
-            var code = $('#s_code').val();
-            var desc = $('#s_desc').val();
-            var dept = $('#s_dept').val();
-            var role = $('#s_role').val();
-            fetch_data(page, reverse_order, column_name, code, desc, dept, role);
-       });
-
-       $(document).on('click', '#btnrefresh', function() {
-
-            var code  = ''; 
-            var desc = '';
-            var dept = '';
-            var role = '';
-
-            var column_name = $('#hidden_column_name').val();
-            var sort_type = $('#hidden_sort_type').val();
-            var page = 1;
-
-            document.getElementById('s_code').value  = '';
-            document.getElementById('s_desc').value  = '';
-            document.getElementById('s_dept').value  = '';
-            document.getElementById('s_role').value  = '';
-            document.getElementById('tmpcode').value  = code;
-            document.getElementById('tmpdesc').value  = desc;
-            document.getElementById('tmpdept').value  = dept;
-            document.getElementById('tmprole').value  = role;
-
-            fetch_data(page, sort_type, column_name, code, desc, dept, role);
-        });
 
         $(document).on('change','#t_code',function(){
             var code = $('#t_code').val();

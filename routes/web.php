@@ -34,6 +34,7 @@ use App\Http\Controllers\Usage\UsageBrowseController;
 use App\Http\Controllers\Usage\PmConfirmController;
 use App\Http\Controllers\Usage\PmmssgController;
 use App\Http\Controllers\Other\WhyHistController;
+use App\Http\Controllers\Routine\RoutineCheckController;
 use App\Http\Controllers\SparepartController;
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
@@ -411,14 +412,14 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/needsp', 'UserChartController@needsp');
 
 	//work order maintenance
-	Route::get('/womaint', [wocontroller::class, 'wobrowse'])->name('womaint');
+	Route::get('/womaint', [wocontroller::class, 'womaint'])->name('womaint');
 	Route::post('/createwo', [wocontroller::class, 'createwo']);
 	Route::get('/searchic', [wocontroller::class, 'searchic']);
 	Route::get('/searchil', [wocontroller::class, 'searchil']);
 	Route::get('/searchis', [wocontroller::class, 'searchis']);
 	Route::get('/searchiq', [wocontroller::class, 'searchiq']);
 	Route::get('/filtermaintcode', [wocontroller::class, 'filtermaintcode']);
-	route::get('/womaint/pagination', 'wocontroller@wopaging');
+	// route::get('/womaint/pagination', 'wocontroller@wopaging');
 	route::post('/editwo', [wocontroller::class, 'editwo']); 
 	route::post('/editwoeng','wocontroller@editwoeng'); 
 	route::post('/closewo',[wocontroller::class, 'closewo']); 
@@ -794,6 +795,9 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/accutransfer', [SparepartController::class, 'accutransfer'])->name('accuTransBrw');
 	Route::get('/searchaccutrf', [SparepartController::class, 'searchaccutrf']);
 	Route::post('/submitaccutrf', [SparepartController::class, 'submitaccutrf']);
+
+	//my routine check browse
+	Route::get('/myroutine', [RoutineCheckController::class, 'myroutinebrowse']);
 });
 
 Auth::routes();

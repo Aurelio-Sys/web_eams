@@ -406,20 +406,18 @@ class UserChartController extends Controller
 
         if (!isset($engcode) && !isset($sdept)){
             $datawo = DB::table('wo_mstr')
-                ->select('wo_nbr','wo_status','wo_schedule','wo_engineer1', 'wo_engineer2', 'wo_engineer3', 'wo_engineer4',
-                    'wo_engineer5','wo_asset','asset_desc','wo_sr_nbr','wo_duedate','wo_failure_code1','wo_failure_code2',
-                    'wo_failure_code3','wo_creator','wo_note','wo_start_date','wo_finish_date','wo_type')
-                //->selectRaw('DAY(wo_schedule) as tgl')
-                ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_schedule) else day(wo_finish_date) end) as tgl")
-                ->join('asset_mstr','asset_code','=','wo_asset')
+                ->select('wo_number','wo_status','wo_start_date','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note','wo_job_startdate','wo_job_finishdate','wo_type')
+                //->selectRaw('DAY(wo_start_date) as tgl')
+                ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_start_date) else day(wo_job_finishdate) end) as tgl")
+                ->join('asset_mstr','asset_code','=','wo_asset_code')
                 ->where(function ($query) use ($tgl) {
-                    $query->where('wo_schedule','like',date("Y-m",strtotime($tgl)).'%')
-                        ->orwhere('wo_finish_date','like',date("Y-m",strtotime($tgl)).'%');
+                    $query->where('wo_job_startdate','like',date("Y-m",strtotime($tgl)).'%')
+                        ->orwhere('wo_job_finishdate','like',date("Y-m",strtotime($tgl)).'%');
                 })
                 ->whereRaw($kondisi)
                 // ->whereIn('wo_status',['open','plan','started'])
                 ->orderBy('tgl')
-                ->orderBy('wo_nbr')
+                ->orderBy('wo_number')
                 ->get();
 
             $fotoeng = $dataeng->where('eng_code','=',"")->first();
@@ -428,20 +426,18 @@ class UserChartController extends Controller
         {
             //dd(date("Y-m",strtotime($tgl)));
             $datawo = DB::table('wo_mstr')
-                ->select('wo_nbr','wo_status','wo_schedule','wo_engineer1', 'wo_engineer2', 'wo_engineer3', 'wo_engineer4',
-                    'wo_engineer5','wo_asset','asset_desc','wo_sr_nbr','wo_duedate','wo_failure_code1','wo_failure_code2',
-                    'wo_failure_code3','wo_creator','wo_note','wo_start_date','wo_finish_date','wo_type')
-                //->selectRaw('DAY(wo_schedule) as tgl')
-                ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_schedule) else day(wo_finish_date) end) as tgl")
-                ->join('asset_mstr','asset_code','=','wo_asset')
+                ->select('wo_number','wo_status','wo_start_date','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note','wo_job_startdate','wo_job_finishdate','wo_type')
+                //->selectRaw('DAY(wo_start_date) as tgl')
+                ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_start_date) else day(wo_job_finishdate) end) as tgl")
+                ->join('asset_mstr','asset_code','=','wo_asset_code')
                 ->whereRaw($kondisi)
                 ->where(function ($query) use ($tgl) {
-                    $query->where('wo_schedule','like',date("Y-m",strtotime($tgl)).'%')
-                        ->orwhere('wo_finish_date','like',date("Y-m",strtotime($tgl)).'%');
+                    $query->where('wo_job_startdate','like',date("Y-m",strtotime($tgl)).'%')
+                        ->orwhere('wo_job_finishdate','like',date("Y-m",strtotime($tgl)).'%');
                 })
                 // ->whereIn('wo_status',['open','plan','started'])
                 ->orderBy('tgl')
-                ->orderBy('wo_nbr');
+                ->orderBy('wo_number');
             
             if(isset($engcode)) {
                 $datawo = $datawo->where(function ($query) use ($engcode) {
@@ -778,36 +774,65 @@ class UserChartController extends Controller
         if (!isset($code) && !isset($sloc)){
 
             $datawo = DB::table('wo_mstr')
-                ->select('wo_nbr','wo_status','wo_schedule','wo_engineer1', 'wo_engineer2', 'wo_engineer3', 'wo_engineer4',
-                'wo_engineer5','wo_asset','asset_desc','wo_sr_nbr','wo_duedate','wo_failure_code1','wo_failure_code2',
-                'wo_failure_code3','wo_creator','wo_note','wo_start_date','wo_finish_date','wo_type')
-                ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_schedule) else day(wo_finish_date) end) as tgl")
-                ->join('asset_mstr','asset_code','=','wo_asset')
+                ->select('wo_number','wo_status','wo_start_date','wo_list_engineer','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note',
+                    'wo_job_startdate','wo_job_finishdate','wo_type')
+                ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_job_startdate) else day(wo_job_finishdate) end) as tgl")
+                ->join('asset_mstr','asset_code','=','wo_asset_code')
                 ->where(function ($query) use ($tgl) {
-                    $query->where('wo_schedule','like',date("Y-m",strtotime($tgl)).'%')
-                        ->orwhere('wo_finish_date','like',date("Y-m",strtotime($tgl)).'%');
+                    $query->where('wo_job_startdate','like',date("Y-m",strtotime($tgl)).'%')
+                        ->orwhere('wo_job_finishdate','like',date("Y-m",strtotime($tgl)).'%');
                 })
                 ->orderBy('tgl')
-                ->orderBy('wo_nbr')
+                ->orderBy('wo_number')
                 // ->whereIn('wo_status',['open','plan','started'])
                 ->get();
+
+            // $datawo = DB::table('wo_mstr')
+            //     ->select('wo_nbr','wo_status','wo_schedule','wo_engineer1', 'wo_engineer2', 'wo_engineer3', 'wo_engineer4',
+            //     'wo_engineer5','wo_asset','asset_desc','wo_sr_nbr','wo_duedate','wo_failure_code1','wo_failure_code2',
+            //     'wo_failure_code3','wo_creator','wo_note','wo_start_date','wo_finish_date','wo_type')
+            //     ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_schedule) else day(wo_finish_date) end) as tgl")
+            //     ->join('asset_mstr','asset_code','=','wo_asset')
+            //     ->where(function ($query) use ($tgl) {
+            //         $query->where('wo_schedule','like',date("Y-m",strtotime($tgl)).'%')
+            //             ->orwhere('wo_finish_date','like',date("Y-m",strtotime($tgl)).'%');
+            //     })
+            //     ->orderBy('tgl')
+            //     ->orderBy('wo_nbr')
+            //     // ->whereIn('wo_status',['open','plan','started'])
+            //     ->get();
+
+            // $datawo = DB::table('wo_mstr')
+            //     ->select('wo_number','wo_status','wo_start_date','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note','wo_job_startdate','wo_job_finishdate','wo_type')
+            //     //->selectRaw('DAY(wo_start_date) as tgl')
+            //     ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_start_date) else day(wo_job_finishdate) end) as tgl")
+            //     ->join('asset_mstr','asset_code','=','wo_asset_code')
+            //     ->where(function ($query) use ($tgl) {
+            //         $query->where('wo_job_startdate','like',date("Y-m",strtotime($tgl)).'%')
+            //             ->orwhere('wo_job_finishdate','like',date("Y-m",strtotime($tgl)).'%');
+            //     })
+            //     // ->whereIn('wo_status',['open','plan','started'])
+            //     ->orderBy('tgl')
+            //     ->orderBy('wo_number')
+            //     ->get();
+
 
             $foto = $dataAsset->where('asset_code','=',"")->first();
         }
         else
         {
-           $datawo = DB::table('wo_mstr')
-                ->select('wo_nbr','wo_status','wo_schedule','wo_engineer1', 'wo_engineer2', 'wo_engineer3', 'wo_engineer4',
-                    'wo_engineer5','wo_asset','asset_desc','wo_sr_nbr','wo_duedate','wo_failure_code1','wo_failure_code2',
-                    'wo_failure_code3','wo_creator','wo_note','wo_start_date','wo_finish_date','wo_type')
-                ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_schedule) else day(wo_finish_date) end) as tgl")
-                ->join('asset_mstr','asset_code','=','wo_asset')
+            $datawo = DB::table('wo_mstr')
+                ->select('wo_number','wo_status','wo_start_date','wo_list_engineer','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note',
+                    'wo_job_startdate','wo_job_finishdate','wo_type')
+                ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_job_startdate) else day(wo_job_finishdate) end) as tgl")
+                ->join('asset_mstr','asset_code','=','wo_asset_code')
                 ->where(function ($query) use ($tgl) {
-                    $query->where('wo_schedule','like',date("Y-m",strtotime($tgl)).'%')
-                        ->orwhere('wo_finish_date','like',date("Y-m",strtotime($tgl)).'%');
+                    $query->where('wo_job_startdate','like',date("Y-m",strtotime($tgl)).'%')
+                        ->orwhere('wo_job_finishdate','like',date("Y-m",strtotime($tgl)).'%');
                 })
                 ->orderBy('tgl')
-                ->orderBy('wo_nbr');
+                ->orderBy('wo_number');
+                // ->whereIn('wo_status',['open','plan','started']);
 
             if(isset($code)) {
                 $datawo = $datawo->where('wo_asset',$code);
@@ -867,9 +892,9 @@ class UserChartController extends Controller
             ->get();
 
         $datawo = DB::table('wo_mstr')
-                ->join('asset_mstr','asset_code','=','wo_asset')
+                ->join('asset_mstr','asset_code','=','wo_asset_code')
                 ->whereNotIn('wo_status', ['closed','finish','delete'])
-                ->orderBy('wo_schedule')
+                ->orderBy('wo_start_date')
                 ->get();
 
         $thn = Carbon::now('ASIA/JAKARTA')->addMonth(-11)->toDateTimeString();
@@ -992,9 +1017,9 @@ class UserChartController extends Controller
         $dataAsset = $dataAsset->get();
 
         $datawo = DB::table('wo_mstr')
-                ->join('asset_mstr','asset_code','=','wo_asset')
+                ->join('asset_mstr','asset_code','=','wo_asset_code')
                 ->whereNotIn('wo_status', ['closed','finish','delete'])
-                ->orderBy('wo_schedule')
+                ->orderBy('wo_start_date')
                 ->get();
         
         $dataeng = DB::table('users')
@@ -1621,153 +1646,152 @@ class UserChartController extends Controller
                     });
 
                     /* Mencari data sparepart dari wo detail */
-                    $data = DB::table('wo_dets')
-                        ->join('wo_mstr','wo_nbr','=','wo_dets_nbr')
-                        ->whereNotNull('wo_dets_sp')
+                    $data = DB::table('wo_dets_sp')
+                        ->join('wo_mstr','wo_number','=','wd_sp_wonumber')
                         ->whereNotIn('wo_status',['closed','delete'])
-                        ->orderBy('wo_dets_nbr')
+                        ->orderBy('wd_sp_wonumber')
                         ->get();
 
                     foreach($data as $da){
                         DB::table('temp_wo_so')->insert([
-                            'temp_wo' => $da->wo_nbr,
-                            'temp_sch_date' => $da->wo_schedule,
+                            'temp_wo' => $da->wo_number,
+                            'temp_sch_date' => $da->wo_start_date,
                             'temp_status' => $da->wo_status,
-                            'temp_sp' => $da->wo_dets_sp,
-                            'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->wo_dets_sp)->value('spm_desc'),
-                            'temp_qty_req' => $da->wo_dets_sp_qty,
-                            'temp_qty_whs' => $da->wo_dets_wh_qty,
-                            'temp_qty_need' => $da->wo_dets_sp_qty - $da->wo_dets_wh_qty,
+                            'temp_sp' => $da->wd_sp_spcode,
+                            'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->wd_sp_spcode)->value('spm_desc'),
+                            'temp_qty_req' => $da->wd_sp_required,
+                            'temp_qty_whs' => $da->wd_sp_issued,
+                            'temp_qty_need' => $da->wd_sp_required - $da->wd_sp_issued,
                         ]);
                     }
                     // dd($data);
                     /* Mencari data sparepart yang belum ada wo detail nya */
-                    $datawo = DB::table('wo_mstr')->whereNotIn('wo_nbr', function($q){
-                            $q->select('wo_dets_nbr')->from('wo_dets');
+                    $datawo = DB::table('wo_mstr')->whereNotIn('wo_number', function($q){
+                            $q->select('wd_sp_wonumber')->from('wo_dets_sp');
                         })
-                        // ->where('wo_nbr','=','WO-22-0098')
                         ->get();
 
-                    foreach($datawo as $do) {
-                        if ($do->wo_repair_code1 != "") {
+                    /* Sudah tidak ada repair code */    
+                    // foreach($datawo as $do) {
+                    //     if ($do->wo_repair_code1 != "") {
 
-                            $sparepart1 = DB::table('wo_mstr')
-                                ->select('wo_nbr','wo_repair_code1 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
-                                'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
-                                ->leftJoin('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
-                                ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-                                ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-                                ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-                                ->where('wo_id', '=', $do->wo_id)
-                                ->orderBy('repm_ins', 'asc')
-                                ->orderBy('repdet_step', 'asc')
-                                ->orderBy('ins_code', 'asc')
-                                ->get();
+                    //         $sparepart1 = DB::table('wo_mstr')
+                    //             ->select('wo_nbr','wo_repair_code1 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
+                    //             'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
+                    //             ->leftJoin('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
+                    //             ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                    //             ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+                    //             ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
+                    //             ->where('wo_id', '=', $do->wo_id)
+                    //             ->orderBy('repm_ins', 'asc')
+                    //             ->orderBy('repdet_step', 'asc')
+                    //             ->orderBy('ins_code', 'asc')
+                    //             ->get();
 
-                            $rc1 = DB::table('wo_mstr')
-                                ->select('repm_code', 'repm_desc')
-                                ->join('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
-                                ->where('wo_id', '=', $do->wo_id)
-                                ->get();
+                    //         $rc1 = DB::table('wo_mstr')
+                    //             ->select('repm_code', 'repm_desc')
+                    //             ->join('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
+                    //             ->where('wo_id', '=', $do->wo_id)
+                    //             ->get();
 
 
-                            $combineSP = $sparepart1;
-                            $rc = $rc1;
-                        }
+                    //         $combineSP = $sparepart1;
+                    //         $rc = $rc1;
+                    //     }
 
-                        if ($do->wo_repair_code2 != "") {
-                            // dump('repaircode2');
-                            $sparepart2 = DB::table('wo_mstr')
-                                ->select('wo_nbr','wo_repair_code2 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
-                                'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
-                                ->leftJoin('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
-                                ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-                                ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-                                ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-                                ->where('wo_id', '=', $do->wo_id)
-                                ->orderBy('repm_ins', 'asc')
-                                ->orderBy('repdet_step', 'asc')
-                                ->orderBy('ins_code', 'asc')
-                                ->get();
+                    //     if ($do->wo_repair_code2 != "") {
+                    //         // dump('repaircode2');
+                    //         $sparepart2 = DB::table('wo_mstr')
+                    //             ->select('wo_nbr','wo_repair_code2 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
+                    //             'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
+                    //             ->leftJoin('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
+                    //             ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                    //             ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+                    //             ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
+                    //             ->where('wo_id', '=', $do->wo_id)
+                    //             ->orderBy('repm_ins', 'asc')
+                    //             ->orderBy('repdet_step', 'asc')
+                    //             ->orderBy('ins_code', 'asc')
+                    //             ->get();
 
-                            $rc2 = DB::table('wo_mstr')
-                                ->select('repm_code', 'repm_desc')
-                                ->join('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
-                                ->where('wo_id', '=', $do->wo_id)
-                                ->get();
+                    //         $rc2 = DB::table('wo_mstr')
+                    //             ->select('repm_code', 'repm_desc')
+                    //             ->join('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
+                    //             ->where('wo_id', '=', $do->wo_id)
+                    //             ->get();
 
-                            // $tempSP2 = (new CreateTempTable())->createSparePartUsed($sparepart2);
+                    //         // $tempSP2 = (new CreateTempTable())->createSparePartUsed($sparepart2);
 
-                            $combineSP = $sparepart1->merge($sparepart2);
-                            $rc = $rc1->merge($rc2);
-                        }
+                    //         $combineSP = $sparepart1->merge($sparepart2);
+                    //         $rc = $rc1->merge($rc2);
+                    //     }
 
-                        if ($do->wo_repair_code3 != "") {
-                            // dump('repaircode3');
-                            $sparepart3 = DB::table('wo_mstr')
-                                ->select('wo_nbr','wo_repair_code3 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
-                                'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
-                                ->leftJoin('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
-                                ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-                                ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-                                ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-                                ->where('wo_id', '=', $do->wo_id)
-                                ->orderBy('repm_ins', 'asc')
-                                ->orderBy('repdet_step', 'asc')
-                                ->orderBy('ins_code', 'asc')
-                                ->get();
+                    //     if ($do->wo_repair_code3 != "") {
+                    //         // dump('repaircode3');
+                    //         $sparepart3 = DB::table('wo_mstr')
+                    //             ->select('wo_nbr','wo_repair_code3 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
+                    //             'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
+                    //             ->leftJoin('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
+                    //             ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                    //             ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+                    //             ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
+                    //             ->where('wo_id', '=', $do->wo_id)
+                    //             ->orderBy('repm_ins', 'asc')
+                    //             ->orderBy('repdet_step', 'asc')
+                    //             ->orderBy('ins_code', 'asc')
+                    //             ->get();
 
-                            $rc3 = DB::table('wo_mstr')
-                                ->select('repm_code', 'repm_desc')
-                                ->join('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
-                                ->where('wo_id', '=', $do->wo_id)
-                                ->get();
+                    //         $rc3 = DB::table('wo_mstr')
+                    //             ->select('repm_code', 'repm_desc')
+                    //             ->join('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
+                    //             ->where('wo_id', '=', $do->wo_id)
+                    //             ->get();
 
-                            // $tempSP3 = (new CreateTempTable())->createSparePartUsed($sparepart3);
+                    //         // $tempSP3 = (new CreateTempTable())->createSparePartUsed($sparepart3);
 
-                            $combineSP = $sparepart1->merge($sparepart2)->merge($sparepart3);
-                            $rc = $rc1->merge($rc2)->merge($rc3);
-                        }
+                    //         $combineSP = $sparepart1->merge($sparepart2)->merge($sparepart3);
+                    //         $rc = $rc1->merge($rc2)->merge($rc3);
+                    //     }
 
-                        // dd($rc);
+                    //     // dd($rc);
 
-                        if ($do->wo_repair_code1 == "" && $do->wo_repair_code2 == "" && $do->wo_repair_code3 == "") {
-                            // dd('aa');
-                            $combineSP = DB::table('xxrepgroup_mstr')
-                                ->select('wo_nbr','repm_code as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 
-                                'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
-                                ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
-                                ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-                                ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-                                ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-                                ->leftJoin('wo_mstr','wo_repair_group','xxrepgroup_mstr.xxrepgroup_nbr')
-                                ->where('xxrepgroup_mstr.xxrepgroup_nbr', '=', $do->wo_repair_group)
-                                ->where('wo_id', '=', $do->wo_id)
-                                ->orderBy('repair_code', 'asc')
-                                ->orderBy('repm_ins', 'asc')
-                                ->orderBy('repdet_step', 'asc')
-                                ->orderBy('ins_code', 'asc')
-                                ->get();
+                    //     if ($do->wo_repair_code1 == "" && $do->wo_repair_code2 == "" && $do->wo_repair_code3 == "") {
+                    //         // dd('aa');
+                    //         $combineSP = DB::table('xxrepgroup_mstr')
+                    //             ->select('wo_nbr','repm_code as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 
+                    //             'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
+                    //             ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
+                    //             ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
+                    //             ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
+                    //             ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
+                    //             ->leftJoin('wo_mstr','wo_repair_group','xxrepgroup_mstr.xxrepgroup_nbr')
+                    //             ->where('xxrepgroup_mstr.xxrepgroup_nbr', '=', $do->wo_repair_group)
+                    //             ->where('wo_id', '=', $do->wo_id)
+                    //             ->orderBy('repair_code', 'asc')
+                    //             ->orderBy('repm_ins', 'asc')
+                    //             ->orderBy('repdet_step', 'asc')
+                    //             ->orderBy('ins_code', 'asc')
+                    //             ->get();
 
-                            // dd($combineSP);
+                    //         // dd($combineSP);
 
-                            $rc = DB::table('xxrepgroup_mstr')
-                                ->select('repm_code', 'repm_desc')
-                                ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
-                                ->get();
-                        }
-                    }
+                    //         $rc = DB::table('xxrepgroup_mstr')
+                    //             ->select('repm_code', 'repm_desc')
+                    //             ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
+                    //             ->get();
+                    //     }
+                    // }
                     // dd($combineSP);
-                    foreach($combineSP as $dc){
+                    foreach($datawo as $dc){
                         DB::table('temp_wo_so')->insert([
-                            'temp_wo' => $dc->wo_nbr,
-                            'temp_sch_date' => $dc->wo_schedule,
+                            'temp_wo' => $dc->wo_number,
+                            'temp_sch_date' => $dc->wo_start_date,
                             'temp_status' => $dc->wo_status,
-                            'temp_sp' => $dc->insd_part,
-                            'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$dc->insd_part)->value('spm_desc'),
-                            'temp_qty_req' => $dc->insd_qty,
+                            'temp_sp' => 'dari SP LIST',
+                            'temp_sp_desc' => 'dari SP LIST',
+                            'temp_qty_req' => 0,
                             'temp_qty_whs' => 0,
-                            'temp_qty_need' => $dc->insd_qty,
+                            'temp_qty_need' => 0,
                         ]);
                     }
 

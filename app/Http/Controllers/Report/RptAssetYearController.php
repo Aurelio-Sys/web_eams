@@ -37,15 +37,21 @@ class RptAssetYearController extends Controller
         $bulan = Carbon::createFromDate($tgl)->isoFormat('YYYY');
 
         $data = DB::table('asset_mstr')
-        // rumus untuk sch by bulan ->selectRaw('asset_mstr.*, PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal) as harusnya')
-        ->selectRaw('asset_mstr.*, date_format(DATE_ADD(DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY),"%Y%m") as harusnya')
-        ->where('asset_measure','=','C')
+        ->selectRaw('asset_mstr.*, now() as harusnya')
         ->where('asset_active','=','Yes')
-        // ->where('asset_code','=','01-AT-002')
-        // rumus untuk sch by bulan ->whereRaw('PERIOD_DIFF(PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal), date_format(now(),"%Y%m")) <= - asset_tolerance') // fungsi MYSQL
-        ->whereRaw('DATE_ADD(DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY) < curdate()')
         ->orderBy('asset_code')
         ->get();
+
+        // $data = DB::table('asset_mstr')
+        // // rumus untuk sch by bulan ->selectRaw('asset_mstr.*, PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal) as harusnya')
+        // ->selectRaw('asset_mstr.*, date_format(DATE_ADD(DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY),"%Y%m") as harusnya')
+        // ->where('asset_measure','=','C')
+        // ->where('asset_active','=','Yes')
+        // // ->where('asset_code','=','01-AT-002')
+        // // rumus untuk sch by bulan ->whereRaw('PERIOD_DIFF(PERIOD_ADD(date_format(asset_last_mtc,"%Y%m"),asset_cal), date_format(now(),"%Y%m")) <= - asset_tolerance') // fungsi MYSQL
+        // ->whereRaw('DATE_ADD(DATE_ADD(asset_last_mtc,INTERVAL asset_cal DAY), INTERVAL -asset_tolerance DAY) < curdate()')
+        // ->orderBy('asset_code')
+        // ->get();
 // dd($data);        
         Schema::create('temp_asset', function ($table) {
             $table->increments('id');
@@ -59,7 +65,7 @@ class RptAssetYearController extends Controller
             DB::table('temp_asset')->insert([
                 'temp_code' => $datas->asset_code,
                 'temp_sch' => $datas->harusnya,
-                'temp_cal' => $datas->asset_cal,
+                'temp_cal' => '',
             ]);
         }
                
@@ -96,10 +102,10 @@ class RptAssetYearController extends Controller
         
         /* Actual data WO */
         $datawo = DB::table('wo_mstr')
-            ->selectRaw('wo_asset,year(wo_schedule) as "thnwo", month(wo_schedule) as "blnwo", wo_type')
-            ->orderBy('wo_asset')
-            ->orderBy('wo_nbr')
-            ->groupBy('wo_asset','thnwo','blnwo','wo_type')
+            ->selectRaw('wo_asset_code,year(wo_start_date) as "thnwo", month(wo_start_date) as "blnwo", wo_type')
+            ->orderBy('wo_asset_code')
+            ->orderBy('wo_number')
+            ->groupBy('wo_asset_code','thnwo','blnwo','wo_type')
             ->get();
 
         // dd($datawo);

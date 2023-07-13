@@ -20,7 +20,8 @@ class PmConfirmController extends Controller
     {
         $s_code = $req->s_code;
         $s_desc = $req->s_desc;
-        $s_loc = $req->s_loc;
+        $s_date1 = $req->s_date1;
+        $s_date2 = $req->s_date2;
 
         $data = DB::table('pmo_confirm')
             ->leftJoin('asset_mstr','asset_code','=','pmo_asset')
@@ -38,10 +39,19 @@ class PmConfirmController extends Controller
             ->orderBy('id');
 
         if($s_code) {
-            $data = $data->where('asset_code','like','%'.$s_code.'%');
+            $data = $data->where(function($query) use ($s_code) {
+                $query->where('asset_code','like','%'.$s_code.'%')
+                ->orwhere('asset_desc','like','%'.$s_code.'%');
+            });
         }
         if($s_desc) {
-            $data = $data->where('pmo_pmcode','like','%'.$s_desc.'%');
+            $data = $data->where(function($query) use ($s_desc) {
+                $query->where('pmc_code','like','%'.$s_desc.'%')
+                ->orwhere('pmc_desc','like','%'.$s_desc.'%');
+            });
+        }
+        if($s_date1) {
+            $data = $data->whereBetween('pmo_sch_date', [$s_date1, $s_date2]);
         }
 
         $data = $data->paginate(10);

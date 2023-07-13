@@ -2,18 +2,6 @@
 <tr class="foottr">
   <td class="foot1" data-label="WO Number">{{ $show->wo_number }}</td>
   <td class="foot1" data-label="Asset">{{ $show->asset_code }} -- {{ $show->asset_desc }}</td>
-  @if($show->wo_type == 'auto')
-  <td class="foot1" data-label="WO Type">Preventive</td>
-  @elseif($show->wo_type == 'direct')
-  <td class="foot1" data-label="WO Type">Direct</td>
-  @elseif($show->wo_type == 'other')
-    @if($show->wo_sr_nbr != null)
-    <td class="foot1" data-label="WO Type">WO from SR</td>
-    @else
-    <td class="foot1" data-label="WO Type">Work Order</td>
-    @endif
-  @endif
-
   <td class="foot1" data-label="Status">{{ $show->wo_status }}</td>
   <td class="foot1" data-label="Priority">{{ $show->wo_priority }}</td>
   <td class="foot1" >

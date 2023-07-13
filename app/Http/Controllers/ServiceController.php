@@ -3040,19 +3040,19 @@ class ServiceController extends Controller
             ->first();
         $srmstr = DB::table('service_req_mstr')
             ->where('sr_number', '=', $sr)
-            ->selectRaw('fn1.fn_desc as fn1, fn2.fn_desc as fn2, fn3.fn_desc as fn3, dept_desc, eng_desc, sr_number, sr_fail_type, sr_dept,
-            sr_created_at, sr_asset, asset_desc, req_by, sr_approver, sr_impact, imp_desc, sr_req_date, sr_time, asset_desc, wotyp_desc, 
-            sr_note, imp_code, dept_user, req_by, wo_number, wo_duedate, wo_schedule')
+            ->selectRaw('"" as fn1, "" as fn2, "" as fn3, dept_desc, eng_desc, sr_number, sr_fail_type, sr_dept,
+            sr_req_date, sr_asset, asset_desc, sr_req_by, "" as sr_approver, sr_impact, imp_desc, sr_req_date, sr_req_time, asset_desc, wotyp_desc, 
+            sr_note, imp_code, "" as dept_user, sr_req_by, service_req_mstr.wo_number, wo_due_date, wo_start_date')
             ->leftjoin('eng_mstr', 'service_req_mstr.sr_req_by', 'eng_mstr.eng_code')
             ->leftJoin('dept_mstr', 'service_req_mstr.sr_dept', 'dept_mstr.dept_code')
             ->leftJoin('asset_mstr', 'service_req_mstr.sr_asset', 'asset_mstr.asset_code')
-            ->leftJoin('fn_mstr as fn1', 'service_req_mstr.sr_failurecode1', 'fn1.fn_code')
-            ->leftJoin('fn_mstr as fn2', 'service_req_mstr.sr_failurecode2', 'fn2.fn_code')
-            ->leftJoin('fn_mstr as fn3', 'service_req_mstr.sr_failurecode3', 'fn3.fn_code')
+            // ->leftJoin('fn_mstr as fn1', 'service_req_mstr.sr_failurecode1', 'fn1.fn_code')
+            // ->leftJoin('fn_mstr as fn2', 'service_req_mstr.sr_failurecode2', 'fn2.fn_code')
+            // ->leftJoin('fn_mstr as fn3', 'service_req_mstr.sr_failurecode3', 'fn3.fn_code')
             ->leftJoin('wotyp_mstr', 'service_req_mstr.sr_fail_type', 'wotyp_mstr.wotyp_code')
-            ->leftJoin('wo_mstr', 'service_req_mstr.sr_number', 'wo_mstr.wo_sr_nbr')
+            ->leftJoin('wo_mstr', 'service_req_mstr.sr_number', 'wo_mstr.wo_sr_number')
             ->leftJoin('imp_mstr', 'service_req_mstr.sr_impact', 'imp_mstr.imp_code')
-            ->leftJoin('users', 'service_req_mstr.sr_approver', 'users.username')
+            // ->leftJoin('users', 'service_req_mstr.sr_approver', 'users.username')
             ->first();
 
         $impact = DB::table(('imp_mstr'))
@@ -3062,24 +3062,27 @@ class ServiceController extends Controller
 
         $womstr = DB::table('wo_mstr')
             ->when($sr, function ($q, $sr) {
-                return $q->where('wo_sr_nbr', $sr);
+                return $q->where('wo_sr_number', $sr);
             })
-            ->leftjoin('users', 'wo_mstr.wo_creator', 'users.username')
-            ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
+            ->leftjoin('users', 'wo_mstr.wo_createdby', 'users.username')
+            ->leftJoin('dept_mstr', 'wo_mstr.wo_department', 'dept_mstr.dept_code')
             ->first();
         // dd($womstr);
 
-        $engineerlist = DB::table('wo_mstr')
-            ->when($sr, function ($q, $sr) {
-                return $q->where('wo_sr_nbr', $sr);
-            })
-            ->selectRaw('a.name as eng1,b.name as eng2,c.name as eng3,d.name as eng4,e.name as eng5')
-            ->leftjoin('users as a', 'wo_mstr.wo_engineer1', 'a.username')
-            ->leftjoin('users as b', 'wo_mstr.wo_engineer2', 'b.username')
-            ->leftjoin('users as c', 'wo_mstr.wo_engineer3', 'c.username')
-            ->leftjoin('users as d', 'wo_mstr.wo_engineer4', 'd.username')
-            ->leftjoin('users as e', 'wo_mstr.wo_engineer5', 'e.username')
-            ->first();
+        // $engineerlist = DB::table('wo_mstr')
+        //     ->when($sr, function ($q, $sr) {
+        //         return $q->where('wo_sr_number', $sr);
+        //     })
+        //     ->selectRaw('a.name as eng1,b.name as eng2,c.name as eng3,d.name as eng4,e.name as eng5')
+        //     ->leftjoin('users as a', 'wo_mstr.wo_engineer1', 'a.username')
+        //     ->leftjoin('users as b', 'wo_mstr.wo_engineer2', 'b.username')
+        //     ->leftjoin('users as c', 'wo_mstr.wo_engineer3', 'c.username')
+        //     ->leftjoin('users as d', 'wo_mstr.wo_engineer4', 'd.username')
+        //     ->leftjoin('users as e', 'wo_mstr.wo_engineer5', 'e.username')
+        //     ->first();
+
+        $engineerlist = "";
+
         // $wodet = DB::table('wo_dets')
         //     ->join('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')
         //     ->where('wo_dets_nbr', '=', $sr)

@@ -26,7 +26,7 @@ class WORelease extends Controller
             ->where('asset_active', '=', 'Yes')
             ->get();
 
-        if(Session::get('role') == 'ADMIN'){
+        if(Session::get('role') == 'ADMIN' || Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR'){
             $data = DB::table('wo_mstr')
                 ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
                 ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')

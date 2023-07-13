@@ -1,4 +1,4 @@
-@php($eng = $ds->wo_engineer1)
+{{--  @php($eng = $ds->wo_engineer1)
 @if(!is_null($ds->wo_engineer2))
     @php($eng .= ','.$ds->wo_engineer2)
 @endif
@@ -25,7 +25,7 @@
 @if(!is_null($ds->wo_failure_code3) && $ds->wo_failure_code3 != "")
     @php($fcode = $datafn->where('fn_code','=',$ds->wo_failure_code3)->first())
     @php($dfc .= $ds->wo_failure_code3.' - '.$fcode->fn_desc."\n")    
-@endif
+@endif  --}}
 
 @if($ds->wo_type == 'auto')
     @php($tipe = 'PM')
@@ -33,11 +33,14 @@
     @php($tipe = 'WO')
 @endif
 
+@php($eng = 'eng')
+@php($dfc = '-')
+
 <a href="javascript:void(0)" class="viewwo" data-toggle="modal"  title="View WO"  data-target="#viewModal" 
-    data-wonbr="{{$ds->wo_nbr}}" data-srnbr="{{$ds->wo_sr_nbr}}" data-woengineer="{{$ds->wo_engineer1}}" 
-    data-woasset="{{$ds->wo_asset}}" data-schedule="{{$ds->wo_schedule}}" data-duedate="{{$ds->wo_duedate}}"
-    data-assdesc="{{$ds->asset_desc}}" data-eng="{{$eng}}" data-dfc="{{$dfc}}" data-creator="{{$ds->wo_creator}}"
-    data-note="{{$ds->wo_note}}" data-startdate="{{$ds->wo_start_date}}" data-finishdate="{{$ds->wo_finish_date}}"
+    data-wonbr="{{$ds->wo_number}}" data-srnbr="{{$ds->wo_sr_number}}" 
+    data-woasset="{{$ds->wo_asset_code}}" data-schedule="{{$ds->wo_start_date}}" data-duedate="{{$ds->wo_due_date}}"
+    data-assdesc="{{$ds->asset_desc}}" data-eng="{{$eng}}" data-dfc="{{$dfc}}" data-creator="{{$ds->wo_createdby}}"
+    data-note="{{$ds->wo_note}}" data-startdate="{{$ds->wo_job_startdate}}" data-finishdate="{{$ds->wo_job_finishdate}}"
     data-status="{{$ds->wo_status}}">
 
     @if($ds->wo_status == 'plan')

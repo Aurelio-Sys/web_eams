@@ -45,9 +45,9 @@ class RptCostController extends Controller
             $a = $req->s_eng;
             $data = $data->whereIn('asset_code', function($query) use ($a, $bulan)
             {
-                $query->select('wo_asset')
+                $query->select('wo_asset_code')
                       ->from('wo_mstr')
-                      ->whereYear('wo_created_at','=',$bulan)
+                      ->whereYear('wo_system_create','=',$bulan)
                       ->where('wo_engineer1','=',$a)
                       ->orWhere('wo_engineer2','=',$a)
                       ->orWhere('wo_engineer3','=',$a)
@@ -59,9 +59,9 @@ class RptCostController extends Controller
             $a = $req->s_type;
             $data = $data->whereIn('asset_code', function($query) use ($bulan)
             {
-                $query->select('wo_asset')
+                $query->select('wo_asset_code')
                       ->from('wo_mstr')
-                      ->whereYear('wo_created_at','=',$bulan)
+                      ->whereYear('wo_system_create','=',$bulan)
                       ->where('wo_type','<>','auto');
             });
         }
@@ -69,9 +69,9 @@ class RptCostController extends Controller
             $a = $req->s_type;
             $data = $data->whereIn('asset_code', function($query) use ($bulan)
             {
-                $query->select('wo_asset')
+                $query->select('wo_asset_code')
                       ->from('wo_mstr')
-                      ->whereYear('wo_created_at','=',$bulan)
+                      ->whereYear('wo_system_create','=',$bulan)
                       ->where('wo_type','=','auto');
             });
         }
@@ -90,18 +90,20 @@ class RptCostController extends Controller
             $table->temporary();
         });
 
+        // sum(wo_dets_sp_price * wo_dets_sp_qty) as jml')
+
         $dataharga = DB::table('wo_mstr')
-            ->selectRaw('wo_asset,month(wo_created_at) as "bln",year(wo_created_at) as "thn",
-                sum(wo_dets_sp_price * wo_dets_sp_qty) as jml')
-            ->leftJoin('wo_dets','wo_dets_nbr','=','wo_nbr')
-            ->groupBy('wo_asset')
+            ->selectRaw('wo_asset_code,month(wo_system_create) as "bln",year(wo_system_create) as "thn",
+                sum(0) as jml')
+            // ->leftJoin('wo_dets','wo_dets_nbr','=','wo_nbr')
+            ->groupBy('wo_asset_code')
             ->groupBy('bln')
             ->groupBy('thn')
             ->get();
 
         foreach($dataharga as $dataharga) {
             DB::table('temp_asset')->insert([
-                'temp_code' => $dataharga->wo_asset,
+                'temp_code' => $dataharga->wo_asset_code,
                 'temp_bln' => $dataharga->bln,
                 'temp_thn' => $dataharga->thn,
                 'temp_cost' => isset($dataharga->jml) ? $dataharga->jml : 0 ,
@@ -177,17 +179,17 @@ class RptCostController extends Controller
         });
 
         $dataharga = DB::table('wo_mstr')
-            ->selectRaw('wo_asset,month(wo_created_at) as "bln",year(wo_created_at) as "thn",
+            ->selectRaw('wo_asset_code,month(wo_system_create) as "bln",year(wo_system_create) as "thn",
                 sum(wo_dets_sp_price * wo_dets_sp_qty) as jml')
             ->leftJoin('wo_dets','wo_dets_nbr','=','wo_nbr')
-            ->groupBy('wo_asset')
+            ->groupBy('wo_asset_code')
             ->groupBy('bln')
             ->groupBy('thn')
             ->get();
 
         foreach($dataharga as $dataharga) {
             DB::table('temp_asset')->insert([
-                'temp_code' => $dataharga->wo_asset,
+                'temp_code' => $dataharga->wo_asset_code,
                 'temp_bln' => $dataharga->bln,
                 'temp_thn' => $dataharga->thn,
                 'temp_cost' => isset($dataharga->jml) ? $dataharga->jml : 0 ,
@@ -227,9 +229,9 @@ class RptCostController extends Controller
             $code = $req->code;
 
             $data = DB::table('wo_mstr')
-                    ->join('asset_mstr','asset_code','=','wo_asset')
+                    ->join('asset_mstr','asset_code','=','wo_asset_code')
                     ->whereNotIn('wo_status', ['closed','finish','delete'])
-                    ->whereWo_asset($code)
+                    ->whereWo_asset_code($code)
                     ->orderBy('wo_schedule')
                     ->get();
 

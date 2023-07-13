@@ -25,15 +25,21 @@
         <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
         <div class="card card-body bg-black rounded-0">
             <div class="col-12 form-group row">
-                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset Code</label>
+                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
-                    <input id="s_code" type="text" class="form-control" name="s_code"
-                    value="" autofocus autocomplete="off"/>
+                    <input id="s_code" type="text" class="form-control" name="s_code" value="" autofocus autocomplete="off"/>
                 </div>
-                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">PM Code</label>
+                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">PM</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
-                    <input id="s_desc" type="text" class="form-control" name="s_desc"
-                    value="" autofocus autocomplete="off"/>
+                    <input id="s_desc" type="text" class="form-control" name="s_desc" value="" autofocus autocomplete="off"/>
+                </div>
+                <label for="s_date1" class="col-md-2 col-sm-2 col-form-label text-md-right">Date</label>
+                <div class="col-md-4 col-sm-4 mb-2 input-group">
+                    <input id="s_date1" type="date" class="form-control" name="s_date1" value="" autofocus autocomplete="off"/>
+                </div>
+                <label for="s_date2" class="col-md-2 col-sm-2 col-form-label text-md-right">To</label>
+                <div class="col-md-4 col-sm-4 mb-2 input-group">
+                    <input id="s_date2" type="date" class="form-control" name="s_date2" value="" autofocus autocomplete="off"/>
                 </div>
                 <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
                 <div class="col-md-2 col-sm-4 mb-2 input-group">
@@ -73,14 +79,14 @@
                 @else
                     @php($leadtime = $show->pma_leadtime)
                 @endif
-                @php($tglakhir = date_add(date_create($show->pmo_sch_date), date_interval_create_from_date_string(''.$leadtime.' days')))
+                @php($tglakhir = date_add(date_create($show->pmo_sch_date), date_interval_create_from_date_string(''.round($leadtime).' days')))
                 <tr>
                     <td>{{$show->pmo_asset}}</td>
                     <td>{{$show->asset_desc}}</td>
                     <td>{{$show->pmo_pmcode}}</td>
                     <td>{{$show->pmc_desc}}</td>
-                    <td class="td_pmdate">@if($show->pmo_sch_date != "0000-00-00") {{$show->pmo_sch_date}} @endif</td>
-                    <td> {{date_format($tglakhir,"Y-m-d")}} </td>
+                    <td class="td_pmdate">@if($show->pmo_sch_date != "0000-00-00") {{date('d-m-Y', strtotime($show->pmo_sch_date))}} @endif</td>
+                    <td> {{date_format($tglakhir,"d-m-Y")}} </td>
                     {{--  <td class="td_pmnumber">{{$show->pmo_number}}</td>  --}}
 
                     <td>

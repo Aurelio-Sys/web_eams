@@ -65,31 +65,37 @@ class wocontroller extends Controller
         );
     }
     //wo browse
-    public function wobrowsemenu() /* route : wobrowse  blade : workorder.woview */
+    public function wobrowsemenu(Request $req) /* route : wobrowse  blade : workorder.woview */
     {
         //dd(Session::get('department'));    
         if (strpos(Session::get('menu_access'), 'WO05') !== false) {
             $usernow = DB::table('users')
                 ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
                 ->where('username', '=', session()->get('username'))
-                ->first();
+                ->get();
+
 
             $data = DB::table('wo_mstr')
-                ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset')
-                ->orderby('wo_created_at', 'desc')
-                ->orderBy('wo_mstr.wo_id', 'desc')
-                //->whereWo_nbr('WO-21-0036')
-                //->get();
-                ->paginate(10);
-            //dd($data);
+                ->leftJoin('users','wo_mstr.wo_createdby','users.username')
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code');
 
-            $custrnow = DB::table('wo_mstr')
-                ->selectRaw('wo_creator,min(name) as creator_desc')
-                // ->join('eng_mstr','wo_mstr.wo_creator','eng_mstr.eng_code')
-                ->join('users', 'wo_mstr.wo_creator', 'users.username')
-                ->groupBy('wo_creator')
-                ->get();
-            // dd($custrnow);
+            if ($req->s_nomorwo) {
+                $data->where('wo_number', 'like', '%' . $req->s_nomorwo . '%');
+            }
+            if ($req->s_asset) {
+                $data->where('asset_code', $req->s_asset);
+            }
+            if ($req->s_status) {
+                $data->where('wo_status', $req->s_status);
+            }
+            if ($req->s_wotype) {
+                $data->where('wo_type', $req->s_wotype);
+            }
+            if ($req->s_engineer) {
+                $data->where('wo_list_engineer', 'like', '%' . $req->s_engineer . '%');
+            }
+
+            $data = $data->orderby('wo_system_create', 'desc')->orderBy('wo_number', 'desc')->paginate(10);
 
             $depart = DB::table('dept_mstr')
                 ->get();
@@ -101,16 +107,38 @@ class wocontroller extends Controller
                 ->where('asset_active', '=', 'Yes')
                 ->orderBy('asset_code')
                 ->get();
+
             $failure = DB::table('fn_mstr')
+                ->leftJoin('asfn_det', 'asfn_det.asfn_fncode', 'fn_mstr.fn_code')
+                ->groupBy('fn_code')
                 ->get();
+
+
+            $maintenance = DB::table('pmc_mstr')->get();
+
+            $inslist = DB::table('ins_list')->groupBy('ins_code')->get();
+
+            $splist = DB::table('spg_list')->groupBy('spg_code')->get();
+
+            $qclist = DB::table('qcs_list')->groupBy('qcs_code')->get();
+
             $impact = DB::table('imp_mstr')
                 ->get();
             $wottype = DB::table('wotyp_mstr')
-                ->get();
-            $ceksrfile = DB::table('service_req_upload')
+                // ->leftJoin('asfn_det','asfn_det.asfn_fntype','wotyp_mstr.wotyp_code')
+                // ->groupBy('asfn_asset','asfn_fntype')
                 ->get();
 
-            return view('workorder.woview', ['impact' => $impact, 'wottype' => $wottype, 'custrnow' => $custrnow, 'data' => $data, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '', 'ceksrfile' => $ceksrfile]);
+            // dd($wottype);
+            $ceksrfile = DB::table(('service_req_upload'))
+                ->get();
+            return view('workorder.woview', [
+                'impact' => $impact, 'wottype' => $wottype, 'data' => $data,
+                'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset,
+                'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '',
+                'maintenancelist' => $maintenance, 'ceksrfile' => $ceksrfile, 'inslist' => $inslist, 'splist' => $splist,
+                'qclist' => $qclist
+            ]);
         } else {
             toast('Anda tidak memiliki akses menu, Silahkan kontak admin', 'error');
             return back();
@@ -226,8 +254,8 @@ class wocontroller extends Controller
     }
 
     // WO maint
-    public function wobrowse(Request $req)
-    {         // route : womaint  blade : workorder.wobrowse
+    public function womaint(Request $req)
+    {         // route : womaint  blade : workorder.wobrowse        
         if (strpos(Session::get('menu_access'), 'WO01') !== false) {
             // dd(Session::all());
             $usernow = DB::table('users')
@@ -236,8 +264,9 @@ class wocontroller extends Controller
                 ->get();
 
 
-            if (Session::get('role') == 'ADMIN') {
+            if (Session::get('role') == 'ADMIN' || Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR' ) {
                 $data = DB::table('wo_mstr')
+                    ->leftJoin('users','wo_mstr.wo_createdby','users.username')
                     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code');
             } else {
                 $username = Session::get('username');
@@ -245,6 +274,7 @@ class wocontroller extends Controller
                 // dd($username);
 
                 $data = DB::table('wo_mstr')
+                    ->leftJoin('users','wo_mstr.wo_createdby','users.username')
                     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                     ->where(function ($query) use ($username) {
                         $query->where('wo_list_engineer', '=', $username . ';')
@@ -3717,7 +3747,7 @@ class wocontroller extends Controller
             $wodet_sp = DB::table('wo_dets_sp')
                         ->get();
 
-            if (Session::get('role') == 'ADMIN') {
+            if (Session::get('role') == 'ADMIN' || Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR') {
 
                 $data = DB::table('wo_mstr')
                     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
@@ -3897,7 +3927,7 @@ class wocontroller extends Controller
 
         if (strpos(Session::get('menu_access'), 'WO03') !== false) {
 
-            if (Session::get('role') == 'ADMIN') {
+            if (Session::get('role') == 'ADMIN' || Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR') {
 
                 $data = DB::table('wo_mstr')
                     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
@@ -4742,7 +4772,7 @@ class wocontroller extends Controller
                 ]);
 
                 DB::commit();
-                toast('Reporting Successfuly', 'success')->persistent('Dismiss');
+                toast('Reporting '.$req->c_wonbr.' Successfuly', 'success')->persistent('Dismiss');
                 return redirect()->route('woreport');
             }
 
@@ -6411,13 +6441,13 @@ class wocontroller extends Controller
         $zip = new ZipArchive;
 
         $assetnow = DB::table('wo_mstr')
-            ->where('wo_nbr', '=', $wo)
+            ->where('wo_number', '=', $wo)
             ->first();
 
         // dd($wo);
 
         $listdownload = DB::table('asset_upload')
-            ->where('asset_code', '=', $assetnow->wo_asset)
+            ->where('asset_code', '=', $assetnow->wo_asset_code)
             ->get();
 
         /* A211103 */
@@ -6425,7 +6455,7 @@ class wocontroller extends Controller
             ->whereFile_wonumber($wo)
             ->get();
 
-        $fileName = $wo . '_' . $assetnow->wo_asset . '.zip';
+        $fileName = $wo . '_' . $assetnow->wo_asset_code . '.zip';
 
         if (count($listdownload) > 0 || count($listfinish) > 0) {
             if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE) {
