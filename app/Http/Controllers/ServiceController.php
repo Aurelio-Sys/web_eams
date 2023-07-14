@@ -682,11 +682,11 @@ class ServiceController extends Controller
 
             $maintenance = DB::table('pmc_mstr')->get();
 
-            $inslist = DB::table('ins_list')->get();
+            $inslist = DB::table('ins_list')->groupBy('ins_code')->get();
 
-            $splist = DB::table('spg_list')->get();
+            $splist = DB::table('spg_list')->groupBy('spg_code')->get();
 
-            $qclist = DB::table('qcs_list')->get();
+            $qclist = DB::table('qcs_list')->groupBy('qcs_code')->get();
 
             return view('service.servicereq-approvaleng', [
                 'wotypes' => $wotypes, 'impacts' => $impacts,

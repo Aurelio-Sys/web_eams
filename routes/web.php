@@ -415,6 +415,9 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/womaint', [wocontroller::class, 'womaint'])->name('womaint');
 	Route::post('/createwo', [wocontroller::class, 'createwo']);
 	Route::get('/searchic', [wocontroller::class, 'searchic']);
+	Route::get('/searchil', [wocontroller::class, 'searchil']);
+	Route::get('/searchis', [wocontroller::class, 'searchis']);
+	Route::get('/searchiq', [wocontroller::class, 'searchiq']);
 	Route::get('/filtermaintcode', [wocontroller::class, 'filtermaintcode']);
 	// route::get('/womaint/pagination', 'wocontroller@wopaging');
 	route::post('/editwo', [wocontroller::class, 'editwo']); 

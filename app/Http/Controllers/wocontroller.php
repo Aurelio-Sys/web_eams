@@ -1002,6 +1002,33 @@ class wocontroller extends Controller
         return response()->json($searchic);
     }
 
+    public function searchil(Request $req)
+    {
+        $searchil = DB::table('ins_list')
+            ->where('ins_code', '=', $req->ins_code)
+            ->get();
+
+        return response()->json($searchil);
+    }
+
+    public function searchis(Request $req)
+    {
+        $searchis = DB::table('spg_list')
+            ->where('spg_code', '=', $req->spg_code)
+            ->get();
+
+        return response()->json($searchis);
+    }
+
+    public function searchiq(Request $req)
+    {
+        $searchiq = DB::table('qcs_list')
+            ->where('qcs_code', '=', $req->qcs_code)
+            ->get();
+
+        return response()->json($searchiq);
+    }
+
     public function filtermaintcode(Request $req)
     {
         $datafilter = DB::table('pmc_mstr')
