@@ -794,7 +794,9 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/submitaccutrf', [SparepartController::class, 'submitaccutrf']);
 
 	//my routine check browse
-	Route::get('/myroutine', [RoutineCheckController::class, 'myroutinebrowse']);
+	Route::get('/myroutine', [RoutineCheckController::class, 'myroutinebrowse'])->name('myroutine');
+	Route::get('/myroutine/detail/{id}', [RoutineCheckController::class, 'routincheckdetail'])->name('myrcdetail');
+	Route::post('/myroutinesubmit', [RoutineCheckController::class, 'routinesubmit'])->name('routinesubmit');
 });
 
 Auth::routes();

@@ -60,6 +60,11 @@ class routineCheck extends Command
                 $listeng .= $datasegr->egr_eng.';';
             }
 
+            $qcsdesc = DB::table('qcs_list')
+                        ->select('qcs_desc')
+                        ->where('qcs_code','=', $datas->rcm_qcs)
+                        ->first();
+
 
 
             for($time = $start_schedule; $time <= $end_schedule; $time += $Interval_minutes * 60){
@@ -68,8 +73,10 @@ class routineCheck extends Command
                 DB::table('rcm_activity_log')->insert([
                     'ra_asset_code' => $datas->rcm_asset,
                     'ra_qcs_code' => $datas->rcm_qcs,
+                    'ra_qcs_desc' => $qcsdesc->qcs_desc,
                     'ra_schedule_time' => $activityTime,
                     'ra_eng_list' => $listeng,
+                    'ra_emailalert' => $datas->rcm_email,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
