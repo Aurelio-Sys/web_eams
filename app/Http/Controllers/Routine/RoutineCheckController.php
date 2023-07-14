@@ -93,6 +93,8 @@ class RoutineCheckController extends Controller
                         'ra_det_qcsspec' => $req->qc_spec[$datasrcm],
                         'ra_det_result1' => $req->qc_result1[$datasrcm],
                         'ra_det_note' => $req->qc_note[$datasrcm],
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ]);
                 
                 }
@@ -119,11 +121,11 @@ class RoutineCheckController extends Controller
                         'ra_det_qcsspec' => $req->qc_spec[$datasrcm],
                         'ra_det_result1' => $req->qc_result1[$datasrcm],
                         'ra_det_note' => $req->qc_note[$datasrcm],
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ]);
                 
                 }
-
-                
 
                 //update table rcm_activity_log
 
