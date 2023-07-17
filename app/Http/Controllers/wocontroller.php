@@ -2243,6 +2243,9 @@ class wocontroller extends Controller
                 ->where('username', '=', session()->get('username'))
                 ->get();
 
+            $wodet_sp = DB::table('wo_dets_sp')
+                ->get();
+
             if (Session::get('role') == 'ADMIN') {
                 //ADMIN
                 if ($wonumber == '' and $asset == '' and $status == '' and $priority == '') {
@@ -2257,7 +2260,7 @@ class wocontroller extends Controller
                         ->orderBy('wo_mstr.id', 'desc')
                         ->paginate(10);
 
-                    return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
+                    return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow, 'wodet_sp'=> $wodet_sp]);
                 } else {
                     $kondisi = "wo_mstr.id > 0";
 
@@ -2285,7 +2288,7 @@ class wocontroller extends Controller
                         ->paginate(10);
                     // dd($kondisi);
                     // dd($_SERVER['REQUEST_URI']);                
-                    return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
+                    return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow, 'wodet_sp'=> $wodet_sp]);
                 }
             } else {
                 //engineer yang ditunjuk
@@ -2308,7 +2311,7 @@ class wocontroller extends Controller
                         })
                         ->paginate(10);
 
-                    return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
+                    return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow, 'wodet_sp'=> $wodet_sp]);
                 } else {
                     $kondisi = "wo_mstr.id > 0";
 
@@ -2345,7 +2348,7 @@ class wocontroller extends Controller
                         ->paginate(10);
                     // dd($data);
                     // dd($_SERVER['REQUEST_URI']);                
-                    return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow]);
+                    return view('workorder.table-wostart', ['data' => $data, 'usernow' => $usernow,'wodet_sp'=> $wodet_sp]);
                 }
             }
         }
@@ -4093,25 +4096,23 @@ class wocontroller extends Controller
 
             //cek jika ada spare part yang digunakan saat reporting dan informasi yang dibutuhkan untuk issued unplanned ke QAD lengkap
             if ($req->has('hidden_sp') && $req->has('hidden_sitefrom') && $req->has('hidden_locfrom') && $req->has('hidden_lotfrom') && $req->has('qtyrequired') && $req->has('qtyissued') && $req->has('qtypotong')) {
-                // $domain = ModelsQxwsa::first();
+                $domain = ModelsQxwsa::first();
 
-                // $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
+                $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
 
-                // if ($costdata === false) {
-                //     alert()->error('Error', 'WSA Failed');
-                //     return redirect()->route('woreport');
-                // } else {
-                //     if ($costdata[1] == "false") {
-                //         alert()->error('Error', 'Item Cost tidak ditemukan');
-                //         return redirect()->route('woreport');
-                //     } else {
-                //         $tempCost = (new CreateTempTable())->createTempCost($costdata[0]);
+                if ($costdata === false) {
+                    alert()->error('Error', 'WSA Failed');
+                    return redirect()->route('woreport');
+                } else {
+                    if ($costdata[1] == "false") {
+                        alert()->error('Error', 'Item Cost tidak ditemukan');
+                        return redirect()->route('woreport');
+                    } else {
+                        $tempCost = (new CreateTempTable())->createTempCost($costdata[0]);
 
-                //         $tempCost = collect($tempCost[0]);
-                //     }
-                // }
-
-                // dd($tempCost);
+                        $tempCost = collect($tempCost[0]);
+                    }
+                }
 
 
                 $dataArrayIssued = []; //penampungngan data yg mau diissued unplanned
@@ -4193,6 +4194,9 @@ class wocontroller extends Controller
                         $qtyIssued = $req->qtyissued[$index];
                         $qtyPotong = $req->qtypotong[$index];
 
+                        $sparepartcost = $tempCost->where('cost_site','=', $siteFrom)
+                                                ->where('cost_part','=', $sparepartCode)->first();
+
                         // dd($qtyIssued);
                         //update data untuk pertama kali melakukan report dengan kondisi site,loc,lot issued masih null dan kolom wd_already_issued = false
                         DB::table('wo_dets_sp')
@@ -4208,7 +4212,8 @@ class wocontroller extends Controller
                                 'wd_sp_site_issued' => $siteFrom,
                                 'wd_sp_loc_issued' => $locFrom,
                                 'wd_sp_lot_issued' => $lotFrom,
-                                'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
+                                'wd_sp_itemcost' => $sparepartcost->cost_cost,
+                                'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
 
                         //jika sudah ada isi untuk field wd_sp_site_issued, wd_sp_loc_issued, wd_sp_lot_issued
@@ -4220,6 +4225,7 @@ class wocontroller extends Controller
                                 'wd_sp_loc_issued' => $locFrom,
                                 'wd_sp_lot_issued' => $lotFrom,
                                 'wd_already_issued' => true,
+                                'wd_sp_itemcost' => $sparepartcost->cost_cost,
                             ], [
                                 'wd_sp_spcode' => $sparepartCode,
                                 'wd_sp_issued' => DB::raw('wd_sp_issued + ' . $qtyPotong),
@@ -4227,16 +4233,17 @@ class wocontroller extends Controller
                                 'wd_sp_site_issued' => $siteFrom,
                                 'wd_sp_loc_issued' => $locFrom,
                                 'wd_sp_lot_issued' => $lotFrom,
+                                'wd_sp_itemcost' => $sparepartcost->cost_cost,
                                 'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
                     }
 
 
-                    $checkDatas = DB::table('wo_dets_sp')
-                        ->where('wd_sp_wonumber', '=', $req->c_wonbr)
-                        ->where('wd_sp_spcode', '=', $spcode)
-                        ->where('wd_sp_required', '>', 0)
-                        ->first();
+                    // $checkDatas = DB::table('wo_dets_sp')
+                    //     ->where('wd_sp_wonumber', '=', $req->c_wonbr)
+                    //     ->where('wd_sp_spcode', '=', $spcode)
+                    //     ->where('wd_sp_required', '>', 0)
+                    //     ->first();
                     //proses memotong/mengurangi qty required di table inv_required ketika sudah di issues unplanned
 
                     //cek kondisi jika qty yang required sudah full terissued atau terpotong maka yang dipotong di inv_required sejumlah yang di required wo_dets_sp
@@ -4806,6 +4813,22 @@ class wocontroller extends Controller
                             'wo_system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                         ]);
 
+
+                    //check apakah WO ada PM, jika YA maka update pma_start sebagai tanggal terakhir dilalukannya maintenance
+                    $checkWO = DB::table('wo_mstr')
+                                    ->where('wo_number','=',$req->c_wonbr)
+                                    ->first();
+
+                    if($checkWO->wo_type == 'PM'){
+                        DB::table('pma_asset')
+                            ->where('pma_asset','=', $checkWO->wo_asset_code)
+                            ->where('pma_pmcode','=', $checkWO->wo_mt_code)
+                            ->update([
+                                'pma_start' => $checkWO->wo_job_startdate,
+                                'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+                    }
+
                     //get wo dan sr mstr
                     $womstr = DB::table('wo_mstr')->where('wo_number', $req->c_wonbr)->first();
 
@@ -4853,6 +4876,20 @@ class wocontroller extends Controller
                         ]);
 
 
+                    //check apakah WO ada PM, jika YA maka update pma_start sebagai tanggal terakhir dilalukannya maintenance
+                    $checkWO = DB::table('wo_mstr')
+                                    ->where('wo_number','=',$req->c_wonbr)
+                                    ->first();
+
+                    if($checkWO->wo_type == 'PM'){
+                        DB::table('pma_asset')
+                            ->where('pma_asset','=', $checkWO->wo_asset_code)
+                            ->where('pma_pmcode','=', $checkWO->wo_mt_code)
+                            ->update([
+                                'pma_start' => $checkWO->wo_job_startdate,
+                                'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+                    }
 
                     DB::commit();
                     toast('Work Order ' . $req->c_wonbr . ' Status: Closed', 'success')->persistent('Dismiss');
