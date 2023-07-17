@@ -15,6 +15,8 @@
           data-rolecode="{{$show->role_code}} " data-roledesc="{{ $show->role_desc }}">
           <i class="icon-table fa fa-trash fa-lg"></i></a>
         @endif
+        
+        
     </td>
 </tr>
 @empty

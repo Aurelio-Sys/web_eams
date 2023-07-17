@@ -11,7 +11,7 @@
   <link rel="icon" type="image/gif/jpg" href="images/imgheadxx.png">
   <link rel="stylesheet" href="{{url('assets/css/bootstrap-select.min.css')}}">
   <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="{{url('plugins/fontawesome-free/css/all.min.css')}}">
+  <link rel="stylesheet" href="{{url('plugins/fontawesome-free/css/all.css')}}">
 
 
   <!-- IonIcons -->
@@ -164,6 +164,15 @@ to get the desired effect
                with font-awesome or any other icon font library -->
             <!-- <li class="nav-header">SETTING</li> -->
 
+            @if(str_contains( Session::get('menu_access'), 'RC01'))
+            <li class="nav-item ">
+              <a href="/myroutine" class="nav-link ">
+                <i class="nav-icon fas fa-user-clock"></i>
+                  <p>My Routine Check</p>
+              </a>
+            </li>
+            @endif
+
             @if(str_contains( Session::get('menu_access'), 'SR'))
             <li class="nav-item has-treeview">
               <a href="javascript:void(0)" class="nav-link">
@@ -265,7 +274,6 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
-                {{-- Browse menggunakan WO Maintenance, diatur hak aksesnya
                 @if(str_contains( Session::get('menu_access'), 'WO05'))
                 <li class="nav-item ">
                   <a href="/wobrowse" class="nav-link ">
@@ -273,7 +281,7 @@ to get the desired effect
                       <p>Work Order Browse</p>
                   </a>
                 </li>  
-                @endif--}}
+                @endif
                 @if(str_contains( Session::get('menu_access'), 'WO09'))
                 <li class="nav-item ">
                   <a href="/worelease" class="nav-link ">

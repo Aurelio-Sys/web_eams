@@ -515,6 +515,12 @@
     </div>
 </div>
 
+<div class="modal fade" id="loadingtable" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <h1 class="animate__animated animate__bounce" style="display:inline;width:100%;text-align:center;color:white;font-size:larger;text-align:center">Loading...</h1>
+  </div>
+</div>
+
 @endsection
 
 @section('scripts')
@@ -807,6 +813,7 @@
         });
 
         $(document).on('click', '.loclotfrom', function() {
+            $('#loadingtable').modal('show');
             var row = $(this).closest("tr");
             const spcode = row.find(".hidden_sp").val();
             const qtypotong = row.find(".qtypotong").val();
@@ -895,7 +902,7 @@
                         tableContainer.appendChild(table);
 
                         // memanggil modal setelah tabel dimuat
-                        $('#myModal').modal('show');
+                        // $('#myModal').modal('show');
 
 
                     },
@@ -908,7 +915,7 @@
                         }, 500);
 
                         setTimeout(function() {
-                            $('#viewModal').modal('show');
+                            $('#myModal').modal('show');
                         }, 1000);
 
                     }
@@ -998,7 +1005,7 @@
                         tableContainer.appendChild(table);
 
                         // memanggil modal setelah tabel dimuat
-                        $('#myModal').modal('show');
+                        // $('#myModal').modal('show');
 
 
                     },
@@ -1011,7 +1018,7 @@
                         }, 500);
 
                         setTimeout(function() {
-                            $('#viewModal').modal('show');
+                            $('#myModal').modal('show');
                         }, 1000);
 
                     }

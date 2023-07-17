@@ -206,6 +206,7 @@ div #munculgambar .gambar:hover{
     <thead>
       <tr style="text-align: center;">
         <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="20%">WO Number<span id="name_icon"></span></th>
+        <th class="sorting" data-sorting_type="asc" data-column_name="wo_sr_number" width="20%">SR Number<span id="name_icon"></span></th>
         <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="25%">Asset<span id="username_icon"></span></th>
         <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="50%">Desc<span id="username_icon"></span></th>
         <th class="sorting" data-sorting_type="asc" data-column_name="wo_schedule" width="7%">Start Date<span id="name_icon"></span></th>

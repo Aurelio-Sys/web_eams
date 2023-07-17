@@ -153,6 +153,21 @@
               <center><strong>Role Permissions</strong></center>
             </h3>
             <br/>
+            <!-- Routine Check -->
+            <h4>
+            <center><strong>Routine Check</strong></center>
+            </h4>
+            <hr>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('My Routine Check') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbRCBrowse">
+                  <input type="checkbox" class="custom-control-input" id="cbRCBrowse" name="cbRCBrowse" value="RC01" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+
             <!-- Service Request -->
             <h4>
             <center><strong>Service Request Menu</strong></center>
@@ -204,7 +219,7 @@
                 </label>
               </div>
             </div>  --}}
-              <div class="form-group row">
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('User Acceptance') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbUA">
@@ -236,7 +251,7 @@
                 </label>
               </div>
             </div> 
-            {{--  <div class="form-group row">
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Browse') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbWoBrowse">
@@ -244,7 +259,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>  --}}
+            </div>
             <!-- <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Create') }}</label>
               <div class="col-6">
@@ -1004,6 +1019,21 @@
             </h3>
             <br>
 
+            <!-- Routine Check -->
+            <h4>
+            <center><strong>Routine Check</strong></center>
+            </h4>
+            <hr>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('My Routine Check') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbRCBrowse">
+                  <input type="checkbox" class="custom-control-input" id="e_cbRCBrowse" name="e_cbRCBrowse" value="RC01" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+
             <h4>
             <center><strong>Service Request Menu</strong></center>
             </h4>
@@ -1087,7 +1117,7 @@
                 </label>
               </div>
             </div> 
-            {{--  <div class="form-group row">
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Browse') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbWoBrowse">
@@ -1095,7 +1125,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>  --}}
+            </div>
             <!-- <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Create') }}</label>
               <div class="col-6">
@@ -2170,11 +2200,11 @@
         } else {
           document.getElementById('e_cbWoMaint').checked = false;
         }
-        {{--  if (listmenu.search("WO05") >= 0) {
+        if (listmenu.search("WO05") >= 0) {
           document.getElementById('e_cbWoBrowse').checked = true;
         } else {
           document.getElementById('e_cbWoBrowse').checked = false;
-        }  --}}
+        }
         {{--  if (listmenu.search("WO04") >= 0) {
            document.getElementById('e_cbWoCreate').checked = true;
         } else {
@@ -2360,6 +2390,13 @@
           document.getElementById('e_cbBookSchedule').checked = true;
         } else {
           document.getElementById('e_cbBookSchedule').checked = false;
+        }
+
+        //Routine Check Main
+        if (listmenu.search("RC01") >= 0) {
+          document.getElementById('e_cbRCBrowse').checked = true;
+        } else {
+          document.getElementById('e_cbRCBrowse').checked = false;
         }
 
 
