@@ -41,7 +41,7 @@ class SettingController extends Controller
     // User Maint
     public function usermenu()
     {
-        if (strpos(Session::get('menu_access'), 'MT01') !== false) {
+        if (strpos(Session::get('menu_access'), 'MTA01') !== false) {
             $data = DB::table('users')
                 ->leftjoin('roles', 'users.role_user', 'roles.role_code')
                 ->leftjoin('site_mstrs', 'users.site', 'site_mstrs.site_code')
@@ -223,7 +223,7 @@ class SettingController extends Controller
     // Role Menu
     public function rolemenu()
     {
-        if (strpos(Session::get('menu_access'), 'MT02') !== false) {
+        if (strpos(Session::get('menu_access'), 'MTA02') !== false) {
             $data = DB::table('roles')
                 ->orderBy('role_code', 'ASC')
                 ->paginate(10);
@@ -247,7 +247,7 @@ class SettingController extends Controller
         $access = $req->dept . $req->Skill . $req->Eng . $req->RoleMaint . $req->EngGroup . $req->cbRunning . $req->SetWsa . $req->SetFntype . $req->Fn . $req->SetImp . 
             $req->Astype . $req->Asgroup . $req->Supp . $req->SetAssetsite . $req->SetAssetloc . $req->Asset . $req->Aspar . $req->SetMove . $req->SetEngpm . $req->SetUm . $req->SetAsfn . $req->pmasset . 
             $req->Spt . $req->Spg . $req->SetSpsite . $req->SetSploc . $req->Spm . $req->Rep . $req->SetRepgroup . $req->SetIns . $req->SetSplist . $req->qcspec . $req->SetPmcode . $req->notmssg . $req->rcmmstr .
-            $req->appsr . $req->appwo . $req->invso . $req->invsu .
+            $req->appsr . $req->appwo . $req->appsp . $req->invso . $req->invsu .
             $req->cbWoCreatedirect . $req->cbWoMaint . $req->cbWoBrowse . $req->cbWoRelease . $req->cbWoWhsConf . $req->cbWoStart . $req->cbWoReport . $req->cbWoQc . 
             $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbSRapprovaleng .
             $req->cbUSMT . $req->cbUSmultiMT . $req->cbUSGen . $req->pmconf . $req->ksp . $req->cbUSBrowse .
@@ -314,7 +314,7 @@ class SettingController extends Controller
         $access = $req->e_dept . $req->e_Skill . $req->e_Eng . $req->e_RoleMaint . $req->e_EngGroup . $req->e_cbRunning . $req->e_SetWsa . $req->e_SetFntype . $req->e_Fn . $req->e_SetImp . 
             $req->e_Astype . $req->e_Asgroup . $req->e_Supp . $req->e_SetAssetsite . $req->e_SetAssetloc . $req->e_Asset . $req->e_Aspar . $req->e_SetMove . $req->e_SetEngpm . $req->e_SetUm . $req->e_SetAsfn . $req->e_pmasset . 
             $req->e_Spt . $req->e_Spg . $req->e_SetSpsite . $req->e_SetSploc . $req->e_Spm . $req->e_Rep . $req->e_SetRepgroup . $req->e_SetIns . $req->e_SetSplist . $req->e_qcspec . $req->e_SetPmcode . $req->e_notmssg . $req->e_rcmmstr .
-            $req->e_appsr . $req->e_appwo . $req->e_invso . $req->e_invsu .
+            $req->e_appsr . $req->e_appwo . $req->e_appsp . $req->e_invso . $req->e_invsu .
             $req->e_cbWoCreatedirect . $req->e_cbWoMaint . $req->e_cbWoBrowse . $req->e_cbWoRelease . $req->e_cbWoWhsConf . $req->e_cbWoStart . $req->e_cbWoReport . $req->e_cbWoQc . 
             $req->e_cbSRcreate . $req->e_cbSRapprove . $req->e_cbSRbrowse . $req->e_cbSRapprovaleng .
             $req->e_cbUSMT . $req->e_cbUSmultiMT . $req->e_cbUSGen . $req->e_pmconf . $req->e_ksp . $req->e_cbUSBrowse .
@@ -413,7 +413,7 @@ class SettingController extends Controller
     //supplier maint
     public function suppmenu()
     {
-        if (strpos(Session::get('menu_access'), 'MT06') !== false) {
+        if (strpos(Session::get('menu_access'), 'MTE06') !== false) {
             
             $data = DB::table('supp_mstrs')
                 ->paginate(10);
@@ -469,7 +469,7 @@ class SettingController extends Controller
     //untuk menampilkan menu site master
     public function sitemaster(Request $req)
     {      
-        if (strpos(Session::get('menu_access'), 'MT27') !== false) {
+        if (strpos(Session::get('menu_access'), 'MTD27') !== false) {
             $data = DB::table('site_mstrs')
                 ->paginate(10);
 
@@ -885,7 +885,7 @@ class SettingController extends Controller
     //untuk menampilkan menu area master
     public function areamaster(Request $req)
     {   
-        if (strpos(Session::get('menu_access'), 'MT29') !== false) {
+        if (strpos(Session::get('menu_access'), 'MTD29') !== false) {
             $dataSite = DB::table('site_mstrs')
                 ->get();
 
@@ -1125,7 +1125,7 @@ class SettingController extends Controller
     //untuk menampilkan menu asset type
     public function assettypemaster(Request $req)
     {   
-        if (strpos(Session::get('menu_access'), 'MT05') !== false) {
+        if (strpos(Session::get('menu_access'), 'MTE05') !== false) {
             $data = DB::table('asset_type')
                 ->orderby('astype_code')
                 ->paginate(10);
@@ -1286,7 +1286,7 @@ class SettingController extends Controller
     //untuk menampilkan menu asset group
     public function assetgroupmaster(Request $req)
     {   
-        if (strpos(Session::get('menu_access'), 'MT06') !== false) {
+        if (strpos(Session::get('menu_access'), 'MTE06') !== false) {
             $data = DB::table('asset_group')
                 ->orderby('asgroup_code')
                 ->paginate(10);
@@ -1439,7 +1439,7 @@ class SettingController extends Controller
     //untuk menampilkan menu failure
     public function fnmaster(Request $req)
     {   
-        if (strpos(Session::get('menu_access'), 'MT33') !== false) {
+        if (strpos(Session::get('menu_access'), 'MTC33') !== false) {
             $data = DB::table('fn_mstr')
                 ->orderby('fn_code')
                 ->paginate(10);
@@ -1577,7 +1577,7 @@ class SettingController extends Controller
     //untuk menampilkan menu supplier master
     public function suppmaster(Request $req)
     {   
-        if (strpos(Session::get('menu_access'), 'MT07') !== false) {
+        if (strpos(Session::get('menu_access'), 'MTE07') !== false) {
             $data = DB::table('supp_mstr')
                 ->orderby('supp_code')
                 ->paginate(10);
@@ -1753,7 +1753,7 @@ class SettingController extends Controller
     //untuk menampilkan menu asset master
     public function assetmaster(Request $req) /** blade setting.asset */
     {   
-        if (strpos(Session::get('menu_access'), 'MT08') !== false) {
+        if (strpos(Session::get('menu_access'), 'MTE08') !== false) {
             $s_code = $req->s_code;
             $s_loc = $req->s_loc;
             $s_type = $req->s_type;
@@ -2465,7 +2465,7 @@ class SettingController extends Controller
     //untuk menampilkan menu Asset Hierarchy master
     public function asparmaster(Request $req)
     {   
-        if (strpos(Session::get('menu_access'), 'MT07') !== false) {
+        if (strpos(Session::get('menu_access'), 'MTE09') !== false) {
             $data = DB::table('asset_par')
                 ->orderby('aspar_par')
                 ->paginate(10);
@@ -3109,7 +3109,7 @@ class SettingController extends Controller
     //untuk menampilkan menu Spare Part Master
     public function spmmaster(Request $req) /** blade : setting.sp-mstr */
     {   
-        if (strpos(Session::get('menu_access'), 'MT12') !== false) {
+        if (strpos(Session::get('menu_access'), 'MTD12') !== false) {
             $data = DB::table('sp_mstr')
                 ->leftJoin('site_mstrs','site_code','=','spm_site')
                 ->leftJoin('loc_mstr', function ($join) {
@@ -3675,7 +3675,7 @@ class SettingController extends Controller
     //untuk menampilkan menu Repair
     public function repmasterb(Request $req)
     {   
-        if (strpos(Session::get('menu_access'), 'MT26') !== false) {
+        if (strpos(Session::get('menu_access'), 'MTE26') !== false) {
             $data = DB::table('rep_master')
                 ->orderby('repm_code')
                 ->paginate(10);
@@ -3823,7 +3823,7 @@ class SettingController extends Controller
     //untuk menampilkan menu Instruction Detail
     public function insmaster(Request $req)
     {   
-        if (strpos(Session::get('menu_access'), 'MT35') !== false) {
+        if (strpos(Session::get('menu_access'), 'MTF35') !== false) {
             $data = DB::table('ins_mstr')
                 ->orderby('ins_code')
                 ->paginate(10);
@@ -5308,7 +5308,7 @@ class SettingController extends Controller
     //untuk menampilkan menu Engineer Master
     public function engmaster(Request $req)
     {   
-        if (strpos(Session::get('menu_access'), 'MT01') !== false) {
+        if (strpos(Session::get('menu_access'), 'MTA01') !== false) {
             $s_code = $req->s_code;
             $s_desc = $req->s_desc;
             $s_dept = $req->s_dept;
@@ -5793,7 +5793,7 @@ class SettingController extends Controller
     //untuk menampilkan menu departmene
     public function deptmaster(Request $req)
     {   
-        if (strpos(Session::get('menu_access'), 'MT21') !== false) {
+        if (strpos(Session::get('menu_access'), 'MTA21') !== false) {
 
             // dd(session()->all());
             $data = DB::table('dept_mstr')
@@ -6089,7 +6089,7 @@ class SettingController extends Controller
     //untuk menampilkan menu Skill
     public function skillmaster(Request $req)
     {   
-        if (strpos(Session::get('menu_access'), 'MT21') !== false) {
+        if (strpos(Session::get('menu_access'), 'MTA21') !== false) {
             $data = DB::table('skill_mstr')
                 ->orderby('skill_code')
                 ->paginate(10);

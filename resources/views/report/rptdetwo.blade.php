@@ -129,12 +129,11 @@
         <th>Create Date</th>
         <th>Sch Date</th>
         <th>Note</th>
-        <th>Repair</th>
         <th>Status</th>
         <th>Sparepart</th>
         <th>Desc</th>
         <th>Qty Req</th>
-        <th>Qty Used</th>
+        <th>Qty Issued</th>
         <th>Action</th>
       </tr>
     </thead>
@@ -364,9 +363,9 @@
       success: function(vamp) {
         var tempres = JSON.stringify(vamp);
         var result = JSON.parse(tempres);
-        var wonbr = result[0].wo_nbr;
-        var srnbr = result[0].wo_sr_nbr;
-        var en1val = result[0].u11;
+        var wonbr = result[0].wo_number;
+        var srnbr = result[0].wo_sr_number;
+        /* var en1val = result[0].u11;
         var en2val = result[0].u22;
         var en3val = result[0].u33;
         var en4val = result[0].u44;
@@ -418,9 +417,6 @@
           fclist = fc1 + '--' + fn1 + '\n' + fc2 + '--' + fn2 + '\n' + fc3 + '--' + fn3;
         }
 
-        
-        // console.log(rd1);
-        // alert(vimpact);
         var strimp = '';
         if (vimpact != null && vimpactdesc != null) {
           var arrimpact = vimpact.split(';');
@@ -431,10 +427,7 @@
             }
           }
         }
-        // alert(arrimpact[0]);
 
-        // alert(strarr);
-        // alert(arrimpact);
         var arreng = '';
         if (en1val == null || en1val == '') {
           en1val = '';
@@ -549,12 +542,10 @@
         } else if (reason == null) {
           document.getElementById('divunconf').style.display = 'none';
         }
-        document.getElementById('v_reportnote').value = apprnote;
-      },
+        document.getElementById('v_reportnote').value = apprnote; */
+      },  
 
       complete: function(vamp) {
-        //  $('.modal-backdrop').modal('hide');
-        // alert($('.modal-backdrop').hasClass('in'));
 
         setTimeout(function() {
           $('#loadingtable').modal('hide');

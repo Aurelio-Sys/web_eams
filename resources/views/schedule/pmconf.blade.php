@@ -86,7 +86,7 @@
                     <td>{{$show->pmo_pmcode}}</td>
                     <td>{{$show->pmc_desc}}</td>
                     <td class="td_pmdate">@if($show->pmo_sch_date != "0000-00-00") {{date('d-m-Y', strtotime($show->pmo_sch_date))}} @endif</td>
-                    <td> {{date_format($tglakhir,"d-m-Y")}} </td>
+                    <td>{{date_format($tglakhir,"d-m-Y")}} </td>
                     {{--  <td class="td_pmnumber">{{$show->pmo_number}}</td>  --}}
 
                     <td>

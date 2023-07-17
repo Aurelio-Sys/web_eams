@@ -15,6 +15,7 @@ use App\Http\Controllers\Master\PmassetController;
 use App\Http\Controllers\Master\RcmMstrController;
 use App\Http\Controllers\Master\AppSrController;
 use App\Http\Controllers\Master\AppWoController;
+use App\Http\Controllers\Master\AppSpController;
 use App\Http\Controllers\Master\InvSoController;
 use App\Http\Controllers\Master\InvSuController;
 use App\Http\Controllers\Master\NotmssgController;
@@ -727,6 +728,11 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/appwo',[AppWoController::class, 'index']);
 	Route::get('/getApp',[AppWoController::class, 'getApp']);
 	Route::post('/createappwo',[AppWoController::class, 'update']);
+
+	//Approval SP Maintenance
+	Route::get('/appsp',[AppSpController::class, 'index']);
+	Route::get('/getAppSp',[AppSpController::class, 'getAppSp']);
+	Route::post('/createappsp',[AppSpController::class, 'update']);
 
 	//Inventory Source Maintenance
 	Route::get('/invso',[InvSoController::class, 'index']);
