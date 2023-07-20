@@ -128,13 +128,14 @@
                     <table width="100%" id='asetTable' class='table table-striped table-bordered dataTable no-footer order-list'>
                         <thead>
                             <th width="20%">Spare part</th>
-                            <th width="12%">Qty Requested</th>
-                            <th width="8%">Site From</th>
-                            <th width="15%">Location & Lot From</th>
-                            <th width="12%">Qty Transferred</th>
-                            <th width="8%">Site To</th>
-                            <th width="10%">Location To</th>
-                            <th width="15%">Note</th>
+                            <th width="8%">Qty Req</th>
+                            <!-- <th width="8%">Site From</th> -->
+                            <th width="20%">Site & Location & Lot From</th>
+                            <th width="15%">Request SP Note</th>
+                            <th width="8%">Qty Trf</th>
+                            <!-- <th width="8%">Site To</th> -->
+                            <th width="15%">Site & Location To</th>
+                            <th width="15%">Transfer SP Note</th>
                         </thead>
                         <tbody id='v_detailapp'></tbody>
                     </table>

@@ -130,8 +130,9 @@
                     <table width="100%" id='asetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
                         <thead>
                             <th width="30%">Spare part</th>
-                            <th width="10%">Qty Request</th>
+                            <th width="15%">Qty Request</th>
                             <th width="20%">Location To</th>
+                            <th width="20%">Note</th>
                         </thead>
                         <tbody id='v_detailapp'></tbody>
                     </table>
@@ -178,14 +179,15 @@
                         <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
                             <thead>
                                 <th width="30%">Spare part</th>
-                                <th width="10%">Qty Request</th>
+                                <th width="15%">Qty Request</th>
                                 <th width="20%">Location To</th>
+                                <th width="20%">Note</th>
                                 <th width="10%">Delete</th>
                             </thead>
                             <tbody id='ed_detailapp'></tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="4">
+                                    <td colspan="5">
                                         <input type="button" class="btn btn-lg btn-block btn-focus" id="ed_addrow" value="Add Item" style="background-color:#1234A5; color:white; font-size:16px" />
                                     </td>
                                 </tr>
@@ -336,6 +338,9 @@
         cols += '<option value="{{$loc->inp_loc}}">{{$loc->inp_loc}}</option>';
         @endforeach
         cols += '</select>';
+        cols += '</td>';
+        cols += '<td>';
+        cols += '<textarea type="text" id="reqnotes" class="form-control reqnotes" name="reqnotes[]" rows="2" ></textarea>';
         cols += '</td>';
         cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
         cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';

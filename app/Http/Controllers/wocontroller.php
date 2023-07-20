@@ -3328,23 +3328,26 @@ class wocontroller extends Controller
             'updated_at' => Carbon::now()->toDateTimeString(),
         ];
 
-        $srupdatehist = [
-            'sr_number'         => $srmstr->sr_number,
-            'sr_fail_type'      => $srmstr->sr_fail_type,
-            'sr_fail_code'      => $srmstr->sr_fail_code,
-            'sr_impact'         => $srmstr->sr_impact,
-            'sr_priority'       => $srmstr->sr_priority,
-            'sr_note'           => $srmstr->sr_note,
-            'sr_cancel_note'    => $reason,
-            'sr_req_date'       => $srmstr->sr_req_date,
-            'sr_req_time'       => $srmstr->sr_req_time,
-            'sr_status'         => 'Acceptance',
-            'sr_status_approval' => 'User acceptance',
-            'sr_eng_approver'   => $srmstr->sr_eng_approver,
-            'sr_action'         => 'SR needs to user acceptance',
-            'created_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-            'updated_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-        ];
+        if ($srmstr != null) {
+            $srupdatehist = [
+                'sr_number'         => $srmstr->sr_number,
+                'sr_fail_type'      => $srmstr->sr_fail_type,
+                'sr_fail_code'      => $srmstr->sr_fail_code,
+                'sr_impact'         => $srmstr->sr_impact,
+                'sr_priority'       => $srmstr->sr_priority,
+                'sr_note'           => $srmstr->sr_note,
+                'sr_cancel_note'    => $reason,
+                'sr_req_date'       => $srmstr->sr_req_date,
+                'sr_req_time'       => $srmstr->sr_req_time,
+                'sr_status'         => 'Acceptance',
+                'sr_status_approval' => 'User acceptance',
+                'sr_eng_approver'   => $srmstr->sr_eng_approver,
+                'sr_action'         => 'SR needs to user acceptance',
+                'created_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                'updated_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+            ];
+        }
+
 
         if ($req->action == 'approve') {
 
