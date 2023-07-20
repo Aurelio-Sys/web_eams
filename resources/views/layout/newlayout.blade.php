@@ -199,6 +199,14 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
+                @if(str_contains( Session::get('menu_access'), 'SR06'))
+                <li class="nav-item has-treeview">
+                  <a href="/srbrowseonly" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                     <p>Service Request Browse</p>
+                  </a>
+                </li>
+                @endif
                 @if(str_contains( Session::get('menu_access'), 'SR02'))
                 <li class="nav-item has-treeview">
                   <a href="/srapproval" class="nav-link ">
@@ -287,6 +295,14 @@ to get the desired effect
                   <a href="/worelease" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Work Order Release</p>
+                  </a>
+                </li>
+                @endif
+                @if(str_contains( Session::get('menu_access'), 'WO10'))
+                <li class="nav-item ">
+                  <a href="/woreleaseapprovalbrowse" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>WO Release Approval</p>
                   </a>
                 </li>
                 @endif

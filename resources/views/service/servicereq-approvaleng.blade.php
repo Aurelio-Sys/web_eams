@@ -1138,16 +1138,13 @@
     $(document).on('click', '.maintcode', function(e) {
       $('#maintCodeModal').modal('show');
 
-      //   e.stopPropagation();
-
-      // document.getElementById('btnclose_b').addEventListener('click', function() {
-      //   // Mengatur fokus kembali pada modal pertama
-      //   document.getElementById('maintCodeModal').style.display = 'none';
-      //   document.getElementById('viewModal').style.display = 'block';
-      //   document.getElementById('wotype').focus();
-
-      //   document.body.classList.remove('modal-open');
-      // });
+      //ketika button cancel maka akan melakukan reset value untuk semua select2
+      document.getElementById('btnclose_b').addEventListener('click', function(){
+        $('#b_mtcode').val(null).trigger('change');
+        $('#b_inslist').val(null).trigger('change');
+        $('#b_splist').val(null).trigger('change');
+        $('#b_qclist').val(null).trigger('change');
+      });
 
       //muncul saat modal pertama kali muncul
       //maintenance code

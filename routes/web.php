@@ -519,8 +519,11 @@ Route::group(['middleware' => ['auth']], function() {
 	//bagian tommy sr browse
 	route::get('/srbrowse', 'ServiceController@srbrowse');
 	route::get('/srbrowse/searchsr', 'ServiceController@searchsr');
+	route::get('/srbrowseonly', 'ServiceController@srbrowseonly');
+	route::get('/srbrowseonly/searchsr', 'ServiceController@searchbrowseonly');
 	route::get('/srbrowseopen', 'ServiceController@srbrowseopen'); //tyas, link dari Home
 	route::get('/donlodsr','ServiceController@donlodsr'); //tyas, excel SR
+	route::get('/donlodsrbrowse','ServiceController@donlodsrbrowse'); //tyas, excel SR
 	route::get('/useracceptance', 'ServiceController@useracceptance'); 
 	route::post('/acceptance', 'ServiceController@acceptance');
 	route::get('/useracceptance/search', 'ServiceController@searchuseracc');
@@ -564,6 +567,10 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// wo release
 	Route::get('/worelease', [WORelease::class, 'browse'])->name('browseRelease');
+	Route::get('/woreleaseapprovalbrowse', [WORelease::class, 'approvalbrowse'])->name('approvalBrowseRelease');
+	Route::get('/woreleaseapprovalsearch', [WORelease::class, 'approvalsearch'])->name('approvalSearchRelease');
+	Route::get('/woreleaseapproval', [WORelease::class, 'approval'])->name('approvalRelease');
+	Route::get('/woreleaseapprovalroute', [WORelease::class, 'route'])->name('approvalRouteRelease');
 	Route::get('/worelease/releasedetail/{id}', [WORelease::class, 'detailrelease'])->name('ReleaseDetail');
 	Route::post('/worelease/requestwh', [WORelease::class, 'requesttowh'])->name('requestWH');
 	Route::post('/submitrelease', [WORelease::class,'submitrelease'])->name('submitRelease');
