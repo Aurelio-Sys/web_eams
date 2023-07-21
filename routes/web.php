@@ -569,7 +569,9 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/worelease', [WORelease::class, 'browse'])->name('browseRelease');
 	Route::get('/woreleaseapprovalbrowse', [WORelease::class, 'approvalbrowse'])->name('approvalBrowseRelease');
 	Route::get('/woreleaseapprovalsearch', [WORelease::class, 'approvalsearch'])->name('approvalSearchRelease');
-	Route::get('/woreleaseapproval', [WORelease::class, 'approval'])->name('approvalRelease');
+	route::get('/woreleaseapprovaldetail/{wonumber}', [WORelease::class, 'approvaldetail'])->name('approvalRelease');
+	route::get('/woreleaseapprovaldetail-info/{wonumber}', [WORelease::class, 'approvaldetailinfo'])->name('approvalReleaseInfo');
+	Route::post('/woreleaseapprove', [WORelease::class, 'approval']);
 	Route::get('/woreleaseapprovalroute', [WORelease::class, 'route'])->name('approvalRouteRelease');
 	Route::get('/worelease/releasedetail/{id}', [WORelease::class, 'detailrelease'])->name('ReleaseDetail');
 	Route::post('/worelease/requestwh', [WORelease::class, 'requesttowh'])->name('requestWH');

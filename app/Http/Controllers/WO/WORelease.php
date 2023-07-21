@@ -147,9 +147,9 @@ class WORelease extends Controller
             $data = WOMaster::query()
                 ->with(['getCurrentApproverRelease'])
                 ->whereHas('getWOReleaseTransAppr', function ($q) {
-                    // $q->where('retr_status', '=', 'waiting for approval');
-                    // $q->orWhere('retr_status', '=', 'approved');
-                    // $q->orWhere('retr_status', '=', 'revision');
+                    $q->where('retr_status', '=', 'waiting for approval');
+                    $q->orWhere('retr_status', '=', 'approved');
+                    $q->orWhere('retr_status', '=', 'revision');
                     $q->where('wo_status', '=', 'released');
                 });
             $data = $data
@@ -161,7 +161,7 @@ class WORelease extends Controller
                 ->orderBy('wo_mstr.id', 'desc')
                 ->groupBy('wo_mstr.wo_number');
 
-            if (Session::get('role') <> 'ADMIN' && Session::get('role') <> 'QCA') {
+            if (Session::get('role') <> 'ADMIN' && Session::get('role') <> 'WHS') {
                 $data = $data->join('release_trans_approval', function ($join) {
                     $join->on('wo_mstr.id', '=', 'release_trans_approval.retr_mstr_id')
                         ->where('retr_dept_approval', '=', Session::get('department'))
@@ -173,6 +173,7 @@ class WORelease extends Controller
             }
 
             $data = $data->paginate(10);
+            // dd($data);
 
             $engineer = DB::table('users')
                 ->join('roles', 'users.role_user', 'roles.role_code')
@@ -227,9 +228,9 @@ class WORelease extends Controller
                     // ->where('wo_status', '=', 'finished')
                     // ->orWhere('wo_status', '=', 'started')
                     ->whereHas('getWOReleaseTransAppr', function ($q) {
-                        // $q->where('retr_status', '=', 'waiting for approval');
-                        // $q->orWhere('retr_status', '=', 'approved');
-                        // $q->orWhere('retr_status', '=', 'revision');
+                        $q->where('retr_status', '=', 'waiting for approval');
+                        $q->orWhere('retr_status', '=', 'approved');
+                        $q->orWhere('retr_status', '=', 'revision');
                         $q->where('wo_status', '=', 'released');
                         // $q->orWhere('wo_status', '=', 'started');
                     });
@@ -249,7 +250,7 @@ class WORelease extends Controller
                     ->orderBy('wo_mstr.id', 'desc')
                     ->groupBy('wo_mstr.wo_number');
 
-                if (Session::get('role') <> 'ADMIN' && Session::get('role') <> 'QCA') {
+                if (Session::get('role') <> 'ADMIN' && Session::get('role') <> 'WHS') {
                     $data = $data->join('release_trans_approval', function ($join) {
                         $join->on('wo_mstr.id', '=', 'release_trans_approval.retr_mstr_id')
                             ->where('retr_dept_approval', '=', Session::get('department'))
@@ -289,9 +290,9 @@ class WORelease extends Controller
                     // ->where('wo_status', '=', 'finished')
                     // ->where('wo_status', '=', 'started')
                     ->whereHas('getWOReleaseTransAppr', function ($q) {
-                        // $q->where('retr_status', '=', 'waiting for approval');
-                        // $q->orWhere('retr_status', '=', 'approved');
-                        // $q->orWhere('retr_status', '=', 'revision');
+                        $q->where('retr_status', '=', 'waiting for approval');
+                        $q->orWhere('retr_status', '=', 'approved');
+                        $q->orWhere('retr_status', '=', 'revision');
                         $q->where('wo_status', '=', 'released');
                         // $q->orWhere('wo_status', '=', 'started');
                     });
@@ -305,7 +306,7 @@ class WORelease extends Controller
                     ->orderBy('wo_mstr.id', 'desc')
                     ->groupBy('wo_mstr.wo_number');
 
-                if (Session::get('role') <> 'ADMIN' && Session::get('role') <> 'QCA') {
+                if (Session::get('role') <> 'ADMIN' && Session::get('role') <> 'WHS') {
                     $data = $data->join('release_trans_approval', function ($join) {
                         $join->on('wo_mstr.id', '=', 'release_trans_approval.retr_mstr_id')
                             ->where('retr_dept_approval', '=', Session::get('department'))
@@ -325,6 +326,227 @@ class WORelease extends Controller
                 return view('workorder.table-woreleaseapproval', ['data' => $data, 'usernow' => $usernow]);
             }
         }
+    }
+
+    public function approvaldetail($wonumber)
+    {
+        //ambil data untuk header wo report detail
+        $dataheader = DB::table('wo_mstr')
+            ->leftJoin('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+            ->where('wo_number', '=', $wonumber)
+            ->first();
+
+        // dd($dataheader);
+
+        $idwo = DB::table('wo_mstr')->where('wo_number', '=', $wonumber)
+            ->selectRaw('id')
+            ->first();
+
+        // dd($idwo);
+
+        //ambil data failure code
+        $asfn_det = DB::table('asfn_det')
+            ->where('asfn_asset', '=', $dataheader->asset_group)
+            ->where('asfn_fntype', '=', $dataheader->asset_type)
+            ->count();
+
+        if ($asfn_det > 0) {
+            //jika ada
+
+            $failure = DB::table('fn_mstr')
+                ->leftJoin('asfn_det', 'asfn_det.asfn_fncode', 'fn_mstr.fn_code')
+                ->where('asfn_asset', '=', $dataheader->asset_group)
+                ->where('asfn_fntype', '=', $dataheader->asset_type)
+                ->groupBy('asfn_fncode')
+                ->get();
+        } else {
+            //jika tidak ada
+
+            $failure = DB::table('fn_mstr')
+                ->get();
+        }
+
+        // ambil UM
+        $um = DB::table('um_mstr')
+            ->get();
+
+        // ambil data deskripsi engineer
+        $listeng_wo = $dataheader->wo_list_engineer;
+
+        $listeng_wo = explode(';', $listeng_wo);
+
+        $engData = array();
+
+        foreach ($listeng_wo as $datalisteng) {
+
+            $engdesc = DB::table('eng_mstr')
+                ->where('eng_code', '=', $datalisteng)
+                ->first()->eng_desc;
+
+            $engData[] = array('eng_code' => $datalisteng, 'eng_desc' => $engdesc);
+        }
+
+
+        //ambil data spare part dari wo_dets_sp
+        $datasparepart = DB::table('wo_dets_sp')
+            ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
+            ->where('wd_sp_wonumber', '=', $wonumber)
+            ->groupBy('wd_sp_wonumber', 'wd_sp_spcode')
+            ->select('*', DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'))
+            ->get();
+
+        // dd($datasparepart);
+
+        // ambil semua data spare part
+        $sp_all = DB::table('sp_mstr')
+            ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
+            ->where('spm_active', '=', 'Yes')
+            ->get();
+
+        // ambil data instruction step dari wo_dets_ins
+        $datainstruction = DB::table('wo_dets_ins')
+            ->leftJoin('um_mstr', 'um_mstr.um_code', 'wo_dets_ins.wd_ins_durationum')
+            ->where('wd_ins_wonumber', '=', $wonumber)
+            ->get();
+
+        // dd($datainstruction);
+
+        // ambil semua step instruction dari ins_list
+        $ins_all = DB::table('ins_list')
+            ->select('ins_code', 'ins_desc', 'ins_duration', 'ins_durationum', 'ins_manpower', 'ins_step', 'ins_stepdesc', 'ins_ref')
+            ->get();
+
+
+        $dataqcparam = DB::table('wo_dets_qc')
+            ->where('wd_qc_wonumber', '=', $wonumber)
+            ->get();
+
+        return view('workorder.worelease-approvaldetail', [
+            'header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all,
+            'instruction' => $datainstruction, 'inslist' => $ins_all, 'um' => $um, 'idwo' => $idwo,
+            'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure
+        ]);
+    }
+
+    public function approvaldetailinfo($wonumber)
+    {
+        //ambil data untuk header wo report detail
+        $dataheader = DB::table('wo_mstr')
+            ->leftJoin('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+            ->where('wo_number', '=', $wonumber)
+            ->first();
+
+        // dd($dataheader);
+
+        $idwo = DB::table('wo_mstr')->where('wo_number', '=', $wonumber)
+            ->selectRaw('id')
+            ->first();
+
+        $wo = DB::table('wo_mstr')->where('wo_number', '=', $wonumber)
+            // ->selectRaw('id')
+            ->first();
+
+        // dd($idwo);
+
+        //ambil data failure code
+        $asfn_det = DB::table('asfn_det')
+            ->where('asfn_asset', '=', $dataheader->asset_group)
+            ->where('asfn_fntype', '=', $dataheader->asset_type)
+            ->count();
+
+        if ($asfn_det > 0) {
+            //jika ada
+
+            $failure = DB::table('fn_mstr')
+                ->leftJoin('asfn_det', 'asfn_det.asfn_fncode', 'fn_mstr.fn_code')
+                ->where('asfn_asset', '=', $dataheader->asset_group)
+                ->where('asfn_fntype', '=', $dataheader->asset_type)
+                ->groupBy('asfn_fncode')
+                ->get();
+        } else {
+            //jika tidak ada
+
+            $failure = DB::table('fn_mstr')
+                ->get();
+        }
+
+        // ambil UM
+        $um = DB::table('um_mstr')
+            ->get();
+
+        // ambil data deskripsi engineer
+        $listeng_wo = $dataheader->wo_list_engineer;
+
+        $listeng_wo = explode(';', $listeng_wo);
+
+        $engData = array();
+
+        foreach ($listeng_wo as $datalisteng) {
+
+            $engdesc = DB::table('eng_mstr')
+                ->where('eng_code', '=', $datalisteng)
+                ->first()->eng_desc;
+
+            $engData[] = array('eng_code' => $datalisteng, 'eng_desc' => $engdesc);
+        }
+
+
+        //ambil data spare part dari wo_dets_sp
+        $datasparepart = DB::table('wo_dets_sp')
+            ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
+            ->where('wd_sp_wonumber', '=', $wonumber)
+            ->groupBy('wd_sp_wonumber', 'wd_sp_spcode')
+            ->select('*', DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'))
+            ->get();
+
+        // dd($datasparepart);
+
+        // ambil semua data spare part
+        $sp_all = DB::table('sp_mstr')
+            ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
+            ->where('spm_active', '=', 'Yes')
+            ->get();
+
+        // ambil data instruction step dari wo_dets_ins
+        $datainstruction = DB::table('wo_dets_ins')
+            ->leftJoin('um_mstr', 'um_mstr.um_code', 'wo_dets_ins.wd_ins_durationum')
+            ->where('wd_ins_wonumber', '=', $wonumber)
+            ->get();
+
+        // dd($datainstruction);
+
+        // ambil semua step instruction dari ins_list
+        $ins_all = DB::table('ins_list')
+            ->select('ins_code', 'ins_desc', 'ins_duration', 'ins_durationum', 'ins_manpower', 'ins_step', 'ins_stepdesc', 'ins_ref')
+            ->get();
+
+
+        $dataqcparam = DB::table('wo_dets_qc')
+            ->where('wd_qc_wonumber', '=', $wonumber)
+            ->get();
+
+
+        if (session()->get('role') <> 'ADMIN') {
+            //jika approver bukan admin
+            $approver = DB::table('release_trans_approval')
+                ->leftJoin('users', 'users.id', 'release_trans_approval.retr_approved_by')
+                ->where('retr_mstr_id', $wo->id)
+                ->where('retr_role_approval', session()->get('role'))
+                ->first();
+        } else {
+            $approver = DB::table('release_trans_approval')
+                ->leftJoin('users', 'users.id', 'release_trans_approval.retr_approved_by')
+                ->where('retr_mstr_id', $wo->id)
+                ->first();
+        }
+
+        // dd($approver);
+
+        return view('workorder.worelease-approvaldetail-info', [
+            'header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all,
+            'instruction' => $datainstruction, 'inslist' => $ins_all, 'um' => $um, 'idwo' => $idwo,
+            'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure, 'approver' => $approver
+        ]);
     }
 
     public function approval(Request $req)
@@ -357,7 +579,7 @@ class WORelease extends Controller
         // dd($countwoapprover);
 
         //cek role user yg login
-        if (Session::get('role') <> 'ADMIN' && Session::get('role') <> 'QCA') {
+        if (Session::get('role') <> 'ADMIN' && Session::get('role') <> 'WHS') {
             //jika user bukan admin
             $woapprover = DB::table('release_trans_approval')
                 ->where('retr_mstr_id', $idwo)
@@ -421,30 +643,6 @@ class WORelease extends Controller
             'updated_at' => Carbon::now()->toDateTimeString(),
         ];
 
-        $srupdate = [
-            'sr_status' => 'Acceptance',
-            'sr_status_approval' => 'waiting for acceptance',
-            'updated_at' => Carbon::now()->toDateTimeString(),
-        ];
-
-        $srupdatehist = [
-            'sr_number'         => $srmstr->sr_number,
-            'sr_fail_type'      => $srmstr->sr_fail_type,
-            'sr_fail_code'      => $srmstr->sr_fail_code,
-            'sr_impact'         => $srmstr->sr_impact,
-            'sr_priority'       => $srmstr->sr_priority,
-            'sr_note'           => $srmstr->sr_note,
-            'sr_cancel_note'    => $reason,
-            'sr_req_date'       => $srmstr->sr_req_date,
-            'sr_req_time'       => $srmstr->sr_req_time,
-            'sr_status'         => 'Acceptance',
-            'sr_status_approval' => 'User acceptance',
-            'sr_eng_approver'   => $srmstr->sr_eng_approver,
-            'sr_action'         => 'SR needs to user acceptance',
-            'created_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-            'updated_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-        ];
-
         if ($req->action == 'approve') {
 
             $srnumber = $womstr->wo_sr_number ? $womstr->wo_sr_number : $womstr->wo_number;
@@ -464,47 +662,12 @@ class WORelease extends Controller
                         DB::table('release_trans_approval_hist')
                             ->insert($retransapprovedhist);
 
-                        if ($womstr->wo_sr_number == "") {
-                            //jika wo tidak memiliki sr number 
-                            DB::table('wo_mstr')
-                                ->where('id', '=', $idwo)
-                                ->update([
-                                    'wo_status' => 'closed',
-                                    'wo_system_update' => Carbon::now()->toDateTimeString(),
-                                ]);
-
-                            DB::table('wo_trans_history')
-                                ->insert([
-                                    'wo_number' => $womstr->wo_number,
-                                    'wo_action' => 'closed',
-                                    'system_update' => Carbon::now()->toDateTimeString(),
-                                ]);
-                        } else {
-                            //jika wo memiliki sr number akan kembali ke user acceptance dan wo di close oleh user
-                            DB::table('wo_mstr')
-                                ->where('id', '=', $idwo)
-                                ->update([
-                                    'wo_status' => 'acceptance',
-                                    'wo_system_update' => Carbon::now()->toDateTimeString(),
-                                ]);
-
-                            DB::table('wo_trans_history')
-                                ->insert([
-                                    'wo_number' => $womstr->wo_number,
-                                    'wo_action' => 'acceptance',
-                                    'system_update' => Carbon::now()->toDateTimeString(),
-                                ]);
-
-                            DB::table('service_req_mstr')
-                                ->where('sr_number', '=', $womstr->wo_sr_number)
-                                ->update($srupdate);
-
-                            DB::table('service_req_mstr_hist')
-                                ->insert($srupdatehist);
-
-                            //email terikirm ke user yang membuat SR
-                            // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
-                        }
+                        DB::table('wo_trans_history')
+                            ->insert([
+                                'wo_number' => $womstr->wo_number,
+                                'wo_action' => 'wo released approved by ' . $user->role_user,
+                                'system_update' => Carbon::now()->toDateTimeString(),
+                            ]);
                     } else {
                         //jika user adalah admin, maka semua approval (approval bertingkat) akan menjadi approved
                         DB::table('release_trans_approval')
@@ -514,48 +677,15 @@ class WORelease extends Controller
                         DB::table('release_trans_approval_hist')
                             ->insert($retransapprovedhist);
 
-                        if ($womstr->wo_sr_number == "") {
-                            //jika wo tidak memiliki sr number 
-                            DB::table('wo_mstr')
-                                ->where('id', '=', $idwo)
-                                ->update([
-                                    'wo_status' => 'closed',
-                                    'wo_system_update' => Carbon::now()->toDateTimeString(),
-                                ]);
-
-                            DB::table('wo_trans_history')
-                                ->insert([
-                                    'wo_number' => $womstr->wo_number,
-                                    'wo_action' => 'closed',
-                                    'system_update' => Carbon::now()->toDateTimeString(),
-                                ]);
-                        } else {
-                            //jika wo memiliki sr number akan kembali ke user acceptance dan wo di close oleh user
-                            DB::table('wo_mstr')
-                                ->where('id', '=', $idwo)
-                                ->update([
-                                    'wo_status' => 'acceptance',
-                                    'wo_system_update' => Carbon::now()->toDateTimeString(),
-                                ]);
-
-                            DB::table('wo_trans_history')
-                                ->insert([
-                                    'wo_number' => $womstr->wo_number,
-                                    'wo_action' => 'acceptance',
-                                    'system_update' => Carbon::now()->toDateTimeString(),
-                                ]);
-
-                            DB::table('service_req_mstr')
-                                ->where('sr_number', '=', $womstr->wo_sr_number)
-                                ->update($srupdate);
-
-                            DB::table('service_req_mstr_hist')
-                                ->insert($srupdatehist);
-
-                            //email terikirm ke user yang membuat SR
-                            // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
-                        }
+                        DB::table('wo_trans_history')
+                            ->insert([
+                                'wo_number' => $womstr->wo_number,
+                                'wo_action' => 'wo released approved by ' . $user->role_user,
+                                'system_update' => Carbon::now()->toDateTimeString(),
+                            ]);
                     }
+                    //email terikirm ke engineer yg melakukan released
+                    // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
                 } else {
                     //jika next approval not null
 
@@ -573,16 +703,10 @@ class WORelease extends Controller
                         DB::table('release_trans_approval_hist')
                             ->insert($retransapprovedhist);
 
-                        DB::table('wo_mstr')
-                            ->where('id', '=', $idwo)
-                            ->update([
-                                'wo_system_update' => Carbon::now()->toDateTimeString(),
-                            ]);
-
                         DB::table('wo_trans_history')
                             ->insert([
                                 'wo_number' => $womstr->wo_number,
-                                'wo_action' => 'approval',
+                                'wo_action' => 'wo released approved by ' . $user->role_user,
                                 'system_update' => Carbon::now()->toDateTimeString(),
                             ]);
 
@@ -598,48 +722,15 @@ class WORelease extends Controller
                         DB::table('release_trans_approval_hist')
                             ->insert($retransapprovedhist);
 
+                        DB::table('wo_trans_history')
+                            ->insert([
+                                'wo_number' => $womstr->wo_number,
+                                'wo_action' => 'wo released approved by ' . $user->role_user,
+                                'system_update' => Carbon::now()->toDateTimeString(),
+                            ]);
 
-                        if ($womstr->wo_sr_number == "") {
-                            //jika wo tidak memiliki sr number 
-                            DB::table('wo_mstr')
-                                ->where('id', '=', $idwo)
-                                ->update([
-                                    'wo_status' => 'closed',
-                                    'wo_system_update' => Carbon::now()->toDateTimeString(),
-                                ]);
-
-                            DB::table('wo_trans_history')
-                                ->insert([
-                                    'wo_number' => $womstr->wo_number,
-                                    'wo_action' => 'closed',
-                                    'system_update' => Carbon::now()->toDateTimeString(),
-                                ]);
-                        } else {
-                            //jika wo memiliki sr number akan kembali ke user acceptance dan wo di close oleh user
-                            DB::table('wo_mstr')
-                                ->where('id', '=', $idwo)
-                                ->update([
-                                    'wo_status' => 'acceptance',
-                                    'wo_system_update' => Carbon::now()->toDateTimeString(),
-                                ]);
-
-                            DB::table('wo_trans_history')
-                                ->insert([
-                                    'wo_number' => $womstr->wo_number,
-                                    'wo_action' => 'acceptance',
-                                    'system_update' => Carbon::now()->toDateTimeString(),
-                                ]);
-
-                            DB::table('service_req_mstr')
-                                ->where('sr_number', '=', $womstr->wo_sr_number)
-                                ->update($srupdate);
-
-                            DB::table('service_req_mstr_hist')
-                                ->insert($srupdatehist);
-
-                            //email terikirm ke user yang membuat SR
-                            // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
-                        }
+                        //email terikirm ke engineer yg melakukan released
+                        // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
                     }
                 }
             } else {
@@ -686,70 +777,69 @@ class WORelease extends Controller
                 }
             }
 
-
-
             // DB::commit();
-            toast('Work order ' . $womstr->wo_number . ' approved successfuly', 'success');
-            return redirect()->route('woapprovalbrowse');
-        } else {
-            //REJECT
-            $requestor = $womstr->wo_list_engineer;
-
-            DB::table('wo_mstr')
-                ->where('id', '=', $idwo)
-                ->update([
-                    'wo_status' => 'started', //status berganti jadi started supaya bisa di edit
-                    'wo_system_update' => Carbon::now()->toDateTimeString(),
-                ]);
-
-            DB::table('wo_trans_history')
-                ->insert([
-                    'wo_number' => $womstr->wo_number,
-                    'wo_action' => 'rejected',
-                    'system_update' => Carbon::now()->toDateTimeString(),
-                ]);
-
-            if (is_null($nextapprover)) {
-                //kondisi hanya 1 approver atau approver terakhir
-
-                //jika user bukan admin dan hanya 1 approver
-                if (is_null($prevapprover) && Session::get('role') <> 'ADMIN') {
-                    // dd('1 approver');
-                    DB::table('release_trans_approval')
-                        ->where('retr_mstr_id', '=', $idwo)
-                        ->where('retr_role_approval', '=', $user->role_user)
-                        ->update($retransreject);
-
-                    DB::table('release_trans_approval_hist')
-                        ->insert($retransrejecthist);
-                } else {
-                    // dd('approver terakhir');
-                    DB::table('release_trans_approval')
-                        ->where('retr_mstr_id', '=', $idwo)
-                        // ->where('srta_role_approval', '=', $user->role_user) <-- role dikomen biar semua approver statusnya revisi -->
-                        ->update($retransreject);
-
-                    DB::table('release_trans_approval_hist')
-                        ->insert($retransrejecthist);
-                }
-            } else {
-                //kondisi approver pertama atau approver tengah
-                DB::table('release_trans_approval')
-                    ->where('retr_mstr_id', '=', $idwo)
-                    // ->where('srta_role_approval', '=', $user->role_user) <-- role dikomen biar semua approver statusnya revisi -->
-                    ->update($retransreject);
-
-                DB::table('release_trans_approval_hist')
-                    ->insert($retransrejecthist);
-            }
-
-            //email terkirim ke wo list engineer
-            // EmailScheduleJobs::dispatch('', $asset, '11', '', $requestor, $srnumber, '');
-
-            // DB::commit();
-            toast('Work order ' . $womstr->wo_number . ' has been rejected', 'success');
-            return redirect()->route('woreleaseapproval');
+            toast('WO Released ' . $womstr->wo_number . ' approved successfuly', 'success');
+            return redirect()->route('approvalBrowseRelease');
         }
+        // else {
+        //     //REJECT
+        //     $requestor = $womstr->wo_list_engineer;
+
+        //     DB::table('wo_mstr')
+        //         ->where('id', '=', $idwo)
+        //         ->update([
+        //             'wo_status' => 'started', //status berganti jadi started supaya bisa di edit
+        //             'wo_system_update' => Carbon::now()->toDateTimeString(),
+        //         ]);
+
+        //     DB::table('wo_trans_history')
+        //         ->insert([
+        //             'wo_number' => $womstr->wo_number,
+        //             'wo_action' => 'rejected',
+        //             'system_update' => Carbon::now()->toDateTimeString(),
+        //         ]);
+
+        //     if (is_null($nextapprover)) {
+        //         //kondisi hanya 1 approver atau approver terakhir
+
+        //         //jika user bukan admin dan hanya 1 approver
+        //         if (is_null($prevapprover) && Session::get('role') <> 'ADMIN') {
+        //             // dd('1 approver');
+        //             DB::table('release_trans_approval')
+        //                 ->where('retr_mstr_id', '=', $idwo)
+        //                 ->where('retr_role_approval', '=', $user->role_user)
+        //                 ->update($retransreject);
+
+        //             DB::table('release_trans_approval_hist')
+        //                 ->insert($retransrejecthist);
+        //         } else {
+        //             // dd('approver terakhir');
+        //             DB::table('release_trans_approval')
+        //                 ->where('retr_mstr_id', '=', $idwo)
+        //                 // ->where('srta_role_approval', '=', $user->role_user) <-- role dikomen biar semua approver statusnya revisi -->
+        //                 ->update($retransreject);
+
+        //             DB::table('release_trans_approval_hist')
+        //                 ->insert($retransrejecthist);
+        //         }
+        //     } else {
+        //         //kondisi approver pertama atau approver tengah
+        //         DB::table('release_trans_approval')
+        //             ->where('retr_mstr_id', '=', $idwo)
+        //             // ->where('srta_role_approval', '=', $user->role_user) <-- role dikomen biar semua approver statusnya revisi -->
+        //             ->update($retransreject);
+
+        //         DB::table('release_trans_approval_hist')
+        //             ->insert($retransrejecthist);
+        //     }
+
+        //     //email terkirim ke wo list engineer
+        //     // EmailScheduleJobs::dispatch('', $asset, '11', '', $requestor, $srnumber, '');
+
+        //     // DB::commit();
+        //     toast('Work order ' . $womstr->wo_number . ' has been rejected', 'success');
+        //     return redirect()->route('approvalBrowseRelease');
+        // }
     }
 
     public function route(Request $request)
@@ -761,8 +851,10 @@ class WORelease extends Controller
 
         $dataApprover = DB::table('release_trans_approval')
             ->leftJoin('users', 'release_trans_approval.retr_approved_by', '=', 'users.id')
-            ->selectRaw('release_trans_approval.*, users.username, users.dept_user')
+            ->leftJoin('dept_mstr', 'release_trans_approval.retr_dept_approval', '=', 'dept_mstr.dept_code')
+            ->selectRaw('release_trans_approval.*, users.username, users.dept_user, dept_desc')
             ->where('retr_mstr_id', '=', $datawo->id)
+            ->orderBy('retr_sequence', 'asc')
             ->get();
         // dd($dataApprover);
         $output = '';
@@ -776,14 +868,14 @@ class WORelease extends Controller
                 $output .= $key + 1;
                 $output .= '</td>';
                 $output .= '<td>';
-                $output .= $approver->retr_dept_approval != null ? $approver->retr_dept_approval : $approver->dept_user;
+                $output .= $approver->retr_dept_approval ? $approver->retr_dept_approval . ' - ' . $approver->dept_desc : '';
                 $output .= '</td>';
                 $output .= '<td>';
                 $output .= $approver->retr_role_approval;
                 $output .= '</td>';
-                $output .= '<td>';
-                $output .= $approver->retr_reason;
-                $output .= '</td>';
+                // $output .= '<td>';
+                // $output .= $approver->retr_reason;
+                // $output .= '</td>';
                 $output .= '<td>';
                 $output .= $approver->retr_status;
                 $output .= '</td>';
@@ -1090,6 +1182,7 @@ class WORelease extends Controller
                                     ->insert([
                                         'retr_mstr_id' => $womstr->id,
                                         'retr_sr_number' => $womstr->wo_sr_number,
+                                        'retr_dept_approval' => 'WHS',
                                         'retr_role_approval' => $nextroleapprover,
                                         'retr_sequence' => $nextseqapprover,
                                         'retr_status' => 'waiting for approval',
@@ -1101,6 +1194,7 @@ class WORelease extends Controller
                                     ->insert([
                                         'retrh_wo_number' => $womstr->wo_number,
                                         'retrh_sr_number' => $womstr->wo_sr_number,
+                                        'retrh_dept_approval' => 'WHS',
                                         'retrh_role_approval' => $nextroleapprover,
                                         'retrh_sequence' => $nextseqapprover,
                                         'retrh_status' => 'WO Release ready for approval',

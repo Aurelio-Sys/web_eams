@@ -2,7 +2,6 @@
 <tr class="foottr">
   <td class="foot1" data-label="WO Number">{{ $show->wo_number }}</td>
   <td class="foot1" data-label="Asset">{{ $show->asset_code }} -- {{ $show->asset_desc }}</td>
-  <!-- <td class="foot1" data-label="Asset">{{ $show->wo_type }}</td> -->
   <?php 
   // @if($show->wo_sr_nbr != null)
   // <td class="foot1" data-label="WO Type">WO from SR</td>
@@ -17,25 +16,25 @@
   // @endif 
   ?>
 
-  <td class="foot1" data-label="Status">{{ $show->wotr_status }}</td>
+  <td class="foot1" data-label="Status">{{ $show->retr_status }}</td>
   <td class="foot1" data-label="Priority">{{ $show->wo_priority }}</td>
   <td class="foot1" data-label="ReleasedBy">{{ $show->wo_releasedby }}</td>
-  <td class="foot1" data-label="FinishedDate">{{date('d-m-Y', strtotime($show->wo_job_finishdate))}}</td>
-  <td class="foot1" data-label="FinishedTime">{{date('H:i', strtotime($show->wo_job_finishtime))}}</td>
+  <td class="foot1" data-label="ReleasedDate">{{date('d-m-Y', strtotime($show->wo_job_finishdate))}}</td>
+  <td class="foot1" data-label="ReleasedTime">{{date('H:i', strtotime($show->wo_job_finishtime))}}</td>
   <td class="foot1" style="text-align: center;">
     <input type="hidden" name='wonbrr' value="{{$show->wo_number}}">
-    @if($show->getCurrentApprover != null)
+    @if($show->getCurrentApproverRelease != null)
     <!-- <button type="button"  class="btn btn-success btn-action jobview" style="width: 100%;">View</button> -->
-    @if($show->getCurrentApprover->wotr_role_approval == session('role') || session('role') == 'ADMIN')
-    <a href="{{route('approvalWO', $show->wo_number)}}"><i class="icon-table fas fa-thumbs-up fa-lg">
+    @if($show->getCurrentApproverRelease->retr_role_approval == session('role') || session('role') == 'ADMIN')
+    <a href="{{route('approvalRelease', $show->wo_number)}}"><i class="icon-table fas fa-thumbs-up fa-lg">
       </i></a>
     @else
-    <a href="{{route('approvalWOInfo', $show->wo_number)}}"><i class="icon-table fas fa-eye fa-lg">
+    <a href="{{route('approvalReleaseInfo', $show->wo_number)}}"><i class="icon-table fas fa-eye fa-lg">
       </i></a>
     @endif
     @else
     <!-- <button type="button"  class="btn btn-success btn-action jobview" style="width: 100%;">View</button> -->
-    <a href="{{route('approvalWOInfo', $show->wo_number)}}"><i class="icon-table fas fa-eye fa-lg">
+    <a href="{{route('approvalReleaseInfo', $show->wo_number)}}"><i class="icon-table fas fa-eye fa-lg">
       </i></a>
     @endif
     <a href="javascript:void(0)" class="route">

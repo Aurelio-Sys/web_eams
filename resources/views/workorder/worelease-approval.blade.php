@@ -110,13 +110,13 @@
           <th width="12%">Status Approval</th>
           <th width="5%">Priority</th>
           <th width="10%">Released by</th>
-          <th width="10%">Finished date</th>
-          <th width="10%">Finished time</th>
+          <th width="10%">Released date</th>
+          <th width="10%">Released time</th>
           <th width="5%">Action</th>
         </tr>
       </thead>
       <tbody>
-        @include('workorder.table-woapproval')
+        @include('workorder.table-woreleaseapproval')
       </tbody>
     </table>
     <input type="hidden" name="hidden_page" id="hidden_page" value="1" />
@@ -304,7 +304,7 @@
           <div class="col-md-12">
             <div class="form-group row">
               <label for="ppnumber" class="col-2 col-sm-2 col-md-2 col-lg-2 col-form-label text-sm-center">{{
-                            __('SR No.')
+                            __('WO No.')
                             }}</label>
               <div class="col-4 col-sm-4 col-md-4 col-lg-4">
                 <input type="text" class="form-control" id="m_route_ppnumber" readonly>
@@ -335,7 +335,7 @@
                     <th style="width:10%">No.</th>
                     <th style="width:10%">Department</th>
                     <th style="width:10%">Role</th>
-                    <th style="width:15%">Reason</th>
+                    <!-- <th style="width:15%">Reason</th> -->
                     <th style="width:10%">Status</th>
                     <th style="width:10%">Approved By</th>
                     <th style="width:15%">Timestamp</th>
@@ -517,7 +517,7 @@
 
           $.ajax({
             type: "GET",
-            url: "/routewo",
+            url: "/woreleaseapprovalroute",
             data: {
               wo_number: wonumber
             },
