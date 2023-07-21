@@ -24,7 +24,7 @@ class AllWOGenerate extends Controller
     public function getAll(Request $req)
     {
 
-        // dd($req->all());
+        dd($req->all());
         $todaydate = Carbon::now()->toDateTime()->format("Y-m-d");
 
         $fromdate = date_create($todaydate);
@@ -45,7 +45,7 @@ class AllWOGenerate extends Controller
 
             $getWoExisting = DB::table('wo_mstr')
                             ->select('wo_asset','wo_schedule')
-                            ->where('wo_type','=','auto') // auto = preventive,other = non-preventive
+                            ->where('wo_type','=','PM') // auto = preventive,other = non-preventive
                             ->where('wo_status','=','plan') // status plan = wo baru dibuat, belom dikerjakan
                             ->where('wo_asset','=',$tbl_asset->asset_code)
                             ->orderBy('wo_schedule','desc')

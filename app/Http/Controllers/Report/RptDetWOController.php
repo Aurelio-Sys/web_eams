@@ -97,7 +97,7 @@ class RptDetWOController extends Controller
             $table->temporary();
         });
 
-        /* Mencari data sparepart dari wo detail */
+        /* 1 Mencari data sparepart dari wo detail */
         $datadets = DB::table('wo_dets_sp')
             ->join('wo_mstr','wo_number','=','wd_sp_wonumber')
             ->orderBy('wd_sp_wonumber')
@@ -128,156 +128,72 @@ class RptDetWOController extends Controller
             ]);
         }
 
-        /* Mencari data sparepart yang belum ada wo detail nya */
-        // $datawo = DB::table('wo_mstr')
-        //     // ->where('wo_nbr','=','PM-23-004839')
-        //     ->whereNotIn('wo_nbr', function($q){
-        //         $q->select('wd_sp_wonumber')->from('wo_dets');
-        //     })
-        //     ->get();
+        /* 2 Mencari data sparepart yang belum ada wo detail nya */
+        $datawo = DB::table('wo_mstr')
+            // ->where('wo_nbr','=','PM-23-004839')
+            ->whereNotIn('wo_number', function($q){
+                $q->select('wd_sp_wonumber')->from('wo_dets_sp');
+            })
+            ->get();
         // dd($datawo);
-        // foreach($datawo as $do) {
-        //     if ($do->wo_repair_code1 != "") {
 
-        //         $sparepart1 = DB::table('wo_mstr')
-        //             ->select('wo_nbr','wo_repair_code1 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
-        //             'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule',
-        //             'wo_sr_nbr', 'wo_createdby', 'wo_system_create', 'wo_new_type', 'wo_failure_code1',
-        //             'wo_failure_code2', 'wo_failure_code3', 'wo_asset', 'wo_note', 'repm_desc', 'wo_type',
-        //             'wo_engineer1','wo_engineer2','wo_engineer3','wo_engineer4','wo_engineer5',
-        //             'wo_asset_site','wo_asset_loc')
-        //             ->leftJoin('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
-        //             ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-        //             ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-        //             ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-        //             ->where('id', '=', $do->wo_id)
-        //             ->orderBy('repm_ins', 'asc')
-        //             ->orderBy('repdet_step', 'asc')
-        //             ->orderBy('ins_code', 'asc')
-        //             ->get();
+        foreach($datawo as $ds) {
+            /* 2a Jika ada SparepartList nya */
+            if($ds->wo_sp_code <> '' || $ds->wo_sp_code <> NULL) {
+                $datasplist = DB::table('spg_list')
+                ->whereSpgCode($ds->wo_sp_code)
+                ->get();
+            
+                foreach($datasplist as $da){
+                    DB::table('temp_wo')->insert([
+                        'temp_wo' => $ds->wo_number,
+                        'temp_type' => $ds->wo_type,
+                        'temp_sr' => $ds->wo_sr_number,
+                        'temp_asset' => $ds->wo_asset_code,
+                        'temp_asset_desc' => DB::table('asset_mstr')->where('asset_code','=',$ds->wo_asset_code)->value('asset_desc'),
+                        'temp_asset_site' => $ds->wo_site,
+                        'temp_asset_loc' => $ds->wo_location,
+                        'temp_creator' => $ds->wo_createdby,
+                        'temp_create_date' => $ds->wo_system_create,
+                        'temp_sch_date' => $ds->wo_start_date,
+                        'temp_fail_type' => $ds->wo_failure_type,
+                        'temp_fail_code' => $ds->wo_failure_code.";".$ds->wo_failure_code.";".$ds->wo_failure_code,
+                        'temp_note' => $ds->wo_note,
+                        'temp_repair' => "",
+                        'temp_status' => $ds->wo_status,
+                        'temp_sp' => $da->spg_spcode,
+                        'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->spg_spcode)->value('spm_desc'),
+                        'temp_qty_req' => $da->spg_qtyreq,
+                        'temp_qty_whs' => 0,
+                        'temp_eng1' => $ds->wo_list_engineer,
+                    ]);
+                }
 
-        //         $rc1 = DB::table('wo_mstr')
-        //             ->select('repm_code', 'repm_desc')
-        //             ->join('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
-        //             ->where('id', '=', $do->wo_id)
-        //             ->get();
-        //         // dd($sparepart1);
-        //         $combineSP = $sparepart1;
-        //         $rc = $rc1;
-        //     }
-
-        //     if ($do->wo_repair_code2 != "") {
-        //         $sparepart2 = DB::table('wo_mstr')
-        //             ->select('wo_nbr','wo_repair_code2 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
-        //             'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule',
-        //             'wo_sr_nbr', 'wo_createdby', 'wo_system_create', 'wo_new_type', 'wo_failure_code1',
-        //             'wo_failure_code2', 'wo_failure_code3', 'wo_asset', 'wo_note', 'repm_desc', 'wo_type',
-        //             'wo_engineer1','wo_engineer2','wo_engineer3','wo_engineer4','wo_engineer5',
-        //             'wo_asset_site','wo_asset_loc')
-        //             ->leftJoin('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
-        //             ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-        //             ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-        //             ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-        //             ->where('id', '=', $do->wo_id)
-        //             ->orderBy('repm_ins', 'asc')
-        //             ->orderBy('repdet_step', 'asc')
-        //             ->orderBy('ins_code', 'asc')
-        //             ->get();
-
-        //         $rc2 = DB::table('wo_mstr')
-        //             ->select('repm_code', 'repm_desc')
-        //             ->join('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
-        //             ->where('id', '=', $do->wo_id)
-        //             ->get();
-
-        //         $combineSP = $sparepart1->merge($sparepart2);
-        //         $rc = $rc1->merge($rc2);
-        //     }
-
-        //     if ($do->wo_repair_code3 != "") {
-        //         $sparepart3 = DB::table('wo_mstr')
-        //             ->select('wo_nbr','wo_repair_code3 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
-        //             'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule',
-        //             'wo_sr_nbr', 'wo_createdby', 'wo_system_create', 'wo_new_type', 'wo_failure_code1',
-        //             'wo_failure_code2', 'wo_failure_code3', 'wo_asset', 'wo_note', 'repm_desc', 'wo_type',
-        //             'wo_engineer1','wo_engineer2','wo_engineer3','wo_engineer4','wo_engineer5',
-        //             'wo_asset_site','wo_asset_loc')
-        //             ->leftJoin('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
-        //             ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-        //             ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-        //             ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-        //             ->where('id', '=', $do->wo_id)
-        //             ->orderBy('repm_ins', 'asc')
-        //             ->orderBy('repdet_step', 'asc')
-        //             ->orderBy('ins_code', 'asc')
-        //             ->get();
-
-        //         $rc3 = DB::table('wo_mstr')
-        //             ->select('repm_code', 'repm_desc')
-        //             ->join('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
-        //             ->where('id', '=', $do->wo_id)
-        //             ->get();
-
-        //         $combineSP = $sparepart1->merge($sparepart2)->merge($sparepart3);
-        //         $rc = $rc1->merge($rc2)->merge($rc3);
-        //     }
-
-        //     if ($do->wo_repair_code1 == "" && $do->wo_repair_code2 == "" && $do->wo_repair_code3 == "") {
-        //         $combineSP = DB::table('xxrepgroup_mstr')
-        //             ->select('wo_nbr','repm_code as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 
-        //             'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule',
-        //             'wo_sr_nbr', 'wo_createdby', 'wo_system_create', 'wo_new_type', 'wo_failure_code1',
-        //             'wo_failure_code2', 'wo_failure_code3', 'wo_asset', 'wo_note', 'repm_desc', 'wo_type',
-        //             'wo_engineer1','wo_engineer2','wo_engineer3','wo_engineer4','wo_engineer5',
-        //             'wo_asset_site','wo_asset_loc')
-        //             ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code',)
-        //             ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-        //             ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-        //             ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-        //             ->leftJoin('wo_mstr','wo_repair_group','xxrepgroup_mstr.xxrepgroup_nbr')
-        //             ->where('xxrepgroup_mstr.xxrepgroup_nbr', '=', $do->wo_repair_group)
-        //             ->where('id', '=', $do->wo_id)
-        //             ->orderBy('repair_code', 'asc')
-        //             ->orderBy('repm_ins', 'asc')
-        //             ->orderBy('repdet_step', 'asc')
-        //             ->orderBy('ins_code', 'asc')
-        //             ->get();
-
-        //         $rc = DB::table('xxrepgroup_mstr')
-        //             ->select('repm_code', 'repm_desc')
-        //             ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
-        //             ->get();
-        //     }
-        // }
-        // // dd($combineSP);
-        // foreach($combineSP as $dc){
-        //     DB::table('temp_wo')->insert([
-        //         'temp_wo' => $dc->wo_nbr,
-        //         'temp_type' => $da->wo_type == 'auto' ? 'PM' : 'WO',
-        //         'temp_sr' => $dc->wo_sr_nbr,
-        //         'temp_asset' => $dc->wo_asset,
-        //         'temp_asset_desc' => DB::table('asset_mstr')->where('asset_code','=',$dc->wo_asset)->value('asset_desc'),
-        //         'temp_asset_site' => $dc->wo_asset_site,
-        //         'temp_asset_loc' => $dc->wo_asset_loc,
-        //         'temp_creator' => $dc->wo_createdby,
-        //         'temp_create_date' => $dc->wo_system_create,
-        //         'temp_sch_date' => $dc->wo_schedule,
-        //         'temp_fail_type' => $dc->wo_new_type,
-        //         'temp_fail_code' => $dc->wo_failure_code1.";".$dc->wo_failure_code2.";".$dc->wo_failure_code3,
-        //         'temp_note' => $dc->wo_note,
-        //         'temp_repair' => $dc->repair_code." : ".$dc->repm_desc,
-        //         'temp_status' => $dc->wo_status,
-        //         'temp_sp' => $dc->insd_part,
-        //         'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$dc->insd_part)->value('spm_desc'),
-        //         'temp_qty_req' => $dc->insd_qty,
-        //         'temp_qty_whs' => 0,
-        //         'temp_eng1' => $dc->wo_engineer1,
-        //         'temp_eng2' => $dc->wo_engineer2,
-        //         'temp_eng3' => $dc->wo_engineer3,
-        //         'temp_eng4' => $dc->wo_engineer4,
-        //         'temp_eng5' => $dc->wo_engineer5,
-        //     ]);
-        // }
+            } else { /* 2a Jika tidak ada SparepartList nya */
+                DB::table('temp_wo')->insert([
+                    'temp_wo' => $ds->wo_number,
+                    'temp_type' => $ds->wo_type,
+                    'temp_sr' => $ds->wo_sr_number,
+                    'temp_asset' => $ds->wo_asset_code,
+                    'temp_asset_desc' => DB::table('asset_mstr')->where('asset_code','=',$ds->wo_asset_code)->value('asset_desc'),
+                    'temp_asset_site' => $ds->wo_site,
+                    'temp_asset_loc' => $ds->wo_location,
+                    'temp_creator' => $ds->wo_createdby,
+                    'temp_create_date' => $ds->wo_system_create,
+                    'temp_sch_date' => $ds->wo_start_date,
+                    'temp_fail_type' => $ds->wo_failure_type,
+                    'temp_fail_code' => $ds->wo_failure_code.";".$ds->wo_failure_code.";".$ds->wo_failure_code,
+                    'temp_note' => $ds->wo_note,
+                    'temp_repair' => "",
+                    'temp_status' => $ds->wo_status,
+                    'temp_sp' => "",
+                    'temp_sp_desc' => "",
+                    'temp_qty_req' => 0,
+                    'temp_qty_whs' => 0,
+                    'temp_eng1' => $ds->wo_list_engineer,
+                ]);
+            }
+        }
 
         $datatemp = DB::table('temp_wo')
         // ->where('temp_wo','=','PM-23-004839')
@@ -331,7 +247,6 @@ class RptDetWOController extends Controller
         Schema::dropIfExists('temp_wo');
         // dd($impact);
         if ($request->dexcel == "excel") {
-            // dd($request->stype);
             return Excel::download(new DetailWOExport($request->swo,$request->sasset,$request->per1,$request->per2,
             $request->sdept,$request->sloc,$request->seng,$request->stype), 'DetailWO.xlsx');
             

@@ -64,10 +64,11 @@
                                 <td style="text-align: center; width: 5% !important; font-weight: bold;">Spare Part Code</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Spare Part Desc</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty Requested</td>
+                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Request SP Note</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Location & Lot From</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Location To</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty to Transfer</td>
-                                <td style="text-align: center; width: 12% !important; font-weight: bold;">Note</td>
+                                <td style="text-align: center; width: 12% !important; font-weight: bold;">Transfer SP Note</td>
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
@@ -82,6 +83,9 @@
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$spd->req_spd_qty_request}}
+                                </td>
+                                <td style="vertical-align:middle;text-align:left;">
+                                    {{$spd->req_spd_reqnote}}
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" data-index="{{ $index }}" readonly required placeholder="Click Here">

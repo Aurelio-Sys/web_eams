@@ -96,6 +96,7 @@ class SparepartController extends Controller
                     "spreq" => $requestData['spreq'],
                     "locto" => $requestData['locto'],
                     "qtyrequest" => $requestData['qtyrequest'],
+                    "reqnote" => $requestData['reqnote'],
                     "siteto" => $requestData['siteto'],
                 ];
 
@@ -105,6 +106,7 @@ class SparepartController extends Controller
                         'locto' => $data['locto'][$key],
                         'siteto' => $data['siteto'][$key],
                         'qtyrequest' => $data['qtyrequest'][$key],
+                        'reqnote' => $data['reqnote'][$key],
                     ];
                 })->groupBy('spreq')->map(function ($group) {
                     $totalqtyrequest = $group->sum('qtyrequest');
@@ -113,6 +115,7 @@ class SparepartController extends Controller
                         'spreq' => $group[0]['spreq'],
                         'locto' => $group[0]['locto'],
                         'siteto' => $group[0]['siteto'],
+                        'reqnote' => $group[0]['reqnote'],
                         'qtyrequest' => $totalqtyrequest,
                     ];
                 })->values();
@@ -171,6 +174,7 @@ class SparepartController extends Controller
                             'req_spd_qty_request' => $loopsp['qtyrequest'],
                             'req_spd_loc_to' => $loopsp['locto'],
                             'req_spd_site_to' => $loopsp['siteto'],
+                            'req_spd_reqnote' => $loopsp['reqnote'],
                             'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                         ]);
@@ -193,7 +197,7 @@ class SparepartController extends Controller
 
                 DB::commit();
 
-                toast('Sparepart Requested Successfully !', 'success')->autoClose(10000);
+                toast('Sparepart Requested '. $runningnbr .' Number Successfully !', 'success')->autoClose(10000);
                 return redirect()->route('reqspbrowse');
             } else {
                 toast('You have not request any sparepart yet !', 'error')->autoClose(10000);
@@ -217,7 +221,7 @@ class SparepartController extends Controller
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
                 ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
                 ->where('req_sp_number', $rsnumber)
-                ->groupBy('req_sp_number')
+                // ->groupBy('req_sp_number')
                 ->get();
 
             $sp_all = DB::table('sp_mstr')
@@ -249,12 +253,15 @@ class SparepartController extends Controller
                 }
                 $output .= '</select>';
                 $output .= '</td>';
+                $output .= '<td>';
+                $output .= '<textarea type="text" id="te_reqnote" class="form-control te_reqnote" name="te_reqnote[]" rows="2" >' . $data->req_spd_reqnote . '</textarea>';
+                $output .= '</td>';
                 $output .= '<td><input type="checkbox" name="cek[]" class="cek" id="cek" value="0">';
                 $output .= '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
                 $output .= '</tr>';
             }
 
-            // dd($data);
+            // dd($datas);
 
             return response($output);
         }
@@ -271,7 +278,7 @@ class SparepartController extends Controller
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
                 ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
                 ->where('req_sp_number', $rsnumber)
-                ->groupBy('req_sp_number')
+                // ->groupBy('req_sp_number')
                 ->get();
             // dd($data);
 
@@ -281,7 +288,8 @@ class SparepartController extends Controller
                 $output .= '<td><input type="hidden" name="te_spreq[]" readonly>' . $data->req_spd_sparepart_code . ' -- ' . $data->spm_desc . '</td>';
                 $output .= '</td>';
                 $output .= '<td><input type="hidden" name="te_qtyreq[]" readonly>' . $data->req_spd_qty_request . '</td>';
-                $output .= '<td><input type="hidden" name="te_qtyreq[]" readonly>' . $data->req_spd_loc_to . '</td>';
+                $output .= '<td><input type="hidden" name="te_locto[]" readonly>' . $data->req_spd_loc_to . '</td>';
+                $output .= '<td><input type="hidden" name="te_reqnote[]" readonly>' . $data->req_spd_reqnote . '</td>';
                 $output .= '</td>';
                 $output .= '</tr>';
             }
@@ -321,6 +329,7 @@ class SparepartController extends Controller
                 "spreq" => $newData['te_spreq'],
                 "locto" => $newData['te_locto'],
                 "qtyrequest" => $newData['te_qtyreq'],
+                "reqnote" => $newData['te_reqnote'],
                 "tick" => $newData['tick'],
             ];
 
@@ -329,6 +338,7 @@ class SparepartController extends Controller
                     'spreq' => $spreq,
                     'locto' => $data['locto'][$key],
                     'qtyrequest' => $data['qtyrequest'][$key],
+                    'reqnote' => $data['reqnote'][$key],
                     "tick" => $data['tick'][$key],
                 ];
             })->groupBy('spreq')->map(function ($group) {
@@ -337,6 +347,7 @@ class SparepartController extends Controller
                 return [
                     'spreq' => $group[0]['spreq'],
                     'locto' => $group[0]['locto'],
+                    'reqnote' => $group[0]['reqnote'],
                     'qtyrequest' => $totalqtyrequest,
                     'tick' => $group[0]['tick'],
                 ];
@@ -355,6 +366,7 @@ class SparepartController extends Controller
                             'req_spd_sparepart_code' => $data['spreq'],
                             'req_spd_qty_request' => $data['qtyrequest'],
                             'req_spd_loc_to' => $data['locto'],
+                            'req_spd_reqnote' => $data['reqnote'],
                             'updated_at' => Carbon::now()->toDateTimeString(),
                         ]);
 
@@ -511,7 +523,7 @@ class SparepartController extends Controller
             ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
             ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
             ->where('req_spd_mstr_id', $data->id)
-            ->groupBy('req_spd_mstr_id')
+            // ->groupBy('req_spd_mstr_id')
             ->get();
 
             // dd($sparepart_detail);
@@ -537,7 +549,7 @@ class SparepartController extends Controller
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
                 ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
                 ->where('req_sp_number', $rsnumber)
-                ->groupBy('req_sp_number')
+                // ->groupBy('req_sp_number')
                 ->get();
             // dd($data);
 
@@ -547,11 +559,12 @@ class SparepartController extends Controller
                 $output .= '<td><input type="hidden" name="te_spreq[]" readonly>' . $data->req_spd_sparepart_code . ' -- ' . $data->spm_desc . '</td>';
                 $output .= '</td>';
                 $output .= '<td><input type="hidden" name="te_qtyreq[]" readonly>' . $data->req_spd_qty_request . '</td>';
-                $output .= '<td><input type="hidden" name="te_sitefrom[]" readonly>' . $data->req_spd_site_from . '</td>';
-                $output .= '<td><input type="hidden" name="te_locnlotfrom[]" readonly>' . $data->req_spd_loc_from . ' & ' . $data->req_spd_lot_from . '</td>';
+                // $output .= '<td><input type="hidden" name="te_sitefrom[]" readonly>' . $data->req_spd_site_from . '</td>';
+                $output .= '<td><input type="hidden" name="te_locnlotfrom[]" readonly>'.$data->req_spd_site_from .' & ' . $data->req_spd_loc_from . ' & ' . $data->req_spd_lot_from . '</td>';
+                $output .= '<td><input type="hidden" name="te_reqnote[]" readonly>' . $data->req_spd_reqnote . '</td>';
                 $output .= '<td><input type="hidden" name="te_qtytrf[]" readonly>' . $data->req_spd_qty_transfer . '</td>';
-                $output .= '<td><input type="hidden" name="te_siteto[]" readonly>' . $data->req_spd_site_to . '</td>';
-                $output .= '<td><input type="hidden" name="te_locto[]" readonly>' . $data->req_spd_loc_to . '</td>';
+                // $output .= '<td><input type="hidden" name="te_siteto[]" readonly>' . $data->req_spd_site_to . '</td>';
+                $output .= '<td><input type="hidden" name="te_locto[]" readonly>'. $data->req_spd_site_to .' & '. $data->req_spd_loc_to . '</td>';
                 $output .= '<td><input type="hidden" name="te_note[]" readonly>' . $data->req_spd_note . '</td>';
                 $output .= '</td>';
                 $output .= '</tr>';

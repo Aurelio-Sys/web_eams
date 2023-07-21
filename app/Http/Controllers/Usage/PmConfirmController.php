@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Schema;
 use Carbon\Carbon;
 
 class PmConfirmController extends Controller
@@ -23,20 +24,24 @@ class PmConfirmController extends Controller
         $s_date1 = $req->s_date1;
         $s_date2 = $req->s_date2;
 
+        // Select data yang pma_pmcode nya bukan kosong
         $data = DB::table('pmo_confirm')
             ->leftJoin('asset_mstr','asset_code','=','pmo_asset')
             ->leftJoin('pmc_mstr','pmc_code','=','pmo_pmcode')
             ->leftjoin('pma_asset', function ($join) {
                 $join->on('pmo_confirm.pmo_asset', '=', 'pma_asset.pma_asset')
-                    ->on('pmo_confirm.pmo_pmcode', '=', 'pma_asset.pma_pmcode');     
+                    ->when(is_null('pmo_confirm.pmo_pmcode'), function ($join) {
+                        $join->on('pmo_confirm.pmo_pmcode', '=', 'pma_asset.pma_pmcode');
+                    });
             })
-            ->select('pmo_confirm.*','asset_code','asset_desc','pmc_desc','pma_leadtime')
+            ->select('pmo_confirm.*','asset_code','asset_desc','pmc_desc as pmc_desc','pma_leadtime')
             ->whereNotIn('pmo_number', function ($query) {
                 $query->select('pml_pm_number')->from('pml_log');
             })
             ->orderBy('asset_code')
             ->orderBy('pmo_pmcode')
-            ->orderBy('id');
+            ->orderBy('id')
+            ->groupBy('asset_code','pmo_pmcode','pmo_sch_date');
 
         if($s_code) {
             $data = $data->where(function($query) use ($s_code) {
@@ -55,7 +60,7 @@ class PmConfirmController extends Controller
         }
 
         $data = $data->paginate(10);
-// dd($data);
+
         $datalog = DB::table('pml_log')
             ->orderBy('pml_asset')
             ->orderBy('pml_pmcode')
