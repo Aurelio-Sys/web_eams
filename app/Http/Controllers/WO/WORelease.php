@@ -25,14 +25,21 @@ class WORelease extends Controller
         $asset1 = DB::table('asset_mstr')
             ->where('asset_active', '=', 'Yes')
             ->get();
-
-        if(Session::get('role') == 'ADMIN' || Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR'){
+        
+        if (Session::get('role') == 'ADMIN' ) {
             $data = DB::table('wo_mstr')
                 ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
                 ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
                 ->where('wo_status','=','firm')
                 ->orderby('wo_system_create', 'desc');
-        }else{
+        } elseif (Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR') {
+            $data = DB::table('wo_mstr')
+                ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
+                ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+                ->where('wo_status','=','firm')
+                ->where('wo_department','=', Session::get('department'))
+                ->orderby('wo_system_create', 'desc');
+        } else {
 
             $username = Session::get('username');
 
