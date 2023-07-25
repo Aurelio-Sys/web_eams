@@ -302,7 +302,7 @@ to get the desired effect
                 <li class="nav-item ">
                   <a href="/woreleaseapprovalbrowse" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>WO Release Approval</p>
+                      <p>Work Order Release Approval</p>
                   </a>
                 </li>
                 @endif

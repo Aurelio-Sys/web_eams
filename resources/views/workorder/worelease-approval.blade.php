@@ -105,14 +105,14 @@
     <table class="table table-bordered mini-table mt-4" id="dataTable" width="100%" cellspacing="0">
       <thead>
         <tr style="text-align: center;">
-          <th width="9%">WO Number</th>
+          <th width="10%">WO Number</th>
           <th width="33%">Asset</th>
           <th width="12%">Status Approval</th>
           <th width="5%">Priority</th>
-          <th width="10%">Released by</th>
           <th width="10%">Released date</th>
           <th width="10%">Released time</th>
-          <th width="5%">Action</th>
+          <th width="10%">Released by</th>
+          <th width="7%">Action</th>
         </tr>
       </thead>
       <tbody>

@@ -76,7 +76,7 @@ class wocontroller extends Controller
 
 
             $data = DB::table('wo_mstr')
-                ->leftJoin('users','wo_mstr.wo_createdby','users.username')
+                ->leftJoin('users', 'wo_mstr.wo_createdby', 'users.username')
                 ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code');
 
             if ($req->s_nomorwo) {
@@ -264,22 +264,22 @@ class wocontroller extends Controller
                 ->get();
 
 
-            if (Session::get('role') == 'ADMIN' ) {
+            if (Session::get('role') == 'ADMIN') {
                 $data = DB::table('wo_mstr')
-                    ->leftJoin('users','wo_mstr.wo_createdby','users.username')
+                    ->leftJoin('users', 'wo_mstr.wo_createdby', 'users.username')
                     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code');
-            } elseif(Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR') {
+            } elseif (Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR') {
                 $data = DB::table('wo_mstr')
-                    ->leftJoin('users','wo_mstr.wo_createdby','users.username')
+                    ->leftJoin('users', 'wo_mstr.wo_createdby', 'users.username')
                     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
-                    ->where('wo_department','=', Session::get('department'));
+                    ->where('wo_department', '=', Session::get('department'));
             } else {
                 $username = Session::get('username');
 
                 // dd($username);
 
                 $data = DB::table('wo_mstr')
-                    ->leftJoin('users','wo_mstr.wo_createdby','users.username')
+                    ->leftJoin('users', 'wo_mstr.wo_createdby', 'users.username')
                     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                     ->where(function ($query) use ($username) {
                         $query->where('wo_list_engineer', '=', $username . ';')
@@ -1861,7 +1861,7 @@ class wocontroller extends Controller
                         DB::table('wo_trans_approval')
                             ->where('wotr_mstr_id', '=', $checksr->id)
                             ->delete();
-                            
+
                         DB::table('wo_mstr')
                             ->where('wo_number', '=', $req->tmp_wonbr)
                             ->delete();
@@ -2284,9 +2284,7 @@ class wocontroller extends Controller
                     ->get();
 
                 return view('workorder.table-wostart', ['data' => $data, 'wodet_sp' => $wodet_sp]);
-
-
-            } elseif(Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR'){
+            } elseif (Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR') {
 
                 $data = DB::table('wo_mstr')
                     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
@@ -2298,7 +2296,7 @@ class wocontroller extends Controller
                         $status->where('wo_status', '=', 'released');
                         $status->orWhere('wo_status', '=', 'started');
                     })
-                    ->where('wo_department','=', Session::get('department'))
+                    ->where('wo_department', '=', Session::get('department'))
                     ->orderby('wo_system_create', 'desc')
                     ->orderBy('wo_mstr.id', 'desc')
                     ->groupBy('wo_number')
@@ -2320,8 +2318,7 @@ class wocontroller extends Controller
                     ->get();
 
                 return view('workorder.table-wostart', ['data' => $data, 'wodet_sp' => $wodet_sp]);
-
-            }else {
+            } else {
                 $user = Session()->get('username');
 
                 $data = DB::table('wo_mstr')
@@ -3086,12 +3083,18 @@ class wocontroller extends Controller
             ->get();
 
 
-
-        $approver = DB::table('wo_trans_approval')
-            ->leftJoin('users', 'users.id', 'wo_trans_approval.wotr_approved_by')
-            ->where('wotr_mstr_id', $wo->id)
-            ->where('wotr_role_approval', session()->get('role'))
-            ->first();
+        if (session()->get('role') <> 'ADMIN') {
+            $approver = DB::table('wo_trans_approval')
+                ->leftJoin('users', 'users.id', 'wo_trans_approval.wotr_approved_by')
+                ->where('wotr_mstr_id', $wo->id)
+                ->where('wotr_role_approval', session()->get('role'))
+                ->first();
+        } else {
+            $approver = DB::table('wo_trans_approval')
+                ->leftJoin('users', 'users.id', 'wo_trans_approval.wotr_approved_by')
+                ->where('wotr_mstr_id', $wo->id)
+                ->first();
+        }
 
         // dd($approver);
 
@@ -3756,7 +3759,7 @@ class wocontroller extends Controller
             $qclist = DB::table('qcs_list')->groupBy('qcs_code')->get();
 
             $wodet_sp = DB::table('wo_dets_sp')
-                        ->get();
+                ->get();
 
             if (Session::get('role') == 'ADMIN') {
 
@@ -3789,7 +3792,7 @@ class wocontroller extends Controller
                     ->groupBy('asset_code')
                     ->orderBy('asset_code')
                     ->get();
-            } elseif(Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR'){
+            } elseif (Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR') {
 
                 $data = DB::table('wo_mstr')
                     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
@@ -3801,7 +3804,7 @@ class wocontroller extends Controller
                         $status->where('wo_status', '=', 'released');
                         $status->orWhere('wo_status', '=', 'started');
                     })
-                    ->where('wo_department','=', Session::get('department'))
+                    ->where('wo_department', '=', Session::get('department'))
                     ->orderby('wo_system_create', 'desc')
                     ->orderBy('wo_mstr.id', 'desc')
                     ->groupBy('wo_number')
@@ -3821,8 +3824,7 @@ class wocontroller extends Controller
                     ->groupBy('asset_code')
                     ->orderBy('asset_code')
                     ->get();
-
-            }else {
+            } else {
                 $user = Session()->get('username');
 
                 $data = DB::table('wo_mstr')
@@ -3978,17 +3980,16 @@ class wocontroller extends Controller
                     })
                     ->orderBy('wo_status', 'desc')
                     ->orderBy('wo_mstr.id', 'desc');
-            } elseif(Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR') {
+            } elseif (Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR') {
 
                 $data = DB::table('wo_mstr')
                     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                     ->where(function ($status) {
                         $status->where('wo_status', '=', 'started');
                     })
-                    ->where('wo_department','=', Session::get('department'))
+                    ->where('wo_department', '=', Session::get('department'))
                     ->orderBy('wo_status', 'desc')
                     ->orderBy('wo_mstr.id', 'desc');
-                
             } else {
                 $username = Session::get('username');
 
@@ -4244,8 +4245,8 @@ class wocontroller extends Controller
                         $qtyIssued = $req->qtyissued[$index];
                         $qtyPotong = $req->qtypotong[$index];
 
-                        $sparepartcost = $tempCost->where('cost_site','=', $siteFrom)
-                                                ->where('cost_part','=', $sparepartCode)->first();
+                        $sparepartcost = $tempCost->where('cost_site', '=', $siteFrom)
+                            ->where('cost_part', '=', $sparepartCode)->first();
 
                         // dd($qtyIssued);
                         //update data untuk pertama kali melakukan report dengan kondisi site,loc,lot issued masih null dan kolom wd_already_issued = false
@@ -4829,7 +4830,7 @@ class wocontroller extends Controller
                 ]);
 
                 DB::commit();
-                toast('Reporting '.$req->c_wonbr.' Successfuly', 'success')->persistent('Dismiss');
+                toast('Reporting ' . $req->c_wonbr . ' Successfuly', 'success')->persistent('Dismiss');
                 return redirect()->route('woreport');
             }
 
@@ -4866,13 +4867,13 @@ class wocontroller extends Controller
 
                     //check apakah WO ada PM, jika YA maka update pma_start sebagai tanggal terakhir dilalukannya maintenance
                     $checkWO = DB::table('wo_mstr')
-                                    ->where('wo_number','=',$req->c_wonbr)
-                                    ->first();
+                        ->where('wo_number', '=', $req->c_wonbr)
+                        ->first();
 
-                    if($checkWO->wo_type == 'PM'){
+                    if ($checkWO->wo_type == 'PM') {
                         DB::table('pma_asset')
-                            ->where('pma_asset','=', $checkWO->wo_asset_code)
-                            ->where('pma_pmcode','=', $checkWO->wo_mt_code)
+                            ->where('pma_asset', '=', $checkWO->wo_asset_code)
+                            ->where('pma_pmcode', '=', $checkWO->wo_mt_code)
                             ->update([
                                 'pma_start' => $checkWO->wo_job_startdate,
                                 'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -4928,13 +4929,13 @@ class wocontroller extends Controller
 
                     //check apakah WO ada PM, jika YA maka update pma_start sebagai tanggal terakhir dilalukannya maintenance
                     $checkWO = DB::table('wo_mstr')
-                                    ->where('wo_number','=',$req->c_wonbr)
-                                    ->first();
+                        ->where('wo_number', '=', $req->c_wonbr)
+                        ->first();
 
-                    if($checkWO->wo_type == 'PM'){
+                    if ($checkWO->wo_type == 'PM') {
                         DB::table('pma_asset')
-                            ->where('pma_asset','=', $checkWO->wo_asset_code)
-                            ->where('pma_pmcode','=', $checkWO->wo_mt_code)
+                            ->where('pma_asset', '=', $checkWO->wo_asset_code)
+                            ->where('pma_pmcode', '=', $checkWO->wo_mt_code)
                             ->update([
                                 'pma_start' => $checkWO->wo_job_startdate,
                                 'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),

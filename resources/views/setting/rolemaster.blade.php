@@ -288,7 +288,7 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO Release Approval') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Release Approval') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbWoReleaseApproval">
                   <input type="checkbox" class="custom-control-input" id="cbWoReleaseApproval" name="cbWoReleaseApproval" value="WO10" />
@@ -1172,7 +1172,7 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('WO Release Approval') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Release Approval') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbWoReleaseApproval">
                   <input type="checkbox" class="custom-control-input" id="e_cbWoReleaseApproval" name="e_cbWoReleaseApproval" value="WO10" />

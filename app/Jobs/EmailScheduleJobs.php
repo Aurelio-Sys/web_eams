@@ -16,7 +16,8 @@ use PDF;
 use App;
 use Illuminate\Support\Facades\Auth\Authenticatable;
 
-class EmailScheduleJobs implements ShouldQueue
+// class EmailScheduleJobs implements ShouldQueue
+class EmailScheduleJobs
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -983,6 +984,99 @@ class EmailScheduleJobs implements ShouldQueue
 
                   
 
+
+        } else if ($a == 15) { //kirim email ketika work order release di approved dan kirim ke approver selanjutnya
+
+            $asset = $this->asset;
+            $wonumber = $this->srnumber;
+            $approver = $this->tampungarray;
+            $role = $this->roleapprover;
+            $womstr = DB::table('wo_mstr')->where('wo_number', $wonumber)->first();
+            // dd($wonumber);
+
+            $emailrequestor = DB::table('users')
+                ->where('dept_user', '=', $approver->retr_dept_approval)
+                ->where('role_user', '=', $approver->retr_role_approval)
+                ->get();
+
+            $emails = '';
+
+            foreach ($emailrequestor as $email) {
+                $emails .= $email->email_user . ',';
+            }
+
+            $emails = substr($emails, 0, strlen($emails) - 1);
+            // dd($emails);
+            $array_email = explode(',', $emails);
+            // dd($array_email);
+            Mail::send(
+                'emailwo',
+                [
+                    'pesan' => 'Work Order Release Waiting For Approval',
+                    'note1' => $wonumber,
+                    'note2' => $asset,
+                    'header1' => 'WO Number',
+                ],
+                function ($message) use ($array_email) {
+                    $message->subject('eAMS - Work Order Release Waiting For Approval');
+                    // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
+                    $message->to($array_email);
+                }
+            );
+
+            foreach ($emailrequestor as $approver) {
+                $user = App\User::where('id', '=', $approver->id)->first();
+                $details = [
+                    'body' => 'Work Order Release Waiting For Approval',
+                    'url' => 'woreleaseapprovalbrowse',
+                    'nbr' => $wonumber,
+                    'note' => 'Please check'
+
+                ]; // isi data yang dioper
+
+                $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel                
+
+            }
+
+                  
+
+
+        } else if ($a == 16) { //kirim email ke engineer yg melakukan released ketika work order released di approved
+            $asset = $this->asset;
+            $requestor = $this->requestor;
+            $srnumber = $this->srnumber;
+            // $rejectnote = $this->rejectnote;
+            // dd($requestor);
+            $emailrequestor = DB::table('users')
+                ->where('username', '=', $requestor)
+                ->first();
+            // dd($emailrequestor);
+
+            Mail::send(
+                'emailrequestor',
+                [
+                    'pesan' => 'Work Order Release has been approved',
+                    'note1' => $srnumber,
+                    'note2' => $asset,
+                ],
+                function ($message) use ($emailrequestor) {
+                    $message->subject('eAMS - Work Order Release has been approved');
+                    // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
+                    $message->to($emailrequestor->email_user);
+                }
+            );
+
+            $user = App\User::where('id', '=', $emailrequestor->id)->first();
+            $details = [
+                'body' => '',
+                'url' => 'woreleaseapprovalbrowse',
+                'nbr' => $srnumber,
+                'note' => 'Please check'
+
+            ]; // isi data yang dioper
+
+
+            $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
 
         }
     }

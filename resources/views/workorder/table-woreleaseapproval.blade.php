@@ -18,9 +18,9 @@
 
   <td class="foot1" data-label="Status">{{ $show->retr_status }}</td>
   <td class="foot1" data-label="Priority">{{ $show->wo_priority }}</td>
+  <td class="foot1" data-label="ReleasedDate">{{date('d-m-Y', strtotime($show->wo_released_date))}}</td>
+  <td class="foot1" data-label="ReleasedTime">{{date('H:i', strtotime($show->wo_released_time))}}</td>
   <td class="foot1" data-label="ReleasedBy">{{ $show->wo_releasedby }}</td>
-  <td class="foot1" data-label="ReleasedDate">{{date('d-m-Y', strtotime($show->wo_job_finishdate))}}</td>
-  <td class="foot1" data-label="ReleasedTime">{{date('H:i', strtotime($show->wo_job_finishtime))}}</td>
   <td class="foot1" style="text-align: center;">
     <input type="hidden" name='wonbrr' value="{{$show->wo_number}}">
     @if($show->getCurrentApproverRelease != null)
