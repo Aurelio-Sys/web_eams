@@ -471,6 +471,13 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
+                @if(str_contains( Session::get('menu_access'), 'BO06'))
+                <li class="nav-item has-treeview">
+                  <a href="{{url('/reqspapproval')}}" class="nav-link">
+                      <p>Request Sparepart Approval</p>
+                  </a>
+                </li>
+                @endif
                 @if(str_contains( Session::get('menu_access'), 'BO04'))
                 <li class="nav-item has-treeview">
                   <a href="{{url('/trfsp')}}" class="nav-link">

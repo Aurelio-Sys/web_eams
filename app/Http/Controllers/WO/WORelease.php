@@ -4,6 +4,7 @@ namespace App\Http\Controllers\WO;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\EmailScheduleJobs;
+use App\Jobs\SendNotifWOReleaseApproval;
 use App\Jobs\SendWorkOrderWarehouseNotification;
 use App\Services\CreateTempTable;
 use App\Services\WSAServices;
@@ -1178,7 +1179,7 @@ class WORelease extends Controller
                     // dd($getFirstApprover);
 
                     //send notifikasi ke approver pertama
-                    // SendNotifWoFinish::dispatch($requestData['hide_wonum'], $getFirstApprover->sp_approver_role);
+                    SendNotifWOReleaseApproval::dispatch($requestData['hide_wonum'], $getFirstApprover->sp_approver_role, Session::get('department'));
 
                     //get wo dan sr mstr
                     $womstr = DB::table('wo_mstr')->where('wo_number', $requestData['hide_wonum'])->first();

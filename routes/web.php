@@ -782,8 +782,12 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/reqspsubmit', [SparepartController::class,'reqspsubmit'])->name('reqspsubmit');
 	Route::get('/reqspeditdet',[SparepartController::class, 'reqspeditdet']);
 	Route::get('/reqspviewdet',[SparepartController::class, 'reqspviewdet']);
+	Route::get('/reqspviewdetappr',[SparepartController::class, 'reqspviewdetappr']);
+	Route::get('/reqsprouteappr',[SparepartController::class, 'reqsprouteappr']);
 	Route::post('/reqspupdate',[SparepartController::class, 'reqspupdate']);
 	Route::post('/reqspcancel', [SparepartController::class, 'reqspcancel']);
+	Route::get('/reqspapproval', [SparepartController::class, 'reqspapprovalbrowse'])->name('approvalBrowseSP');
+	Route::post('/reqspapprove', [SparepartController::class, 'reqspapproval'])->name('approveSP');
 
 	//Transfer Sparepart
 	Route::get('/trfsp', [SparepartController::class, 'trfspbrowse'])->name('trfspbrowse');

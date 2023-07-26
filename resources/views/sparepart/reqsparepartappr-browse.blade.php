@@ -3,18 +3,19 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-9">
-            <h1 class="m-0 text-dark">Request Sparepart Maintenance</h1>
-            <p class="pb-0 m-0">Menu ini berfungsi untuk melakukan permintaan sparepart tanpa melalui Work Order</p>
+            <h1 class="m-0 text-dark">Request Sparepart Approval</h1>
+            <p class="pb-0 m-0">Menu ini berfungsi untuk melakukan approval pada request sparepart</p>
         </div><!-- /.col -->
-        <div class="col-sm-3">
+        <!-- <div class="col-sm-3">
             <a class="btn btn-block btn-primary" href="{{route('reqspcreate')}}">
                 Request Sparepart</a>
-        </div><!-- /.col -->
+        </div> -->
+        <!-- /.col -->
     </div><!-- /.row -->
 </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-<form action="/reqsp" method="GET">
+<form action="/reqspapproval" method="GET">
     <div class="container-fluid mb-2">
         <div class="row">
             <div class="col-md-12">
@@ -91,7 +92,7 @@
             </tr>
         </thead>
         <tbody>
-            @include('sparepart.table-reqsparepartbrowse')
+            @include('sparepart.table-reqsparepartapprbrowse')
         </tbody>
     </table>
     <input type="hidden" name="hidden_page" id="hidden_page" value="1" />
@@ -142,6 +143,12 @@
                         <tbody id='v_detailapp'></tbody>
                     </table>
                 </div>
+                <div class="form-group row col-md-12">
+                    <label for="v_message" class="col-md-4 col-form-label text-md-left">eAMS Message</label>
+                    <div class="col-md-6" id="v_message">
+                        <!-- <p id="v_message"></p> -->
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
@@ -150,17 +157,17 @@
     </div>
 </div>
 
-<!-- Request Sparepart Edit -->
-<div class="modal fade" id="editModal" role="dialog" aria-hidden="true" data-backdrop="static">
+<!-- Request Sparepart Approval -->
+<div class="modal fade" id="approvalModal" role="dialog" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">Request Sparepart Edit</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Request Sparepart Approval</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/reqspupdate">
+            <form class="form-horizontal" method="post" action="/reqspapprove">
                 <!-- <form class="form-horizontal" method="post" action="#"> -->
                 {{ csrf_field() }}
                 <div class="modal-body">
@@ -181,7 +188,7 @@
                         </div>
                         <label for="e_duedate" class="col-md-3 col-form-label">Needed Date</label>
                         <div class="col-md-3">
-                            <input type="date" class="form-control" id="e_duedate" name="e_duedate">
+                            <input type="date" class="form-control" id="e_duedate" name="e_duedate" readonly>
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -191,25 +198,96 @@
                                 <th width="15%">Qty Request</th>
                                 <th width="20%">Location To</th>
                                 <th width="20%">Note</th>
-                                <th width="10%">Delete</th>
+                                <!-- <th width="10%">Delete</th> -->
                             </thead>
                             <tbody id='ed_detailapp'></tbody>
                             <tfoot>
-                                <tr>
+                                <!-- <tr>
                                     <td colspan="5">
                                         <input type="button" class="btn btn-lg btn-block btn-focus" id="ed_addrow" value="Add Item" style="background-color:#1234A5; color:white; font-size:16px" />
                                     </td>
-                                </tr>
+                                </tr> -->
                             </tfoot>
                         </table>
                     </div>
+                    <div class="form-group row col-md-12">
+                    <!-- <label class="col-md-12 col-form-label text-md-center"><b>Completed</b></label> -->
+                    <label for="v_reason" class="col-md-4 col-form-label text-md-left">Reason</label>
+                    <div class="col-md-6">
+                        <textarea id="v_reason" name="v_reason" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success bt-action" id="btnedit">Save</button>
+                    <button type="submit" class="btn btn-danger bt-action" name="action" value="reject" id="btreject">Reject</button>
+                    <button type="submit" class="btn btn-success bt-action" name="action" value="approve" id="btnapproval">Approve</button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!--Request Sparepart route-->
+<div class="modal fade" id="routeModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center" id="exampleModalLabel">Route to Action</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group row" style="margin: 0px 0px 0.8em 0px;">
+                    <label for="r_rsnumber" class="col-md-3 col-form-label">RS Number</label>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" id="r_rsnumber" name="r_rsnumber" readonly>
+                    </div>
+                    <label for="r_reqby" class="col-md-3 col-form-label">Requested By</label>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" id="r_reqby" name="r_reqby" readonly>
+                    </div>
+                </div>
+                <div class="form-group row" style="margin: 0px 0px 1.5em 0px;">
+                    <label for="r_wonumber" class="col-md-3 col-form-label">WO Number</label>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" id="r_wonumber" name="r_wonumber" readonly>
+                    </div>
+                    <label for="r_duedate" class="col-md-3 col-form-label">Needed Date</label>
+                    <div class="col-md-3">
+                        <input type="date" class="form-control" id="r_duedate" name="r_duedate" readonly>
+                    </div>
+                </div>
+                <div class="form-group row" style="margin-bottom: 0px;">
+                    <div class="col-lg-12 col-md-12" style="overflow-x: auto; display: block;white-space: nowrap;">
+                        <table id='routetable' class='table route-list' style="margin-bottom: 0px;">
+                            <thead>
+                                <tr>
+                                    <th style="width:10%">No.</th>
+                                    <th style="width:10%">Department</th>
+                                    <th style="width:10%">Role</th>
+                                    <th style="width:15%">Reason</th>
+                                    <th style="width:10%">Status</th>
+                                    <th style="width:10%">Approved By</th>
+                                    <th style="width:15%">Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id='bodyroute'>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-info btn-outline-success" id="e_btnclose" data-dismiss="modal"><i
+                        class="fas fa-undo"></i>&nbsp;Cancel</button> -->
+            </div>
+
         </div>
     </div>
 </div>
@@ -287,6 +365,14 @@
             }
         })
 
+        $.ajax({
+            url: "reqspviewdetappr?code=" + rsnumber,
+            success: function(data) {
+                // console.log(data);
+                $('#v_message').html('').append(data);
+            }
+        })
+
     });
 
     $(document).on('click', '.cancelreqsp', function() {
@@ -300,9 +386,9 @@
 
     });
 
-    $(document).on('click', '.editreqsp', function() {
+    $(document).on('click', '.approvalreqsp', function() {
 
-        $('#editModal').modal('show');
+        $('#approvalModal').modal('show');
 
         var rsnumber = $(this).data('rsnumber');
         var reqby = $(this).data('reqby');
@@ -317,12 +403,40 @@
         document.getElementById('e_wonumber').value = wonumber;
 
         $.ajax({
-            url: "reqspeditdet?code=" + rsnumber,
+            url: "reqspviewdet?code=" + rsnumber,
             success: function(data) {
                 // console.log(data);
                 $('#ed_detailapp').html('').append(data);
             }
         })
+
+    });
+
+    $(document).on('click', '.route', function() {
+        $('#routeModal').modal('show');
+
+        var rsnumber = $(this).data('rsnumber');
+        var reqby = $(this).data('reqby');
+        var duedate = $(this).data('duedate');
+        var wonumber = $(this).data('wonumber');
+
+        document.getElementById('r_rsnumber').value = rsnumber;
+        document.getElementById('r_reqby').value = reqby;
+        document.getElementById('r_duedate').value = duedate;
+        document.getElementById('r_wonumber').value = wonumber;
+
+        $.ajax({
+            type: "GET",
+            url: "/reqsprouteappr",
+            data: {
+                rs_number: rsnumber
+            },
+            success: function(data) {
+                $('#bodyroute').html(data);
+            }
+        });
+
+
 
     });
 

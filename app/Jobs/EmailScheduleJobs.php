@@ -1009,28 +1009,22 @@ class EmailScheduleJobs
             // dd($emails);
             $array_email = explode(',', $emails);
             // dd($array_email);
-            Mail::send(
-                'emailwo',
+            Mail::send('emailsend-woreleaseapproval',
                 [
-                    'pesan' => 'Work Order Release Waiting For Approval',
-                    'note1' => $wonumber,
-                    'note2' => $asset,
-                    'header1' => 'WO Number',
-                ],
-                function ($message) use ($array_email) {
-                    $message->subject('eAMS - Work Order Release Waiting For Approval');
-                    // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
-                    $message->to($array_email);
-                }
-            );
+                    'wonumber' => $wonumber,
+                ],function ($message) use($array_email,$wonumber){
+                        $message->subject('eAMS - Work Order Release Approval Needed for '.$wonumber.'');
+                        $message->to($array_email);
+                });
+
 
             foreach ($emailrequestor as $approver) {
                 $user = App\User::where('id', '=', $approver->id)->first();
                 $details = [
-                    'body' => 'Work Order Release Waiting For Approval',
+                    'body' => 'Work Order Release Approval needed for '.$wonumber.'',
                     'url' => 'woreleaseapprovalbrowse',
                     'nbr' => $wonumber,
-                    'note' => 'Please check'
+                    'note' => 'Please review and provide approval promptly'
 
                 ]; // isi data yang dioper
 
@@ -1038,9 +1032,36 @@ class EmailScheduleJobs
 
             }
 
-                  
+            // Mail::send(
+            //     'emailwo',
+            //     [
+            //         'pesan' => 'Work Order Release Waiting For Approval',
+            //         'note1' => $wonumber,
+            //         'note2' => $asset,
+            //         'header1' => 'WO Number',
+            //     ],
+            //     function ($message) use ($array_email) {
+            //         $message->subject('eAMS - Work Order Release Waiting For Approval');
+            //         // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
+            //         $message->to($array_email);
+            //     }
+            // );
 
+            // foreach ($emailrequestor as $approver) {
+            //     $user = App\User::where('id', '=', $approver->id)->first();
+            //     $details = [
+            //         'body' => 'Work Order Release Waiting For Approval',
+            //         'url' => 'woreleaseapprovalbrowse',
+            //         'nbr' => $wonumber,
+            //         'note' => 'Please check'
 
+            //     ]; // isi data yang dioper
+
+            //     $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel                
+
+            // }
+
+                
         } else if ($a == 16) { //kirim email ke engineer yg melakukan released ketika work order released di approved
             $asset = $this->asset;
             $requestor = $this->requestor;

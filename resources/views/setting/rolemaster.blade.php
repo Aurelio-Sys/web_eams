@@ -435,6 +435,15 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Request Sparepart Approval') }}</label>
+              <div class="col-6">
+                <label class="switch" for="reqspappr">
+                  <input type="checkbox" class="custom-control-input" id="reqspappr" name="reqspappr" value="BO06" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Transfer Sparepart') }}</label>
               <div class="col-6">
                 <label class="switch" for="trfsp">
@@ -1314,6 +1323,15 @@
               <div class="col-6">
                 <label class="switch" for="e_reqsp">
                   <input type="checkbox" class="custom-control-input" id="e_reqsp" name="e_reqsp" value="BO03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Request Sparepart Approval') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_reqspappr">
+                  <input type="checkbox" class="custom-control-input" id="e_reqspappr" name="e_reqspappr" value="BO06" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -2385,6 +2403,11 @@
           document.getElementById('e_accutrf').checked = true;
         } else {
           document.getElementById('e_accutrf').checked = false;
+        }
+        if (listmenu.search("BO06") >= 0) {
+          document.getElementById('e_reqspappr').checked = true;
+        } else {
+          document.getElementById('e_reqspappr').checked = false;
         }
 
         //Report

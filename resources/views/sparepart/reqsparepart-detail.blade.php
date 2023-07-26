@@ -39,6 +39,17 @@
                 <input type="date" class="form-control" id="due_date" name="due_date" value="" required>
             </div>
         </div>
+        <div class="form-group row" style="padding-left: 1em; margin-top: 1.5em;">
+            <label class="col-md-3 col-form-label" style="font-size: 17px">WO Number</label>
+            <div class="col-md-3">
+                <select name="wonbr" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" autofocus>
+                    <option value=""> -- Select WO Number -- </option>
+                    @foreach($womstr as $da)
+                    <option value="{{$da->wo_number}}"> {{$da->wo_number}} </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
 
 
         <div class="modal-body">
@@ -71,7 +82,7 @@
                                     <input type="number" class="form-control" step="1" min="0" name="qtyrequired[]" value="{{$datas->spg_qtyreq}}" required />
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
-                                    <textarea type="text" id="reqnotes" class="form-control reqnotes" name="reqnotes[]" rows="2" ></textarea>
+                                    <textarea type="text" id="reqnotes" class="form-control reqnotes" name="reqnotes[]" rows="2"></textarea>
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
                                     <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete">
@@ -177,7 +188,7 @@
             cols += '<td>';
             cols += '<input type="number" class="form-control qtyrequest" name="qtyrequest[]" step=".01" min="0" required />';
             cols += '</td>';
-            
+
             cols += '<td>';
             cols += '<select name="locto[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
             cols += '<option value = ""> -- Select Location To -- </option>';
