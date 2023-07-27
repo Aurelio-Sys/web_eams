@@ -3168,8 +3168,10 @@ class wocontroller extends Controller
     {
         if (strpos(Session::get('menu_access'), 'WO08') !== false) {
             $usernow = DB::table('users')
-                ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
-                ->where('username', '=', session()->get('username'))
+                ->join('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+                ->where('eng_code', '=', session()->get('username'))
+                ->where('active', '=', 'Yes')
+                ->where('approver', '=', 1)
                 ->first();
             // dd($usernow);
 
@@ -3198,15 +3200,20 @@ class wocontroller extends Controller
                 ->orderBy('wo_mstr.id', 'desc')
                 ->groupBy('wo_mstr.wo_number');
 
-            if (Session::get('role') <> 'ADMIN' && Session::get('role') <> 'QCA') {
-                $data = $data->join('wo_trans_approval', function ($join) {
-                    $join->on('wo_mstr.id', '=', 'wo_trans_approval.wotr_mstr_id')
-                        ->where('wotr_dept_approval', '=', Session::get('department'))
-                        ->where('wotr_role_approval', '=', Session::get('role'))
-                        ->where('wo_department', Session::get('department'));
-                });
+            if ($usernow != null) {
+                if (Session::get('role') <> 'ADMIN' && Session::get('role') <> 'QCA') {
+                    $data = $data->join('wo_trans_approval', function ($join) {
+                        $join->on('wo_mstr.id', '=', 'wo_trans_approval.wotr_mstr_id')
+                            ->where('wotr_dept_approval', '=', Session::get('department'))
+                            ->where('wotr_role_approval', '=', Session::get('role'))
+                            ->where('wo_department', Session::get('department'));
+                    });
+                } else {
+                    $data = $data->join('wo_trans_approval', 'wo_trans_approval.wotr_mstr_id', 'wo_mstr.id');
+                }
             } else {
-                $data = $data->join('wo_trans_approval', 'wo_trans_approval.wotr_mstr_id', 'wo_mstr.id');
+                toast('Anda tidak memiliki akses menu untuk melakukan approval, silahkan kontak admin', 'error');
+                return back();
             }
 
             $data = $data->paginate(10);
