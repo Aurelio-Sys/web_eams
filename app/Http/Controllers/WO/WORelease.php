@@ -30,8 +30,8 @@ class WORelease extends Controller
         $asset1 = DB::table('asset_mstr')
             ->where('asset_active', '=', 'Yes')
             ->get();
-        
-        if (Session::get('role') == 'ADMIN' ) {
+
+        if (Session::get('role') == 'ADMIN') {
             $data = DB::table('wo_mstr')
                 ->select('wo_mstr.id as wo_id', 'wo_number', 'asset_code', 'asset_desc', 'wo_status', 'wo_start_date', 'wo_due_date', 'wo_priority')
                 ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
@@ -39,10 +39,10 @@ class WORelease extends Controller
                 ->orderby('wo_system_create', 'desc');
         } elseif (Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR') {
             $data = DB::table('wo_mstr')
-                ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
+                ->select('wo_mstr.id as wo_id', 'wo_number', 'asset_code', 'asset_desc', 'wo_status', 'wo_start_date', 'wo_due_date', 'wo_priority')
                 ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
-                ->where('wo_status','=','firm')
-                ->where('wo_department','=', Session::get('department'))
+                ->where('wo_status', '=', 'firm')
+                ->where('wo_department', '=', Session::get('department'))
                 ->orderby('wo_system_create', 'desc');
         } else {
 
@@ -148,8 +148,10 @@ class WORelease extends Controller
     {
         if (strpos(Session::get('menu_access'), 'WO10') !== false) {
             $usernow = DB::table('users')
-                ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
-                ->where('username', '=', session()->get('username'))
+                ->join('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+                ->where('eng_code', '=', session()->get('username'))
+                ->where('active', '=', 'Yes')
+                ->where('approver', '=', 1)
                 ->first();
             // dd($usernow);
 
@@ -170,16 +172,22 @@ class WORelease extends Controller
                 ->orderBy('wo_mstr.id', 'desc')
                 ->groupBy('wo_mstr.wo_number');
 
-            if (Session::get('role') <> 'ADMIN' && Session::get('role') <> 'WHS') {
-                $data = $data->join('release_trans_approval', function ($join) {
-                    $join->on('wo_mstr.id', '=', 'release_trans_approval.retr_mstr_id')
-                        ->where('retr_dept_approval', '=', Session::get('department'))
-                        ->where('retr_role_approval', '=', Session::get('role'))
-                        ->where('wo_department', Session::get('department'));
-                });
+            if ($usernow != null) {
+                if (Session::get('role') <> 'ADMIN' && Session::get('role') <> 'WHS') {
+                    $data = $data->join('release_trans_approval', function ($join) {
+                        $join->on('wo_mstr.id', '=', 'release_trans_approval.retr_mstr_id')
+                            ->where('retr_dept_approval', '=', Session::get('department'))
+                            ->where('retr_role_approval', '=', Session::get('role'))
+                            ->where('wo_department', Session::get('department'));
+                    });
+                } else {
+                    $data = $data->join('release_trans_approval', 'release_trans_approval.retr_mstr_id', 'wo_mstr.id');
+                }
             } else {
-                $data = $data->join('release_trans_approval', 'release_trans_approval.retr_mstr_id', 'wo_mstr.id');
+                toast('Anda tidak memiliki akses menu untuk melakukan approval, silahkan kontak admin', 'error');
+                return back();
             }
+
 
             $data = $data->paginate(10);
             // dd($data);
@@ -606,7 +614,7 @@ class WORelease extends Controller
             ->where('retr_sequence', '>', $woapprover->retr_sequence)
             ->first();
 
-            // dd($nextapprover);
+        // dd($nextapprover);
 
         //cek previous approver
         $prevapprover = DB::table('release_trans_approval')->where('retr_mstr_id', $woapprover->retr_mstr_id)
@@ -747,7 +755,7 @@ class WORelease extends Controller
                         EmailScheduleJobs::dispatch('', $asset, '16', '', $requestor, $srnumber, '');
                     }
                 }
-            } 
+            }
             // else {
             //     if ($womstr->wo_sr_number == "") {
             //         //jika wo tidak memiliki sr number 
