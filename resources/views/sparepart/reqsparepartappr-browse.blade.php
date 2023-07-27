@@ -144,6 +144,12 @@
                     </table>
                 </div>
                 <div class="form-group row col-md-12">
+                    <label for="vi_reason" class="col-md-4 col-form-label text-md-left">Reason</label>
+                    <div class="col-md-6">
+                        <textarea id="vi_reason" name="vi_reason" class="form-control" rows="2" readonly></textarea>
+                    </div>
+                </div>
+                <div class="form-group row col-md-12">
                     <label for="v_message" class="col-md-4 col-form-label text-md-left">eAMS Message</label>
                     <div class="col-md-6" id="v_message">
                         <!-- <p id="v_message"></p> -->
@@ -211,7 +217,6 @@
                         </table>
                     </div>
                     <div class="form-group row col-md-12">
-                    <!-- <label class="col-md-12 col-form-label text-md-center"><b>Completed</b></label> -->
                     <label for="v_reason" class="col-md-4 col-form-label text-md-left">Reason</label>
                     <div class="col-md-6">
                         <textarea id="v_reason" name="v_reason" class="form-control" rows="2"></textarea>
@@ -351,11 +356,13 @@
         var reqby = $(this).data('reqby');
         var duedate = $(this).data('duedate');
         var wonumber = $(this).data('wonumber');
+        var reason = $(this).data('reason');
 
         document.getElementById('v_rsnumber').value = rsnumber;
         document.getElementById('v_reqby').value = reqby;
         document.getElementById('v_duedate').value = duedate;
         document.getElementById('v_wonumber').value = wonumber;
+        document.getElementById('vi_reason').value = reason;
 
         $.ajax({
             url: "reqspviewdet?code=" + rsnumber,
@@ -424,6 +431,8 @@
         document.getElementById('r_reqby').value = reqby;
         document.getElementById('r_duedate').value = duedate;
         document.getElementById('r_wonumber').value = wonumber;
+
+        // console.log(document.getElementById('r_duedate').value = duedate);
 
         $.ajax({
             type: "GET",

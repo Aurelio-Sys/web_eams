@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\EmailScheduleJobs;
 use App\Jobs\SendNotifReqSparepart;
 use App\Jobs\SendNotifReqSparepartApproval;
 use App\Jobs\SendNotifWarehouseToUser;
@@ -670,37 +671,45 @@ class SparepartController extends Controller
     {
         if (strpos(Session::get('menu_access'), 'BO06') !== false) {
             $usernow = DB::table('users')
-                ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
-                ->where('username', '=', session()->get('username'))
+                ->join('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+                ->where('eng_code', '=', session()->get('username'))
+                ->where('active', '=', 'Yes')
+                ->where('approver', '=', 1)
                 ->first();
-            // dd($usernow);
+            // dd($engineer);
 
             $data = ReqSPMstr::query()
                 ->with(['getCurrentApprover'])
                 ->whereHas('getReqSPTransAppr', function ($q) {
                     $q->where('rqtr_status', '=', 'waiting for approval');
                     $q->orWhere('rqtr_status', '=', 'approved');
-                    $q->orWhere('rqtr_status', '=', 'rejected');
+                    $q->orWhere('rqtr_status', '=', 'revision');
                 });
 
             $data = $data
                 ->leftJoin('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
-                ->Join('users', 'req_sparepart.req_sp_requested_by', 'users.username')
-                ->selectRaw('req_sparepart.*, sp_mstr.*, users.username')
+                ->join('users', 'req_sparepart.req_sp_requested_by', 'users.username')
                 ->groupBy('req_sp_number')
                 ->orderBy('req_sp_due_date', 'ASC');
 
-            if (Session::get('role') <> 'ADMIN') {
-                $data = $data->join('reqsp_trans_approval', function ($join) {
-                    $join->on('req_sparepart.id', '=', 'reqsp_trans_approval.rqtr_mstr_id')
-                        // ->where('rqtr_dept_approval', '=', Session::get('department'))
-                        ->where('rqtr_role_approval', '=', Session::get('role'));
-                    // ->where('req_sp_dept', Session::get('department'));
-                });
+            //pengecekan apakah user yg login adalah approver atau tidak
+            if ($usernow != null) {
+                //jika approver bukan admin
+                if (Session::get('role') <> 'ADMIN') {
+                    $data = $data->join('reqsp_trans_approval', function ($join) {
+                        $join->on('req_sparepart.id', '=', 'reqsp_trans_approval.rqtr_mstr_id')
+                            ->where('rqtr_dept_approval', '=', Session::get('department'))
+                            ->where('rqtr_role_approval', '=', Session::get('role'));
+                    });
+                } else {
+                    $data = $data->join('reqsp_trans_approval', 'reqsp_trans_approval.rqtr_mstr_id', 'req_sparepart.id');
+                }
             } else {
-                $data = $data->join('reqsp_trans_approval', 'reqsp_trans_approval.rqtr_mstr_id', 'req_sparepart.id');
+                toast('Anda tidak memiliki akses menu untuk melakukan approval, silahkan kontak admin', 'error');
+                return back();
             }
+
 
             $sp_all = DB::table('sp_mstr')
                 ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
@@ -734,7 +743,9 @@ class SparepartController extends Controller
                 $data->where('req_sp_due_date', '<=', $dateto);
             }
 
-            $data = $data->paginate(10);
+            $data = $data
+                ->selectRaw('req_sparepart.*, sp_mstr.*, users.username, rqtr_status, rqtr_dept_approval, rqtr_role_approval, rqtr_reason, rqtr_approved_by, reqsp_trans_approval.updated_at')
+                ->paginate(10);
 
             // dd($data);
 
@@ -754,7 +765,7 @@ class SparepartController extends Controller
 
         $user = Auth::user();
 
-        $idrs = ReqSPMstr::where('req_sp_number', $rsnbr)->first();
+        $idrs = ReqSPMstr::where('req_sp_number', $rsnbr)->pluck('id')->first();
 
         //ambil data Req SP
         $reqspmstr = DB::table('req_sparepart')
@@ -766,7 +777,9 @@ class SparepartController extends Controller
 
         $srmstr = DB::table('service_req_mstr')->where('wo_number', $reqspmstr->req_sp_wonumber)->first();
 
-        $asset = $reqspmstr->asset_code . ' -- ' . $reqspmstr->asset_desc;
+        $wo = $reqspmstr->req_sp_wonumber;
+
+        // $asset = $reqspmstr->asset_code . ' -- ' . $reqspmstr->asset_desc;
         $srnumber = $reqspmstr->req_sp_wonumber;
 
         $roleapprover = $user->role_user;
@@ -824,6 +837,27 @@ class SparepartController extends Controller
             'updated_at' => Carbon::now()->toDateTimeString(),
         ];
 
+        //wo approved setelah direject
+        $rqtranswaiting = [
+            // 'rqtr_dept_approval' => $user->dept_user,
+            'rqtr_status'      => 'waiting for approval',
+            'rqtr_reason'      => '',
+            'rqtr_approved_by' => '',
+            'updated_at' => '',
+        ];
+
+        $rqtranswaitinghist = [
+            'rqtrh_rs_number'        => $reqspmstr->req_sp_number,
+            'rqtrh_wo_number'        => $reqspmstr->req_sp_wonumber,
+            'rqtrh_dept_approval'    => $user->dept_user,
+            'rqtrh_role_approval'    => $user->role_user,
+            'rqtrh_status'           => 'Request SP waiting for approval again',
+            // 'rqtrh_reason'           => $reason,
+            // 'rqtrh_sequence'         => $woapprover->rqtr_sequence,
+            // 'rqtrh_approved_by'      => $user->id,
+            'updated_at' => Carbon::now()->toDateTimeString(),
+        ];
+
         //wo rejected
         $rqtransreject = [
             // 'rqtr_dept_approval' => $user->dept_user,
@@ -846,13 +880,12 @@ class SparepartController extends Controller
 
         if ($req->action == 'approve') {
 
-            $srnumber = $reqspmstr->req_sp_wonumber ? $reqspmstr->req_sp_wonumber : $reqspmstr->req_sp_number;
-            $requestor = $reqspmstr->wo_releasedby;
+            $srnumber = $reqspmstr->req_sp_number;
+            $requestor = $reqspmstr->req_sp_requested_by;
 
             if ($countwoapprover != 0) {
                 //jika next approver null
                 if (is_null($nextapprover)) {
-                    // dd(1);
                     //cek apakah approver admin atau bukan
                     if (Session::get('role') <> 'ADMIN') {
                         //jika user bukan admin, hanya tingkatan yang rolenya sama yang akan menjadi approved
@@ -861,7 +894,7 @@ class SparepartController extends Controller
                             ->where('rqtr_role_approval', '=', $user->role_user)
                             ->update($rqtransapproved);
 
-                        DB::table('release_trans_approval_hist')
+                        DB::table('reqsp_trans_approval_hist')
                             ->insert($rqtransapprovedhist);
                     } else {
                         //jika user adalah admin, maka semua approval (approval bertingkat) akan menjadi approved
@@ -869,11 +902,11 @@ class SparepartController extends Controller
                             ->where('rqtr_mstr_id', '=', $idrs)
                             ->update($rqtransapproved);
 
-                        DB::table('release_trans_approval_hist')
+                        DB::table('reqsp_trans_approval_hist')
                             ->insert($rqtransapprovedhist);
                     }
-                    //email terikirm ke engineer yg melakukan released
-                    // EmailScheduleJobs::dispatch('', $asset, '16', '', $requestor, $srnumber, '');
+                    //email terikirm ke engineer yg melakukan request sparepart
+                    EmailScheduleJobs::dispatch('', '', '18', '', $requestor, $srnumber, '');
                 } else {
                     // dd(2);
                     //jika next approval not null
@@ -884,16 +917,36 @@ class SparepartController extends Controller
                     //cek apakah approver admin atau bukan
                     if (Session::get('role') <> 'ADMIN') {
                         //jika user bukan admin, hanya tingkatan yang rolenya sama yang akan menjadi approved
-                        DB::table('reqsp_trans_approval')
-                            ->where('rqtr_mstr_id', '=', $idrs)
-                            ->where('rqtr_role_approval', '=', $user->role_user)
-                            ->update($rqtransapproved);
+                        if ($nextapprover->rqtr_status == 'revision') {
+                            //melakukan update data approval selain role approval supaya kembali menjadi waiting list
+                            DB::table('reqsp_trans_approval')
+                                ->where('rqtr_mstr_id', '=', $idrs)
+                                ->where('rqtr_role_approval', '!=', $user->role_user)
+                                ->update($rqtranswaiting);
 
-                        DB::table('release_trans_approval_hist')
-                            ->insert($rqtransapprovedhist);
+                            DB::table('reqsp_trans_approval_hist')
+                                ->insert($rqtranswaitinghist);
+
+                            //melakukan update data sesuai role approval menjadi approved
+                            DB::table('reqsp_trans_approval')
+                                ->where('rqtr_mstr_id', '=', $idrs)
+                                ->where('rqtr_role_approval', '=', $user->role_user)
+                                ->update($rqtransapproved);
+
+                            DB::table('reqsp_trans_approval_hist')
+                                ->insert($rqtransapprovedhist);
+                        } else {
+                            DB::table('reqsp_trans_approval')
+                                ->where('rqtr_mstr_id', '=', $idrs)
+                                ->where('rqtr_role_approval', '=', $user->role_user)
+                                ->update($rqtransapproved);
+
+                            DB::table('reqsp_trans_approval_hist')
+                                ->insert($rqtransapprovedhist);
+                        }
 
                         //email terikirm ke approver selanjutnya
-                        // EmailScheduleJobs::dispatch('', $asset, '15', $tampungarray, '', $srnumber, $roleapprover);
+                        EmailScheduleJobs::dispatch($wo, '', '17', $tampungarray, '', $srnumber, $roleapprover);
                     } else {
                         // dd(2);
                         //jika user adalah admin, maka semua approval (approval bertingkat) akan menjadi approved
@@ -901,65 +954,22 @@ class SparepartController extends Controller
                             ->where('rqtr_mstr_id', '=', $idrs)
                             ->update($rqtransapproved);
 
-                        DB::table('release_trans_approval_hist')
+                        DB::table('reqsp_trans_approval_hist')
                             ->insert($rqtransapprovedhist);
 
-                        //email terikirm ke engineer yg melakukan released
-                        // EmailScheduleJobs::dispatch('', $asset, '16', '', $requestor, $srnumber, '');
+                        //email terikirm ke engineer yg melakukan request sparepart
+                        EmailScheduleJobs::dispatch('', '', '18', '', $requestor, $srnumber, '');
                     }
                 }
             }
-            // else {
-            //     if ($reqspmstr->req_sp_wonumber == "") {
-            //         //jika wo tidak memiliki sr number 
-            //         DB::table('wo_mstr')
-            //             ->where('id', '=', $idrs)
-            //             ->update([
-            //                 'wo_status' => 'closed',
-            //                 'wo_system_update' => Carbon::now()->toDateTimeString(),
-            //             ]);
-
-            //         DB::table('wo_trans_history')
-            //             ->insert([
-            //                 'wo_number' => $reqspmstr->wo_number,
-            //                 'wo_action' => 'closed',
-            //                 'system_update' => Carbon::now()->toDateTimeString(),
-            //             ]);
-            //     } else {
-            //         //jika wo memiliki sr number akan kembali ke user acceptance dan wo di close oleh user
-            //         DB::table('wo_mstr')
-            //             ->where('id', '=', $idrs)
-            //             ->update([
-            //                 'wo_status' => 'acceptance',
-            //                 'wo_system_update' => Carbon::now()->toDateTimeString(),
-            //             ]);
-
-            //         DB::table('wo_trans_history')
-            //             ->insert([
-            //                 'wo_number' => $reqspmstr->wo_number,
-            //                 'wo_action' => 'acceptance',
-            //                 'system_update' => Carbon::now()->toDateTimeString(),
-            //             ]);
-
-            //         DB::table('service_req_mstr')
-            //             ->where('sr_number', '=', $reqspmstr->req_sp_wonumber)
-            //             ->update($srupdate);
-
-            //         DB::table('service_req_mstr_hist')
-            //             ->insert($srupdatehist);
-
-            //         //email terikirm ke user yang membuat SR
-            //         // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
-            //     }
-            // }
 
             DB::commit();
             toast('Request Sparepart ' . $reqspmstr->req_sp_number . ' approved successfuly', 'success');
             return redirect()->route('approvalBrowseSP');
-        }
-        else {
+        } else {
             //REJECT
-            $requestor = $reqspmstr->wo_list_engineer;
+            $srnumber = $reqspmstr->req_sp_number;
+            $requestor = $reqspmstr->req_sp_requested_by;
             if (is_null($nextapprover)) {
                 //kondisi hanya 1 approver atau approver terakhir
 
@@ -971,7 +981,7 @@ class SparepartController extends Controller
                         ->where('rqtr_role_approval', '=', $user->role_user)
                         ->update($rqtransreject);
 
-                    DB::table('release_trans_approval_hist')
+                    DB::table('reqsp_trans_approval_hist')
                         ->insert($rqtransrejecthist);
                 } else {
                     // dd('approver terakhir');
@@ -980,7 +990,7 @@ class SparepartController extends Controller
                         // ->where('srta_role_approval', '=', $user->role_user) <-- role dikomen biar semua approver statusnya revisi -->
                         ->update($rqtransreject);
 
-                    DB::table('release_trans_approval_hist')
+                    DB::table('reqsp_trans_approval_hist')
                         ->insert($rqtransrejecthist);
                 }
             } else {
@@ -990,12 +1000,12 @@ class SparepartController extends Controller
                     // ->where('srta_role_approval', '=', $user->role_user) <-- role dikomen biar semua approver statusnya revisi -->
                     ->update($rqtransreject);
 
-                DB::table('release_trans_approval_hist')
+                DB::table('reqsp_trans_approval_hist')
                     ->insert($rqtransrejecthist);
             }
 
-            //email terkirim ke wo list engineer
-            // EmailScheduleJobs::dispatch('', $asset, '11', '', $requestor, $srnumber, '');
+            //email terkirim ke engineer yg melakukan request sparepart
+            EmailScheduleJobs::dispatch($wo, '', '19', '', $requestor, $srnumber, '');
 
             // DB::commit();
             toast('Request Sparepart' . $reqspmstr->req_sp_number . ' has been rejected', 'success');

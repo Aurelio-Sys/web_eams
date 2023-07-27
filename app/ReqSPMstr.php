@@ -13,8 +13,8 @@ class ReqSPMstr extends Model
     {
         return $this->hasOne(ReqSPTransApproval::class, 'rqtr_mstr_id')
             ->where('rqtr_status', '=', 'waiting for approval')
-            ->orWhere('rqtr_status', '=', 'approved')
-            ->orWhere('rqtr_status', '=', 'rejected')
+            ->orWhere('rqtr_status', '=', 'revision')
+            // ->orWhere('rqtr_status', '=', 'rejected')
             ->orderBy('rqtr_sequence');
     }
 

@@ -49,10 +49,11 @@ class SendNotifReqSparepartApproval
         $userrole = $this->userrole;
         $userdept = $this->userdept;
 
-        $getUsersEmail = DB::table('users')
-                            ->where('role_user', '=', $userrole)
-                            ->where('dept_user', '=', $userdept)
-                            ->where('active', '=', 'Yes')
+        $getUsersEmail = DB::table('eng_mstr')
+                            ->where('eng_role', '=', $userrole)
+                            ->where('eng_dept', '=', $userdept)
+                            ->where('eng_active', '=', 'Yes')
+                            ->where('approver', '=', 1)
                             ->get();
 
         $emails = '';
@@ -80,7 +81,7 @@ class SendNotifReqSparepartApproval
                 $user = App\User::where('id', '=', $approver->id)->first();
                 $details = [
                     'body' => 'Request Sparepart Approval needed for '.$rsnumber.'',
-                    'url' => 'woreleaseapprovalbrowse',
+                    'url' => 'reqspapproval',
                     'nbr' => $rsnumber,
                     'note' => 'Please review and provide approval promptly'
 
