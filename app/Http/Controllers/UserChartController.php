@@ -405,17 +405,14 @@ class UserChartController extends Controller
         }
 
         if (!isset($engcode) && !isset($sdept)){
+            // query disamakan dengan assetsch
             $datawo = DB::table('wo_mstr')
-                ->select('wo_number','wo_status','wo_start_date','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note','wo_job_startdate','wo_job_finishdate','wo_type')
-                //->selectRaw('DAY(wo_start_date) as tgl')
-                ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_start_date) else day(wo_job_finishdate) end) as tgl")
+                ->select('wo_number','wo_status','wo_start_date','wo_list_engineer','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note',
+                    'wo_job_startdate','wo_job_finishdate','wo_type','wo_location','wo_site','asloc_desc')
+                ->selectRaw("day(wo_start_date) AS tgl")
                 ->join('asset_mstr','asset_code','=','wo_asset_code')
-                ->where(function ($query) use ($tgl) {
-                    $query->where('wo_job_startdate','like',date("Y-m",strtotime($tgl)).'%')
-                        ->orwhere('wo_job_finishdate','like',date("Y-m",strtotime($tgl)).'%');
-                })
-                ->whereRaw($kondisi)
-                // ->whereIn('wo_status',['open','plan','started'])
+                ->join('asset_loc','asloc_code','=','wo_location')
+                ->where('wo_start_date','like',date("Y-m",strtotime($tgl)).'%')
                 ->orderBy('tgl')
                 ->orderBy('wo_number')
                 ->get();
@@ -424,29 +421,25 @@ class UserChartController extends Controller
         }
         else
         {
-            //dd(date("Y-m",strtotime($tgl)));
             $datawo = DB::table('wo_mstr')
-                ->select('wo_number','wo_status','wo_start_date','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note','wo_job_startdate','wo_job_finishdate','wo_type')
-                //->selectRaw('DAY(wo_start_date) as tgl')
-                ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_start_date) else day(wo_job_finishdate) end) as tgl")
+                ->select('wo_number','wo_status','wo_start_date','wo_list_engineer','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note',
+                    'wo_job_startdate','wo_job_finishdate','wo_type','wo_location','wo_site','asloc_desc')
+                ->selectRaw("day(wo_start_date) AS tgl")
                 ->join('asset_mstr','asset_code','=','wo_asset_code')
-                ->whereRaw($kondisi)
-                ->where(function ($query) use ($tgl) {
-                    $query->where('wo_job_startdate','like',date("Y-m",strtotime($tgl)).'%')
-                        ->orwhere('wo_job_finishdate','like',date("Y-m",strtotime($tgl)).'%');
-                })
-                // ->whereIn('wo_status',['open','plan','started'])
+                ->join('asset_loc','asloc_code','=','wo_location')
+                ->where('wo_start_date','like',date("Y-m",strtotime($tgl)).'%')
                 ->orderBy('tgl')
                 ->orderBy('wo_number');
-            
+         
             if(isset($engcode)) {
-                $datawo = $datawo->where(function ($query) use ($engcode) {
-                    $query->where('wo_engineer1', '=', $engcode)
-                          ->orWhere('wo_engineer2', '=', $engcode)
-                          ->orWhere('wo_engineer3', '=', $engcode)
-                          ->orWhere('wo_engineer4', '=', $engcode)
-                          ->orWhere('wo_engineer5', '=', $engcode);
-                });
+                // $datawo = $datawo->where(function ($query) use ($engcode) {
+                //     $query->where('wo_engineer1', '=', $engcode)
+                //           ->orWhere('wo_engineer2', '=', $engcode)
+                //           ->orWhere('wo_engineer3', '=', $engcode)
+                //           ->orWhere('wo_engineer4', '=', $engcode)
+                //           ->orWhere('wo_engineer5', '=', $engcode);
+                // });
+                $datawo = $datawo->where('wo_list_engineer','like','%'.$engcode.'%');
             }
             if(isset($sdept)) {
                 $datawo = $datawo->where('eng_dept','=',$sdept);
@@ -768,25 +761,49 @@ class UserChartController extends Controller
         }
         
         $dataAsset = DB::table('asset_mstr')
-                    ->orderBy('asset_code')
-                    ->get();
+            ->leftJoin('asset_loc', function($join) {
+                $join->on('asloc_code','=','asset_loc');
+                $join->on('asloc_site','=','asset_site');
+            })
+            ->orderBy('asset_code')
+            ->get();
 
         if (!isset($code) && !isset($sloc)){
-
+            // dd($tgl);
+            // select semua data berdasarkan tanggal schedule date (wo_start_date) di bulan yang tampil
             $datawo = DB::table('wo_mstr')
                 ->select('wo_number','wo_status','wo_start_date','wo_list_engineer','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note',
-                    'wo_job_startdate','wo_job_finishdate','wo_type')
-                ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_job_startdate) else day(wo_job_finishdate) end) as tgl")
+                    'wo_job_startdate','wo_job_finishdate','wo_type','wo_location','wo_site','asloc_desc')
+                // ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_job_startdate) else day(wo_job_finishdate) end) as tgl")
+                ->selectRaw("day(wo_start_date) AS tgl")
                 ->join('asset_mstr','asset_code','=','wo_asset_code')
-                ->where(function ($query) use ($tgl) {
-                    $query->where('wo_job_startdate','like',date("Y-m",strtotime($tgl)).'%')
-                        ->orwhere('wo_job_finishdate','like',date("Y-m",strtotime($tgl)).'%');
-                })
+                ->join('asset_loc','asloc_code','=','wo_location')
+                ->where('wo_start_date','like',date("Y-m",strtotime($tgl)).'%')
+                // ->where(function ($query) use ($tgl) {
+                //     $query->where('wo_job_startdate','like',date("Y-m",strtotime($tgl)).'%')
+                //         ->orwhere('wo_job_finishdate','like',date("Y-m",strtotime($tgl)).'%');
+                // })
                 ->orderBy('tgl')
                 ->orderBy('wo_number')
                 // ->whereIn('wo_status',['open','plan','started'])
                 ->get();
+// dd($datawo);
+            // rumus lama ditutup dulu, ngga tau kenapa rumus select nya. sementara diganti semua wo yang tanggal schedule nya bulan ini ditampilkan
+            // $datawo = DB::table('wo_mstr')
+            //     ->select('wo_number','wo_status','wo_start_date','wo_list_engineer','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note',
+            //         'wo_job_startdate','wo_job_finishdate','wo_type')
+            //     ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_job_startdate) else day(wo_job_finishdate) end) as tgl")
+            //     ->join('asset_mstr','asset_code','=','wo_asset_code')
+            //     ->where(function ($query) use ($tgl) {
+            //         $query->where('wo_job_startdate','like',date("Y-m",strtotime($tgl)).'%')
+            //             ->orwhere('wo_job_finishdate','like',date("Y-m",strtotime($tgl)).'%');
+            //     })
+            //     ->orderBy('tgl')
+            //     ->orderBy('wo_number')
+            //     // ->whereIn('wo_status',['open','plan','started'])
+            //     ->get();
 
+            // dibawah ini rumus yang ada wo_dets
             // $datawo = DB::table('wo_mstr')
             //     ->select('wo_nbr','wo_status','wo_schedule','wo_engineer1', 'wo_engineer2', 'wo_engineer3', 'wo_engineer4',
             //     'wo_engineer5','wo_asset','asset_desc','wo_sr_nbr','wo_duedate','wo_failure_code1','wo_failure_code2',
@@ -823,23 +840,20 @@ class UserChartController extends Controller
         {
             $datawo = DB::table('wo_mstr')
                 ->select('wo_number','wo_status','wo_start_date','wo_list_engineer','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note',
-                    'wo_job_startdate','wo_job_finishdate','wo_type')
-                ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_job_startdate) else day(wo_job_finishdate) end) as tgl")
-                ->join('asset_mstr','asset_code','=','wo_asset_code')
-                ->where(function ($query) use ($tgl) {
-                    $query->where('wo_job_startdate','like',date("Y-m",strtotime($tgl)).'%')
-                        ->orwhere('wo_job_finishdate','like',date("Y-m",strtotime($tgl)).'%');
-                })
+                    'wo_job_startdate','wo_job_finishdate','wo_type','wo_location','wo_site','asloc_desc')
+                ->selectRaw("day(wo_start_date) AS tgl")
+                ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
+                ->leftjoin('asset_loc','asloc_code','=','wo_location')
+                ->where('wo_start_date','like',date("Y-m",strtotime($tgl)).'%')
                 ->orderBy('tgl')
                 ->orderBy('wo_number');
-                // ->whereIn('wo_status',['open','plan','started']);
 
             if(isset($code)) {
-                $datawo = $datawo->where('wo_asset',$code);
+                $datawo = $datawo->where('wo_asset_code',$code);
             }
             if(isset($sloc)) {
                 
-                $datawo = $datawo->whereIn('wo_asset', function($query) use ($sloc)
+                $datawo = $datawo->whereIn('wo_asset_code', function($query) use ($sloc)
                 {
                     $query->select('asset_code')
                           ->from('asset_mstr')
@@ -848,8 +862,6 @@ class UserChartController extends Controller
             }
 
             $datawo = $datawo->get();
-
-            // dd($datawo);
            
            $foto = $dataAsset->where('asset_code','=',$code)->first();
         }
@@ -861,8 +873,12 @@ class UserChartController extends Controller
             ->orderBy('asloc_code')
             ->get();
 
+        $dataeng = DB::table('eng_mstr')
+            ->orderBy('eng_code')
+            ->get();
+// dd($datawo);
         return view('report.assetsch',compact('skrg','hari','kosong','bulan','datawo','dataAsset','foto','datafn','dataloc',
-            'sloc'));
+            'sloc','dataeng'));
     }
 
     public function engrpt(Request $req)

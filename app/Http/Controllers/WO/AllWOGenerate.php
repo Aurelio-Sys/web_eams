@@ -138,19 +138,37 @@ class AllWOGenerate extends Controller
             });
 
             // data yang diambil adalah data yang didaftarkan assetnya pada menu Asset Preventive
-            $datawo = DB::table('pma_asset')
-                ->join('wo_mstr', function ($join) {
-                    $join->on('wo_mstr.wo_asset_code', '=', 'pma_asset.pma_asset') 
-                        ->on('wo_mstr.wo_mt_code', '=', 'pma_asset.pma_pmcode')
-                        ->whereNotIn('wo_status',['closed'])
-                        ->whereWoType('PM');     
-                })
-                ->orderBy('pma_asset')
-                ->orderBy('pma_mea');
+            // $datawo = DB::table('pma_asset')
+            // ->leftJoin('wo_mstr', function ($join) {
+            //     $join->on('pma_asset', '=', 'wo_asset_code')
+            //          ->whereColumn('pma_pmcode', '=', 'wo_mt_code');
+            // })
+            //     ->whereNotIn('wo_status',['closed'])
+            //     ->whereWoType('PM')
+            //     ->orderBy('pma_asset')
+            //     ->orderBy('pma_mea');
+
+            $query1 = DB::table('wo_mstr')
+                ->join('pma_asset', 'pma_asset', '=', 'wo_asset_code')
+                ->whereNull('wo_mt_code')
+                ->whereNull('pma_pmcode')
+                ->orderBy('pma_asset');
 
             if($req->asset) {
-                $datawo = $datawo->where('pma_asset','=',$req->asset);
+                $query1 = $query1->where('wo_asset_code','=',$req->asset);
             }
+
+            $query2 = DB::table('wo_mstr')
+                ->join('pma_asset', 'pma_asset', '=', 'wo_asset_code')
+                ->whereNotNull('wo_mt_code')
+                ->where('pma_pmcode', '=', DB::raw('wo_mt_code'))
+                ->orderBy('pma_asset');
+
+            if($req->asset) {
+                $query2 = $query2->where('wo_asset_code','=',$req->asset);
+            }
+
+            $datawo = $query1->unionAll($query2);
 
             $datawo = $datawo->get();
             $tempwo = [];

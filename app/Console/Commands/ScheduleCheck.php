@@ -8,11 +8,6 @@ use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use App\Jobs\EmailScheduleJobs;
 
-/*
-Daftar perubahan :
-A211025 : WO yang terbentuk dari PM statusnya langsung open, jadi tidak memerlukan approve oleh supervisor. default eng01 02 sesuai kesepakatan meeting
-*/
-
 class ScheduleCheck extends Command
 {
     /**
@@ -46,9 +41,10 @@ class ScheduleCheck extends Command
      */
     public function handle()
     {
+/*
         // Perhitungan untuk type Calendar
         $datacal = DB::table('pma_asset')
-            ->wherePmaMea('C')
+            ->whereIn('pma_mea',['C','B'])
             ->whereRaw('DATE_ADD(DATE_ADD(pma_start,INTERVAL pma_cal DAY), INTERVAL -pma_tolerance DAY) < curdate()')
             ->get();
 
@@ -108,6 +104,7 @@ class ScheduleCheck extends Command
                         'wo_sr_number'          => '',
                         'wo_asset_code'          => $dc->pma_asset,
                         'wo_site'             => $dataasset->asset_site,
+                        'wo_location'           => $dataasset->asset_loc,
                         'wo_type'              => 'PM',
                         'wo_status'              => 'firm',
                         'wo_list_engineer'    => $dc->pma_eng, 
@@ -150,135 +147,145 @@ class ScheduleCheck extends Command
                 return back();
             }
         }
-dd('stop');
+*/
         // END Perhitungan untuk type Calendar
 
-
-        $data2 = DB::table('asset_mstr')
-                    ->where('asset_measure','=','M')
-                    ->whereRaw('asset_last_usage_mtc + asset_tolerance >= asset_last_usage + asset_meter')
-                    // ->whereRaw("(asset_on_use is null or asset_on_use = '')")
-                    ->get();
-
+        // START Perhitungan untuk type Meter
+        $data2 = DB::table('pma_asset')
+            ->whereIn('pma_mea',['M','B'])
+            ->where(function ($subquery) {
+                $subquery->whereNull('pma_pmnumber')
+                    ->orWhere('pma_pmnumber', '');
+            })
+            ->get();
+// dd($data2);
+        $dataussage = DB::table('us_hist')
+            ->select('us_hist.us_asset', 'us_last_mea', 'us_date as tgl', 'us_hist.us_mea_um')
+            ->join(
+                \DB::raw('(SELECT us_asset,us_mea_um, MAX(us_date) AS max_date FROM us_hist GROUP BY us_asset, us_mea_um) as max_us'),
+                function ($join) {
+                    $join->on('us_hist.us_asset', '=', 'max_us.us_asset');
+                    $join->on('us_hist.us_date', '=', 'max_us.max_date');
+                    $join->on('us_hist.us_mea_um', '=', 'max_us.us_mea_um');
+                }
+            )
+            ->get();
+dd($dataussage);
         if($data2->count() > 0){
-            foreach($data2 as $data2){
-                // cek repair
-                $repcode1 = "";
-                $repcode2 = "";
-                $repcode3 = "";
-                $repgroup = "";
-                if ($data2->asset_repair_type == 'group') {
-                    $repgroup = $data2->asset_repair;
-                } else if ($data2->asset_repair_type == 'code') {
-                    $a = explode(",", $data2->asset_repair);
+            DB::beginTransaction();
 
-                    $repcode1 = $a[0];
-                    if(isset($a[1])) {
-                        $repcode2 = $a[1];
+            try {
+
+                foreach($data2 as $dc){
+                        
+                    // Mencari nomor PM terakhir
+                    $tablern = DB::table('running_mstr')
+                    ->first();
+                    $newyear = Carbon::now()->format('y');
+
+                    if ($tablern->year == $newyear) {
+                        $tempnewrunnbr = strval(intval($tablern->wt_nbr) + 1);
+                        $newtemprunnbr = '';
+
+                        if (strlen($tempnewrunnbr) < 6) {
+                            $newtemprunnbr = str_pad($tempnewrunnbr, 6, '0', STR_PAD_LEFT);
+                        }
+                    } else {
+                        $newtemprunnbr = "000001";
                     }
-                    if(isset($a[2])) {
-                        $repcode3 = $a[2];
-                    }
-                } else {
-                    $rep = "";
-                }
-                
-                // Bkin WO
-                $tablern = DB::table('running_mstr')
-                                ->first();
 
-                // $tempnewrunnbr = strval(intval($tablern->wt_nbr)+1);
-                // $newtemprunnbr = '';
+                    $runningnbr = $tablern->wt_prefix . '-' . $newyear . '-' . $newtemprunnbr;
 
-                // if(strlen($tempnewrunnbr) <= 6){
-                // $newtemprunnbr = str_pad($tempnewrunnbr,6,'0',STR_PAD_LEFT);
-                // }
-
-                $newyear = Carbon::now()->format('y');
-
-                if ($tablern->year == $newyear) {
-                    $tempnewrunnbr = strval(intval($tablern->wt_nbr) + 1);
-
-                    $newtemprunnbr = '';
-                    if (strlen($tempnewrunnbr) < 6) {
-                        $newtemprunnbr = str_pad($tempnewrunnbr, 6, '0', STR_PAD_LEFT);
-                    }
-                } else {
-                    $newtemprunnbr = '000001';
-                }
-
-                $runningnbr = $tablern->wt_prefix.'-'.$newyear.'-'.$newtemprunnbr;
-
-                /* Mencari engineer yang bertugas */
-                if($data2->asset_group) {
-                    $dataengpm = DB::table('pm_eng')
-                        ->where('pm_group','=',$data2->asset_group)
+                    // Mencari site asset
+                    $dataasset = DB::table('asset_mstr')
+                        ->whereAssetCode($dc->pma_asset)
                         ->first();
 
-                    $arrayeng = [];
-                    foreach(explode(';', $dataengpm->pm_engcode) as $info) {
-                        $arrayeng[] = $info;
+                    // Mencari data detail untuk PM Code
+                    $datapmcode = DB::table('pmc_mstr')
+                        ->wherePmcCode($dc->pma_pmcode)
+                        ->first();
+
+                    if($datapmcode) {
+                        $dins = $datapmcode->pmc_ins;
+                        $dspg = $datapmcode->pmc_spg;
+                        $dqcs = $datapmcode->pmc_qcs;
+                    } else {
+                        $dins = null;
+                        $dspg = null;
+                        $dqcs = null;
                     }
-                }
-                
-                $dataarray = array(
-                    'wo_nbr' => $runningnbr,
-                    'wo_status' => 'plan',
-                    'wo_engineer1' => isset($arrayeng[1]) ? $arrayeng[1] : "", //A211025
-                    'wo_engineer2' => isset($arrayeng[2]) ? $arrayeng[2] : "", //A211025
-                    'wo_engineer3' => isset($arrayeng[3]) ? $arrayeng[3] : "", //A211025
-                    'wo_engineer4' => isset($arrayeng[4]) ? $arrayeng[4] : "", //A211025
-                    'wo_engineer5' => isset($arrayeng[5]) ? $arrayeng[5] : "", //A211025
-                    'wo_priority' => 'high',
-                    'wo_repair_type' => $data2->asset_repair_type,
-                    'wo_repair_group' => $repgroup,
-                    'wo_repair_code1' => $repcode1,
-                    'wo_repair_code2' => $repcode2,
-                    'wo_repair_code3' => $repcode3,
-                    'wo_asset' => $data2->asset_code, 
-                    'wo_asset_site' => $data2->asset_site,
-                    'wo_asset_loc' => $data2->asset_loc,
-                    'wo_dept' => 'ENG', // Hardcode
-                    'wo_type'=>'auto', //Hardcode
-                    'wo_schedule' => Carbon::now('ASIA/JAKARTA')->toDateString(),
-                    'wo_duedate' => Carbon::now('ASIA/JAKARTA')->endOfMonth()->toDateString(),
-                    'wo_created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                    'wo_updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                );
 
-                DB::table('wo_mstr')->insert($dataarray);
+                    if(is_null($dc->pma_leadtime)) {
+                        $dleadtime = 0;
+                    } else {
+                        $dleadtime = $dc->pma_leadtime;
+                    }
 
-                DB::table('running_mstr')
-                ->update([
-                    'wt_nbr' => $newtemprunnbr,
-                    'year' => $newyear
-                ]);
+                    // Mencari data pengukuran terakhir
+                    $qlastmea = $dataussage->where('us_asset','=',$dc->pma_asset)->where('us_mea_um','=',$dc->pma_meterum)->first();
+                    $lastusage = $qlastmea ? $qlastmea->us_last_mea : 0;
 
-                DB::table('asset_mstr')
-                ->where('asset_code',$data2->asset_code)
-                ->update([
-                    'asset_on_use' => $runningnbr,
-                    'asset_last_usage' => $data2->asset_last_usage_mtc,
-                ]);
-                
-                // Melakukan edit untuk histori transaksi
-                DB::table('us_hist')
-                    ->where('us_asset','=',$data2->asset_code)
-                    ->where('us_asset_site','=',$data2->asset_site)
-                    ->where('us_asset_loc','=',$data2->asset_loc)
-                    ->where('us_last_mea','=',$data2->asset_last_usage_mtc)
-                    ->update([
-                        'us_no_pm' => $runningnbr,
-                    ]);
+                    // Membentuk PM jika pengukuran terakhir melebihi pengukuran
+                    if($lastusage > $dc->pma_meter + $dc->pma_lastmea) {
 
-                // Kirim Email
-                $assettable = DB::table('asset_mstr')
-                                ->where('asset_code','=',$data2->asset_code)
-                                ->first();
-                
-                $asset = $data2->asset_code.' - '.$assettable->asset_desc;
+                        $dataarray = array(
+                            'wo_number'           => $runningnbr,
+                            'wo_sr_number'          => '',
+                            'wo_asset_code'          => $dc->pma_asset,
+                            'wo_site'             => $dataasset->asset_site,
+                            'wo_location'           => $dataasset->asset_loc,
+                            'wo_type'              => 'PM',
+                            'wo_status'              => 'firm',
+                            'wo_list_engineer'    => $dc->pma_eng, 
+                            'wo_start_date'       => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            'wo_due_date'          => Carbon::now('ASIA/JAKARTA')->addDays($dleadtime),
+                            'wo_mt_code'          => $dc->pma_pmcode, // $req->has('c_mtcode') ? $req->c_mtcode : null,
+                            'wo_ins_code'          => $dins,
+                            'wo_sp_code'          => $dspg,
+                            'wo_qcspec_code'      => $dqcs,
+                            'wo_createdby'          => 'ADMIN',
+                            'wo_department'       => 'ENG',
+                            'wo_system_create'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            'wo_system_update'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(), 
+                        );
 
-                // ditutup dulu, email belum di seting EmailScheduleJobs::dispatch($runningnbr,$asset,'1','','','','');
+                        DB::table('wo_mstr')->insert($dataarray);
+            
+                        DB::table('wo_trans_history')
+                            ->insert([
+                                'wo_number' => $runningnbr,
+                                'wo_action' => 'firm',
+                            ]);
+            
+                        DB::table('running_mstr')
+                            // ->where('wt_nbr', '=', $tablern->wo_nbr)   // ini kenapa pakai where yaaa??
+                            ->update([
+                                'year' => $newyear,
+                                'wt_nbr' => $newtemprunnbr
+                            ]);
+
+                        // Update data di pma_asset untuk mencatat pengukuran saat terbentuknya PM
+                        DB::table('pma_asset')
+                            ->wherePmaAsset($dc->pma_asset)
+                            ->wherePmaPmcode($dc->pma_pmcode)
+                            ->wherePmaMeterum($dc->pma_meterum)
+                            ->update([
+                                'pma_lastmea' => $lastusage,
+                                'pma_pmnumber' => $runningnbr
+                            ]);
+                    }
+                    
+                } // END foreach($req->he_wonbr as $he_wonbr)
+                // dd('stop');
+                DB::commit();
+
+            } catch (Exception $err) {
+                DB::rollBack();
+
+                dd($err);
+                toast('Work Order Generated Error, please re-generate again.', 'success');
+                return back();
             }
         }
     }

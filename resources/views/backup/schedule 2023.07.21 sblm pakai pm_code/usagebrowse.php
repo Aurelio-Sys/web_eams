@@ -4,12 +4,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6 mt-2">
-            <h1 class="m-0 text-dark">Asset Measurement Reporting</h1>
+            <h1 class="m-0 text-dark">Asset PM Calculate</h1>
           </div><!-- /.col -->
           <!-- <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{url('/home')}}">Home</a></li>
-              <li class="breadcrumb-item active">Asset Measurement Reporting</li>
+              <li class="breadcrumb-item active">Asset Usage Reporting</li>
             </ol>
           </div>/.col -->
         </div><!-- /.row -->
@@ -19,39 +19,38 @@
 @section('content')
 <!-- Flash Menu -->
 
-<!--FORM Search Disini-->
-<form action="/usagemt" method="GET">
 <div class="col-12 form-group row">
+  
+  <!--FORM Search Disini-->
   <label for="s_nomorwo" class="col-md-2 col-form-label text-md-left">{{ __('Asset') }}</label>
   <div class="col-md-4 col-sm-12 mb-2 input-group">
     <select name="asset" id="asset" class="form-control">
             <option value="">-- Select Data --</option>
         @foreach($asset as $asset)
-            <option value="{{$asset->asset_code}}">{{$asset->asset_code}} - {{$asset->asset_desc}} - {{$asset->asloc_desc}}</option>
+            <option value="{{$asset->asset_code}}">{{$asset->asset_code}} - {{$asset->asset_desc}}</option>
         @endforeach
     </select>
   </div>
   <label for="" class="col-md-2 col-form-label text-md-right">{{ __('') }}</label>
   <div class="col-md-2 col-sm-12 mb-2 input-group">
-    <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
+    <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" style="float:right" />
   </div>
   <div class="col-md-2 col-sm-12 mb-2 input-group">
     <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
   </div>
 </div>
-</form>
+<hr>
 
-
-<div class="table-responsive col-12 mt-0 pt-0 align-top" style="overflow-x: auto; display: block;white-space: nowrap;">
-  <table class="table table-bordered mt-0" id="dataTable" width="100%" cellspacing="0" style="width:100%;padding: .2rem !important;">
+<div class="table-responsive col-12">
+  <table class="table table-bordered mt-4 mini-table" id="dataTable" width="100%" cellspacing="0">
     <thead>
       <tr style="text-align: center;">
         <th class="sorting" width="10%">Asset Code</th>
-        <th class="sorting" width="20%">Asset Description</th>
-        <th class="sorting" width="20%">Location</th>
-        <th class="sorting" width="5%">UM</th>
-        <th class="sorting" width="10%">Last Date Measurement</th>
-        <th class="sorting" width="10%">Last Measurement</th>
+        <th class="sorting" width="25%">Asset Description</th>
+        <th class="sorting" width="10%">(satuan)</th>
+        <th class="sorting" width="15%">Last Maintenance</th>
+        <th class="sorting" width="15%">Next Maintenance</th>
+        <th class="sorting" width="15%">Last Measurement</th>
         <th width="10%">Action</th>
       </tr>
     </thead>
@@ -69,7 +68,7 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel">Asset Measurement Reporting</h5>
+        <h5 class="modal-title text-center" id="exampleModalLabel">Asset PM Calculate</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -80,38 +79,28 @@
           <div class="form-group row col-md-12">
             <label for="e_asset" class="col-md-4 col-form-label text-md-left">Asset</label>
             <div class="col-md-8">
-              <input id="e_asset" type="text" class="form-control e_asset" name="e_asset" readonly>
+              <input id="e_asset" type="text" class="form-control e_asset" name="e_asset" autofocus required readonly>
             </div>
           </div>
 
           <div class="form-group row col-md-12">
             <label for="e_assetdesc" class="col-md-4 col-form-label text-md-left">Asset Desc</label>
             <div class="col-md-8">
-              <input id="e_assetdesc" type="text" class="form-control e_assetdesc" name="e_assetdesc" readonly>
+              <input id="e_assetdesc" type="text" class="form-control e_assetdesc" name="e_assetdesc" autofocus required readonly>
             </div>
           </div>
 
           <div class="form-group row col-md-12">
-            <label for="e_loc" class="col-md-4 col-form-label text-md-left">Location</label>
+            <label for="e_usage" class="col-md-4 col-form-label text-md-left">Last Maintenance</label>
             <div class="col-md-8">
-              <input id="e_loc" type="text" class="form-control e_loc" name="e_loc" readonly>
-            </div>
-          </div>
-
-          <div class="form-group row col-md-12">
-            <label for="e_usage" class="col-md-4 col-form-label text-md-left">Last Measurement Date</label>
-            <div class="col-md-8">
-              <input id="e_usage" type="text" class="form-control e_usage" name="e_usage" readonly>
+              <input id="e_usage" type="text" class="form-control e_usage" name="e_usage" autofocus required readonly>
             </div>
           </div>
 
           <div class="form-group row col-md-12">
             <label for="e_checked" class="col-md-4 col-form-label text-md-left">Last Measurement</label>
-            <div class="col-md-5">
-              <input id="e_checked" type="text" class="form-control e_checked" name="e_checked" readonly>
-            </div>
-            <div class="col-md-3">
-              <input id="e_meterum" type="text" class="form-control e_meterum" name="e_meterum" readonly>
+            <div class="col-md-8">
+              <input id="e_checked" type="text" class="form-control e_checked" name="e_checked" autofocus required readonly>
             </div>
           </div>
 
@@ -121,7 +110,7 @@
               <input id="e_date" type="date" class="form-control e_date" name="e_date" required >
             </div>
             <div class="col-md-4">
-              <input id="e_time" type="time" class="form-control e_time" name="e_time">
+              <input id="e_time" type="time" class="form-control e_time" name="e_time" required>
             </div>
           </div>
 
@@ -163,31 +152,68 @@
         theme: 'bootstrap4',
     });
     
-    {{--  $("#new").submit(function() {
+    $("#new").submit(function() {
         document.getElementById('btnclose').style.display = 'none';
         document.getElementById('btnconf').style.display = 'none';
         document.getElementById('btnloading').style.display = '';
-    });  --}}
+    });
 
     function clear_icon() {
         $('#id_icon').html('');
         $('#post_title_icon').html('');
     }
 
+    function fetch_data(page, sort_type, sort_by, asset) {
+        $.ajax({
+        url: "/usagemt?page=" + page + "&sorttype=" + sort_type + "&sortby=" + sort_by + "&asset=" + asset,
+        success: function(data) {
+            console.log(data);
+            $('tbody').html('');
+            $('tbody').html(data);
+        }
+        })
+    }
+
+    $(document).on('click', '#btnsearch', function() {
+        var asset    = $('#asset').val(); 
+        var column_name = $('#hidden_column_name').val();
+        var sort_type   = $('#hidden_sort_type').val();
+        var page = 1;
+
+        fetch_data(page, sort_type, column_name, asset);
+    });
+    
+    $(document).on('click', '.pagination a', function(event) {
+        event.preventDefault();
+        var page = $(this).attr('href').split('page=')[1];
+        $('#hidden_page').val(page);
+        var column_name = $('#hidden_column_name').val();
+        var sort_type   = $('#hidden_sort_type').val();
+        var wonumber    = $('#tmpwo').val();
+        var asset       = $('#tmpasset').val();
+        var status      = $('#tmpstatus').val();
+        fetch_data(page, sort_type, column_name, wonumber, asset,status);
+    });
+
+    $(document).on('click', '#btnrefresh', function() {
+        var asset    = ''; 
+        var column_name = $('#hidden_column_name').val();
+        var sort_type   = $('#hidden_sort_type').val();
+        var page = 1;
+
+        fetch_data(page, sort_type, column_name, asset);
+    });
+
     $(document).on('click', '.editmodal',function(){
-        asset = $(this).data('asset');
-        lastusage = $(this).data('lastusage');
-        lastdate = $(this).data('lastdate');
-        desc = $(this).data('desc');
-        meterum = $(this).data('meterum');
-        assetloc = $(this).attr('data-assetloc');
-{{--  alert(lastdate);  --}}
-        document.getElementById('e_asset').value = asset;
-        document.getElementById('e_assetdesc').value = desc;
-        document.getElementById('e_loc').value = decodeURIComponent(assetloc);
-        document.getElementById('e_usage').value = lastdate;
-        document.getElementById('e_checked').value = lastusage.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        document.getElementById('e_meterum').value = meterum;
+        $asset = $(this).data('asset');
+        $lastusage = $(this).data('lastusage');
+        $lastmt = $(this).data('lastmt');
+        $desc = $(this).data('desc');
+
+        document.getElementById('e_asset').value = $asset;
+        document.getElementById('e_usage').value = $lastusage;
+        document.getElementById('e_checked').value = $lastmt;
+        document.getElementById('e_assetdesc').value = $desc;
 
     });
 
