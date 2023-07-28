@@ -16,7 +16,8 @@ use PDF;
 use App;
 use Illuminate\Support\Facades\Auth\Authenticatable;
 
-class EmailScheduleJobs implements ShouldQueue
+// class EmailScheduleJobs implements ShouldQueue
+class EmailScheduleJobs
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -980,10 +981,271 @@ class EmailScheduleJobs implements ShouldQueue
                 $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel                
 
             }
+        } else if ($a == 15) { //kirim email ketika work order release di approved dan kirim ke approver selanjutnya
 
-                  
+            $asset = $this->asset;
+            $wonumber = $this->srnumber;
+            $approver = $this->tampungarray;
+            $role = $this->roleapprover;
+            $womstr = DB::table('wo_mstr')->where('wo_number', $wonumber)->first();
+            // dd($wonumber);
+
+            $emailrequestor = DB::table('users')
+                ->where('dept_user', '=', $approver->retr_dept_approval)
+                ->where('role_user', '=', $approver->retr_role_approval)
+                ->get();
+
+            $emails = '';
+
+            foreach ($emailrequestor as $email) {
+                $emails .= $email->email_user . ',';
+            }
+
+            $emails = substr($emails, 0, strlen($emails) - 1);
+            // dd($emails);
+            $array_email = explode(',', $emails);
+            // dd($array_email);
+            Mail::send(
+                'emailsend-woreleaseapproval',
+                [
+                    'wonumber' => $wonumber,
+                ],
+                function ($message) use ($array_email, $wonumber) {
+                    $message->subject('eAMS - Work Order Release Approval Needed for ' . $wonumber . '');
+                    $message->to($array_email);
+                }
+            );
 
 
+            foreach ($emailrequestor as $approver) {
+                $user = App\User::where('id', '=', $approver->id)->first();
+                $details = [
+                    'body' => 'Work Order Release Approval needed for ' . $wonumber . '',
+                    'url' => 'woreleaseapprovalbrowse',
+                    'nbr' => $wonumber,
+                    'note' => 'Please review and provide approval promptly'
+
+                ]; // isi data yang dioper
+
+                $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel                
+
+            }
+
+            // Mail::send(
+            //     'emailwo',
+            //     [
+            //         'pesan' => 'Work Order Release Waiting For Approval',
+            //         'note1' => $wonumber,
+            //         'note2' => $asset,
+            //         'header1' => 'WO Number',
+            //     ],
+            //     function ($message) use ($array_email) {
+            //         $message->subject('eAMS - Work Order Release Waiting For Approval');
+            //         // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
+            //         $message->to($array_email);
+            //     }
+            // );
+
+            // foreach ($emailrequestor as $approver) {
+            //     $user = App\User::where('id', '=', $approver->id)->first();
+            //     $details = [
+            //         'body' => 'Work Order Release Waiting For Approval',
+            //         'url' => 'woreleaseapprovalbrowse',
+            //         'nbr' => $wonumber,
+            //         'note' => 'Please check'
+
+            //     ]; // isi data yang dioper
+
+            //     $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel                
+
+            // }
+
+
+        } else if ($a == 16) { //kirim email ke engineer yg melakukan released ketika work order released di approved
+            $asset = $this->asset;
+            $requestor = $this->requestor;
+            $srnumber = $this->srnumber;
+            // $rejectnote = $this->rejectnote;
+            // dd($requestor);
+            $emailrequestor = DB::table('users')
+                ->where('username', '=', $requestor)
+                ->first();
+            // dd($emailrequestor);
+
+            Mail::send(
+                'emailrequestor',
+                [
+                    'pesan' => 'Work Order Release has been approved',
+                    'note1' => $srnumber,
+                    'note2' => $asset,
+                ],
+                function ($message) use ($emailrequestor) {
+                    $message->subject('eAMS - Work Order Release has been approved');
+                    // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
+                    $message->to($emailrequestor->email_user);
+                }
+            );
+
+            $user = App\User::where('id', '=', $emailrequestor->id)->first();
+            $details = [
+                'body' => '',
+                'url' => 'woreleaseapprovalbrowse',
+                'nbr' => $srnumber,
+                'note' => 'Please check'
+
+            ]; // isi data yang dioper
+
+
+            $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
+
+        } else if ($a == 17) { //kirim email ketika request sparepart di approved dan kirim ke approver selanjutnya
+
+            $wonumber = $this->wo;
+            $rsnumber = $this->srnumber;
+            $approver = $this->tampungarray;
+            $role = $this->roleapprover;
+            // $womstr = DB::table('wo_mstr')->where('wo_number', $wonumber)->first();
+            // dd($wonumber);
+
+            $emailrequestor = DB::table('eng_mstr')
+                ->where('eng_dept', '=', $approver->rqtr_dept_approval)
+                ->where('eng_role', '=', $approver->rqtr_role_approval)
+                ->where('eng_active', '=', 'Yes')
+                ->where('approver', '=', '1')
+                ->get();
+
+            $emails = '';
+
+            foreach ($emailrequestor as $email) {
+                $emails .= $email->eng_email . ',';
+            }
+
+            $emails = substr($emails, 0, strlen($emails) - 1);
+            // dd($emails);
+            $array_email = explode(',', $emails);
+
+            Mail::send(
+                'emailsend-reqspapproval',
+                [
+                    'rsnumber' => $rsnumber,
+                    'wonumber' => $wonumber,
+                ],
+                function ($message) use ($array_email, $rsnumber) {
+                    $message->subject('eAMS - Request Sparepart Approval Needed for ' . $rsnumber . '');
+                    $message->to($array_email);
+                }
+            );
+
+            foreach ($emailrequestor as $approver) {
+                // dd($approver);
+                $user = App\User::where('id', '=', $approver->ID)->first();
+                $details = [
+                    'body' => 'Request Sparepart Approval needed for '.$rsnumber.'',
+                    'url' => 'reqspapproval',
+                    'nbr' => $rsnumber,
+                    'note' => 'Please review and provide approval promptly'
+
+                ]; // isi data yang dioper
+
+                $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel                
+
+            }
+
+
+        } else if ($a == 18) { //kirim email ke engineer yg melakukan request sparepart ketika request sparepart released di approved
+            $asset = $this->asset;
+            $requestor = $this->requestor;
+            $srnumber = $this->srnumber;
+            // $rejectnote = $this->rejectnote;
+            // dd($requestor);
+            $emailrequestor = DB::table('users')
+                ->where('username', '=', $requestor)
+                ->first();
+            // dd($emailrequestor);
+
+            Mail::send(
+                'emailrequestor',
+                [
+                    'pesan' => 'Request Sparepart ' . $srnumber . ' has been approved',
+                    'note1' => $srnumber,
+                    'note2' => $asset,
+                ],
+                function ($message) use ($emailrequestor,$srnumber) {
+                    $message->subject('eAMS - Request Sparepart ' . $srnumber . ' has been approved');
+                    // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
+                    $message->to($emailrequestor->email_user);
+                }
+            );
+
+            $user = App\User::where('id', '=', $emailrequestor->id)->first();
+            $details = [
+                'body' => '',
+                'url' => 'reqspapproval',
+                'nbr' => $srnumber,
+                'note' => 'Please check'
+
+            ]; // isi data yang dioper
+
+
+            $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
+
+        } else if ($a == 19) { //kirim email ke engineer yang bertugas mengerjakan wo ketika work order ditolak/reject
+            // $asset = $this->asset;
+            $engineer = $this->requestor;
+            $rsnumber = $this->srnumber;
+            $wonumber = $this->wo;
+            // $rejectnote = $this->rejectnote;
+            // dd($engineer);
+
+            $data = DB::table('eng_mstr')
+                ->join('users', 'eng_mstr.eng_code', '=', 'users.username')
+                ->where('username', '=', $engineer)
+                ->where('approver', '=', '1')
+                ->get();
+
+            // dd($data);
+
+            $listto = [];
+            $i = 0;
+
+            if ($data->count() > 0) {
+
+                foreach ($data as $data1) {
+                    $listto[$i] = $data1->eng_email;
+                    $i++;
+                }
+
+                // Kirim Email
+                Mail::send(
+                    'emailrequestor',
+                    [
+                        'pesan' => 'Request Sparepart '. $rsnumber .' has been rejected',
+                        'note1' => $wonumber,
+                        'note2' => $asset,
+                        'header1' => 'Work Order'
+                    ],
+                    function ($message) use ($wo, $listto, $rsnumber) {
+                        $message->subject('eAMS - Work Order '.$rsnumber.' has been rejected');
+                        // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
+                        $message->to(array_filter($listto));
+                    }
+                );
+
+
+                foreach ($data as $data) {
+                    $user = App\User::where('id', '=', $data->id)->first();
+                    $details = [
+                        'body' => 'Request Sparepart '.$rsnumber.' has been rejected',
+                        'url' => 'reqspapproval',
+                        'nbr' => $rsnumber,
+                        'note' => 'Please check'
+
+                    ]; // isi data yang dioper
+
+
+                    $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
+                }
+            }
         }
     }
 }

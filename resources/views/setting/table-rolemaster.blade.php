@@ -9,8 +9,8 @@
         <i class="icon-table fa fa-edit fa-lg"></i></a>
         &ensp;
         
-        {{--  Role admin, SPVSR dan QCA tidak dapat dihapus karena digunakan untuk validasi coding approval SR dan WO  --}}
-        @if($show->role_code <> 'ADMIN' && $show->role_code <> 'SPVSR' && $show->role_code <> 'QCA')
+        {{--  Role admin, SPVSR, WHS dan QCA tidak dapat dihapus karena digunakan untuk validasi coding approval SR, WO dan WO Release/Req SP  --}}
+        @if($show->role_code <> 'ADMIN' && $show->role_code <> 'SPVSR' && $show->role_code <> 'QCA' && $show->role_code <> 'WHS')
           <a href="javascript:void(0)" class="deletedata" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal" 
           data-rolecode="{{$show->role_code}} " data-roledesc="{{ $show->role_desc }}">
           <i class="icon-table fa fa-trash fa-lg"></i></a>

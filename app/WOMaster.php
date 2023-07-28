@@ -25,4 +25,21 @@ class WOMaster extends Model
             return $this->hasOne(WOTransApproval::class, 'wotr_mstr_id')->where('wotr_role_approval', Auth::user()->role_user);
         }
    }
+
+    public function getCurrentApproverRelease()
+    {
+        return $this->hasOne(WOReleaseTransApproval::class, 'retr_mstr_id')
+            ->where('retr_status', '=', 'waiting for approval')
+            ->orWhere('retr_status', '=', 'need revision')
+            ->orderBy('retr_sequence');
+    }
+
+    public function getWOReleaseTransAppr()
+    {
+        if (Auth::user()->role_user == 'ADMIN') {
+            return $this->hasOne(WOReleaseTransApproval::class, 'retr_mstr_id');            
+        } else {
+            return $this->hasOne(WOReleaseTransApproval::class, 'retr_mstr_id')->where('retr_role_approval', Auth::user()->role_user);
+        }
+   }
 }

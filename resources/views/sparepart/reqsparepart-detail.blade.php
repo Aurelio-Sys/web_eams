@@ -39,6 +39,17 @@
                 <input type="date" class="form-control" id="due_date" name="due_date" value="" required>
             </div>
         </div>
+        <div class="form-group row" style="padding-left: 1em; margin-top: 1.5em;">
+            <label class="col-md-3 col-form-label" style="font-size: 17px">WO Number</label>
+            <div class="col-md-3">
+                <select name="wonbr" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" autofocus>
+                    <option value=""> -- Select WO Number -- </option>
+                    @foreach($womstr as $da)
+                    <option value="{{$da->wo_number}}"> {{$da->wo_number}} </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
 
 
         <div class="modal-body">
@@ -50,6 +61,7 @@
                                 <th style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Qty Request</th>
                                 <th style="text-align: center; width: 20% !important; font-weight: bold;">Location To</th>
+                                <th style="text-align: center; width: 20% !important; font-weight: bold;">Note</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Delete</th>
                             </tr>
                         </thead>
@@ -68,6 +80,9 @@
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
                                     <input type="number" class="form-control" step="1" min="0" name="qtyrequired[]" value="{{$datas->spg_qtyreq}}" required />
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <textarea type="text" id="reqnotes" class="form-control reqnotes" name="reqnotes[]" rows="2"></textarea>
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
                                     <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete">
@@ -182,6 +197,9 @@
             @endforeach
             cols += '</select>';
             cols += '<input type="hidden" class="siteto" name="siteto[]" value=""/>';
+            cols += '</td>';
+            cols += '<td>';
+            cols += '<textarea type="text" id="reqnote" class="form-control reqnote" name="reqnote[]" rows="2" ></textarea>';
             cols += '</td>';
 
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';

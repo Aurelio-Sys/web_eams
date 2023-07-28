@@ -35,6 +35,7 @@ use Response;
 
 use App;
 use App\Exports\ExportSR;
+use App\Exports\ExportSRBrowse;
 use App\ServiceReqMaster;
 use Barryvdh\DomPDF\Facade as PDF;
 use Exception;
@@ -2149,6 +2150,93 @@ class ServiceController extends Controller
         ]);
     }
 
+    public function srbrowseonly() /* route : srbrowse   blade : service.servicereqbrowse */
+    {
+        // $q = $req->srnumber;
+        $dataapps = DB::table('dept_mstr')
+            ->leftjoin('service_req_mstr', 'service_req_mstr.sr_eng_approver', 'dept_mstr.dept_code')
+            ->selectRaw('dept_mstr.*, service_req_mstr.*')
+            ->get();
+
+
+        $data = DB::table('service_req_mstr')
+            ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_asset')
+            ->leftjoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
+            ->leftjoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
+            ->leftjoin('wotyp_mstr', 'wotyp_mstr.wotyp_code', 'service_req_mstr.sr_fail_type')
+            ->join('users', 'users.username', 'service_req_mstr.sr_req_by')  //B211014
+            ->join('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
+            ->leftjoin('wo_mstr', 'wo_mstr.wo_number', 'service_req_mstr.wo_number')
+            ->leftjoin('sr_trans_approval', 'sr_trans_approval.srta_mstr_id', 'service_req_mstr.id')
+            ->leftjoin('sr_trans_approval_eng', 'sr_trans_approval_eng.srta_eng_mstr_id', 'service_req_mstr.id')
+            ->leftjoin('eng_mstr', 'eng_mstr.eng_dept', 'service_req_mstr.sr_eng_approver')
+            ->leftjoin('dept_mstr as u1', 'eng_mstr.eng_dept', 'u1.dept_code')
+            ->selectRaw('service_req_mstr.* ,
+                asset_mstr.asset_code, asset_mstr.asset_desc, asset_mstr.asset_loc, dept_mstr.dept_code, dept_mstr.dept_desc, users.username, users.name,
+                wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.dept_desc as u11, wo_cancel_note,
+                wo_mstr.wo_job_startdate, wo_mstr.wo_job_finishdate, wo_mstr.wo_status, eng_mstr.eng_dept, eng_mstr.eng_desc, wo_mstr.wo_list_engineer,
+                sr_trans_approval.srta_reason, sr_trans_approval_eng.srta_eng_reason, sr_trans_approval.srta_status, sr_trans_approval_eng.srta_eng_status')
+            ->orderBy('sr_req_date', 'DESC')
+            ->orderBy('sr_number', 'DESC')
+            ->groupBy('sr_number');
+        // ->get();
+
+        /* Jika bukan admin, maka yang muncul adalah approver sesuai login */
+        // if (Session::get('role') <> 'ADMIN') {
+        //     $data = $data->where('sr_dept', '=', session::get('department'));
+        // }
+
+        $data = $data->paginate(10);
+        // dd($data);
+
+        $asset = DB::table('asset_mstr')
+            ->leftJoin('asset_loc', 'asloc_code', '=', 'asset_loc')
+            ->where('asset_active', '=', 'Yes')
+            // ->where('asset_loc','=',session::get('department'))
+            ->orderBy('asset_code')
+            ->get();
+        // dd($asset);
+        $datadepart = DB::table('dept_mstr')
+            ->get();
+
+        $wotype = DB::table('wotyp_mstr')
+            ->orderBy('wotyp_code')
+            ->get();
+
+        $impact = DB::table('imp_mstr')
+            ->orderBy('imp_code')
+            ->get();
+
+        $fcode = DB::table('fn_mstr')
+            ->orderBy('fn_code')
+            ->get();
+
+        $datasset = DB::table('asset_mstr')
+            ->get();
+
+        $datauser = DB::table('users')
+            ->where('active', '=', 'Yes')
+            ->get();
+
+        $ceksrfile = DB::table(('service_req_upload'))
+            ->get();
+
+        $dataapp = DB::table('eng_mstr')
+            ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'eng_mstr.eng_dept')
+            ->selectRaw('dept_mstr.*,eng_mstr.*')
+            ->where('eng_active', '=', 'Yes')
+            ->where('approver', '=', 1)
+            ->groupBy('eng_dept')
+            ->orderBy('eng_code')
+            ->get();
+
+        return view('service.servicereqbrowseonly', [
+            'datas' => $data, 'asset' => $datasset, 'fromhome' => '',
+            'users' => $datauser, 'ceksrfile' => $ceksrfile, 'fcode' => $fcode,
+            'wotype' => $wotype, 'impact' => $impact, 'dataapp' => $dataapp, 'dataapps' => $dataapps,
+        ]);
+    }
+
     public function downloadfile($id)
     {
         // dd($id);
@@ -2496,6 +2584,140 @@ class ServiceController extends Controller
                 // dd($data);
 
                 return view('service.table-srbrowse', ['datas' => $data, 'ceksrfile' => $ceksrfile, 'dataapps' => $dataapps]);
+            }
+        }
+    }
+
+    public function searchbrowseonly(Request $req)
+    {
+        if ($req->ajax()) {
+            $srnumber = $req->get('srnumber');
+            $asset = $req->get('asset');
+            $status = $req->get('status');
+            $requestby = $req->get('requestby');
+            $datefrom = $req->get('datefrom') == '' ? '2000-01-01' : date($req->get('datefrom'));
+            $dateto = $req->get('dateto') == '' ? '3000-01-01' : date($req->get('dateto'));
+
+            // dd($datefrom, $dateto);
+
+            $ceksrfile = DB::table(('service_req_upload'))
+                ->get();
+
+            $cekdate = DB::table(('service_req_mstr'))->where('id', '>', 0)->whereBetween('sr_req_date', [$datefrom, $dateto])
+                ->get();
+            // dd($requestby);
+
+            if ($srnumber == "" && $asset == "" /*&& $priority == ""*/  /*&& $period == "" */ && $status == "" && $requestby == "" && $datefrom == "2000-01-01" && $dateto == "3000-01-01") {
+
+                $data = DB::table('service_req_mstr')
+                    ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_asset')
+                    ->leftjoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
+                    ->leftjoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
+                    ->leftjoin('wotyp_mstr', 'wotyp_mstr.wotyp_code', 'service_req_mstr.sr_fail_type')
+                    ->join('users', 'users.username', 'service_req_mstr.sr_req_by')  //B211014
+                    ->join('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
+                    ->leftjoin('wo_mstr', 'wo_mstr.wo_number', 'service_req_mstr.wo_number')
+                    ->leftjoin('sr_trans_approval', 'sr_trans_approval.srta_mstr_id', 'service_req_mstr.id')
+                    ->leftjoin('sr_trans_approval_eng', 'sr_trans_approval_eng.srta_eng_mstr_id', 'service_req_mstr.id')
+                    ->leftjoin('eng_mstr', 'eng_mstr.eng_dept', 'service_req_mstr.sr_eng_approver')
+                    ->leftjoin('dept_mstr as u1', 'eng_mstr.eng_dept', 'u1.dept_code')
+                    ->selectRaw('service_req_mstr.* ,
+                    asset_mstr.asset_code, asset_mstr.asset_desc, asset_mstr.asset_loc, dept_mstr.dept_code, dept_mstr.dept_desc, users.username, users.name,
+                    wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.dept_desc as u11,wo_cancel_note,
+                    wo_mstr.wo_job_startdate, wo_mstr.wo_job_finishdate, wo_mstr.wo_status, eng_mstr.eng_dept, eng_mstr.eng_desc, wo_mstr.wo_list_engineer,
+                    sr_trans_approval.srta_reason, sr_trans_approval_eng.srta_eng_reason, sr_trans_approval.srta_status, sr_trans_approval_eng.srta_eng_status')
+                    ->orderBy('sr_req_date', 'DESC')
+                    ->orderBy('sr_number', 'DESC')
+                    ->groupBy('sr_number');
+                // ->get();
+
+                /* Jika bukan admin, maka yang muncul adalah approver sesuai login */
+                // if (Session::get('role') <> 'ADMIN') {
+                //     $data = $data->where('sr_dept', '=', session::get('department'));
+                // }
+
+                $data = $data->paginate(10);
+
+                // dd($data);
+
+                return view('service.table-srbrowseonly', ['datas' => $data, 'ceksrfile' => $ceksrfile]);
+            } else {
+                // dd("test2");
+                $tigahari = Carbon::now()->subDays(3)->toDateTimeString();
+                $limahari = Carbon::now()->subDays(5)->toDateTimeString();
+
+                $kondisi = "service_req_mstr.id > 0";
+
+
+                // dd($tigahari,$limahari);
+
+                // if($period == 1){
+                //     $kondisi = "sr_created_at > '".$tigahari."'";
+                // }else if($period == 2){
+                //     $kondisi = "sr_created_at BETWEEN '".$tigahari."' AND '".$limahari."'";
+                // }else if($period == 3){
+                //     $kondisi = "sr_created_at < '".$limahari."'";
+                // }else if($period == ""){
+                //     $kondisi = "sr_created_at > 01-01-1900";
+                // }
+
+                if ($srnumber != '') {
+                    $kondisi .= " AND sr_number LIKE '%" . $srnumber . "%'";
+                    // dd($var);
+                }
+                if ($asset != '') {
+                    $kondisi .= " AND asset_desc LIKE '%" . $asset . "%'";
+                }
+                if ($status != '') {
+                    $kondisi .= " AND sr_status = '" . $status . "' ";
+                }
+                // if ($priority != '') {
+                //     $kondisi .= " AND sr_priority = '" . $priority . "'";
+                // }
+                if ($requestby != '') {
+                    $kondisi .= " AND sr_req_by = '" . $requestby . "' ";
+                }
+
+                if ($datefrom != '' || $dateto != '') {
+                    $kondisi .= " AND sr_req_date BETWEEN '" . $datefrom . "' AND '" . $dateto . "'";
+                }
+
+                $dataapps = DB::table('service_req_mstr')
+                    ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_eng_approver')
+                    ->selectRaw('dept_mstr.*')
+                    ->where('sr_dept', '=', session::get('department'))
+                    ->first();
+
+                $data = DB::table('service_req_mstr')
+                    ->join('asset_mstr', 'asset_mstr.asset_code', 'service_req_mstr.sr_asset')
+                    ->leftjoin('asset_type', 'asset_type.astype_code', 'asset_mstr.asset_type')
+                    ->leftjoin('loc_mstr', 'loc_mstr.loc_code', 'asset_mstr.asset_loc')
+                    ->leftjoin('wotyp_mstr', 'wotyp_mstr.wotyp_code', 'service_req_mstr.sr_fail_type')
+                    ->join('users', 'users.username', 'service_req_mstr.sr_req_by')  //B211014
+                    ->join('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
+                    ->leftjoin('wo_mstr', 'wo_mstr.wo_number', 'service_req_mstr.wo_number')
+                    ->leftjoin('sr_trans_approval', 'sr_trans_approval.srta_mstr_id', 'service_req_mstr.id')
+                    ->leftjoin('sr_trans_approval_eng', 'sr_trans_approval_eng.srta_eng_mstr_id', 'service_req_mstr.id')
+                    ->leftjoin('eng_mstr', 'eng_mstr.eng_dept', 'service_req_mstr.sr_eng_approver')
+                    ->leftjoin('dept_mstr as u1', 'eng_mstr.eng_dept', 'u1.dept_code')
+                    ->selectRaw('service_req_mstr.* ,
+                asset_mstr.asset_code, asset_mstr.asset_desc, asset_mstr.asset_loc, dept_mstr.dept_desc, users.username, users.name,
+                wotyp_mstr.* , asset_type.astype_code, asset_type.astype_desc, loc_mstr.loc_code, loc_mstr.loc_desc, u1.dept_desc as u11,
+                wo_mstr.wo_job_startdate, wo_mstr.wo_job_finishdate, wo_mstr.wo_status, wo_mstr.wo_list_engineer, eng_mstr.eng_dept, wo_cancel_note,
+                sr_trans_approval.srta_reason, sr_trans_approval_eng.srta_eng_reason, sr_trans_approval.srta_status, sr_trans_approval_eng.srta_eng_status')
+                    ->whereRaw($kondisi)
+                    ->orderBy('sr_number', 'DESC')
+                    ->groupBy('sr_number');
+
+                /* Jika bukan admin, maka yang muncul adalah approver sesuai login */
+                // if (Session::get('role') <> 'ADMIN') {
+                //     $data = $data->where('sr_dept', '=', session::get('department'));
+                // }
+
+                $data = $data->paginate(10);
+                // dd($data);
+
+                return view('service.table-srbrowseonly', ['datas' => $data, 'ceksrfile' => $ceksrfile, 'dataapps' => $dataapps]);
             }
         }
     }
@@ -3027,6 +3249,20 @@ class ServiceController extends Controller
         // dd($srnbr,$asset,$status,$reqby,$datefrom,$dateto);
 
         return Excel::download(new ExportSR($srnbr, $status, $asset, $reqby, $datefrom, $dateto), 'Service Request.xlsx');
+    }
+
+    public function donlodsrbrowse(Request $req)
+    { /* blade : servicereqbrowseonly */
+        $srnbr    = $req->srnumber;
+        $asset    = $req->asset;
+        $status   = $req->status;
+        $reqby    = $req->reqby;
+        $datefrom = $req->datefrom;
+        $dateto   = $req->dateto;
+
+        // dd($srnbr,$asset,$status,$reqby,$datefrom,$dateto);
+
+        return Excel::download(new ExportSRBrowse($srnbr, $status, $asset, $reqby, $datefrom, $dateto), 'Service Request.xlsx');
     }
 
     public function srprint(Request $req, $sr)

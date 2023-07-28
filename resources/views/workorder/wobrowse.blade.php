@@ -412,11 +412,20 @@ div #munculgambar .gambar:hover{
       </div>
       <!-- </div> -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-success bt-action" id="btnconf">Save</button>
-        <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
-          <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
-        </button>
+        <div class="container">
+          <div class="row">
+            <div class="col-4 pl-0">
+              <button type="button" class="btn btn-dark maintcode" style="float:left"><b style="font-size: 13px;color:white">Maintenance Code</b></button>
+            </div>
+            <div class="col-8 text-right">
+              <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-success bt-action" id="btnconf">Save</button>
+              <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
+                <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
       </form>
     </div>
@@ -583,17 +592,24 @@ div #munculgambar .gambar:hover{
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-warning bt-action mr-auto e_btnaddfai" id="e_addfai" style="display:none"><b>Add Failure Code</b></button>
-          <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-success bt-action" id="e_btnconf">Save</button>
-          <button type="button" class="btn btn-block btn-info" id="e_btnloading" style="display:none">
-            <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
-          </button>
+          <div class="container">
+            <div class="row">
+              <div class="col-4 pl-0">
+                  <button type="button" class="btn btn-dark maintcode" style="float:left"><b style="font-size: 13px;color:white">Maintenance Code</b></button>
+              </div>
+              <div class="col-8 text-right">
+                <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-success bt-action" id="e_btnconf">Save</button>
+                <button type="button" class="btn btn-block btn-info" id="e_btnloading" style="display:none">
+                  <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
     </div>
     </form>
   </div>
-</div>
 </div>
 
 <!--Modal Approve-->
@@ -1177,10 +1193,159 @@ div #munculgambar .gambar:hover{
     <h1 class="animate__animated animate__bounce" style="display:inline;width:100%;text-align:center;color:white;font-size:larger;text-align:center">Loading...</h1>
   </div>
 </div>
+
+<!-- Modal Maint Code -->
+<div class="modal fade" id="maintCodeModal" role="dialog" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center" id="exampleModalLabel">Maintenance Code Browse</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="form-horizontal" id="maintcodebrowse" method="post" action="/" enctype="multipart/form-data">
+        {{ csrf_field() }}
+        <div class="modal-body">
+          <!-- <input type="hidden" id="v_hiddenreq" name="v_hiddenreq" />
+          <input type="hidden" id="v_idsr" name="v_idsr" /> -->
+          <div class="form-group row col-md-12">
+            <label for="b_mtcode" class="col-md-3 col-form-label text-md-left">Maintenance Code</label>
+            <div class="col-md-7">
+              <select id="b_mtcode" name="b_mtcode" class="form-control">
+                <option value="">--Select Maintenance Code--</option>
+                @foreach($maintenancelist as $mt)
+                <option value="{{$mt->pmc_code}}">{{$mt->pmc_code}} -- {{$mt->pmc_desc}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="responsive-table">
+            <table class="table table-bordered mt-4 no-footer" id="dataTable" width="100%" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>Maintenance Code</th>
+                  <th>Maintenance Type</th>
+                  <th>Instruction List</th>
+                  <th>Instruction Sparepart</th>
+                  <th>Instruction Qc</th>
+                </tr>
+              </thead>
+              <tbody id="b_mtcodetable">
+              </tbody>
+            </table>
+          </div>
+          <hr>
+          <div class="form-group row col-md-12">
+            <label for="b_inslist" class="col-md-3 col-form-label text-md-left">Instruction List Code</label>
+            <div class="col-md-7">
+              <select class="form-control b_inslist" name="b_inslist" id="b_inslist">
+                <option></option>
+                @foreach ($inslist as $ins)
+                <option value="{{$ins->ins_code}}">{{$ins->ins_code}} -- {{$ins->ins_desc}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="responsive-table">
+            <table class="table table-bordered mt-4 no-footer" id="dataTable" width="100%" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>Instruction Code</th>
+                  <th>Duration</th>
+                  <th>UM</th>
+                  <th>Man Power</th>
+                  <th>Step</th>
+                  <th>Step Desc</th>
+                  <th>Reference</th>
+                </tr>
+              </thead>
+              <tbody id="b_inslisttable">
+              </tbody>
+            </table>
+          </div>
+          <hr>
+          <div class="form-group row col-md-12">
+            <label for="b_splist" class="col-md-3 col-form-label text-md-left">Instruction Sparepart Code</label>
+            <div class="col-md-7">
+              <select class="form-control b_splist" name="b_splist" id="b_splist">
+                <option></option>
+                @foreach ($splist as $sp)
+                <option value="{{$sp->spg_code}}">{{$sp->spg_code}} -- {{$sp->spg_desc}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="responsive-table">
+            <table class="table table-bordered mt-4 no-footer" id="dataTable" width="100%" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>Instruction Sparepart Code</th>
+                  <th>Sparepart Code</th>
+                  <th>Qty Req</th>
+                </tr>
+              </thead>
+              <tbody id="b_splisttable">
+              </tbody>
+            </table>
+          </div>
+          <hr>
+          <div class="form-group row col-md-12">
+            <label for="b_qclist" class="col-md-3 col-form-label text-md-left">Instruction QC</label>
+            <div class="col-md-7">
+              <select class="form-control b_qclist" name="b_qclist" id="b_qclist">
+                <option></option>
+                @foreach ($qclist as $qc)
+                <option value="{{$qc->qcs_code}}">{{$qc->qcs_code}} -- {{$qc->qcs_desc}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="responsive-table">
+            <table class="table table-bordered mt-4 no-footer" id="dataTable" width="100%" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>QC Code</th>
+                  <th>QC Spec</th>
+                  <th>QC Tools</th>
+                  <th>Operator</th>
+                  <th>Value 1</th>
+                  <th>Value 2</th>
+                  <th>UM</th>
+                </tr>
+              </thead>
+              <tbody id="b_qclisttable">
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-info bt-action" id="btnclose_b" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
+              <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+            </button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
 @endsection
 
 @section('scripts')
-<script>
+<script type="text/javascript">
+    //konfigurasi modal ketika ada modal bertumpuk dan modal terakhir di close tetap bisa scroll ke modal pertama
+    $(document).on('show.bs.modal', '.modal', function() {
+      var zIndex = 1040 + (10 * $('.modal.show').length);
+      $(this).css('z-index', zIndex);
+      setTimeout(function() {
+        $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+      }, 0);
+    });
+
+    $(document).on('hidden.bs.modal', '.modal', function() {
+      $('.modal.show').length && $(document.body).addClass('modal-open');
+    });
+    //batas konfigurasi modal
+
 
   $(document).on('submit', '#approvee', function(event) {
 
@@ -1227,7 +1392,6 @@ div #munculgambar .gambar:hover{
       document.getElementById('approvee2').submit();
     }
   });
-
 
   $("#apprengpick").select2({
     width: '100%',
@@ -1872,6 +2036,30 @@ div #munculgambar .gambar:hover{
   });
   
   $(document).ready(function(){
+    $("#b_mtcode").select2({
+      width: '100%',
+      placeholder: "Select Maintenance Code",
+      allowClear: true,
+    });
+
+    $("#b_inslist").select2({
+      width: '100%',
+      placeholder: "Select Instruction List Code",
+      allowClear: true,
+    });
+
+    $("#b_splist").select2({
+      width: '100%',
+      placeholder: "Select Spare Part List Code",
+      allowClear: true,
+    });
+
+    $("#b_qclist").select2({
+      width: '100%',
+      placeholder: "Select QC List Code",
+      allowClear: true,
+    });
+
       $('#e_engineerlist').select2({
         placeholder: 'Select Engineers',
         width: '100%',
@@ -2477,7 +2665,287 @@ div #munculgambar .gambar:hover{
                   })
               }
             })
-        });
+      });
+
+      $(document).on('click', '.maintcode', function(e) {
+          $('#maintCodeModal').modal('show');
+
+          //   e.stopPropagation();
+
+          // document.getElementById('btnclose_b').addEventListener('click', function() {
+          //   // Mengatur fokus kembali pada modal pertama
+          //   document.getElementById('maintCodeModal').style.display = 'none';
+          //   document.getElementById('viewModal').style.display = 'block';
+          //   document.getElementById('wotype').focus();
+
+          //   document.body.classList.remove('modal-open');
+          // });
+
+          //muncul saat modal pertama kali muncul
+          //maintenance code
+          var output = '';
+          output += '<tr>';
+          output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Maintenace Code first! </td>';
+          output += '</tr>';
+          $('#b_mtcodetable').html('').append(output);
+
+          //instruction list
+          var output = '';
+          output += '<tr>';
+          output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction List Code first! </td>';
+          output += '</tr>';
+          $('#b_inslisttable').html('').append(output);
+
+          //sparepart list
+          var output = '';
+          output += '<tr>';
+          output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction Sparepart Code first! </td>';
+          output += '</tr>';
+          $('#b_splisttable').html('').append(output);
+
+          //qc list
+          var output = '';
+          output += '<tr>';
+          output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction QC Code first! </td>';
+          output += '</tr>';
+          $('#b_qclisttable').html('').append(output);
+
+          $(document).on('change', '#b_mtcode', function() {
+
+            let selectedValue = $(this).val();
+            $.ajax({
+              url: '/searchic',
+              method: 'GET',
+              data: {
+                pmc_code: selectedValue
+              },
+              success: function(response) {
+
+                if (Object.keys(response).length === 0) {
+                  //jika data yang dipilih valuenya tidak ada
+                  var output = '';
+                  output += '<tr>';
+                  output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Maintenace Code first! </td>';
+                  output += '</tr>';
+
+                  $('#b_mtcodetable').html('').append(output);
+
+                  $('#b_inslist option[value!=""]').prop('disabled', false);
+                  $('#b_inslist').val('').trigger('change');
+
+                  $('#b_splist option').prop('disabled', false);
+                  $('#b_splist').val('').trigger('change');
+
+                  $('#b_qclist option').prop('disabled', false);
+                  $('#b_qclist').val('').trigger('change');
+
+                  $("#b_inslist").select2({
+                    width: '100%',
+                    placeholder: "Select Instruction List Code",
+                    allowClear: true,
+                  });
+
+                  $("#b_splist").select2({
+                    width: '100%',
+                    placeholder: "Select Spare Part List Code",
+                    allowClear: true,
+                  });
+
+                  $("#b_qclist").select2({
+                    width: '100%',
+                    placeholder: "Select QC List Code",
+                    allowClear: true,
+                  });
+                } else {
+                  //jika data yang dipilih valuenya ada
+                  var output = '';
+                  output += '<tr>';
+                  output += '<td>' + response.pmc_code + ' -- ' + response.pmc_desc + '</td>';
+                  output += '<td>' + response.pmc_type + '</td>';
+                  output += '<td>' + response.pmc_ins + '</td>';
+                  output += '<td>' + response.pmc_spg + '</td>';
+                  output += '<td>' + response.pmc_qcs + '</td>';
+                  output += '</tr>';
+
+                  $('#b_mtcodetable').html('').append(output);
+
+                  let inslistval = response.pmc_ins;
+                  let spglistval = response.pmc_spg;
+                  let qcslistval = response.pmc_qcs;
+
+                  $('#b_inslist option[value !="' + inslistval + '"]').prop('disabled', true);
+                  $('#b_inslist option[value="' + inslistval + '"]').prop('disabled', false);
+                  $('#b_inslist').val(inslistval).trigger('change');
+
+                  $('#b_splist option[value !="' + spglistval + '"]').prop('disabled', true);
+                  $('#b_splist option[value="' + spglistval + '"]').prop('disabled', false);
+                  $('#b_splist').val(spglistval).trigger('change');
+
+                  $('#b_qclist option[value !="' + qcslistval + '"]').prop('disabled', true);
+                  $('#b_qclist option[value="' + qcslistval + '"]').prop('disabled', false);
+                  $('#b_qclist').val(qcslistval).trigger('change');
+
+                  $("#b_inslist").select2({
+                    width: '100%',
+                    placeholder: "Select Instruction List Code",
+                    allowClear: false,
+                  });
+
+                  $("#b_splist").select2({
+                    width: '100%',
+                    placeholder: "Select Spare Part List Code",
+                    allowClear: false,
+                  });
+
+                  $("#b_qclist").select2({
+                    width: '100%',
+                    placeholder: "Select QC List Code",
+                    allowClear: false,
+                  });
+                }
+              }
+            });
+          });
+
+          $(document).on('change', '#b_inslist', function() {
+
+            let selectedValue = $(this).val();
+            $.ajax({
+              url: '/searchil',
+              method: 'GET',
+              data: {
+                ins_code: selectedValue
+              },
+              success: function(response) {
+                if (Object.keys(response).length === 0) {
+                  //jika data yang dipilih valuenya tidak ada
+                  var output = '';
+                  output += '<tr>';
+                  output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction List Code first! </td>';
+                  output += '</tr>';
+
+                  $('#b_inslisttable').html('').append(output);
+                } else {
+                  //jika data yang dipilih valuenya ada
+                  var output = '';
+                  for (var i = 0; i < response.length; i++) {
+                    output += '<tr>';
+                    output += '<td>' + response[i].ins_code + ' -- ' + response[i].ins_desc + '</td>';
+                    output += '<td>' + response[i].ins_duration + '</td>';
+                    output += '<td>' + response[i].ins_durationum + '</td>';
+                    output += '<td>' + response[i].ins_manpower + '</td>';
+                    output += '<td>' + response[i].ins_step + '</td>';
+                    output += '<td>' + response[i].ins_stepdesc + '</td>';
+                    if (response[i].ins_ref == null) {
+                      output += '<td></td>';
+                    } else {
+                      output += '<td>' + response[i].ins_ref + '</td>';
+                    }
+                    output += '</tr>';
+                  }
+
+                  $('#b_inslisttable').html('').append(output);
+                }
+              }
+            });
+          });
+
+          $(document).on('change', '#b_splist', function() {
+
+            let selectedValue = $(this).val();
+            $.ajax({
+              url: '/searchis',
+              method: 'GET',
+              data: {
+                spg_code: selectedValue
+              },
+              success: function(response) {
+                if (Object.keys(response).length === 0) {
+                  //jika data yang dipilih valuenya tidak ada
+                  var output = '';
+                  output += '<tr>';
+                  output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction Sparepart Code first! </td>';
+                  output += '</tr>';
+
+                  $('#b_splisttable').html('').append(output);
+                } else {
+                  //jika data yang dipilih valuenya ada
+                  var output = '';
+                  for (var i = 0; i < response.length; i++) {
+                    output += '<tr>';
+                    output += '<td>' + response[i].spg_code + ' -- ' + response[i].spg_desc + '</td>';
+                    if (response[i].spg_spcode == null) {
+                      output += '<td></td>';
+                    } else {
+                      output += '<td>' + response[i].spg_spcode + '</td>';
+                    }
+                    if (response[i].spg_qtyreq == null) {
+                      output += '<td></td>';
+                    } else {
+                      output += '<td>' + response[i].spg_qtyreq + '</td>';
+                    }
+                    output += '</tr>';
+                  }
+
+                  $('#b_splisttable').html('').append(output);
+                }
+              }
+            });
+          });
+
+          $(document).on('change', '#b_qclist', function() {
+
+            let selectedValue = $(this).val();
+            $.ajax({
+              url: '/searchiq',
+              method: 'GET',
+              data: {
+                qcs_code: selectedValue
+              },
+              success: function(response) {
+                if (Object.keys(response).length === 0) {
+                  //jika data yang dipilih valuenya tidak ada
+                  var output = '';
+                  output += '<tr>';
+                  output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction QC Code first! </td>';
+                  output += '</tr>';
+
+                  $('#b_qclisttable').html('').append(output);
+                } else {
+                  //jika data yang dipilih valuenya ada
+                  var output = '';
+                  for (var i = 0; i < response.length; i++) {
+                    output += '<tr>';
+                    output += '<td>' + response[i].qcs_code + ' -- ' + response[i].qcs_desc + '</td>';
+                    output += '<td>' + response[i].qcs_spec + '</td>';
+                    if (response[i].qcs_tools == null) {
+                      output += '<td></td>';
+                    } else {
+                      output += '<td>' + response[i].qcs_tools + '</td>';
+                    }
+                    output += '<td>' + response[i].qcs_op + '</td>';
+                    output += '<td>' + response[i].qcs_val1 + '</td>';
+                    if (response[i].qcs_val2 == null) {
+                      output += '<td></td>';
+                    } else {
+                      output += '<td>' + response[i].qcs_val2 + '</td>';
+                    }
+                    if (response[i].qcs_um == null) {
+                      output += '<td></td>';
+                    } else {
+                      output += '<td>' + response[i].qcs_um + '</td>';
+                    }
+                    output += '</tr>';
+                  }
+
+                  $('#b_qclisttable').html('').append(output);
+                }
+              }
+            });
+          });
+
+
+      });
 
   });
   $(document).on('click', '.reopen', function() {
@@ -2849,5 +3317,6 @@ div #munculgambar .gambar:hover{
 
 
   });
+
 </script>
 @endsection

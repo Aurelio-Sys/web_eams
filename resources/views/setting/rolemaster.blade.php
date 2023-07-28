@@ -192,10 +192,19 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Service Request Browse') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Service Request Maintenance') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbSRbrowse">
                   <input type="checkbox" class="custom-control-input" id="cbSRbrowse" name="cbSRbrowse" value="SR03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Service Request Browse') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbSRbrowseonly">
+                  <input type="checkbox" class="custom-control-input" id="cbSRbrowseonly" name="cbSRbrowseonly" value="SR06" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -274,6 +283,15 @@
               <div class="col-6">
                 <label class="switch" for="cbWoRelease">
                   <input type="checkbox" class="custom-control-input" id="cbWoRelease" name="cbWoRelease" value="WO09" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Release Approval') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbWoReleaseApproval">
+                  <input type="checkbox" class="custom-control-input" id="cbWoReleaseApproval" name="cbWoReleaseApproval" value="WO10" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -412,6 +430,15 @@
               <div class="col-6">
                 <label class="switch" for="reqsp">
                   <input type="checkbox" class="custom-control-input" id="reqsp" name="reqsp" value="BO03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Request Sparepart Approval') }}</label>
+              <div class="col-6">
+                <label class="switch" for="reqspappr">
+                  <input type="checkbox" class="custom-control-input" id="reqspappr" name="reqspappr" value="BO06" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -1057,10 +1084,19 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Service Request Browse') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Service Request Maintenance') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbSRbrowse">
                   <input type="checkbox" class="custom-control-input" id="e_cbSRbrowse" name="e_cbSRbrowse" value="SR03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Service Request Browse') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbSRbrowseonly">
+                  <input type="checkbox" class="custom-control-input" id="e_cbSRbrowseonly" name="e_cbSRbrowseonly" value="SR06" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -1140,6 +1176,15 @@
               <div class="col-6">
                 <label class="switch" for="e_cbWoRelease">
                   <input type="checkbox" class="custom-control-input" id="e_cbWoRelease" name="e_cbWoRelease" value="WO09" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Work Order Release Approval') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbWoReleaseApproval">
+                  <input type="checkbox" class="custom-control-input" id="e_cbWoReleaseApproval" name="e_cbWoReleaseApproval" value="WO10" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -1278,6 +1323,15 @@
               <div class="col-6">
                 <label class="switch" for="e_reqsp">
                   <input type="checkbox" class="custom-control-input" id="e_reqsp" name="e_reqsp" value="BO03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Request Sparepart Approval') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_reqspappr">
+                  <input type="checkbox" class="custom-control-input" id="e_reqspappr" name="e_reqspappr" value="BO06" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -2215,6 +2269,11 @@
         } else {
           document.getElementById('e_cbWoRelease').checked = false;
         }
+        if (listmenu.search("WO10") >= 0) {
+          document.getElementById('e_cbWoReleaseApproval').checked = true;
+        } else {
+          document.getElementById('e_cbWoReleaseApproval').checked = false;
+        }
         if (listmenu.search("WO07") >= 0) {
           document.getElementById('e_cbWoWhsConf').checked = true;
         } else {
@@ -2255,6 +2314,12 @@
           document.getElementById('e_cbSRbrowse').checked = true;
         } else {
           document.getElementById('e_cbSRbrowse').checked = false;
+        }
+
+        if (listmenu.search("SR06") >= 0) {
+          document.getElementById('e_cbSRbrowseonly').checked = true;
+        } else {
+          document.getElementById('e_cbSRbrowseonly').checked = false;
         }
 
         if (listmenu.search("SR05") >= 0) {
@@ -2338,6 +2403,11 @@
           document.getElementById('e_accutrf').checked = true;
         } else {
           document.getElementById('e_accutrf').checked = false;
+        }
+        if (listmenu.search("BO06") >= 0) {
+          document.getElementById('e_reqspappr').checked = true;
+        } else {
+          document.getElementById('e_reqspappr').checked = false;
         }
 
         //Report
