@@ -37,6 +37,7 @@ use App\Http\Controllers\Usage\PmmssgController;
 use App\Http\Controllers\Other\WhyHistController;
 use App\Http\Controllers\Routine\RoutineCheckController;
 use App\Http\Controllers\SparepartController;
+use App\Http\Controllers\Training\TrainingController;
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
 use Illuminate\Routing\Route as RoutingRoute;
@@ -819,6 +820,14 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/myroutine', [RoutineCheckController::class, 'myroutinebrowse'])->name('myroutine');
 	Route::get('/myroutine/detail/{id}', [RoutineCheckController::class, 'routincheckdetail'])->name('myrcdetail');
 	Route::post('/myroutinesubmit', [RoutineCheckController::class, 'routinesubmit'])->name('routinesubmit');
+
+	//Training Module
+	Route::get('/traininghome', [TrainingController::class, 'traininghome']);
+	Route::get('/trainingsetup', [TrainingController::class, 'trainingsetup'])->name('trainSetup');
+	Route::get('/trainingplan', [TrainingController::class, 'trainingplan'])->name('trainPlan');
+	Route::get('/trainingexecute', [TrainingController::class, 'trainingexecute'])->name('trainExecute');
+	Route::get('/traininganalyze', [TrainingController::class, 'traininganalyze'])->name('trainAnalyze');
+	
 });
 
 Auth::routes();
