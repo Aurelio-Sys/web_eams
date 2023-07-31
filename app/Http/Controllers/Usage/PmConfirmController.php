@@ -239,6 +239,7 @@ class PmConfirmController extends Controller
                             'wo_sr_number'          => '',
                             'wo_asset_code'          => $req->te_asset[$flg],
                             'wo_site'             => $dataasset->asset_site,
+                            'wo_location'         => $dataasset->asset_loc,
                             'wo_type'              => 'PM',
                             'wo_status'              => 'firm',
                             'wo_list_engineer'    => $deng, 

@@ -9,10 +9,10 @@
           </div><!-- /.col -->
           <div>
             Work Order Status  :  
-            <span class="badge badge-primary">Planned</span>
-            <span class="badge badge-danger">Open</span>
-            <span class="badge badge-warning">Started</span>
-            <span class="badge badge-success">Finish</span>
+            <span class="badge badge-primary">Firm</span>
+            {{--  <span class="badge badge-danger">Open</span>  --}}
+            <span class="badge badge-success">Started</span>
+            <span class="badge badge-warning">Finish</span>
             <span class="badge badge-secondary">Closed</span>
           </div>
         </div><!-- /.row -->
@@ -40,7 +40,7 @@
                                 <select id="t_asset" class="form-control" name="t_asset">
                                     <option value="">--Select Data--</option>
                                    @foreach($dataAsset as $da)
-                                      <option value="{{$da->asset_code}}" {{$dtasset === $da->asset_code ? "selected" : ""}}>{{$da->asset_code}} -- {{$da->asset_desc}}</option>
+                                      <option value="{{$da->asset_code}}" {{$dtasset === $da->asset_code ? "selected" : ""}}>{{$da->asset_code}} -- {{$da->asset_desc}} -- {{$da->asloc_desc}} </option>
                                     @endforeach
                                 </select>
                                 <br>
@@ -180,81 +180,151 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-        <input type="hidden" id="v_counter" value=0>
-        <div class="modal-body">
-          <div class="form-group row ">
-            <label for="v_nowo" class="col-md-3 col-form-label text-md-left">Work Order Number</label>
-            <div class="col-md-3">
-              <input id="v_nowo" type="text" class="form-control" name="v_nowo"  autocomplete="off" readonly autofocus>
-            </div>
-         
-            <label for="v_nosr" class="col-md-2 col-form-label text-md-right">SR Number</label>
-            <div class="col-md-3">
-              <input id="v_nosr" type="text" class="form-control" name="v_nosr"  readonly autofocus>
-            </div>
+      <input type="hidden" id="v_counter" value=0>
+      <div class="modal-body">
+        <div class="form-group row">
+          <label for="v_nowo" class="col-md-2 col-form-label text-md-left">WO Number</label>
+          <div class="col-md-4">
+            <input id="v_nowo" type="text" class="form-control" name="v_nowo" autocomplete="off" readonly autofocus>
           </div>
-          <div class="form-group row ">
-            <label for="v_engineer" class="col-md-3 col-form-label text-md-left">Engineer</label>
-            <div class="col-md-8">
-              <input type='text' id="v_engineer" class="form-control v_engineer" name="v_engineer"  autofocus readonly>
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="v_asset" class="col-md-3 col-form-label text-md-left">Asset</label>
-            <div class="col-md-8">
-              <input type="text" readonly id="v_asset" type="text" class="form-control v_asset" name="v_asset" autofocus >
-            </div>
-          </div>
-          <!-- <div class="form-group row ">
-            <label for="v_failure" class="col-md-3 col-form-label text-md-left">Failure Code</label>
-            <div class="col-md-8">
-              <textarea id="v_failure" class="form-control v_failure" autofocus readonly></textarea>
-            </div>
-          </div> -->
-          <div class="form-group row ">
-            <label for="v_note" class="col-md-3 col-form-label text-md-left">Note</label>
-            <div class="col-md-8">
-              <textarea id="v_note" class="form-control v_note" autofocus readonly></textarea>
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="v_schedule" class="col-md-3 col-form-label text-md-left">Schedule Date</label>
-            <div class="col-md-3">
-              <input id="v_schedule" readonly type="text" class="form-control" name="v_schedule">
-            </div>      
-            <label for="v_startdate" class="col-md-2 col-form-label text-md-right">Start Date</label>
-            <div class="col-md-3">
-              <input id="v_startdate" readonly type="text" class="form-control" name="v_startdate">
-            </div>      
-          </div>
-          <div class="form-group row">
-            <label for="v_duedate" class="col-md-3 col-form-label text-md-left">Due Date</label>
-            <div class="col-md-3">
-              <input id="v_duedate" type="text" class="form-control" name="v_duedate" readonly>
-            </div>     
-            <label for="v_finishdate" class="col-md-2 col-form-label text-md-right">Finish Date</label>
-            <div class="col-md-3">
-              <input id="v_finishdate" type="text" class="form-control" name="v_finishdate" readonly>
-            </div>
-          </div>
-          <div class="form-group row ">
-            <label for="v_creator" class="col-md-3 col-form-label text-md-left">Created By</label>
-            <div class="col-md-3">
-              <input  id="v_creator" readonly  class="form-control" name="v_creator">
-            </div>
-            <label for="v_status" class="col-md-2 col-form-label text-md-right">Status</label>
-            <div class="col-md-3">
-              <input  id="v_status" readonly  class="form-control" name="v_status">
-            </div>
+          <label for="v_creator" class="col-md-2 col-form-label text-md-left">Requested By</label>
+          <div class="col-md-4">
+            <input id="v_creator" readonly class="form-control" name="v_creator" value="{{ old('v_creator') }}" autofocus>
           </div>
         </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Close</button>
+        <div class="form-group row">
+          <label for="v_nosr" class="col-md-2 col-form-label text-md-left">SR Number</label>
+          <div class="col-md-4">
+            <input id="v_nosr" type="text" class="form-control" name="v_nosr" readonly autofocus>
+          </div>
+          <label for="v_dept" class="col-md-2 col-form-label text-md-left">Department</label>
+          <div class="col-md-4">
+            <input id="v_dept" readonly class="form-control" name="v_dept" value="{{ old('v_dept') }}" autofocus>
           </div>
         </div>
-      </form>
+        <div class="form-group row">
+          <label for="v_srnote" class="col-md-2 col-form-label text-md-left">SR Note</label>
+          <div class="col-md-4">
+            <textarea id="v_srnote" readonly class="form-control" name="v_srnote" value="{{ old('v_srnote') }}" autofocus></textarea>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="v_wotype" class="col-md-2 col-form-label text-md-left">WO Type</label>
+          <div class="col-md-4">
+            <input id="v_wotype" readonly class="form-control" name="v_wotype" value="{{ old('v_wotype') }}" autofocus>
+          </div>
+          <label for="v_status" class="col-md-2 col-form-label text-md-left">WO Status</label>
+          <div class="col-md-4">
+            <input id="v_status" readonly class="form-control" name="v_status" value="{{ old('v_status') }}" autofocus>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="v_asset" class="col-md-2 col-form-label text-md-left">Asset Code</label>
+          <div class="col-md-4">
+            <input type="text" readonly id="v_asset" type="text" class="form-control v_asset" name="v_asset" autofocus>
+          </div>
+          <label for="v_loc" class="col-md-2 col-form-label text-md-left">Location</label>
+          <div class="col-md-4">
+            <input id="v_loc" type="text" class="form-control" name="v_loc" value="{{ old('v_loc') }}" autofocus readonly>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="v_assetdesc" class="col-md-2 col-form-label text-md-left">Asset Desc</label>
+          <div class="col-md-4">
+            <input type="text" readonly id="v_assetdesc" type="text" class="form-control v_assetdesc" name="v_assetdesc" autofocus>
+          </div>
+          <label for="v_wottype" class="col-md-2 col-form-label text-md-left">Failure Type</label>
+          <div class="col-md-4">
+            <input id="v_wottype" type="text" class="form-control" name="v_wottype" value="{{ old('v_wottype') }}" autofocus readonly>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="v_note" class="col-md-2 col-form-label text-md-left">Note</label>
+          <div class="col-md-4">
+            <textarea id="v_note" readonly class="form-control" name="v_note" value="{{ old('v_note') }}" autofocus></textarea>
+          </div>
+          <label for="v_fclist" class="col-md-2 col-form-label text-md-left">Failure Code</label>
+          <div class="col-md-4">
+            <textarea id="v_fclist" class="form-control" name="v_fclist" value="{{ old('v_fclist') }}" style="white-space: pre-wrap;" autofocus readonly></textarea>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="v_engineerl" class="col-md-2 col-form-label text-md-left">Engineer List</label>
+          <div class="col-md-4">
+            <textarea id="v_engineerl" class="form-control v_engineerl" name="v_engineerl" autofocus readonly></textarea>
+          </div>
+          <label for="v_impact" class="col-md-2 col-form-label text-md-left">Impact</label>
+          <div class="col-md-4">
+            <textarea id="v_impact" class="form-control" name="v_impact" value="{{ old('v_impact') }}" style="white-space: pre-wrap;" autofocus readonly></textarea>
+          </div>
+        </div>
+        <div class="form-group row">
+            <label for="v_startdate" class="col-md-2 col-form-label text-md-left">Schedule Date</label>
+            <div class="col-md-4">
+              <input id="v_startdate" readonly type="text" class="form-control" name="v_startdate" value="{{ old('v_startdate') }}" autofocus>
+            </div>
+            <label for="v_wostart" class="col-md-2 col-form-label text-md-left">Start Date</label>
+            <div class="col-md-4">
+              <input id="v_wostart" type="text" class="form-control" name="v_wostart" value="{{ old('v_wostart') }}" autofocus readonly>
+            </div>
+        </div>
+        <div class="form-group row">
+          <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
+          <div class="col-md-4">
+            <input id="v_duedate" type="text" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
+          </div>
+          <label for="v_wofinish" class="col-md-2 col-form-label text-md-left">Finish Date</label>
+          <div class="col-md-4">
+            <input id="v_wofinish" readonly type="text" class="form-control" name="v_wofinish" value="{{ old('v_wofinish') }}" autofocus>
+          </div>
+      </div>
+        <div class="form-group row">
+          <label class="col-md-2 col-form-label text-md-left">SR Uploaded File</label>
+          <div class="col-md-4" style="overflow-x: auto;">
+            <!-- <table class="table table-bordered" style="width: 100%; max-width: 100%;" id="munculgambar_view_sr">
+            </table> -->
+            <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>File Name</th>
+                  </tr>
+                </thead>
+                <tbody id="munculgambar_view_sr">
+
+                </tbody>
+              </table>  
+          </div>
+          <label class="col-md-2 col-form-label text-md-left">WO Uploaded File</label>
+          <div class="col-md-4" style="overflow-x: auto;">
+            <table class="table table-bordered" style="width: 100%; max-width: 100%;" id="munculgambar_view">
+            </table>  
+          </div>
+        </div>
+        <div class="form-group row">
+            <label for="v_rejectreason" class="col-md-2 col-form-label text-md-left">User Acceptance Note</label>
+            <div class="col-md-4">
+              <textarea id="v_rejectreason" readonly type="text" class="form-control" name="v_rejectreason" value="{{ old('v_rejectreason') }}" rows="2" autofocus></textarea>
+            </div>
+            <!-- <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
+            <div class="col-md-4">
+              <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
+            </div> -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Close</button>
+      </div>
     </div>
+    </form>
   </div>
+</div>
+
+<!--Modal Loading-->
+<div class="modal fade" id="loadingtable" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <h1 class="animate__animated animate__bounce" style="display:inline;width:100%;text-align:center;color:white;font-size:larger;text-align:center">Loading...</h1>
+  </div>
+</div>
 
 @endsection('content')
 
@@ -262,35 +332,124 @@
 <script type="text/javascript">
 
     $(document).on('click', '.viewwo', function() {
-        
-        var wonbr       = $(this).data('wonbr');
-        var srnbr       = $(this).data('srnbr');
-        var asset       = $(this).data('woasset');
-        var assdesc       = $(this).data('assdesc');
-        var schedule       = $(this).data('schedule');
-        var duedate       = $(this).data('duedate');
-        var eng       = $(this).data('eng');
-        var dfailure       = $(this).data('dfc');
-        var creator       = $(this).data('creator');
-        var note       = $(this).data('note');
-        var startdate       = $(this).data('startdate');
-        var finishdate       = $(this).data('finishdate');
-        var status       = $(this).data('status');
-    
-        document.getElementById('v_nowo').value       = wonbr;
-        document.getElementById('v_nosr').value       = srnbr;
-        document.getElementById('v_asset').value      = asset+' -- '+assdesc;
-        document.getElementById('v_schedule').value   = schedule;
-        document.getElementById('v_duedate').value    = duedate;
-        document.getElementById('v_engineer').value  = eng;
-        // document.getElementById('v_failure').value   = dfailure;
-        document.getElementById('v_creator').value    = creator;
-        document.getElementById('v_note').value    = note;
-        document.getElementById('v_startdate').value    = startdate;
-        document.getElementById('v_finishdate').value    = finishdate;
-        document.getElementById('v_status').value    = status;
-
+      $('#viewModal').modal('show');
+      var wonbr = $(this).data('wonbr');
+      {{--  var srnumber = $(this).data('srnumber');
+      var btnendel1 = document.getElementById("btndeleteen1");
+      var btnendel2 = document.getElementById("btndeleteen2");
+      var btnendel3 = document.getElementById("btndeleteen3");
+      var btnendel4 = document.getElementById("btndeleteen4");
+      var btnendel5 = document.getElementById("btndeleteen5");
+      var counter = document.getElementById('counter').value;
+      var counterfail = document.getElementById('counterfail').value;  --}}
+      $.ajax({
+        url: '/womaint/getwoinfo',
+        method: 'GET',
+        data: {
+            wonumber: wonbr,
+        },
+        success: function(vamp) {
+  
+          // console.log(vamp);
+          
+          var wonumber = wonbr;
+          var srnumber = vamp.wo_master.wo_sr_number;
+          var assetcode = vamp.wo_master.wo_asset_code;
+          var srnote = vamp.sr_note;
+          var assetdesc = vamp.asset.asset_desc;
+          var assetloc = vamp.asset.asset_loc;
+          var assetloc_desc = vamp.asset.asloc_desc;
+          var failuretype_code = vamp.wo_master.wo_failure_type !== null ? vamp.wo_master.wo_failure_type : '';
+          var failuretype_desc = vamp.failure_type.wotyp_desc ? vamp.failure_type.wotyp_desc : '';
+          var note = vamp.wo_master.wo_note;
+          var startdate = vamp.wo_master.wo_start_date;
+          startdate = new Date(startdate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+          var duedate = vamp.wo_master.wo_due_date;
+          duedate = new Date(duedate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+          var createdby = vamp.wo_master.wo_createdby;
+          var department = vamp.wo_master.wo_department ? vamp.wo_master.wo_department : '';
+          var rejectreason = vamp.sr_acceptance_note ? vamp.sr_acceptance_note : '';
+          var status = vamp.wo_master.wo_status;
+          var wotype = vamp.wo_master.wo_type;
+          var wostart = vamp.wo_master.wo_job_startdate ? new Date(vamp.wo_master.wo_job_startdate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
+          var wofinish = vamp.wo_master.wo_job_finishdate ? new Date(vamp.wo_master.wo_job_finishdate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
+  
+          let combineFailure = [];
+  
+          vamp.failurecode.forEach(function(failure) {
+            combineFailure.push(failure.fn_code + " - " + failure.fn_desc);
+          });
+  
+          let combineImpact = [];
+  
+          vamp.impact.forEach(function(impact){
+            combineImpact.push(impact.imp_code + " - " + impact.imp_desc);
+          });
+  
+          let combineEngineer = [];
+  
+          vamp.engineer.forEach(function(engineer){
+            combineEngineer.push(engineer.eng_code + ' - ' + engineer.eng_desc);
+          });
+  
+  
+          document.getElementById('v_nowo').value = wonumber;
+          document.getElementById('v_asset').value = assetcode;
+          document.getElementById('v_assetdesc').value = assetdesc;
+          document.getElementById('v_loc').value = assetloc + ' - ' + assetloc_desc;
+          document.getElementById('v_wottype').value = failuretype_code + ' - ' + failuretype_desc;
+          document.getElementById('v_fclist').value = combineFailure.join('\n');
+          document.getElementById('v_impact').value = combineImpact.join('\n');
+          document.getElementById('v_engineerl').value = combineEngineer.join('\n');
+          document.getElementById('v_note').value = note;
+          document.getElementById('v_nosr').value = srnumber;
+          document.getElementById('v_startdate').value = startdate;
+          document.getElementById('v_duedate').value = duedate;
+          document.getElementById('v_creator').value = createdby;
+          document.getElementById('v_dept').value = department;
+          document.getElementById('v_srnote').value = srnote;
+          document.getElementById('v_rejectreason').value = rejectreason;
+          document.getElementById('v_status').value = status;
+          document.getElementById('v_wotype').value = wotype;
+          document.getElementById('v_wostart').value = wostart;
+          document.getElementById('v_wofinish').value = wofinish;
+          
+  
+        },complete: function(vamp) {
+          //  $('.modal-backdrop').modal('hide');
+          // alert($('.modal-backdrop').hasClass('in'));
+  
+          {{--  setTimeout(function() {
+            $('#loadingtable').modal('hide');
+          }, 500);
+  
+          setTimeout(function() {
+            $('#viewModal').modal('show');
+          }, 1000);  --}}
+  
+        }
+      })
+  
+      $.ajax({
+        url: "/imageviewonly_woimaint",
+        data: {
+          wonumber: wonbr,
+        },
+        success: function(data) {
+  
+          $('#munculgambar_view').html('').append(data);
+        }
+      })
+  
+      $.ajax({
+          url: "/listuploadview/" + srnumber,
+          success: function(data) {
+            // console.log(data);
+            $('#munculgambar_view_sr').html('').append(data);
+          }
+        })
     });
+    // flag tunggu semua menu  --}}
 
     $("#t_asset").select2({
         width : '100%',

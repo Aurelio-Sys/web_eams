@@ -1,56 +1,35 @@
-{{--  @php($eng = $ds->wo_engineer1)
-@if(!is_null($ds->wo_engineer2))
-    @php($eng .= ','.$ds->wo_engineer2)
-@endif
-@if(!is_null($ds->wo_engineer3))
-    @php($eng .= ','.$ds->wo_engineer3)
-@endif
-@if(!is_null($ds->wo_engineer4))
-    @php($eng .= ','.$ds->wo_engineer4)
-@endif
-@if(!is_null($ds->wo_engineer5))
-    @php($eng .= ','.$ds->wo_engineer5)
-@endif
+{{--  query disamakan dengan assetsch  --}}
+@php($tipe = $ds->wo_type)
 
-@php($fc = $ds->wo_failure_code1)
-@php($dfc = "")
-@if(!is_null($ds->wo_failure_code1) && $ds->wo_failure_code1 != "")
-    @php($fcode = $datafn->where('fn_code','=',$ds->wo_failure_code1)->first())
-    @php($dfc = $fc.' - '.$fcode->fn_desc."\n")
-@endif
-@if(!is_null($ds->wo_failure_code2) && $ds->wo_failure_code2 != "")
-    @php($fcode = $datafn->where('fn_code','=',$ds->wo_failure_code2)->first())
-    @php($dfc .= $ds->wo_failure_code2.' - '.$fcode->fn_desc."\n")
-@endif
-@if(!is_null($ds->wo_failure_code3) && $ds->wo_failure_code3 != "")
-    @php($fcode = $datafn->where('fn_code','=',$ds->wo_failure_code3)->first())
-    @php($dfc .= $ds->wo_failure_code3.' - '.$fcode->fn_desc."\n")    
-@endif  --}}
+{{--  Mencari data Engineer  --}}
+@php($arrayEng = explode(';', $ds->wo_list_engineer))
+@foreach($arrayEng as $descEng)
+    @php($engDesc = $dataeng->where('eng_code', $descEng)->pluck('eng_desc')->first())
 
-@if($ds->wo_type == 'auto')
-    @php($tipe = 'PM')
-@else
-    @php($tipe = 'WO')
-@endif
+    @if($engDesc)
+        @php($eng = isset($eng) ? $eng . " ; " . $engDesc : $engDesc)
+    @endif
+@endforeach
 
-@php($eng = "")
+{{--  Mencari data Lokasi  --}}
+@php($loc = $ds->wo_site . ' ; ' . $ds->wo_location . ' -- ' . $ds->asloc_desc)
+@php($dfc = '-')
 
-{{--  <a href="javascript:void(0)" class="viewwo" data-toggle="modal"  title="View WO"  data-target="#viewModal" 
-    data-wonbr="{{$ds->wo_nbr}}" data-srnbr="{{$ds->wo_sr_nbr}}" data-woengineer="{{$ds->wo_engineer1}}" 
-    data-woasset="{{$ds->wo_asset}}" data-schedule="{{$ds->wo_schedule}}" data-duedate="{{$ds->wo_duedate}}"
-    data-assdesc="{{$ds->asset_desc}}" data-eng="{{$eng}}" data-dfc="{{$dfc}}" data-creator="{{$ds->wo_creator}}"
-    data-note="{{$ds->wo_note}}" data-startdate="{{$ds->wo_start_date}}" data-finishdate="{{$ds->wo_finish_date}}"
-    data-status="{{$ds->wo_status}}">  --}}
-<a href="javascript:void(0)" class="viewwo" data-toggle="modal"  title="View WO"  data-target="#viewModal" >
+<a href="javascript:void(0)" class="viewwo" data-toggle="modal"  title="View WO"  data-target="#viewModal" 
+    data-wonbr="{{$ds->wo_number}}" data-srnbr="{{$ds->wo_sr_number}}" 
+    data-woasset="{{$ds->wo_asset_code}}" data-schedule="{{$ds->wo_start_date}}" data-duedate="{{$ds->wo_due_date}}"
+    data-assdesc="{{$ds->asset_desc}}" data-eng="{{$eng}}" data-dfc="{{$dfc}}" data-creator="{{$ds->wo_createdby}}"
+    data-note="{{$ds->wo_note}}" data-startdate="{{$ds->wo_job_startdate}}" data-finishdate="{{$ds->wo_job_finishdate}}"
+    data-status="{{$ds->wo_status}}" data-loc="{{$loc}}">
 
-    @if($ds->wo_status == 'plan')
+    @if($ds->wo_status == 'firm')
         <span class="badge badge-primary">{{$tipe}} : {{$eng}} - {{$ds->asset_desc}}</span>
     @elseif($ds->wo_status == 'started')
-        <span class="badge badge-warning">{{$tipe}} : {{$eng}} - {{$ds->asset_desc}}</span>
-    @elseif($ds->wo_status == 'open')
-        <span class="badge badge-danger">{{$tipe}} : {{$eng}} - {{$ds->asset_desc}}</span>
-    @elseif($ds->wo_status == 'finish')
         <span class="badge badge-success">{{$tipe}} : {{$eng}} - {{$ds->asset_desc}}</span>
+    @elseif($ds->wo_status == 'acceptance')
+        <span class="badge badge-warning">{{$tipe}} : {{$eng}} - {{$ds->asset_desc}}</span>
+    @elseif($ds->wo_status == 'finished')
+        <span class="badge badge-warning">{{$tipe}} : {{$eng}} - {{$ds->asset_desc}}</span>
     @elseif($ds->wo_status == 'closed')
         <span class="badge badge-secondary">{{$tipe}} : {{$eng}} - {{$ds->asset_desc}}</span>
     @else 

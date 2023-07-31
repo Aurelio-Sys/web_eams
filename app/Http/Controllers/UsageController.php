@@ -18,7 +18,35 @@ class UsageController extends Controller
 {
     public function index(Request $req){
 
+        $s_asset = $req->asset;
+        // dd($s_asset);
+        
         $data = DB::table('asset_mstr')
+            ->join('pma_asset','pma_asset','=','asset_code')
+            ->whereIn('pma_mea',['M','B'])
+            // ->whereIn('asset_code',function($query) {
+            //     $query->select('pma_asset')
+            //         ->from('pma_asset')
+            //         ->whereIn('pma_mea',['M','B'])
+            //         ->groupBy('pma_asset');
+            // })
+            ->join('asset_site','assite_code','=','asset_site')
+            ->join('asset_loc', function ($join) {
+                $join->on('asset_loc.asloc_site', '=', 'asset_mstr.asset_site')
+                     ->on('asset_loc.asloc_code', '=', 'asset_mstr.asset_loc');
+            })
+            ->whereAssetActive('Yes')
+            ->groupBy('pma_asset','pma_meterum')
+            ->orderBy('pma_asset')
+            ->orderBy('pma_meterum');
+
+        if($s_asset) {
+            $data = $data->where('asset_code','=',$s_asset);
+        }
+// dd($data->get());
+        $data = $data->paginate(10);
+        
+        $asset = DB::table('asset_mstr')
             ->whereIn('asset_code',function($query) {
                 $query->select('pma_asset')
                     ->from('pma_asset')
@@ -28,22 +56,24 @@ class UsageController extends Controller
             ->join('asset_site','assite_code','=','asset_site')
             ->join('asset_loc', function ($join) {
                 $join->on('asset_loc.asloc_site', '=', 'asset_mstr.asset_site')
-                     ->on('asset_loc.asloc_code', '=', 'asset_mstr.asset_loc');
-            })
-            ->whereAssetActive('Yes');
-// dd($data->get());
-        $data = $data->paginate(10);
-        
-        $asset = DB::table('asset_mstr')
-            ->join('asset_site','assite_code','=','asset_site')
-            ->join('asset_loc', function ($join) {
-                $join->on('asset_loc.asloc_site', '=', 'asset_mstr.asset_site')
-                     ->on('asset_loc.asloc_code', '=', 'asset_mstr.asset_loc');
+                        ->on('asset_loc.asloc_code', '=', 'asset_mstr.asset_loc');
             })
             ->whereAssetActive('Yes')
             ->get();
 
-        return view('schedule.usage',['data' => $data, 'asset' => $asset]);
+        $dataussage = DB::table('us_hist')
+            ->select('us_hist.us_asset', 'us_last_mea', 'us_date as tgl', 'us_hist.us_mea_um')
+            ->join(
+                \DB::raw('(SELECT us_asset,us_mea_um, MAX(us_date) AS max_date FROM us_hist GROUP BY us_asset, us_mea_um) as max_us'),
+                function ($join) {
+                    $join->on('us_hist.us_asset', '=', 'max_us.us_asset');
+                    $join->on('us_hist.us_date', '=', 'max_us.max_date');
+                    $join->on('us_hist.us_mea_um', '=', 'max_us.us_mea_um');
+                }
+            )
+            ->get();
+// dd($dataussage);
+        return view('schedule.usage',['data' => $data, 'asset' => $asset, 'dataussage' => $dataussage]);
         
     }
 
@@ -77,7 +107,7 @@ class UsageController extends Controller
                 'us_asset' => $checkdata->asset_code,
                 'us_asset_site' => $checkdata->asset_site,
                 'us_asset_loc' => $checkdata->asset_loc,
-                // 'us_mea_um' => $checkdata->asset_mea_um,
+                'us_mea_um' => $req->e_meterum,
                 'us_date' => $req->e_date,
                 'us_time' => $req->e_time,
                 'us_last_mea' => $req->e_current,
