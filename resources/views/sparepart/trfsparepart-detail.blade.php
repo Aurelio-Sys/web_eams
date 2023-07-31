@@ -30,9 +30,13 @@
         </div>
         <label class="col-md-2 col-form-label text-md-right">Needed Date</label>
         <div class="col-md-3 mb-3">
-            <input type="text" class="form-control" id="due_date" name="due_date" value="{{$data->req_sp_due_date}}" readonly>
+            <input type="text" class="form-control" id="due_date" name="due_date" value="{{date('d-m-Y',strtotime($data->req_sp_due_date))}}" readonly>
         </div>
-        <label class="col-md-3 col-form-label text-md-right">Requested By</label>
+        <label class="col-md-3 col-form-label text-md-right">WO Number</label>
+        <div class="col-md-3">
+            <input type="text" class="form-control" id="wo_num" name="wo_num" value="{{$data->req_sp_wonumber}}" readonly>
+        </div>
+        <label class="col-md-2 col-form-label text-md-right">Requested By</label>
         <div class="col-md-3">
             <input type="text" class="form-control" id="req_by" name="req_by" value="{{$data->req_sp_requested_by}}" readonly>
         </div>

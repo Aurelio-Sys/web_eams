@@ -816,6 +816,11 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/searchaccutrf', [SparepartController::class, 'searchaccutrf']);
 	Route::post('/submitaccutrf', [SparepartController::class, 'submitaccutrf']);
 
+	//return sparepart
+	Route::get('/retsp', [SparepartController::class, 'returnspbrowse'])->name('returnSPBrowse');
+	Route::get('/searchretsp', [SparepartController::class, 'searchretsp']);
+	Route::post('/submitretsp', [SparepartController::class, 'submitretsp']);
+
 	//my routine check browse
 	Route::get('/myroutine', [RoutineCheckController::class, 'myroutinebrowse'])->name('myroutine');
 	Route::get('/myroutine/detail/{id}', [RoutineCheckController::class, 'routincheckdetail'])->name('myrcdetail');
