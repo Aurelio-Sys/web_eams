@@ -163,6 +163,12 @@ to get the desired effect
             <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
             <!-- <li class="nav-header">SETTING</li> -->
+            <li class="nav-item ">
+              <a href="/traininghome" class="nav-link ">
+                <i class="nav-icon fas fa-book-open"></i>
+                  <p>Training Module</p>
+              </a>
+            </li>
 
             @if(str_contains( Session::get('menu_access'), 'RC01'))
             <li class="nav-item ">
