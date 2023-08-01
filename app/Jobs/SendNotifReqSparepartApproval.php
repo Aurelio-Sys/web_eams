@@ -59,7 +59,7 @@ class SendNotifReqSparepartApproval
         $emails = '';
         
         foreach ($getUsersEmail as $email) {
-            $emails .= $email->email_user . ',';
+            $emails .= $email->eng_email . ',';
         }
 
         $emails = substr($emails, 0, strlen($emails) - 1);
@@ -78,7 +78,7 @@ class SendNotifReqSparepartApproval
 
 
             foreach ($getUsersEmail as $approver) {
-                $user = App\User::where('id', '=', $approver->id)->first();
+                $user = App\User::where('id', '=', $approver->ID)->first();
                 $details = [
                     'body' => 'Request Sparepart Approval needed for '.$rsnumber.'',
                     'url' => 'reqspapproval',

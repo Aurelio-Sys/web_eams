@@ -122,7 +122,7 @@
         </div>
 
         <div class="modal-footer">
-            <a class="btn btn-danger" href="/wotransfer" id="btnback">Back</a>
+            <a class="btn btn-danger" href="/accutransfer" id="btnback">Back</a>
             <button type="submit" class="btn btn-success bt-action" id="btnconf" disabled>Confirm</button>
             <button type="button" class="btn bt-action" id="btnloading" style="display:none">
                 <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading

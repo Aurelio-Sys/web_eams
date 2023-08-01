@@ -1245,7 +1245,7 @@ class SparepartController extends Controller
                 $output .= '<input type="text" class="form-control spret" name="spret[]" value="'. $data->wd_sp_spcode . ' -- ' . $data->spm_desc .'" readonly/>';
                 $output .= '</td>';
                 $output .= '<td>';
-                $output .= '<input type="number" class="form-control qtyreturn" name="qtyreturn[]" step=".01" max="' . $data->wd_sp_required - $data->wd_sp_issued . '"  min="0.1" value="' . $data->wd_sp_required - $data->wd_sp_issued . '" required />';
+                $output .= '<input type="number" class="form-control qtyreturn" name="qtyreturn[]" step=".01" max="' . ($data->wd_sp_required - $data->wd_sp_issued) . '"  min="0.1" value="' . ($data->wd_sp_required - $data->wd_sp_issued) . '" required />';
                 $output .= '</td>';
                 $output .= '<td>';
                 $output .= '<select name="locto[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
