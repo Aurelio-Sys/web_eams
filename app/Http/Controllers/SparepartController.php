@@ -1136,8 +1136,364 @@ class SparepartController extends Controller
         }
     }
 
-    public function returnspbrowse(){
-        return view('sparepart.returnsparepart-mtc'); 
+    public function retspbrowse(Request $request)
+    {
+        $data = DB::table('ret_sparepart')
+            ->leftJoin('ret_sparepart_det', 'ret_sparepart_det.ret_spd_mstr_id', 'ret_sparepart.id')
+            ->join('sp_mstr', 'sp_mstr.spm_code', 'ret_sparepart_det.ret_spd_sparepart_code')
+            ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
+            ->groupBy('ret_sp_number')
+            ->orderBy('ret_sp_due_date', 'ASC');
+
+        $sp_all = DB::table('sp_mstr')
+            ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
+            ->where('spm_active', '=', 'Yes')
+            ->get();
+
+        $loc_to = DB::table('inp_supply')->get();
+
+        $requestby = DB::table('ret_sparepart')
+            ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
+            ->groupBy('ret_sp_return_by')
+            ->get();
+
+        $datefrom = $request->get('s_datefrom') == '' ? '2000-01-01' : date($request->get('s_datefrom'));
+        $dateto = $request->get('s_dateto') == '' ? '3000-01-01' : date($request->get('s_dateto'));
+
+        if ($request->s_nomorrs) {
+            $data->where('ret_sp_number', 'like', '%' . $request->s_nomorrs . '%');
+        }
+
+        if ($request->s_reqby) {
+            $data->where('ret_sp_return_by', '=', $request->s_reqby);
+        }
+
+        if ($request->s_status) {
+            $data->where('ret_sp_status', '=', $request->s_status);
+        }
+
+        if ($datefrom != '' || $dateto != '') {
+            $data->where('ret_sp_due_date', '>=', $datefrom);
+            $data->where('ret_sp_due_date', '<=', $dateto);
+        }
+
+        if (Session::get('role') <> 'ADMIN') {
+            $data = $data->where('ret_sp_dept', Session::get('department'));
+        }
+
+        $data = $data->paginate(10);
+
+        return view('sparepart.returnsparepart', ['data' => $data, 'sp_all' => $sp_all, 'loc_to' => $loc_to, 'requestby' => $requestby,]);
+        // return view('sparepart.returnsparepart-mtc'); 
+    }
+
+    public function retspcreate()
+    {
+        $sp_all = DB::table('sp_mstr')
+            ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
+            ->where('spm_active', '=', 'Yes')
+            ->get();
+
+        $wo_sp = collect([]);
+
+        $data = DB::table('ret_sparepart')
+            ->join('ret_sparepart_det', 'ret_sparepart_det.ret_spd_mstr_id', 'ret_sparepart.id')
+            ->get();
+
+        $loc_to = DB::table('inp_supply')->get();
+
+        //nomor wo akan di filter berdasarkan departmen user yang login harus sama dengan departmen wo, kecuali admin dapat mengakses semua nomor wo
+        $womstr = DB::table('wo_dets_sp')
+            ->join('wo_mstr', 'wo_mstr.wo_number', 'wo_dets_sp.wd_sp_wonumber')
+            ->where('wo_status', '<>', 'closed')
+            ->where('wo_status', '<>', 'finished')
+            ->where('wo_status', '<>', 'acceptance')
+            ->where('wo_status', '<>', 'canceled')
+            ->when(Session::get('role') <> 'ADMIN', function ($q) {
+                return $q->where('wo_department', Session::get('department'));
+            })
+            ->groupBy('wd_sp_wonumber')
+            ->get();
+
+        // dd($womstr);
+
+        return view('sparepart.returnsparepart-detail', compact('data', 'wo_sp', 'sp_all', 'loc_to', 'womstr'));
+    }
+
+    public function retsplistwo(Request $req)
+    {
+        $wo_number = $req->wonumber;
+        // dd($wo_number);
+        $splistwo = WOMaster::join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber', 'wo_mstr.wo_number')
+            ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
+            ->whereColumn('wd_sp_required', '>', 'wd_sp_issued')
+            ->where('wo_number', $wo_number)
+            ->get();
+
+        $loc_to = DB::table('inc_source')->get();
+
+        $output = '';
+
+        if ($splistwo->count() != 0) {
+            foreach ($splistwo as $key => $data) {
+
+                $output .= '<tr>';
+                // $output .= '<td>';
+                // $output .= $key + 1;
+                // $output .= '</td>';
+                $output .= '<td>';
+                $output .= '<input type="text" class="form-control spret" name="spret[]" value="'. $data->wd_sp_spcode . ' -- ' . $data->spm_desc .'" readonly/>';
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= '<input type="number" class="form-control qtyreturn" name="qtyreturn[]" step=".01" max="' . $data->wd_sp_required - $data->wd_sp_issued . '"  min="0.1" value="' . $data->wd_sp_required - $data->wd_sp_issued . '" required />';
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= '<select name="locto[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
+                $output .= '<option value = ""> -- Select Location To -- </option>';
+                foreach ($loc_to as $loc) {
+                    $output .= '<option data-siteto="'. $loc->inc_source_site .'" value="'. $loc->inc_loc .'">'.$loc->inc_loc.'</option>';
+                }
+                $output .= '</select>';
+                $output .= '<input type="hidden" class="siteto" name="siteto[]" value="'. $loc->inc_source_site .'"/>';
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= '<textarea type="text" id="retnote" class="form-control retnote" name="retnote[]" rows="2" ></textarea>';
+                $output .= '</td>';
+                $output .= '<td data-title="Action" style="vertical-align:middle;text-align:center;">';
+                $output .= '<input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete">';
+                $output .= '<input type="hidden" class="op" name="op[]" value="A"/>';
+                $output .= '</td>';
+                $output .= '</tr>';
+            }
+        }
+
+        return response($output);
+    }
+
+    public function retspsubmit(Request $req)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            //mengelompokan data dari request depan
+            $requestData = $req->all(); // mengambil data dari request
+            dd($requestData);
+
+            if (!empty($requestData['spret'])) { //jika di released dengan adanya spare part
+
+                $data = [
+                    "spret" => $requestData['spret'],
+                    "locto" => $requestData['locto'],
+                    "qtyreturn" => $requestData['qtyreturn'],
+                    "retnote" => $requestData['retnote'],
+                    "siteto" => $requestData['siteto'],
+                ];
+
+                $groupedData = collect($data['spret'])->map(function ($spret, $key) use ($data) {
+                    return [
+                        'spret' => $spret,
+                        'locto' => $data['locto'][$key],
+                        'siteto' => $data['siteto'][$key],
+                        'qtyreturn' => $data['qtyreturn'][$key],
+                        'retnote' => $data['retnote'][$key],
+                    ];
+                })->groupBy('spret')->map(function ($group) {
+                    $totalqtyreturn = $group->sum('qtyreturn');
+
+                    return [
+                        'spret' => $group[0]['spret'],
+                        'locto' => $group[0]['locto'],
+                        'siteto' => $group[0]['siteto'],
+                        'retnote' => $group[0]['retnote'],
+                        'qtyreturn' => $totalqtyreturn,
+                    ];
+                })->values();
+
+                $data = [];
+
+                $user = Auth::user();
+                // dd($user);
+
+                $tablern = DB::table('running_mstr')->first();
+                $newyear = Carbon::now()->format('y');
+
+                // dd($tablern);
+
+                if ($tablern->year == $newyear) {
+                    $tempnewrunnbr = strval(intval($tablern->rs_nbr) + 1);
+                    $newtemprunnbr = '';
+
+                    // dd($tempnewrunnbr);
+
+                    if (strlen($tempnewrunnbr) < 6) {
+                        $newtemprunnbr = str_pad($tempnewrunnbr, 6, '0', STR_PAD_LEFT);
+                    }
+                } else {
+                    $newtemprunnbr = "0001";
+                }
+
+                $runningnbr = $tablern->rs_prefix . '-' . $newyear . '-' . $newtemprunnbr;
+                // dd($runningnbr);
+
+                //simpan ke dalam ret_sparepart
+                $reqspmstrid = DB::table('ret_sparepart')
+                    ->insertGetId([
+                        'ret_sp_number' => $runningnbr,
+                        'ret_sp_wonumber' => $requestData['wonbr'],
+                        'ret_sp_dept' => $user->dept_user,
+                        'ret_sp_return_by' => $user->username,
+                        // 'ret_sp_due_date' => $req->due_date,
+                        'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    ]);
+
+                DB::table('running_mstr')
+                    ->where('rt_nbr', '=', $tablern->rt_nbr)
+                    ->update([
+                        'year' => $newyear,
+                        'rt_nbr' => $newtemprunnbr
+                    ]);
+
+                //simpan ke dalam ret_sparepart_det
+                foreach ($groupedData as $loopsp) {
+
+                    //simpan list spare part yang di released ke table wo_det
+                    DB::table('ret_sparepart_det')
+                        ->insert([
+                            'ret_spd_mstr_id' => $reqspmstrid,
+                            'ret_spd_sparepart_code' => $loopsp['spret'],
+                            'ret_spd_qty_return' => $loopsp['qtyreturn'],
+                            'ret_spd_loc_to' => $loopsp['locto'],
+                            'ret_spd_site_to' => $loopsp['siteto'],
+                            'ret_spd_engnote' => $loopsp['retnote'],
+                            'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
+
+                    // simpan history created
+                    DB::table('ret_sparepart_hist')
+                        ->insert([
+                            'ret_sph_number' => $runningnbr,
+                            'ret_sph_wonumber' => $requestData['wonbr'],
+                            'ret_sph_dept' => $user->dept_user,
+                            'ret_sph_retby' => $user->username,
+                            'ret_sph_spcode' => $loopsp['spret'],
+                            'ret_sph_qtyret' => $loopsp['qtyreturn'],
+                            'ret_sph_locto' => $loopsp['locto'],
+                            // 'ret_sph_duedate' => $req->due_date,
+                            'ret_sph_action' => 'request sparepart created',
+                            'created_at' => Carbon::now()->toDateTimeString(),
+                        ]);
+                }
+
+                //tambahkan data ke table approval wo release
+                //cek apakah approval release sudah di setting atau belum
+                // $checkApprover = DB::table('sp_approver_mstr')
+                //     ->count();
+
+                // // dd($checkApprover);
+
+                // if ($checkApprover > 0) {
+                //     //jika ada settingan approver
+
+                //     //ambil role approver order paling pertama untuk dikirimkan email notifikasi
+                //     $getFirstApprover = DB::table('sp_approver_mstr')
+                //         ->orderBy('sp_approver_order', 'ASC')
+                //         ->first();
+
+                //     // dd($getFirstApprover);
+
+                //     //send notifikasi ke approver pertama
+                //     SendNotifReqSparepartApproval::dispatch($runningnbr, $requestData['wonbr'], $getFirstApprover->sp_approver_role, Session::get('department'));
+
+                //     //get wo dan sr mstr
+                //     $womstr = DB::table('wo_mstr')->where('wo_number', $requestData['wonbr'])->first();
+                //     $rsmstr = DB::table('req_sparepart')->where('req_sp_number', $runningnbr)->first();
+
+                //     //cek wo release approval master
+                //     $woapprover = DB::table('sp_approver_mstr')->where('id', '>', 0)->get();
+
+                //     if (count($woapprover) > 0) {
+                //         for ($i = 0; $i < count($woapprover); $i++) {
+                //             $nextroleapprover = $woapprover[$i]->sp_approver_role;
+                //             $nextseqapprover = $woapprover[$i]->sp_approver_order;
+
+                //             if ($woapprover[$i]->sp_approver_role == 'WHS') {
+                //                 //jika user rolenya warehouse maka department dikosongkan
+                //                 //update status wo approval
+                //                 DB::table('reqsp_trans_approval')
+                //                     ->insert([
+                //                         'rqtr_mstr_id' => $rsmstr->id,
+                //                         'rqtr_wo_number' => $womstr->wo_number,
+                //                         // 'rqtr_dept_approval' => 'WHS',
+                //                         'rqtr_role_approval' => $nextroleapprover,
+                //                         'rqtr_sequence' => $nextseqapprover,
+                //                         'rqtr_status' => 'waiting for approval',
+                //                         'rqtr_reason' => null,
+                //                         'created_at' => Carbon::now()->toDateTimeString(),
+                //                     ]);
+
+                //                 //input ke wo trans approval hist jika ada approval department
+                //                 DB::table('reqsp_trans_approval_hist')
+                //                     ->insert([
+                //                         'rqtrh_rs_number' => $rsmstr->req_sp_number,
+                //                         'rqtrh_wo_number' => $womstr->wo_number,
+                //                         // 'rqtrh_dept_approval' => 'WHS',
+                //                         'rqtrh_role_approval' => $nextroleapprover,
+                //                         'rqtrh_sequence' => $nextseqapprover,
+                //                         'rqtrh_status' => 'Request SP ready for approval',
+                //                         'created_at' => Carbon::now()->toDateTimeString(),
+                //                         'updated_at' => Carbon::now()->toDateTimeString(),
+                //                     ]);
+                //             } else {
+                //                 //update status wo approval
+                //                 DB::table('reqsp_trans_approval')
+                //                     ->insert([
+                //                         'rqtr_mstr_id' => $rsmstr->id,
+                //                         'rqtr_wo_number' => $womstr->wo_number,
+                //                         'rqtr_dept_approval' => session()->get('department'),
+                //                         'rqtr_role_approval' => $nextroleapprover,
+                //                         'rqtr_sequence' => $nextseqapprover,
+                //                         'rqtr_status' => 'waiting for approval',
+                //                         'rqtr_reason' => null,
+                //                         'created_at' => Carbon::now()->toDateTimeString(),
+                //                     ]);
+
+                //                 //input ke wo trans approval hist jika ada approval department
+                //                 DB::table('reqsp_trans_approval_hist')
+                //                     ->insert([
+                //                         'rqtrh_rs_number' => $rsmstr->req_sp_number,
+                //                         'rqtrh_wo_number' => $womstr->wo_number,
+                //                         'rqtrh_dept_approval' => session()->get('department'),
+                //                         'rqtrh_role_approval' => $nextroleapprover,
+                //                         'rqtrh_sequence' => $nextseqapprover,
+                //                         'rqtrh_status' => 'Request SP ready for approval',
+                //                         'created_at' => Carbon::now()->toDateTimeString(),
+                //                         'updated_at' => Carbon::now()->toDateTimeString(),
+                //                     ]);
+                //             }
+                //         }
+                //     }
+                // }
+
+                //kirim email ke warehouse
+                // SendNotifReqSparepart::dispatch($runningnbr);
+
+                DB::commit();
+
+                toast('Sparepart Requested ' . $runningnbr . ' Number Successfully !', 'success')->autoClose(10000);
+                return redirect()->route('reqspbrowse');
+            } else {
+                toast('You have not request any sparepart yet !', 'error')->autoClose(10000);
+                return redirect()->back();
+            }
+        } catch (Exception $e) {
+            dd($e);
+            DB::rollBack();
+            toast('WO Release Failed', 'error');
+            return redirect()->route('reqspbrowse');
+        }
     }
 
     public function gettrfspwsastockfrom(Request $req)

@@ -4,6 +4,7 @@
     <div class="row">
         <div class="col-sm-9">
             <h1 class="m-0 text-dark">Return Sparepart</h1>
+            <p class="pb-0 m-0">Menu ini berfungsi untuk melakukan pengembalian sparepart dari gudang engineer ke inventory source</p>
         </div><!-- /.col -->
     </div><!-- /.row -->
 </div><!-- /.container-fluid -->

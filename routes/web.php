@@ -783,10 +783,10 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/reqspsubmit', [SparepartController::class,'reqspsubmit'])->name('reqspsubmit');
 	Route::get('/reqspeditdet',[SparepartController::class, 'reqspeditdet']);
 	Route::get('/reqspviewdet',[SparepartController::class, 'reqspviewdet']);
-	Route::get('/reqspviewdetappr',[SparepartController::class, 'reqspviewdetappr']);
-	Route::get('/reqsprouteappr',[SparepartController::class, 'reqsprouteappr']);
 	Route::post('/reqspupdate',[SparepartController::class, 'reqspupdate']);
 	Route::post('/reqspcancel', [SparepartController::class, 'reqspcancel']);
+	Route::get('/reqspviewdetappr',[SparepartController::class, 'reqspviewdetappr']);
+	Route::get('/reqsprouteappr',[SparepartController::class, 'reqsprouteappr']);
 	Route::get('/reqspapproval', [SparepartController::class, 'reqspapprovalbrowse'])->name('approvalBrowseSP');
 	Route::post('/reqspapprove', [SparepartController::class, 'reqspapproval'])->name('approveSP');
 
@@ -796,6 +796,16 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/trfspsubmit', [SparepartController::class,'trfspsubmit'])->name('trfspsubmit');
 	Route::get('/gettrfspwsastockfrom', [SparepartController::class, 'gettrfspwsastockfrom']);
 	Route::get('/trfspviewdet', [SparepartController::class, 'trfspviewdet']);
+
+	//Return Sparepart
+	Route::get('/retsp', [SparepartController::class, 'retspbrowse'])->name('retspbrowse');
+	Route::get('/retspcreate', [SparepartController::class, 'retspcreate'])->name('retspcreate');
+	Route::get('/retsplistwo', [SparepartController::class, 'retsplistwo'])->name('splistWO');
+	Route::post('/retspsubmit', [SparepartController::class,'retspsubmit'])->name('retspsubmit');
+	Route::get('/reqspeditdet',[SparepartController::class, 'reqspeditdet']);
+	Route::get('/reqspviewdet',[SparepartController::class, 'reqspviewdet']);
+	Route::post('/reqspupdate',[SparepartController::class, 'reqspupdate']);
+	Route::post('/reqspcancel', [SparepartController::class, 'reqspcancel']);
 	
 	// PM Confirm
 	Route::get('/pmconf',[PmConfirmController::class, 'index'])->name('pmconf'); 
@@ -815,11 +825,6 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/accutransfer', [SparepartController::class, 'accutransfer'])->name('accuTransBrw');
 	Route::get('/searchaccutrf', [SparepartController::class, 'searchaccutrf']);
 	Route::post('/submitaccutrf', [SparepartController::class, 'submitaccutrf']);
-
-	//return sparepart
-	Route::get('/retsp', [SparepartController::class, 'returnspbrowse'])->name('returnSPBrowse');
-	Route::get('/searchretsp', [SparepartController::class, 'searchretsp']);
-	Route::post('/submitretsp', [SparepartController::class, 'submitretsp']);
 
 	//my routine check browse
 	Route::get('/myroutine', [RoutineCheckController::class, 'myroutinebrowse'])->name('myroutine');
