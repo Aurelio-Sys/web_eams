@@ -166,7 +166,7 @@ to get the desired effect
             <li class="nav-item ">
               <a href="/traininghome" class="nav-link ">
                 <i class="nav-icon fas fa-book-open"></i>
-                  <p>Training Module</p>
+                  <p>Introduction</p>
               </a>
             </li>
 

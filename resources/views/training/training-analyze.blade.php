@@ -61,7 +61,7 @@
                 <div class="col-md-4">
                     <a href="/engsch" target="_blank" class="card-link">
                         <div class="card d-flex align-items-center" style="border-radius: 10px; height: 12rem;">
-                            <img style="border-radius: 50px;" src="{{asset('images/pik4.png')}}" height="150" width="100" alt="Card image cap">
+                            <img style="border-radius: 50px;" src="{{asset('images/pik4.png')}}" height="150" width="120" alt="Card image cap">
                             <div class="card-body">
                                 <h5 class="card-text text-center font-weight-bold">Engineer Schedule</h5>
                             </div>

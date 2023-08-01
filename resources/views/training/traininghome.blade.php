@@ -42,7 +42,7 @@
                     <div class="card-body">
                         <h3 class="card-text text-center font-weight-bold">PLAN</h3>
                     </div>
-                    <img class="p-3" style="border-radius: 50px;" src="{{asset('images/plan-robot.png')}}" height="300" width="165" alt="Card image cap">
+                    <img class="p-3" style="border-radius: 50px;" src="{{asset('images/plan-robot.png')}}" height="300" width="200" alt="Card image cap">
                 </div>
             </a>
         </div>

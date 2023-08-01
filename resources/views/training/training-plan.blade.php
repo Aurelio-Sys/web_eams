@@ -42,13 +42,12 @@
             </div>
         </div>
         <div class="col-md-7 d-flex align-items-center justify-content-center">
-            <div class="card" style="border-radius: 30px; height: 10rem; width: 30rem; background-color: #FFD966; box-shadow: 0 4px 8px rgba(0, 0, 0, 1) !important;">
+            <div class="card" style="border-radius: 30px; height: 9rem; width: 30rem; background-color: #FFD966; box-shadow: 0 4px 8px rgba(0, 0, 0, 1) !important;">
                 <div class="card-body text-center">
                     <a class="card-link2" href="/rcmmstr" target="_blank">Register routine assets check</a>
                     <a class="card-link2" href="/viewwogenerator" target="_blank">Generate asset maintenance plans</a>
                     <a class="card-link2" href="/pmconf" target="_blank">Maintenance plans confirmation</a>
                     <a class="card-link2" href="/needsp" target="_blank">Generate spare part requirements</a>
-                    <a class="card-link2" href="#" target="_blank">Send spare part requirements to purchase</a>
                 </div>
             </div>
         </div>
