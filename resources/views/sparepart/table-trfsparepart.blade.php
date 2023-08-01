@@ -1,6 +1,7 @@
 @forelse ( $data as $datas )
 <tr>
     <td>{{ $datas->req_sp_number }}</td>
+    <td>{{ $datas->req_sp_wonumber }}</td>
     <td>{{ $datas->req_sp_requested_by }}</td>
     <td>{{ date("d-m-Y",strtotime($datas->req_sp_due_date)) }}</td>
     <td>{{ $datas->req_sp_status }}</td>

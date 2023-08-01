@@ -506,6 +506,13 @@ to get the desired effect
                     </a>
                   </li>
                 @endif
+                @if(str_contains( Session::get('menu_access'), 'BO07'))
+                  <li class="nav-item has-treeview">
+                    <a href="/retsp" class="nav-link">
+                      <p>Return Sparepart</p>
+                    </a>
+                  </li>
+                @endif
               </ul>
             </li>
             @endif
