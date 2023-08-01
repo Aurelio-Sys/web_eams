@@ -53,7 +53,7 @@
                             <h1 class="card-text text-right font-weight-bold" style="color: #5B9BD5; position: absolute; bottom: 0; left: 0; right: 0;">EXECUTE</h1>
                         </div>
                         <div class="col-md-4">
-                            <img src="{{asset('images/execute-pic.png')}}" height="200" width="120" alt="Card image cap" style="float: right;">
+                            <img src="{{asset('images/execute-robot.png')}}" height="200" width="135" alt="Card image cap" style="float: right;">
                         </div>
                     </div>
                 </div>

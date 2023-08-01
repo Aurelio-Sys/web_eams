@@ -29,9 +29,17 @@
 </style>
 <div class="container p-1" style="background-color: white; height: 34rem;">
     <div class="row">
-        <div class="col-md-6 p-2 d-flex align-items-center justify-content-center">
-            <h1 class="card-text text-center font-weight-bold" style="color: #5B9BD5;">SETUP</h1>
-            <img src="{{asset('images/setup-pic.png')}}" height="300" width="200" alt="Card image cap">
+        <div class="col-md-6 d-flex flex-column justify-content-center align-items-center">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1 class="card-text text-center font-weight-bold" style="color: #5B9BD5;">SETUP</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <img src="{{asset('images/robot-setup.png')}}" height="300" width="200" alt="Card image cap">
+                </div>
+            </div>
         </div>
         <div class="col-md-6 p-2">
             <div class="row">
@@ -64,7 +72,7 @@
                         <div class="card-body text-center">
                             <a class="card-link3" href="/inslist " target="_blank">Define repair or PM instruction</a>
                             <a class="card-link3" href="/splist" target="_blank">Define spare part to be used</a>
-                            <a class="card-link3" href="/qcspec" target="_blank">Define quality specifiaction</a>
+                            <a class="card-link3" href="/qcspec" target="_blank">Define quality specification</a>
                             <a class="card-link3" href="/pmcode" target="_blank">Register PM/CM Code</a>
                             <a class="card-link3" href="/appsr" target="_blank">Approval SR setting</a>
                             <a class="card-link3" href="/appwo" target="_blank">Approval WO setting</a>
