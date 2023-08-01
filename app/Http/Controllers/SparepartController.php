@@ -907,6 +907,9 @@ class SparepartController extends Controller
                     }
                     //email terikirm ke engineer yg melakukan request sparepart
                     EmailScheduleJobs::dispatch('', '', '18', '', $requestor, $srnumber, '');
+
+                    //email terkirim ke warehouse
+                    SendNotifReqSparepart::dispatch($srnumber);
                 } else {
                     // dd(2);
                     //jika next approval not null
@@ -959,6 +962,9 @@ class SparepartController extends Controller
 
                         //email terikirm ke engineer yg melakukan request sparepart
                         EmailScheduleJobs::dispatch('', '', '18', '', $requestor, $srnumber, '');
+
+                        //email terkirim ke warehouse
+                        SendNotifReqSparepart::dispatch($srnumber);
                     }
                 }
             }
@@ -1128,6 +1134,10 @@ class SparepartController extends Controller
 
             return response($output);
         }
+    }
+
+    public function returnspbrowse(){
+        return view('sparepart.returnsparepart-mtc'); 
     }
 
     public function gettrfspwsastockfrom(Request $req)
