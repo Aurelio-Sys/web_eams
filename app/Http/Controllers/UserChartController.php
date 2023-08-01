@@ -912,7 +912,7 @@ class UserChartController extends Controller
                 ->whereNotIn('wo_status', ['closed','finish','delete'])
                 ->orderBy('wo_start_date')
                 ->get();
-
+// dd($datawo);
         $thn = Carbon::now('ASIA/JAKARTA')->addMonth(-11)->toDateTimeString();
         $tgl = Carbon::now('ASIA/JAKARTA')->toDateTimeString();
 
@@ -934,41 +934,44 @@ class UserChartController extends Controller
             $engcode = $req->code;
 
             $data = DB::table('wo_mstr')
-                    ->join('asset_mstr','asset_code','=','wo_asset')
+                    ->join('asset_mstr','asset_code','=','wo_asset_code')
                     // ->whereNotIn('wo_status', ['closed','finish','delete'])
-                    ->where(function ($query) use ($engcode) {
-                    $query->where('wo_engineer1', '=', $engcode)
-                          ->orWhere('wo_engineer2', '=', $engcode)
-                          ->orWhere('wo_engineer3', '=', $engcode)
-                          ->orWhere('wo_engineer4', '=', $engcode)
-                          ->orWhere('wo_engineer5', '=', $engcode);
-                    })
-                    ->orderBy('wo_schedule')
+                    // ->where(function ($query) use ($engcode) {
+                    // $query->where('wo_engineer1', '=', $engcode)
+                    //       ->orWhere('wo_engineer2', '=', $engcode)
+                    //       ->orWhere('wo_engineer3', '=', $engcode)
+                    //       ->orWhere('wo_engineer4', '=', $engcode)
+                    //       ->orWhere('wo_engineer5', '=', $engcode);
+                    // })
+                    ->where('wo_list_engineer', 'like', '%' . $engcode . '%')
+                    ->orderBy('wo_start_date')
                     ->get();
 
             $output = '';
             foreach ($data as $data) {
-                $eng = $data->wo_engineer1;
-                if(!is_null($data->wo_engineer2)) {
-                    $eng .= ", ".$data->wo_engineer2;
-                }
-                if(!is_null($data->wo_engineer3)) {
-                    $eng .= ", ".$data->wo_engineer3;
-                }
-                if(!is_null($data->wo_engineer4)) {
-                    $eng .= ", ".$data->wo_engineer4;
-                }
-                if(!is_null($data->wo_engineer5)) {
-                    $eng .= ", ".$data->wo_engineer5;
-                }
+                // $eng = $data->wo_engineer1;
+                // if(!is_null($data->wo_engineer2)) {
+                //     $eng .= ", ".$data->wo_engineer2;
+                // }
+                // if(!is_null($data->wo_engineer3)) {
+                //     $eng .= ", ".$data->wo_engineer3;
+                // }
+                // if(!is_null($data->wo_engineer4)) {
+                //     $eng .= ", ".$data->wo_engineer4;
+                // }
+                // if(!is_null($data->wo_engineer5)) {
+                //     $eng .= ", ".$data->wo_engineer5;
+                // }
+
+                $eng = $data->wo_list_engineer;
 
 
                 $output .= '<tr>'.
-                '<td>'.$data->wo_nbr.'</td>'.
-                '<td>'.$data->wo_asset.' - '.$data->asset_desc.'</td>'.
+                '<td>'.$data->wo_number.'</td>'.
+                '<td>'.$data->wo_asset_code.' - '.$data->asset_desc.'</td>'.
                 '<td>'.$eng.'</td>'.
-                '<td>'.$data->wo_schedule.'</td>'.
-                '<td>'.$data->wo_finish_date.'</td>'.
+                '<td>'.$data->wo_start_date.'</td>'.
+                '<td>'.$data->wo_due_date.'</td>'.
                 '<td>'.$data->wo_status.'</td>'.
                 '</tr>';
             }
@@ -1075,19 +1078,19 @@ class UserChartController extends Controller
             $code = $req->code;
 
             $data = DB::table('wo_mstr')
-                    ->join('asset_mstr','asset_code','=','wo_asset')
+                    ->join('asset_mstr','asset_code','=','wo_asset_code')
                     ->whereNotIn('wo_status', ['closed','finish','delete'])
-                    ->whereWo_asset($code)
-                    ->orderBy('wo_schedule')
+                    ->whereWo_asset_code($code)
+                    ->orderBy('wo_start_date')
                     ->get();
 
             $output = '';
             foreach ($data as $data) {
                 $output .= '<tr>'.
-                '<td>'.$data->wo_nbr.'</td>'.
-                '<td>'.$data->wo_asset.' - '.$data->asset_desc.'</td>'.
-                '<td>'.$data->wo_engineer1.'</td>'.
-                '<td>'.$data->wo_schedule.'</td>'.
+                '<td>'.$data->wo_number.'</td>'.
+                '<td>'.$data->wo_asset_code.' - '.$data->asset_desc.'</td>'.
+                '<td>'.$data->wo_list_engineer.'</td>'.
+                '<td>'.$data->wo_start_date.'</td>'.
                 '<td>'.$data->wo_status.'</td>'.
                 '</tr>';
             }
@@ -1108,11 +1111,11 @@ class UserChartController extends Controller
         foreach ($period as $dt) {
 
             $data = DB::table('wo_mstr')
-                    ->join('asset_mstr','asset_code','=','wo_asset')
+                    ->join('asset_mstr','asset_code','=','wo_asset_code')
                     ->whereNotIn('wo_status', ['closed','finish','delete'])
-                    ->whereWo_asset($req->code)
-                    ->whereMonth('wo_schedule','=',$dt->format("m"))
-                    ->whereYear('wo_schedule','=',$dt->format("Y"))
+                    ->whereWo_asset_code($req->code)
+                    ->whereMonth('wo_start_date','=',$dt->format("m"))
+                    ->whereYear('wo_start_date','=',$dt->format("Y"))
                     ->count();
 
             if ($jmlwo == "") {

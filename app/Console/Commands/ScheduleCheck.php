@@ -170,7 +170,7 @@ class ScheduleCheck extends Command
                 }
             )
             ->get();
-dd($dataussage);
+// dd($dataussage);
         if($data2->count() > 0){
             DB::beginTransaction();
 
