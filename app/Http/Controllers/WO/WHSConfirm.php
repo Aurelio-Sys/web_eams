@@ -39,15 +39,34 @@ class WHSConfirm extends Controller
             ->get();
 
             if(Session::get('role') == 'ADMIN' || Session::get('role') == 'WHS'){
-                $data = DB::table('wo_mstr')
-                    ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority','wd_sp_flag')
-                    ->join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber','wo_mstr.wo_number')
-                    ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
-                    ->where('wo_status', 'released')
-                    ->where('wd_sp_flag','=', 1)
-                    ->groupBy('wo_number')
-                    ->orderby('wo_system_create', 'desc');
-                
+                $ApproverCheck = DB::table('sr_approver_mstr')->count();
+
+                if($ApproverCheck === 0){
+                    $data = DB::table('wo_mstr')
+                        ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
+                        ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+                        ->join('wo_dets_sp','wo_dets_sp.wd_sp_wonumber','wo_mstr.wo_number')
+                        ->where(function ($status) {
+                            $status->where('wo_status', '=', 'released');
+                            $status->orWhere('wo_status', '=', 'started');
+                        })
+                        ->groupBy('wo_mstr.wo_number');
+                }else{
+                    $data = DB::table('wo_mstr')
+                        ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
+                        ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+                        ->join('wo_dets_sp','wo_dets_sp.wd_sp_wonumber','wo_mstr.wo_number')
+                        ->join('release_trans_approval', function ($join) {
+                            $join->on('release_trans_approval.retr_mstr_id', '=', 'wo_mstr.id')
+                                 ->where('release_trans_approval.retr_status', '=', 'approved');
+                        })
+                        ->where(function ($status) {
+                            $status->where('wo_status', '=', 'released');
+                            $status->orWhere('wo_status', '=', 'started');
+                        })
+                        ->groupBy('wo_mstr.wo_number');
+                }
+
             }else{
                 return view('errors.401');
             }
@@ -66,7 +85,7 @@ class WHSConfirm extends Controller
                 $data->where('wo_priority', '=', $request->s_priority);
             }
     
-            $data = $data->paginate(10);
+            $data = $data->orderBy('wo_number','desc')->orderBy('wo_priority','asc')->paginate(10);
 
             // dd($data,Session::get('role'));
 
@@ -399,6 +418,7 @@ class WHSConfirm extends Controller
                         ->update([
                             'wd_sp_flag' => false,
                             'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            'wd_sp_whtf' => DB::raw("wd_sp_whtf + $qtyfromweb"),
                         ]);
                 }
             }
