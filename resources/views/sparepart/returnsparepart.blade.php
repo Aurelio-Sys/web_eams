@@ -23,7 +23,7 @@
         box-sizing: border-box;
     }
 </style>
-<form action="/reqsp" method="GET">
+<form action="/retsp" method="GET">
     <div class="container-fluid mb-2">
         <div class="row">
             <div class="col-md-12">
@@ -37,25 +37,25 @@
                 <div class="col-12 form-group row">
 
                     <!--FORM Search Disini-->
-                    <label for="s_nomorrs" class="col-md-2 col-form-label text-md-right">{{ __('RS Number') }}</label>
+                    <label for="s_nomorrs" class="col-md-2 col-form-label text-md-right">{{ __('RS / WO Number') }}</label>
                     <div class="col-md-3 col-sm-12 mb-2 input-group">
                         <input id="s_nomorrs" type="text" class="form-control" name="s_nomorrs" value="" autofocus autocomplete="off">
                     </div>
-                    <label for="s_reqby" class="col-md-2 col-form-label text-md-right">{{ __('Request By') }}</label>
+                    <label for="s_reqby" class="col-md-2 col-form-label text-md-right">{{ __('Return By') }}</label>
                     <div class="col-md-3 col-sm-12 mb-2 input-group">
                         <select id="s_reqby" class="form-control" style="color:black" name="s_reqby" autofocus autocomplete="off">
-                            <option value="">--Select Request By--</option>
+                            <option value="">--Select Return By--</option>
                             @foreach($requestby as $reqby)
                             <option value="{{$reqby->username}}">{{$reqby->username}}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col-md-1"></div>
-                    <label for="s_datefrom" class="col-md-2 col-form-label text-md-right">{{ __('Needed Date From') }}</label>
+                    <label for="s_datefrom" class="col-md-2 col-form-label text-md-right">{{ __('Return Date From') }}</label>
                     <div class="col-md-3 col-sm-12 mb-2 input-group">
                         <input id="s_datefrom" type="date" class="form-control" name="s_datefrom" value="" autofocus autocomplete="off">
                     </div>
-                    <label for="s_daeto" class="col-md-2 col-form-label text-md-right">{{ __('Needed Date To') }}</label>
+                    <label for="s_daeto" class="col-md-2 col-form-label text-md-right">{{ __('Return Date To') }}</label>
                     <div class="col-md-3 col-sm-12 mb-2 input-group">
                         <input id="s_dateto" type="date" class="form-control" name="s_dateto" value="" autofocus autocomplete="off">
                     </div>
@@ -86,21 +86,21 @@
     <button type="submit" class="btn btn-success bt-action" id="btnconf">Release Work Order</button>
 </div> -->
 
-<!-- Request Sparepart Browse -->
+<!-- Return Sparepart Browse -->
 <div class="table-responsive col-12 mt-0 pt-0" style="overflow-x: auto;overflow-y: hidden ;display: inline-block;white-space: nowrap; position:relative;">
     <table class="table table-bordered mt-0" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr style="text-align: center;">
-                <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="10%">Req Sparepart Number<span id="name_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="10%">Return Sparepart Number<span id="name_icon"></span></th>
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="10%">WO Number<span id="name_icon"></span></th>
-                <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="10%">Request By<span id="username_icon"></span></th>
-                <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="10%">Due Date<span id="username_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="10%">Return By<span id="username_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="10%">Return Date<span id="username_icon"></span></th>
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="10%">Status<span id="username_icon"></span></th>
                 <th width="10%">Action</th>
             </tr>
         </thead>
         <tbody>
-            @include('sparepart.table-reqsparepartbrowse')
+            @include('sparepart.table-retsparepartbrowse')
         </tbody>
     </table>
     <input type="hidden" name="hidden_page" id="hidden_page" value="1" />
@@ -109,12 +109,12 @@
 </div>
 </div>
 
-<!-- Request Sparepart View -->
+<!-- Return Sparepart View -->
 <div class="modal fade" id="viewModal" role="dialog" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">Request Sparepart View</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Return Sparepart View</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -125,9 +125,9 @@
                     <div class="col-md-3">
                         <input type="text" class="form-control" id="v_rsnumber" name="v_rsnumber" readonly>
                     </div>
-                    <label for="v_reqby" class="col-md-3 col-form-label">Requested By</label>
+                    <label for="v_retby" class="col-md-3 col-form-label">Requested By</label>
                     <div class="col-md-3">
-                        <input type="text" class="form-control" id="v_reqby" name="v_reqby" readonly>
+                        <input type="text" class="form-control" id="v_retby" name="v_retby" readonly>
                     </div>
                 </div>
                 <div class="form-group row" style="margin: 0px 0px 1.5em 0px;">
@@ -135,21 +135,27 @@
                     <div class="col-md-3">
                         <input type="text" class="form-control" id="v_wonumber" name="v_wonumber" readonly>
                     </div>
-                    <label for="v_duedate" class="col-md-3 col-form-label">Needed Date</label>
+                    <label for="v_retdate" class="col-md-3 col-form-label">Return Date</label>
                     <div class="col-md-3">
-                        <input type="text" class="form-control" id="v_duedate" name="v_duedate" readonly>
+                        <input type="text" class="form-control" id="v_retdate" name="v_retdate" readonly>
                     </div>
                 </div>
                 <div class="col-md-12">
                     <table width="100%" id='asetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
                         <thead>
                             <th width="30%">Spare part</th>
-                            <th width="15%">Qty Request</th>
+                            <th width="15%">Qty Return</th>
                             <th width="20%">Location To</th>
                             <th width="20%">Note</th>
                         </thead>
                         <tbody id='v_detailapp'></tbody>
                     </table>
+                </div>
+                <div id="v_cancelnote" class="form-group row" style="margin: 2em 0px 0.8em 0px;">
+                <label for="e_rsnumber" class="col-md-3 col-form-label">Cancel Reason</label>
+                <div class="col-md-6">
+                    <textarea class="form-control" id="v_reason" name="v_reason" autofocus rows="2" readonly></textarea>
+                </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -159,17 +165,17 @@
     </div>
 </div>
 
-<!-- Request Sparepart Edit -->
+<!-- Return Sparepart Edit -->
 <div class="modal fade" id="editModal" role="dialog" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">Request Sparepart Edit</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Return Sparepart Edit</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/reqspupdate">
+            <form class="form-horizontal" method="post" action="/retspupdate">
                 <!-- <form class="form-horizontal" method="post" action="#"> -->
                 {{ csrf_field() }}
                 <div class="modal-body">
@@ -178,9 +184,9 @@
                         <div class="col-md-3">
                             <input type="text" class="form-control" id="e_rsnumber" name="e_rsnumber" readonly>
                         </div>
-                        <label for="e_reqby" class="col-md-3 col-form-label">Requested By</label>
+                        <label for="e_retby" class="col-md-3 col-form-label">Requested By</label>
                         <div class="col-md-3">
-                            <input type="text" class="form-control" id="e_reqby" name="e_reqby" readonly>
+                            <input type="text" class="form-control" id="e_retby" name="e_retby" readonly>
                         </div>
                     </div>
                     <div class="form-group row" style="margin: 0px 0px 1.5em 0px;">
@@ -188,23 +194,23 @@
                         <div class="col-md-3">
                             <input type="text" class="form-control" id="e_wonumber" name="e_wonumber" readonly>
                         </div>
-                        <label for="e_duedate" class="col-md-3 col-form-label">Needed Date</label>
+                        <label for="e_retdate" class="col-md-3 col-form-label">Return Date</label>
                         <div class="col-md-3">
-                            <input type="date" class="form-control" id="e_duedate" name="e_duedate">
+                            <input type="text" class="form-control" id="e_retdate" name="e_retdate" readonly>
                         </div>
                     </div>
                     <div class="col-md-12">
                         <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
                             <thead>
                                 <th width="30%">Spare part</th>
-                                <th width="15%">Qty Request</th>
+                                <th width="15%">Qty Return</th>
                                 <th width="20%">Location To</th>
                                 <th width="20%">Note</th>
                                 <th width="10%">Delete</th>
                             </thead>
                             <tbody id='ed_detailapp'></tbody>
                             <tfoot>
-                                <tr>
+                                <tr id="tfootbtn">
                                     <td colspan="5">
                                         <input type="button" class="btn btn-lg btn-block btn-focus" id="ed_addrow" value="Add Item" style="background-color:#1234A5; color:white; font-size:16px" />
                                     </td>
@@ -223,18 +229,18 @@
     </div>
 </div>
 
-<!-- Request Sparepart Cancel -->
+<!-- Return Sparepart Cancel -->
 <div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-dialog-centered modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">Request Sparepart Cancel</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Return Sparepart Cancel</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <input type="hidden" id="statuscancel">
-            <form class="form-horizontal" id="newcancel" method="post" action="reqspcancel" enctype="multipart/form-data">
+            <form class="form-horizontal" id="newcancel" method="post" action="retspcancel" enctype="multipart/form-data">
                 {{csrf_field()}}
 
                 <div style="display: none;">
@@ -275,31 +281,40 @@
         $('.selectpicker').selectpicker().focus();
     }
 
-    $(document).on('click', '.viewreqsp', function() {
+    $(document).on('click', '.viewretsp', function() {
 
         $('#viewModal').modal('show');
 
         var rsnumber = $(this).data('rsnumber');
-        var reqby = $(this).data('reqby');
-        var duedate = $(this).data('duedate');
+        var retby = $(this).data('retby');
+        var crdate = $(this).data('crdate');
         var wonumber = $(this).data('wonumber');
+        var cancelnote = $(this).data('cancelnote');
 
         document.getElementById('v_rsnumber').value = rsnumber;
-        document.getElementById('v_reqby').value = reqby;
-        document.getElementById('v_duedate').value = duedate;
+        document.getElementById('v_retby').value = retby;
+        document.getElementById('v_retdate').value = crdate;
         document.getElementById('v_wonumber').value = wonumber;
+        document.getElementById('v_reason').value = cancelnote;
 
         $.ajax({
-            url: "reqspviewdet?code=" + rsnumber,
+            url: "retspviewdet?code=" + rsnumber,
             success: function(data) {
                 // console.log(data);
                 $('#v_detailapp').html('').append(data);
             }
         })
 
+        if (cancelnote != '') {
+            document.getElementById('v_cancelnote').style.display = '';
+        }else{
+            document.getElementById('v_cancelnote').style.display = 'none';
+
+        }
+
     });
 
-    $(document).on('click', '.cancelreqsp', function() {
+    $(document).on('click', '.cancelretsp', function() {
 
         $('#cancelModal').modal('show');
 
@@ -310,29 +325,39 @@
 
     });
 
-    $(document).on('click', '.editreqsp', function() {
+    $(document).on('click', '.editretsp', function() {
 
         $('#editModal').modal('show');
 
         var rsnumber = $(this).data('rsnumber');
-        var reqby = $(this).data('reqby');
-        var duedate = $(this).data('duedate');
+        var retby = $(this).data('retby');
+        var crdate = $(this).data('crdate');
         var wonumber = $(this).data('wonumber');
 
-        // console.log(duedate);
+        // console.log(crdate);
 
         document.getElementById('e_rsnumber').value = rsnumber;
-        document.getElementById('e_reqby').value = reqby;
-        document.getElementById('e_duedate').value = duedate;
+        document.getElementById('e_retby').value = retby;
+        document.getElementById('e_retdate').value = crdate;
         document.getElementById('e_wonumber').value = wonumber;
 
         $.ajax({
-            url: "reqspeditdet?code=" + rsnumber,
+            url: "retspeditdet?code=" + rsnumber,
+            data: {
+                wonbr: wonumber
+            },
             success: function(data) {
                 // console.log(data);
                 $('#ed_detailapp').html('').append(data);
             }
         })
+
+        if (wonumber != '') {
+            document.getElementById('tfootbtn').style.display = 'none';
+        } else {
+            document.getElementById('tfootbtn').style.display = '';
+
+        }
 
     });
 
@@ -342,7 +367,7 @@
         var cols = "";
 
         cols += '<td>';
-        cols += '<select name="te_spreq[]" id="te_spreq" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" required>';
+        cols += '<select name="te_spret[]" id="te_spret" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" required>';
         cols += '<option value = ""> -- Select Sparepart -- </option>';
         @foreach($sp_all as $da)
         cols += '<option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
@@ -351,19 +376,19 @@
         cols += '</td>';
 
         cols += '<td>';
-        cols += '<input type="number" class="form-control" name="te_qtyreq[]" id="te_qtyreq" step=".01" min="0" required />';
+        cols += '<input type="number" class="form-control" name="te_qtyret[]" id="te_qtyret" step=".01" min="0" required />';
         cols += '</td>';
 
         cols += '<td>';
         cols += '<select name="te_locto[]" id="te_locto" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" required>';
         cols += '<option value = ""> -- Select Location To -- </option>';
         @foreach($loc_to as $loc)
-        cols += '<option value="{{$loc->inp_loc}}">{{$loc->inp_loc}}</option>';
+        cols += '<option value="{{$loc->inc_loc}}">{{$loc->inc_loc}}</option>';
         @endforeach
         cols += '</select>';
         cols += '</td>';
         cols += '<td>';
-        cols += '<textarea type="text" id="reqnotes" class="form-control reqnotes" name="reqnotes[]" rows="2" ></textarea>';
+        cols += '<textarea type="text" id="te_retnote" class="form-control te_retnote" name="te_retnote[]" rows="2" ></textarea>';
         cols += '</td>';
         cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
         cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';

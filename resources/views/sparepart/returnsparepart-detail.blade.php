@@ -74,7 +74,7 @@
                                     <?php
                                     // {{$datas->spm_code}} -- {{$datas->spm_desc}}
                                     ?>
-                                    <input type="hidden" name="spreq[]" value="{{$datas->spm_code}}" />
+                                    <input type="hidden" name="spret[]" value="{{$datas->spm_code}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     <?php
@@ -86,7 +86,7 @@
                                     <input type="number" class="form-control" step="1" min="0" name="qtyrequired[]" value="{{$datas->spg_qtyreq}}" required />
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
-                                    <textarea type="text" id="reqnotes" class="form-control reqnotes" name="reqnotes[]" rows="2"></textarea>
+                                    <textarea type="text" id="retnotes" class="form-control retnotes" name="retnotes[]" rows="2"></textarea>
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
                                     <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete">
@@ -101,7 +101,7 @@
 
                             <tr>
                                 <td>
-                                    <select name="spreq[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="200px" autofocus>
+                                    <select name="spret[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="200px" autofocus>
                                         <option value=""> -- Select Spare Part -- </option>
                                         @foreach($sp_all as $da)
                                         <option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>
@@ -205,7 +205,7 @@
             var cols = "";
 
             cols += '<td>';
-            cols += '<select name="spreq[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
+            cols += '<select name="spret[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
             cols += '<option value = ""> -- Select Sparepart -- </option>';
             @foreach($sp_all as $da)
             cols += '<option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
@@ -214,20 +214,20 @@
             cols += '</td>';
 
             cols += '<td>';
-            cols += '<input type="number" class="form-control qtyrequest" name="qtyrequest[]" step=".01" min="0" required />';
+            cols += '<input type="number" class="form-control qtyreturn" name="qtyreturn[]" step=".01" min="0" required />';
             cols += '</td>';
 
             cols += '<td>';
             cols += '<select name="locto[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
             cols += '<option value = ""> -- Select Location To -- </option>';
             @foreach($loc_to as $loc)
-            cols += '<option data-siteto="{{$loc->inp_supply_site}}" value="{{$loc->inp_loc}}">{{$loc->inp_loc}}</option>';
+            cols += '<option data-siteto="{{$loc->inc_source_site}}" value="{{$loc->inc_loc}}">{{$loc->inc_loc}}</option>';
             @endforeach
             cols += '</select>';
             cols += '<input type="hidden" class="siteto" name="siteto[]" value=""/>';
             cols += '</td>';
             cols += '<td>';
-            cols += '<textarea type="text" id="reqnote" class="form-control reqnote" name="reqnote[]" rows="2" ></textarea>';
+            cols += '<textarea type="text" id="retnote" class="form-control retnote" name="retnote[]" rows="2" ></textarea>';
             cols += '</td>';
 
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';

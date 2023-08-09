@@ -802,10 +802,10 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/retspcreate', [SparepartController::class, 'retspcreate'])->name('retspcreate');
 	Route::get('/retsplistwo', [SparepartController::class, 'retsplistwo'])->name('splistWO');
 	Route::post('/retspsubmit', [SparepartController::class,'retspsubmit'])->name('retspsubmit');
-	Route::get('/reqspeditdet',[SparepartController::class, 'reqspeditdet']);
-	Route::get('/reqspviewdet',[SparepartController::class, 'reqspviewdet']);
-	Route::post('/reqspupdate',[SparepartController::class, 'reqspupdate']);
-	Route::post('/reqspcancel', [SparepartController::class, 'reqspcancel']);
+	Route::get('/retspeditdet',[SparepartController::class, 'retspeditdet']);
+	Route::get('/retspviewdet',[SparepartController::class, 'retspviewdet']);
+	Route::post('/retspupdate',[SparepartController::class, 'retspupdate']);
+	Route::post('/retspcancel', [SparepartController::class, 'retspcancel']);
 	
 	// PM Confirm
 	Route::get('/pmconf',[PmConfirmController::class, 'index'])->name('pmconf'); 

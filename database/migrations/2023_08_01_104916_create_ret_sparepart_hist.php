@@ -16,7 +16,7 @@ class CreateRetSparepartHist extends Migration
         Schema::create('ret_sparepart_hist', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('ret_sph_number');
-            $table->string('ret_sph_wonumber');
+            $table->string('ret_sph_wonumber')->nullable();
             $table->string('ret_sph_dept');
             $table->string('ret_sph_retby');
             $table->string('ret_sph_spcode');

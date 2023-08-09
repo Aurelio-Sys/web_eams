@@ -170,7 +170,7 @@ class SparepartController extends Controller
                 $reqspmstrid = DB::table('req_sparepart')
                     ->insertGetId([
                         'req_sp_number' => $runningnbr,
-                        'req_sp_wonumber' => $requestData['wonbr'],
+                        'req_sp_wonumber' => $requestData['wonbr'] ? $requestData['wonbr'] : null,
                         'req_sp_dept' => $user->dept_user,
                         'req_sp_requested_by' => $user->username,
                         'req_sp_due_date' => $req->due_date,
@@ -179,16 +179,27 @@ class SparepartController extends Controller
                     ]);
 
                 DB::table('running_mstr')
-                    ->where('rs_nbr', '=', $tablern->rs_nbr)
+                    ->where('rt_nbr', '=', $tablern->rt_nbr)
                     ->update([
                         'year' => $newyear,
-                        'rs_nbr' => $newtemprunnbr
+                        'rt_nbr' => $newtemprunnbr
                     ]);
 
                 //simpan ke dalam req_sparepart_det
                 foreach ($groupedData as $loopsp) {
 
-                    //simpan list spare part yang di released ke table wo_det
+                    //simpan list spare part yang di released ke table wo_det jika nomor wo dipilih
+                    if ($requestData['wonbr'] != null) {
+                        DB::table('wo_dets_sp')
+                            ->insert([
+                                'wd_sp_wonumber' => $requestData['wonbr'],
+                                'wd_sp_spcode' => $loopsp['spreq'],
+                                'wd_sp_required' => $loopsp['qtyrequest'],
+                                'wd_sp_created' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+                    }
+
                     DB::table('req_sparepart_det')
                         ->insert([
                             'req_spd_mstr_id' => $reqspmstrid,
@@ -205,7 +216,7 @@ class SparepartController extends Controller
                     DB::table('req_sparepart_hist')
                         ->insert([
                             'req_sph_number' => $runningnbr,
-                            'req_sph_wonumber' => $requestData['wonbr'],
+                            'req_sph_wonumber' => $requestData['wonbr'] ? $requestData['wonbr'] : null,
                             'req_sph_dept' => $user->dept_user,
                             'req_sph_reqby' => $user->username,
                             'req_sph_spcode' => $loopsp['spreq'],
@@ -241,6 +252,12 @@ class SparepartController extends Controller
                     $womstr = DB::table('wo_mstr')->where('wo_number', $requestData['wonbr'])->first();
                     $rsmstr = DB::table('req_sparepart')->where('req_sp_number', $runningnbr)->first();
 
+                    if ($womstr == null) {
+                        $wonbr = null;
+                    } else {
+                        $wonbr = $womstr->wo_number;
+                    }
+
                     //cek wo release approval master
                     $woapprover = DB::table('sp_approver_mstr')->where('id', '>', 0)->get();
 
@@ -255,7 +272,7 @@ class SparepartController extends Controller
                                 DB::table('reqsp_trans_approval')
                                     ->insert([
                                         'rqtr_mstr_id' => $rsmstr->id,
-                                        'rqtr_wo_number' => $womstr->wo_number,
+                                        'rqtr_wo_number' => $wonbr,
                                         // 'rqtr_dept_approval' => 'WHS',
                                         'rqtr_role_approval' => $nextroleapprover,
                                         'rqtr_sequence' => $nextseqapprover,
@@ -268,7 +285,7 @@ class SparepartController extends Controller
                                 DB::table('reqsp_trans_approval_hist')
                                     ->insert([
                                         'rqtrh_rs_number' => $rsmstr->req_sp_number,
-                                        'rqtrh_wo_number' => $womstr->wo_number,
+                                        'rqtrh_wo_number' => $wonbr,
                                         // 'rqtrh_dept_approval' => 'WHS',
                                         'rqtrh_role_approval' => $nextroleapprover,
                                         'rqtrh_sequence' => $nextseqapprover,
@@ -281,7 +298,7 @@ class SparepartController extends Controller
                                 DB::table('reqsp_trans_approval')
                                     ->insert([
                                         'rqtr_mstr_id' => $rsmstr->id,
-                                        'rqtr_wo_number' => $womstr->wo_number,
+                                        'rqtr_wo_number' => $wonbr,
                                         'rqtr_dept_approval' => session()->get('department'),
                                         'rqtr_role_approval' => $nextroleapprover,
                                         'rqtr_sequence' => $nextseqapprover,
@@ -294,7 +311,7 @@ class SparepartController extends Controller
                                 DB::table('reqsp_trans_approval_hist')
                                     ->insert([
                                         'rqtrh_rs_number' => $rsmstr->req_sp_number,
-                                        'rqtrh_wo_number' => $womstr->wo_number,
+                                        'rqtrh_wo_number' => $wonbr,
                                         'rqtrh_dept_approval' => session()->get('department'),
                                         'rqtrh_role_approval' => $nextroleapprover,
                                         'rqtrh_sequence' => $nextseqapprover,
@@ -321,7 +338,7 @@ class SparepartController extends Controller
         } catch (Exception $e) {
             dd($e);
             DB::rollBack();
-            toast('WO Release Failed', 'error');
+            toast('Sparepart Requested Failed', 'error');
             return redirect()->route('reqspbrowse');
         }
     }
@@ -1142,15 +1159,16 @@ class SparepartController extends Controller
             ->leftJoin('ret_sparepart_det', 'ret_sparepart_det.ret_spd_mstr_id', 'ret_sparepart.id')
             ->join('sp_mstr', 'sp_mstr.spm_code', 'ret_sparepart_det.ret_spd_sparepart_code')
             ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
+            ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_desc, ret_sparepart.created_at')
             ->groupBy('ret_sp_number')
-            ->orderBy('ret_sp_due_date', 'ASC');
+            ->orderByDesc('ret_sp_number');
 
         $sp_all = DB::table('sp_mstr')
             ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
             ->where('spm_active', '=', 'Yes')
             ->get();
 
-        $loc_to = DB::table('inp_supply')->get();
+        $loc_to = DB::table('inc_source')->get();
 
         $requestby = DB::table('ret_sparepart')
             ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
@@ -1161,7 +1179,8 @@ class SparepartController extends Controller
         $dateto = $request->get('s_dateto') == '' ? '3000-01-01' : date($request->get('s_dateto'));
 
         if ($request->s_nomorrs) {
-            $data->where('ret_sp_number', 'like', '%' . $request->s_nomorrs . '%');
+            $data->where('ret_sp_number', 'like', '%' . $request->s_nomorrs . '%')
+                ->orWhere('ret_sp_wonumber', 'like', '%' . $request->s_nomorrs . '%');
         }
 
         if ($request->s_reqby) {
@@ -1172,16 +1191,17 @@ class SparepartController extends Controller
             $data->where('ret_sp_status', '=', $request->s_status);
         }
 
-        if ($datefrom != '' || $dateto != '') {
-            $data->where('ret_sp_due_date', '>=', $datefrom);
-            $data->where('ret_sp_due_date', '<=', $dateto);
-        }
+        // if ($datefrom != '' || $dateto != '') {
+        //     $data->where('created_at', '>=', $datefrom);
+        //     $data->where('created_at', '<=', $dateto);
+        // }
 
         if (Session::get('role') <> 'ADMIN') {
             $data = $data->where('ret_sp_dept', Session::get('department'));
         }
 
         $data = $data->paginate(10);
+        // dd($data);
 
         return view('sparepart.returnsparepart', ['data' => $data, 'sp_all' => $sp_all, 'loc_to' => $loc_to, 'requestby' => $requestby,]);
         // return view('sparepart.returnsparepart-mtc'); 
@@ -1200,7 +1220,7 @@ class SparepartController extends Controller
             ->join('ret_sparepart_det', 'ret_sparepart_det.ret_spd_mstr_id', 'ret_sparepart.id')
             ->get();
 
-        $loc_to = DB::table('inp_supply')->get();
+        $loc_to = DB::table('inc_source')->get();
 
         //nomor wo akan di filter berdasarkan departmen user yang login harus sama dengan departmen wo, kecuali admin dapat mengakses semua nomor wo
         $womstr = DB::table('wo_dets_sp')
@@ -1242,7 +1262,8 @@ class SparepartController extends Controller
                 // $output .= $key + 1;
                 // $output .= '</td>';
                 $output .= '<td>';
-                $output .= '<input type="text" class="form-control spret" name="spret[]" value="'. $data->wd_sp_spcode . ' -- ' . $data->spm_desc .'" readonly/>';
+                $output .= '<input type="text" class="form-control spretdesc" name="spretdesc[]" value="' . $data->wd_sp_spcode . ' -- ' . $data->spm_desc . '" readonly/>';
+                $output .= '<input type="hidden" class="form-control spret" name="spret[]" value="' . $data->wd_sp_spcode . '" readonly/>';
                 $output .= '</td>';
                 $output .= '<td>';
                 $output .= '<input type="number" class="form-control qtyreturn" name="qtyreturn[]" step=".01" max="' . ($data->wd_sp_required - $data->wd_sp_issued) . '"  min="0.1" value="' . ($data->wd_sp_required - $data->wd_sp_issued) . '" required />';
@@ -1251,10 +1272,10 @@ class SparepartController extends Controller
                 $output .= '<select name="locto[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
                 $output .= '<option value = ""> -- Select Location To -- </option>';
                 foreach ($loc_to as $loc) {
-                    $output .= '<option data-siteto="'. $loc->inc_source_site .'" value="'. $loc->inc_loc .'">'.$loc->inc_loc.'</option>';
+                    $output .= '<option data-siteto="' . $loc->inc_source_site . '" value="' . $loc->inc_loc . '">' . $loc->inc_loc . '</option>';
                 }
                 $output .= '</select>';
-                $output .= '<input type="hidden" class="siteto" name="siteto[]" value="'. $loc->inc_source_site .'"/>';
+                $output .= '<input type="hidden" class="siteto" name="siteto[]" value="' . $loc->inc_source_site . '"/>';
                 $output .= '</td>';
                 $output .= '<td>';
                 $output .= '<textarea type="text" id="retnote" class="form-control retnote" name="retnote[]" rows="2" ></textarea>';
@@ -1278,7 +1299,7 @@ class SparepartController extends Controller
 
             //mengelompokan data dari request depan
             $requestData = $req->all(); // mengambil data dari request
-            dd($requestData);
+            // dd($requestData);
 
             if (!empty($requestData['spret'])) { //jika di released dengan adanya spare part
 
@@ -1311,6 +1332,7 @@ class SparepartController extends Controller
                 })->values();
 
                 $data = [];
+                $wonbr = $requestData['wonbr'] ? $requestData['wonbr'] : null;
 
                 $user = Auth::user();
                 // dd($user);
@@ -1321,7 +1343,7 @@ class SparepartController extends Controller
                 // dd($tablern);
 
                 if ($tablern->year == $newyear) {
-                    $tempnewrunnbr = strval(intval($tablern->rs_nbr) + 1);
+                    $tempnewrunnbr = strval(intval($tablern->rt_nbr) + 1);
                     $newtemprunnbr = '';
 
                     // dd($tempnewrunnbr);
@@ -1333,17 +1355,16 @@ class SparepartController extends Controller
                     $newtemprunnbr = "0001";
                 }
 
-                $runningnbr = $tablern->rs_prefix . '-' . $newyear . '-' . $newtemprunnbr;
+                $runningnbr = $tablern->rt_prefix . '-' . $newyear . '-' . $newtemprunnbr;
                 // dd($runningnbr);
 
                 //simpan ke dalam ret_sparepart
                 $reqspmstrid = DB::table('ret_sparepart')
                     ->insertGetId([
                         'ret_sp_number' => $runningnbr,
-                        'ret_sp_wonumber' => $requestData['wonbr'],
+                        'ret_sp_wonumber' => $wonbr,
                         'ret_sp_dept' => $user->dept_user,
                         'ret_sp_return_by' => $user->username,
-                        // 'ret_sp_due_date' => $req->due_date,
                         'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                         'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                     ]);
@@ -1358,7 +1379,6 @@ class SparepartController extends Controller
                 //simpan ke dalam ret_sparepart_det
                 foreach ($groupedData as $loopsp) {
 
-                    //simpan list spare part yang di released ke table wo_det
                     DB::table('ret_sparepart_det')
                         ->insert([
                             'ret_spd_mstr_id' => $reqspmstrid,
@@ -1375,7 +1395,7 @@ class SparepartController extends Controller
                     DB::table('ret_sparepart_hist')
                         ->insert([
                             'ret_sph_number' => $runningnbr,
-                            'ret_sph_wonumber' => $requestData['wonbr'],
+                            'ret_sph_wonumber' => $wonbr,
                             'ret_sph_dept' => $user->dept_user,
                             'ret_sph_retby' => $user->username,
                             'ret_sph_spcode' => $loopsp['spret'],
@@ -1482,18 +1502,282 @@ class SparepartController extends Controller
 
                 DB::commit();
 
-                toast('Sparepart Requested ' . $runningnbr . ' Number Successfully !', 'success')->autoClose(10000);
-                return redirect()->route('reqspbrowse');
+                toast('Sparepart Return ' . $runningnbr . ' Number Successfully !', 'success')->autoClose(10000);
+                return redirect()->route('retspbrowse');
             } else {
-                toast('You have not request any sparepart yet !', 'error')->autoClose(10000);
+                toast('You have not return any sparepart yet !', 'error')->autoClose(10000);
                 return redirect()->back();
             }
         } catch (Exception $e) {
             dd($e);
             DB::rollBack();
-            toast('WO Release Failed', 'error');
-            return redirect()->route('reqspbrowse');
+            toast('Sparepart Return Failed', 'error');
+            return redirect()->route('retspbrowse');
         }
+    }
+
+    public function retspeditdet(Request $req)
+    {
+        $rsnumber = $req->code;
+        $wonumber = $req->wonbr;
+        if ($req->ajax()) {
+
+            $datas = DB::table('ret_sparepart')
+                ->leftJoin('ret_sparepart_det', 'ret_sparepart_det.ret_spd_mstr_id', 'ret_sparepart.id')
+                ->join('sp_mstr', 'sp_mstr.spm_code', 'ret_sparepart_det.ret_spd_sparepart_code')
+                ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
+                ->join('inc_source', 'inc_source.inc_loc', 'ret_sparepart_det.ret_spd_loc_to')
+                ->when($wonumber, function ($q) {
+                    return $q->join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber', 'ret_sparepart.ret_sp_wonumber')
+                        ->whereColumn('wd_sp_required', '>', 'wd_sp_issued')
+                        ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inc_loc, wd_sp_spcode');
+                }, function ($q) {
+                    return $q->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inc_loc');
+                })
+                ->where('ret_sp_number', $rsnumber)
+                // ->groupBy('req_sp_number')
+                ->get();
+
+            $sp_all = DB::table('sp_mstr')
+                ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
+                ->where('spm_active', '=', 'Yes')
+                ->get();
+
+            $loc_to = DB::table('inc_source')->get();
+
+            // dd($datas);
+
+            $output = '';
+            foreach ($datas as $data) {
+                if ($wonumber != null) {
+                    $output .= '<tr>';
+                    $output .= '<td>';
+                    $output .= '<input type="text" class="form-control spretdesc" name="spretdesc[]" value="' . $data->wd_sp_spcode . ' -- ' . $data->spm_desc . '" readonly/>';
+                    $output .= '<input type="hidden" class="form-control spret" name="te_spret[]" value="' . $data->wd_sp_spcode . '" readonly/>';
+                    $output .= '</td>';
+                    $output .= '<td><input type="number" class="form-control" step=".01" min="0.01" max="' . $data->ret_spd_qty_return . '" name="te_qtyret[]" value="' . $data->ret_spd_qty_return . '"></td>';
+                    $output .= '<td>';
+                    $output .= '<select name="te_locto[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" required>';
+                    $output .= '<option value = ""> -- Select Location To -- </option>';
+                    foreach ($loc_to as $dat) {
+                        $selected = ($dat->inc_loc === $data->inc_loc) ? 'selected' : '';
+                        $output .= '<option value="' . $dat->inc_loc . '" ' . $selected . '> ' . $dat->inc_loc . ' </option>';
+                    }
+                    $output .= '</select>';
+                    $output .= '</td>';
+                    $output .= '<td>';
+                    $output .= '<textarea type="text" id="te_retnote" class="form-control te_retnote" name="te_retnote[]" rows="2" >' . $data->ret_spd_engnote . '</textarea>';
+                    $output .= '</td>';
+                    $output .= '<td><input type="checkbox" name="cek[]" class="cek" id="cek" value="0">';
+                    $output .= '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
+                    $output .= '</tr>';
+                } else {
+                    $output .= '<tr>';
+                    $output .= '<td>';
+                    $output .= '<select name="te_spret[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" required>';
+                    $output .= '<option value = ""> -- Select Sparepart -- </option>';
+                    foreach ($sp_all as $dat) {
+                        $selected = ($dat->spm_code === $data->spm_code) ? 'selected' : '';
+                        $output .= '<option value="' . $dat->spm_code . '" ' . $selected . '> ' . $dat->spm_code . ' -- ' . $dat->spm_desc . ' </option>';
+                    }
+                    $output .= '</select>';
+                    $output .= '</td>';
+                    $output .= '<td><input type="number" class="form-control" step=".01" min="0.01" max="' . $data->ret_spd_qty_return . '" name="te_qtyret[]" value="' . $data->ret_spd_qty_return . '"></td>';
+                    $output .= '<td>';
+                    $output .= '<select name="te_locto[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" required>';
+                    $output .= '<option value = ""> -- Select Location To -- </option>';
+                    foreach ($loc_to as $dat) {
+                        $selected = ($dat->inc_loc === $data->inc_loc) ? 'selected' : '';
+                        $output .= '<option value="' . $dat->inc_loc . '" ' . $selected . '> ' . $dat->inc_loc . ' </option>';
+                    }
+                    $output .= '</select>';
+                    $output .= '</td>';
+                    $output .= '<td>';
+                    $output .= '<textarea type="text" id="te_retnote" class="form-control te_retnote" name="te_retnote[]" rows="2" >' . $data->ret_spd_engnote . '</textarea>';
+                    $output .= '</td>';
+                    $output .= '<td><input type="checkbox" name="cek[]" class="cek" id="cek" value="0">';
+                    $output .= '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
+                    $output .= '</tr>';
+                }
+            }
+
+            // dd($datas);
+
+            return response($output);
+        }
+    }
+
+    public function retspviewdet(Request $req)
+    {
+        $rsnumber = $req->code;
+        // dd($req->code);
+        if ($req->ajax()) {
+
+            $data = DB::table('ret_sparepart')
+                ->leftJoin('ret_sparepart_det', 'ret_sparepart_det.ret_spd_mstr_id', 'ret_sparepart.id')
+                ->join('sp_mstr', 'sp_mstr.spm_code', 'ret_sparepart_det.ret_spd_sparepart_code')
+                ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
+                ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_desc')
+                ->where('ret_sp_number', $rsnumber)
+                // ->groupBy('req_sp_number')
+                ->get();
+            // dd($data);
+
+            $output = '';
+            foreach ($data as $data) {
+                $output .= '<tr>';
+                $output .= '<td><input type="hidden" name="te_spreq[]" readonly>' . $data->ret_spd_sparepart_code . ' -- ' . $data->spm_desc . '</td>';
+                $output .= '</td>';
+                $output .= '<td><input type="hidden" name="te_qtyreq[]" readonly>' . $data->ret_spd_qty_return . '</td>';
+                $output .= '<td><input type="hidden" name="te_locto[]" readonly>' . $data->ret_spd_loc_to . '</td>';
+                $output .= '<td><input type="hidden" name="te_reqnote[]" readonly>' . $data->ret_spd_engnote . '</td>';
+                $output .= '</td>';
+                $output .= '</tr>';
+            }
+
+            // dd($output);
+
+            return response($output);
+        }
+    }
+
+    public function retspupdate(Request $req)
+    {
+        $newData = $req->all();
+        $wonbr = $req->e_wonumber;
+        if ($req->te_spret) {
+            // cek apakah ada duplikat sparepart
+            if (count(array_unique($req->te_spret)) < count($req->te_spret)) {
+                toast('Duplicate Sparepart!!!', 'error');
+                return back();
+            }
+
+            $retspmstr = DB::table('ret_sparepart')->where('ret_sp_number', $req->e_rsnumber)->first();
+
+            // delete data yg lama lalu insert request sparepart det jika tidak di delete
+
+            $data = [
+                "spret" => $newData['te_spret'],
+                "locto" => $newData['te_locto'],
+                "qtyreturn" => $newData['te_qtyret'],
+                "retnote" => $newData['te_retnote'],
+                "tick" => $newData['tick'],
+            ];
+
+            $groupedData = collect($data['spret'])->map(function ($spret, $key) use ($data) {
+                return [
+                    'spret' => $spret,
+                    'locto' => $data['locto'][$key],
+                    'qtyreturn' => $data['qtyreturn'][$key],
+                    'retnote' => $data['retnote'][$key],
+                    "tick" => $data['tick'][$key],
+                ];
+            })->groupBy('spret')->map(function ($group) {
+                $totalqtyreturn = $group->sum('qtyreturn');
+
+                return [
+                    'spret' => $group[0]['spret'],
+                    'locto' => $group[0]['locto'],
+                    'retnote' => $group[0]['retnote'],
+                    'qtyreturn' => $totalqtyreturn,
+                    'tick' => $group[0]['tick'],
+                ];
+            })->values();
+
+            //hapus data detail yg lama
+            DB::table('ret_sparepart_det')
+                ->where('ret_spd_mstr_id', $retspmstr->id)
+                ->delete();
+
+            foreach ($groupedData as $data) {
+                if ($data['tick'] == 0) {
+                    DB::table('ret_sparepart_det')
+                        ->insert([
+                            'ret_spd_mstr_id' => $retspmstr->id,
+                            'ret_spd_sparepart_code' => $data['spret'],
+                            'ret_spd_qty_return' => $data['qtyreturn'],
+                            'ret_spd_loc_to' => $data['locto'],
+                            'ret_spd_engnote' => $data['retnote'],
+                            'created_at' => Carbon::now()->toDateTimeString(),
+                            'updated_at' => Carbon::now()->toDateTimeString(),
+                        ]);
+
+                    //input history updated
+                    DB::table('ret_sparepart_hist')
+                        ->insert([
+                            'ret_sph_number' => $req->e_rsnumber,
+                            'ret_sph_wonumber' => $wonbr,
+                            'ret_sph_spcode' => $data['spret'],
+                            'ret_sph_qtyret' => $data['qtyreturn'],
+                            'ret_sph_locto' => $data['locto'],
+                            'ret_sph_action' => 'sparepart updated',
+                            'created_at' => Carbon::now()->toDateTimeString(),
+                        ]);
+                } else {
+                    //input history deleted 1 sparepart
+                    DB::table('ret_sparepart_hist')
+                        ->insert([
+                            'ret_sph_number' => $req->e_rsnumber,
+                            'ret_sph_spcode' => $data['spret'],
+                            'ret_sph_qtyret' => $data['qtyreturn'],
+                            'ret_sph_locto' => $data['locto'],
+                            'ret_sph_action' => 'sparepart deleted',
+                            'created_at' => Carbon::now()->toDateTimeString(),
+                        ]);
+                }
+            }
+
+            toast('Return Sparepart Updated Successfully!', 'success')->autoClose(10000);
+        }
+
+        $retspdet = DB::table('ret_sparepart_det')->where('ret_spd_mstr_id', $retspmstr->id)->get();
+
+        if (count($retspdet) == 0) {
+
+            //delete masternya
+            DB::table('ret_sparepart')
+                ->where('ret_sp_number', $req->e_rsnumber)
+                ->delete();
+
+            //input history delete all sparepart
+            DB::table('ret_sparepart_hist')
+                ->insert([
+                    'ret_sph_number' => $req->e_rsnumber,
+                    'ret_sph_action' => 'all sparepart deleted',
+                    'created_at' => Carbon::now()->toDateTimeString(),
+                ]);
+
+
+            toast('Return Sparepart Updated Successfully!', 'success')->autoClose(1000);
+            return back();
+        } else {
+            return back();
+        }
+    }
+
+    public function retspcancel(Request $req)
+    {
+        $rsnumber = $req->c_rsnumber;
+        $reason = $req->c_reason;
+
+        DB::table('ret_sparepart')
+            ->where('ret_sp_number', $rsnumber)
+            ->update([
+                'ret_sp_status' => 'canceled',
+                'ret_sp_cancelnote' => $reason,
+                'updated_at' => Carbon::now()->toDateTimeString(),
+            ]);
+
+        DB::table('ret_sparepart_hist')
+            ->insert([
+                'ret_sph_number' => $rsnumber,
+                'ret_sph_action' => 'canceled by user',
+                'created_at' => Carbon::now()->toDateTimeString(),
+            ]);
+
+        DB::commit();
+        toast('Return Sparepart ' . $rsnumber . ' successfully canceled !', 'success');
+        return back();
     }
 
     public function gettrfspwsastockfrom(Request $req)
