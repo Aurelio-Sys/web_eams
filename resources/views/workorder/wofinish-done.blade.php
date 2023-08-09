@@ -250,14 +250,16 @@
             <!-- Instruction WO -->
 
             <div style="border: 1px solid black; margin-top: 5% !important; padding-top: 5%; padding-bottom: 5%; padding-left: 2%; padding-right: 2%;">
-                <div class="table-responsive tag-container" style="overflow-x: auto; display:inline-block; white-space: nowrap; padding:0; text-align:center; position:relative">
-                    <table id="createTableIns" class="table table-bordered order-list" width="100%" cellspacing="0">
+                <div class="table-responsive tag-container" style="overflow-x: auto; overflow-y: hidden; width: 53rem;">
+                    <table id="createTableIns" class="table table-bordered order-list" width="100%" cellspacing="0" style="width: 75rem !important; max-width: none !important;">
                         <thead>
                             <tr>
                                 <th style="text-align: center; width: 6% !important; font-weight: bold;">Step</th>
                                 <th style="text-align: center; width: 25% !important; font-weight: bold;">Deskripsi</th>
-                                <th style="text-align: center; width: 15% !important; font-weight: bold;">Duration</th>
+                                <th style="text-align: center; width: 16% !important; font-weight: bold;">Duration</th>
                                 <th style="text-align: center; width: 20% !important; font-weight: bold;">Engineer</th>
+                                <th style="text-align: center; width: 20% !important; font-weight: bold;">Note</th>
+                                <th style="text-align: center; width: 6% !important; font-weight: bold;">Do</th>
                                 <th style="text-align: center; width: 5% !important; font-weight: bold;">Action</th>
                             </tr>
                         </thead>
@@ -291,6 +293,13 @@
                                         <option value="{{$engCode}}" {{$selected}}>{{$engCode}} -- {{$engDesc}}</option>
                                         @endforeach
                                     </select>
+                                </td>
+                                <td style="vertical-align:middle;text-align:right; max-width: 100px !important;">
+                                    <textarea class="form-control ins_note" name="ins_note[]" rows="2" maxlength="250">{{ $datains->wd_ins_insnote }}</textarea>
+                                </td>
+                                <td style="vertical-align:middle;text-align:center; max-width: 100px !important;">
+                                    <input type="checkbox" class="ins_check" name="ins_check[]" value="0" {{ $datains->wd_ins_do ? 'checked="checked"' : '' }}>
+                                    <input type="hidden" class="ins_check_hidden" name="ins_check_hidden[]" value="{{$datains->wd_ins_do}}">
                                 </td>
                                 <td style="vertical-align:middle;text-align:center;">
 
@@ -534,6 +543,19 @@
     }
 
     $(document).ready(function() {
+        $(document).on('change','.ins_check',function(e){
+            var checkbox = $(this), // Selected or current checkbox
+            value = checkbox.val(); // Value of checkbox
+
+            if (checkbox.is(':checked'))
+            {
+                $(this).closest("tr").find('.ins_check_hidden').val(1).trigger('change');
+            } else
+            {
+                $(this).closest("tr").find('.ins_check_hidden').val(0).trigger('change');
+            }        
+        });
+
         $('#finishCheckbox').change(function() {
             // Mengubah nilai elemen hidden berdasarkan status checkbox
             if ($(this).is(':checked')) {
@@ -657,6 +679,14 @@
             cols += '<option value="{{$dataeng["eng_code"]}}">{{$dataeng["eng_code"]}} -- {{$dataeng["eng_desc"]}}</option>';
             @endforeach
             cols += '</select>';
+            cols += '</td>';
+
+            cols += '<td style="vertical-align:middle;text-align:right; max-width: 100px !important;">';
+            cols += '<textarea class="form-control ins_note" name="ins_note[]" rows="2" maxlength="250"></textarea>';
+            cols += '</td>';
+            cols += '<td style="vertical-align:middle;text-align:center; max-width: 100px !important;">';
+            cols += '<input type="checkbox" class="ins_check" name="ins_check[]" value="0">';
+            cols += '<input type="hidden" class="ins_check_hidden" name="ins_check_hidden[]" value="0">';
             cols += '</td>';
 
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>';

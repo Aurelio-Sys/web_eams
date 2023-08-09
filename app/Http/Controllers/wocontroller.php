@@ -4739,6 +4739,8 @@ class wocontroller extends Controller
                             'wd_ins_duration' => $req->has('ins_duration') ? $req->ins_duration[$index] : null,
                             'wd_ins_durationum' => $req->has('ins_duration') ? $req->durationum[$index] : null,
                             'wd_ins_engineer' => $engineersString,
+                            'wd_ins_insnote' => $req->ins_note[$index],
+                            'wd_ins_do' => $req->ins_check_hidden[$index],
 
                         ]);
                 }
