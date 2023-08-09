@@ -2348,7 +2348,6 @@ class ServiceController extends Controller
         $data = DB::table('service_req_upload')
             ->where('sr_number', $id)
             ->get();
-        dd($data);
 
         $output = '';
         foreach ($data as $data) {
