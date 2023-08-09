@@ -712,7 +712,7 @@ class UserChartController extends Controller
         return view('report.bookcal',compact('skrg','hari','kosong','bulan','dataAsset','dataBook','arraynewdate','asset'));
     }
 
-    public function assetsch(Request $req)
+    public function assetsch(Request $req) /** Blade : report.assetsch */
     {
         // dd($req->all());
         if (is_null($req->bulan)) {
@@ -721,7 +721,7 @@ class UserChartController extends Controller
             $tgl = Carbon::createFromDate($req->bulan)->addMonth(-1)->toDateTimeString();
         } elseif ($req->stat == 'maju') {
             $tgl = Carbon::createFromDate($req->bulan)->addMonth(1)->toDateTimeString();
-        } elseif (!is_null($req->t_asset) || !is_null($req->t_loc)) {
+        } elseif (!is_null($req->t_asset) || !is_null($req->t_loc) || !is_null($req->t_status)) {
             $tgl = Carbon::createFromDate($req->bulan)->toDateTimeString();
         } else {
             toast('Back to Home!!', 'error');
@@ -731,6 +731,7 @@ class UserChartController extends Controller
 
         $code = $req->input('t_asset');
         $sloc = $req->input('t_loc');
+        $sstatus = $req->input('t_status');
        
         $skrg = Carbon::createFromDate($tgl)->lastOfMonth()->day;
         $hari = Carbon::createFromDate($tgl)->startOfMonth()->isoFormat('dddd');
@@ -768,103 +769,32 @@ class UserChartController extends Controller
             ->orderBy('asset_code')
             ->get();
 
-        if (!isset($code) && !isset($sloc)){
-            // dd($tgl);
-            // select semua data berdasarkan tanggal schedule date (wo_start_date) di bulan yang tampil
-            $datawo = DB::table('wo_mstr')
-                ->select('wo_number','wo_status','wo_start_date','wo_list_engineer','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note',
-                    'wo_job_startdate','wo_job_finishdate','wo_type','wo_location','wo_site','asloc_desc')
-                // ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_job_startdate) else day(wo_job_finishdate) end) as tgl")
-                ->selectRaw("day(wo_start_date) AS tgl")
-                ->join('asset_mstr','asset_code','=','wo_asset_code')
-                ->join('asset_loc','asloc_code','=','wo_location')
-                ->where('wo_start_date','like',date("Y-m",strtotime($tgl)).'%')
-                // ->where(function ($query) use ($tgl) {
-                //     $query->where('wo_job_startdate','like',date("Y-m",strtotime($tgl)).'%')
-                //         ->orwhere('wo_job_finishdate','like',date("Y-m",strtotime($tgl)).'%');
-                // })
-                ->orderBy('tgl')
-                ->orderBy('wo_number')
-                // ->whereIn('wo_status',['open','plan','started'])
-                ->get();
-// dd($datawo);
-            // rumus lama ditutup dulu, ngga tau kenapa rumus select nya. sementara diganti semua wo yang tanggal schedule nya bulan ini ditampilkan
-            // $datawo = DB::table('wo_mstr')
-            //     ->select('wo_number','wo_status','wo_start_date','wo_list_engineer','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note',
-            //         'wo_job_startdate','wo_job_finishdate','wo_type')
-            //     ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_job_startdate) else day(wo_job_finishdate) end) as tgl")
-            //     ->join('asset_mstr','asset_code','=','wo_asset_code')
-            //     ->where(function ($query) use ($tgl) {
-            //         $query->where('wo_job_startdate','like',date("Y-m",strtotime($tgl)).'%')
-            //             ->orwhere('wo_job_finishdate','like',date("Y-m",strtotime($tgl)).'%');
-            //     })
-            //     ->orderBy('tgl')
-            //     ->orderBy('wo_number')
-            //     // ->whereIn('wo_status',['open','plan','started'])
-            //     ->get();
+        $foto = $dataAsset->where('asset_code','=',"")->first();
 
-            // dibawah ini rumus yang ada wo_dets
-            // $datawo = DB::table('wo_mstr')
-            //     ->select('wo_nbr','wo_status','wo_schedule','wo_engineer1', 'wo_engineer2', 'wo_engineer3', 'wo_engineer4',
-            //     'wo_engineer5','wo_asset','asset_desc','wo_sr_nbr','wo_duedate','wo_failure_code1','wo_failure_code2',
-            //     'wo_failure_code3','wo_creator','wo_note','wo_start_date','wo_finish_date','wo_type')
-            //     ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_schedule) else day(wo_finish_date) end) as tgl")
-            //     ->join('asset_mstr','asset_code','=','wo_asset')
-            //     ->where(function ($query) use ($tgl) {
-            //         $query->where('wo_schedule','like',date("Y-m",strtotime($tgl)).'%')
-            //             ->orwhere('wo_finish_date','like',date("Y-m",strtotime($tgl)).'%');
-            //     })
-            //     ->orderBy('tgl')
-            //     ->orderBy('wo_nbr')
-            //     // ->whereIn('wo_status',['open','plan','started'])
-            //     ->get();
-
-            // $datawo = DB::table('wo_mstr')
-            //     ->select('wo_number','wo_status','wo_start_date','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note','wo_job_startdate','wo_job_finishdate','wo_type')
-            //     //->selectRaw('DAY(wo_start_date) as tgl')
-            //     ->selectRaw("(case when wo_status in ('open','plan','started') then day(wo_start_date) else day(wo_job_finishdate) end) as tgl")
-            //     ->join('asset_mstr','asset_code','=','wo_asset_code')
-            //     ->where(function ($query) use ($tgl) {
-            //         $query->where('wo_job_startdate','like',date("Y-m",strtotime($tgl)).'%')
-            //             ->orwhere('wo_job_finishdate','like',date("Y-m",strtotime($tgl)).'%');
-            //     })
-            //     // ->whereIn('wo_status',['open','plan','started'])
-            //     ->orderBy('tgl')
-            //     ->orderBy('wo_number')
-            //     ->get();
-
-
-            $foto = $dataAsset->where('asset_code','=',"")->first();
-        }
-        else
-        {
-            $datawo = DB::table('wo_mstr')
-                ->select('wo_number','wo_status','wo_start_date','wo_list_engineer','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note',
-                    'wo_job_startdate','wo_job_finishdate','wo_type','wo_location','wo_site','asloc_desc')
-                ->selectRaw("day(wo_start_date) AS tgl")
-                ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
-                ->leftjoin('asset_loc','asloc_code','=','wo_location')
-                ->where('wo_start_date','like',date("Y-m",strtotime($tgl)).'%')
-                ->orderBy('tgl')
-                ->orderBy('wo_number');
-
-            if(isset($code)) {
-                $datawo = $datawo->where('wo_asset_code',$code);
-            }
-            if(isset($sloc)) {
-                
-                $datawo = $datawo->whereIn('wo_asset_code', function($query) use ($sloc)
-                {
-                    $query->select('asset_code')
-                          ->from('asset_mstr')
-                          ->where('asset_loc','=',$sloc);
-                });
-            }
-
-            $datawo = $datawo->get();
+        $datawo = DB::table('wo_mstr')
+            ->select('wo_number','wo_status','wo_start_date','wo_list_engineer','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note',
+                'wo_job_startdate','wo_job_finishdate','wo_type','wo_location','wo_site','asloc_desc')
+            ->selectRaw("day(wo_start_date) AS tgl")
+            ->join('asset_mstr','asset_code','=','wo_asset_code')
+            ->join('asset_loc','asloc_code','=','wo_location')
+            ->where('wo_start_date','like',date("Y-m",strtotime($tgl)).'%')
+            ->orderBy('tgl')
+            ->orderBy('wo_number');
            
-           $foto = $dataAsset->where('asset_code','=',$code)->first();
+        if(isset($code)) {
+            $datawo = $datawo->where('wo_asset_code','=',$code);
+            $foto = $dataAsset->where('asset_code','=',$code)->first();
         }
+
+        if(isset($sloc)) {
+            $datawo = $datawo->where('wo_location','=',$sloc); 
+        }
+
+        if(isset($sstatus)) {
+            $datawo = $datawo->where('wo_status','=',$sstatus); 
+        }
+
+        $datawo = $datawo->get();
 
         $datafn = DB::table('fn_mstr')
                 ->get();
@@ -876,9 +806,71 @@ class UserChartController extends Controller
         $dataeng = DB::table('eng_mstr')
             ->orderBy('eng_code')
             ->get();
-// dd($datawo);
+
+        /** Mencari data WO untuk diambil datanya untuk melihat last Wo di View Preventive */
+        $datalastwo = DB::table('wo_mstr')
+            ->leftJoin('pma_asset', function ($join) {
+                $join->on('wo_mstr.wo_asset_code', '=', 'pma_asset.pma_asset')
+                    ->where(function ($query) {
+                        $query->where('wo_mstr.wo_mt_code', '=', 'pma_asset.pma_pmcode')
+                            ->orWhere(function ($subQuery) {
+                                $subQuery->whereNull('wo_mstr.wo_mt_code')
+                                            ->whereNull('pma_asset.pma_pmcode');
+                            });
+                    });
+            })
+            ->whereWo_type('PM')
+            ->orderBy('wo_asset_code')
+            ->orderBy('wo_mt_code')
+            ->orderBy('wo_number','desc')
+            ->orderBy('wo_start_date','desc')
+            ->get();
+
+        /** Menampilkan data PM yang belum confirm */
+        $datapm = DB::table('pmo_confirm')
+            ->leftJoin('pma_asset', function ($join) {
+                $join->on('pmo_confirm.pmo_asset', '=', 'pma_asset.pma_asset')
+                    ->where(function ($query) {
+                        $query->where('pmo_confirm.pmo_pmcode', '=', DB::raw('pma_asset.pma_pmcode'))
+                            ->orWhere(function ($subQuery) {
+                                $subQuery->whereNull('pmo_confirm.pmo_pmcode')
+                                        ->whereNull('pma_asset.pma_pmcode');
+                            });
+                    });
+            })
+            ->leftJoin("asset_mstr","asset_code","=",'pmo_asset')
+            ->leftJoin('asset_loc', function($join) {
+                $join->on('asloc_code','=','asset_loc');
+                $join->on('asloc_site','=','asset_site');
+            })
+            ->leftJoin('pmc_mstr','pmo_pmcode','=','pmc_code')
+            ->selectRaw("day(pmo_sch_date) AS tgl,pmo_asset,asset_desc,asset_site,asset_loc,asloc_desc,
+                pmo_pmcode, pmo_sch_date,
+                pma_eng, pma_leadtime, pmc_desc, pma_mea, pma_cal, pma_meter, pma_meterum,
+                pmc_desc")
+            ->selectRaw('CASE 
+                WHEN pma_leadtime <= 1 
+                THEN pmo_sch_date
+                ELSE DATE_SUB(DATE_ADD(pmo_sch_date, INTERVAL pma_leadtime DAY), INTERVAL 1 DAY)
+                END AS tgl_duedate')
+            ->where('pmo_sch_date','like',date("Y-m",strtotime($tgl)).'%');
+
+        if(isset($code)) {
+            $datapm = $datapm->where('pmo_asset',$code);
+        }
+        if(isset($sloc)) {
+            $datapm = $datapm->where('asset_loc',$sloc);
+        }
+        if(isset($sstatus)) {
+            if($sstatus <> 'plan') {
+                $datapm = $datapm->where('pmo_confirm.id','<',0);
+            }
+        }
+
+        $datapm = $datapm->get();
+// dd($datapm);
         return view('report.assetsch',compact('skrg','hari','kosong','bulan','datawo','dataAsset','foto','datafn','dataloc',
-            'sloc','dataeng'));
+            'sloc','sstatus','dataeng','datapm','datalastwo'));
     }
 
     public function engrpt(Request $req)
@@ -912,7 +904,7 @@ class UserChartController extends Controller
                 ->whereNotIn('wo_status', ['closed','finish','delete'])
                 ->orderBy('wo_start_date')
                 ->get();
-
+// dd($datawo);
         $thn = Carbon::now('ASIA/JAKARTA')->addMonth(-11)->toDateTimeString();
         $tgl = Carbon::now('ASIA/JAKARTA')->toDateTimeString();
 
@@ -934,41 +926,44 @@ class UserChartController extends Controller
             $engcode = $req->code;
 
             $data = DB::table('wo_mstr')
-                    ->join('asset_mstr','asset_code','=','wo_asset')
+                    ->join('asset_mstr','asset_code','=','wo_asset_code')
                     // ->whereNotIn('wo_status', ['closed','finish','delete'])
-                    ->where(function ($query) use ($engcode) {
-                    $query->where('wo_engineer1', '=', $engcode)
-                          ->orWhere('wo_engineer2', '=', $engcode)
-                          ->orWhere('wo_engineer3', '=', $engcode)
-                          ->orWhere('wo_engineer4', '=', $engcode)
-                          ->orWhere('wo_engineer5', '=', $engcode);
-                    })
-                    ->orderBy('wo_schedule')
+                    // ->where(function ($query) use ($engcode) {
+                    // $query->where('wo_engineer1', '=', $engcode)
+                    //       ->orWhere('wo_engineer2', '=', $engcode)
+                    //       ->orWhere('wo_engineer3', '=', $engcode)
+                    //       ->orWhere('wo_engineer4', '=', $engcode)
+                    //       ->orWhere('wo_engineer5', '=', $engcode);
+                    // })
+                    ->where('wo_list_engineer', 'like', '%' . $engcode . '%')
+                    ->orderBy('wo_start_date')
                     ->get();
 
             $output = '';
             foreach ($data as $data) {
-                $eng = $data->wo_engineer1;
-                if(!is_null($data->wo_engineer2)) {
-                    $eng .= ", ".$data->wo_engineer2;
-                }
-                if(!is_null($data->wo_engineer3)) {
-                    $eng .= ", ".$data->wo_engineer3;
-                }
-                if(!is_null($data->wo_engineer4)) {
-                    $eng .= ", ".$data->wo_engineer4;
-                }
-                if(!is_null($data->wo_engineer5)) {
-                    $eng .= ", ".$data->wo_engineer5;
-                }
+                // $eng = $data->wo_engineer1;
+                // if(!is_null($data->wo_engineer2)) {
+                //     $eng .= ", ".$data->wo_engineer2;
+                // }
+                // if(!is_null($data->wo_engineer3)) {
+                //     $eng .= ", ".$data->wo_engineer3;
+                // }
+                // if(!is_null($data->wo_engineer4)) {
+                //     $eng .= ", ".$data->wo_engineer4;
+                // }
+                // if(!is_null($data->wo_engineer5)) {
+                //     $eng .= ", ".$data->wo_engineer5;
+                // }
+
+                $eng = $data->wo_list_engineer;
 
 
                 $output .= '<tr>'.
-                '<td>'.$data->wo_nbr.'</td>'.
-                '<td>'.$data->wo_asset.' - '.$data->asset_desc.'</td>'.
+                '<td>'.$data->wo_number.'</td>'.
+                '<td>'.$data->wo_asset_code.' - '.$data->asset_desc.'</td>'.
                 '<td>'.$eng.'</td>'.
-                '<td>'.$data->wo_schedule.'</td>'.
-                '<td>'.$data->wo_finish_date.'</td>'.
+                '<td>'.$data->wo_start_date.'</td>'.
+                '<td>'.$data->wo_due_date.'</td>'.
                 '<td>'.$data->wo_status.'</td>'.
                 '</tr>';
             }
@@ -1075,19 +1070,19 @@ class UserChartController extends Controller
             $code = $req->code;
 
             $data = DB::table('wo_mstr')
-                    ->join('asset_mstr','asset_code','=','wo_asset')
+                    ->join('asset_mstr','asset_code','=','wo_asset_code')
                     ->whereNotIn('wo_status', ['closed','finish','delete'])
-                    ->whereWo_asset($code)
-                    ->orderBy('wo_schedule')
+                    ->whereWo_asset_code($code)
+                    ->orderBy('wo_start_date')
                     ->get();
 
             $output = '';
             foreach ($data as $data) {
                 $output .= '<tr>'.
-                '<td>'.$data->wo_nbr.'</td>'.
-                '<td>'.$data->wo_asset.' - '.$data->asset_desc.'</td>'.
-                '<td>'.$data->wo_engineer1.'</td>'.
-                '<td>'.$data->wo_schedule.'</td>'.
+                '<td>'.$data->wo_number.'</td>'.
+                '<td>'.$data->wo_asset_code.' - '.$data->asset_desc.'</td>'.
+                '<td>'.$data->wo_list_engineer.'</td>'.
+                '<td>'.$data->wo_start_date.'</td>'.
                 '<td>'.$data->wo_status.'</td>'.
                 '</tr>';
             }
@@ -1108,11 +1103,11 @@ class UserChartController extends Controller
         foreach ($period as $dt) {
 
             $data = DB::table('wo_mstr')
-                    ->join('asset_mstr','asset_code','=','wo_asset')
+                    ->join('asset_mstr','asset_code','=','wo_asset_code')
                     ->whereNotIn('wo_status', ['closed','finish','delete'])
-                    ->whereWo_asset($req->code)
-                    ->whereMonth('wo_schedule','=',$dt->format("m"))
-                    ->whereYear('wo_schedule','=',$dt->format("Y"))
+                    ->whereWo_asset_code($req->code)
+                    ->whereMonth('wo_start_date','=',$dt->format("m"))
+                    ->whereYear('wo_start_date','=',$dt->format("Y"))
                     ->count();
 
             if ($jmlwo == "") {
@@ -1541,7 +1536,7 @@ class UserChartController extends Controller
                         ->groupby('wd_sp_wonumber');
                 })
             ->join('spg_list','spg_code','=','wo_sp_code')
-            ->whereNotIn('wo_status',['closed','delete'])
+            ->whereNotIn('wo_status',['closed','delete','canceled'])
             ->orderBy('wo_start_date')
             ->orderBy('wo_number')
             ->get();
@@ -1560,7 +1555,7 @@ class UserChartController extends Controller
                 'temp_qty_need' => $da->spg_qtyreq,
             ]);
         } 
-        
+       
         /* Mencari data sparepart yang sudah ada wo detail nya  di tabel wo_dets_sp */
         $data = DB::table('wo_mstr')
             ->join('wo_dets_sp','wd_sp_wonumber','=','wo_number')
@@ -1584,13 +1579,37 @@ class UserChartController extends Controller
             ]);
         } 
 
+        /** Mencari data sparepart dari PM Plan (yang belum di confirm) */
+        $data = DB::table('pmo_confirm')
+            ->leftJoin('pmc_mstr','pmo_pmcode','=','pmc_code')
+            ->leftJoin('spg_list','spg_code','=','pmc_spg')
+            // ->wherePmo_sch_date('2023-07-17')
+            ->whereNotNull('pmo_pmcode')
+            ->get();
+// dd($data);
+        foreach($data as $da){
+            DB::table('temp_wo')->insert([
+                'temp_wo' => 'PM Not Confirm',
+                'temp_asset' => $da->pmo_asset,
+                'temp_create_date' => $da->pmo_sch_date,
+                'temp_sch_date' => $da->pmo_sch_date,
+                'temp_status' => 'Plan',
+                'temp_sp' => $da->spg_spcode,
+                'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->spg_spcode)->value('spm_desc'),
+                'temp_qty_req' => $da->spg_qtyreq,
+                'temp_qty_whs' => 0,
+                'temp_qty_need' => 0, 
+            ]);
+        } 
+
         $datatemp = DB::table('temp_wo')
             ->whereNotIn('temp_status',['closed','delete'])
             ->selectRaw('temp_sch_date,temp_sp,temp_sp_desc,sum(temp_qty_req) as sumreq')
+            // ->whereTemp_sp('BESI')
             ->orderBy('temp_sch_date')
             ->orderBy('temp_sp')
             ->groupBy('temp_sch_date','temp_sp');
-
+// dd($datatemp->get());
         if($swo) {
             $datatemp = $datatemp->where('temp_wo','like','%'.$swo.'%');
         }
@@ -1603,7 +1622,7 @@ class UserChartController extends Controller
         if($ssp) {
             $datatemp = $datatemp->where('temp_sp',$ssp);
         }
-            
+       
         $datatemp = $datatemp->paginate(10);   
 
         Schema::dropIfExists('temp_wo');
@@ -1623,6 +1642,131 @@ class UserChartController extends Controller
         return view('report.needsp', ['data' => $datatemp, 'dataasset' => $dataasset, 'datasite' => $datasite,
             'datasp' => $datasp, 'swo' => $swo, 'sasset' => $sasset, 'sper1' => $sper1,
             'sper2' => $sper2, 'ssp' => $ssp]);
+    }
+
+    public function needspdetail(Request $req) /** Blade : needsp */
+    {
+        if ($req->ajax()) {
+
+            $code = $req->code;
+            $sch = $req->sch;
+
+            /* Temp table untuk menampung data spare part dari Wo detail, Wo yang belum ada detailnya, Wo yang belum terbentuk */
+            Schema::create('temp_wo', function ($table) {
+                $table->increments('id');
+                $table->string('temp_wo');
+                $table->string('temp_asset');
+                $table->date('temp_sch_date');
+                $table->date('temp_create_date');
+                $table->string('temp_status');
+                $table->string('temp_sp')->nullable();
+                $table->string('temp_sp_desc')->nullable();
+                $table->decimal('temp_qty_req',10,2)->nullable();
+                $table->decimal('temp_qty_whs',10,2)->nullable();
+                $table->decimal('temp_qty_need',10,2)->nullable();
+                $table->temporary();
+            });
+
+            /* Mencari data sparepart dari wo yang statusnya bukan close atau delete dan tidak mempunyai data detail sparepart dari tabel wo_dets_sp */
+            $data = DB::table('wo_mstr')
+                ->whereNotIn('wo_number', function ($query) use ($code) {
+                        $query->select('wd_sp_wonumber')
+                            ->from('wo_dets_sp')
+                            // ->whereWd_sp_spcode($code) 
+                            ->groupby('wd_sp_wonumber');
+                    })
+                ->join('spg_list','spg_code','=','wo_sp_code')
+                ->whereSpg_spcode($code)
+                ->whereNotIn('wo_status',['closed','delete','canceled'])
+                ->whereWo_start_date($sch)
+                ->orderBy('wo_start_date')
+                ->orderBy('wo_number')
+                ->get();
+
+            foreach($data as $da){
+                DB::table('temp_wo')->insert([
+                    'temp_wo' => $da->wo_number,
+                    'temp_asset' => $da->wo_asset_code,
+                    'temp_create_date' => $da->wo_system_create,
+                    'temp_sch_date' => $da->wo_start_date,
+                    'temp_status' => $da->wo_status,
+                    'temp_sp' => $da->spg_spcode,
+                    'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->spg_spcode)->value('spm_desc'),
+                    'temp_qty_req' => $da->spg_qtyreq,
+                    'temp_qty_whs' => 0,
+                    'temp_qty_need' => $da->spg_qtyreq,
+                ]);
+            } 
+        
+            /* Mencari data sparepart yang sudah ada wo detail nya  di tabel wo_dets_sp */
+            $data = DB::table('wo_mstr')
+                ->join('wo_dets_sp','wd_sp_wonumber','=','wo_number')
+                ->whereNotIn('wo_status',['closed','delete','canceled'])
+                ->whereWd_sp_spcode($code)
+                ->whereWo_start_date($sch)
+                ->orderBy('wo_start_date')
+                ->orderBy('wo_number')
+                ->get();
+
+            foreach($data as $da){
+                DB::table('temp_wo')->insert([
+                    'temp_wo' => $da->wo_number,
+                    'temp_asset' => $da->wo_asset_code,
+                    'temp_create_date' => $da->wo_system_create,
+                    'temp_sch_date' => $da->wo_start_date,
+                    'temp_status' => $da->wo_status,
+                    'temp_sp' => $da->wd_sp_spcode,
+                    'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->wd_sp_spcode)->value('spm_desc'),
+                    'temp_qty_req' => $da->wd_sp_required,
+                    'temp_qty_whs' => $da->wd_sp_issued,
+                    'temp_qty_need' => $da->wd_sp_required - $da->wd_sp_issued, 
+                ]);
+            } 
+
+            /** Mencari data sparepart dari PM Plan (yang belum di confirm) */
+            $data = DB::table('pmo_confirm')
+                ->leftJoin('pmc_mstr','pmo_pmcode','=','pmc_code')
+                ->leftJoin('spg_list','spg_code','=','pmc_spg')
+                ->whereSpg_spcode($code)
+                ->wherePmo_sch_date($sch)
+                ->whereNotNull('pmo_pmcode')
+                ->get();
+        // dd($data);
+            foreach($data as $da){
+                DB::table('temp_wo')->insert([
+                    'temp_wo' => 'PM Not Confirm',
+                    'temp_asset' => $da->pmo_asset,
+                    'temp_create_date' => $da->pmo_sch_date,
+                    'temp_sch_date' => $da->pmo_sch_date,
+                    'temp_status' => 'Plan',
+                    'temp_sp' => $da->spg_spcode,
+                    'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->spg_spcode)->value('spm_desc'),
+                    'temp_qty_req' => $da->spg_qtyreq,
+                    'temp_qty_whs' => 0,
+                    'temp_qty_need' => 0, 
+                ]);
+            } 
+
+            $data = Db::table('temp_wo')
+                ->get();
+
+            $output = '';
+            foreach ($data as $data) {
+
+                $output .= '<tr>'.
+                '<td>'.$data->temp_wo.'</td>'.
+                '<td>'.$data->temp_sch_date.'</td>'.
+                '<td>'.$data->temp_status.'</td>'.
+                '<td>'.$data->temp_qty_req.'</td>'.
+                '<td>'.$data->temp_qty_whs.'</td>'.
+                '<td>'.$data->temp_qty_need.'</td>'.
+                '</tr>';
+            }
+
+            Schema::dropIfExists('temp_wo');
+
+            return response($output);
+        }
     }
     
     public function generateso(Request $req)

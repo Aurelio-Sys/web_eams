@@ -1872,7 +1872,8 @@ class SettingController extends Controller
             return view('setting.asset', ['data' => $data, 'datasite' => $datasite, 'dataloc' => $dataloc, 
             'dataastype' => $dataastype, 'dataasgroup' => $dataasgroup, 'datasupp' => $datasupp, 'datafn' => $datafn, 
             'repaircode' => $repaircode, 'repairgroup' => $repairgroup, 'datasearch' => $datasearch, 
-            'dataassetqad' => $dataassetqad, 'datameaum' => $datameaum]);
+            'dataassetqad' => $dataassetqad, 'datameaum' => $datameaum, 
+            's_code' =>$req->s_code, 's_loc' =>$req->s_loc, 's_type' =>$req->s_type, 's_group' =>$req->s_group]);
         } else {
             toast('You do not have menu access, please contact admin.', 'error');
             return back();

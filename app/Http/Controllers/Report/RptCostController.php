@@ -94,8 +94,8 @@ class RptCostController extends Controller
 
         $dataharga = DB::table('wo_mstr')
             ->selectRaw('wo_asset_code,month(wo_system_create) as "bln",year(wo_system_create) as "thn",
-                sum(0) as jml')
-            // ->leftJoin('wo_dets','wo_dets_nbr','=','wo_nbr')
+                sum(wd_sp_issued * wd_sp_itemcost) as jml')
+            ->leftJoin('wo_dets_sp','wd_sp_wonumber','=','wo_number')
             ->groupBy('wo_asset_code')
             ->groupBy('bln')
             ->groupBy('thn')

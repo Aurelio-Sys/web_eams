@@ -78,6 +78,7 @@
             <tr>
                 <th class="sorting" data-sorting_type="asc" >Booking Code</th>
                 <th>Asset</th>
+                <th>Location</th>
                 <th>Start  </th>
                 <th>End  </th>
                 <th>Booked By </th>
@@ -122,21 +123,25 @@
                             <select id="t_asset" class="form-control selectpicker" data-live-search="true" name="t_asset" required>
                                 <option value="">--Select Data--</option>
                                 @foreach($dataAsset as $da)
-                                  <option value="{{$da->asset_code}}">{{$da->asset_code}} -- {{$da->asset_desc}}</option>
+                                  <option value="{{$da->asset_code}}">{{$da->asset_code}} -- {{$da->asset_desc}} -- {{$da->asloc_desc}} </option>
                                 @endforeach
                             </select>     
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_ref" class="col-md-4 col-form-label text-md-right">Start</label>
+                        <label for="t_ref" class="col-md-4 col-form-label text-md-right">Start
+                            <span id="alert1" style="color: red; font-weight: 200;">*</span>
+                        </label>
                         <div class="col-md-6">
-                            <input type="datetime-local" class="form-control" name="t_start" id="t_start"/>
+                            <input type="datetime-local" class="form-control" name="t_start" id="t_start" required/>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_ref" class="col-md-4 col-form-label text-md-right">End</label>
+                        <label for="t_ref" class="col-md-4 col-form-label text-md-right">End
+                            <span id="alert1" style="color: red; font-weight: 200;">*</span>
+                        </label>
                         <div class="col-md-6">
-                            <input type="datetime-local" class="form-control" name="t_end" id="t_end"/>
+                            <input type="datetime-local" class="form-control" name="t_end" id="t_end" required/>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -177,17 +182,19 @@
                      </div>
                  </div>
                  <div class="form-group row">
-                     <label for="te_asset" class="col-md-4 col-form-label text-md-right">Asset Code
+                     <label for="te_asset" class="col-md-4 col-form-label text-md-right">Asset 
                      <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                      <div class="col-md-6">
-                         <select id="te_asset" class="form-control selectpicker" data-live-search="true" name="te_asset" required>
-                             <option value="">--Select Data--</option>
-                             @foreach($dataAsset as $da)
-                               <option value="{{$da->asset_code}}">{{$da->asset_code}} -- {{$da->asset_desc}}</option>
-                             @endforeach
-                         </select>     
+                        <input type="text" class="form-control" name="te_asset" id="te_asset"  readonly>   
+                        <input type="hidden" class="form-control" name="h_asset" id="h_asset"  readonly>   
                      </div>
                  </div>
+                 <div class="form-group row">
+                    <label for="te_loc" class="col-md-4 col-form-label text-md-right">Location</label>
+                    <div class="col-md-6">
+                       <input type="text" class="form-control" name="te_loc" id="te_loc"  readonly>   
+                    </div>
+                </div>
                  <div class="form-group row">
                      <label for="te_start" class="col-md-4 col-form-label text-md-right">Start</label>
                      <div class="col-md-6">
@@ -328,7 +335,8 @@
            
            var code = $(this).data('code');
            var asset = $(this).data('asset');
-        //    console.log(asset);
+           var assetdesc = $(this).data('assetdesc');
+           var assetloc = atob($(this).data('assetloc'));
            var start = $(this).data('start');
            var end = $(this).data('end');
            var allday = $(this).data('allday');
@@ -366,7 +374,9 @@
            var enddate = year+'-'+month+'-'+day+'T'+hour+':'+min;
 
            document.getElementById('te_code').value = code;
-           $('#te_asset').val(asset).trigger('change');
+           document.getElementById('te_asset').value = asset + " -- " + assetdesc;
+           document.getElementById('h_asset').value = asset;
+           document.getElementById('te_loc').value = assetloc;
            document.getElementById('te_start').value = startdate;
            document.getElementById("te_end").min = startdate;
            document.getElementById('te_end').value = enddate;

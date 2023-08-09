@@ -104,7 +104,7 @@
         <div class="card-deck mb-3 col-12">
       @endif
       
-      @php($jmlwo = $datawo->where('wo_asset','=',$de->asset_code)->count())
+      @php($jmlwo = $datawo->where('wo_asset_code','=',$de->asset_code)->count())
 
 
       <div class="col-xl-3 col-lg-5 col-md-4 col-xs-12 pl-0 pr-0" >

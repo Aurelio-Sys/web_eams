@@ -22,10 +22,19 @@ class BookingController extends Controller
     public function booking()
     {
         $dataAsset = DB::table('asset_mstr')
+            ->leftjoin('asset_loc', function($join) {
+                $join->on('asloc_site','=','asset_site')
+                    ->on('asloc_code','=','asset_loc');
+            })
+            ->orderBy('asset_code')
             ->get();
 
         $data = DB::table('booking')
             ->join('asset_mstr', 'asset_code', '=', 'book_asset')
+            ->leftjoin('asset_loc', function($join) {
+                $join->on('asloc_site','=','asset_site')
+                    ->on('asloc_code','=','asset_loc');
+            })
             ->orderBy('book_id', 'desc')
             ->paginate(10);
 
@@ -39,13 +48,11 @@ class BookingController extends Controller
 
         $newyear = Carbon::now()->format('y');
 
-        if (is_null($codeBook)) {
-            $noBook = "BO" . $newyear . "000001";
+        if($qBook->bo_nbr == NULL || $qBook->bo_nbr == "" || $qBook->year <> $newyear) {
+            $noBook = $qBook->bo_prefix . $newyear . "000001";
         } else {
             $noBook = $qBook->bo_prefix . $qBook->year . str_pad($qBook->bo_nbr + 1, 6, '0', STR_PAD_LEFT);
         }
-
-        // dd($noBook);
 
         $datadobel = DB::table("booking")
             ->whereIn("book_status", ["Open", "Approved"])
@@ -133,7 +140,7 @@ class BookingController extends Controller
 
             DB::table('running_mstr')
                 ->update([
-                    'bo_nbr' => substr($req->t_code, 6, 6),
+                    'bo_nbr' => substr($req->t_code, 4, 6),
                     'year' => $newyear
                 ]);
 
@@ -148,8 +155,6 @@ class BookingController extends Controller
             toast('Booking Asset Error.', 'error');
             return redirect()->route('bookingBrowse');
         }
-
-        //dd($req->all());
 
     }
 
@@ -174,7 +179,7 @@ class BookingController extends Controller
         DB::table('booking')
             ->where('book_code', '=', $req->te_code)
             ->update([
-                'book_asset'       => $req->te_asset,
+                'book_asset'       => $req->h_asset,
                 'book_start'      => $tglawal,
                 'book_end'      => $tglakhir,
                 'book_allday'      => $allday,

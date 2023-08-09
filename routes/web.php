@@ -412,6 +412,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/enggraf', 'UserChartController@enggraf');
 	route::get('/prevsch', 'UserChartController@prevsch');
 	route::get('/needsp', 'UserChartController@needsp');
+	route::get('/needspdetail', 'UserChartController@needspdetail');
 
 	//work order maintenance
 	Route::get('/womaint', [wocontroller::class, 'womaint'])->name('womaint');

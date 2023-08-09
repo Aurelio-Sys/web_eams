@@ -2949,7 +2949,7 @@ class wocontroller extends Controller
             ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
             ->where('wd_sp_wonumber', '=', $wonumber)
             ->groupBy('wd_sp_wonumber', 'wd_sp_spcode')
-            ->select('*', DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'))
+            ->select('*', DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'), DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as wd_sp_whtf'))
             ->get();
 
         // dd($datasparepart);
@@ -4739,6 +4739,8 @@ class wocontroller extends Controller
                             'wd_ins_duration' => $req->has('ins_duration') ? $req->ins_duration[$index] : null,
                             'wd_ins_durationum' => $req->has('ins_duration') ? $req->durationum[$index] : null,
                             'wd_ins_engineer' => $engineersString,
+                            'wd_ins_insnote' => $req->ins_note[$index],
+                            'wd_ins_do' => $req->ins_check_hidden[$index],
 
                         ]);
                 }

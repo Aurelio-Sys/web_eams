@@ -98,17 +98,11 @@
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                {{--  <th width="10%">No WO</th>
-                <th width="10%">Asset</th>
-                <th width="15%">Desc Asset</th>
-                <th width="7%">Create Date</th>  --}}
-                <th width="7%">Sch Date</th>
-                {{--  <th width="5%">Status</th>  --}}
-                <th width="10%">Sparepart</th>
-                <th width="15%">Desc</th>  
-                <th width="7%">Qty Req</th>  
-                {{--  <th width="7%">Qty Whs</th>  
-                <th width="7%">Qty Needed</th>    --}}
+              <th width="15%">Sch Date</th>
+              <th width="25%">Sparepart</th>
+              <th width="40%">Desc</th>  
+              <th width="10%">Qty Req</th>  
+              <th width="10%">Detail</th>  
             </tr>
         </thead>
         <tbody>
@@ -121,6 +115,40 @@
     <input type="hidden" name="hidden_sort_type" id="hidden_sort_type" value="asc" />
 </div>
 
+
+<!-- Modal View -->
+<div class="modal fade" id="viewModal" role="dialog" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-left" id="exampleModalLabel">
+          Detail Work Order
+          <br>
+          Sparepart : <span id="v_code"></span> --  <span id="v_codedesc"></span>
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+              <tr>
+                <th width="20%">Wo Number</th>
+                <th width="15%">Wo Date</th>
+                <th width="15%">WO Status</th>  
+                <th width="15%">Qty Required</th>  
+                <th width="20%">Qty Transfered</th>  
+                <th width="15%">Qty Issued</th>  
+              </tr>
+          </thead>
+          <tbody id='detailapp'>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 
 @endsection
 
@@ -168,6 +196,27 @@
             document.getElementById('s_per2').required = false;
         
             resetSearch();
+        });
+
+        $(document).on('click', '.view', function() {
+          
+          $('#viewModal').modal('show');
+
+          var code = $(this).data('sp');
+          var codedesc = $(this).data('spdesc');
+          var sch = $(this).data('sch'); 
+
+          document.getElementById('v_code').innerHTML = code;
+          document.getElementById('v_codedesc').innerHTML = codedesc;
+
+          $.ajax({
+            url:"needspdetail?code="+code+"&sch="+sch,
+            success: function(data) {
+              console.log(data);
+              //alert(data);
+              $('#detailapp').html('').append(data);
+            }
+          })
         });
       
     </script>
