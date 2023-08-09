@@ -21,12 +21,14 @@ class PmConfirmController extends Controller
     {
         $s_code = $req->s_code;
         $s_desc = $req->s_desc;
+        $s_loc = $req->s_loc;
         $s_date1 = $req->s_date1;
         $s_date2 = $req->s_date2;
 
         // Select data yang pma_pmcode nya bukan kosong
         $data = DB::table('pmo_confirm')
             ->leftJoin('asset_mstr','asset_code','=','pmo_asset')
+            ->leftJoin('asset_loc','asloc_code','=','asset_loc')
             ->leftJoin('pmc_mstr','pmc_code','=','pmo_pmcode')
             ->leftjoin('pma_asset', function ($join) {
                 $join->on('pmo_confirm.pmo_asset', '=', 'pma_asset.pma_asset')
@@ -34,7 +36,7 @@ class PmConfirmController extends Controller
                         $join->on('pmo_confirm.pmo_pmcode', '=', 'pma_asset.pma_pmcode');
                     });
             })
-            ->select('pmo_confirm.*','asset_code','asset_desc','pmc_desc as pmc_desc','pma_leadtime')
+            ->select('pmo_confirm.*','asset_code','asset_desc','asset_loc','asset_site','asloc_desc','pmc_desc as pmc_desc','pma_leadtime')
             ->whereNotIn('pmo_number', function ($query) {
                 $query->select('pml_pm_number')->from('pml_log');
             })
@@ -55,9 +57,16 @@ class PmConfirmController extends Controller
                 ->orwhere('pmc_desc','like','%'.$s_desc.'%');
             });
         }
+        if($s_loc) {
+            $data = $data->where(function($query) use ($s_loc) {
+                $query->where('asloc_code','like','%'.$s_loc.'%')
+                ->orwhere('asloc_desc','like','%'.$s_loc.'%');
+            });
+        }
         if($s_date1) {
             $data = $data->whereBetween('pmo_sch_date', [$s_date1, $s_date2]);
         }
+        
 
         $data = $data->paginate(10);
 
@@ -66,7 +75,13 @@ class PmConfirmController extends Controller
             ->orderBy('pml_pmcode')
             ->get();
 
-        return view('schedule.pmconf', compact('data', 'datalog'));
+        $dataloc = DB::table('asset_loc')
+            ->orderBy('asloc_site')
+            ->orderBy('asloc_code')
+            ->get();
+
+        return view('schedule.pmconf', compact('data', 'datalog', 'dataloc',
+            's_code', 's_desc', 's_loc', 's_date1', 's_date2'));
     }
 
     /**
