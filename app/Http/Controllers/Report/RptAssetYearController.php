@@ -72,30 +72,6 @@ class RptAssetYearController extends Controller
         $datatemp = DB::table('temp_asset')
             ->get();
 
-        /* Menyimpan data sementara schedule WO yang selanjutnya */
-        /* foreach($datatemp as $dt) {
-            $tglharusnya = Carbon::create(substr($dt->temp_sch,0,4), substr($dt->temp_sch,4,2), 1, 0);
-
-            for($i = 1;$i<=10;$i++)
-            {
-                DB::table('temp_asset')->insert([
-                    'temp_code' => $dt->temp_code,
-                    'temp_sch' => $tglharusnya->addMonth($dt->temp_cal)->format('Ym'),
-                    'temp_cal' => $dt->temp_cal,
-                ]);
-            }
-
-            $tglharusnya = Carbon::create(substr($dt->temp_sch,0,4), substr($dt->temp_sch,4,2), 1, 0);
-            for($i = 1;$i<=10;$i++)
-            {
-                DB::table('temp_asset')->insert([
-                    'temp_code' => $dt->temp_code,
-                    'temp_sch' => $tglharusnya->subMonth($dt->temp_cal)->format('Ym'),
-                    'temp_cal' => $dt->temp_cal,
-                ]);
-            } 
-        } */
-
         $datatemp = DB::table('temp_asset')
             ->orderBy('temp_code')
             ->get();
@@ -109,6 +85,21 @@ class RptAssetYearController extends Controller
             ->get();
 
         // dd($datawo);
+
+        /** Menampilkan data PM yang belum confirm */
+        $datapm = DB::table('pmo_confirm')
+            ->leftJoin('pma_asset', function ($join) {
+                $join->on('pmo_confirm.pmo_asset', '=', 'pma_asset.pma_asset')
+                    ->where(function ($query) {
+                        $query->where('pmo_confirm.pmo_pmcode', '=', DB::raw('pma_asset.pma_pmcode'))
+                            ->orWhere(function ($subQuery) {
+                                $subQuery->whereNull('pmo_confirm.pmo_pmcode')
+                                        ->whereNull('pma_asset.pma_pmcode');
+                            });
+                    });
+            })
+            ->selectRaw('pmo_asset,year(pmo_sch_date) as "thnwo", month(pmo_sch_date) as "blnwo"')
+            ->get();
 
         Schema::dropIfExists('temp_asset');
 
@@ -173,7 +164,36 @@ class RptAssetYearController extends Controller
         return view('report.assetyear', ['data' => $data, 'datatemp' => $datatemp, 'datawo' => $datawo, 'bulan' => $bulan,
             'dataasset' => $dataasset, 'sasset' => $sasset, 'swo' => $req->s_nomorwo, 'sasset' => $req->s_asset,
             'sloc' => $req->s_loc, 'seng' => $req->s_eng,
-            'dataloc' => $dataloc, 'dataeng' => $dataeng, 'stype' => $req->s_type]);
+            'dataloc' => $dataloc, 'dataeng' => $dataeng, 'stype' => $req->s_type, 'datapm' => $datapm]);
+    }
+
+    public function assetyeardetail(Request $req) /** Blade : needsp */
+    {
+        if ($req->ajax()) {
+
+            $code = $req->code;
+            $sch = $req->sch;
+dd($req->all());
+            $data = DB::table('asset_loc')
+            ->orderBy('asloc_code')
+            ->get();
+
+            // $data = DB::table('wo_mstr')
+            //     // ->whereWo_asset_code($code)
+            //     ->get();
+// dd($data);
+            $output = '';
+            foreach ($data as $data) {
+                $output .= '<tr>'.
+                '<td>'.$data->wo_number.'</td>'.
+                '<td>'.$data->wo_number.'</td>'.
+                '<td>'.$data->wo_number.'</td>'.
+                '<td>'.$data->wo_number.'</td>'.
+                '</tr>';
+            }
+
+            return response($output);
+        }
     }
 
     /**

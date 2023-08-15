@@ -838,11 +838,10 @@
         });
 
         $(document).on('click', '#btnrefresh', function() {
-            alert('test');
-            var s_code = '';
-            var s_loc = '';
-            var s_type = '';
-            var s_group = '';
+            document.getElementById('s_code').value  = '';
+            document.getElementById('s_loc').value  = '';
+            document.getElementById('s_type').value  = '';
+            document.getElementById('s_group').value  = '';
         });
 
     </script>
