@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-sm-9">
             <h1 class="m-0 text-dark">Return Sparepart</h1>
-            <p class="pb-0 m-0">Menu ini berfungsi untuk engineer melakukan pengembalian sparepart dari gudang engineer ke inventory source</p>
+            <p class="pb-0 m-0">Menu ini berfungsi untuk melakukan pengembalian sparepart dari inventory supply ke inventory source oleh pihak engineer</p>
         </div><!-- /.col -->
         <div class="col-sm-3">
             <a class="btn btn-block btn-primary" href="{{route('retspcreate')}}">
@@ -37,7 +37,7 @@
                 <div class="col-12 form-group row">
 
                     <!--FORM Search Disini-->
-                    <label for="s_nomorrs" class="col-md-2 col-form-label text-md-right">{{ __('RS / WO Number') }}</label>
+                    <label for="s_nomorrs" class="col-md-2 col-form-label text-md-right">{{ __('RT / WO Number') }}</label>
                     <div class="col-md-3 col-sm-12 mb-2 input-group">
                         <input id="s_nomorrs" type="text" class="form-control" name="s_nomorrs" value="" autofocus autocomplete="off">
                     </div>
@@ -121,11 +121,11 @@
             </div>
             <div class="modal-body">
                 <div class="form-group row" style="margin: 0px 0px 0.8em 0px;">
-                    <label for="v_rsnumber" class="col-md-3 col-form-label">RS Number</label>
+                    <label for="v_rsnumber" class="col-md-3 col-form-label">RT Number</label>
                     <div class="col-md-3">
                         <input type="text" class="form-control" id="v_rsnumber" name="v_rsnumber" readonly>
                     </div>
-                    <label for="v_retby" class="col-md-3 col-form-label">Requested By</label>
+                    <label for="v_retby" class="col-md-3 col-form-label">Returned By</label>
                     <div class="col-md-3">
                         <input type="text" class="form-control" id="v_retby" name="v_retby" readonly>
                     </div>
@@ -180,11 +180,11 @@
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row" style="margin: 0px 0px 0.8em 0px;">
-                        <label for="e_rsnumber" class="col-md-3 col-form-label">RS Number</label>
+                        <label for="e_rsnumber" class="col-md-3 col-form-label">RT Number</label>
                         <div class="col-md-3">
                             <input type="text" class="form-control" id="e_rsnumber" name="e_rsnumber" readonly>
                         </div>
-                        <label for="e_retby" class="col-md-3 col-form-label">Requested By</label>
+                        <label for="e_retby" class="col-md-3 col-form-label">Returned By</label>
                         <div class="col-md-3">
                             <input type="text" class="form-control" id="e_retby" name="e_retby" readonly>
                         </div>
@@ -204,7 +204,7 @@
                             <thead>
                                 <th width="30%">Spare part</th>
                                 <th width="15%">Qty Return</th>
-                                <th width="20%">Location To</th>
+                                <th width="20%">Location From</th>
                                 <th width="20%">Note</th>
                                 <th width="10%">Delete</th>
                             </thead>
@@ -244,7 +244,7 @@
                 {{csrf_field()}}
 
                 <div style="display: none;">
-                    <label for="c_rsnumber" class="col-md-4 col-form-label text-md-right">{{ __('RS Number') }}</label>
+                    <label for="c_rsnumber" class="col-md-4 col-form-label text-md-right">{{ __('RT Number') }}</label>
                     <div class="col-md-7">
                         <input id="c_rsnumber" type="text" class="form-control" name="c_rsnumber" value="" readonly>
                     </div>

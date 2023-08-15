@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Session;
 
 class SparepartController extends Controller
 {
+    //REQUEST SPAREPART BROWSE
     public function reqspbrowse(Request $request)
     {
         $data = DB::table('req_sparepart')
@@ -70,6 +71,7 @@ class SparepartController extends Controller
         return view('sparepart.reqsparepart-browse', ['data' => $data, 'sp_all' => $sp_all, 'loc_to' => $loc_to, 'requestby' => $requestby,]);
     }
 
+    //REQUEST SPAREPART CREATE
     public function reqspcreate()
     {
         $sp_all = DB::table('sp_mstr')
@@ -100,6 +102,7 @@ class SparepartController extends Controller
         return view('sparepart.reqsparepart-detail', compact('data', 'wo_sp', 'sp_all', 'loc_to', 'womstr'));
     }
 
+    //REQUEST SPAREPART SUBMIT AFTER CREATE
     public function reqspsubmit(Request $req)
     {
         DB::beginTransaction();
@@ -343,6 +346,7 @@ class SparepartController extends Controller
         }
     }
 
+    //REQUEST SPAREPART EDIT
     public function reqspeditdet(Request $req)
     {
         $rsnumber = $req->code;
@@ -399,6 +403,7 @@ class SparepartController extends Controller
         }
     }
 
+    //REQUEST SPAREPART VIEW
     public function reqspviewdet(Request $req)
     {
         $rsnumber = $req->code;
@@ -432,6 +437,7 @@ class SparepartController extends Controller
         }
     }
 
+    //REQUEST SPAREPART VIEW EAMS MESSAGE
     public function reqspviewdetappr(Request $req)
     {
         $rsnumber = $req->code;
@@ -469,6 +475,7 @@ class SparepartController extends Controller
         }
     }
 
+    //REQUEST SPAREPART VIEW APPROVAL STATUS
     public function reqsprouteappr(Request $req)
     {
         $rs_number = $req->rs_number;
@@ -526,6 +533,7 @@ class SparepartController extends Controller
         return response($output);
     }
 
+    //REQUEST SPAREPART UPDATE AFTER EDIT
     public function reqspupdate(Request $req)
     {
         $newData = $req->all();
@@ -659,6 +667,7 @@ class SparepartController extends Controller
         }
     }
 
+    //REQUEST SPAREPART CANCEL
     public function reqspcancel(Request $req)
     {
         $rsnumber = $req->c_rsnumber;
@@ -684,6 +693,7 @@ class SparepartController extends Controller
         return back();
     }
 
+    //REQUEST SPAREPART APPROVAL BROWSE
     public function reqspapprovalbrowse(Request $request)
     {
         if (strpos(Session::get('menu_access'), 'BO06') !== false) {
@@ -773,6 +783,7 @@ class SparepartController extends Controller
         }
     }
 
+    //REQUEST SPAREPART APPROVAL
     public function reqspapproval(Request $req)
     {
         $rsnbr = $req->e_rsnumber;
@@ -1036,6 +1047,7 @@ class SparepartController extends Controller
         }
     }
 
+    //TRANSFER SPAREPART BROWSE
     public function trfspbrowse(Request $request)
     {
         if (Session::get('role') == 'ADMIN' || Session::get('role') == 'WHS') {
@@ -1087,6 +1099,7 @@ class SparepartController extends Controller
         return view('sparepart.trfsparepart-browse', ['data' => $data, 'sp_all' => $sp_all, 'loc_to' => $loc_to, 'requestby' => $requestby,]);
     }
 
+    //TRANSFER SPAREPART CONFIRM
     public function trfspdet($id)
     {
         // dd($id);
@@ -1115,6 +1128,7 @@ class SparepartController extends Controller
         ));
     }
 
+    //TRANSFER SPAREPART VIEW DETAIL
     public function trfspviewdet(Request $req)
     {
         $rsnumber = $req->code;
@@ -1153,6 +1167,7 @@ class SparepartController extends Controller
         }
     }
 
+    //RETURN SPAREPART BROWSE
     public function retspbrowse(Request $request)
     {
         $data = DB::table('ret_sparepart')
@@ -1207,6 +1222,7 @@ class SparepartController extends Controller
         // return view('sparepart.returnsparepart-mtc'); 
     }
 
+    //RETURN SPAREPART CREATE
     public function retspcreate()
     {
         $sp_all = DB::table('sp_mstr')
@@ -1220,7 +1236,7 @@ class SparepartController extends Controller
             ->join('ret_sparepart_det', 'ret_sparepart_det.ret_spd_mstr_id', 'ret_sparepart.id')
             ->get();
 
-        $loc_to = DB::table('inc_source')->get();
+        $loc_from = DB::table('inp_supply')->get();
 
         //nomor wo akan di filter berdasarkan departmen user yang login harus sama dengan departmen wo, kecuali admin dapat mengakses semua nomor wo
         $womstr = DB::table('wo_dets_sp')
@@ -1237,20 +1253,22 @@ class SparepartController extends Controller
 
         // dd($womstr);
 
-        return view('sparepart.returnsparepart-detail', compact('data', 'wo_sp', 'sp_all', 'loc_to', 'womstr'));
+        return view('sparepart.returnsparepart-detail', compact('data', 'wo_sp', 'sp_all', 'loc_from', 'womstr'));
     }
 
+    //RETURN SPAREPART TO VIEW SPAREPART FROM WO
     public function retsplistwo(Request $req)
     {
         $wo_number = $req->wonumber;
         // dd($wo_number);
         $splistwo = WOMaster::join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber', 'wo_mstr.wo_number')
             ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
+            ->leftJoin('inp_supply', 'inp_supply.inp_loc', 'wo_dets_sp.wd_sp_loc_issued')
             ->whereColumn('wd_sp_required', '>', 'wd_sp_issued')
             ->where('wo_number', $wo_number)
             ->get();
 
-        $loc_to = DB::table('inc_source')->get();
+        $loc_from = DB::table('inp_supply')->get();
 
         $output = '';
 
@@ -1271,11 +1289,12 @@ class SparepartController extends Controller
                 $output .= '<td>';
                 $output .= '<select name="locto[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
                 $output .= '<option value = ""> -- Select Location To -- </option>';
-                foreach ($loc_to as $loc) {
-                    $output .= '<option data-siteto="' . $loc->inc_source_site . '" value="' . $loc->inc_loc . '">' . $loc->inc_loc . '</option>';
+                foreach ($loc_from as $loc) {
+                    $selected = ($loc->inp_loc === $data->inp_loc) ? 'selected' : '';
+                    $output .= '<option data-siteto="' . $loc->inp_supply_site . '" value="' . $loc->inp_loc . '"' . $selected . '>' . $loc->inp_loc . '</option>';
                 }
                 $output .= '</select>';
-                $output .= '<input type="hidden" class="siteto" name="siteto[]" value="' . $loc->inc_source_site . '"/>';
+                $output .= '<input type="hidden" class="siteto" name="siteto[]" value="' . $loc->inp_supply_site . '"/>';
                 $output .= '</td>';
                 $output .= '<td>';
                 $output .= '<textarea type="text" id="retnote" class="form-control retnote" name="retnote[]" rows="2" ></textarea>';
@@ -1291,6 +1310,7 @@ class SparepartController extends Controller
         return response($output);
     }
 
+    //RETURN SPAREPART SUBMIT AFTER CREATE
     public function retspsubmit(Request $req)
     {
         DB::beginTransaction();
@@ -1516,6 +1536,7 @@ class SparepartController extends Controller
         }
     }
 
+    //RETURN SPAREPART EDIT
     public function retspeditdet(Request $req)
     {
         $rsnumber = $req->code;
@@ -1526,13 +1547,13 @@ class SparepartController extends Controller
                 ->leftJoin('ret_sparepart_det', 'ret_sparepart_det.ret_spd_mstr_id', 'ret_sparepart.id')
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'ret_sparepart_det.ret_spd_sparepart_code')
                 ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
-                ->join('inc_source', 'inc_source.inc_loc', 'ret_sparepart_det.ret_spd_loc_to')
+                ->join('inp_supply', 'inp_supply.inp_loc', 'ret_sparepart_det.ret_spd_loc_to')
                 ->when($wonumber, function ($q) {
                     return $q->join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber', 'ret_sparepart.ret_sp_wonumber')
                         ->whereColumn('wd_sp_required', '>', 'wd_sp_issued')
-                        ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inc_loc, wd_sp_spcode');
+                        ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inp_loc, wd_sp_spcode');
                 }, function ($q) {
-                    return $q->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inc_loc');
+                    return $q->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inp_loc');
                 })
                 ->where('ret_sp_number', $rsnumber)
                 // ->groupBy('req_sp_number')
@@ -1543,7 +1564,7 @@ class SparepartController extends Controller
                 ->where('spm_active', '=', 'Yes')
                 ->get();
 
-            $loc_to = DB::table('inc_source')->get();
+            $loc_to = DB::table('inp_supply')->get();
 
             // dd($datas);
 
@@ -1560,8 +1581,8 @@ class SparepartController extends Controller
                     $output .= '<select name="te_locto[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" required>';
                     $output .= '<option value = ""> -- Select Location To -- </option>';
                     foreach ($loc_to as $dat) {
-                        $selected = ($dat->inc_loc === $data->inc_loc) ? 'selected' : '';
-                        $output .= '<option value="' . $dat->inc_loc . '" ' . $selected . '> ' . $dat->inc_loc . ' </option>';
+                        $selected = ($dat->inp_loc === $data->inp_loc) ? 'selected' : '';
+                        $output .= '<option value="' . $dat->inp_loc . '" ' . $selected . '> ' . $dat->inp_loc . ' </option>';
                     }
                     $output .= '</select>';
                     $output .= '</td>';
@@ -1587,8 +1608,8 @@ class SparepartController extends Controller
                     $output .= '<select name="te_locto[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" required>';
                     $output .= '<option value = ""> -- Select Location To -- </option>';
                     foreach ($loc_to as $dat) {
-                        $selected = ($dat->inc_loc === $data->inc_loc) ? 'selected' : '';
-                        $output .= '<option value="' . $dat->inc_loc . '" ' . $selected . '> ' . $dat->inc_loc . ' </option>';
+                        $selected = ($dat->inp_loc === $data->inp_loc) ? 'selected' : '';
+                        $output .= '<option value="' . $dat->inp_loc . '" ' . $selected . '> ' . $dat->inp_loc . ' </option>';
                     }
                     $output .= '</select>';
                     $output .= '</td>';
@@ -1607,6 +1628,7 @@ class SparepartController extends Controller
         }
     }
 
+    //RETURN SPAREPART VIEW
     public function retspviewdet(Request $req)
     {
         $rsnumber = $req->code;
@@ -1641,6 +1663,7 @@ class SparepartController extends Controller
         }
     }
 
+    //RETURN SPAREPART UPDATE AFTER EDIT
     public function retspupdate(Request $req)
     {
         $newData = $req->all();
@@ -1755,6 +1778,7 @@ class SparepartController extends Controller
         }
     }
 
+    //RETURN SPAREPART CANCEL
     public function retspcancel(Request $req)
     {
         $rsnumber = $req->c_rsnumber;
@@ -1780,6 +1804,7 @@ class SparepartController extends Controller
         return back();
     }
 
+    //CHECKING STOCK SPAREPART IN INVENTORY SOURCE FOR TRANSFER SPAREPART AND RETURN SPAREPART
     public function gettrfspwsastockfrom(Request $req)
     {
         // $assetsite = $req->get('assetsite');
@@ -1823,6 +1848,7 @@ class SparepartController extends Controller
         return response()->json($data);
     }
 
+    //WSA SETTING
     private function httpHeader($req)
     {
         return array(
@@ -1835,6 +1861,7 @@ class SparepartController extends Controller
         );
     }
 
+    //TRANSFER SPAREPART SUBMIT
     public function trfspsubmit(Request $req)
     {
         // dd($req->all()); 
@@ -2167,6 +2194,491 @@ class SparepartController extends Controller
             DB::rollBack();
             toast('Confirm Failed', 'error');
             return redirect()->route('trfspbrowse');
+        }
+    }
+
+    //RETURN SPAREPART WAREHOUSE BROWSE
+    public function retspwhsbrowse(Request $request)
+    {
+        if (Session::get('role') == 'ADMIN' || Session::get('role') == 'WHS') {
+            $data = DB::table('ret_sparepart')
+                ->leftJoin('ret_sparepart_det', 'ret_sparepart_det.ret_spd_mstr_id', 'ret_sparepart.id')
+                ->join('sp_mstr', 'sp_mstr.spm_code', 'ret_sparepart_det.ret_spd_sparepart_code')
+                ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
+                ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_desc, ret_sparepart.created_at')
+                ->groupBy('ret_sp_number')
+                ->orderByDesc('ret_sp_number');
+
+            // $data = DB::table('req_sparepart')
+            //     ->leftJoin('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
+            //     ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
+            //     ->where('req_sp_status', '!=', 'canceled')
+            //     ->groupBy('req_sp_number')
+            //     ->orderBy('req_sp_due_date', 'ASC');
+
+            $sp_all = DB::table('sp_mstr')
+                ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
+                ->where('spm_active', '=', 'Yes')
+                ->get();
+
+            $loc_to = DB::table('inc_source')->get();
+
+            $requestby = DB::table('ret_sparepart')
+                ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
+                ->groupBy('ret_sp_return_by')
+                ->get();
+        } else {
+            return view('errors.401');
+        }
+
+        // $datefrom = $request->get('s_datefrom') == '' ? '2000-01-01' : date($request->get('s_datefrom'));
+        // $dateto = $request->get('s_dateto') == '' ? '3000-01-01' : date($request->get('s_dateto'));
+
+        if ($request->s_nomorrs) {
+            $data->where('ret_sp_number', 'like', '%' . $request->s_nomorrs . '%');
+        }
+
+        if ($request->s_reqby) {
+            $data->where('ret_sp_return_by', '=', $request->s_reqby);
+        }
+
+        if ($request->s_status) {
+            $data->where('ret_sp_status', '=', $request->s_status);
+        }
+
+        // if ($datefrom != '' || $dateto != '') {
+        //     $data->where('req_sp_due_date', '>=', $datefrom);
+        //     $data->where('req_sp_due_date', '<=', $dateto);
+        // }
+
+        $data = $data->paginate(10);
+        // dd($data);
+
+        return view('sparepart.returnsparepartwhs-browse', ['data' => $data, 'sp_all' => $sp_all, 'loc_to' => $loc_to, 'requestby' => $requestby,]);
+    }
+
+    //RETURN SPAREPART WAREHOUSE CONFIRM
+    public function retspwhsdet($id)
+    {
+        // dd($id);
+        $data = DB::table('ret_sparepart')
+            ->where('ret_sp_number', $id)
+            ->where('ret_sp_status', '!=', 'canceled')
+            ->first();
+
+        $sparepart_detail = DB::table('ret_sparepart')
+            ->leftJoin('ret_sparepart_det', 'ret_sparepart_det.ret_spd_mstr_id', 'ret_sparepart.id')
+            ->join('sp_mstr', 'sp_mstr.spm_code', 'ret_sparepart_det.ret_spd_sparepart_code')
+            ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
+            ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_desc, ret_sparepart.created_at')
+            ->groupBy('ret_sp_number')
+            ->where('ret_spd_mstr_id', $data->id)
+            // ->groupBy('req_spd_mstr_id')
+            ->get();
+
+        // dd($sparepart_detail);
+        $datalocsupply = DB::table('inc_source')
+            ->get();
+
+        // dd($data);
+        return view('sparepart.returnsparepartwhs-detail', compact(
+            'data',
+            'sparepart_detail',
+            'datalocsupply',
+        ));
+    }
+
+    //RETURN SPAREPART VIEW DETAIL
+    public function retspwhsviewdet(Request $req)
+    {
+        $rsnumber = $req->code;
+        // dd($req->code);
+        if ($req->ajax()) {
+
+            $data = DB::table('ret_sparepart')
+                ->leftJoin('ret_sparepart_det', 'ret_sparepart_det.ret_spd_mstr_id', 'ret_sparepart.id')
+                ->join('sp_mstr', 'sp_mstr.spm_code', 'ret_sparepart_det.ret_spd_sparepart_code')
+                ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
+                ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_desc, ret_sparepart.created_at')
+                ->groupBy('ret_sp_number')
+                ->where('ret_sp_number', $rsnumber)
+                // ->groupBy('req_sp_number')
+                ->get();
+            // dd($data);
+
+            $output = '';
+            foreach ($data as $data) {
+                $output .= '<tr>';
+                $output .= '<td><input type="hidden" name="te_spreq[]" readonly>' . $data->ret_spd_sparepart_code . ' -- ' . $data->spm_desc . '</td>';
+                $output .= '</td>';
+                $output .= '<td><input type="hidden" name="te_qtyret[]" readonly>' . $data->ret_spd_qty_return . '</td>';
+                // $output .= '<td><input type="hidden" name="te_sitefrom[]" readonly>' . $data->ret_spd_site_from . '</td>';
+                $output .= '<td><input type="hidden" name="te_locnlotfrom[]" readonly>' . $data->ret_spd_site_from . ' & ' . $data->ret_spd_loc_from . ' & ' . $data->ret_spd_lot_from . '</td>';
+                $output .= '<td><input type="hidden" name="te_retnote[]" readonly>' . $data->ret_spd_engnote . '</td>';
+                $output .= '<td><input type="hidden" name="te_qtytrf[]" readonly>' . $data->ret_spd_qty_transfer . '</td>';
+                // $output .= '<td><input type="hidden" name="te_siteto[]" readonly>' . $data->ret_spd_site_to . '</td>';
+                $output .= '<td><input type="hidden" name="te_locto[]" readonly>' . $data->ret_spd_site_to . ' & ' . $data->ret_spd_loc_to . '</td>';
+                $output .= '<td><input type="hidden" name="te_note[]" readonly>' . $data->ret_spd_whsnote . '</td>';
+                $output .= '</td>';
+                $output .= '</tr>';
+            }
+
+            // dd($output);
+
+            return response($output);
+        }
+    }
+
+    //RETURN SPAREPART WAREHOUSE SUBMIT
+    public function retspwhssubmit(Request $req)
+    {
+        dd($req->all()); 
+
+        //ambil data dari qad untuk pengecekan kembali stock inventory source di QAD
+        Schema::dropIfExists('temp_table');
+        Schema::create('temp_table', function ($table) {
+            $table->string('t_part');
+            $table->string('t_site');
+            $table->string('t_loc')->nullable();
+            $table->string('t_lot')->nullable();
+            $table->decimal('t_qtyoh', 10, 2);
+            $table->temporary();
+        });
+
+        foreach ($req->hidden_spcode as $index => $spcode) {
+            $getActualStockSource = (new WSAServices())->wsacekstoksource($spcode, $req->hidden_sitefrom[$index], $req->hidden_locfrom[$index], $req->hidden_lotfrom[$index]);
+
+            if ($getActualStockSource === false) {
+                toast('WSA Connection Failed', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+
+                // jika hasil WSA ke QAD tidak ditemukan
+                if ($getActualStockSource[1] == "false") {
+                    toast('Something went wrong with the data', 'error')->persistent('Dismiss');
+                    return redirect()->back();
+                }
+
+
+                // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+
+                $resultWSA = $getActualStockSource[0];
+
+                //kumpulkan hasilnya ke dalam 1 array sebagai penampung list location dan lot from
+                foreach ($resultWSA as $thisresult) {
+                    DB::table('temp_table')
+                        ->insert([
+                            't_part' => $thisresult->t_part,
+                            't_site' => $thisresult->t_site,
+                            't_loc' => $thisresult->t_loc,
+                            't_lot' => $thisresult->t_lot,
+                            't_qtyoh' => $thisresult->t_qtyoh,
+                        ]);
+                }
+            }
+        }
+
+        $dataStockQAD = DB::table('temp_table')
+            ->get();
+
+
+        Schema::dropIfExists('temp_table');
+
+        DB::beginTransaction();
+        
+
+        try {
+
+            $notEnough = "";
+            foreach ($req->qtytotransfer as $index => $qtytotransfer) {
+                foreach ($dataStockQAD as $source) {
+                    if ($req->hidden_spcode[$index] == $source->t_part && $req->hidden_sitefrom[$index] == $source->t_site && $req->hidden_locfrom[$index] == $source->t_loc && $req->hidden_lotfrom[$index] == $source->t_lot) {
+                        if (floatval($req->qtytotransfer[$index]) > floatval($source->t_qtyoh)) {
+                            //jika tidak cukup berikan alert
+                            // dump($source->t_qtyoh);
+                            $notEnough .= $req->hidden_spcode[$index] . ", ";
+                        }
+                    }
+                }
+            }
+
+            if ($notEnough != "") {
+                $notEnough = rtrim($notEnough, ", "); // hapus koma terakhir
+                alert()->html('<u><b>Alert!</b></u>', "<b>The qty to be transferred does not have sufficient stock for the following spare part code :</b><br>" . $notEnough . "", 'error')->persistent('Dismiss');
+                return redirect()->back();
+            }
+
+            /* Qxtend Transfer Single Item */
+            $qxwsa = ModelsQxwsa::first();
+
+            // Var Qxtend
+            $qxUrl          = $qxwsa->qx_url; // Edit Here
+
+            $qxRcv          = $qxwsa->qx_rcv;
+
+            $timeout        = 0;
+
+            $domain         = $qxwsa->wsas_domain;
+
+            // XML Qextend ** Edit Here
+
+            // dd($qxRcv);
+
+            $qdocHead = '  
+            <soapenv:Envelope xmlns="urn:schemas-qad-com:xml-services"
+            xmlns:qcom="urn:schemas-qad-com:xml-services:common"
+            xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing">
+            <soapenv:Header>
+                <wsa:Action/>
+                <wsa:To>urn:services-qad-com:' . $qxRcv . '</wsa:To>
+                <wsa:MessageID>urn:services-qad-com::' . $qxRcv . '</wsa:MessageID>
+                <wsa:ReferenceParameters>
+                <qcom:suppressResponseDetail>true</qcom:suppressResponseDetail>
+                </wsa:ReferenceParameters>
+                <wsa:ReplyTo>
+                <wsa:Address>urn:services-qad-com:</wsa:Address>
+                </wsa:ReplyTo>
+            </soapenv:Header>
+            <soapenv:Body>
+                <transferInvSingleItem>
+                <qcom:dsSessionContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>domain</qcom:propertyName>
+                    <qcom:propertyValue>' . $domain . '</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>scopeTransaction</qcom:propertyName>
+                    <qcom:propertyValue>true</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>version</qcom:propertyName>
+                    <qcom:propertyValue>ERP3_1</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>mnemonicsRaw</qcom:propertyName>
+                    <qcom:propertyValue>false</qcom:propertyValue>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>username</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>password</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>action</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>entity</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>email</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                    <qcom:ttContext>
+                    <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
+                    <qcom:propertyName>emailLevel</qcom:propertyName>
+                    <qcom:propertyValue/>
+                    </qcom:ttContext>
+                </qcom:dsSessionContext>
+                <dsItem>';
+
+            $qdocBody = '';
+
+            /* bisa foreach per item dari sini */
+
+            $reqspmstr = DB::table('ret_sparepart')->where('ret_sp_number', $req->hide_rsnum)->first();
+
+            foreach ($req->qtytotransfer as $index => $qtyfromweb) {
+                if ($qtyfromweb > 0) { //jika qty to transfer yang diisi user dari menu wo transfer lebih dari 0, baru lakukan qxtend transfer single item
+                    $qdocBody .= '<item>
+                            <part>' . $req->hidden_spcode[$index] . '</part>
+                            <itemDetail>
+                                <lotserialQty>' . $qtyfromweb . '</lotserialQty>
+                                <nbr>' . $req->hide_rsnum . '</nbr>
+                                <siteFrom>' . $req->hidden_sitefrom[$index] . '</siteFrom>
+                                <locFrom>' . $req->hidden_locfrom[$index] . '</locFrom>
+                                <lotserFrom>' . $req->hidden_lotfrom[$index] . '</lotserFrom>
+                                <siteTo>' . $req->hidden_siteto[$index] . '</siteTo>
+                                <locTo>' . $req->hidden_locto[$index] . '</locTo>
+                            </itemDetail>
+                        </item>';
+
+
+                    DB::table('req_sparepart_det')
+                        ->where('req_spd_mstr_id', '=', $reqspmstr->id)
+                        ->where('req_spd_sparepart_code', '=', $req->hidden_spcode[$index])
+                        ->update([
+                            'req_spd_qty_transfer' => $req->qtytotransfer[$index],
+                            'req_spd_site_from' => $req->hidden_sitefrom[$index],
+                            'req_spd_loc_from' => $req->hidden_locfrom[$index],
+                            'req_spd_lot_from' => $req->hidden_lotfrom[$index],
+                            'req_spd_note' => $req->notes[$index],
+                            'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
+
+                    $user = Auth::user();
+
+                    DB::table('ret_sparepart')
+                        ->where('ret_sp_number', '=', $req->hide_rsnum)
+                        ->update([
+                            'ret_sp_transfered_by' => $user->username,
+                            'ret_sp_transfer_date' => Carbon::now('ASIA/JAKARTA')->format('Y-m-d'),
+                            'ret_sp_status' => 'closed',
+                            'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
+
+                    DB::table('ret_sparepart_hist')
+                        ->insert([
+                            'ret_sph_number' =>  $req->hide_rsnum,
+                            'ret_sph_wonumber' =>  $reqspmstr->ret_sp_wonumber,
+                            'ret_sph_dept' =>  $reqspmstr->ret_sp_dept,
+                            'ret_sph_retby' =>  $reqspmstr->ret_sp_return_by,
+                            'ret_sph_trfby' => $user->username,
+                            'ret_sph_status' => 'closed',
+                            'ret_sph_qtytrf' => $req->qtytotransfer[$index],
+                            'ret_sph_sitefrom' => $req->hidden_sitefrom[$index],
+                            'ret_sph_locfrom' => $req->hidden_locfrom[$index],
+                            'ret_sph_lotfrom' => $req->hidden_lotfrom[$index],
+                            'created_at' => Carbon::now('ASIA/JAKARTA'),
+                            'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
+                }
+            }
+
+            // <rmks>'.$dqx->wo_dets_nbr.'</rmks>
+            /* endforeach disini */
+            // dd($qdocBody);
+            $qdocfooter =   '</dsItem>
+                            </transferInvSingleItem>
+                        </soapenv:Body>
+                    </soapenv:Envelope>';
+
+            $qdocRequest = $qdocHead . $qdocBody . $qdocfooter;
+
+            // dd($qdocRequest);
+
+            $curlOptions = array(
+                CURLOPT_URL => $qxUrl,
+                CURLOPT_CONNECTTIMEOUT => $timeout,        // in seconds, 0 = unlimited / wait indefinitely.
+                CURLOPT_TIMEOUT => $timeout + 120, // The maximum number of seconds to allow cURL functions to execute. must be greater than CURLOPT_CONNECTTIMEOUT
+                CURLOPT_HTTPHEADER => $this->httpHeader($qdocRequest),
+                CURLOPT_POSTFIELDS => preg_replace("/\s+/", " ", $qdocRequest),
+                CURLOPT_POST => true,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => false
+            );
+
+            $getInfo = '';
+            $httpCode = 0;
+            $curlErrno = 0;
+            $curlError = '';
+
+
+            $qdocResponse = '';
+
+            $curl = curl_init();
+            if ($curl) {
+                curl_setopt_array($curl, $curlOptions);
+                $qdocResponse = curl_exec($curl);           // sending qdocRequest here, the result is qdocResponse.
+                //
+                $curlErrno = curl_errno($curl);
+                $curlError = curl_error($curl);
+                $first = true;
+                foreach (curl_getinfo($curl) as $key => $value) {
+                    if (gettype($value) != 'array') {
+                        if (!$first) $getInfo .= ", ";
+                        $getInfo = $getInfo . $key . '=>' . $value;
+                        $first = false;
+                        if ($key == 'http_code') $httpCode = $value;
+                    }
+                }
+                curl_close($curl);
+            }
+
+            if (is_bool($qdocResponse)) {
+
+                DB::rollBack();
+                toast('Something Wrong with Qxtend', 'error');
+                /* jika qxtend servicenya mati */
+            }
+            $xmlResp = simplexml_load_string($qdocResponse);
+            $xmlResp->registerXPathNamespace('soapenv', 'urn:schemas-qad-com:xml-services:common');
+            $qdocFault = '';
+            $qdocFault = $xmlResp->xpath('//soapenv:faultstring');
+            // dd($qdocFault);
+
+            if (!empty($qdocFault)) {
+                DB::rollBack();
+
+                $qdocFault = (string) $xmlResp->xpath('//soapenv:faultstring')[0];
+
+                alert()->html('<u><b>Error Response Qxtend</b></u>', "<b>Detail Response Qxtend :</b><br>" . $qdocFault . "", 'error')->persistent('Dismiss');
+                return redirect()->back();
+            }
+
+            $xmlResp->registerXPathNamespace('ns1', 'urn:schemas-qad-com:xml-services');
+            $qdocResult = (string) $xmlResp->xpath('//ns1:result')[0];
+
+
+
+            if ($qdocResult == "success" or $qdocResult == "warning") {
+                /* jika response sukses atau warning maka menyimpan data jika sudah di transferr ke qad*/
+                $rsnumber = $req->hide_rsnum;
+                //kirim notifikasi kepada para engineer yg mengerjakan wo tersebut bahwa spare part yg tidak cukup sudah ditransfer ke inventory supply
+                // SendNotifWarehouseToUser::dispatch($rsnumber);
+            } else {
+
+                //jika qtend mengembalikan pesan error 
+
+                DB::rollBack();
+                $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
+                $outputerror = '';
+                foreach ($xmlResp->xpath('//ns3:temp_err_msg') as $temp_err_msg) {
+                    $context = $temp_err_msg->xpath('./ns3:tt_msg_context')[0];
+                    $desc = $temp_err_msg->xpath('./ns3:tt_msg_desc')[0];
+                    $outputerror .= "&bull;  " . $context . " - " . $desc . "<br>";
+                }
+
+                // dd('stop');
+                // $qdocMsgDesc = $xmlResp->xpath('//ns3:tt_msg_desc');
+                // $output = '';
+
+                // foreach($qdocMsgDesc as $datas){
+                // 	if(str_contains($datas, 'ERROR:')){
+                // 		$output .= $datas. ' <br> ';
+                // 	}
+                // }
+
+                // $output = substr($output, 0, -6);
+
+                alert()->html('<u><b>Error Response Qxtend</b></u>', "<b>Detail Response Qxtend :</b><br>" . $outputerror . "", 'error')->persistent('Dismiss');
+                return redirect()->back();
+                /* jika qxtend response error */
+            }
+
+            DB::commit();
+
+            toast('Return Spare Part for ' . $req->hide_rsnum . ' Successfuly !', 'success');
+            return redirect()->route('trfspbrowse');
+        } catch (Exception $e) {
+            dd($e);
+            DB::rollBack();
+            toast('Confirm Failed', 'error');
+            return redirect()->route('retspwhsbrowse');
         }
     }
 

@@ -808,6 +808,12 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/retspviewdet',[SparepartController::class, 'retspviewdet']);
 	Route::post('/retspupdate',[SparepartController::class, 'retspupdate']);
 	Route::post('/retspcancel', [SparepartController::class, 'retspcancel']);
+
+	//Return Sparepart for Warehouse
+	Route::get('/retspwhs', [SparepartController::class, 'retspwhsbrowse'])->name('retspwhsbrowse');
+	Route::get('/retspwhsdet/{id}', [SparepartController::class, 'retspwhsdet'])->name('retspwhsdet');
+	Route::get('/retspwhsviewdet', [SparepartController::class, 'retspwhsviewdet']);
+	Route::post('/retspwhssubmit', [SparepartController::class,'retspwhssubmit'])->name('retspwhssubmit');
 	
 	// PM Confirm
 	Route::get('/pmconf',[PmConfirmController::class, 'index'])->name('pmconf'); 

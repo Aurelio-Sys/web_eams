@@ -60,7 +60,7 @@
                             <tr>
                                 <th style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Qty Return</th>
-                                <th style="text-align: center; width: 20% !important; font-weight: bold;">Location To</th>
+                                <th style="text-align: center; width: 20% !important; font-weight: bold;">Location From</th>
                                 <th style="text-align: center; width: 20% !important; font-weight: bold;">Note</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Delete</th>
                             </tr>
@@ -220,8 +220,8 @@
             cols += '<td>';
             cols += '<select name="locto[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
             cols += '<option value = ""> -- Select Location To -- </option>';
-            @foreach($loc_to as $loc)
-            cols += '<option data-siteto="{{$loc->inc_source_site}}" value="{{$loc->inc_loc}}">{{$loc->inc_loc}}</option>';
+            @foreach($loc_from as $loc)
+            cols += '<option data-siteto="{{$loc->inp_supply_site}}" value="{{$loc->inp_loc}}">{{$loc->inp_loc}}</option>';
             @endforeach
             cols += '</select>';
             cols += '<input type="hidden" class="siteto" name="siteto[]" value=""/>';
