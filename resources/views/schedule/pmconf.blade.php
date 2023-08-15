@@ -27,19 +27,32 @@
             <div class="col-12 form-group row">
                 <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
-                    <input id="s_code" type="text" class="form-control" name="s_code" value="" autofocus autocomplete="off"/>
+                    <input id="s_code" type="text" class="form-control" name="s_code" value="{{$s_code}}" autofocus autocomplete="off"/>
                 </div>
                 <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">PM</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
-                    <input id="s_desc" type="text" class="form-control" name="s_desc" value="" autofocus autocomplete="off"/>
+                    <input id="s_desc" type="text" class="form-control" name="s_desc" value="{{$s_desc}}" autofocus autocomplete="off"/>
+                </div>
+                <label for="s_loc" class="col-md-2 col-sm-2 col-form-label text-md-right">Location</label>
+                <div class="col-md-4 col-sm-4 mb-2 input-group">
+                    <select id="s_loc" class="form-control" name="s_loc">
+                        <option value="">--Select Data--</option>
+                        @foreach($dataloc as $dl)
+                          <option value="{{$dl->asloc_code}}" {{$s_loc === $dl->asloc_code ? "selected" : ""}}>{{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <label for="s_loc" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
+                <div class="col-md-4 col-sm-4 mb-2 input-group">
+                    
                 </div>
                 <label for="s_date1" class="col-md-2 col-sm-2 col-form-label text-md-right">Date</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
-                    <input id="s_date1" type="date" class="form-control" name="s_date1" value="" autofocus autocomplete="off"/>
+                    <input id="s_date1" type="date" class="form-control" name="s_date1" value="{{$s_date1}}" autofocus autocomplete="off"/>
                 </div>
                 <label for="s_date2" class="col-md-2 col-sm-2 col-form-label text-md-right">To</label>
                 <div class="col-md-4 col-sm-4 mb-2 input-group">
-                    <input id="s_date2" type="date" class="form-control" name="s_date2" value="" autofocus autocomplete="off"/>
+                    <input id="s_date2" type="date" class="form-control" name="s_date2" value="{{$s_date2}}" autofocus autocomplete="off"/>
                 </div>
                 <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
                 <div class="col-md-2 col-sm-4 mb-2 input-group">
@@ -61,13 +74,16 @@
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                <th width="10%">Asset</th>
-                <th width="20%">Desc</th>
+                <th width="10%">Asset Code</th>
+                <th width="16%">Asset Desc</th>
+                <th width="7%">Site</th>
+                <th width="7%">Location</th>
+                <th width="16%">Location Desc</th>
                 <th width="10%">PM Code</th>
-                <th width="30%">PM Desc</th>
-                <th width="10%">Schedule Date</th>
-                <th width="10%">Due Date</th>
-                <th width="10%">Action</th>  
+                <th width="15%">PM Desc</th>
+                <th width="7%">Schedule Date</th>
+                <th width="7%">Due Date</th>
+                <th width="5%">Action</th>  
             </tr>
         </thead>
         <tbody>
@@ -83,6 +99,9 @@
                 <tr>
                     <td>{{$show->pmo_asset}}</td>
                     <td>{{$show->asset_desc}}</td>
+                    <td>{{$show->asset_site}}</td>
+                    <td>{{$show->asset_loc}}</td>
+                    <td>{{$show->asloc_desc}}</td>
                     <td>{{$show->pmo_pmcode}}</td>
                     <td>{{$show->pmc_desc}}</td>
                     <td class="td_pmdate">@if($show->pmo_sch_date != "0000-00-00") {{date('d-m-Y', strtotime($show->pmo_sch_date))}} @endif</td>
@@ -133,7 +152,7 @@
 </div>
 
 </form>
-
+{{--  
 <!-- Modal Create -->
 <div class="modal fade" id="createModal" role="dialog" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
@@ -190,14 +209,14 @@
                          </thead>
                          <tbody id='ed_detailapp'></tbody>
                      </table>
-                     Which date do you want to proceed to create Work Order?  --}}
+                     Which date do you want to proceed to create Work Order?  
                   </div>
                </div>
             </div>
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Close</button>
-                {{--  <button type="submit" class="btn btn-success bt-action" id="btnedit">Save</button>  --}}
+                {{--  <button type="submit" class="btn btn-success bt-action" id="btnedit">Save</button>  
             </div>
         </form>
     </div>
@@ -230,7 +249,7 @@
             </form>
         </div>
     </div>
-</div>
+</div>  --}}
 @endsection
 
 @section('scripts')
@@ -240,7 +259,7 @@
         function selectPicker() {
             $('.selectpicker').selectpicker().focus();
         }
-
+{{--  
        $(document).on('click', '#editdata', function(e){
            $('#editModal').modal('show');
 
@@ -268,15 +287,18 @@
             document.getElementById('d_incid').value          = incid;
             document.getElementById('td_code').innerHTML = code;
             document.getElementById('td_desc').innerHTML = desc;
-       });
+       });  --}}
 
        
         $(document).on('click', '#btnrefresh', function() {
             $('#s_code').val('');
             $('#s_desc').val('');
+            $('#s_loc').val('');
+            $('#s_date1').val('');
+            $('#s_date2').val('');
         });   
 
-        $("#t_code").select2({
+        {{--  $("#t_code").select2({
          width : '100%',
          theme : 'bootstrap4',
         });
@@ -289,8 +311,8 @@
         $("#t_loc").select2({
             width : '100%',
             theme : 'bootstrap4',
-        });
-
+        });  --}}
+{{--  
         // Menampilkan data lokasi saat menu create
         $(document).on('change', '#t_desc', function() {
             var site = $('#t_desc').val();
@@ -302,9 +324,9 @@
                       $('#t_loc').html('').append(data);
                   }
               }) 
-          });
+          });  --}}
 
-          // Cek duplikasi data
+          {{--  // Cek duplikasi data
           $(document).on('change', '#t_loc', function() {
           
             var code = $('#t_code').val();
@@ -324,7 +346,7 @@
                 
                 }
               })
-          });
+          });  --}}
 
           $(document).on('click', '.detpmco', function() { 
             var row = $(this).closest("tr");
@@ -460,7 +482,7 @@
                 }
             });
 
-          });
+          }); 
 
           $(document).on('change','#cek',function(e){
             var checkbox = $(this), // Selected or current checkbox
@@ -474,6 +496,11 @@
             {
                 $(this).closest("tr").find('.tick').val(0);
             }        
+        });
+
+        $("#s_loc").select2({
+            width : '100%',
+            theme : 'bootstrap4',   
         });
 
     </script>

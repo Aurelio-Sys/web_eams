@@ -21,18 +21,16 @@
     data-note="{{$ds->wo_note}}" data-startdate="{{$ds->wo_job_startdate}}" data-finishdate="{{$ds->wo_job_finishdate}}"
     data-status="{{$ds->wo_status}}" data-loc="{{$loc}}">
 
-    @if($ds->wo_status == 'firm')
+    @if($ds->wo_status == 'firm' || $ds->wo_status == 'released')
         <span class="badge badge-primary">{{$tipe}} : {{$ds->asset_desc}} - {{$eng}}</span>
     @elseif($ds->wo_status == 'started')
         <span class="badge badge-success">{{$tipe}} : {{$ds->asset_desc}} - {{$eng}}</span>
-    @elseif($ds->wo_status == 'acceptance')
+    @elseif($ds->wo_status == 'finished' || $ds->wo_status == 'acceptance')
         <span class="badge badge-warning">{{$tipe}} : {{$ds->asset_desc}} - {{$eng}}</span>
-    @elseif($ds->wo_status == 'finished')
-        <span class="badge badge-warning">{{$tipe}} : {{$ds->asset_desc}} - {{$eng}}</span>
-    @elseif($ds->wo_status == 'closed')
+    @elseif($ds->wo_status == 'closed' || $ds->wo_status == 'canceled')
         <span class="badge badge-secondary">{{$tipe}} : {{$ds->asset_desc}} - {{$eng}}</span>
     @else 
-        <span class="badge badge-success">{{$tipe}} : {{$ds->asset_desc}} - {{$eng}}</span>
+        <span class="badge badge-light">{{$tipe}} : {{$ds->asset_desc}} - {{$eng}}</span>
     @endif
 
 </a>

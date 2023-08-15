@@ -471,6 +471,15 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Return Sparepart Warehouse') }}</label>
+              <div class="col-6">
+                <label class="switch" for="retspwhs">
+                  <input type="checkbox" class="custom-control-input" id="retspwhs" name="retspwhs" value="BO08" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Movement ') }}</label>
               <div class="col-6">
                 <label class="switch" for="SetMove">
@@ -1368,6 +1377,15 @@
               <div class="col-6">
                 <label class="switch" for="e_retsp">
                   <input type="checkbox" class="custom-control-input" id="e_retsp" name="e_retsp" value="BO07" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Return Sparepart Warehouse') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_retspwhs">
+                  <input type="checkbox" class="custom-control-input" id="e_retspwhs" name="e_retspwhs" value="BO08" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -2431,6 +2449,11 @@
           document.getElementById('e_retsp').checked = true;
         } else {
           document.getElementById('e_retsp').checked = false;
+        }
+        if (listmenu.search("BO08") >= 0) {
+          document.getElementById('e_retspwhs').checked = true;
+        } else {
+          document.getElementById('e_retspwhs').checked = false;
         }
 
         //Report

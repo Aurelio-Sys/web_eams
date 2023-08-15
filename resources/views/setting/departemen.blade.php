@@ -86,7 +86,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/createdept">
+            <form class="form-horizontal" method="post" action="/createdept" onsubmit="return validateInput()">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
@@ -107,7 +107,7 @@
                         <label for="t_runningnbr" class="col-md-4 col-form-label text-md-right">SR Running Number 
                             <span id="alert1" style="color: red; font-weight: 200;">*</span> </label>
                         <div class="col-md-6">
-                            <input id="t_runningnbr" type="text" class="form-control" name="t_runningnbr" autocomplete="off" autofocus maxlength="4" value="0001" required/>
+                            <input id="t_runningnbr" type="text" class="form-control" name="t_runningnbr" autocomplete="off" autofocus maxlength="4" value="0000" required/>
                             <span id="errorcur" style="color:red"></span>
                         </div>
                     </div>
@@ -397,6 +397,20 @@
               }
             })
         });
+
+        function validateInput() {
+            var t_code = document.getElementById("t_code").value;
+      
+            // Regular expression to match only letters and numbers
+            var pattern = /^[A-Z0-9]*$/;
+      
+            if (t_code.length !== 3 || !pattern.test(t_code)) {
+                alert("The Department code must consist of 3 uppercase alphanumeric characters without spaces or special characters.");
+                return false;
+            }
+      
+            return true;
+        }
     </script>
 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">

@@ -412,6 +412,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/enggraf', 'UserChartController@enggraf');
 	route::get('/prevsch', 'UserChartController@prevsch');
 	route::get('/needsp', 'UserChartController@needsp');
+	route::get('/needspdetail', 'UserChartController@needspdetail');
 
 	//work order maintenance
 	Route::get('/womaint', [wocontroller::class, 'womaint'])->name('womaint');
@@ -605,6 +606,7 @@ Route::group(['middleware' => ['auth']], function() {
 	
 	Route::get('/rptcost', [RptCostController::class, 'index'])->name('rptcost');
 	Route::get('/rptcostview', [RptCostController::class, 'rptcostview'])->name('rptcostview');
+	route::get('/donlodcost',[RptCostController::class, 'donlodcost'])->name('donlodcost');
 	// Route::get('/yearcost', [RptCostController::class, 'yearcost'])->name('yearcost');
 	
 
@@ -802,10 +804,16 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/retspcreate', [SparepartController::class, 'retspcreate'])->name('retspcreate');
 	Route::get('/retsplistwo', [SparepartController::class, 'retsplistwo'])->name('splistWO');
 	Route::post('/retspsubmit', [SparepartController::class,'retspsubmit'])->name('retspsubmit');
-	Route::get('/reqspeditdet',[SparepartController::class, 'reqspeditdet']);
-	Route::get('/reqspviewdet',[SparepartController::class, 'reqspviewdet']);
-	Route::post('/reqspupdate',[SparepartController::class, 'reqspupdate']);
-	Route::post('/reqspcancel', [SparepartController::class, 'reqspcancel']);
+	Route::get('/retspeditdet',[SparepartController::class, 'retspeditdet']);
+	Route::get('/retspviewdet',[SparepartController::class, 'retspviewdet']);
+	Route::post('/retspupdate',[SparepartController::class, 'retspupdate']);
+	Route::post('/retspcancel', [SparepartController::class, 'retspcancel']);
+
+	//Return Sparepart for Warehouse
+	Route::get('/retspwhs', [SparepartController::class, 'retspwhsbrowse'])->name('retspwhsbrowse');
+	Route::get('/retspwhsdet/{id}', [SparepartController::class, 'retspwhsdet'])->name('retspwhsdet');
+	Route::get('/retspwhsviewdet', [SparepartController::class, 'retspwhsviewdet']);
+	Route::post('/retspwhssubmit', [SparepartController::class,'retspwhssubmit'])->name('retspwhssubmit');
 	
 	// PM Confirm
 	Route::get('/pmconf',[PmConfirmController::class, 'index'])->name('pmconf'); 

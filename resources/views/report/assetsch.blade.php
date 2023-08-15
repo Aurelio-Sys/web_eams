@@ -9,6 +9,7 @@
           </div><!-- /.col -->
           <div>
             Work Order Status  :  
+            <span class="badge badge-info">Plan</span>
             <span class="badge badge-primary">Firm</span>
             {{--  <span class="badge badge-danger">Open</span>  --}}
             <span class="badge badge-success">Started</span>
@@ -35,6 +36,8 @@
                                 <label for="t_asset" class="col-form-label text-md-right">Asset Code</label>
                                 <br><br>
                                 <label for="t_asset" class="col-form-label text-md-right">Location</label>
+                                <br><br>
+                                <label class="col-form-label text-md-right">Status</label>
                             </div>
                             <div class="col-md-6">
                                 <select id="t_asset" class="form-control" name="t_asset">
@@ -49,15 +52,27 @@
                                  @foreach($dataloc as $dl)
                                     <option value="{{$dl->asloc_code}}" {{$sloc === $dl->asloc_code ? "selected" : ""}}>{{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
                                   @endforeach
-                              </select>
+                                </select>
+                                <br>
+                                <select id="t_status" class="form-control" name="t_status">
+                                  <option value="">--Select Status--</option>
+                                  <option value="plan" {{$sstatus === "plan" ? "selected" : ""}}>Plan</option>
+                                  <option value="firm" {{$sstatus === "firm" ? "selected" : ""}}>Firm</option>
+                                  <option value="released" {{$sstatus === "released" ? "selected" : ""}}>Released</option>
+                                  <option value="started" {{$sstatus === "started" ? "selected" : ""}}>Started</option>
+                                  <option value="finished" {{$sstatus === "finished" ? "selected" : ""}}>Finished</option>
+                                  <option value="closed" {{$sstatus === "closed" ? "selected" : ""}}>Closed</option>
+                                  <option value="canceled" {{$sstatus === "canceled" ? "selected" : ""}}>Canceled</option>
+                                  <option value="acceptance" {{$sstatus === "acceptance" ? "selected" : ""}}>Acceptance</option>
+                                </select>
                                 <!-- Label kosong untuk spasi -->
                                 <label class="col-md-12>"></label>
                                 <div>
                                 <h1 class="m-0 text-dark text-center">
-                                    <a href="/assetsch?bulan={{$bulan}}&stat=mundur&t_asset={{$dtasset}}&t_loc={{$sloc}}" ><i class="fas fa-angle-left"></i></a>
+                                    <a href="/assetsch?bulan={{$bulan}}&stat=mundur&t_asset={{$dtasset}}&t_loc={{$sloc}}&t_status={{$sstatus}}" ><i class="fas fa-angle-left"></i></a>
                                     &ensp;&ensp;{{$bulan}}&ensp;&ensp;
                                     <input type='hidden' name='bulan' id='bulan' value='{{$bulan}}'>
-                                    <a href="/assetsch?bulan={{$bulan}}&stat=maju&t_asset={{$dtasset}}&t_loc={{$sloc}}" ><i class="fas fa-angle-right"></i></a>
+                                    <a href="/assetsch?bulan={{$bulan}}&stat=maju&t_asset={{$dtasset}}&t_loc={{$sloc}}&t_status={{$sstatus}}" ><i class="fas fa-angle-right"></i></a>
                                 </h1>
                             </div>
                             </div>
@@ -139,9 +154,11 @@
                     <td></td>
                 @else
                     @php($ds = $datawo->where('tgl','=',$i)->count())
+                    @php($dp = $datapm->where('tgl','=',$i)->count())
                     <td>
                         {{$i}}
                         <br>
+                        {{--  Menampilkan data WO  --}}
                         @if($ds == 1)
                             @php($ds = $datawo->where('tgl','=',$i)->first())
                             @include('report.assetsch-det')
@@ -149,6 +166,18 @@
                             @foreach($datawo as $ds)
                                 @if($ds->tgl == $i)
                                     @include('report.assetsch-det')
+                                @endif
+                            @endforeach
+                        @endif
+
+                        {{--  Menampilkan data PM yang belum confirm   --}}
+                        @if($dp == 1)
+                            @php($dp = $datapm->where('tgl','=',$i)->first())
+                            @include('report.assetsch-detpm')
+                        @elseif($dp > 1)
+                            @foreach($datapm as $dp)
+                                @if($dp->tgl == $i)
+                                    @include('report.assetsch-detpm')
                                 @endif
                             @endforeach
                         @endif
@@ -172,7 +201,7 @@
 
 <!--Modal View-->
 <div class="modal fade" id="viewModal" role="dialog" aria-hidden="true" data-backdrop="static">
-  <div class="modal-dialog modal-lg" role="document">
+  <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-center" id="exampleModalLabel">Work Order View</h5>
@@ -309,6 +338,76 @@
             <div class="col-md-4">
               <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
             </div> -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+
+<!--Modal PM View-->
+<div class="modal fade" id="viewpmModal" role="dialog" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center" id="exampleModalLabel">Preventive Maintenance Planning View</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group row">
+          <label for="pm_asset" class="col-md-2 col-form-label text-md-left">Asset Code</label>
+          <div class="col-md-4">
+            <input type="text" readonly id="pm_asset" type="text" class="form-control pm_asset" name="pm_asset">
+          </div>
+          <label for="pm_assetloc" class="col-md-2 col-form-label text-md-left">Location</label>
+          <div class="col-md-4">
+            <input id="pm_assetloc" type="text" class="form-control" name="pm_assetloc" readonly>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="pm_assetdesc" class="col-md-2 col-form-label text-md-left">Asset Desc</label>
+          <div class="col-md-4">
+            <input type="text" readonly id="pm_assetdesc" type="text" class="form-control pm_assetdesc" name="pm_assetdesc">
+          </div>
+          <label for="pm_eng" class="col-md-2 col-form-label text-md-left">Engineer List</label>
+          <div class="col-md-4">
+            <textarea id="pm_eng" class="form-control pm_eng" name="pm_eng" readonly></textarea>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="pm_startdate" class="col-md-2 col-form-label text-md-left">Schedule Date</label>
+          <div class="col-md-4">
+            <input id="pm_startdate" readonly type="text" class="form-control" name="pm_startdate">
+          </div>
+          <label for="pm_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
+          <div class="col-md-4">
+            <input id="pm_duedate" type="text" class="form-control" name="pm_duedate" readonly>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="pm_pmcode" class="col-md-2 col-form-label text-md-left">PM Code</label>
+          <div class="col-md-4">
+            <input id="pm_pmcode" readonly type="text" class="form-control" name="pm_pmcode">
+          </div>
+          <label for="pm_pmmea" class="col-md-2 col-form-label text-md-left">Measurement</label>
+          <div class="col-md-4">
+            <input id="pm_pmmea" type="text" class="form-control" name="pm_pmmea" readonly>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="pm_lastno" class="col-md-2 col-form-label text-md-left">Last Maintenance Number</label>
+          <div class="col-md-4">
+            <input id="pm_lastno" readonly type="text" class="form-control" name="pm_lastno">
+          </div>
+          <label for="pm_lastdate" class="col-md-2 col-form-label text-md-left">Last Maintenance Date</label>
+          <div class="col-md-4">
+            <input id="pm_lastdate" type="text" class="form-control" name="pm_lastdate" readonly>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -458,6 +557,32 @@
     $("#t_loc").select2({
       width : '100%',
       theme : 'bootstrap4',   
+  });
+
+  $(document).on('click', '.viewpm', function() {
+    $('#viewpmModal').modal('show');
+    var asset = $(this).data('asset');
+    var assetdesc = $(this).data('assetdesc');
+    var assetloc = $(this).data('assetloc');
+    var eng = $(this).data('eng');
+    var startdate = $(this).data('startdate');
+    var duedate= $(this).data('duedate');
+    var pmmea= $(this).data('pmmea');
+    var pmcode= $(this).data('pmcode');
+    var lastno= $(this).data('lastno');
+    var lastdate= $(this).data('lastdate');
+
+    document.getElementById('pm_asset').value = asset;
+    document.getElementById('pm_assetdesc').value = assetdesc;
+    document.getElementById('pm_assetloc').value = assetloc;
+    document.getElementById('pm_eng').value = eng;
+    document.getElementById('pm_startdate').value = startdate.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3-$2-$1");
+    document.getElementById('pm_duedate').value = duedate.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3-$2-$1");
+    document.getElementById('pm_pmcode').value = pmcode;
+    document.getElementById('pm_pmmea').value = pmmea;
+    document.getElementById('pm_lastno').value = lastno;
+    document.getElementById('pm_lastdate').value = lastdate.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3-$2-$1");
+
   });
 
 </script>

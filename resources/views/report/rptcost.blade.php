@@ -32,8 +32,8 @@
             <div class="col-md-4 col-sm-12 mb-2 input-group">
                 <select id="s_type" class="form-control" style="color:black" name="s_type" autofocus autocomplete="off">
                 <option value="">--</option>
-                <option value="PM" {{$stype === "PM" ? "selected" : ""}}>PM</option>
-                <option value="WO" {{$stype === "WO" ? "selected" : ""}}>WO</option>
+                <option value="CM" {{$stype === "CM" ? "selected" : ""}}>CM (Correnctive Maintenance)</option>
+                <option value="PM" {{$stype === "PM" ? "selected" : ""}}>PM (Preventive Maintenance)</option>
                 </select>
             </div>
             <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
@@ -63,6 +63,11 @@
                 @endforeach
             </select>
             </div>
+            <label for="s_child" class="col-md-2 col-form-label text-md-right">{{ __('Include Child?') }}</label>
+            <div class="col-md-4 col-sm-12 mb-2 input-group">
+                <input type="checkbox" id="s_child" name="s_child" value="Yes" {{ $schild ? 'checked' : '' }}>
+            </div>
+            <label for="s_eng" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
             <div class="col-md-2 col-sm-12 mb-2 input-group">
             <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
             </div>
@@ -150,11 +155,14 @@
                         <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
                             <thead>
                               <tr id='full'>
-                                <th width="15%">WO Number</th>
-                                <th width="25%">Engineer</th>
-                                <th width="15%">WO Create</th>
-                                <th width="10%">Status</th>
-                                <th width="10%">Cost</th>
+                                <th>WO Number</th>
+                                <th>Note</th>
+                                <th>Engineer</th>
+                                <th>WO Create</th>
+                                <th>WO Type</th>
+                                <th>Status</th>
+                                <th>Cost</th>
+                                <th>Detail</th>
                               </tr>
                             </thead>
                             <tbody id='detailapp'>
@@ -191,13 +199,18 @@
         var code         = $(this).data('code');
         var desc         = $(this).data('desc');
         var locdesc      = $(this).data('locdesc');
+        var bln      = $(this).data('bln');
+        var thn      = $(this).data('thn');
+        var type      = $(this).data('type');
+        var eng      = $(this).data('eng');
+        var child      = $(this).data('child');
         
         document.getElementById('e_code').value         = code;
         document.getElementById('e_desc').value         = desc;
         document.getElementById('e_locdesc').value      = locdesc;
 
         $.ajax({
-            url:"rptcostview?code="+code,
+            url:"rptcostview?code="+code+"&bln="+bln+"&thn="+thn+"&type="+type+"&eng="+eng+"&child="+child,
             success: function(data) {
             // console.log(data);
             //alert(data);
@@ -240,6 +253,17 @@
             theme : 'bootstrap4',
         });
     
+        $(document).on('click', '#btnexcel', function() {
+            var asset = $('#s_asset').val();
+            var type = $('#s_type').val();
+            var loc = $('#s_loc').val();
+            var eng = $('#s_eng').val();
+            var bulan = $('#bulan').val();
+      
+            // console.log(srnumber, srasset, srstatus, /*srpriority, srperiod,*/ srreq, srdatefrom, srdateto);
+      
+            window.open("/donlodcost?asset=" + asset + "&type="+type+"&loc="+loc+"&eng="+eng+"&bulan="+bulan, '_blank');
+          });
     
     </script>
 

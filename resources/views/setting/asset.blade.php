@@ -33,22 +33,22 @@
                     <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset</label>
                     <div class="col-md-4 col-sm-4 mb-2 input-group">
                         <input id="s_code" type="text" class="form-control" name="s_code"
-                        value="" autofocus autocomplete="off"/>
+                        value="{{$s_code}}" autofocus autocomplete="off"/>
                     </div>
                     <label for="s_loc" class="col-md-2 col-sm-2 col-form-label text-md-right">Location</label>
                     <div class="col-md-4 col-sm-4 mb-2 input-group">
                         <input id="s_loc" type="text" class="form-control" name="s_loc"
-                        value="" autofocus autocomplete="off"/>
+                        value="{{$s_loc}}" autofocus autocomplete="off"/>
                     </div>
                     <label for="s_type" class="col-md-2 col-sm-2 col-form-label text-md-right">Type</label>
                     <div class="col-md-4 col-sm-4 mb-2 input-group">
                         <input id="s_type" type="text" class="form-control" name="s_type"
-                        value="" autofocus autocomplete="off"/>
+                        value="{{$s_type}}" autofocus autocomplete="off"/>
                     </div>
                     <label for="s_group" class="col-md-2 col-sm-2 col-form-label text-md-right">Group</label>
                     <div class="col-md-4 col-sm-4 mb-2 input-group">
                         <input id="s_group" type="text" class="form-control" name="s_group"
-                        value="" autofocus autocomplete="off"/>
+                        value="{{$s_group}}" autofocus autocomplete="off"/>
                     </div>
                     <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
                     <div class="col-md-8 col-sm-8 mb-8 input-group">
@@ -835,6 +835,13 @@
         $("#te_um").select2({
             width : '100%',
             theme : 'bootstrap4',
+        });
+
+        $(document).on('click', '#btnrefresh', function() {
+            document.getElementById('s_code').value  = '';
+            document.getElementById('s_loc').value  = '';
+            document.getElementById('s_type').value  = '';
+            document.getElementById('s_group').value  = '';
         });
 
     </script>

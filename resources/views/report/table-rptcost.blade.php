@@ -13,7 +13,9 @@
                 @php($bulantampil = $bln == $count ? $pa->temp_cost : '')
                 @if ($tahun == $bulan)
                 <a href="" class="editarea2" id='editdata' data-toggle="modal" data-target="#editModal"
-                data-code="{{$show->asset_code}}" data-desc="{{$show->asset_desc}}" data-locdesc="{{$show->asloc_desc}}">
+                data-code="{{$show->asset_code}}" data-desc="{{$show->asset_desc}}" data-locdesc="{{$show->asloc_desc}}"
+                data-bln="{{$bln}}" data-thn="{{$tahun}}" data-type="{{$stype}}" data-eng="{{$seng}}"
+                data-child="{{$schild}}">           
                 <span class="badge badge-primary">{{ $bulantampil }}</span>
                 </a>
                 @endif

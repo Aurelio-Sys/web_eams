@@ -251,7 +251,7 @@ class SettingController extends Controller
             $req->cbWoCreatedirect . $req->cbWoMaint . $req->cbWoBrowse . $req->cbWoRelease . $req->cbWoWhsConf . $req->cbWoStart . $req->cbWoReport . $req->cbWoQc . $req->cbWoReleaseApproval .
             $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbSRapprovaleng . $req->cbSRbrowseonly .
             $req->cbUSMT . $req->cbUSmultiMT . $req->cbUSGen . $req->pmconf . $req->ksp . $req->cbUSBrowse .
-            $req->cbBoas . $req->whyhist . $req->reqsp . $req->trfsp . $req->cbUA . $req->reqspappr . $req->retsp .
+            $req->cbBoas . $req->whyhist . $req->reqsp . $req->trfsp . $req->cbUA . $req->reqspappr . $req->retsp . $req->retspwhs .
             $req->cbRptDet . $req->cbRptCost . $req->cbAssetReport . $req->cbEngReport . $req->cbRptRemsp . 
             $req->cbAssetSchedule . $req->cbRptSchyear . $req->cbEngSchedule . $req->cbRptSpneed . $req->cbBookSchedule .
             $req->accutrf . $req->cbRCBrowse;
@@ -318,7 +318,7 @@ class SettingController extends Controller
             $req->e_cbWoCreatedirect . $req->e_cbWoMaint . $req->e_cbWoBrowse . $req->e_cbWoRelease . $req->e_cbWoWhsConf . $req->e_cbWoStart . $req->e_cbWoReport . $req->e_cbWoQc . $req->e_cbWoReleaseApproval .
             $req->e_cbSRcreate . $req->e_cbSRapprove . $req->e_cbSRbrowse . $req->e_cbSRapprovaleng . $req->e_cbSRbrowseonly .
             $req->e_cbUSMT . $req->e_cbUSmultiMT . $req->e_cbUSGen . $req->e_pmconf . $req->e_ksp . $req->e_cbUSBrowse .
-            $req->e_cbBoas . $req->e_whyhist . $req->e_reqsp . $req->e_trfsp . $req->e_cbUA . $req->e_reqspappr . $req->e_retsp .
+            $req->e_cbBoas . $req->e_whyhist . $req->e_reqsp . $req->e_trfsp . $req->e_cbUA . $req->e_reqspappr . $req->e_retsp . $req->e_retspwhs .
             $req->e_cbRptDet . $req->e_cbRptCost . $req->e_cbAssetReport . $req->e_cbEngReport . $req->e_cbRptRemsp . 
             $req->e_cbAssetSchedule . $req->e_cbRptSchyear . $req->e_cbEngSchedule . $req->e_cbRptSpneed . $req->e_cbBookSchedule .
             $req->e_accutrf . $req->e_cbRCBrowse;
@@ -1872,7 +1872,8 @@ class SettingController extends Controller
             return view('setting.asset', ['data' => $data, 'datasite' => $datasite, 'dataloc' => $dataloc, 
             'dataastype' => $dataastype, 'dataasgroup' => $dataasgroup, 'datasupp' => $datasupp, 'datafn' => $datafn, 
             'repaircode' => $repaircode, 'repairgroup' => $repairgroup, 'datasearch' => $datasearch, 
-            'dataassetqad' => $dataassetqad, 'datameaum' => $datameaum]);
+            'dataassetqad' => $dataassetqad, 'datameaum' => $datameaum, 
+            's_code' =>$req->s_code, 's_loc' =>$req->s_loc, 's_type' =>$req->s_type, 's_group' =>$req->s_group]);
         } else {
             toast('You do not have menu access, please contact admin.', 'error');
             return back();
@@ -5306,7 +5307,7 @@ class SettingController extends Controller
 
 /* Engineer Master */
     //untuk menampilkan menu Engineer Master
-    public function engmaster(Request $req)
+    public function engmaster(Request $req) /** Blade : setting.eng */
     {   
         if (strpos(Session::get('menu_access'), 'MTA01') !== false) {
             $s_code = $req->s_code;
@@ -5388,11 +5389,19 @@ class SettingController extends Controller
     //untuk cek Engineering Master
     public function cekeng(Request $req)
     {
-        $cek = DB::table('eng_mstr')
+        
+        $cekeng = DB::table('eng_mstr')
             ->where('eng_code','=',$req->code)
-            ->get();
+            ->count();
 
-        if ($cek->count() == 0) {
+        $cekuser = DB::table('users')
+            ->where('username','=',$req->code)
+            ->count();
+
+        $cek = $cekeng + $cekuser;
+            
+            
+        if ($cek == 0) {
             return "tidak";
         } else {
             return "ada";
@@ -5698,7 +5707,7 @@ class SettingController extends Controller
             ]);
         }
 
-        toast('Engineer Updated.', 'success');
+        toast('User Data Updated.', 'success');
         return back();
     }
 
@@ -5713,7 +5722,7 @@ class SettingController extends Controller
             ->where('eng_code', '=', $req->d_code)
             ->delete();
 
-        toast('Deleted Engineer Successfully.', 'success');
+        toast('Deleted User Successfully.', 'success');
         return back();
     }
 
@@ -5986,15 +5995,17 @@ class SettingController extends Controller
 
         if(empty($runningdata)){
             $prefixsr = 'SR';
-            $srnbr = '000000';
             $prefixwo = 'WO';
             $prefixwt = 'WT';
             $prefixwd = 'WD';
             $prefixbo = 'BO';
+            $prefixrt = 'RT';
+            $srnbr = '000000';
             $wtnbr = '000000';
             $wonbr = '000000';
             $wdnbr = '000000';
             $bonbr = '000000';
+            $rtnbr = '000000';
             $year = Carbon::now()->format('y');
 
             DB::table('running_mstr')
@@ -6004,11 +6015,13 @@ class SettingController extends Controller
                         'wt_prefix' => $prefixwt,
                         'wd_prefix' => $prefixwd,
                         'bo_prefix' => $prefixbo,
+                        'rt_prefix' => $prefixrt,
                         'sr_nbr' => $srnbr,
                         'wo_nbr' => $wonbr,
                         'wt_nbr' => $wtnbr,
                         'wd_nbr' => $wdnbr,
                         'bo_nbr' => $bonbr,
+                        'rt_nbr' => $rtnbr,
                         'year' => $year,
                 ]);
 
@@ -6028,11 +6041,13 @@ class SettingController extends Controller
         $prefixwd = $req->input('wdprefix');
         $prefixbo = $req->input('boprefix');
         $prefixrs = $req->input('rsprefix');
+        $prefixrt = $req->input('rtprefix');
         $wtnbr = $req->input('wtnumber');
         $wonbr = $req->input('wonbr');
         $wdnbr = $req->input('wdnumber');
         $bonbr = $req->input('bonumber');
         $rsnbr = $req->input('rsnumber');
+        $rtnbr = $req->input('rtnumber');
         $year = Carbon::now()->format('y');
 
         $data = DB::Table('running_mstr')
@@ -6047,12 +6062,14 @@ class SettingController extends Controller
                         'wd_prefix' => $prefixwd,
                         'bo_prefix' => $prefixbo,
                         'rs_prefix' => $prefixrs,
+                        'rt_prefix' => $prefixrt,
                         'sr_nbr' => $srnbr,
                         'wo_nbr' => $wonbr,
                         'wt_nbr' => $wtnbr,
                         'wd_nbr' => $wdnbr,
                         'bo_nbr' => $bonbr,
                         'rs_nbr' => $rsnbr,
+                        'rt_nbr' => $rtnbr,
                         'year' => $year,
                         
                 ]);
@@ -6070,12 +6087,14 @@ class SettingController extends Controller
                     'wd_prefix' => $prefixwd,
                     'bo_prefix' => $prefixbo,
                     'rs_prefix' => $prefixrs,
+                    'rt_prefix' => $prefixrt,
                     'sr_nbr' => $srnbr,
                     'wo_nbr' => $wonbr,
                     'wt_nbr' => $wtnbr,
                     'wd_nbr' => $wdnbr,
                     'bo_nbr' => $bonbr,
                     'rs_nbr' => $rsnbr,
+                    'rt_nbr' => $rtnbr,
                     'year' => $year,
                 ]);
 

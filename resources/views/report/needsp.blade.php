@@ -16,7 +16,11 @@
     {{ method_field('post') }}
     {{ csrf_field() }}
     <div class="row mb-4">
-        <label for="site_genso" class="col-form-label col-md-1 text-md-left">Site</label>
+        <label for="t_cust" class="col-form-label col-md-1 text-md-left">Customer</label>
+        <div class="col-md-3">
+            <input type="text" class="form-control" id="t_cust" name="t_cust" value="eams" required> 
+        </div>
+        <label for="site_genso" class="col-form-label col-md-1 text-md-right">Site</label>
         <div class="col-md-3">
             <select class="form-control" id="site_genso" name="site_genso" required>
                     <option></option>
@@ -25,6 +29,11 @@
                 @endforeach
             </select>
         </div>
+        <input type="hidden" id="hs_nomorwo" name="hs_nomorwo">
+        <input type="hidden" id="hs_asset" name="hs_asset">
+        <input type="hidden" id="hs_per1" name="hs_per1">
+        <input type="hidden" id="hs_per2" name="hs_per2">
+        <input type="hidden" id="hs_sp" name="hs_sp">
         <div class="col-md-2">
             <button type="submit" id="btngenso" class="btn btn-primary">Generate SO</button>
             <button type="button" class="btn btn-info" id="btnloading" style="display:none;">
@@ -46,10 +55,11 @@
         <div class="card card-body bg-black rounded-0">
           <div class="col-12 form-group row">
             <!--FORM Search Disini-->
-            <label for="s_nomorwo" class="col-md-2 col-form-label text-md-right">{{ __('Work Order Number') }}</label>
+            {{--  Lihat sparepart di WO di WO detail saja
+              <label for="s_nomorwo" class="col-md-2 col-form-label text-md-right">{{ __('Work Order Number') }}</label>
             <div class="col-md-4 col-sm-12 mb-2 input-group">
               <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="{{$swo}}" autofocus autocomplete="off">
-            </div>
+            </div>  --}}
             <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
             <div class="col-md-4 col-sm-12 mb-2 input-group">
               <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
@@ -59,7 +69,8 @@
                 @endforeach
               </select>
             </div>
-            <label for="s_sp" class="col-md-2 col-form-label text-md-right">{{ __('Sparepart') }}</label>
+            <label for="s_eng" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
+            <label for="s_sp" class="col-md-1 col-form-label text-md-left">{{ __('Sparepart') }}</label>
             <div class="col-md-4 col-sm-12 mb-2 input-group">
               <select id="s_sp" class="form-control" style="color:black" name="s_sp" autofocus autocomplete="off">
                 <option value="">--Select Sparepart--</option>
@@ -68,15 +79,12 @@
                 @endforeach
               </select>
             </div>
-            <label for="s_eng" class="col-md-2 col-form-label text-md-right">{{ __('') }}</label>
-            <div class="col-md-4 col-sm-12 mb-2 input-group">
-              <label for="s_eng" class="col-md-2 col-form-label text-md-right">{{ __('') }}</label>
-            </div>
             <label for="s_per1" class="col-md-2 col-form-label text-md-right">{{ __('WO Date') }}</label>
             <div class="col-md-4 col-sm-12 mb-2 input-group">
               <input type="date" name="s_per1" id="s_per1" class="form-control" value="{{$sper1}}">
             </div>
-            <label for="s_per2" class="col-md-2 col-form-label text-md-right">{{ __('s/d') }}</label>
+            <label for="s_eng" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
+            <label for="s_per2" class="col-md-1 col-form-label text-md-left">{{ __('s/d') }}</label>
             <div class="col-md-4 col-sm-12 mb-2 input-group">
               <input type="date" name="s_per2" id="s_per2" class="form-control" value="{{$sper2}}">
             </div>
@@ -85,6 +93,10 @@
             </div>
             <div class="col-md-1 col-sm-6 mb-1 input-group justify-content-md-center">
               <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'/><i class="fas fa-sync-alt"></i></button>
+            </div>
+            <label for="s_eng" class="col-md-4 col-form-label text-md-right">{{ __('') }}</label>
+            <div class="col-md-4 col-sm-12 mb-2 input-group">
+              <label for="s_eng" class="col-md-2 col-form-label text-md-right">{{ __('') }}</label>
             </div>
           </div>
         </div>
@@ -98,17 +110,11 @@
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-                {{--  <th width="10%">No WO</th>
-                <th width="10%">Asset</th>
-                <th width="15%">Desc Asset</th>
-                <th width="7%">Create Date</th>  --}}
-                <th width="7%">Sch Date</th>
-                {{--  <th width="5%">Status</th>  --}}
-                <th width="10%">Sparepart</th>
-                <th width="15%">Desc</th>  
-                <th width="7%">Qty Req</th>  
-                {{--  <th width="7%">Qty Whs</th>  
-                <th width="7%">Qty Needed</th>    --}}
+              <th width="15%">Sch Date</th>
+              <th width="25%">Sparepart</th>
+              <th width="40%">Desc</th>  
+              <th width="10%">Qty Req</th>  
+              <th width="10%">Detail</th>  
             </tr>
         </thead>
         <tbody>
@@ -122,6 +128,41 @@
 </div>
 
 
+<!-- Modal View -->
+<div class="modal fade" id="viewModal" role="dialog" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-left" id="exampleModalLabel">
+          Detail Work Order
+          <br>
+          Sparepart : <span id="v_code"></span> --  <span id="v_codedesc"></span>
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+              <tr>
+                <th width="20%">Wo Number</th>
+                <th width="10%">Wo Date</th>
+                <th width="30%">Asset</th>
+                <th width="10%">WO Status</th>  
+                <th width="10%">Qty Required</th>  
+                <th width="10%">Qty Transfered</th>  
+                <th width="10%">Qty Issued</th>  
+              </tr>
+          </thead>
+          <tbody id='detailapp'>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 @endsection
 
 @section('scripts')
@@ -132,6 +173,20 @@
                 document.getElementById('btngenso').style.display = 'none';
                 document.getElementById('btnloading').style.display = '';
             });
+
+            /* Kirim dara search ke form Generasl SO */
+            var currentURL = window.location.href;
+            var urlParams = new URLSearchParams(currentURL);
+
+            var s_sp = urlParams.get('s_sp');
+            var s_asset = urlParams.get('s_asset');
+            var s_per1 = urlParams.get('s_per1');
+            var s_per2 = urlParams.get('s_per2');
+
+            document.getElementById('hs_sp').value = s_sp;
+            document.getElementById('hs_asset').value =s_asset;
+            document.getElementById('hs_per1').value =s_per1;
+            document.getElementById('hs_per2').value =s_per2;
         });
 
        function clear_icon()
@@ -169,7 +224,30 @@
         
             resetSearch();
         });
-      
+
+        $(document).on('click', '.view', function() {
+          
+          $('#viewModal').modal('show');
+
+          var code = $(this).data('sp');
+          var codedesc = $(this).data('spdesc');
+          var sch = $(this).data('sch'); 
+
+          document.getElementById('v_code').innerHTML = code;
+          document.getElementById('v_codedesc').innerHTML = codedesc;
+
+          $.ajax({
+            url:"needspdetail?code="+code+"&sch="+sch,
+            success: function(data) {
+              console.log(data);
+              //alert(data);
+              $('#detailapp').html('').append(data);
+            }
+          })
+        });
+
+       
+
     </script>
 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">

@@ -7,18 +7,22 @@
         @endif
     @endforeach
 
+    @php($assetloc = $show->asset_site . " : " . $show->asset_loc . " -- " . $show->asloc_desc)
+
     @if($dobel == "Yes")
         <td style="color:blue">{{$show->book_code}}</td>
         <td style="color:blue">{{$show->book_asset}} - {{$show->asset_desc}} </td>
-        <td style="color:blue">{{date('Y-m-d  H:i', strtotime($show->book_start))}}</td>
-        <td style="color:blue">{{date('Y-m-d  H:i', strtotime($show->book_end))}}</td>
+        <td style="color:blue">{{$assetloc}} </td>
+        <td style="color:blue">{{date('d-m-Y  H:i', strtotime($show->book_start))}}</td>
+        <td style="color:blue">{{date('d-m-Y  H:i', strtotime($show->book_end))}}</td>
         <td style="color:blue">{{$show->book_edited_by }}</td>
         <td style="color:blue">{{$show->book_status }}</td>
     @else
         <td>{{$show->book_code}}</td>
         <td>{{$show->book_asset}} - {{$show->asset_desc}} </td>
-        <td>{{date('Y-m-d  H:i', strtotime($show->book_start))}}</td>
-        <td>{{date('Y-m-d  H:i', strtotime($show->book_end))}}</td>
+        <td>{{$assetloc}} </td>
+        <td>{{date('d-m-Y  H:i', strtotime($show->book_start))}}</td>
+        <td>{{date('d-m-Y  H:i', strtotime($show->book_end))}}</td>
         <td>{{$show->book_edited_by }}</td>
         <td>{{$show->book_status }}</td>
     @endif
@@ -28,7 +32,7 @@
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Booking Modify"  data-target="#editModal"
             data-code="{{$show->book_code}}" data-asset="{{$show->book_asset}}" 
             data-start="{{$show->book_start}}" data-end="{{$show->book_end}}"
-            data-allday="{{$show->book_allday}}">
+            data-allday="{{$show->book_allday}}" data-assetdesc="{{$show->asset_desc}}" data-assetloc={{base64_encode($assetloc)}}>
             <i class="icon-table fa fa-edit fa-lg"></i></a>
         &ensp; 
         @endif

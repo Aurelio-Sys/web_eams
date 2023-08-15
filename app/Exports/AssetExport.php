@@ -32,59 +32,6 @@ class AssetExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
     }
     public function query()
     {
-        $kondisi = 'asset_mstr.id > 0';
-
-        if($this->sasset != null ||$this->sasset != '' ){
-            $kondisi .= " and asset_code = '".$this->sasset."'";
-        }
-        if($this->sloc != null ||$this->sloc != '' ){
-            $explloc = explode(".",$this->sloc);
-            $esite = $explloc[0];
-            $eloc = $explloc[1];
-            $kondisi .= " and asset_site = '".$esite."' and asset_loc = '".$eloc."'";
-        }
-        if($this->stype != null ||$this->stype != '' ){
-            $kondisi .= " and asset_type = '".$this->stype."'";
-        }
-        if($this->sgroup != null ||$this->sgroup != '' ){
-            $kondisi .= " and asset_group = '".$this->sgroup."'";
-        }
-        
-        /* Mencari deskripsi repair */
-        // $dataasset = DB::table('asset_mstr')
-        //     ->whereNotNull('asset_repair_type')
-        //     ->orWhere('asset_repair_type','<>','')
-        //     ->get();
-
-        // DB::statement("CREATE TEMPORARY TABLE temp_repair (id INT(11) PRIMARY KEY AUTO_INCREMENT, temp_asset VARCHAR(255), temp_rep VARCHAR(255))");
-
-        // foreach($dataasset as $da) {
-        //     if($da->asset_repair_type == 'code') {
-        //         $explrep = explode(",",$da->asset_repair);
-        //         foreach($explrep as $ep){
-        //             $descrep = Db::table('rep_master')
-        //                 ->whereRepm_code($ep)
-        //                 ->first();
-        //             if(isset($repair)){
-        //                 $repair = $repair . "," . $descrep->repm_desc;
-        //             } else {
-        //                 $repair = $descrep->repm_desc;
-        //             }
-        //         }
-        //     } elseif ($da->asset_repair_type == 'group') {
-        //         $descrep = Db::table('xxrepgroup_mstr')
-        //             ->whereXxrepgroup_nbr($da->asset_repair)
-        //             ->first();
-        //         $repair = $descrep->xxrepgroup_desc;
-        //     } else {
-        //         $repair = '-';
-        //     }
-
-        //     DB::table('temp_repair')->insert([
-        //         'temp_asset' => $da->asset_code,
-        //         'temp_rep' => $repair,
-        //     ]);
-        // }
 
         $data =  DB::table('asset_mstr')
         ->selectRaw("asset_code,asset_desc,asset_active,asset_um,asset_type,astype_desc,asset_group,asgroup_desc,
@@ -96,6 +43,35 @@ class AssetExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
         // ->leftJoin('temp_repair','temp_asset','=','asset_code')
         ->whereRaw($kondisi)
         ->orderby('asset_code');
+
+        if($this->sasset) {
+            $sasset = $this->sasset;
+            $data = $data->where(function($query) use ($sasset) {
+                $query->where('asset_code','like','%'.$sasset.'%')
+                ->orwhere('asset_desc','like','%'.$sasset.'%');
+            });
+        }
+        if($this->sloc) {
+            $sloc = $this->sloc;
+            $data = $data->where(function($query) use ($sloc) {
+                $query->where('asloc_code','like','%'.$sloc.'%')
+                ->orwhere('asloc_desc','like','%'.$sloc.'%');
+            });
+        }
+        if($this->stype) {
+            $stype = $this->stype;
+            $data = $data->where(function($query) use ($stype) {
+                $query->where('astype_code','like','%'.$stype.'%')
+                ->orwhere('astype_desc','like','%'.$stype.'%');
+            });
+        }
+        if($this->sgroup) {
+            $sgroup = $this->sgroup;
+            $data = $data->where(function($query) use ($sgroup) {
+                $query->where('asgroup_code','like','%'.$sgroup.'%')
+                ->orwhere('asgroup_desc','like','%'.$sgroup.'%');
+            });
+        }
 
         return $data;
         

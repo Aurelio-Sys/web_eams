@@ -219,6 +219,17 @@
         </div>
     </div>
 </div>
+
+<div class="modal" id="loadingtable" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered d-flex align-items-center justify-content-center" role="document">
+      <div class="spinner-grow text-danger">LOADING</div>
+      <div class="spinner-grow text-warning" style="animation-delay:0.2s;"></div>
+      <div class="spinner-grow text-success" style="animation-delay:0.45s;"></div>
+      <div class="spinner-grow text-info"style="animation-delay:0.65s;"></div>
+      <div class="spinner-grow text-primary"style="animation-delay:0.85s;"></div>
+    </div>
+</div>
+
 @endsection
 
 @section('scripts')
@@ -390,6 +401,10 @@
 
             }
         })
+    });
+
+    $("#submit").submit(function(e) {
+        $('#loadingtable').modal('show');
     });
 </script>
 

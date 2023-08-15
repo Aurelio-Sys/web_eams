@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Schema;
 use App\Models\Qxwsa as ModelsQxwsa;
 use App\Services\WSAServices;
 
+use App;
+use App\Exports\ExportCost;
+use Maatwebsite\Excel\Facades\Excel;
+
 class RptCostController extends Controller
 {
     public function index(Request $req)
@@ -35,44 +39,28 @@ class RptCostController extends Controller
             ->leftJoin('asset_loc','asloc_code','=','asset_loc')
             ->orderBy('asset_code');
 
-        if ($req->s_asset) {
-            $data->where('asset_code', '=', $req->s_asset);
+        if($req->s_loc) {
+            $data = $data->where('asset_loc','=',$req->s_loc);
+            // $a = $req->s_loc;
+            // $data = $data->whereIn('asset_code', function($query) use ($bulan,$a)
+            // {
+            //     $query->select('wo_asset')
+            //           ->from('wo_mstr')
+            //           ->whereYear('wo_created_at','=',$bulan)
+            //           ->where('wo_location','=',$a);
+            // });
         }
-        if ($req->s_loc) {
-            $data->where('asset_loc', '=', $req->s_loc);
+        if($req->s_asset) {
+            $data = $data->where('asset_code','=',$req->s_asset);
         }
         if($req->s_eng) {
             $a = $req->s_eng;
-            $data = $data->whereIn('asset_code', function($query) use ($a, $bulan)
+            $data = $data->whereIn('asset_code', function($query) use ($bulan,$a)
             {
                 $query->select('wo_asset_code')
                       ->from('wo_mstr')
-                      ->whereYear('wo_system_create','=',$bulan)
-                      ->where('wo_engineer1','=',$a)
-                      ->orWhere('wo_engineer2','=',$a)
-                      ->orWhere('wo_engineer3','=',$a)
-                      ->orWhere('wo_engineer4','=',$a)
-                      ->orWhere('wo_engineer5','=',$a);
-            });
-        }
-        if($req->s_type == "WO") {
-            $a = $req->s_type;
-            $data = $data->whereIn('asset_code', function($query) use ($bulan)
-            {
-                $query->select('wo_asset_code')
-                      ->from('wo_mstr')
-                      ->whereYear('wo_system_create','=',$bulan)
-                      ->where('wo_type','<>','auto');
-            });
-        }
-        if($req->s_type == "PM") {
-            $a = $req->s_type;
-            $data = $data->whereIn('asset_code', function($query) use ($bulan)
-            {
-                $query->select('wo_asset_code')
-                      ->from('wo_mstr')
-                      ->whereYear('wo_system_create','=',$bulan)
-                      ->where('wo_type','=','auto');
+                      ->whereYear('wo_start_date','=',$bulan)
+                      ->where('wo_list_engineer','like','%'.$a.'%');
             });
         }
 
@@ -93,13 +81,22 @@ class RptCostController extends Controller
         // sum(wo_dets_sp_price * wo_dets_sp_qty) as jml')
 
         $dataharga = DB::table('wo_mstr')
-            ->selectRaw('wo_asset_code,month(wo_system_create) as "bln",year(wo_system_create) as "thn",
+            ->selectRaw('wo_asset_code,wo_type,month(wo_start_date) as "bln",year(wo_start_date) as "thn",
                 sum(wd_sp_issued * wd_sp_itemcost) as jml')
             ->leftJoin('wo_dets_sp','wd_sp_wonumber','=','wo_number')
+            ->whereYear('wo_start_date','=',$bulan)
             ->groupBy('wo_asset_code')
             ->groupBy('bln')
-            ->groupBy('thn')
-            ->get();
+            ->groupBy('thn');
+
+        if($req->s_type) {
+            $dataharga = $dataharga->where('wo_type','=',$req->s_type);
+        }
+        if($req->s_eng) {
+            $dataharga = $dataharga->where('wo_list_engineer','like','%'.$a.'%');
+        }
+
+        $dataharga = $dataharga->get();
 
         foreach($dataharga as $dataharga) {
             DB::table('temp_asset')->insert([
@@ -109,7 +106,48 @@ class RptCostController extends Controller
                 'temp_cost' => isset($dataharga->jml) ? $dataharga->jml : 0 ,
             ]);
         }
-               
+
+        $datatemp = DB::table('temp_asset')
+            ->get();
+
+        /** Kondisi jika include perhitungan parent */
+        if($req->s_child) {
+            /** Mencari asset yang terdaftar di asset hierarchy */
+            $datapar = DB::table('asset_par')
+            ->selectRaw('aspar_par,wo_type,month(wo_start_date) as "bln",year(wo_start_date) as "thn"')
+            ->selectRaw('SUM(wd_sp_issued * wd_sp_itemcost) as jml')
+            ->leftJoin('wo_mstr', 'wo_asset_code', '=', 'aspar_child')
+            ->leftJoin('wo_dets_sp', 'wo_number', '=', 'wd_sp_wonumber')
+            ->whereYear('wo_start_date','=',$bulan)
+            ->groupBy('aspar_par')
+            ->groupBy('bln')
+            ->groupBy('thn')
+            ->get();
+
+            // dd($datapars);
+
+            /** Update cost untuk asset yang ada parent nya */
+            foreach($datatemp as $dt) {
+                $sumpar = $datapar->where('aspar_par','=',$dt->temp_code)
+                    ->where('bln','=',$dt->temp_bln)->where('thn','=',$dt->temp_thn)->first();
+
+                /** menambahkan cost dari parent ke looping utama */
+                if($sumpar) {
+                    if($sumpar->jml > 0) {
+                        $tambah = $dt->temp_cost + $sumpar->jml;
+                        DB::table('temp_asset')
+                            ->where('temp_code', $dt->temp_code)
+                            ->where('temp_bln', $dt->temp_bln)
+                            ->where('temp_thn', $dt->temp_thn)
+                            ->update([
+                                'temp_cost' => $tambah ,
+                            ]);
+                    }
+                }
+            }
+            // dd('stop');
+        }
+
         $datatemp = DB::table('temp_asset')
             ->get();
 
@@ -134,7 +172,7 @@ class RptCostController extends Controller
 
         return view('report.rptcost', ['data' => $data, 'datatemp' => $datatemp, 'bulan' => $bulan, 'dataasset' => $dataasset,
             'sasset' => $sasset, 'swo' => $req->s_nomorwo, 'sasset' => $req->s_asset,'sloc' => $req->s_loc, 'seng' => $req->s_eng,
-            'dataloc' => $dataloc, 'dataeng' => $dataeng, 'stype' => $req->s_type]);
+            'dataloc' => $dataloc, 'dataeng' => $dataeng, 'stype' => $req->s_type, 'schild' => $req->s_child]);
     }  
 
     /* Jadwal preventive asset */
@@ -227,46 +265,70 @@ class RptCostController extends Controller
         if ($req->ajax()) {
 
             $code = $req->code;
+            $bln = $req->bln;
+            $thn = $req->thn;
+            $type = $req->type;
+            $eng = $req->eng;
+            $child = $req->child;
 
-            $data = DB::table('wo_mstr')
+            /** Data untuk seluruh WO */
+            $datawo = DB::table('wo_mstr')
+                    ->select('wo_number','wo_note','wo_list_engineer','wo_start_date','wo_type','wo_status')
                     ->join('asset_mstr','asset_code','=','wo_asset_code')
-                    ->whereNotIn('wo_status', ['closed','finish','delete'])
                     ->whereWo_asset_code($code)
-                    ->orderBy('wo_schedule')
-                    ->get();
+                    ->whereMonth('wo_start_date','=',$bln)
+                    ->whereYear('wo_start_date','=',$thn)
+                    ->orderBy('wo_start_date');
+
+            /** Data jika include parent dari hierarchy asset */
+            $datapar = DB::table('asset_par')
+                    ->leftJoin('wo_mstr', 'wo_asset_code', '=', 'aspar_child')
+                    ->selectRaw('wo_number,CONCAT("child asset ", wo_asset_code) as wo_note,wo_list_engineer,wo_start_date,wo_type,wo_status')
+                    ->whereAspar_par($code)
+                    ->whereMonth('wo_start_date','=',$bln)
+                    ->whereYear('wo_start_date','=',$thn);
+
+            if($type) {
+                $datawo = $datawo->where('wo_type','=',$type);
+                $datapar = $datapar->where('wo_type','=',$type);
+            }
+            if($eng) {
+                $datawo = $datawo->where('wo_list_engineer','like','%'.$eng.'%');
+                $datapar = $datapar->where('wo_list_engineer','like','%'.$eng.'%');
+            }
+
+            $datawo = $datawo->get();
+            $datapar = $datapar->get();
+
+            if($child == "Yes") {
+                $data = $datawo->merge($datapar);
+            } else {
+                $data = $datawo;
+            }
 
             $output = '';
             foreach ($data as $data) {
                 $eng = "";
-                if ($data->wo_engineer1 <> "" && $data->wo_engineer1 <> NULL) {
-                    $eng = $data->wo_engineer1;
-                }
-                if ($data->wo_engineer2 <> "" && $data->wo_engineer2 <> NULL) {
-                    $eng = $eng.";".$data->wo_engineer2;
-                }
-                if ($data->wo_engineer3 <> "" && $data->wo_engineer3 <> NULL) {
-                    $eng = $eng.";".$data->wo_engineer3;
-                }
-                if ($data->wo_engineer4 <> "" && $data->wo_engineer4 <> NULL) {
-                    $eng = $eng.";".$data->wo_engineer4;
-                }
-                if ($data->wo_engineer5 <> "" && $data->wo_engineer5 <> NULL) {
-                    $eng = $eng.";".$data->wo_engineer5;
-                }
 
-                $dataharga = DB::table('wo_dets')
-                    ->selectRaw('sum(wo_dets_sp_price * wo_dets_sp_qty) as jml')
-                    ->whereWo_dets_nbr($data->wo_nbr)
+                $dataharga = DB::table('wo_dets_sp')
+                    ->selectRaw('sum(wd_sp_issued * wd_sp_itemcost) as jml')
+                    ->whereWd_sp_wonumber($data->wo_number)
                     ->first();
 
                 // dump($dataharga->jml);
 
                 $output .= '<tr>'.
-                '<td>'.$data->wo_nbr.'</td>'.
-                '<td>'.$eng.'</td>'.
-                '<td>'.$data->wo_schedule.'</td>'.
+                '<td>'.$data->wo_number.'</td>'.
+                '<td>'.$data->wo_note.'</td>'.
+                '<td>'.$data->wo_list_engineer.'</td>'.
+                '<td>'.date('d-m-Y', strtotime($data->wo_start_date)).'</td>'.
+                '<td>'.$data->wo_type.'</td>'.
                 '<td>'.$data->wo_status.'</td>'.
-                '<td>'.$dataharga->jml.'</td>'.
+                '<td style="text-align: right">'.number_format($dataharga->jml,2).'</td>'.
+                '<td><a href="javascript:void(0)" class="view" type="button" data-toggle="tooltip" title="View Service Request"
+                    data-sp="{{$show->temp_sp}}" data-spdesc="{{$show->temp_sp_desc}}" data-sch="{{$show->temp_sch_date}}">
+                    <i class="icon-table far fa-eye fa-lg"></i>
+                </a></td>'.
                 '</tr>';
             }
 
@@ -274,5 +336,16 @@ class RptCostController extends Controller
 
             return response($output);
         }
+    }
+
+    public function donlodcost(Request $req)
+    { 
+        $asset    = $req->asset;
+        $type    = $req->type;
+        $loc    = $req->loc;
+        $eng    = $req->eng;
+        $bulan    = $req->bulan;
+
+        return Excel::download(new ExportCost($asset,$type,$loc,$eng,$bulan), 'EAMS Cost Report.xlsx');
     }
 }
