@@ -19,6 +19,7 @@ use App\Http\Controllers\Master\AppSpController;
 use App\Http\Controllers\Master\InvSoController;
 use App\Http\Controllers\Master\InvSuController;
 use App\Http\Controllers\Master\NotmssgController;
+use App\Http\Controllers\Master\CostCenterController;
 use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\Report\RemainSpController;
@@ -845,6 +846,11 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/trainingplan', [TrainingController::class, 'trainingplan'])->name('trainPlan');
 	Route::get('/trainingexecute', [TrainingController::class, 'trainingexecute'])->name('trainExecute');
 	Route::get('/traininganalyze', [TrainingController::class, 'traininganalyze'])->name('trainAnalyze');
+
+	// Cost Center Maintenance
+	Route::get('/costcenter',[CostCenterController::class, 'index']); 
+	Route::post('/createcc',[CostCenterController::class, 'store']);
+	Route::post('/editcc',[CostCenterController::class, 'update']);
 	
 });
 

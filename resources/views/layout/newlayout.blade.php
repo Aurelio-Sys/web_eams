@@ -652,6 +652,13 @@ to get the desired effect
                     </p>
                   </a>
                   <ul class="nav nav-treeview">
+                    @if(str_contains( Session::get('menu_access'), 'MTA50'))
+                    <li class="nav-item">
+                      <a href="/costcenter" class="nav-link ">
+                        <p>Cost Center</p>
+                      </a>
+                    </li>
+                    @endif
                     @if(str_contains( Session::get('menu_access'), 'MTA21'))
                     <li class="nav-item">
                       <a href="/deptmaster" class="nav-link ">

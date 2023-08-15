@@ -1,15 +1,14 @@
 @forelse($data as $show)
 <tr>
-    <td>{{$show->dept_code}}</td>
-    <td>{{$show->dept_desc}}</td>
+    <td>{{$show->cc_code}}</td>
+    <td>{{$show->cc_desc}}</td>
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal" 
-        data-code="{{$show->dept_code}}" data-desc="{{$show->dept_desc}}" data-runningnbr="{{$show->dept_running_nbr}}"
-        data-cost="{{$show->dept_cc}}">
+        data-code="{{$show->cc_code}}" data-desc="{{$show->cc_desc}}">
             <i class="icon-table fa fa-edit fa-lg"></i></a>
         &ensp;
         <a href="javascript:void(0)" class="deletedata" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal" 
-        data-code="{{$show->dept_code}}" data-desc="{{$show->dept_desc}}" data-runningnbr="{{$show->dept_running_nbr}}">
+        data-code="{{$show->cc_code}}" data-desc="{{$show->cc_desc}}">
             <i class="icon-table fa fa-trash fa-lg"></i></a>
     </td>
 </tr>

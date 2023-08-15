@@ -244,7 +244,7 @@ class SettingController extends Controller
 
         $access = $req->cbRoleMaint . $req->cbSite . $req->cbLoc . $req->cbSupp . $req->cbAstype . $req->cbAsgroup . $req->cbFn . $req->cbAsset . $req->cbAspar . $req->cbSpt . $req->cbSpg . $req->cbSpm . $req->cbTool . $req->cbRep . $req->cbIns . /*$req->cbRepdet .*/  $req->cbRepins . $req->cbReppart . $req->cbEng . $req->cbInv . $req->cbDept . $req->cbSkill . $req->cbWoBrowse . $req->cbWoCreatedirect . $req->cbWoStart . $req->cbWoReport . $req->cbWoMaint . $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbSRbrowseonly . $req->cbSRapprovaleng . $req->cbUA . $req->cbUSMT . $req->cbUSmultiMT . $req->cbUser . $req->cbRunning . $req->cbBoas . $req->cbEngSchedule . $req->cbBookSchedule . $req->cbAssetSchedule . $req->cbEngReport . $req->cbAssetReport;
 
-        $access = $req->dept . $req->Skill . $req->Eng . $req->RoleMaint . $req->EngGroup . $req->cbRunning . $req->SetWsa . $req->SetFntype . $req->Fn . $req->SetImp . 
+        $access = $req->cc .$req->dept . $req->Skill . $req->Eng . $req->RoleMaint . $req->EngGroup . $req->cbRunning . $req->SetWsa . $req->SetFntype . $req->Fn . $req->SetImp . 
             $req->Astype . $req->Asgroup . $req->Supp . $req->SetAssetsite . $req->SetAssetloc . $req->Asset . $req->Aspar . $req->SetMove . $req->SetEngpm . $req->SetUm . $req->SetAsfn . $req->pmasset . 
             $req->Spt . $req->Spg . $req->SetSpsite . $req->SetSploc . $req->Spm . $req->Rep . $req->SetRepgroup . $req->SetIns . $req->SetSplist . $req->qcspec . $req->SetPmcode . $req->notmssg . $req->rcmmstr .
             $req->appsr . $req->appwo . $req->appsp . $req->invso . $req->invsu .
@@ -311,7 +311,7 @@ class SettingController extends Controller
 
     public function editrole(Request $req)
     {
-        $access = $req->e_dept . $req->e_Skill . $req->e_Eng . $req->e_RoleMaint . $req->e_EngGroup . $req->e_cbRunning . $req->e_SetWsa . $req->e_SetFntype . $req->e_Fn . $req->e_SetImp . 
+        $access = $req->e_cc . $req->e_dept . $req->e_Skill . $req->e_Eng . $req->e_RoleMaint . $req->e_EngGroup . $req->e_cbRunning . $req->e_SetWsa . $req->e_SetFntype . $req->e_Fn . $req->e_SetImp . 
             $req->e_Astype . $req->e_Asgroup . $req->e_Supp . $req->e_SetAssetsite . $req->e_SetAssetloc . $req->e_Asset . $req->e_Aspar . $req->e_SetMove . $req->e_SetEngpm . $req->e_SetUm . $req->e_SetAsfn . $req->e_pmasset . 
             $req->e_Spt . $req->e_Spg . $req->e_SetSpsite . $req->e_SetSploc . $req->e_Spm . $req->e_Rep . $req->e_SetRepgroup . $req->e_SetIns . $req->e_SetSplist . $req->e_qcspec . $req->e_SetPmcode . $req->e_notmssg . $req->e_rcmmstr .
             $req->e_appsr . $req->e_appwo . $req->e_appsp . $req->e_invso . $req->e_invsu .
@@ -3364,6 +3364,7 @@ class SettingController extends Controller
                             $sp->spm_lot = $datas->t_lotser;
                             $sp->spm_group = $datas->t_group;
                             $sp->spm_type = $datas->t_sptype;
+                            $sp->spm_account = $datas->t_account;
                             $sp->spm_active = 'Yes';
                             $sp->created_at = Carbon::now()->toDateTimeString();
                             $sp->updated_at = Carbon::now()->toDateTimeString();
@@ -3373,6 +3374,28 @@ class SettingController extends Controller
                 }
             } /** else ($spdata === false) { */
         } /* foreach($datasite as $da) { */
+
+        /** Load data cost dari Item Cost Standard */
+        
+        $datacost = (new WSAServices())->wsacost($domain->wsas_domain);
+
+        if ($datacost === false) {
+            toast('WSA Failed', 'error')->persistent('Dismiss');
+            return redirect()->back();
+        } else {
+            if ($datacost[1] == "false") {
+                // toast('Data Sparepart pada Site ' . $da->site_code . ' tidak ditemukan', 'error')->persistent('Dismiss');
+                // return redirect()->back();
+            } else {
+                
+                foreach ($datacost[0] as $datas) {
+                    SPMstr::where('spm_code', $datas->t_part)
+                        ->where('spm_site', $datas->t_site)
+                        ->update(['spm_price' => $datas->t_cost]);
+                }
+            }
+        } /** else ($datacost === false) { */
+        
 
         toast('Spare Part Loaded.', 'success');
         return back();
@@ -5809,7 +5832,11 @@ class SettingController extends Controller
                 ->orderby('dept_code')
                 ->paginate(10);
 
-            return view('setting.departemen', ['data' => $data]);
+            $datacc = DB::table('cc_mstr')
+                ->orderBy('cc_code')
+                ->get();
+
+            return view('setting.departemen', ['data' => $data, 'datacc' => $datacc]);
         } else {
             toast('You do not have menu access, please contact admin.', 'error');
             return back();
@@ -5844,7 +5871,8 @@ class SettingController extends Controller
             ->insert([
                 'dept_code'   => $req->t_code,
                 'dept_desc'   => $req->t_desc,
-                'dept_running_nbr' => $req->t_runningnbr,                
+                'dept_running_nbr' => $req->t_runningnbr,      
+                'dept_cc'   => $req->t_cc,          
                 'created_at'    => Carbon::now()->toDateTimeString(),
                 'updated_at'    => Carbon::now()->toDateTimeString(),
                 'edited_by'     => Session::get('username'),
@@ -5872,6 +5900,7 @@ class SettingController extends Controller
             ->update([
                 'dept_desc'   => $req->te_desc,
                 'dept_running_nbr' => $req->te_runningnbr,
+                'dept_cc' => $req->te_cc,
                 'updated_at'    => Carbon::now()->toDateTimeString(),
                 'edited_by'     => Session::get('username'),
             ]);

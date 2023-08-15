@@ -3,7 +3,7 @@
       <div class="container-fluid">
         <div class="row">          
           <div class="col-sm-4">
-            <h1 class="m-0 text-dark">Department Maintenance</h1>
+            <h1 class="m-0 text-dark">Cost Center Maintenance</h1>
           </div>    
         </div><!-- /.row -->
         <div class="col-md-12">
@@ -11,7 +11,7 @@
         </div>
         <div class="row">                 
           <div class="col-sm-2">    
-            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Department Create</button>
+            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Cost Center Create</button>
           </div><!-- /.col -->  
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
@@ -30,12 +30,12 @@
         <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
         <div class="card card-body bg-black rounded-0">
             <div class="col-12 form-group row">
-                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Department Code</label>
+                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Cost Center Code</label>
                 <div class="col-md-4 mb-2 input-group">
                     <input id="s_code" type="text" class="form-control" name="s_code"
                     value="" autofocus autocomplete="off"/>
                 </div>
-                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Department Description</label>
+                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Cost Center Description</label>
                 <div class="col-md-4 mb-2 input-group">
                     <input id="s_desc" type="text" class="form-control" name="s_desc"
                     value="" autofocus autocomplete="off"/>
@@ -68,7 +68,7 @@
         </thead>
         <tbody>
             <!-- untuk isi table -->
-            @include('setting.table-departemen')
+            @include('setting.table-costcenter')
         </tbody>
     </table>
     <input type="hidden" name="hidden_page" id="hidden_page" value="1"/>
@@ -81,12 +81,12 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">Department Create</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Cost Center Create</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/createdept" onsubmit="return validateInput()">
+            <form class="form-horizontal" method="post" action="/createcc" onsubmit="return validateInput()">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
@@ -101,25 +101,6 @@
                             <span id="alert1" style="color: red; font-weight: 200;">*</span> </label>
                         <div class="col-md-6">
                             <input id="t_desc" type="text" class="form-control" name="t_desc" autocomplete="off" autofocus maxlength="50" required/>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="t_runningnbr" class="col-md-4 col-form-label text-md-right">SR Running Number 
-                            <span id="alert1" style="color: red; font-weight: 200;">*</span> </label>
-                        <div class="col-md-6">
-                            <input id="t_runningnbr" type="text" class="form-control" name="t_runningnbr" autocomplete="off" autofocus maxlength="4" value="0000" required/>
-                            <span id="errorcur" style="color:red"></span>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="t_cc" class="col-md-4 col-form-label text-md-right">Cost Center</label>
-                        <div class="col-md-6">
-                            <select id="t_cc" class="form-control" name="t_cc">
-                                <option value="">--Select Data--</option>
-                                @foreach($datacc as $dc)
-                                <option value="{{$dc->cc_code}}">{{$dc->cc_code}} -- {{$dc->cc_desc}}</option>
-                                @endforeach
-                            </select>
                         </div>
                     </div>
                 </div>
@@ -137,12 +118,12 @@
     <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel">Department Modify</h5>
+        <h5 class="modal-title text-center" id="exampleModalLabel">Cost Center Modify</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
         </div>
-        <form class="form-horizontal" method="post" action="/editdept">
+        <form class="form-horizontal" method="post" action="/editcc">
             {{ csrf_field() }}
             <div class="modal-body">
                 <div class="form-group row">
@@ -156,25 +137,6 @@
                         <span id="alert1" style="color: red; font-weight: 200;">*</span> </label>
                     <div class="col-md-6">
                         <input id="te_desc" type="text" class="form-control" name="te_desc" autocomplete="off" autofocus maxlength="50" required/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="te_runningnbr" class="col-md-4 col-form-label text-md-right">SR Running Number 
-                        <span id="alert1" style="color: red; font-weight: 200;">*</span> </label>
-                    <div class="col-md-6">
-                        <input id="te_runningnbr" type="text" class="form-control" name="te_runningnbr" autocomplete="off" autofocus maxlength="4" required/>
-                        <span id="te_errorcur" style="color:red"></span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="te_cc" class="col-md-4 col-form-label text-md-right">Cost Center</label>
-                    <div class="col-md-6">
-                        <select id="te_cc" class="form-control" name="te_cc">
-                            <option value="">--Select Data--</option>
-                            @foreach($datacc as $dc)
-                            <option value="{{$dc->cc_code}}">{{$dc->cc_code}} -- {{$dc->cc_desc}}</option>
-                            @endforeach
-                        </select>
                     </div>
                 </div>
             </div>
@@ -192,16 +154,16 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title text-center" id="exampleModalLabel">Department Delete</h5>
+            <h5 class="modal-title text-center" id="exampleModalLabel">Cost Center Delete</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
             </div>
-            <form class="form-horizontal" method="post" action="/deletedept">
+            <form class="form-horizontal" method="post" action="/deletecc">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <input type="hidden" id="d_code" name="d_code">
-                    Delete Department <b><span id="td_code"></span> -- <span id="td_desc"></span></b> ?
+                    Delete Cost Center <b><span id="td_code"></span> -- <span id="td_desc"></span></b> ?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
@@ -219,72 +181,10 @@
            $('#editModal').modal('show');
            var code = $(this).data('code');
            var desc = $(this).data('desc');
-           var runningnbr = $(this).data('runningnbr');
-           var cost = $(this).data('cost');
 
            document.getElementById('te_code').value = code;
            document.getElementById('te_desc').value = desc;
-           document.getElementById('te_runningnbr').value = runningnbr;
-           document.getElementById('te_cc').value = cost;
        });
-
-        $(document).on('blur','#t_runningnbr',function(){ // Click to only happen on announce links
-       
-            //alert('tst');
-            var isi = document.getElementById("t_runningnbr").value;
-            var nbr = isi.length;
-
-            var isnum = /^\d+$/.test(isi);
-            
-            if(nbr > 4){
-                document.getElementById("errorcur").innerHTML = 'Current Number Must Be 4 Digits';
-                document.getElementById("t_runningnbr").focus();
-                document.getElementById("btncreate").disabled = true;
-                return false;
-            }else if(nbr < 4){
-                document.getElementById("errorcur").innerHTML = 'Current Number Must Be 4 Digits';
-                document.getElementById("t_runningnbr").focus();
-                document.getElementById("btncreate").disabled = true;
-
-            }else if(!isnum){
-                document.getElementById("errorcur").innerHTML = 'Current Number Must Be 4 Digits';
-                document.getElementById("t_runningnbr").focus();
-                document.getElementById("btncreate").disabled = true;
-                return false;
-            }else{
-                document.getElementById("errorcur").innerHTML = '';
-                document.getElementById("btncreate").disabled = false;
-            }
-        });
-
-        $(document).on('blur','#te_runningnbr',function(){ // Click to only happen on announce links
-       
-            //alert('tst');
-            var isi = document.getElementById("te_runningnbr").value;
-            var nbr = isi.length;
-
-            var isnum = /^\d+$/.test(isi);
-            
-            if(nbr > 4){
-                document.getElementById("te_errorcur").innerHTML = 'Current Number Must Be 4 Digits';
-                document.getElementById("te_runningnbr").focus();
-                document.getElementById("btnedit").disabled = true;
-                return false;
-            }else if(nbr < 4){
-                document.getElementById("te_errorcur").innerHTML = 'Current Number Must Be 4 Digits';
-                document.getElementById("te_runningnbr").focus();
-                document.getElementById("btnedit").disabled = true;
-
-            }else if(!isnum){
-                document.getElementById("te_errorcur").innerHTML = 'Current Number Must Be 4 Digits';
-                document.getElementById("te_runningnbr").focus();
-                document.getElementById("btnedit").disabled = true;
-                return false;
-            }else{
-                document.getElementById("te_errorcur").innerHTML = '';
-                document.getElementById("btnedit").disabled = false; 
-            }
-        });
 
        $(document).on('click', '.deletedata', function(e){
             $('#deleteModal').modal('show');
@@ -428,18 +328,13 @@
             // Regular expression to match only letters and numbers
             var pattern = /^[A-Z0-9]*$/;
       
-            if (t_code.length !== 3 || !pattern.test(t_code)) {
-                alert("The Department code must consist of 3 uppercase alphanumeric characters without spaces or special characters.");
+            {{--  if (t_code.length !== 3 || !pattern.test(t_code)) {
+                alert("The Cost Center code must consist of 3 uppercase alphanumeric characters without spaces or special characters.");
                 return false;
-            }
+            }  --}}
       
             return true;
         }
-
-        $("#t_cc").select2({
-            width: '100%',
-            theme: 'bootstrap4',
-        });
     </script>
 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">

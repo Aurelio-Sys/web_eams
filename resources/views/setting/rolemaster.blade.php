@@ -602,6 +602,15 @@
             </h4>
             <hr>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Cost Center Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cc">
+                  <input type="checkbox" class="custom-control-input" id="cc" name="cc" value="MTA50" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Department Maintenance') }}</label>
               <div class="col-6">
                 <label class="switch" for="dept">
@@ -1514,6 +1523,15 @@
             </h4>
             <hr>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Cost Center Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cc">
+                  <input type="checkbox" class="custom-control-input" id="e_cc" name="e_cc" value="MTA50" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Department Maintenance') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_dept">
@@ -2025,7 +2043,11 @@
         var listmenu = data;
         
         // Setting
-        
+        if (listmenu.search("MTA50") >= 0) {
+          document.getElementById('e_cc').checked = true;
+        } else {
+          document.getElementById('e_cc').checked = false;
+        }
         if (listmenu.search("MTA21") >= 0) {
           document.getElementById('e_dept').checked = true;
         } else {
