@@ -5307,7 +5307,7 @@ class SettingController extends Controller
 
 /* Engineer Master */
     //untuk menampilkan menu Engineer Master
-    public function engmaster(Request $req)
+    public function engmaster(Request $req) /** Blade : setting.eng */
     {   
         if (strpos(Session::get('menu_access'), 'MTA01') !== false) {
             $s_code = $req->s_code;
@@ -5389,11 +5389,19 @@ class SettingController extends Controller
     //untuk cek Engineering Master
     public function cekeng(Request $req)
     {
-        $cek = DB::table('eng_mstr')
+        
+        $cekeng = DB::table('eng_mstr')
             ->where('eng_code','=',$req->code)
-            ->get();
+            ->count();
 
-        if ($cek->count() == 0) {
+        $cekuser = DB::table('users')
+            ->where('username','=',$req->code)
+            ->count();
+
+        $cek = $cekeng + $cekuser;
+            
+            
+        if ($cek == 0) {
             return "tidak";
         } else {
             return "ada";
@@ -5699,7 +5707,7 @@ class SettingController extends Controller
             ]);
         }
 
-        toast('Engineer Updated.', 'success');
+        toast('User Data Updated.', 'success');
         return back();
     }
 
@@ -5714,7 +5722,7 @@ class SettingController extends Controller
             ->where('eng_code', '=', $req->d_code)
             ->delete();
 
-        toast('Deleted Engineer Successfully.', 'success');
+        toast('Deleted User Successfully.', 'success');
         return back();
     }
 
@@ -5987,15 +5995,17 @@ class SettingController extends Controller
 
         if(empty($runningdata)){
             $prefixsr = 'SR';
-            $srnbr = '000000';
             $prefixwo = 'WO';
             $prefixwt = 'WT';
             $prefixwd = 'WD';
             $prefixbo = 'BO';
+            $prefixrt = 'RT';
+            $srnbr = '000000';
             $wtnbr = '000000';
             $wonbr = '000000';
             $wdnbr = '000000';
             $bonbr = '000000';
+            $rtnbr = '000000';
             $year = Carbon::now()->format('y');
 
             DB::table('running_mstr')
@@ -6005,11 +6015,13 @@ class SettingController extends Controller
                         'wt_prefix' => $prefixwt,
                         'wd_prefix' => $prefixwd,
                         'bo_prefix' => $prefixbo,
+                        'rt_prefix' => $prefixrt,
                         'sr_nbr' => $srnbr,
                         'wo_nbr' => $wonbr,
                         'wt_nbr' => $wtnbr,
                         'wd_nbr' => $wdnbr,
                         'bo_nbr' => $bonbr,
+                        'rt_nbr' => $rtnbr,
                         'year' => $year,
                 ]);
 
@@ -6029,11 +6041,13 @@ class SettingController extends Controller
         $prefixwd = $req->input('wdprefix');
         $prefixbo = $req->input('boprefix');
         $prefixrs = $req->input('rsprefix');
+        $prefixrt = $req->input('rtprefix');
         $wtnbr = $req->input('wtnumber');
         $wonbr = $req->input('wonbr');
         $wdnbr = $req->input('wdnumber');
         $bonbr = $req->input('bonumber');
         $rsnbr = $req->input('rsnumber');
+        $rtnbr = $req->input('rtnumber');
         $year = Carbon::now()->format('y');
 
         $data = DB::Table('running_mstr')
@@ -6048,12 +6062,14 @@ class SettingController extends Controller
                         'wd_prefix' => $prefixwd,
                         'bo_prefix' => $prefixbo,
                         'rs_prefix' => $prefixrs,
+                        'rt_prefix' => $prefixrt,
                         'sr_nbr' => $srnbr,
                         'wo_nbr' => $wonbr,
                         'wt_nbr' => $wtnbr,
                         'wd_nbr' => $wdnbr,
                         'bo_nbr' => $bonbr,
                         'rs_nbr' => $rsnbr,
+                        'rt_nbr' => $rtnbr,
                         'year' => $year,
                         
                 ]);
@@ -6071,12 +6087,14 @@ class SettingController extends Controller
                     'wd_prefix' => $prefixwd,
                     'bo_prefix' => $prefixbo,
                     'rs_prefix' => $prefixrs,
+                    'rt_prefix' => $prefixrt,
                     'sr_nbr' => $srnbr,
                     'wo_nbr' => $wonbr,
                     'wt_nbr' => $wtnbr,
                     'wd_nbr' => $wdnbr,
                     'bo_nbr' => $bonbr,
                     'rs_nbr' => $rsnbr,
+                    'rt_nbr' => $rtnbr,
                     'year' => $year,
                 ]);
 

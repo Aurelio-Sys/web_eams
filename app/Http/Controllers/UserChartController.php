@@ -1606,6 +1606,7 @@ class UserChartController extends Controller
             ->whereNotIn('temp_status',['closed','delete'])
             ->selectRaw('temp_sch_date,temp_sp,temp_sp_desc,sum(temp_qty_req) as sumreq')
             // ->whereTemp_sp('BESI')
+            ->whereNotNull('temp_sp')
             ->orderBy('temp_sch_date')
             ->orderBy('temp_sp')
             ->groupBy('temp_sch_date','temp_sp');
@@ -1750,12 +1751,18 @@ class UserChartController extends Controller
             $data = Db::table('temp_wo')
                 ->get();
 
+            $dataasset = DB::table('asset_mstr')
+                ->get();
+
             $output = '';
             foreach ($data as $data) {
+
+                $assetdesc = $dataasset->where('asset_code','=',$data->temp_asset)->first();
 
                 $output .= '<tr>'.
                 '<td>'.$data->temp_wo.'</td>'.
                 '<td>'.$data->temp_sch_date.'</td>'.
+                '<td>'.$data->temp_asset.' -- '.$assetdesc->asset_desc.'</td>'.
                 '<td>'.$data->temp_status.'</td>'.
                 '<td>'.$data->temp_qty_req.'</td>'.
                 '<td>'.$data->temp_qty_whs.'</td>'.
@@ -1769,9 +1776,9 @@ class UserChartController extends Controller
         }
     }
     
-    public function generateso(Request $req)
+    public function generateso(Request $req) /** Blade : needsp */
     {
-
+// dd($req->all());
         DB::beginTransaction();
 
         try {
@@ -1789,13 +1796,17 @@ class UserChartController extends Controller
                     toast('WSA Failed', 'error')->persistent('Dismiss');
                     return redirect()->back();
                 } else {
-
-                    /* mengambil data WO untuk dijadikan SO */
-                    /* Temp table untuk menampun data spare part dari Wo detail, Wo yang belum ada detailnya, Wo yang belum terbentuk */
-                    Schema::create('temp_wo_so', function ($table) {
+                    $sasset = $req->hs_asset;
+                    $ssp = $req->hs_sp;
+                    $sper1 = $req->hs_per1;
+                    $sper2 = $req->hs_per2;
+                    /* Temp table untuk menampung data spare part dari Wo detail, Wo yang belum ada detailnya, Wo yang belum terbentuk */
+                    Schema::create('temp_wo', function ($table) {
                         $table->increments('id');
                         $table->string('temp_wo');
+                        $table->string('temp_asset');
                         $table->date('temp_sch_date');
+                        $table->date('temp_create_date');
                         $table->string('temp_status');
                         $table->string('temp_sp')->nullable();
                         $table->string('temp_sp_desc')->nullable();
@@ -1805,167 +1816,106 @@ class UserChartController extends Controller
                         $table->temporary();
                     });
 
-                    /* Mencari data sparepart dari wo detail */
-                    $data = DB::table('wo_dets_sp')
-                        ->join('wo_mstr','wo_number','=','wd_sp_wonumber')
-                        ->whereNotIn('wo_status',['closed','delete'])
-                        ->orderBy('wd_sp_wonumber')
+                    /* Mencari data sparepart dari wo yang statusnya bukan close atau delete dan tidak mempunyai data detail sparepart dari tabel wo_dets_sp */
+                    $data = DB::table('wo_mstr')
+                        ->whereNotIn('wo_number', function ($query) {
+                                $query->select('wd_sp_wonumber')
+                                    ->from('wo_dets_sp')
+                                    ->groupby('wd_sp_wonumber');
+                            })
+                        ->join('spg_list','spg_code','=','wo_sp_code')
+                        ->whereNotIn('wo_status',['closed','delete','canceled'])
+                        ->orderBy('wo_start_date')
+                        ->orderBy('wo_number')
                         ->get();
 
                     foreach($data as $da){
-                        DB::table('temp_wo_so')->insert([
+                        DB::table('temp_wo')->insert([
                             'temp_wo' => $da->wo_number,
+                            'temp_asset' => $da->wo_asset_code,
+                            'temp_create_date' => $da->wo_system_create,
+                            'temp_sch_date' => $da->wo_start_date,
+                            'temp_status' => $da->wo_status,
+                            'temp_sp' => $da->spg_spcode,
+                            'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->spg_spcode)->value('spm_desc'),
+                            'temp_qty_req' => $da->spg_qtyreq,
+                            'temp_qty_whs' => 0,
+                            'temp_qty_need' => $da->spg_qtyreq,
+                        ]);
+                    } 
+                
+                    /* Mencari data sparepart yang sudah ada wo detail nya  di tabel wo_dets_sp */
+                    $data = DB::table('wo_mstr')
+                        ->join('wo_dets_sp','wd_sp_wonumber','=','wo_number')
+                        ->whereNotIn('wo_status',['closed','delete','canceled'])
+                        ->orderBy('wo_start_date')
+                        ->orderBy('wo_number')
+                        ->get();
+
+                    foreach($data as $da){
+                        DB::table('temp_wo')->insert([
+                            'temp_wo' => $da->wo_number,
+                            'temp_asset' => $da->wo_asset_code,
+                            'temp_create_date' => $da->wo_system_create,
                             'temp_sch_date' => $da->wo_start_date,
                             'temp_status' => $da->wo_status,
                             'temp_sp' => $da->wd_sp_spcode,
                             'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->wd_sp_spcode)->value('spm_desc'),
                             'temp_qty_req' => $da->wd_sp_required,
                             'temp_qty_whs' => $da->wd_sp_issued,
-                            'temp_qty_need' => $da->wd_sp_required - $da->wd_sp_issued,
+                            'temp_qty_need' => $da->wd_sp_required - $da->wd_sp_issued, 
                         ]);
-                    }
-                    // dd($data);
-                    /* Mencari data sparepart yang belum ada wo detail nya */
-                    $datawo = DB::table('wo_mstr')->whereNotIn('wo_number', function($q){
-                            $q->select('wd_sp_wonumber')->from('wo_dets_sp');
-                        })
+                    } 
+
+                    /** Mencari data sparepart dari PM Plan (yang belum di confirm) */
+                    $data = DB::table('pmo_confirm')
+                        ->leftJoin('pmc_mstr','pmo_pmcode','=','pmc_code')
+                        ->leftJoin('spg_list','spg_code','=','pmc_spg')
+                        // ->wherePmo_sch_date('2023-07-17')
+                        ->whereNotNull('pmo_pmcode')
                         ->get();
-
-                    /* Sudah tidak ada repair code */    
-                    // foreach($datawo as $do) {
-                    //     if ($do->wo_repair_code1 != "") {
-
-                    //         $sparepart1 = DB::table('wo_mstr')
-                    //             ->select('wo_nbr','wo_repair_code1 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
-                    //             'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
-                    //             ->leftJoin('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
-                    //             ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-                    //             ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-                    //             ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-                    //             ->where('wo_id', '=', $do->wo_id)
-                    //             ->orderBy('repm_ins', 'asc')
-                    //             ->orderBy('repdet_step', 'asc')
-                    //             ->orderBy('ins_code', 'asc')
-                    //             ->get();
-
-                    //         $rc1 = DB::table('wo_mstr')
-                    //             ->select('repm_code', 'repm_desc')
-                    //             ->join('rep_master', 'wo_mstr.wo_repair_code1', 'rep_master.repm_code')
-                    //             ->where('wo_id', '=', $do->wo_id)
-                    //             ->get();
-
-
-                    //         $combineSP = $sparepart1;
-                    //         $rc = $rc1;
-                    //     }
-
-                    //     if ($do->wo_repair_code2 != "") {
-                    //         // dump('repaircode2');
-                    //         $sparepart2 = DB::table('wo_mstr')
-                    //             ->select('wo_nbr','wo_repair_code2 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
-                    //             'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
-                    //             ->leftJoin('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
-                    //             ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-                    //             ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-                    //             ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-                    //             ->where('wo_id', '=', $do->wo_id)
-                    //             ->orderBy('repm_ins', 'asc')
-                    //             ->orderBy('repdet_step', 'asc')
-                    //             ->orderBy('ins_code', 'asc')
-                    //             ->get();
-
-                    //         $rc2 = DB::table('wo_mstr')
-                    //             ->select('repm_code', 'repm_desc')
-                    //             ->join('rep_master', 'wo_mstr.wo_repair_code2', 'rep_master.repm_code')
-                    //             ->where('wo_id', '=', $do->wo_id)
-                    //             ->get();
-
-                    //         // $tempSP2 = (new CreateTempTable())->createSparePartUsed($sparepart2);
-
-                    //         $combineSP = $sparepart1->merge($sparepart2);
-                    //         $rc = $rc1->merge($rc2);
-                    //     }
-
-                    //     if ($do->wo_repair_code3 != "") {
-                    //         // dump('repaircode3');
-                    //         $sparepart3 = DB::table('wo_mstr')
-                    //             ->select('wo_nbr','wo_repair_code3 as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc',
-                    //             'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
-                    //             ->leftJoin('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
-                    //             ->leftJoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-                    //             ->leftJoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-                    //             ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-                    //             ->where('wo_id', '=', $do->wo_id)
-                    //             ->orderBy('repm_ins', 'asc')
-                    //             ->orderBy('repdet_step', 'asc')
-                    //             ->orderBy('ins_code', 'asc')
-                    //             ->get();
-
-                    //         $rc3 = DB::table('wo_mstr')
-                    //             ->select('repm_code', 'repm_desc')
-                    //             ->join('rep_master', 'wo_mstr.wo_repair_code3', 'rep_master.repm_code')
-                    //             ->where('wo_id', '=', $do->wo_id)
-                    //             ->get();
-
-                    //         // $tempSP3 = (new CreateTempTable())->createSparePartUsed($sparepart3);
-
-                    //         $combineSP = $sparepart1->merge($sparepart2)->merge($sparepart3);
-                    //         $rc = $rc1->merge($rc2)->merge($rc3);
-                    //     }
-
-                    //     // dd($rc);
-
-                    //     if ($do->wo_repair_code1 == "" && $do->wo_repair_code2 == "" && $do->wo_repair_code3 == "") {
-                    //         // dd('aa');
-                    //         $combineSP = DB::table('xxrepgroup_mstr')
-                    //             ->select('wo_nbr','repm_code as repair_code', 'repdet_step', 'ins_code', 'insd_part_desc', 
-                    //             'insd_det.insd_part', 'insd_det.insd_um', 'insd_qty', 'wo_status', 'wo_schedule')
-                    //             ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
-                    //             ->leftjoin('rep_det', 'rep_master.repm_code', 'rep_det.repdet_code')
-                    //             ->leftjoin('ins_mstr', 'rep_det.repdet_ins', 'ins_mstr.ins_code')
-                    //             ->leftJoin('insd_det', 'ins_mstr.ins_code', 'insd_det.insd_code')
-                    //             ->leftJoin('wo_mstr','wo_repair_group','xxrepgroup_mstr.xxrepgroup_nbr')
-                    //             ->where('xxrepgroup_mstr.xxrepgroup_nbr', '=', $do->wo_repair_group)
-                    //             ->where('wo_id', '=', $do->wo_id)
-                    //             ->orderBy('repair_code', 'asc')
-                    //             ->orderBy('repm_ins', 'asc')
-                    //             ->orderBy('repdet_step', 'asc')
-                    //             ->orderBy('ins_code', 'asc')
-                    //             ->get();
-
-                    //         // dd($combineSP);
-
-                    //         $rc = DB::table('xxrepgroup_mstr')
-                    //             ->select('repm_code', 'repm_desc')
-                    //             ->leftjoin('rep_master', 'xxrepgroup_mstr.xxrepgroup_rep_code', 'rep_master.repm_code')
-                    //             ->get();
-                    //     }
-                    // }
-                    // dd($combineSP);
-                    foreach($datawo as $dc){
-                        DB::table('temp_wo_so')->insert([
-                            'temp_wo' => $dc->wo_number,
-                            'temp_sch_date' => $dc->wo_start_date,
-                            'temp_status' => $dc->wo_status,
-                            'temp_sp' => 'dari SP LIST',
-                            'temp_sp_desc' => 'dari SP LIST',
-                            'temp_qty_req' => 0,
+            // dd($data);
+                    foreach($data as $da){
+                        DB::table('temp_wo')->insert([
+                            'temp_wo' => 'PM Not Confirm',
+                            'temp_asset' => $da->pmo_asset,
+                            'temp_create_date' => $da->pmo_sch_date,
+                            'temp_sch_date' => $da->pmo_sch_date,
+                            'temp_status' => 'Plan',
+                            'temp_sp' => $da->spg_spcode,
+                            'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->spg_spcode)->value('spm_desc'),
+                            'temp_qty_req' => $da->spg_qtyreq,
                             'temp_qty_whs' => 0,
-                            'temp_qty_need' => 0,
+                            'temp_qty_need' => 0, 
                         ]);
-                    }
+                    } 
 
-                    $datatemp = DB::table('temp_wo_so')
+                    $datatemp = DB::table('temp_wo')
                         ->whereNotIn('temp_status',['closed','delete'])
+                        ->selectRaw('temp_sch_date,temp_sp,temp_sp_desc,sum(temp_qty_req) as sumreq')
+                        // ->whereTemp_sp('BESI')
+                        ->whereNotNull('temp_sp')
                         ->orderBy('temp_sch_date')
-                        ->orderBy('temp_wo')
-                        ->get();
+                        ->orderBy('temp_sp')
+                        ->groupBy('temp_sch_date','temp_sp');
+            // dd($datatemp->get());
+                    if($sasset) {
+                        $datatemp = $datatemp->where('temp_asset','=',$sasset);
+                    }
+                    if($sper1) {
+                        $datatemp = $datatemp->whereBetween('temp_create_date',[$sper1,$sper2]);
+                    }
+                    if($ssp) {
+                        $datatemp = $datatemp->where('temp_sp',$ssp);
+                    }
+                
+                    $datatemp = $datatemp->get();   
+            // dd($datatemp);
+                    $lastschedule = DB::table('temp_wo')
+                            ->orderBy('temp_sch_date','desc')
+                            ->first();
 
-                    $lastschedule = DB::table('temp_wo_so')
-                                    ->orderBy('temp_sch_date','desc')
-                                    ->first();
-
-                    Schema::dropIfExists('temp_wo_so');
+                    Schema::dropIfExists('temp_wo');
 
 
                     foreach ($checkso_eams[0] as $datas) {
@@ -2056,19 +2006,20 @@ class UserChartController extends Controller
                             $qdocBody .= '<salesOrder>
                                                 <operation>A</operation>
                                                 <soNbr>EAMS</soNbr>
-                                                <soCust>'.$req->site_genso.'</soCust>
+                                                <soCust>'.$req->t_cust.'</soCust>
+                                                <soShipvia>FEDX</soShipvia>
                                                 <soDueDate>'.$lastschedule->temp_sch_date.'</soDueDate>';
 
                             $line_nbr = 1;
 
                             foreach($datatemp as $datas) {
-                                if($datas->temp_qty_need > 0){
+                                if($datas->sumreq > 0){
                                     $qdocBody .= '<salesOrderDetail>
                                                     <operation>A</operation>
                                                     <line>'.$line_nbr.'</line>
                                                     <sodPart>'.$datas->temp_sp.'</sodPart>
                                                     <sodSite>'.$req->site_genso.'</sodSite>
-                                                    <sodQtyOrd>'.$datas->temp_qty_need.'</sodQtyOrd>
+                                                    <sodQtyOrd>'.$datas->sumreq.'</sodQtyOrd>
                                                     <sodSite>'.$req->site_genso.'</sodSite>
                                                     <sodDueDate>'.$datas->temp_sch_date.'</sodDueDate>
                                                 </salesOrderDetail>';
@@ -2458,19 +2409,20 @@ class UserChartController extends Controller
                             $qdocBody .= '<salesOrder>
                                                 <operation>A</operation>
                                                 <soNbr>EAMS</soNbr>
-                                                <soCust>'.$req->site_genso.'</soCust>
+                                                <soCust>'.$req->t_cust.'</soCust>
+                                                <soShipvia>FEDX</soShipvia>
                                                 <soDueDate>'.$lastschedule->temp_sch_date.'</soDueDate>';
 
                             $line_nbr = 1;
 
                             foreach($datatemp as $datas) {
-                                if($datas->temp_qty_need > 0){
+                                if($datas->sumreq > 0){
                                     $qdocBody .= '<salesOrderDetail>
                                                     <operation>A</operation>
                                                     <line>'.$line_nbr.'</line>
                                                     <sodPart>'.$datas->temp_sp.'</sodPart>
                                                     <sodSite>'.$req->site_genso.'</sodSite>
-                                                    <sodQtyOrd>'.$datas->temp_qty_need.'</sodQtyOrd>
+                                                    <sodQtyOrd>'.$datas->sumreq.'</sodQtyOrd>
                                                     <sodSite>'.$req->site_genso.'</sodSite>
                                                     <sodDueDate>'.$datas->temp_sch_date.'</sodDueDate>
                                                 </salesOrderDetail>';

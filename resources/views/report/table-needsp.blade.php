@@ -1,6 +1,6 @@
 @forelse($data as $show)
 <tr>
-    <td>{{$show->temp_sch_date}}</td>
+    <td>{{date('d-m-Y', strtotime($show->temp_sch_date))}}</td>
     <td>{{$show->temp_sp}}</td>
     <td>{{$show->temp_sp_desc}}</td>
     <td style="text-align: right">{{number_format($show->sumreq,2)}}</td>

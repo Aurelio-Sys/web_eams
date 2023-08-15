@@ -588,8 +588,9 @@
             $.ajax({
               url: "/cekeng?code=" + code,
               success: function(data) {
+                console.log(data);
                 if (data == "ada") {
-                  alert("Engineer is Already Registerd!!");
+                  alert("User is Already Registerd!!");
                   document.getElementById('t_code').value = '';
                   document.getElementById('t_code').focus();
                 }
@@ -772,6 +773,20 @@
                   }
               }) 
         });  --}}
+
+        function validateInput() {
+            var t_code = document.getElementById("t_code").value;
+      
+            // Regular expression to match only letters and numbers
+            var pattern = /^[a-zsA-Z0-9]*$/;
+      
+            if (!pattern.test(t_code)) {
+                alert("The User Code must consist of alphanumeric characters without spaces or special characters.");
+                return false;
+            }
+      
+            return true;
+        }
         
     </script>
 

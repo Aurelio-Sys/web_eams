@@ -606,6 +606,7 @@ Route::group(['middleware' => ['auth']], function() {
 	
 	Route::get('/rptcost', [RptCostController::class, 'index'])->name('rptcost');
 	Route::get('/rptcostview', [RptCostController::class, 'rptcostview'])->name('rptcostview');
+	route::get('/donlodcost',[RptCostController::class, 'donlodcost'])->name('donlodcost');
 	// Route::get('/yearcost', [RptCostController::class, 'yearcost'])->name('yearcost');
 	
 

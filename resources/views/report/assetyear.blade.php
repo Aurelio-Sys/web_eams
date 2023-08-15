@@ -116,6 +116,38 @@
     <input type="hidden" name="hidden_sort_type" id="hidden_sort_type" value="asc" />
 </div>
 
+<!-- Modal View -->
+<div class="modal fade" id="viewModal" role="dialog" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-left" id="exampleModalLabel">
+          Detail Work Order
+          <br>
+          Asset : <span id="v_code"></span> --  <span id="v_codedesc"></span>
+          Location : <span id="v_code"></span> --  <span id="v_codedesc"></span>
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+              <tr>
+                <th width="20%">Wo Number</th>
+                <th width="20%">Wo Date</th>
+                <th width="20%">WO Status</th>  
+                <th width="40%">Engineer</th>  
+              </tr>
+          </thead>
+          <tbody id='detailapp'>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 
 @endsection
 
@@ -147,6 +179,27 @@
             width : '100%',
             theme : 'bootstrap4',
         });
+
+        $(document).on('click', '.view', function() {
+          
+            $('#viewModal').modal('show');
+  
+            var code = $(this).data('code');
+            var codedesc = $(this).data('codedesc');
+            var sch = $(this).data('sch'); 
+  
+            {{--  document.getElementById('v_code').innerHTML = code;
+            document.getElementById('v_codedesc').innerHTML = codedesc;  --}}
+  
+            $.ajax({
+              url:"assetyeardetail?code="+code+"&sch="+sch,
+              success: function(data) {
+                console.log(data);
+                //alert(data);
+                $('#detailapp').html('').append(data);
+              }
+            })
+          });
     
     </script>
 
