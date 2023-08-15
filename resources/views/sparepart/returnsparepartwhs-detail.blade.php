@@ -92,15 +92,15 @@
                                     {{$spd->ret_spd_engnote}}
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
-                                    {{$spd->ret_spd_loc_to}}
-                                    <input type="hidden" class="hidden_siteto" name="hidden_siteto[]" value="{{$spd->ret_spd_site_to}}" />
-                                    <input type="hidden" class="hidden_locto" name="hidden_locto[]" value="{{$spd->ret_spd_loc_to}}" />
+                                    {{$spd->ret_spd_loc_from}}
+                                    <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="{{$spd->ret_spd_site_from}}" />
+                                    <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="{{$spd->ret_spd_loc_from}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" data-index="{{ $index }}" readonly required placeholder="Click Here">
-                                    <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
-                                    <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
-                                    <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />
+                                    <input type="text" id="loclotto" class="form-control loclotto readonly" name="loclotto[]" data-toggle="tooltip" data-index="{{ $index }}" readonly required placeholder="Click Here">
+                                    <input type="hidden" class="hidden_siteto" name="hidden_siteto[]" value="" />
+                                    <input type="hidden" class="hidden_locto" name="hidden_locto[]" value="" />
+                                    <input type="hidden" class="hidden_lotto" name="hidden_lotto[]" value="" />
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
                                     <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0.01" value="{{$spd->ret_spd_qty_return}}" step="0.01" max="{{$spd->ret_spd_qty_return}}" required />
@@ -196,12 +196,12 @@
         //     }
         // });
 
-        $(document).on('click', '.loclotfrom', function() {
+        $(document).on('click', '.loclotto', function() {
             var row = $(this).closest("tr");
             const spcode = row.find(".hidden_spcode").val();
 
             $.ajax({
-                url: '/gettrfspwsastockfrom',
+                url: '/getretspwsastockfrom',
                 method: 'GET',
                 data: {
                     spcode: spcode,
@@ -221,7 +221,7 @@
 
                     // membuat header tabel
                     const headerRow = document.createElement("tr");
-                    const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "Select"];
+                    const headerColumns = ["Part", "Site", "Location", "Quantity", "Select"];
                     headerColumns.forEach((columnTitle) => {
                         const headerColumn = document.createElement("th");
                         headerColumn.textContent = columnTitle;
@@ -234,7 +234,8 @@
                         // membuat baris record untuk setiap objek dalam dataLocLotFrom
                         vamp.forEach((record) => {
                             const rowtable = document.createElement("tr");
-                            const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh"];
+                            // const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh"];
+                            const columns = ["t_part", "t_site", "t_loc", "totalqty"];
                             columns.forEach((columnKey) => {
                                 const column = document.createElement("td");
                                 column.textContent = record[columnKey];
@@ -249,16 +250,16 @@
                                 // aksi yang ingin dilakukan saat tombol select diklik
                                 const site = record.t_site;
                                 const loc = record.t_loc;
-                                const lot = record.t_lot;
+                                // const lot = record.t_lot;
                                 const qtyoh = record.t_qtyoh;
-                                row.find(".hidden_sitefrom").val(site);
-                                row.find(".hidden_locfrom").val(loc);
-                                row.find(".hidden_lotfrom").val(lot);
+                                row.find(".hidden_siteto").val(site);
+                                row.find(".hidden_locto").val(loc);
+                                // row.find(".hidden_lotto").val(lot);
 
                                 const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
 
-                                row.find(".loclotfrom").val(loclot);
-                                row.find(".loclotfrom").attr('title', loclot);
+                                row.find(".loclotto").val(loclot);
+                                row.find(".loclotto").attr('title', loclot);
 
 
                                 // const qtyohold = row.find(".qtytotransfer").val();
