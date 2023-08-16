@@ -139,7 +139,7 @@
                             <th width="15%">Request SP Note</th>
                             <th width="9%">Qty Transfer</th>
                             <!-- <th width="8%">Site To</th> -->
-                            <th width="13%">Site & Loc & Lot To</th>
+                            <th width="13%">Site & Loc To</th>
                             <th width="15%">Transfer SP Note</th>
                         </thead>
                         <tbody id='v_detailapp'></tbody>

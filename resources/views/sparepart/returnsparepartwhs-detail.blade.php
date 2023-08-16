@@ -103,7 +103,7 @@
                                     <input type="hidden" class="hidden_lotto" name="hidden_lotto[]" value="" />
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
-                                    <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0.01" value="{{$spd->ret_spd_qty_return}}" step="0.01" max="{{$spd->ret_spd_qty_return}}" required />
+                                    <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0.01" value="{{$spd->ret_spd_qty_return}}" step="0.01" max="{{$spd->ret_spd_qty_return}}" readonly />
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
                                     <textarea type="text" id="notes" class="form-control notes" name="notes[]" rows="2" ></textarea>
@@ -256,7 +256,8 @@
                                 row.find(".hidden_locto").val(loc);
                                 // row.find(".hidden_lotto").val(lot);
 
-                                const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
+                                // const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
+                                const loclot = `site: ${site} & loc: ${loc}`;
 
                                 row.find(".loclotto").val(loclot);
                                 row.find(".loclotto").attr('title', loclot);

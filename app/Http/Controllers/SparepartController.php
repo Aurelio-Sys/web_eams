@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Jobs\EmailScheduleJobs;
 use App\Jobs\SendNotifReqSparepart;
 use App\Jobs\SendNotifReqSparepartApproval;
+use App\Jobs\SendNotifRetSparepart;
+use App\Jobs\SendNotifRetSpWarehousetoEng;
 use App\Jobs\SendNotifWarehouseToUser;
 use App\Services\WSAServices;
 use Carbon\Carbon;
@@ -199,7 +201,7 @@ class SparepartController extends Controller
                                 'wd_sp_wonumber' => $requestData['wonbr'],
                                 'wd_sp_spcode' => $loopsp['spreq'],
                                 'wd_sp_required' => $loopsp['qtyrequest'],
-                                'wd_sp_created' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                'wd_sp_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
                     }
@@ -1052,9 +1054,21 @@ class SparepartController extends Controller
     public function trfspbrowse(Request $request)
     {
         if (Session::get('role') == 'ADMIN' || Session::get('role') == 'WHS') {
+
+            $count_reqapprover = DB::table('sp_approver_mstr')->count();
+            
             $data = DB::table('req_sparepart')
                 ->leftJoin('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
+                ->where(function ($query) use ($count_reqapprover){ //kondisi untuk menampilkan request sparepart yang sudah di approved all level
+                    $query->whereIn('req_sparepart.id', function ($subquery) use($count_reqapprover) {
+                        $subquery->select('rqtr_mstr_id')
+                            ->from('reqsp_trans_approval')
+                            ->whereIn('rqtr_status', ['approved'])
+                            ->groupBy('rqtr_mstr_id')
+                            ->havingRaw("COUNT(*) = $count_reqapprover"); // Menentukan jumlah level approval yang statusnya harus approved
+                    });
+                })
                 ->where('req_sp_status', '!=', 'canceled')
                 ->groupBy('req_sp_number')
                 ->orderBy('req_sp_due_date', 'ASC');
@@ -1242,6 +1256,7 @@ class SparepartController extends Controller
         //nomor wo akan di filter berdasarkan departmen user yang login harus sama dengan departmen wo, kecuali admin dapat mengakses semua nomor wo
         $womstr = DB::table('wo_dets_sp')
             ->join('wo_mstr', 'wo_mstr.wo_number', 'wo_dets_sp.wd_sp_wonumber')
+            ->leftJoin('ret_sparepart_det', 'ret_sparepart_det.ret_spd_wonumber', 'wo_dets_sp.wd_sp_wonumber')
             ->where('wo_status', '<>', 'closed')
             ->where('wo_status', '<>', 'finished')
             ->where('wo_status', '<>', 'acceptance')
@@ -1249,6 +1264,8 @@ class SparepartController extends Controller
             ->when(Session::get('role') <> 'ADMIN', function ($q) {
                 return $q->where('wo_department', Session::get('department'));
             })
+            ->whereColumn('wd_sp_required', '>', 'wd_sp_issued') //untuk validasi bahwa qty yg mau dikembalikan sudah pernah di issued namun tidak full issued
+            ->where('wd_already_returned', 0) //untuk validasi bahwa sp pada nomor tersebut belum pernah dikembalikan
             ->groupBy('wd_sp_wonumber')
             ->get();
 
@@ -1265,7 +1282,7 @@ class SparepartController extends Controller
         $splistwo = WOMaster::join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber', 'wo_mstr.wo_number')
             ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
             ->leftJoin('inp_supply', 'inp_supply.inp_loc', 'wo_dets_sp.wd_sp_loc_issued')
-            ->whereColumn('wd_sp_required', '>', 'wd_sp_issued')
+            ->whereColumn('wd_sp_required', '>', 'wd_sp_issued') //untuk validasi bahwa qty yg mau dikembalikan sudah pernah di issued namun tidak full issued
             ->where('wo_number', $wo_number)
             ->get();
 
@@ -1403,6 +1420,7 @@ class SparepartController extends Controller
                     DB::table('ret_sparepart_det')
                         ->insert([
                             'ret_spd_mstr_id' => $reqspmstrid,
+                            'ret_spd_wonumber' => $wonbr,
                             'ret_spd_sparepart_code' => $loopsp['spret'],
                             'ret_spd_qty_return' => $loopsp['qtyreturn'],
                             'ret_spd_loc_from' => $loopsp['locto'],
@@ -1422,8 +1440,9 @@ class SparepartController extends Controller
                             'ret_sph_spcode' => $loopsp['spret'],
                             'ret_sph_qtyret' => $loopsp['qtyreturn'],
                             'ret_sph_locfrom' => $loopsp['locto'],
+                            'ret_sph_sitefrom' => $loopsp['siteto'],
                             // 'ret_sph_duedate' => $req->due_date,
-                            'ret_sph_action' => 'request sparepart created',
+                            'ret_sph_action' => 'return sparepart created',
                             'created_at' => Carbon::now()->toDateTimeString(),
                         ]);
                 }
@@ -1519,7 +1538,7 @@ class SparepartController extends Controller
                 // }
 
                 //kirim email ke warehouse
-                // SendNotifReqSparepart::dispatch($runningnbr);
+                SendNotifRetSparepart::dispatch($runningnbr);
 
                 DB::commit();
 
@@ -1902,9 +1921,9 @@ class SparepartController extends Controller
                     }
 
                     $data = DB::table('temp_table')
-                    ->select(DB::raw('temp_table.*, sum(t_qtyoh) as totalqty'))
-                    ->groupBy(['t_site', 't_loc'])
-                    ->get();
+                        ->select(DB::raw('temp_table.*, sum(t_qtyoh) as totalqty'))
+                        ->groupBy(['t_site', 't_loc'])
+                        ->get();
 
                     // dd($temp_table);
                 }
@@ -2383,7 +2402,7 @@ class SparepartController extends Controller
                 $output .= '<td><input type="hidden" name="te_retnote[]" readonly>' . $data->ret_spd_engnote . '</td>';
                 $output .= '<td><input type="hidden" name="te_qtytrf[]" readonly>' . $data->ret_spd_qty_transfer . '</td>';
                 // $output .= '<td><input type="hidden" name="te_siteto[]" readonly>' . $data->ret_spd_site_to . '</td>';
-                $output .= '<td><input type="hidden" name="te_locto[]" readonly>' . $data->ret_spd_site_to . ' & ' . $data->ret_spd_loc_to . ' & ' . $data->ret_spd_lot_to . '</td>';
+                $output .= '<td><input type="hidden" name="te_locto[]" readonly>' . $data->ret_spd_site_to . ' & ' . $data->ret_spd_loc_to . '</td>';
                 $output .= '<td><input type="hidden" name="te_note[]" readonly>' . $data->ret_spd_whsnote . '</td>';
                 $output .= '</td>';
                 $output .= '</tr>';
@@ -2401,7 +2420,6 @@ class SparepartController extends Controller
         // dd($req->all()); 
 
         DB::beginTransaction();
-
 
         try {
 
@@ -2523,6 +2541,7 @@ class SparepartController extends Controller
                             'ret_spd_loc_to' => $req->hidden_locto[$index],
                             'ret_spd_lot_to' => $req->hidden_lotto[$index],
                             'ret_spd_whsnote' => $req->notes[$index],
+                            'ret_sp_flag' => 1,
                             'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                         ]);
 
@@ -2537,6 +2556,12 @@ class SparepartController extends Controller
                             'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                         ]);
 
+                    DB::table('wo_dets_sp')
+                        ->where('wd_sp_wonumber', '=', $retspmstr->ret_sp_wonumber)
+                        ->update([
+                            'wd_already_returned' => 1
+                        ]);
+
                     DB::table('ret_sparepart_hist')
                         ->insert([
                             'ret_sph_number' =>  $req->hide_rsnum,
@@ -2544,11 +2569,12 @@ class SparepartController extends Controller
                             'ret_sph_dept' =>  $retspmstr->ret_sp_dept,
                             'ret_sph_retby' =>  $retspmstr->ret_sp_return_by,
                             'ret_sph_trfby' => $user->username,
+                            'ret_sph_spcode' => $req->hidden_spcode[$index],
                             'ret_sph_action' => 'sparepart return from warehouse completed',
                             'ret_sph_qtytrf' => $req->qtytotransfer[$index],
                             'ret_sph_siteto' => $req->hidden_siteto[$index],
                             'ret_sph_locto' => $req->hidden_locto[$index],
-                            'ret_sph_lotto' => $req->hidden_lotto[$index],
+                            // 'ret_sph_lotto' => $req->hidden_lotto[$index],
                             'ret_sph_sitefrom' => $req->hidden_sitefrom[$index],
                             'ret_sph_locfrom' => $req->hidden_locfrom[$index],
                             'created_at' => Carbon::now('ASIA/JAKARTA'),
@@ -2669,12 +2695,15 @@ class SparepartController extends Controller
                 /* jika qxtend response error */
             }
 
+            //kirim email ke engineer yg melakukan return sparepart
+            SendNotifRetSpWarehousetoEng::dispatch($req->hide_rsnum);
+
             DB::commit();
 
             toast('Return Spare Part Warehouse for ' . $req->hide_rsnum . ' Successfuly !', 'success');
             return redirect()->route('retspwhsbrowse');
         } catch (Exception $e) {
-            dd($e);
+            // dd($e);
             DB::rollBack();
             toast('Confirm Failed', 'error');
             return redirect()->route('retspwhsbrowse');

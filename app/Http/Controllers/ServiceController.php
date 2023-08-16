@@ -421,7 +421,7 @@ class ServiceController extends Controller
 
             //cek tingkatan approval
             if (count($srdeptapprover) < 1) {
-
+dd(1);
                 //input ke trans approval eng jika tidak ada approval department
                 DB::table('sr_trans_approval_eng')
                     ->insert([
@@ -443,6 +443,7 @@ class ServiceController extends Controller
                         'updated_at' => Carbon::now()->toDateTimeString(),
                     ]);
             } else {
+                dd(2);
                 for ($i = 0; $i < count($srdeptapprover); $i++) {
                     $nextdeptapprover = $srdeptapprover[$i]->sr_approver_dept;
                     $nextroleapprover = $srdeptapprover[$i]->sr_approver_role;
@@ -611,7 +612,7 @@ class ServiceController extends Controller
                     ->join('eng_mstr', 'eng_mstr.eng_dept', 'service_req_mstr.sr_eng_approver')
                     ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
                     ->leftjoin('wo_mstr', 'wo_mstr.wo_number', 'service_req_mstr.wo_number')
-                    ->leftjoin('sr_trans_approval_eng', 'sr_trans_approval_eng.srta_eng_mstr_id', 'service_req_mstr.id')
+                    ->join('sr_trans_approval_eng', 'sr_trans_approval_eng.srta_eng_mstr_id', 'service_req_mstr.id')
                     ->selectRaw('service_req_mstr.*,asset_mstr.*,asset_type.*,asset_loc.*,
                 wotyp_mstr.*,users.*,dept_mstr.*,wo_mstr.*,
                 srta_eng_status,eng_role,srta_eng_reason,service_req_mstr.id')
