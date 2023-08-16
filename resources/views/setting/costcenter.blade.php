@@ -93,7 +93,7 @@
                         <label for="t_code" class="col-md-4 col-form-label text-md-right">Code 
                             <span id="alert1" style="color: red; font-weight: 200;">*</span> </label>
                         <div class="col-md-6">
-                            <input id="t_code" type="text" class="form-control" name="t_code" autocomplete="off" autofocus maxlength="3" required />
+                            <input id="t_code" type="text" class="form-control" name="t_code" autocomplete="off" autofocus required />
                         </div>
                     </div>
                     <div class="form-group row">
@@ -288,11 +288,11 @@
             var desc = $('#t_desc').val();
 
             $.ajax({
-              url: "/cekdept?code=" + code + "&desc=" + desc,
+              url: "/cekcc?code=" + code + "&desc=" + desc,
               success: function(data) {
                 
                 if (data == "ada") {
-                  alert("Departemen Already Registered!!");
+                  alert("Cost Center Already Registered!!");
                   document.getElementById('t_code').value = '';
                   document.getElementById('t_code').focus();
                 }
@@ -308,11 +308,11 @@
             var desc = $('#t_desc').val();
 
             $.ajax({
-              url: "/cekdept?code=" + code + "&desc=" + desc,
+              url: "/cekcc?code=" + code + "&desc=" + desc,
               success: function(data) {
                 
                 if (data == "ada") {
-                  alert("Description Departemen Already Registered!!");
+                  alert("Description Cost Center Already Registered!!");
                   document.getElementById('t_desc').value = '';
                   document.getElementById('t_desc').focus();
                 }
@@ -326,12 +326,12 @@
             var t_code = document.getElementById("t_code").value;
       
             // Regular expression to match only letters and numbers
-            var pattern = /^[A-Z0-9]*$/;
-      
-            {{--  if (t_code.length !== 3 || !pattern.test(t_code)) {
-                alert("The Cost Center code must consist of 3 uppercase alphanumeric characters without spaces or special characters.");
+            var pattern = /^[a-zA-Z0-9]*$/;
+
+            if (!pattern.test(t_code)) {
+                alert("The Cost Center code must consist of characters without spaces or special characters.");
                 return false;
-            }  --}}
+            }
       
             return true;
         }

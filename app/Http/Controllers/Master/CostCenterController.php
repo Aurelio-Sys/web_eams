@@ -42,6 +42,22 @@ class CostCenterController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+    //cek cost center sebelum input
+    public function cekcc(Request $req)
+    {
+        $cek = DB::table('cc_mstr')
+            ->where('cc_code','=',$req->input('code'))
+            ->orWhere('cc_desc','=',$req->input('desc'))
+            ->get();
+
+        if ($cek->count() == 0) {
+            return "tidak";
+        } else {
+            return "ada";
+        }
+    }
+
     public function store(Request $req)
     {
         DB::beginTransaction();
@@ -144,26 +160,26 @@ class CostCenterController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $req)
     {
         DB::beginTransaction();
 
         try {
-            //cek data dari asset
+            //cek data dari departemen
             $cekData = DB::table('dept_mstr')
-                    ->where('dept_user','=',$req->d_code)
+                    ->where('dept_cc','=',$req->d_code)
                     ->get();
 
             if ($cekData->count() == 0) {
-                DB::table('dept_mstr')
-                ->where('dept_code', '=', $req->d_code)
+                DB::table('cc_mstr')
+                ->where('cc_code', '=', $req->d_code)
                 ->delete();
 
                 DB::commit();
-                toast('Deleted Departemen Successfully.', 'success');
+                toast('Deleted Cost Center Successfully.', 'success');
                 return back();
             } else {
-                toast('Departemen Can Not Deleted!!!', 'error');
+                toast('Cost Center Can Not Deleted!!!', 'error');
                 return back();
             }
         } catch (Exception $e) {

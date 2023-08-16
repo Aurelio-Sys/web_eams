@@ -849,8 +849,11 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// Cost Center Maintenance
 	Route::get('/costcenter',[CostCenterController::class, 'index']); 
+	Route::get('/cekcc',[CostCenterController::class, 'cekcc']);
 	Route::post('/createcc',[CostCenterController::class, 'store']);
 	Route::post('/editcc',[CostCenterController::class, 'update']);
+	Route::post('/deletecc',[CostCenterController::class, 'destroy']);
+	
 	
 });
 
