@@ -154,8 +154,8 @@
             <!-- Spare Part -->
 
             <div style="border: 1px solid black; padding-top: 5%; padding-bottom: 5%; padding-left: 2%; padding-right: 2%;">
-                <div class="table-responsive tag-container" style="overflow-x: auto; display:inline-block; white-space: nowrap; padding:0; text-align:center; position:relative">
-                    <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0">
+                <div class="table-responsive tag-container" style="overflow-x: auto; overflow-y: hidden; width: 53rem;">
+                    <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0" style="width: 75rem !important; max-width: none !important;">
                         <thead>
                             <tr>
                                 <th style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</th>
@@ -163,6 +163,8 @@
                                 <th style="text-align: center; width: 5% !important; font-weight: bold;">Issued</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Issue</th>
                                 <th style="text-align: center; width: 18% !important; font-weight: bold;">Location & Lot</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Cost Center</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">GL Account</th>
                                 <th style="text-align: center; width: 5% !important; font-weight: bold;">Action</th>
                             </tr>
                         </thead>
@@ -191,6 +193,12 @@
                                         <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
                                         <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
                                         <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />
+                                    </td>
+                                    <td style="vertical-align: middle; text-align: left;">
+                                        <input type="text" class="form-control costcenter" name="costcenter[]" data-toggle="tooltip" autocomplete="off" readonly value="{{$header->wo_cost_center}}"/>
+                                    </td>
+                                    <td style="vertical-align: middle; text-align: left;">
+                                        <input type="text" class="form-control glacc" name="glacc[]" data-toggle="tooltip" autocomplete="off" readonly value="{{$datas->spm_account}}"/>
                                     </td>
                                     <td style="vertical-align:middle;text-align:center;">
 
@@ -234,7 +242,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="7">
+                                <td colspan="8">
                                     <input type="button" class="btn btn-lg btn-block btn-focus" id="addrow" value="Add New Spare Part" style="background-color:#1234A5; color:white; font-size:16px" />
                                 </td>
                             </tr>
@@ -592,7 +600,7 @@
             cols += '<select style="display: inline-block !important;" class="form-control selectpicker spreq" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="300px">';
             cols += '<option value = ""> -- Select Spare Part -- </option>';
             @foreach($newsparepart as $da)
-            cols += '<option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
+            cols += '<option data-spsite="{{$da->spm_site}}" data-glaccount="{{$da->spm_account}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
             @endforeach
             cols += '</select>';
             cols += '<input type="hidden" class="hidden_sp" name="hidden_sp[]" />';
@@ -615,6 +623,14 @@
             cols += '<input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />';
             cols += '<input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />';
             cols += '<input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />';
+            cols += '</td>';
+
+            cols += '<td style="vertical-align: middle; text-align:center;">';
+            cols += '<input type="text" class="form-control costcenter" name="costcenter[]" data-toggle="tooltip" autocomplete="off" readonly value="{{$header->wo_cost_center}}"/>';
+            cols += '</td>';
+
+            cols += '<td style="vertical-align: middle; text-align:center;">';
+            cols += '<input type="text" class="form-control glacc" name="glacc[]" data-toggle="tooltip" autocomplete="off" readonly/>';
             cols += '</td>';
 
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>';
@@ -838,7 +854,12 @@
             var row = $(this).closest("tr");
             const spreqOption = $(this).val();
 
+            var selectedOption = $(this).find('option:selected');
+            var glAccount = selectedOption.attr('data-glaccount');
+
+
             row.find(".hidden_sp").val(spreqOption);
+            row.find(".glacc").val(glAccount);
 
         });
 
