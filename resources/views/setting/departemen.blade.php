@@ -226,6 +226,11 @@
            document.getElementById('te_desc').value = desc;
            document.getElementById('te_runningnbr').value = runningnbr;
            document.getElementById('te_cc').value = cost;
+
+           $("#te_cc").select2({
+                width: '100%',
+                theme: 'bootstrap4',
+            });
        });
 
         $(document).on('blur','#t_runningnbr',function(){ // Click to only happen on announce links
@@ -440,6 +445,8 @@
             width: '100%',
             theme: 'bootstrap4',
         });
+
+        
     </script>
 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">
