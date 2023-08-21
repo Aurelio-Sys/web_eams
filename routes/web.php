@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Master\AssetSiteController;
 use App\Http\Controllers\Master\AssetLocController;
 use App\Http\Controllers\Master\AssetMoveController;
@@ -854,6 +855,8 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/editcc',[CostCenterController::class, 'update']);
 	Route::post('/deletecc',[CostCenterController::class, 'destroy']);
 	
+	// new dashboard DK
+	Route::get('/expensemt', [HomeController::class, 'expenseMT']);
 	
 });
 
