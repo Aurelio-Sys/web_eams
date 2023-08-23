@@ -421,7 +421,6 @@ class ServiceController extends Controller
 
             //cek tingkatan approval
             if (count($srdeptapprover) < 1) {
-
                 //input ke trans approval eng jika tidak ada approval department
                 DB::table('sr_trans_approval_eng')
                     ->insert([
@@ -611,7 +610,7 @@ class ServiceController extends Controller
                     ->join('eng_mstr', 'eng_mstr.eng_dept', 'service_req_mstr.sr_eng_approver')
                     ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
                     ->leftjoin('wo_mstr', 'wo_mstr.wo_number', 'service_req_mstr.wo_number')
-                    ->leftjoin('sr_trans_approval_eng', 'sr_trans_approval_eng.srta_eng_mstr_id', 'service_req_mstr.id')
+                    ->join('sr_trans_approval_eng', 'sr_trans_approval_eng.srta_eng_mstr_id', 'service_req_mstr.id')
                     ->selectRaw('service_req_mstr.*,asset_mstr.*,asset_type.*,asset_loc.*,
                 wotyp_mstr.*,users.*,dept_mstr.*,wo_mstr.*,
                 srta_eng_status,eng_role,srta_eng_reason,service_req_mstr.id')
@@ -650,7 +649,6 @@ class ServiceController extends Controller
                     ->orderBy('sr_req_date', 'DESC')
                     ->orderBy('sr_number', 'DESC')
                     ->groupBy('sr_number');
-                    
             }
 
             $data = $data->paginate(10);
@@ -795,6 +793,7 @@ class ServiceController extends Controller
         $srmstr = ServiceReqMaster::where('sr_number', $srnbr)->first();
         $runningnbr = $srmstr->sr_number;
 
+        //update service_req_mstr
         $update = ServiceReqMaster::where('sr_number', $srnbr)->first();
         $update->sr_fail_type = $wotype;
         $update->sr_fail_code = $newfailcode;
@@ -807,33 +806,50 @@ class ServiceController extends Controller
         $update->sr_status = 'Open';
         $update->updated_at = Carbon::now('ASIA/JAKARTA')->toDateTimeString();
 
+        //update service_req_mstr_hist
+        DB::table('service_req_mstr_hist')
+            ->insert([
+                'sr_number' => $srnbr,
+                'sr_eng_approver' => $approver,
+                'sr_note' => $note,
+                'sr_req_date' => $reqdate,
+                'sr_req_time' => $reqtime,
+                'sr_fail_type' => $wotype,
+                'sr_fail_code' => $newfailcode,
+                'sr_impact' => $newimpact,
+                'sr_priority' => $priority,
+                'sr_action' => 'SR Updated',
+                'created_at' => Carbon::now()->toDateTimeString(),
+                'updated_at' => Carbon::now()->toDateTimeString(),
+            ]);
+
         //jika ada perubahan approval engineer sebelum diapprove oleh engineer
-        if ($srmstr->sr_eng_approver != $approver) {
-            // dd(1);
-            DB::table('sr_trans_approval_eng')
-                ->where('srta_eng_mstr_id', $srmstr->id)
-                ->update([
-                    'srta_eng_dept_approval' => $approver,
-                    'srta_eng_role_approval' => 'SPVSR',
-                    'srta_eng_reason' => null,
-                    'srta_eng_status' => 'Waiting for engineer approval',
-                    'srta_eng_approved_by' => null,
-                    'updated_at' => null,
-                ]);
+        // if ($srmstr->sr_eng_approver != $approver) {
+        //     // dd(1);
+        //     DB::table('sr_trans_approval_eng')
+        //         ->where('srta_eng_mstr_id', $srmstr->id)
+        //         ->update([
+        //             'srta_eng_dept_approval' => $approver,
+        //             'srta_eng_role_approval' => 'SPVSR',
+        //             'srta_eng_reason' => null,
+        //             'srta_eng_status' => 'Waiting for engineer approval',
+        //             'srta_eng_approved_by' => null,
+        //             'updated_at' => null,
+        //         ]);
 
-            DB::table('sr_trans_approval_eng_hist')
-                ->insert([
-                    'srtah_eng_sr_number' => $srmstr->sr_number,
-                    'srtah_eng_dept_approval' => $approver,
-                    'srtah_eng_role_approval' => 'SPVSR',
-                    'srtah_eng_status' => 'Waiting for engineer approval',
-                    'srtah_eng_reason' => 'Approval has been changed by user',
-                    'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                ]);
+        //     DB::table('sr_trans_approval_eng_hist')
+        //         ->insert([
+        //             'srtah_eng_sr_number' => $srmstr->sr_number,
+        //             'srtah_eng_dept_approval' => $approver,
+        //             'srtah_eng_role_approval' => 'SPVSR',
+        //             'srtah_eng_status' => 'Waiting for engineer approval',
+        //             'srtah_eng_reason' => 'Approval has been changed by user',
+        //             'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+        //             'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+        //         ]);
 
-            EmailScheduleJobs::dispatch('', '', '10', '', '', $runningnbr, '');
-        }
+        //     // EmailScheduleJobs::dispatch('', '', '10', '', '', $runningnbr, '');
+        // }
 
         //jika ada perubahan approval engineer setelah diapprove oleh engineer
         if ($srmstr->sr_status_approval == 'Revision from engineer approval') {
@@ -950,17 +966,35 @@ class ServiceController extends Controller
                         'srta_status'     => 'Canceled by user',
                         'updated_at'      => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
                     ]);
+
+                DB::table('sr_trans_approval_hist')
+                    ->insert([
+                        'srtah_sr_number' => $srnbr,
+                        'srtah_status' => 'Canceled by user',
+                        'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    ]);
             }
         }
 
         $approvaleng = DB::table('sr_trans_approval_eng')->where('srta_eng_mstr_id', $srmstr->id)->first();
-        if ($approvaleng->srta_eng_status = 'Waiting for engineer approval') {
-            DB::table('sr_trans_approval_eng')
-                ->where('srta_eng_mstr_id', '=', $srmstr->id)
-                ->update([
-                    'srta_eng_status'     => 'Canceled by user',
-                    'updated_at'      => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
-                ]);
+        if ($approvaleng != null) {
+            if ($approvaleng->srta_eng_status = 'Waiting for engineer approval') {
+                DB::table('sr_trans_approval_eng')
+                    ->where('srta_eng_mstr_id', '=', $srmstr->id)
+                    ->update([
+                        'srta_eng_status'     => 'Canceled by user',
+                        'updated_at'      => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
+                    ]);
+
+                DB::table('sr_trans_approval_eng_hist')
+                    ->insert([
+                        'srtah_eng_sr_number' => $srnbr,
+                        'srtah_eng_status' => 'Canceled by user',
+                        'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    ]);
+            }
         }
 
 

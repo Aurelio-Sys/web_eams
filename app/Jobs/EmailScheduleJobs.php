@@ -485,9 +485,6 @@ class EmailScheduleJobs
                 ->where('role_user', '=', $approver->srta_role_approval)
                 ->get();
 
-            $emailuser = DB::table('users')
-                ->where('username', $requestor)
-                ->first();
             // dd($user);
 
             $emails = '';
@@ -528,33 +525,6 @@ class EmailScheduleJobs
                 $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel                
 
             }
-
-            //email ke user
-            Mail::send(
-                'emailrequestor',
-                [
-                    'pesan' => 'Service Request Approved by Department ' . $role,
-                    'note1' => $srnumber,
-                    'note2' => $asset,
-                ],
-                function ($message) use ($emailuser) {
-                    $message->subject('eAMS - Service Request Approved by Department');
-                    // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
-                    $message->to($emailuser->email_user);
-                }
-            );
-
-            $user = App\User::where('id', '=', $emailuser->id)->first();
-            $details = [
-                'body' => 'Service Request Approved by Department ' . $role,
-                'url' => 'srbrowse',
-                'nbr' => $srnumber,
-                'note' => 'Please check'
-
-            ]; // isi data yang dioper
-
-            $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel                
-
 
         } else if ($a == 8) { //kirim email ke engineer approver
             $asset = $this->asset;

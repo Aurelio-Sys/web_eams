@@ -19,15 +19,14 @@ class CreateRetSparepartHist extends Migration
             $table->string('ret_sph_wonumber')->nullable();
             $table->string('ret_sph_dept');
             $table->string('ret_sph_retby');
+            $table->string('ret_sph_trfby')->nullable();
             $table->string('ret_sph_spcode');
             $table->decimal('ret_sph_qtyret', 8, 2);
             $table->decimal('ret_sph_qtytrf', 8, 2);
             $table->string('ret_sph_locto');
             $table->string('ret_sph_siteto');
-            $table->string('ret_sph_lotfrom');
             $table->string('ret_sph_locfrom');
             $table->string('ret_sph_sitefrom');
-            $table->date('ret_sph_duedate');
             $table->string('ret_sph_action');
             $table->timestamps();
         });

@@ -139,7 +139,7 @@
       <div class="col-sm-12 col-md-5">
         <button type="submit" id="btnsubmit" class="btn btn-success" style="color: white !important;">Save</button>&nbsp;
         <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
-          <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+          <i class="fas fa-spinner fa-spin"></i> &nbsp;Saving
         </button>
       </div>
     </div>
