@@ -173,8 +173,8 @@
         <div class="modal-footer">
             <a class="btn btn-danger" href="/wotransfer" id="btnback">Back</a>
             <button type="submit" class="btn btn-success bt-action" id="btnconf" disabled>Confirm</button>
-            <button type="button" class="btn bt-action" id="btnloading" style="display:none">
-                <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
+            <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none; width: 150px !important;">
+                <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
             </button>
         </div>
     </form>
@@ -214,6 +214,11 @@
     }
 
     $(document).ready(function() {
+        $('#submit').submit(function(event) {
+            document.getElementById('btnconf').style.display = 'none';
+            document.getElementById('btnback').style.display = 'none';
+            document.getElementById('btnloading').style.display = '';
+        });
 
         // untuk membuat readonly
         $(".readonly").on('keydown paste focus mousedown', function(e){
@@ -235,7 +240,8 @@
         //     }
         // });
 
-        $(document).on('click', '.loclotfrom', function() { 
+        $(document).on('click', '.loclotfrom', function() {
+            $('#loadingtable').modal('show'); 
             var row = $(this).closest("tr");
             const spcode = row.find(".hidden_spcode").val();
             const getassetsite = document.getElementById('hidden_assetsite').value;

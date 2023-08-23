@@ -263,7 +263,7 @@
                     </div>
                     <label for="r_duedate" class="col-md-3 col-form-label">Needed Date</label>
                     <div class="col-md-3">
-                        <input type="date" class="form-control" id="r_duedate" name="r_duedate" readonly>
+                        <input type="text" class="form-control" id="r_duedate" name="r_duedate" readonly>
                     </div>
                 </div>
                 <div class="form-group row" style="margin-bottom: 0px;">

@@ -116,6 +116,10 @@
                     </div>
                 </div>
                 <div class="form-group row" style="margin: 0px 0px 1.5em 0px;">
+                    <label for="v_wonumber" class="col-md-2 col-form-label">WO Number</label>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" id="v_wonumber" name="v_wonumber" readonly>
+                    </div>
                     <label for="v_trfby" class="col-md-2 col-form-label">Transferred By</label>
                     <div class="col-md-2">
                         <input type="text" class="form-control" id="v_trfby" name="v_trfby" readonly>
@@ -129,75 +133,91 @@
                     <table width="100%" id='asetTable' class='table table-striped table-bordered dataTable no-footer order-list'>
                         <thead>
                             <th width="20%">Spare part</th>
-                            <th width="8%">Qty Req</th>
+                            <th width="8%">Qty Return</th>
+                            <th width="12%">Site & Loc From</th>
                             <!-- <th width="8%">Site From</th> -->
-                            <th width="20%">Site & Location & Lot From</th>
                             <th width="15%">Request SP Note</th>
-                            <th width="8%">Qty Trf</th>
+                            <th width="9%">Qty Transfer</th>
                             <!-- <th width="8%">Site To</th> -->
-                            <th width="15%">Site & Location To</th>
+                            <th width="13%">Site & Loc To</th>
                             <th width="15%">Transfer SP Note</th>
                         </thead>
                         <tbody id='v_detailapp'></tbody>
                     </table>
+                    <div id="v_cancelnote" class="form-group row" style="margin: 2em 0px 0.8em 0px;">
+                        <label for="e_rsnumber" class="col-md-3 col-form-label">Engineer reason to cancel</label>
+                        <div class="col-md-6">
+                            <textarea class="form-control" id="v_reason" name="v_reason" autofocus rows="2" readonly></textarea>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-@endsection
-@section('scripts')
-<script>
-    $(document).on('click', '.viewtrfsp', function() {
+    @endsection
+    @section('scripts')
+    <script>
+        $(document).on('click', '.viewtrfsp', function() {
 
-        $('#viewModal').modal('show');
+            $('#viewModal').modal('show');
 
-        var rsnumber = $(this).data('rsnumber');
-        var retby = $(this).data('retby');
-        var duedate = $(this).data('duedate');
-        var trfby = $(this).data('trfby');
-        var trfdate = $(this).data('trfdate');
+            var rsnumber = $(this).data('rsnumber');
+            var wonumber = $(this).data('wonumber');
+            var retby = $(this).data('retby');
+            var duedate = $(this).data('duedate');
+            var trfby = $(this).data('trfby');
+            var trfdate = $(this).data('trfdate');
+            var cancelnote = $(this).data('cancelnote');
 
-        document.getElementById('v_rsnumber').value = rsnumber;
-        document.getElementById('v_retby').value = retby;
-        document.getElementById('v_retdate').value = duedate;
-        document.getElementById('v_trfby').value = trfby;
-        document.getElementById('v_trfdate').value = trfdate;
+            document.getElementById('v_rsnumber').value = rsnumber;
+            document.getElementById('v_wonumber').value = wonumber;
+            document.getElementById('v_retby').value = retby;
+            document.getElementById('v_retdate').value = duedate;
+            document.getElementById('v_trfby').value = trfby;
+            document.getElementById('v_trfdate').value = trfdate;
+            document.getElementById('v_reason').value = cancelnote;
 
-        $.ajax({
-            url: "retspwhsviewdet?code=" + rsnumber,
-            success: function(data) {
-                // console.log(data);
-                $('#v_detailapp').html('').append(data);
+            $.ajax({
+                url: "retspwhsviewdet?code=" + rsnumber,
+                success: function(data) {
+                    // console.log(data);
+                    $('#v_detailapp').html('').append(data);
+                }
+            })
+
+            if (cancelnote != '') {
+                document.getElementById('v_cancelnote').style.display = '';
+            } else {
+                document.getElementById('v_cancelnote').style.display = 'none';
+
             }
-        })
 
-    });
+        });
 
-    function resetSearch() {
-        $('#s_nomorwo').val('');
-        $('#s_asset').val('');
-        $('#s_priority').val('');
-    }
+        function resetSearch() {
+            $('#s_nomorwo').val('');
+            $('#s_asset').val('');
+            $('#s_priority').val('');
+        }
 
-    $(document).ready(function() {
-        var cur_url = window.location.href;
+        $(document).ready(function() {
+            var cur_url = window.location.href;
 
-        let paramString = cur_url.split('?')[1];
-        let queryString = new URLSearchParams(paramString);
+            let paramString = cur_url.split('?')[1];
+            let queryString = new URLSearchParams(paramString);
 
-        let asset = queryString.get('s_asset');
-        let priority = queryString.get('s_priority');
+            let asset = queryString.get('s_asset');
+            let priority = queryString.get('s_priority');
 
-        $('#s_asset').val(asset).trigger('change');
-        $('#s_priority').val(priority).trigger('change');
-    });
+            $('#s_asset').val(asset).trigger('change');
+            $('#s_priority').val(priority).trigger('change');
+        });
 
-    $(document).on('click', '#btnrefresh', function() {
-        resetSearch();
-    });
-</script>
-@endsection
+        $(document).on('click', '#btnrefresh', function() {
+            resetSearch();
+        });
+    </script>
+    @endsection
