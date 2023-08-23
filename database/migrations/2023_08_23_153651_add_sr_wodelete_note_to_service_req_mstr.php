@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddWoDeleteNoteToWoMstr extends Migration
+class AddSrWodeleteNoteToServiceReqMstr extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class AddWoDeleteNoteToWoMstr extends Migration
      */
     public function up()
     {
-        Schema::table('wo_mstr', function (Blueprint $table) {
+        Schema::table('service_req_mstr', function (Blueprint $table) {
             //
-            $table->string('wo_delete_note')->nullable()->after('wo_cancel_note');
+            $table->string('sr_wodelete_note')->nullable()->after('sr_acceptance_note');
         });
     }
 
@@ -26,9 +26,9 @@ class AddWoDeleteNoteToWoMstr extends Migration
      */
     public function down()
     {
-        Schema::table('wo_mstr', function (Blueprint $table) {
+        Schema::table('service_req_mstr', function (Blueprint $table) {
             //
-            $table->dropColumn('wo_delete_note');
+            $table->dropColumn('sr_wodelete_note');
         });
     }
 }

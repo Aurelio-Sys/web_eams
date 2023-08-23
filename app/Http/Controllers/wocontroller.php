@@ -1571,7 +1571,7 @@ class wocontroller extends Controller
                         DB::table('service_req_mstr')
                             ->where('sr_number', '=', $checksr->wo_sr_number)
                             ->update([
-                                'sr_status' => 'Open',
+                                'sr_status' => 'Canceled',
                                 'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
 
@@ -1595,7 +1595,7 @@ class wocontroller extends Controller
                                 'sr_asset' => $getdatasr->sr_asset,
                                 'sr_eng_approver' => $getdatasr->sr_eng_approver,
                                 'sr_note' => $getdatasr->sr_note,
-                                'sr_status' => 'Open',
+                                'sr_status' => 'Canceled',
                                 'sr_status_approval' => $getdatasr->sr_status_approval,
                                 'sr_req_by' => $getdatasr->sr_req_by,
                                 'sr_req_date' => $getdatasr->sr_req_date,
@@ -1634,6 +1634,7 @@ class wocontroller extends Controller
                             ->update([
                                 'sr_status' => 'Open',
                                 'wo_number' => null, //dibuat null jika wo akan didelete
+                                'sr_wodelete_note' => $req->notecancel,
                                 'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
 
@@ -1757,7 +1758,7 @@ class wocontroller extends Controller
                             DB::table('service_req_mstr')
                                 ->where('sr_number', '=', $checksr->wo_sr_number)
                                 ->update([
-                                    'sr_status' => 'Open',
+                                    'sr_status' => 'Canceled',
                                     'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 ]);
 
@@ -1781,7 +1782,7 @@ class wocontroller extends Controller
                                     'sr_asset' => $getdatasr->sr_asset,
                                     'sr_eng_approver' => $getdatasr->sr_eng_approver,
                                     'sr_note' => $getdatasr->sr_note,
-                                    'sr_status' => 'Open',
+                                    'sr_status' => 'Canceled',
                                     'sr_status_approval' => $getdatasr->sr_status_approval,
                                     'sr_req_by' => $getdatasr->sr_req_by,
                                     'sr_req_date' => $getdatasr->sr_req_date,
@@ -1820,6 +1821,7 @@ class wocontroller extends Controller
                                 ->update([
                                     'sr_status' => 'Open',
                                     'wo_number' => null, //dibuat null jika wo akan didelete
+                                    'sr_wodelete_note' => $req->notecancel,
                                     'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 ]);
 
