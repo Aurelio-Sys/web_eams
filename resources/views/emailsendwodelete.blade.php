@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Work Order Cancellation Notification</title>
+    <title>Work Order Deletion Notification</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -41,11 +41,11 @@
   <body>
     <div class="container">
       <div class="header">
-        <h1>Work Order Cancellation Notification</h1>
+        <h1>Work Order Deletion Notification</h1>
       </div>
       <div class="content">
         <p>Dear {{ $name }},</p>
-        <p>This email is to inform you that the work order with number {{ $wonumber }} has been cancelled and the service request {{ $srnumber }} status has been cancel. The following is the cancellation note:</p>
+        <p>This email is to inform you that the work order with number {{ $wonumber }} has been deleted and the service request {{ $srnumber }} status has been returned to open. The following is the deletion note:</p>
         <p>{{ $cancellationNote }}</p>
       </div>
       <div class="footer">

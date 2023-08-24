@@ -1579,7 +1579,7 @@ class wocontroller extends Controller
                         $thiswonumber = $checksr->wo_number;
                         $thissrnumber = $checksr->wo_sr_number;
                         $thisnotecancel = $req->notecancel;
-                        SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
+                        SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel,'cancel');
 
 
                         //ambil data sr untuk diinsert ke table service_req_mstr_hist
@@ -1642,7 +1642,7 @@ class wocontroller extends Controller
                         $thiswonumber = $checksr->wo_number;
                         $thissrnumber = $checksr->wo_sr_number;
                         $thisnotecancel = $req->notecancel;
-                        SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
+                        SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel,'delete');
 
                         //ambil data sr untuk diinsert ke table service_req_mstr_hist
                         $getdatasr = DB::table('service_req_mstr')
@@ -1766,7 +1766,7 @@ class wocontroller extends Controller
                             $thiswonumber = $checksr->wo_number;
                             $thissrnumber = $checksr->wo_sr_number;
                             $thisnotecancel = $req->notecancel;
-                            SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
+                            SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel,'cancel');
 
 
                             //ambil data sr untuk diinsert ke table service_req_mstr_hist
@@ -1829,7 +1829,7 @@ class wocontroller extends Controller
                             $thiswonumber = $checksr->wo_number;
                             $thissrnumber = $checksr->wo_sr_number;
                             $thisnotecancel = $req->notecancel;
-                            SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
+                            SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel,'delete');
 
                             //ambil data sr untuk diinsert ke table service_req_mstr_hist
                             $getdatasr = DB::table('service_req_mstr')
