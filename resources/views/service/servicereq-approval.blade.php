@@ -312,7 +312,7 @@
             <button type="submit" class="btn btn-danger" name="action" value="reject" id="btnreject">Reject</button>
             <button type="submit" class="btn btn-success" name="action" value="approve" id="btnapprove">Approve</button>
             <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
-              <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+              <i class="fas fa-spinner fa-spin"></i> &nbsp;Saving
             </button>
           </div>
       </form>
@@ -445,7 +445,7 @@
             <button type="submit" class="btn btn-warning" name="action" value="revise" id="btnrevise">Revisi</button>
             <button type="submit" class="btn btn-success" name="action" value="approve" id="btnapprove">Approve</button> -->
             <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
-              <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+              <i class="fas fa-spinner fa-spin"></i> &nbsp;Saving
             </button>
           </div>
       </form>

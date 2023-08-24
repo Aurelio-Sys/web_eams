@@ -439,7 +439,7 @@
             <button type="submit" class="btn btn-danger" name="action" value="reject" id="btnreject">Reject</button>
             <button type="submit" class="btn btn-success" name="action" value="approve" id="btnapprove">Approve</button>
             <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
-              <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+              <i class="fas fa-spinner fa-spin"></i> &nbsp;Saving
             </button> -->
             <div class="container">
               <div class="row">
@@ -451,7 +451,7 @@
                   <button type="submit" class="btn btn-danger ml-2" name="action" style="float:right" value="reject" id="btnreject">Reject</button>
                   <button type="button" class="btn btn-info bt-action" style="float:right" id="btnclose" data-dismiss="modal">Cancel</button>
                   <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
-                    <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+                    <i class="fas fa-spinner fa-spin"></i> &nbsp;Saving
                   </button>
                 </div>
               </div>
@@ -690,7 +690,7 @@
             <!-- <button type="submit" class="btn btn-danger" name="action" value="reject" id="btnreject">Reject</button>
             <button type="submit" class="btn btn-success" name="action" value="approve" id="btnapprove">Approve</button> -->
             <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
-              <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+              <i class="fas fa-spinner fa-spin"></i> &nbsp;Saving
             </button>
           </div>
       </form>
@@ -826,7 +826,7 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-info bt-action" id="btnclose_b" data-dismiss="modal">Cancel</button>
             <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none">
-              <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+              <i class="fas fa-spinner fa-spin"></i> &nbsp;Saving
             </button>
           </div>
       </form>

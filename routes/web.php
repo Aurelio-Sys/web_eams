@@ -519,6 +519,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/routesr','ServiceController@routesr');
 	route::get('/routesreng','ServiceController@routesreng');
 	route::post('/cancelsr','ServiceController@cancelsr');
+	route::get('/getsrdetail','ServiceController@getsrdetail');
 
 
 	//bagian tommy sr browse
@@ -818,6 +819,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/retspwhsdet/{id}', [SparepartController::class, 'retspwhsdet'])->name('retspwhsdet');
 	Route::get('/retspwhsviewdet', [SparepartController::class, 'retspwhsviewdet']);
 	Route::post('/retspwhssubmit', [SparepartController::class,'retspwhssubmit'])->name('retspwhssubmit');
+	Route::get('/getretspwsastockfrom', [SparepartController::class, 'getretspwsastockfrom']);
 	
 	// PM Confirm
 	Route::get('/pmconf',[PmConfirmController::class, 'index'])->name('pmconf'); 

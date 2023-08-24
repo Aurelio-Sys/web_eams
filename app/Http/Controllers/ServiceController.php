@@ -421,7 +421,6 @@ class ServiceController extends Controller
 
             //cek tingkatan approval
             if (count($srdeptapprover) < 1) {
-
                 //input ke trans approval eng jika tidak ada approval department
                 DB::table('sr_trans_approval_eng')
                     ->insert([
@@ -611,7 +610,7 @@ class ServiceController extends Controller
                     ->join('eng_mstr', 'eng_mstr.eng_dept', 'service_req_mstr.sr_eng_approver')
                     ->leftjoin('dept_mstr', 'dept_mstr.dept_code', 'service_req_mstr.sr_dept')
                     ->leftjoin('wo_mstr', 'wo_mstr.wo_number', 'service_req_mstr.wo_number')
-                    ->leftjoin('sr_trans_approval_eng', 'sr_trans_approval_eng.srta_eng_mstr_id', 'service_req_mstr.id')
+                    ->join('sr_trans_approval_eng', 'sr_trans_approval_eng.srta_eng_mstr_id', 'service_req_mstr.id')
                     ->selectRaw('service_req_mstr.*,asset_mstr.*,asset_type.*,asset_loc.*,
                 wotyp_mstr.*,users.*,dept_mstr.*,wo_mstr.*,
                 srta_eng_status,eng_role,srta_eng_reason,service_req_mstr.id')
@@ -650,7 +649,6 @@ class ServiceController extends Controller
                     ->orderBy('sr_req_date', 'DESC')
                     ->orderBy('sr_number', 'DESC')
                     ->groupBy('sr_number');
-                    
             }
 
             $data = $data->paginate(10);
@@ -795,6 +793,7 @@ class ServiceController extends Controller
         $srmstr = ServiceReqMaster::where('sr_number', $srnbr)->first();
         $runningnbr = $srmstr->sr_number;
 
+        //update service_req_mstr
         $update = ServiceReqMaster::where('sr_number', $srnbr)->first();
         $update->sr_fail_type = $wotype;
         $update->sr_fail_code = $newfailcode;
@@ -807,33 +806,50 @@ class ServiceController extends Controller
         $update->sr_status = 'Open';
         $update->updated_at = Carbon::now('ASIA/JAKARTA')->toDateTimeString();
 
+        //update service_req_mstr_hist
+        DB::table('service_req_mstr_hist')
+            ->insert([
+                'sr_number' => $srnbr,
+                'sr_eng_approver' => $approver,
+                'sr_note' => $note,
+                'sr_req_date' => $reqdate,
+                'sr_req_time' => $reqtime,
+                'sr_fail_type' => $wotype,
+                'sr_fail_code' => $newfailcode,
+                'sr_impact' => $newimpact,
+                'sr_priority' => $priority,
+                'sr_action' => 'SR Updated',
+                'created_at' => Carbon::now()->toDateTimeString(),
+                'updated_at' => Carbon::now()->toDateTimeString(),
+            ]);
+
         //jika ada perubahan approval engineer sebelum diapprove oleh engineer
-        if ($srmstr->sr_eng_approver != $approver) {
-            // dd(1);
-            DB::table('sr_trans_approval_eng')
-                ->where('srta_eng_mstr_id', $srmstr->id)
-                ->update([
-                    'srta_eng_dept_approval' => $approver,
-                    'srta_eng_role_approval' => 'SPVSR',
-                    'srta_eng_reason' => null,
-                    'srta_eng_status' => 'Waiting for engineer approval',
-                    'srta_eng_approved_by' => null,
-                    'updated_at' => null,
-                ]);
+        // if ($srmstr->sr_eng_approver != $approver) {
+        //     // dd(1);
+        //     DB::table('sr_trans_approval_eng')
+        //         ->where('srta_eng_mstr_id', $srmstr->id)
+        //         ->update([
+        //             'srta_eng_dept_approval' => $approver,
+        //             'srta_eng_role_approval' => 'SPVSR',
+        //             'srta_eng_reason' => null,
+        //             'srta_eng_status' => 'Waiting for engineer approval',
+        //             'srta_eng_approved_by' => null,
+        //             'updated_at' => null,
+        //         ]);
 
-            DB::table('sr_trans_approval_eng_hist')
-                ->insert([
-                    'srtah_eng_sr_number' => $srmstr->sr_number,
-                    'srtah_eng_dept_approval' => $approver,
-                    'srtah_eng_role_approval' => 'SPVSR',
-                    'srtah_eng_status' => 'Waiting for engineer approval',
-                    'srtah_eng_reason' => 'Approval has been changed by user',
-                    'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                ]);
+        //     DB::table('sr_trans_approval_eng_hist')
+        //         ->insert([
+        //             'srtah_eng_sr_number' => $srmstr->sr_number,
+        //             'srtah_eng_dept_approval' => $approver,
+        //             'srtah_eng_role_approval' => 'SPVSR',
+        //             'srtah_eng_status' => 'Waiting for engineer approval',
+        //             'srtah_eng_reason' => 'Approval has been changed by user',
+        //             'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+        //             'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+        //         ]);
 
-            EmailScheduleJobs::dispatch('', '', '10', '', '', $runningnbr, '');
-        }
+        //     // EmailScheduleJobs::dispatch('', '', '10', '', '', $runningnbr, '');
+        // }
 
         //jika ada perubahan approval engineer setelah diapprove oleh engineer
         if ($srmstr->sr_status_approval == 'Revision from engineer approval') {
@@ -950,17 +966,35 @@ class ServiceController extends Controller
                         'srta_status'     => 'Canceled by user',
                         'updated_at'      => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
                     ]);
+
+                DB::table('sr_trans_approval_hist')
+                    ->insert([
+                        'srtah_sr_number' => $srnbr,
+                        'srtah_status' => 'Canceled by user',
+                        'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    ]);
             }
         }
 
         $approvaleng = DB::table('sr_trans_approval_eng')->where('srta_eng_mstr_id', $srmstr->id)->first();
-        if ($approvaleng->srta_eng_status = 'Waiting for engineer approval') {
-            DB::table('sr_trans_approval_eng')
-                ->where('srta_eng_mstr_id', '=', $srmstr->id)
-                ->update([
-                    'srta_eng_status'     => 'Canceled by user',
-                    'updated_at'      => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
-                ]);
+        if ($approvaleng != null) {
+            if ($approvaleng->srta_eng_status = 'Waiting for engineer approval') {
+                DB::table('sr_trans_approval_eng')
+                    ->where('srta_eng_mstr_id', '=', $srmstr->id)
+                    ->update([
+                        'srta_eng_status'     => 'Canceled by user',
+                        'updated_at'      => Carbon::now('ASIA/JAKARTA')->toDateTimeString()
+                    ]);
+
+                DB::table('sr_trans_approval_eng_hist')
+                    ->insert([
+                        'srtah_eng_sr_number' => $srnbr,
+                        'srtah_eng_status' => 'Canceled by user',
+                        'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    ]);
+            }
         }
 
 
@@ -1415,7 +1449,7 @@ class ServiceController extends Controller
         $dataApprover = DB::table('sr_trans_approval_eng')
             ->leftJoin('users', 'sr_trans_approval_eng.srta_eng_approved_by', '=', 'users.id')
             ->join('dept_mstr', 'sr_trans_approval_eng.srta_eng_dept_approval', '=', 'dept_mstr.dept_code')
-            ->join('roles', 'sr_trans_approval_eng.srta_eng_role_approval', '=', 'roles.role_code')
+            ->leftJoin('roles', 'sr_trans_approval_eng.srta_eng_role_approval', '=', 'roles.role_code')
             ->selectRaw('sr_trans_approval_eng.*, users.username, dept_mstr.dept_code, dept_mstr.dept_desc, roles.role_desc')
             ->where('srta_eng_mstr_id', '=', $datasr->id)
             ->get();
@@ -1715,7 +1749,7 @@ class ServiceController extends Controller
                         'srtah_eng_sr_number' => $srmstr->sr_number,
                         'srtah_eng_dept_approval' => $engineer_approver->eng_dept,
                         'srtah_eng_role_approval' => $engineer_approver->eng_role,
-                        'srtah_eng_status' => 'Revision from engineer approval',
+                        'srtah_eng_status' => 'Approved from engineer approval',
                         'srtah_eng_reason' => $rejectnote,
                         'srtah_eng_approved_by' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
@@ -3264,6 +3298,150 @@ class ServiceController extends Controller
         return Excel::download(new ExportSRBrowse($srnbr, $status, $asset, $reqby, $datefrom, $dateto), 'Service Request.xlsx');
     }
 
+    public function getsrdetail(Request $req)
+    {
+        dd($req->all());
+        $nosr = $req->get('srnumber');
+        $currwo = DB::table('wo_mstr')
+            ->where('wo_mstr.wo_number', '=', $nowo)
+            ->first();
+
+        dd($nosr);
+
+        // check apakah wo berasal dari SR
+        // variable tampung sr note
+        $srnote = '';
+        $rejectreason = '';
+        if ($currwo->wo_sr_number != "") {
+            $getSRInfo = DB::table('service_req_mstr')
+                ->where('sr_number', '=', $currwo->wo_sr_number)
+                ->first();
+
+            $srnote = $getSRInfo->sr_note;
+            $rejectreason = $getSRInfo->sr_acceptance_note;
+        }
+
+        if ($currwo->wo_failure_type !== null) {
+            $getFailTypeDesc = DB::table('wotyp_mstr')
+                ->select('wotyp_desc')
+                ->where('wotyp_code', '=', $currwo->wo_failure_type)
+                ->first();
+        } else {
+            $getFailTypeDesc = '';
+        }
+
+
+        if ($currwo->wo_asset_code !== null) {
+            $getAssetDesc = DB::table('asset_mstr')
+                ->select('asset_desc', 'asset_loc', 'asset_group', 'asloc_desc')
+                ->join('asset_loc', 'asset_loc.asloc_code', 'asset_mstr.asset_loc')
+                ->where('asset_code', '=', $currwo->wo_asset_code)
+                ->first();
+        } else {
+            $getAssetDesc = '';
+        }
+
+
+
+        $listFailDesc = [];
+
+        if ($currwo->wo_failure_code !== null) {
+            $listFailCode = explode(';', $currwo->wo_failure_code);
+
+
+
+            foreach ($listFailCode as $failcode) {
+                $getFailDesc = DB::table('fn_mstr')
+                    ->select('fn_desc')
+                    ->where('fn_code', '=', $failcode)
+                    ->first();
+
+                $failure = array('fn_code' => $failcode, 'fn_desc' => $getFailDesc->fn_desc);
+
+                array_push($listFailDesc, $failure);
+            }
+        } else {
+            $getFailDesc = '';
+        }
+
+        $listEngDesc = [];
+
+        if ($currwo->wo_list_engineer !== null) {
+            $listEngCode = explode(';', $currwo->wo_list_engineer);
+
+            foreach ($listEngCode as $engcode) {
+                $getEngDesc = DB::table('eng_mstr')
+                    ->select('eng_desc')
+                    ->where('eng_code', '=', $engcode)
+                    ->first();
+
+                $eng = array('eng_code' => $engcode, 'eng_desc' => $getEngDesc->eng_desc);
+
+                array_push($listEngDesc, $eng);
+            }
+        }
+
+        $listImpactDesc = [];
+
+        if ($currwo->wo_impact_code !== null) {
+            $listImpactCode = explode(';', $currwo->wo_impact_code);
+
+            foreach ($listImpactCode as $impactcode) {
+                $getImpactDesc = DB::table('imp_mstr')
+                    ->select('imp_desc')
+                    ->where('imp_code', '=', $impactcode)
+                    ->first();
+
+                $impact = array('imp_code' => $impactcode, 'imp_desc' => $getImpactDesc->imp_desc);
+
+                array_push($listImpactDesc, $impact);
+            }
+        } else {
+            $getImpactDesc = '';
+        }
+
+        $getMtDesc = DB::table('pmc_mstr')
+            ->select('pmc_code', 'pmc_desc')
+            ->where('pmc_code', '=', $currwo->wo_mt_code)
+            ->first();
+
+        $getInslistDesc = DB::table('ins_list')
+            ->select('ins_code', 'ins_desc')
+            ->where('ins_code', '=', $currwo->wo_ins_code)
+            ->first();
+
+        $getSPlistDesc = DB::table('spg_list')
+            ->select('spg_code', 'spg_desc')
+            ->where('spg_code', '=', $currwo->wo_sp_code)
+            ->first();
+
+        $getQClistDesc = DB::table('qcs_list')
+            ->select('qcs_code', 'qcs_desc')
+            ->where('qcs_code', '=', $currwo->wo_qcspec_code)
+            ->first();
+
+        $getDeptDesc = DB::table('dept_mstr')
+            ->select('dept_code', 'dept_desc')
+            ->where('dept_code', '=', $currwo->wo_department)
+            ->first();
+
+        return response()->json([
+            'wo_master' => $currwo,
+            'asset' => $getAssetDesc,
+            'failure_type' => $getFailTypeDesc,
+            'failurecode' => $listFailDesc,
+            'engineer' => $listEngDesc,
+            'impact' => $listImpactDesc,
+            'mtcode' => $getMtDesc,
+            'inslist' => $getInslistDesc,
+            'splist' => $getSPlistDesc,
+            'qcslist' => $getQClistDesc,
+            'sr_note' => $srnote,
+            'dept_desc' => $getDeptDesc,
+            'sr_acceptance_note' => $rejectreason,
+        ]);
+    }
+
     public function srprint(Request $req, $sr)
     {
         // dd($wo);
@@ -3275,8 +3453,8 @@ class ServiceController extends Controller
             ->first();
         $srmstr = DB::table('service_req_mstr')
             ->where('sr_number', '=', $sr)
-            ->selectRaw('"" as fn1, "" as fn2, "" as fn3, dept_desc, eng_desc, sr_number, sr_fail_type, sr_dept,
-            sr_req_date, sr_asset, asset_desc, sr_req_by, "" as sr_approver, sr_impact, imp_desc, sr_req_date, sr_req_time, asset_desc, wotyp_desc, 
+            ->selectRaw('"" as fn1, "" as fn2, "" as fn3, dept_desc, eng_desc, sr_number, sr_fail_type, sr_dept, sr_eng_approver,
+            sr_req_date, sr_asset, asset_desc, sr_req_by, "" as sr_approver, sr_impact, imp_desc, sr_req_date, sr_req_time, asset_desc, wotyp_desc, sr_fail_code,
             sr_note, imp_code, "" as dept_user, sr_req_by, service_req_mstr.wo_number, wo_due_date, wo_start_date')
             ->leftjoin('eng_mstr', 'service_req_mstr.sr_req_by', 'eng_mstr.eng_code')
             ->leftJoin('dept_mstr', 'service_req_mstr.sr_dept', 'dept_mstr.dept_code')
@@ -3290,8 +3468,49 @@ class ServiceController extends Controller
             // ->leftJoin('users', 'service_req_mstr.sr_approver', 'users.username')
             ->first();
 
-        $impact = DB::table(('imp_mstr'))
-            ->get();
+        $engapprover = DB::table('service_req_mstr')
+        ->where('sr_number', '=', $sr)
+        ->leftJoin('dept_mstr', 'service_req_mstr.sr_eng_approver', 'dept_mstr.dept_code')
+        ->first();
+
+        $listFailDesc = [];
+
+        if ($srmstr->sr_fail_code !== '') {
+            $listFailCode = explode(',', $srmstr->sr_fail_code);
+
+            foreach ($listFailCode as $failcode) {
+                $getFailDesc = DB::table('fn_mstr')
+                    ->select('fn_desc')
+                    ->where('fn_code', '=', $failcode)
+                    ->first();
+
+                $failure = array('fn_code' => $failcode, 'fn_desc' => $getFailDesc->fn_desc);
+                
+                array_push($listFailDesc, $failure);
+            }
+        } else {
+            $getFailDesc = '';
+        }
+
+        $listImpactDesc = [];
+
+        if ($srmstr->sr_impact !== '') {
+            $listImpactCode = explode(',', $srmstr->sr_impact);
+
+            foreach ($listImpactCode as $impactcode) {
+                $getImpactDesc = DB::table('imp_mstr')
+                    ->select('imp_desc')
+                    ->where('imp_code', '=', $impactcode)
+                    ->first();
+
+                $impact = array('imp_code' => $impactcode, 'imp_desc' => $getImpactDesc->imp_desc);
+
+                array_push($listImpactDesc, $impact);
+            }
+        } else {
+            $getImpactDesc = '';
+        }
+
         $dept = DB::table(('dept_mstr'))
             ->get();
 
@@ -3318,360 +3537,6 @@ class ServiceController extends Controller
 
         $engineerlist = "";
 
-        // $wodet = DB::table('wo_dets')
-        //     ->join('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')
-        //     ->where('wo_dets_nbr', '=', $sr)
-        //     ->get();
-        // dd($engineerlist);4
-        // $data = DB::table('wo_mstr')
-        //     ->selectRaw('wo_number,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status,
-        //         wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,wo_engineer2 as woen2, 
-        //         wo_engineer3 as woen3,wo_engineer4 as woen4,wo_engineer5 as woen5,u1.eng_desc as u11,
-        //         u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, 
-        //         loc_code,loc_desc,astype_code,astype_desc,wo_new_type,wotyp_desc,wo_impact,wo_impact_desc,
-        //         wo_reviewer,wo_approver,wo_created_at,wo_reviewer_appdate,wo_approver_appdate,wo_action,wo_sparepart')
-        //     ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
-        //     ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
-        //     ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
-        //     ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
-        //     ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
-        //     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-        //     ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
-        //     ->leftjoin('wotyp_mstr', 'wo_mstr.wo_new_type', 'wotyp_mstr.wotyp_code')
-        //     ->leftjoin('asset_type', 'asset_mstr.asset_type', 'asset_type.astype_code')
-        //     ->leftjoin('loc_mstr', 'asset_mstr.asset_loc', 'loc_mstr.loc_code')
-
-        //     ->where('wo_mstr.wo_number', '=', $sr)
-        //     ->get();
-        // // dd($data);
-        // $statusrepair = DB::table('wo_mstr')
-        //     ->where('wo_mstr.wo_number', '=', $sr)
-        //     ->first();
-        // // dd($statusrepair);
-        // $arrayrepaircode = [];
-        // $repairlist = [];
-        // $arrayrepairdetail = [];
-        // $arrayrepairinst = [];
-        // $arraysptdesc = [];
-        // $currspt_desc = '';
-        // // $repair = '';
-        // $countrepairitr = 0;
-        // $engineerlist = DB::table('wo_mstr')
-        //     ->selectRaw('a.name as eng1,b.name as eng2,c.name as eng3,d.name as eng4,e.name as eng5')
-        //     ->leftjoin('users as a', 'wo_mstr.wo_engineer1', 'a.username')
-        //     ->leftjoin('users as b', 'wo_mstr.wo_engineer2', 'b.username')
-        //     ->leftjoin('users as c', 'wo_mstr.wo_engineer3', 'c.username')
-        //     ->leftjoin('users as d', 'wo_mstr.wo_engineer4', 'd.username')
-        //     ->leftjoin('users as e', 'wo_mstr.wo_engineer5', 'e.username')
-        //     ->where('wo_mstr.wo_number', $sr)
-        //     ->first();
-
-        // // dd($engineerlist);
-        // dd($statusrepair);
-        // if ($statusrepair->wo_repair_type == 'manual') {
-        //     $data = DB::table('wo_mstr')
-        //         ->selectRaw('wo_number,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,
-        //                             wo_status,wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,
-        //                             wo_engineer2 as woen2, wo_engineer3 as woen3,wo_engineer4 as woen4,
-        //                             wo_engineer5 as woen5,u1.eng_desc as u11,u2.eng_desc as u22, u3.eng_desc as u33, 
-        //                             u4.eng_desc as u44, u5.eng_desc as u55,loc_code,loc_desc,astype_code,astype_desc,wo_new_type,wotyp_desc,wo_impact,wo_impact_desc,
-        //                             wo_reviewer,wo_approver,wo_created_at,wo_reviewer_appdate,wo_approver_appdate,wo_action,wo_sparepart')
-        //         ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
-        //         ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
-        //         ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
-        //         ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
-        //         ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
-        //         ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-        //         ->leftjoin('wotyp_mstr', 'wo_mstr.wo_new_type', 'wotyp_mstr.wotyp_code')
-        //         ->leftjoin('asset_type', 'asset_mstr.asset_type', 'asset_type.astype_code')
-        //         ->leftjoin('loc_mstr', 'asset_mstr.asset_loc', 'loc_mstr.loc_code')
-        //         ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
-        //         ->where('wo_mstr.wo_number', '=', $sr)
-        //         ->get();
-        //     $datamanual = DB::table('wo_manual_detail')
-        //         ->where('wo_manual_wo_nbr', '=', $sr)
-        //         ->get();
-        //     $countdb = count($datamanual);
-        // } else if ($statusrepair->wo_repair_type == 'group') {
-        //     $data = DB::table('wo_mstr')
-        //         ->selectRaw('wo_number,wo_priority,wo_dept,dept_desc,wo_note,wo_sr_nbr,wo_status,wo_asset,asset_desc,wo_schedule,
-        //                     wo_duedate,wo_engineer1 as woen1,wo_engineer2 as woen2, wo_engineer3 as woen3,wo_engineer4 as woen4,wo_engineer5 as woen5,u1.eng_desc as u11,u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, u5.eng_desc as u55, 
-        //                     loc_code,loc_desc,astype_code,astype_desc,wo_new_type,wotyp_desc,wo_impact,wo_impact_desc,wo_reviewer,wo_approver,wo_created_at,wo_reviewer_appdate,wo_approver_appdate,wo_action,wo_sparepart')
-        //         ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
-        //         ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
-        //         ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
-        //         ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
-        //         ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
-        //         ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-        //         ->leftjoin('wotyp_mstr', 'wo_mstr.wo_new_type', 'wotyp_mstr.wotyp_code')
-        //         ->leftjoin('asset_type', 'asset_mstr.asset_type', 'asset_type.astype_code')
-        //         ->leftjoin('loc_mstr', 'asset_mstr.asset_loc', 'loc_mstr.loc_code')
-        //         ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
-        //         ->where('wo_mstr.wo_number', '=', $sr)
-        //         ->get();
-        //     // dd($data);
-        //     // for($pa = 1; $pa <= 5; $pa++)
-        //     // $engineername = DB::table('wo_mstr')
-        //     //                 ->join('users','wo_mstr.wo_asset','asset_mstr.asset_code')
-        //     //                 ->join('loc_mstr as a','asset_mstr.asset_site','a.loc_site')
-        //     //                 ->join('loc_mstr as b','asset_mstr.asset_loc','b.loc_code')        
-        //     //                 ->where('wo_mstr.wo_number','=',$sr)  
-        //     //                 ->first();
-        //     $grouprepair = DB::table('xxrepgroup_mstr')
-        //         ->where('xxrepgroup_nbr', '=', $statusrepair->wo_repair_group)
-        //         ->get();
-        //     foreach ($grouprepair as $grouprepair) {
-        //         array_push($arrayrepaircode, $grouprepair->xxrepgroup_rep_code);
-        //     }
-        //     // dd($arrayrepaircode);
-        //     $countrepairitr = count($arrayrepaircode);
-        //     for ($i = 0; $i < count($arrayrepaircode); $i++) {
-        //         // dd($i);
-        //         $repairdesc = DB::table('rep_master')
-        //             ->where('rep_master.repm_code', '=', $arrayrepaircode[$i])
-        //             ->first();
-
-        //         if (!is_null($repairdesc)) {
-        //             array_push($repairlist, $repairdesc->repm_desc);
-        //         }
-
-        //         $repair[$i] = DB::table('wo_mstr')
-        //             ->join('xxrepgroup_mstr', 'wo_mstr.wo_repair_group', 'xxrepgroup_mstr.xxrepgroup_nbr')
-        //             ->join('wo_dets', function ($join) {
-        //                 $join->on('wo_dets.wo_dets_nbr', '=', 'wo_mstr.wo_number');
-        //                 $join->on('wo_dets.wo_dets_rc', '=', 'xxrepgroup_mstr.xxrepgroup_rep_code');
-        //             })
-        //             ->join('rep_master', 'wo_dets.wo_dets_rc', 'rep_master.repm_code')
-        //             // ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
-        //             ->join('ins_mstr', 'wo_dets.wo_dets_ins', 'ins_mstr.ins_code')
-        //             ->leftjoin('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')
-        //             ->where('wo_mstr.wo_number', '=', $sr)
-        //             ->where('xxrepgroup_mstr.xxrepgroup_rep_code', '=', $arrayrepaircode[$i])
-        //             ->get();
-        //         // $repair[$i] = DB::table('xxrepgroup_mstr')
-        //         //                 ->leftjoin('rep_master','xxrepgroup_mstr.xxrepgroup_rep_code','rep_master.repm_code')
-        //         //                 ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
-        //         //                 // ->join('rep_partgroup','rep_master.repm_part','rep_partgroup.reppg_code')
-        //         //                 // ->join('sp_mstr','rep_partgroup.reppg_part','sp_mstr.spm_code')
-        //         //                 // ->join('sp_type','sp_mstr.spm_type','sp_type.spt_code')
-        //         //                 ->leftjoin('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
-        //         //                 // ->leftjoin('sp_group','ins_mstr.ins_part','sp_group.spg_code')
-        //         //                 // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
-        //         //                 ->leftjoin('sp_mstr','ins_mstr.ins_part','sp_mstr.spm_code')
-        //         //                 // ->leftjoin('tool_mstr','ins_mstr.ins_tool','tool_mstr.tool_code')
-        //         //                 ->where('xxrepgroup_mstr.xxrepgroup_nbr','=',$statusrepair->wo_repair_group)
-
-        //         //                 ->distinct('ins_mstr.ins_code')
-        //         //                 ->orderBy('repm_ins','asc')
-
-        //         //                 ->get();
-        //         // dd(count($repair[$i]));
-        //         foreach ($repair[$i] as $grouptool) {
-        //             $newarr = explode(",", $grouptool->ins_tool);
-        //             for ($po = 0; $po < count($newarr); $po++) {
-        //                 $arr = DB::table('tool_mstr')
-        //                     ->where('tool_code', '=', $newarr[$po])
-        //                     ->first();
-        //                 if (isset($arr->tool_desc)) {
-        //                     $newarr[$po] = $arr->tool_desc;
-        //                 } else {
-        //                     $newarr[$po] = '';
-        //                 }
-        //             }
-        //             $exparr = implode(",", $newarr);
-        //             $grouptool->ins_tool = $exparr;
-        //         }
-        //         // dd($repair,$arrayrepaircode[$i],$i);
-        //         $check[$i] = DB::table('wo_mstr')
-        //             ->selectRaw('wrd_flag')
-        //             ->leftjoin('wo_rc_detail as a', 'wo_mstr.wo_number', 'a.wrd_wo_nbr')
-        //             ->where('wo_mstr.wo_number', '=', $sr)
-        //             ->where('a.wrd_repair_code', '=', $arrayrepaircode[$i])
-        //             ->first();
-        //         if (isset($check[$i]) == true) {
-        //             $checkstr[$i] = $check[$i]->wrd_flag;
-        //         } else {
-        //             $checkstr[$i] = 0;
-        //         }
-        //         // dd($repair[$i]);
-        //         // dd(count($repair[$i]));    
-        //         $countdb[$i] = count($repair[$i]);
-        //     }
-        //     // foreach($repair as $repair){
-        //     //     // dd($repair);
-        //     //     foreach($repair as $repair2){
-        //     //         dd($repair2);
-        //     //     }
-
-        //     // }
-        //     // dd($check[0]);
-        //     // // dd($)
-        //     // dd('aaa');
-
-        // } else if ($statusrepair->wo_repair_type == 'code') {
-        //     $data = DB::table('wo_mstr')
-        //         ->selectRaw('wo_number,wo_repair_code1,wo_repair_code2,wo_repair_code3,wo_priority,wo_dept,dept_desc,
-        //                     wo_note,wo_sr_nbr,wo_status,wo_asset,asset_desc,wo_schedule,wo_duedate,wo_engineer1 as woen1,
-        //                     wo_engineer2 as woen2, wo_engineer3 as woen3,wo_engineer4 as woen4,wo_engineer5 as woen5,
-        //                     u1.eng_desc as u11,u2.eng_desc as u22, u3.eng_desc as u33, u4.eng_desc as u44, 
-        //                     u5.eng_desc as u55,loc_code,loc_desc,astype_code,astype_desc,wo_new_type,wotyp_desc,
-        //                     wo_impact,wo_impact_desc,wo_reviewer,wo_approver,wo_created_at,wo_reviewer_appdate,wo_approver_appdate,wo_action,wo_sparepart')
-        //         ->leftjoin('eng_mstr as u1', 'wo_mstr.wo_engineer1', 'u1.eng_code')
-        //         ->leftjoin('eng_mstr as u2', 'wo_mstr.wo_engineer2', 'u2.eng_code')
-        //         ->leftjoin('eng_mstr as u3', 'wo_mstr.wo_engineer3', 'u3.eng_code')
-        //         ->leftjoin('eng_mstr as u4', 'wo_mstr.wo_engineer4', 'u4.eng_code')
-        //         ->leftjoin('eng_mstr as u5', 'wo_mstr.wo_engineer5', 'u5.eng_code')
-        //         ->leftjoin('asset_mstr', 'wo_mstr.wo_asset', 'asset_mstr.asset_code')
-        //         ->leftjoin('wotyp_mstr', 'wo_mstr.wo_new_type', 'wotyp_mstr.wotyp_code')
-        //         ->leftjoin('asset_type', 'asset_mstr.asset_type', 'asset_type.astype_code')
-        //         ->leftjoin('loc_mstr', 'asset_mstr.asset_loc', 'loc_mstr.loc_code')
-        //         ->leftJoin('dept_mstr', 'wo_mstr.wo_dept', 'dept_mstr.dept_code')
-        //         ->where('wo_mstr.wo_number', '=', $sr)
-        //         ->get();
-        //     // dd($data[0]->wo_repair_code1);
-        //     if (isset($data[0]->wo_repair_code1)) {
-        //         array_push($arrayrepaircode, $data[0]->wo_repair_code1);
-        //     }
-        //     if (isset($data[0]->wo_repair_code2)) {
-        //         array_push($arrayrepaircode, $data[0]->wo_repair_code2);
-        //     }
-        //     if (isset($data[0]->wo_repair_code3)) {
-        //         array_push($arrayrepaircode, $data[0]->wo_repair_code3);
-        //     }
-        //     $countrepairitr = count($arrayrepaircode);
-        //     // dd($arrayrepaircode);
-        //     for ($i = 0; $i < count($arrayrepaircode); $i++) {
-        //         // dd($arrayrepaircode);
-        //         $repairdesc = DB::table('rep_master')
-        //             ->where('rep_master.repm_code', '=', $arrayrepaircode[$i])
-        //             ->first();
-
-        //         if (!is_null($repairdesc)) {
-        //             array_push($repairlist, $repairdesc->repm_desc);
-        //         }
-
-        //         $repair[$i] = DB::table('wo_mstr')
-        //             ->leftjoin('wo_dets', 'wo_dets.wo_dets_nbr', 'wo_mstr.wo_number')
-        //             ->leftjoin('ins_mstr', 'wo_dets.wo_dets_ins', 'ins_mstr.ins_code')
-        //             ->leftjoin('rep_master', 'wo_dets.wo_dets_rc', 'rep_master.repm_code')
-        //             // ->join('rep_det','rep_master.repm_code','rep_det.repdet_code')
-
-        //             ->leftjoin('sp_mstr', 'wo_dets.wo_dets_sp', 'sp_mstr.spm_code')
-        //             ->where('wo_mstr.wo_number', '=', $sr)
-        //             ->where('wo_dets.wo_dets_rc', '=', $arrayrepaircode[$i])
-
-        //             // ->groupBy('wo_mstr.wo_number','ins_mstr.ins_code')
-        //             ->distinct('ins_mstr.ins_code')
-        //             ->orderBy('repm_ins', 'asc')
-        //             ->get();
-        //         // dd($repair);
-        //         // $repair[$i] = DB::table('rep_master')
-        //         //                 ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
-        //         //                 ->leftjoin('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
-        //         //                 // ->leftjoin('rep_part','ins_mstr.ins_part','rep_part.reppart_code')
-        //         //                 ->leftjoin('sp_mstr','ins_mstr.ins_part','sp_mstr.spm_code')
-        //         //                 ->where('rep_master.repm_code','=',$arrayrepaircode[$i])
-        //         //                 ->distinct('ins_mstr.ins_code')
-        //         //                 ->orderBy('repm_ins','asc')
-
-        //         //                 ->get();
-
-        //         // dd($repair);
-        //         foreach ($repair[$i] as $grouptool) {
-        //             $newarr = explode(",", $grouptool->ins_tool);
-        //             for ($j = 0; $j < count($newarr); $j++) {
-        //                 $arr = DB::table('tool_mstr')
-        //                     ->where('tool_code', '=', $newarr[$j])
-        //                     ->first();
-        //                 if (isset($arr->tool_desc)) {
-        //                     $newarr[$j] = $arr->tool_desc;
-        //                 } else {
-        //                     $newarr[$j] = '';
-        //                 }
-        //             }
-        //             $exparr = implode(",", $newarr);
-        //             $grouptool->ins_tool = $exparr;
-        //         }
-
-        //         $check[$i] = DB::table('wo_mstr')
-        //             ->selectRaw('wrd_flag')
-        //             ->leftjoin('wo_rc_detail as a', 'wo_mstr.wo_number', 'a.wrd_wo_nbr')
-        //             ->where('wo_mstr.wo_number', '=', $sr)
-        //             ->where('a.wrd_repair_code', '=', $arrayrepaircode[$i])
-        //             ->first();
-        //         if (isset($check[$i]) == true) {
-        //             $checkstr[$i] = $check[$i]->wrd_flag;
-        //         } else {
-        //             $checkstr[$i] = 0;
-        //         }
-        //         // if(count($repair[$i])!= )
-
-        //         // dd(count($repair[1]));
-        //         $countdb[$i] = count($repair[$i]);
-        //     }
-        // }
-        // // dd($data[0]->wo_number);
-        // // $repair = DB::table('wo_mstr')
-        // //         ->selectRaw('r1.repm_desc as r11,r2.repm_desc as r22, r3.repm_desc as r33')
-        // //         ->leftjoin('rep_master as r1','wo_mstr.wo_repair_code1','r1.repm_code')
-        // //         ->leftjoin('rep_master as r2','wo_mstr.wo_repair_code2','r2.repm_code')
-        // //         ->leftjoin('rep_master as r3','wo_mstr.wo_repair_code3','r3.repm_code')
-        // //         ->where('wo_mstr.wo_number','=',$sr)
-        // //         ->get();
-        // // $repair2 = DB::table('wo_mstr')
-        // //         ->selectRaw('sp_mstr.spm_desc')
-        // //         ->join('rep_master','wo_mstr.wo_repair_code2','rep_master.repm_code')
-        // //         ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
-        // //             ->leftjoin('rep_partgroup','rep_master.repm_part','rep_partgroup.reppg_code')
-        // //             ->leftjoin('sp_mstr','rep_partgroup.reppg_part','sp_mstr.spm_code')
-        // //             ->leftjoin('sp_type','sp_mstr.spm_type','sp_type.spt_code')
-        // //             ->leftjoin('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
-        // //         ->where('wo_mstr.wo_number','=',$sr)
-        // //         // ->groupBy('spt_code')
-        // //         ->orderBy('spt_desc')
-        // //         ->get();
-        // // $repair1 = DB::table('wo_mstr')
-        // //         ->selectRaw('sp_mstr.spm_desc')
-        // //         ->join('rep_master','wo_mstr.wo_repair_code1','rep_master.repm_code')
-        // //         ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
-        // //         ->leftjoin('rep_partgroup','rep_master.repm_part','rep_partgroup.reppg_code')
-        // //         ->leftjoin('sp_mstr','rep_partgroup.reppg_part','sp_mstr.spm_code')
-        // //         ->leftjoin('sp_type','sp_mstr.spm_type','sp_type.spt_code')
-        // //         ->leftjoin('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
-        // //         ->where('wo_mstr.wo_number','=',$sr)
-        // //         // ->groupBy('spt_code')
-        // //         ->orderBy('spt_desc')
-        // //         ->get();
-        // // $repair3 = DB::table('wo_mstr')
-        // //         ->selectRaw('sp_mstr.spm_desc')
-        // //         ->join('rep_master','wo_mstr.wo_repair_code3','rep_master.repm_code')
-        // //         ->leftjoin('rep_det','rep_master.repm_code','rep_det.repdet_code')
-        // //             ->leftjoin('rep_partgroup','rep_master.repm_part','rep_partgroup.reppg_code')
-        // //             ->leftjoin('sp_mstr','rep_partgroup.reppg_part','sp_mstr.spm_code')
-        // //             ->leftjoin('sp_type','sp_mstr.spm_type','sp_type.spt_code')
-        // //             ->leftjoin('ins_mstr','rep_det.repdet_ins','ins_mstr.ins_code')
-        // //         ->where('wo_mstr.wo_number','=',$sr)
-        // //         // ->groupBy('spt_code')
-        // //         ->orderBy('spt_desc')
-        // //         ->get();
-
-        // // $collcon = $repair1->concat($repair2)->concat($repair3);
-        // // $array = [];
-        // // dd($repairlist);
-        // // foreach($engineerlist as $el){
-        // //     dd($el);
-        // // }
-        // // dd($engineerlist);
-        // // for($i = 0; $i < count($collcon);$i++){
-        // //     if($collcon[$i]->spm_desc =='' || $collcon[$i]->spm_desc == null){
-        // //         unset($collcon[$i]);       
-        // //     }
-        // //     else{
-        // //         array_push($array,$collcon[$i]->spm_desc);
-        // //     }
-        // // }
-        // // $array = array_values(array_unique($array));
-
         // // dd($array);
         $sparepartarray = [];
         $printdate = Carbon::now('ASIA/JAKARTA')->toDateString();
@@ -3692,7 +3557,12 @@ class ServiceController extends Controller
             ->first();
 
         // $pdf = PDF::loadview('workorder.pdfprint-template',['womstr' => $womstr,'wodet' => $wodet, 'data' => $data,'printdate' =>$printdate,'repair'=>$repair,'sparepart'=>$array])->setPaper('A4','portrait');
-        $pdf = PDF::loadview('service.pdfprint-template', ['impact' => $impact, 'engineerlist' => $engineerlist, 'womstr' => $womstr, 'srmstr' => $srmstr, 'dept' => $dept, 'printdate' => $printdate, 'users' => $users, 'datasr' => $datasr])->setPaper('A4', 'portrait');
+        $pdf = PDF::loadview('service.pdfprint-template', [
+            'engineerlist' => $engineerlist, 'womstr' => $womstr,
+            'srmstr' => $srmstr, 'dept' => $dept, 'printdate' => $printdate, 'users' => $users,
+            'datasr' => $datasr, 'failurecode' => $listFailDesc, 'impact' => $listImpactDesc,
+            'engapprover' => $engapprover,
+        ])->setPaper('A4', 'portrait');
         //return view('picklistbrowse.shipperprint-template',['printdata1' => $printdata1, 'printdata2' => $printdata2, 'runningnbr' => $runningnbr,'user' => $user,'last' =>$countprint]);
         return $pdf->stream($sr . '.pdf');
     }

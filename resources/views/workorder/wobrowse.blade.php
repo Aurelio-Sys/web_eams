@@ -2036,6 +2036,15 @@ div #munculgambar .gambar:hover{
   });
   
   $(document).ready(function(){
+    // var currentURL = window.location.href;
+    // var urlParams = new URLSearchParams(currentURL);
+
+    // var s_asset = urlParams.get('s_asset');
+    // var s_status = urlParams.get('s_status');
+
+    // document.getElementById('test1').value = s_asset;
+    // document.getElementById('test2').value = s_status;
+
     $("#b_mtcode").select2({
       width: '100%',
       placeholder: "Select Maintenance Code",

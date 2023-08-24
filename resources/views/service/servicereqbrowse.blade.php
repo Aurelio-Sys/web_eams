@@ -402,7 +402,7 @@
           <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-success bt-action" id="e_btnconf" disabled>Save</button>
           <button type="button" class="btn btn-block btn-info" id="e_btnloading" style="display:none">
-            <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+            <i class="fas fa-spinner fa-spin"></i> &nbsp;Saving
           </button>
         </div>
     </div>
@@ -447,7 +447,7 @@
           <button type="button" class="btn btn-info bt-action" id="c_btnclose" data-dismiss="modal">No</button>
           <button type="submit" class="btn btn-success bt-action" id="c_btnconf">Yes</button>
           <button type="button" class="btn bt-action" id="c_btnloading" style="display: none;">
-            <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp;Loading
+            <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp;Saving
           </button>
         </div>
       </form>
