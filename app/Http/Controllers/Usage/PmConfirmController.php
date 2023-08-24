@@ -40,11 +40,12 @@ class PmConfirmController extends Controller
             ->whereNotIn('pmo_number', function ($query) {
                 $query->select('pml_pm_number')->from('pml_log');
             })
+            ->wherePmo_asset('BGNKG03')
             ->orderBy('asset_code')
             ->orderBy('pmo_pmcode')
             ->orderBy('id')
             ->groupBy('asset_code','pmo_pmcode','pmo_sch_date');
-
+// dd($data->get());
         if($s_code) {
             $data = $data->where(function($query) use ($s_code) {
                 $query->where('asset_code','like','%'.$s_code.'%')

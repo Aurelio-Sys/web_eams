@@ -400,6 +400,14 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
+                @if(str_contains( Session::get('menu_access'), 'US08'))
+                <li class="nav-item has-treeview">
+                  <a href="{{route('pmmeter')}}" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>PM Planning for Meter</p>
+                  </a>
+                </li>
+                @endif
                 @if(str_contains( Session::get('menu_access'), 'US02'))
                 <li class="nav-item has-treeview">
                   <a href="/usagemulti" class="nav-link ">
@@ -567,14 +575,23 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
-                @if(str_contains( Session::get('menu_access'), 'RT10'))
+                @if(str_contains( Session::get('menu_access'), 'RT15'))
+                <li class="nav-item">
+                  <a href="/downrpt" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>Downtime Report</p>
+                  </a>
+                </li>
+                @endif
+                {{--  Ditutup karena sama dengan menu Sparepart Planning
+                  @if(str_contains( Session::get('menu_access'), 'RT10'))
                 <li class="nav-item">
                   <a href="/remsp" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Remaining Sparepart</p>
                   </a>
                 </li>
-                @endif
+                @endif  --}}
             
                 <li class="nav-item has-treeview">
                   <a href="javascript:void(0)" class="nav-link ">
@@ -622,6 +639,25 @@ to get the desired effect
                     <li class="nav-item">
                       <a href="/bookcal" class="nav-link ">
                           <p>Asset Booking Schedule</p>
+                      </a>
+                    </li>
+                    @endif
+                  </ul><!-- ul Schedule -->
+                </li> <!-- li Schedule -->
+
+                <li class="nav-item has-treeview">
+                  <a href="javascript:void(0)" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>
+                      View Transactions
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    @if(str_contains( Session::get('menu_access'), 'RT13'))
+                    <li class="nav-item">
+                      <a href="/viewwhy" class="nav-link ">
+                          <p>5 Why View</p>
                       </a>
                     </li>
                     @endif

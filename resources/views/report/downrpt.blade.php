@@ -4,7 +4,7 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-sm-9">
-      <h1 class="m-0 text-dark">Work Order Detail Browse</h1>
+      <h1 class="m-0 text-dark">Downtime Browse</h1>
     </div><!-- /.col -->
     <div class="col-sm-3">
 
@@ -28,7 +28,7 @@
   }
 </style>
 
-<form action="/rptdetwo" method="GET">
+<form action="/downrpt" method="GET">
   <div class="row">
     <div class="col-md-12">
       <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
@@ -40,25 +40,12 @@
       <div class="card card-body bg-black rounded-0">
         <div class="col-12 form-group row">
           <!--FORM Search Disini-->
-          <label for="s_nomorwo" class="col-md-2 col-form-label text-md-right">{{ __('Work Order Number') }}</label>
-          <div class="col-md-4 col-sm-12 mb-2 input-group">
-            <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="{{$swo}}" autofocus autocomplete="off">
-          </div>
           <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
           <div class="col-md-4 col-sm-12 mb-2 input-group">
             <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
               <option value="">--Select Asset--</option>
               @foreach($asset1 as $assetsearch)
                 <option value="{{$assetsearch->asset_code}}" {{$assetsearch->asset_code === $sasset ? "selected" : ""}}>{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
-              @endforeach
-            </select>
-          </div>
-          <label for="s_dept" class="col-md-2 col-form-label text-md-right">{{ __('Departement') }}</label>
-          <div class="col-md-4 col-sm-12 mb-2 input-group">
-            <select id="s_dept" class="form-control" style="color:black" name="s_dept" autofocus autocomplete="off">
-              <option value="">--Select Departement--</option>
-              @foreach($dept as $dd)
-                <option value="{{$dd->dept_code}}" {{$dd->dept_code === $sdept ? "selected" : ""}}>{{$dd->dept_code}} -- {{$dd->dept_desc}}</option>
               @endforeach
             </select>
           </div>
@@ -70,6 +57,15 @@
               <option value="PM" {{$stype === "PM" ? "selected" : ""}}>PM</option>
             </select>
           </div>
+          <label for="s_site" class="col-md-2 col-form-label text-md-right">{{ __('Site') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_site" class="form-control" style="color:black" name="s_site" autofocus autocomplete="off">
+              <option value="">--Select Site--</option>
+              @foreach($datasite as $ds)
+                <option value="{{$ds->assite_code}}" {{$ds->assite_code === $sloc ? "selected" : ""}}>{{$ds->assite_code}} -- {{$ds->assite_desc}}</option>
+              @endforeach
+            </select>
+          </div>
           <label for="s_loc" class="col-md-2 col-form-label text-md-right">{{ __('Location') }}</label>
           <div class="col-md-4 col-sm-12 mb-2 input-group">
             <select id="s_loc" class="form-control" style="color:black" name="s_loc" autofocus autocomplete="off">
@@ -79,18 +75,7 @@
               @endforeach
             </select>
           </div>
-          <label for="s_eng" class="col-md-6 col-form-label text-md-right">{{ __('') }}</label>
-          {{--  belum bisa cari cara codin search eng nya
-            <label for="s_eng" class="col-md-2 col-form-label text-md-right">{{ __('Engineer') }}</label>
-          <div class="col-md-4 col-sm-12 mb-2 input-group">
-            <select id="s_eng" class="form-control" style="color:black" name="s_eng" autofocus autocomplete="off">
-              <option value="">--Select Engineer--</option>
-              @foreach($engine as $de)
-                <option value="{{$de->eng_code}}" {{$de->eng_code === $seng ? "selected" : ""}}>{{$de->eng_code}} -- {{$de->eng_desc}}</option>
-              @endforeach
-            </select>
-          </div>  --}}
-          <label for="s_per1" class="col-md-2 col-form-label text-md-right">{{ __('WO Date') }}</label>
+          <label for="s_per1" class="col-md-2 col-form-label text-md-right">{{ __('Period') }}</label>
           <div class="col-md-4 col-sm-12 mb-2 input-group">
             <input type="date" name="s_per1" id="s_per1" class="form-control" value="{{$sper1}}">
           </div>
@@ -126,25 +111,20 @@
   <table class="table table-bordered mt-0" id="dataTable" width="100%" cellspacing="0" style="width:100%;padding: .2rem !important;">
     <thead>
       <tr style="text-align: center;">
-        <th>WO Number</th>
-        <th>SR Number</th>
         <th>Asset</th>
         <th>Desc</th>
-        <th>Req By</th>
-        <th>Type</th>
-        <th>Create Date</th>
-        <th>Sch Date</th>
-        <th>Note</th>
-        <th>Status</th>
-        <th>Sparepart</th>
-        <th>Desc</th>
-        <th>Qty Req</th>
-        <th>Qty Issued</th>
+        <th>Site</th>
+        <th>Location</th>
+        <th>Location Desc</th>
+        <th>MTBF</th>
+        <th>MTTF</th>
+        <th>MDT</th>
+        <th>MTTR</th>
         <th>Action</th>
       </tr>
     </thead>
     <tbody>
-      @include('report.table-rptdetwo')
+      @include('report.table-downrpt')
     </tbody>
   </table>
   <input type="hidden" name="hidden_page" id="hidden_page" value="1" />
@@ -335,23 +315,14 @@
     width: '100%',
     theme: 'bootstrap4',
   });
-  $('#s_dept').select2({
-    width: '100%',
-    theme: 'bootstrap4',
-  });
   $('#s_loc').select2({
     width: '100%',
     theme: 'bootstrap4',
   });
-  $('#s_eng').select2({
-    width: '100%',
-    theme: 'bootstrap4',
-  });
-
-  $('#s_creator').select2({
-    width: '100%',
-    theme: 'bootstrap4',
-  });
+  $('#s_site').select2({
+   width: '100%',
+   theme: 'bootstrap4',
+ });
 
   $(document).on('click', '.viewwo', function() {
     $('#loadingtable').modal('show');
@@ -572,13 +543,11 @@
   }
 
   function resetSearch() {
-    $('#s_nomorwo').val('');
     $('#s_asset').val('');
     $('#s_per1').val('');
     $('#s_per2').val('');
-    $('#s_dept').val('');
     $('#s_loc').val('');
-    $('#s_eng').val('');
+    $('#s_site').val('');
     $('#s_type').val('');
   }
 

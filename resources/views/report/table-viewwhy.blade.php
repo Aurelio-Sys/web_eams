@@ -11,18 +11,7 @@
         data-id="{{$show->id}}" data-asset="{{$show->why_asset}}" data-asset="{{$show->why_wo}}" data-key="{{$show->why_key}}" 
         data-problem="{{$show->why_problem}}" data-why1="{{$show->why_why1}}" data-why2="{{$show->why_why2}}"
         data-why3="{{$show->why_why3}}" data-why4="{{$show->why_why4}}" data-why5="{{$show->why_why5}}" >
-          {{--  data-woengineer="{{$show->wo_engineer1}}"  data-duedate="{{$show->wo_duedate}}"--}}
           <i class="icon-table fa fa-eye fa-lg"></i></a>
-        &ensp;
-        <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip" title="Modify Data" data-target="#editModal"
-        data-id="{{$show->id}}" data-asset="{{$show->why_asset}}" data-asset="{{$show->why_wo}}" data-key="{{$show->why_key}}" 
-        data-problem="{{$show->why_problem}}" data-why1="{{$show->why_why1}}" data-why2="{{$show->why_why2}}"
-        data-why3="{{$show->why_why3}}" data-why4="{{$show->why_why4}}" data-why5="{{$show->why_why5}}">
-        <i class="icon-table fa fa-edit fa-lg"></i></a>
-        &ensp;
-        <a href="javascript:void(0)" class="deletedata" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal" 
-        data-id="{{$show->id}}" data-asset="{{$show->why_asset}}" data-problem="{{$show->why_problem}}">
-        <i class="icon-table fa fa-trash fa-lg"></i></a>
     </td>
 </tr>
 @empty

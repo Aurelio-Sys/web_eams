@@ -8,6 +8,7 @@
   <td style="text-align: left;">{{ $show->temp_asset }}</td>
   <td style="text-align: left;">{{ $show->temp_asset_desc }}</td>
   <td>{{$show->temp_creator}}</td>
+  <td>{{$show->temp_type}}</td>
   <td>{{ date('d-m-Y',strtotime($show->temp_create_date)) }}</td>
   <td>{{ date('d-m-Y',strtotime($show->temp_sch_date)) }}</td>
   <td>{{ $show->temp_note }}</td>
