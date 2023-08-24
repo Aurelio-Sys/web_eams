@@ -995,6 +995,7 @@ class WORelease extends Controller
                         ->insert([
                             'wd_sp_wonumber' => $requestData['hide_wonum'],
                             'wd_sp_spcode' => $loopsp['spreq'],
+                            'wd_sp_standard' => $loopsp['qtystandard'],
                             'wd_sp_required' => $loopsp['qtyrequired'],
                             'wd_sp_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
