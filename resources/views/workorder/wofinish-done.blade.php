@@ -186,7 +186,7 @@
                                         <input type="hidden" class="qtyissued" name="qtyissued[]" value="{{$datas->wd_sp_issued}}" />
                                     </td>
                                     <td style="vertical-align:middle;text-align:center;">
-                                        <input type="number" class="form-control qtypotong" step="0.01" min="{{ $datas->wd_sp_issued == 0 ? 0 : -$datas->wd_sp_issued }}" name="qtypotong[]" value="{{$datas->wd_sp_whtf}}" required />
+                                        <input type="number" class="form-control qtypotong" step="0.01" min="{{ $datas->wd_sp_issued == 0 ? 0 : -$datas->wd_sp_issued }}" max="{{$datas->wd_sp_whtf}}" name="qtypotong[]" value="{{$datas->wd_sp_whtf}}" required />
                                     </td>
                                     <td style="vertical-align: middle; text-align: left;">
                                         <input type="text" id="loclotfrom" class="form-control loclotfrom" name="loclotfrom[]" data-toggle="tooltip" autocomplete="off" readonly placeholder="Click Here">
