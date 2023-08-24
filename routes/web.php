@@ -516,6 +516,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/routesr','ServiceController@routesr');
 	route::get('/routesreng','ServiceController@routesreng');
 	route::post('/cancelsr','ServiceController@cancelsr');
+	route::get('/getsrdetail','ServiceController@getsrdetail');
 
 
 	//bagian tommy sr browse
