@@ -1156,8 +1156,6 @@ class WORelease extends Controller
                         ]);
                 }
 
-
-
                 //perubahaan status dan kirim email harus diluar looping diatas atau ga bisa dobel kirim email
                 DB::table('wo_mstr')
                     ->where('wo_number', '=', $requestData['hide_wonum'])
@@ -1185,9 +1183,6 @@ class WORelease extends Controller
                         ->first();
 
                     // dd($getFirstApprover);
-
-                    //send notifikasi ke approver pertama
-                    SendNotifWOReleaseApproval::dispatch($requestData['hide_wonum'], $getFirstApprover->sp_approver_role, Session::get('department'));
 
                     //get wo dan sr mstr
                     $womstr = DB::table('wo_mstr')->where('wo_number', $requestData['hide_wonum'])->first();
@@ -1387,6 +1382,9 @@ class WORelease extends Controller
                         toast('WO Successfuly Released for ' . $requestData['hide_wonum'] . ' !', 'success')->autoClose(10000);
                         return redirect()->route('browseRelease');
                     }
+
+                    //send notifikasi ke approver pertama
+                    SendNotifWOReleaseApproval::dispatch($requestData['hide_wonum'], $getFirstApprover->sp_approver_role, Session::get('department'));
                 } else {
                     //jika wo release approval belum di setting
 

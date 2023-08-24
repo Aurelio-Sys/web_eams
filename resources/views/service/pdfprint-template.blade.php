@@ -103,73 +103,40 @@
         <table style="border-collapse: collapse;margin-left:5px;">
           <tr>
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
-              <p style="margin:0;padding:0;font-size:12px"><b>Failure Type </b></p>
+              <p style="margin-top:2px;padding:0;font-size:12px"><b>Failure Type </b>: </p>
             </td>
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
-              {{--  <p style="margin-top: 0px; font-size:12px;">: {{$srmstr->sr_wotype}} -- {{$srmstr->wotyp_desc}}</p>  --}}
+              <p style="margin-top: 2px; margin-left:6px; font-size:12px;">
+              @if($srmstr->sr_fail_type != null)
+              {{$srmstr->sr_fail_type}} -- {{$srmstr->wotyp_desc}} 
+              @else
+              
+              @endif 
+            </p>
             </td>
           </tr>
           <tr style="line-height: 2px;">
             <td style="border-top:0px;border-right:0px;border-collapse: collapse;">
-              <p style="margin-top: -2px; font-size:12px;"><b>Failure Code &nbsp;</b></p>
+              <p style="margin-top: 0px; font-size:12px;"><b>Failure Code </b>: </p>
             </td>
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
-              : @if($srmstr->fn1 != null)
-              <p class="fcode" style="margin-top: -3px; margin-left:6px; font-size:12px">
-                - {{$srmstr->fn1}}
-              </p><br>
-              @endif
-              &nbsp; @if($srmstr->fn2 != null)
-              <p style="margin-top: -3px; margin-left:6px; font-size:12px">
-                - {{$srmstr->fn2}}
-              </p><br>
-              @endif
-              &nbsp; @if($srmstr->fn3 != null)
-              <p style="margin-top: -3px; margin-left:6px; font-size:12px">
-                - {{$srmstr->fn3}}
-              </p><br>
-              @endif
+              @foreach($failurecode as $key => $fcode)
+              <p class="fcode" style="margin-top: 0px; margin-left:6px; font-size:12px">
+                {{$key + 1}}. {{$fcode['fn_code']}} -- {{$fcode['fn_desc']}}
+              </p><br><br>
+              @endforeach
             </td>
           </tr>
           <tr style="line-height: 2px;">
             <td style="border-top:0px;border-right:0px;">
-              <p style="margin-top: 0px; font-size:12px"><b>Impact</b></p>
+              <p style="margin-top: 0px; font-size:12px"><b>Impact &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>: </p>
             </td>
             <td style="border-top:0px solid;border-right:0px">
-              <p style="margin-top: 0px; font-size:12px">
-                : @if (strlen($srmstr->sr_impact) > 11)
-                <?php
-                $imp = explode(',', $srmstr->sr_impact);
-                $impc = $impact->where('imp_code', '=', $imp[0]);
-                $impc1 = $impact->where('imp_code', '=', $imp[1]);
-                $impc2 = $impact->where('imp_code', '=', $imp[2]);
-                // dd(strlen($srmstr->sr_impact));
-                ?>
-                @foreach($impc as $impct)
-                {{$impct->imp_desc}},
-                @endforeach
-                @foreach($impc1 as $impct)
-                {{$impct->imp_desc}},
-                @endforeach
-                @foreach($impc2 as $impct)
-                {{$impct->imp_desc}}
-                @endforeach
-                @elseif (strlen($srmstr->sr_impact) >= 6)
-                <?php
-                $imp = explode(',', $srmstr->sr_impact);
-                $impc = $impact->where('imp_code', '=', $imp[0]);
-                $impc1 = $impact->where('imp_code', '=', $imp[1]);
-                ?>
-                @foreach($impc as $impct)
-                {{$impct->imp_desc}},
-                @endforeach
-                @foreach($impc1 as $impct)
-                {{$impct->imp_desc}},
-                @endforeach
-                @else
-                {{$srmstr->imp_desc}}
-                @endif
-              </p>
+              @foreach($impact as $key => $imp)
+              <p class="fcode" style="margin-top: 0px; margin-left:6px; font-size:12px">
+                {{$key + 1}}. {{$imp['imp_code']}} -- {{$imp['imp_desc']}}
+              </p><br><br>
+              @endforeach
             </td>
           </tr>
         </table>
@@ -178,47 +145,49 @@
         <!-- <p style="margin-left:5px; margin-bottom:5px; margin-top:5px">{{$srmstr->dept_desc}} -- {{$srmstr->eng_desc}}</p> -->
         <table style="border-collapse: collapse;margin-left:5px;">
           <tr>
-            <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
-              <p style="margin:0;padding:0;font-size:12px"><b>No. SR / No. WO </b></p>
+            <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;" width="100px">
+              <p style="margin-top:2px;padding:0;font-size:12px"><b>No. SR / No. WO</b></p>
             </td>
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
-              <p style="margin-top: 0px; font-size:12px;">
-                @if($womstr != null)
-                : {{$srmstr->sr_number}} / {{$womstr->wo_nbr}}
+              <p style="margin-top: 2px; font-size:12px;">
+                @if($srmstr->wo_number == null)
+                : {{$srmstr->sr_number}}
+                @elseif($womstr->wo_sr_number == '')
+                : {{$womstr->wo_number}}
                 @else
-                : {{$srmstr->sr_number}} /
+                : {{$womstr->wo_sr_number}} / {{$womstr->wo_number}}
                 @endif
               </p>
             </td>
           </tr>
           <tr style="line-height: 2px;">
-            <td style="border-top:0px;border-right:0px;border-collapse: collapse;">
-              <p style="margin-top: -2px; font-size:12px;"><b>Tanggal & Jam SR / WO</b></p>
+            <td style="border-top:0px;border-right:0px;border-collapse: collapse;" width="120px">
+              <p style="margin-top: 0px; font-size:12px;"><b>Tgl & Jam SR / WO</b></p>
             </td>
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
-              <p style="margin-top: -2px; font-size:12px">
+              <p style="margin-top: 0px; font-size:12px">
                 @if($womstr != null)
-                : {{$srmstr->sr_req_date}} & {{date('H:i', strtotime($srmstr->sr_req_time))}} / {{date('d-m-y', strtotime($womstr->wo_start_date))}} & {{date('H:i', strtotime($womstr->wo_created_at))}}
+                : {{date('d-m-Y', strtotime($srmstr->sr_req_date))}} & {{date('H:i', strtotime($srmstr->sr_req_time))}} / {{date('d-m-Y', strtotime($womstr->wo_system_create))}} & {{date('H:i', strtotime($womstr->wo_system_create))}}
                 @else
-                : {{$srmstr->sr_req_date}} & {{date('H:i', strtotime($srmstr->sr_req_time))}} /
+                : {{date('d-m-Y', strtotime($srmstr->sr_req_date))}} & {{date('H:i', strtotime($srmstr->sr_req_time))}} /
                 @endif
               </p>
             </td>
           </tr>
           <tr style="line-height: 2px;">
             <td style="border-top:0px;border-right:0px;">
-              <p style="margin-top: 0px; font-size:12px"><b>Divisi</b></p>
+              <p style="margin-top: 2px; font-size:12px"><b>Divisi</b></p>
             </td>
             <td style="border-top:0px solid;border-right:0px">
-              <p style="margin-top: 0px; font-size:12px">: {{$srmstr->sr_dept}}</p>
+              <p style="margin-top: 2px; font-size:12px">: {{$srmstr->sr_dept}} -- {{$srmstr->dept_desc}}</p>
             </td>
           </tr>
           <tr style="line-height: 2px;">
             <td style="border-top:0px;border-right:0px;">
-              <p style="margin-top: 0px; font-size:12px"><b>Nama & No. Mesin &nbsp;</b></p>
+              <p style="margin-top: 2px; font-size:12px"><b>Nama & No. Mesin &nbsp;</b></p>
             </td>
-            <td style="border-top:0px solid;border-right:0px">
-              <p style="margin-top: 0px; font-size:12px">: {{$srmstr->asset_desc}} & {{$srmstr->sr_asset}}</p>
+            <td style="border-top:0px solid;border-right:0px;">
+              <p style="margin-top: -10px; font-size:12px;line-height: 1.5">: {{$srmstr->asset_desc}} & {{$srmstr->sr_asset}}</p>
             </td>
           </tr>
         </table>
@@ -229,7 +198,11 @@
         <p style=" margin-bottom:0px; margin-top:0px; margin-left: 5px; font-size:12px">
           <b><span style="padding-bottom: 0px;border-bottom:1px solid black;">Uraian</span>:</b>
           <br>
+          @if($womstr == null)
           {{$srmstr->sr_note}}
+          @else
+          {{$womstr->wo_note}}
+          @endif
         </p>
       </td>
     </tr>
@@ -262,12 +235,12 @@
             <td style="border-top:0px;border-right:0px;border-collapse: collapse;">
               <p style="margin-top: 0px; font-size:12px">
                 <?php
-                $dept_appr = $dept->where('dept_code', '=', $srmstr->dept_user);
+                $dept_appr = $dept->where('dept_code', '=', $srmstr->sr_eng_approver);
                 ?>
+                {{$engapprover->sr_eng_approver}} --
                 @foreach($dept_appr as $dept)
-                {{$dept->dept_desc}} --
+                {{$dept->dept_desc}}
                 @endforeach
-                {{$srmstr->sr_approver}}
               </p>
             </td>
           </tr>
@@ -291,7 +264,7 @@
             <td style="text-align:center;border:1px solid;">
               <p style="margin:0;padding:0;font-size:12px">
                 @if($womstr != null)
-                {{date('d/m/Y', strtotime($womstr->wo_created_at))}}
+                {{date('d/m/Y', strtotime($womstr->wo_system_create))}}
                 @else
                 &nbsp;
                 @endif
@@ -300,7 +273,7 @@
             <td style="text-align:center;border:1px solid;">
               <p style="margin:0;padding:0;font-size:12px">
                 @if($womstr != null)
-                {{date('d/m/Y', strtotime($womstr->wo_schedule))}}
+                {{date('d/m/Y', strtotime($womstr->wo_start_date))}}
                 @else
                 &nbsp;
                 @endif
@@ -309,7 +282,7 @@
             <td style="text-align:center;border:1px solid;">
               <p style="margin:0;padding:0;font-size:12px">
                 @if($womstr != null)
-                {{date('d/m/Y', strtotime($womstr->wo_duedate))}}
+                {{date('d/m/Y', strtotime($womstr->wo_due_date))}}
                 @else
                 &nbsp;
                 @endif
@@ -320,7 +293,7 @@
             <td style="text-align:center;border:1px solid;">
               <p style="margin:0;padding:0;font-size:12px">
                 @if($womstr != null)
-                {{date('H:i', strtotime($womstr->wo_created_at))}}
+                {{date('H:i', strtotime($womstr->wo_system_create))}}
                 @else
                 &nbsp;
                 @endif
@@ -438,8 +411,8 @@
             <td style="text-align:center;border:1px solid;">
               <p style="margin:0;padding:0;font-size:12px">
                 @if($womstr != null)
-                @if($womstr->wo_start_date != null)
-                {{date('d/m/Y', strtotime($womstr->wo_start_date))}}
+                @if($womstr->wo_job_startdate != null)
+                {{date('d/m/Y', strtotime($womstr->wo_job_startdate))}}
                 @else
                 &nbsp;
                 @endif
@@ -449,8 +422,8 @@
             <td style="text-align:center;border:1px solid;">
               <p style="margin:0;padding:0;font-size:12px">
                 @if($womstr != null)
-                @if($womstr->wo_finish_date != null)
-                {{date('d/m/Y', strtotime($womstr->wo_finish_date))}}
+                @if($womstr->wo_job_finishdate != null)
+                {{date('d/m/Y', strtotime($womstr->wo_job_finishdate))}}
                 @else
                 &nbsp;
                 @endif
@@ -465,8 +438,8 @@
             <td style="text-align:center;border:1px solid;">
               <p style="margin:0;padding:0;font-size:12px">
                 @if($womstr != null)
-                @if($womstr->wo_start_time != null)
-                {{date('H:i', strtotime($womstr->wo_start_time))}}
+                @if($womstr->wo_job_starttime != null)
+                {{date('H:i', strtotime($womstr->wo_job_starttime))}}
                 @else
                 &nbsp;
                 @endif
@@ -476,7 +449,7 @@
             <td style="text-align:center;border:1px solid;">
               <p style="margin:0;padding:0;font-size:12px">
                 @if($womstr != null)
-                @if($womstr->wo_start_time != null)
+                @if($womstr->wo_job_starttime != null)
                 {{date('H:i', strtotime($womstr->wo_finish_time))}}
                 @else
                 &nbsp;
@@ -494,7 +467,7 @@
           <span style="padding-bottom: 0px;border-bottom:1px solid black;">Uraian Penyelesaian Job</span>:
           <br>
           @if($womstr != null)
-          {{$womstr->wo_approval_note}}
+          {{$womstr->wo_report_note}}
           @else
           &nbsp;
           @endif
@@ -510,7 +483,7 @@
         <p style=" margin-bottom:5px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Penanggung Jawab,</span></p>
         <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">
           @if($womstr != null)
-          {{$womstr->wo_approver}}
+          {{$womstr->wo_createdby}}
           @else
           &nbsp;
           @endif
@@ -592,5 +565,7 @@
     </tr>
   </table> -->
 </body>
+
+
 
 </html>
