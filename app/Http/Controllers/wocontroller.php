@@ -2642,10 +2642,19 @@ class wocontroller extends Controller
         $kodeFailure = explode(';', $data->wo_failure_code);
         $listFailure = [];
         foreach ($kodeFailure as $cFail) {
-            $deskripsiFail = DB::table('fn_mstr')->where('fn_code', '=', $cFail)->first()->fn_desc;
+            $fnData = DB::table('fn_mstr')->where('fn_code', '=', $cFail)->first();
+
+            if ($fnData) {
+                $deskripsiFail = $fnData->fn_desc;
+            } else {
+                // Handle jika data tidak ditemukan
+                $deskripsiFail = "Deskripsi tidak ditemukan";
+            }
+
+            // $deskripsiFail = DB::table('fn_mstr')->where('fn_code', '=', $cFail)->first()->fn_desc;
             array_push($listFailure, $deskripsiFail);
         }
-
+// dd($data);
         return $data;
     }
 

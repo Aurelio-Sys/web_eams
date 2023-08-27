@@ -7,14 +7,14 @@
   <td>{{ $show->temp_asset_locdesc }}</td>
   <td style="text-align: right;">{{ number_format($show->temp_mtbf,2) }}</td>
   <td style="text-align: right;">{{ number_format($show->temp_mttf,2) }}</td>
-  <td style="text-align: right;">{{ number_format($show->temp_mtbf,2) }}</td>
-  <td style="text-align: right;">{{ number_format($show->temp_mtbf,2) }}</td>
+  <td style="text-align: right;">{{ number_format($show->temp_mdt,2) }}</td>
+  <td style="text-align: right;">{{ number_format($show->temp_mttr,2) }}</td>
   
-  <td>
+  {{--  <td>
       <a href="javascript:void(0)" class="viewwo" data-toggle="tooltip" title="View WO" >
         <i class="icon-table fa fa-eye fa-lg"></i></a>
       &ensp;
-  </td>
+  </td>  --}}
 </tr>
 @empty
 <tr>

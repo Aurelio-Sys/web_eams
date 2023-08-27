@@ -27,46 +27,48 @@
                     <div class="col-md-10">
                         <div class="row col-md-12">
                           <div class="col-md-6">
-                            <div class="col-md-2">
-                                <label for="t_asset" class="col-form-label text-md-left">Engineer</label>
-                            </div>
-                            <div class="col-md-8">
-                                <select id="engcode" class="form-control" name="engcode">
-                                    <option value="">--Select Data--</option>
-                                   @foreach($dataeng as $da)
-                                      <option value="{{$da->eng_code}}">{{$da->eng_code}} -- {{$da->eng_desc}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <label for="s_dept" class="col-form-label text-md-left">Departement</label>
-                            </div>
-                            <div class="col-md-8">
-                                <select id="s_dept" class="form-control" name="s_dept">
-                                    <option value="">--Select Data--</option>
-                                  @foreach($datadept as $dd)
-                                      <option value="{{$dd->dept_code}}">{{$dd->dept_code}} -- {{$dd->dept_desc}}</option>
-                                    @endforeach
-                                </select>
+                            <div class="row col-md-12">
+                              <div class="col-md-4">
+                                  <label class="col-form-label">Engineer</label>
+                              </div>
+                              <div class="col-md-8">
+                                  <select id="engcode" class="form-control" name="engcode">
+                                      <option value="">--Select Data--</option>
+                                    @foreach($dataeng as $da)
+                                        <option value="{{$da->eng_code}}">{{$da->eng_code}} -- {{$da->eng_desc}}</option>
+                                      @endforeach
+                                  </select>
+                              </div>
+                              <div class="col-md-4">
+                                  <label for="s_dept" class="col-form-label text-md-left">Departement</label>
+                              </div>
+                              <div class="col-md-8">
+                                  <select id="s_dept" class="form-control" name="s_dept">
+                                      <option value="">--Select Data--</option>
+                                    @foreach($datadept as $dd)
+                                        <option value="{{$dd->dept_code}}">{{$dd->dept_code}} -- {{$dd->dept_desc}}</option>
+                                      @endforeach
+                                  </select>
+                              </div>
                             </div>
                           </div>
-                            <div class="col-md-1">
-                                <label for="t_type" class="col-form-label text-md-right">Type</label>    
-                            </div>
-                            <div class="col-md-2">
-                                <select class="form-control" id="wotype" name="wotype">
-                                    <option value="All" selected="selected">All</option>
-                                    <option value="PM">PM</option>
-                                    <option value="WO">WO</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="row">
-                                    <button type="submit" class="btn btn-primary bt-action" id="btnedit">Search</button>
-                                    &ensp;
-                                    <a href="/engsch" id="maju"  class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'><i class="fas fa-sync-alt"></i></a>
-                                </div>
-                            </div>
+                          <div class="col-md-1">
+                              <label for="t_type" class="col-form-label text-md-right">Type</label>    
+                          </div>
+                          <div class="col-md-2">
+                              <select class="form-control" id="wotype" name="wotype">
+                                  <option value="All" selected="selected">All</option>
+                                  <option value="PM">PM</option>
+                                  <option value="CM">CM</option>
+                              </select>
+                          </div>
+                          <div class="col-md-3">
+                              <div class="row">
+                                  <button type="submit" class="btn btn-primary bt-action" id="btnedit">Search</button>
+                                  &ensp;
+                                  <a href="/engsch" id="maju"  class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'><i class="fas fa-sync-alt"></i></a>
+                              </div>
+                          </div>
                         </div>
 
                         <!-- Label kosong untuk spasi -->

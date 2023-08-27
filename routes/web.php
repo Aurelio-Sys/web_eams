@@ -855,6 +855,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	//Downtime Report
 	Route::get('/downrpt', [DownrptController::class, 'index']);
+	Route::get('/exceldownrpt', [DownrptController::class, 'index'])->name('exceldownrpt');
 
 	//PM Planning for Meter
 	Route::get('/pmmeter', [PmMeterController::class, 'index'])->name('pmmeter');

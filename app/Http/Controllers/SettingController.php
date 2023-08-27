@@ -252,7 +252,7 @@ class SettingController extends Controller
             $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbSRapprovaleng . $req->cbSRbrowseonly .
             $req->cbUSMT . $req->cbUSmultiMT . $req->cbUSMeter . $req->cbUSGen . $req->pmconf . $req->ksp . $req->cbUSBrowse .
             $req->cbBoas . $req->whyhist . $req->reqsp . $req->trfsp . $req->cbUA . $req->reqspappr . $req->retsp . $req->retspwhs .
-            $req->cbRptDet . $req->cbRptCost . $req->cbAssetReport . $req->cbEngReport . $req->e_cbDownReport . $req->cbRptRemsp . 
+            $req->cbRptDet . $req->cbRptCost . $req->cbAssetReport . $req->cbEngReport . $req->cbDownReport . $req->cbRptRemsp . 
             $req->cbAssetSchedule . $req->cbRptSchyear . $req->cbEngSchedule . $req->cbRptSpneed . $req->cbBookSchedule .
             $req->viewwhy .
             $req->accutrf . $req->cbRCBrowse;

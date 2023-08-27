@@ -156,7 +156,7 @@
 
 <!--Modal View-->
 <div class="modal fade" id="viewModal" role="dialog" aria-hidden="true" data-backdrop="static">
-  <div class="modal-dialog modal-lg" role="document">
+  <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-center" id="exampleModalLabel">Work Order View</h5>
@@ -176,7 +176,7 @@
             <input id="v_creator" readonly class="form-control" name="v_creator" value="{{ old('v_creator') }}" autofocus>
           </div>
         </div>
-        <div class="form-group row justify-content-center">
+        <div class="form-group row">
           <label for="v_nosr" class="col-md-2 col-form-label text-md-left">SR Number</label>
           <div class="col-md-4">
             <input id="v_nosr" type="text" class="form-control" name="v_nosr" readonly autofocus>
@@ -186,7 +186,23 @@
             <input id="v_dept" readonly class="form-control" name="v_dept" value="{{ old('v_dept') }}" autofocus>
           </div>
         </div>
-        <div class="form-group row justify-content-center">
+        <div class="form-group row">
+          <label for="v_srnote" class="col-md-2 col-form-label text-md-left">SR Note</label>
+          <div class="col-md-4">
+            <textarea id="v_srnote" readonly class="form-control" name="v_srnote" value="{{ old('v_srnote') }}" autofocus></textarea>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="v_wotype" class="col-md-2 col-form-label text-md-left">WO Type</label>
+          <div class="col-md-4">
+            <input id="v_wotype" readonly class="form-control" name="v_wotype" value="{{ old('v_wotype') }}" autofocus>
+          </div>
+          <label for="v_status" class="col-md-2 col-form-label text-md-left">WO Status</label>
+          <div class="col-md-4">
+            <input id="v_status" readonly class="form-control" name="v_status" value="{{ old('v_status') }}" autofocus>
+          </div>
+        </div>
+        <div class="form-group row">
           <label for="v_asset" class="col-md-2 col-form-label text-md-left">Asset Code</label>
           <div class="col-md-4">
             <input type="text" readonly id="v_asset" type="text" class="form-control v_asset" name="v_asset" autofocus>
@@ -196,7 +212,7 @@
             <input id="v_loc" type="text" class="form-control" name="v_loc" value="{{ old('v_loc') }}" autofocus readonly>
           </div>
         </div>
-        <div class="form-group row justify-content-center">
+        <div class="form-group row">
           <label for="v_assetdesc" class="col-md-2 col-form-label text-md-left">Asset Desc</label>
           <div class="col-md-4">
             <input type="text" readonly id="v_assetdesc" type="text" class="form-control v_assetdesc" name="v_assetdesc" autofocus>
@@ -205,88 +221,78 @@
           <div class="col-md-4">
             <input id="v_wottype" type="text" class="form-control" name="v_wottype" value="{{ old('v_wottype') }}" autofocus readonly>
           </div>
-          
         </div>
-        <div class="form-group row justify-content-center">
+        <div class="form-group row">
           <label for="v_note" class="col-md-2 col-form-label text-md-left">Note</label>
           <div class="col-md-4">
             <textarea id="v_note" readonly class="form-control" name="v_note" value="{{ old('v_note') }}" autofocus></textarea>
           </div>
           <label for="v_fclist" class="col-md-2 col-form-label text-md-left">Failure Code</label>
           <div class="col-md-4">
-            <textarea id="v_fclist" class="form-control" name="v_fclist" value="{{ old('v_fclist') }}" autofocus readonly></textarea>
+            <textarea id="v_fclist" class="form-control" name="v_fclist" value="{{ old('v_fclist') }}" style="white-space: pre-wrap;" autofocus readonly></textarea>
           </div>
         </div>
-        <div class="form-group row justify-content-center">
+        <div class="form-group row">
           <label for="v_engineerl" class="col-md-2 col-form-label text-md-left">Engineer List</label>
           <div class="col-md-4">
             <textarea id="v_engineerl" class="form-control v_engineerl" name="v_engineerl" autofocus readonly></textarea>
           </div>
-          
           <label for="v_impact" class="col-md-2 col-form-label text-md-left">Impact</label>
           <div class="col-md-4">
-            <textarea id="v_impact" class="form-control" name="v_impact" value="{{ old('v_impact') }}" autofocus readonly></textarea>
+            <textarea id="v_impact" class="form-control" name="v_impact" value="{{ old('v_impact') }}" style="white-space: pre-wrap;" autofocus readonly></textarea>
           </div>
         </div>
-        <!--<div class="form-group row justify-content-center" id="divviewcode" style="display: none;">
-          <label for="v_proc" class="col-md-2 col-form-label text-md-left">Process / Technology</label>
-          <div class="col-md-4">
-            <input id="v_proc" type="text" class="form-control" name="v_proc" value="{{ old('v_proc') }}" autofocus readonly>
-          </div>
-          <label for="v_priority" class="col-md-2 col-form-label text-md-left">Priority</label>
-          <div class="col-md-4">
-            <input id="v_priority" type="text" class="form-control" name="v_priority" value="{{ old('v_priority') }}" autofocus readonly>
-          </div>
-            <label for="v_repaircode" class="col-md-2 col-form-label text-md-left">Repair Code</label>
+        <div class="form-group row">
+            <label for="v_startdate" class="col-md-2 col-form-label text-md-left">Schedule Date</label>
             <div class="col-md-4">
-              <textarea id="v_repaircode" readonly  class="form-control" name="v_repaircode" value="{{ old('v_repaircode') }}"   autofocus></textarea>
+              <input id="v_startdate" readonly type="text" class="form-control" name="v_startdate" value="{{ old('v_startdate') }}" autofocus>
             </div>
-          </div>
-          <div class="form-group row justify-content-center" id="divviewgroup" style="display: none;">
-            <label for="v_repairgroup" class="col-md-2 col-form-label text-md-left">Repair Group</label>
+            <label for="v_wostart" class="col-md-2 col-form-label text-md-left">Start Date</label>
             <div class="col-md-4">
-              <input  id="v_repairgroup" readonly  class="form-control" name="v_repairgroup" value="{{ old('v_repairgroup') }}"  autofocus>
+              <input id="v_wostart" type="text" class="form-control" name="v_wostart" value="{{ old('v_wostart') }}" autofocus readonly>
             </div>
-          </div>
-          <div class="form-group row justify-content-center" id="divviewmanual" style="display: none;">
-            <label for="v_repairmanual" class="col-md-2 col-form-label text-md-left">Repair</label>
-            <div class="col-md-4">
-              <input  id="v_repairmanual" readonly  class="form-control" name="v_repairmanual" value="Manual"  autofocus>
-            </div>
-          </div> -->
-        <div class="form-group row justify-content-center">
-          <label for="v_schedule" class="col-md-2 col-form-label text-md-left">Schedule Date</label>
-          <div class="col-md-4">
-            <input id="v_schedule" readonly type="date" class="form-control" name="v_schedule" value="{{ old('v_schedule') }}" autofocus>
-          </div>
-          <label id="divviewcode" for="v_repaircode" class="col-md-2 col-form-label text-md-left" style="display: none;">Repair Code</label>
-          <label id="divviewgroup" for="v_repairgroup" class="col-md-2 col-form-label text-md-left" style="display: none;">Repair Group</label>
-          <div class="col-md-4">
-            <textarea id="v_repaircode" style="display: none;" readonly  class="form-control" name="v_repaircode" value="{{ old('v_repaircode') }}"   autofocus></textarea>
-            <input  id="v_repairgroup" style="display: none;" readonly  class="form-control" name="v_repairgroup" value="{{ old('v_repairgroup') }}"  autofocus>
-          </div>
         </div>
-        <div class="form-group row justify-content-center">
+        <div class="form-group row">
           <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
           <div class="col-md-4">
-            <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
+            <input id="v_duedate" type="text" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
           </div>
-          <label for="v_mtcby" class="col-md-2 col-form-label text-md-left">Maintenance By</label>
+          <label for="v_wofinish" class="col-md-2 col-form-label text-md-left">Finish Date</label>
           <div class="col-md-4">
-            <input id="v_mtcby" type="text" class="form-control" name="v_mtcby" readonly>
+            <input id="v_wofinish" readonly type="text" class="form-control" name="v_wofinish" value="{{ old('v_wofinish') }}" autofocus>
+          </div>
+      </div>
+        <div class="form-group row">
+          <label class="col-md-2 col-form-label text-md-left">SR Uploaded File</label>
+          <div class="col-md-4" style="overflow-x: auto;">
+            <!-- <table class="table table-bordered" style="width: 100%; max-width: 100%;" id="munculgambar_view_sr">
+            </table> -->
+            <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>File Name</th>
+                  </tr>
+                </thead>
+                <tbody id="munculgambar_view_sr">
+
+                </tbody>
+              </table>  
+          </div>
+          <label class="col-md-2 col-form-label text-md-left">WO Uploaded File</label>
+          <div class="col-md-4" style="overflow-x: auto;">
+            <table class="table table-bordered" style="width: 100%; max-width: 100%;" id="munculgambar_view">
+            </table>  
           </div>
         </div>
-        <div class="form-group row" id="reportnote">
-          <label for="v_reportnote" class="col-md-2 col-form-label text-md-left">Reporting Note</label>
-          <div class="col-md-4">
-            <textarea id="v_reportnote" class="form-control v_reportnote" name="v_reportnote" autofocus readonly></textarea>
-          </div>
-          <div id="divunconf" style="display: none;">
-            <label for="v_unconfirm" class="col-md-2 col-form-label text-md-left">Uncomplete reason</label>
+        <div class="form-group row">
+            <label for="v_rejectreason" class="col-md-2 col-form-label text-md-left">User Acceptance Note</label>
             <div class="col-md-4">
-              <textarea id="v_unconfirm" readonly class="form-control" name="v_unconfirm" value="{{ old('v_unconfirm') }}" autofocus></textarea>
+              <textarea id="v_rejectreason" readonly type="text" class="form-control" name="v_rejectreason" value="{{ old('v_rejectreason') }}" rows="2" autofocus></textarea>
             </div>
-          </div>
+            <!-- <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
+            <div class="col-md-4">
+              <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
+            </div> -->
         </div>
       </div>
       <div class="modal-footer">
@@ -354,217 +360,124 @@
   });
 
   $(document).on('click', '.viewwo', function() {
-    $('#loadingtable').modal('show');
-
+    $('#viewModal').modal('show');
     var wonbr = $(this).data('wonbr');
-    var btnendel1 = document.getElementById("btndeleteen1");
+    var srnumber = $(this).data('srnumber');
+    {{--  var btnendel1 = document.getElementById("btndeleteen1");
     var btnendel2 = document.getElementById("btndeleteen2");
     var btnendel3 = document.getElementById("btndeleteen3");
     var btnendel4 = document.getElementById("btndeleteen4");
     var btnendel5 = document.getElementById("btndeleteen5");
     var counter = document.getElementById('counter').value;
-    var counterfail = document.getElementById('counterfail').value;
+    var counterfail = document.getElementById('counterfail').value;  --}}
     $.ajax({
-      url: '/womaint/getnowo?nomorwo=' + wonbr,
+      url: '/womaint/getwoinfo',
+      method: 'GET',
+      data: {
+          wonumber: wonbr,
+      },
       success: function(vamp) {
-        var tempres = JSON.stringify(vamp);
-        var result = JSON.parse(tempres);
-        var wonbr = result[0].wo_number;
-        var srnbr = result[0].wo_sr_number;
-        /* var en1val = result[0].u11;
-        var en2val = result[0].u22;
-        var en3val = result[0].u33;
-        var en4val = result[0].u44;
-        var en5val = result[0].u55;
-        var asset = result[0].wo_asset;
-        var assdesc = result[0].asset_desc;
-        var schedule = result[0].wo_schedule;
-        var duedate = result[0].wo_duedate;
-        var fc1 = result[0].wofc1;
-        var fc2 = result[0].wofc2;
-        var fc3 = result[0].wofc3;
-        var fn1 = result[0].fd1;
-        var fn2 = result[0].fd2;
-        var fn3 = result[0].fd3;
-        var prio = result[0].wo_priority;
-        var note = result[0].wo_note;
-        var wodept = result[0].dept_desc;
-        var rc1 = result[0].r11;
-        var rc2 = result[0].r22;
-        var rc3 = result[0].r33;
-        var rd1 = result[0].rr11;
-        var rd2 = result[0].rr22;
-        var rd3 = result[0].rr33;
-        var reason = result[0].wo_reject_reason;
-        var creator = result[0].wo_creator;
-        var apprnote = result[0].wo_approval_note;
-        var repairtype = result[0].wo_repair_type;
-        var repairgroup = result[0].xxrepgroup_desc;
-        var loccode = result[0].asloc_code;
-        var locdesc = result[0].asloc_desc;
-        var astypecode = result[0].astype_code;
-        var astypedesc = result[0].astype_desc;
-        var vimpact = result[0].wo_impact;
-        var vimpactdesc = result[0].wo_impact_desc;
-        var vwottype = result[0].wo_new_type + ' -- ' + result[0].wotyp_desc;
-        var mtcby = result[0].asset_daya;
 
-        var fclist = "";
-
-        if (fn1 != null) {
-          fclist = fc1 + '--' + fn1;
-        }
-
-        if (fn1 != null && fn2 != null){
-          fclist = fc1 + '--' + fn1 + '\n' + fc2 + '--' + fn2;
-        }
-
-        if(fn1 != null && fn2 != null && fn3 != null){
-          fclist = fc1 + '--' + fn1 + '\n' + fc2 + '--' + fn2 + '\n' + fc3 + '--' + fn3;
-        }
-
-        var strimp = '';
-        if (vimpact != null && vimpactdesc != null) {
-          var arrimpact = vimpact.split(';');
-          var arrimpactdesc = vimpactdesc.split(';');
-          if (arrimpact.length != 0 && arrimpactdesc.length != 0) {
-            for (var oo = 0; oo < (arrimpact.length - 1); oo++) {
-              strimp += arrimpact[oo] + ' -- ' + arrimpactdesc[oo] + '\n';
-            }
-          }
-        }
-
-        var arreng = '';
-        if (en1val == null || en1val == '') {
-          en1val = '';
-        } else {
-          arreng += en1val + '\n';
-          counter = 1;
-        }
-
-        if (en2val == null || en2val == '') {
-          en2val = '';
-
-        } else {
-          arreng += en2val + '\n';
-          counter = 2;
-        }
-        if (en3val == null || en3val == '') {
-          en3val = '';
-
-        } else {
-          arreng += en3val + '\n';
-          counter = 3;
-        }
-
-        if (en4val == null || en4val == '') {
-          en4val = '';
-
-        } else {
-          arreng += en4val + '\n';
-          counter = 4;
-        }
-
-        if (en5val == null || en5val == '') {
-          en5val = '';
-
-        } else {
-          arreng += en5val + 'n';
-          counter = 5;
-        }
-
-        var arrrc = [];
-
-        if (rc1 != null) {
-          arrrc.push(rd1 + ' -- ' + rc1);
-        }
-        if (rc2 != null) {
-          arrrc.push(rd2 + ' -- ' + rc2);
-        }
-        if (rc3 != null) {
-          arrrc.push(rd3 + ' -- ' + rc3);
-        }
-
-        if (astypecode == null) {
-          astypecode = '';
-        } else {
-          astypecode = astypecode + ' -- ' + astypedesc;
-        }
-
-        if (loccode == null) {
-          loccode = '';
-        } else {
-          loccode = loccode + ' -- ' + locdesc;
-        }
-
-        if (vwottype == 'null -- null') {
-          vwottype = '';
-        } else {
-          vwottype = vwottype;
-        }
-        // alert(arrrc);
-        document.getElementById('counter').value = counter;
-        document.getElementById('v_nowo').value = wonbr;
-        document.getElementById('v_nosr').value = srnbr;
-        document.getElementById('v_schedule').value = schedule;
-        document.getElementById('v_duedate').value = duedate;
-        document.getElementById('v_engineerl').innerHTML = arreng;
-        document.getElementById('v_impact').innerHTML = strimp;
-        document.getElementById('v_wottype').value = vwottype;
-        document.getElementById('v_asset').value = asset;
-        document.getElementById('v_assetdesc').value = assdesc;
-        document.getElementById('v_loc').value = loccode;
-        {{--  document.getElementById('v_proc').value = astypecode;  --}}
-        document.getElementById('counterfail').value = counterfail;
-        {{--  document.getElementById('v_priority').value = prio;  --}}
-        document.getElementById('v_note').value = note;
-        document.getElementById('v_dept').value = wodept;
-        document.getElementById('v_creator').value = creator;
-        document.getElementById('v_unconfirm').value = reason;
-        document.getElementById('v_mtcby').value = mtcby;
-        document.getElementById('v_fclist').value = fclist;
-
+        // console.log(vamp);
         
-        if(repairtype == 'code'){
-          var textareaview = document.getElementById('v_repaircode');
-          textareaview.value = arrrc.join("\n");
-          document.getElementById('divviewcode').style.display = '';
-          document.getElementById('v_repaircode').style.display = '';
-          document.getElementById('v_repairgroup').style.display = 'none';
-          document.getElementById('divviewgroup').style.display = 'none';
-        }
-        else if (repairtype == 'group'){
-          
-          var vgroup = document.getElementById('v_repairgroup').value = result[0].xxrepgroup_nbr + ' -- ' + repairgroup;
-          document.getElementById('divviewcode').style.display = 'none';
-          document.getElementById('v_repaircode').style.display = 'none';
-          document.getElementById('divviewgroup').style.display = '';
-          document.getElementById('v_repairgroup').style.display = '';
+        var wonumber = wonbr;
+        var srnumber = vamp.wo_master.wo_sr_number;
+        var assetcode = vamp.wo_master.wo_asset_code;
+        var srnote = vamp.sr_note;
+        var assetdesc = vamp.asset.asset_desc;
+        var assetloc = vamp.asset.asset_loc;
+        var assetloc_desc = vamp.asset.asloc_desc;
+        var failuretype_code = vamp.wo_master.wo_failure_type !== null ? vamp.wo_master.wo_failure_type : '';
+        var failuretype_desc = vamp.failure_type.wotyp_desc ? vamp.failure_type.wotyp_desc : '';
+        var note = vamp.wo_master.wo_note;
+        var startdate = vamp.wo_master.wo_start_date;
+        startdate = new Date(startdate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        var duedate = vamp.wo_master.wo_due_date;
+        duedate = new Date(duedate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        var createdby = vamp.wo_master.wo_createdby;
+        var department = vamp.wo_master.wo_department ? vamp.wo_master.wo_department : '';
+        var rejectreason = vamp.sr_acceptance_note ? vamp.sr_acceptance_note : '';
+        var status = vamp.wo_master.wo_status;
+        var wotype = vamp.wo_master.wo_type;
+        var wostart = vamp.wo_master.wo_job_startdate ? new Date(vamp.wo_master.wo_job_startdate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
+        var wofinish = vamp.wo_master.wo_job_finishdate ? new Date(vamp.wo_master.wo_job_finishdate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
 
-        }
+        let combineFailure = [];
 
-        if (reason != null) {
-          document.getElementById('divunconf').style.display = '';
-        } else if (reason == null) {
-          document.getElementById('divunconf').style.display = 'none';
-        }
-        document.getElementById('v_reportnote').value = apprnote; */
-      },  
+        vamp.failurecode.forEach(function(failure) {
+          combineFailure.push(failure.fn_code + " - " + failure.fn_desc);
+        });
 
-      complete: function(vamp) {
+        let combineImpact = [];
 
-        setTimeout(function() {
+        vamp.impact.forEach(function(impact){
+          combineImpact.push(impact.imp_code + " - " + impact.imp_desc);
+        });
+
+        let combineEngineer = [];
+
+        vamp.engineer.forEach(function(engineer){
+          combineEngineer.push(engineer.eng_code + ' - ' + engineer.eng_desc);
+        });
+
+
+        document.getElementById('v_nowo').value = wonumber;
+        document.getElementById('v_asset').value = assetcode;
+        document.getElementById('v_assetdesc').value = assetdesc;
+        document.getElementById('v_loc').value = assetloc + ' - ' + assetloc_desc;
+        document.getElementById('v_wottype').value = failuretype_code + ' - ' + failuretype_desc;
+        document.getElementById('v_fclist').value = combineFailure.join('\n');
+        document.getElementById('v_impact').value = combineImpact.join('\n');
+        document.getElementById('v_engineerl').value = combineEngineer.join('\n');
+        document.getElementById('v_note').value = note;
+        document.getElementById('v_nosr').value = srnumber;
+        document.getElementById('v_startdate').value = startdate;
+        document.getElementById('v_duedate').value = duedate;
+        document.getElementById('v_creator').value = createdby;
+        document.getElementById('v_dept').value = department;
+        document.getElementById('v_srnote').value = srnote;
+        document.getElementById('v_rejectreason').value = rejectreason;
+        document.getElementById('v_status').value = status;
+        document.getElementById('v_wotype').value = wotype;
+        document.getElementById('v_wostart').value = wostart;
+        document.getElementById('v_wofinish').value = wofinish;
+        
+
+      },complete: function(vamp) {
+        //  $('.modal-backdrop').modal('hide');
+        // alert($('.modal-backdrop').hasClass('in'));
+
+        {{--  setTimeout(function() {
           $('#loadingtable').modal('hide');
         }, 500);
 
         setTimeout(function() {
           $('#viewModal').modal('show');
-        }, 1000);
+        }, 1000);  --}}
 
       }
     })
+
+    $.ajax({
+      url: "/imageviewonly_woimaint",
+      data: {
+        wonumber: wonbr,
+      },
+      success: function(data) {
+
+        $('#munculgambar_view').html('').append(data);
+      }
+    })
+
+    $.ajax({
+        url: "/listuploadview/" + srnumber,
+        success: function(data) {
+          // console.log(data);
+          $('#munculgambar_view_sr').html('').append(data);
+        }
+      })
   });
-  // flag tunggu semua menu
+  // flag tunggu semua menu  --}}
 
   function clear_icon() {
     $('#id_icon').html('');
