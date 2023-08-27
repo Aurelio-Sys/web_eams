@@ -39,21 +39,57 @@ class HomeController extends Controller
             ->where("users.id", $id)
             ->get();
 
-        
+
 
         return view("home");
     }
 
-    public function expenseMT (){
+    public function expenseMT()
+    {
         $expenses = DB::table('wo_mstr')
-            ->select('wo_mstr.wo_department','dept_mstr.dept_desc', DB::raw('ROUND(SUM(wo_dets_sp.wd_sp_issued * wo_dets_sp.wd_sp_itemcost),2) as total_sparepart_cost'))
+            ->select('wo_mstr.wo_department', 'dept_mstr.dept_desc', DB::raw('ROUND(SUM(wo_dets_sp.wd_sp_issued * wo_dets_sp.wd_sp_itemcost),2) as total_sparepart_cost'))
             ->join('wo_dets_sp', 'wo_mstr.wo_number', '=', 'wo_dets_sp.wd_sp_wonumber')
-            ->join('dept_mstr','wo_mstr.wo_department','dept_mstr.dept_code')
+            ->join('dept_mstr', 'wo_mstr.wo_department', 'dept_mstr.dept_code')
             ->where('wo_mstr.wo_status', 'closed')
             ->groupBy('wo_mstr.wo_department')
-            ->orderBy('total_sparepart_cost','asc')
+            ->orderBy('total_sparepart_cost', 'asc')
             ->get();
 
         return response()->json($expenses);
+    }
+
+    public function WoGraph()
+    {
+        $WoOpen = DB::table('wo_mstr')
+            ->whereNotIn('wo_status', ['close', 'canceled'])
+            ->count();
+
+        $currentDate = Carbon::now()->toDateString();
+
+        $WoOverDue = DB::table('wo_mstr')
+            ->whereNotIn('wo_status', ['close', 'canceled'])
+            ->whereDate('wo_due_date', '<', $currentDate)
+            ->count();
+
+        $WoOnProg = DB::table('wo_mstr')
+            ->where('wo_status', 'started')
+            ->count();
+
+        return response()->json([
+            'WoOpen' => $WoOpen,
+            'WoOverDue' => $WoOverDue,
+            'WoOnProg' => $WoOnProg
+        ]);
+    }
+
+    public function WoDeptStats()
+    {
+        $WoPerDept = DB::table('wo_mstr')
+            ->select(DB::raw('count(*) as count'), 'dept_desc')
+            ->join('dept_mstr','wo_mstr.wo_department','dept_mstr.dept_code')
+            ->groupBy('wo_department')
+            ->get();
+
+        return response()->json($WoPerDept);
     }
 }

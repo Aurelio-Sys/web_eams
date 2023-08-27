@@ -857,7 +857,9 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/deletecc',[CostCenterController::class, 'destroy']);
 	
 	// new dashboard DK
-	Route::get('/expensemt', [HomeController::class, 'expenseMT']);
+	Route::get('/expensemt', [HomeController::class, 'expenseMT']); //biaya maintenance per department
+	Route::get('/wograph', [HomeController::class, 'WoGraph']); // Grafik WO status
+	Route::get('/wodeptstats', [HomeController::class, 'WoDeptStats']); //Grafik WO per department
 	
 });
 
