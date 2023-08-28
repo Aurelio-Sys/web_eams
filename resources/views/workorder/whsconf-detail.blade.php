@@ -48,6 +48,12 @@
             <input type="hidden" id="hidden_assetsite" value="{{$data->wo_site}}" />
         </div>
     </div>
+    <div class="form-group row col-md-12">
+        <label class="col-md-2 col-form-label text-md-right">Department</label>
+        <div class="col-md-2">
+            <input type="text" class="form-control" id="dept" name="dept" value="{{$data->wo_department}}" readonly>
+        </div>
+    </div>
 </div>
 
 <div class="row mt-2">
@@ -145,7 +151,7 @@
                                     <input type="hidden" class="hidden_locto" name="hidden_locto[]" value="" />
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
-                                    <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0" value="{{$spd->wd_sp_required}}" step="0.01" required />
+                                    <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0" value="{{$spd->wd_sp_required}}" max="{{$spd->wd_sp_required}}" step="0.01" required />
                                 </td>
                             </tr>
                             @empty

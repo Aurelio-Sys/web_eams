@@ -1181,6 +1181,10 @@ class wocontroller extends Controller
 
             $runningnbr = $tablern->wo_prefix . '-' . $newyear . '-' . $newtemprunnbr;
 
+            $get_costcenter = DB::table('dept_mstr')
+                                ->where('dept_code','=', Session::get('department'))
+                                ->first();
+
             $dataarray = array(
                 'wo_number'           => $runningnbr,
                 'wo_sr_number'          => '',
@@ -1203,6 +1207,7 @@ class wocontroller extends Controller
                 'wo_note'              => $req->c_note,
                 'wo_createdby'          => session()->get('username'),
                 'wo_department'       => session()->get('department'),
+                'wo_cost_center'      => $get_costcenter->dept_cc,
                 'wo_system_create'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                 'wo_system_update'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
             );
@@ -2860,14 +2865,14 @@ class wocontroller extends Controller
             ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
             ->where('wd_sp_wonumber', '=', $wonumber)
             ->groupBy('wd_sp_wonumber', 'wd_sp_spcode')
-            ->select('*', DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'))
+            ->select('*', DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued', DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as wd_sp_whtf')))
             ->get();
 
         // dd($datasparepart);
 
         // ambil semua data spare part
         $sp_all = DB::table('sp_mstr')
-            ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
+            ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot','spm_account')
             ->where('spm_active', '=', 'Yes')
             ->get();
 
@@ -2967,9 +2972,11 @@ class wocontroller extends Controller
 
         // ambil semua data spare part
         $sp_all = DB::table('sp_mstr')
-            ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
+            ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot', 'spm_account')
             ->where('spm_active', '=', 'Yes')
             ->get();
+
+        dd($sp_all);
 
         // ambil data instruction step dari wo_dets_ins
         $datainstruction = DB::table('wo_dets_ins')
@@ -4167,27 +4174,30 @@ class wocontroller extends Controller
             if ($req->has('hidden_sp') && $req->has('hidden_sitefrom') && $req->has('hidden_locfrom') && $req->has('hidden_lotfrom') && $req->has('qtyrequired') && $req->has('qtyissued') && $req->has('qtypotong')) {
                 $domain = ModelsQxwsa::first();
 
-                $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
+                // $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
 
-                if ($costdata === false) {
-                    alert()->error('Error', 'WSA Failed');
-                    return redirect()->route('woreport');
-                } else {
-                    if ($costdata[1] == "false") {
-                        alert()->error('Error', 'Item Cost tidak ditemukan');
-                        return redirect()->route('woreport');
-                    } else {
-                        $tempCost = (new CreateTempTable())->createTempCost($costdata[0]);
+                // if ($costdata === false) {
+                //     alert()->error('Error', 'WSA Failed');
+                //     return redirect()->route('woreport');
+                // } else {
+                //     if ($costdata[1] == "false") {
+                //         alert()->error('Error', 'Item Cost tidak ditemukan');
+                //         return redirect()->route('woreport');
+                //     } else {
+                //         $tempCost = (new CreateTempTable())->createTempCost($costdata[0]);
 
-                        $tempCost = collect($tempCost[0]);
-                    }
-                }
+                //         $tempCost = collect($tempCost[0]);
+                //     }
+                // }
 
 
                 $dataArrayIssued = []; //penampungngan data yg mau diissued unplanned
                 $dataArrayReceipt = []; //penampungan data yang mau direceipt unplanned
                 foreach ($req->hidden_sp as $index => $spcode) {
                     //cek jika qty yang diissue lebih dari 0 maka dilakukan issued unplanned
+
+                    $getItemCost = DB::table('sp_mstr')->where('spm_code','=', $spcode)->first();
+
                     if ($req->qtypotong[$index] > 0) {
 
                         //menampung spare part yang perlu dilakukan issued unplanned
@@ -4198,6 +4208,8 @@ class wocontroller extends Controller
                         $qtyRequired = $req->qtyrequired[$index];
                         $qtyIssued = $req->qtyissued[$index];
                         $qtyPotong = $req->qtypotong[$index];
+                        $glAccount = $req->glacc[$index];
+                        $costCenter = $req->costcenter[$index];
 
                         $data = [
                             "sparepart_code" => $sparepartCode,
@@ -4206,7 +4218,9 @@ class wocontroller extends Controller
                             "lot_from" => $lotFrom,
                             "qty_required" => $qtyRequired,
                             "qty_issued" => $qtyIssued,
-                            "qty_potong" => $qtyPotong
+                            "qty_potong" => $qtyPotong,
+                            "gl_account" => $glAccount,
+                            "cost_center" => $costCenter
                         ];
 
                         $dataArrayIssued[] = $data;
@@ -4263,8 +4277,8 @@ class wocontroller extends Controller
                         $qtyIssued = $req->qtyissued[$index];
                         $qtyPotong = $req->qtypotong[$index];
 
-                        $sparepartcost = $tempCost->where('cost_site', '=', $siteFrom)
-                            ->where('cost_part', '=', $sparepartCode)->first();
+                        // $sparepartcost = $tempCost->where('cost_site', '=', $siteFrom)
+                        //     ->where('cost_part', '=', $sparepartCode)->first();
 
                         // dd($qtyIssued);
                         //update data untuk pertama kali melakukan report dengan kondisi site,loc,lot issued masih null dan kolom wd_already_issued = false
@@ -4281,7 +4295,7 @@ class wocontroller extends Controller
                                 'wd_sp_site_issued' => $siteFrom,
                                 'wd_sp_loc_issued' => $locFrom,
                                 'wd_sp_lot_issued' => $lotFrom,
-                                'wd_sp_itemcost' => $sparepartcost->cost_cost,
+                                'wd_sp_itemcost' => $getItemCost->spm_price,
                                 'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
 
@@ -4294,7 +4308,7 @@ class wocontroller extends Controller
                                 'wd_sp_loc_issued' => $locFrom,
                                 'wd_sp_lot_issued' => $lotFrom,
                                 'wd_already_issued' => true,
-                                'wd_sp_itemcost' => $sparepartcost->cost_cost,
+                                'wd_sp_itemcost' => $getItemCost->spm_price,
                             ], [
                                 'wd_sp_spcode' => $sparepartCode,
                                 'wd_sp_issued' => DB::raw('wd_sp_issued + ' . $qtyPotong),
@@ -4302,7 +4316,7 @@ class wocontroller extends Controller
                                 'wd_sp_site_issued' => $siteFrom,
                                 'wd_sp_loc_issued' => $locFrom,
                                 'wd_sp_lot_issued' => $lotFrom,
-                                'wd_sp_itemcost' => $sparepartcost->cost_cost,
+                                'wd_sp_itemcost' => $getItemCost->spm_price,
                                 'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
                     }
@@ -4423,6 +4437,7 @@ class wocontroller extends Controller
                                 <location>' . $record['loc_from'] . '</location>
                                 <lotserial>' . $record['lot_from'] . '</lotserial>
                                 <ordernbr>' . $req->c_wonbr . '</ordernbr>
+                                <drAcct>' .$record['gl_account'].'</drAcct>
                             </inventoryIssue>';
                     }
 
@@ -4504,7 +4519,6 @@ class wocontroller extends Controller
                     if ($qdocResult == "success" or $qdocResult == "warning") {
                     } else {
                         // dd('abcd');
-                        DB::rollBack();
 
                         $xmlResp->registerXPathNamespace('ns3', 'urn:schemas-qad-com:xml-services:common');
                         $outputerror = '';
