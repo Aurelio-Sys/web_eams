@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App;
 
-class SendWorkOrderCanceledNotification implements ShouldQueue
-// class SendWorkOrderCanceledNotification
+class SendWorkOrderCanceledSpvNotification implements ShouldQueue
+// class SendWorkOrderCanceledSpvNotification
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -55,9 +55,12 @@ class SendWorkOrderCanceledNotification implements ShouldQueue
                 ->where('wo_number', '=', $wonumber)
                 ->first();
 
+            $getengapprover = DB::table('sr_trans_approval_eng')
+                ->where('srta_eng_mstr_id', $getdatasr->id)
+                ->first();
 
             $getemail = DB::table('users')
-                ->where('username', $getdatasr->sr_req_by)
+                ->where('id', $getengapprover->srta_eng_approved_by)
                 ->first();
 
             Mail::send(
@@ -93,9 +96,12 @@ class SendWorkOrderCanceledNotification implements ShouldQueue
                 ->where('sr_number', '=', $srnumber)
                 ->first();
 
+            $getengapprover = DB::table('sr_trans_approval_eng')
+                ->where('srta_eng_mstr_id', $getdatasr->id)
+                ->first();
 
             $getemail = DB::table('users')
-                ->where('username', $getdatasr->sr_req_by)
+                ->where('id', $getengapprover->srta_eng_approved_by)
                 ->first();
 
             Mail::send(

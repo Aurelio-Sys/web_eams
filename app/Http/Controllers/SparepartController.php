@@ -1561,6 +1561,7 @@ class SparepartController extends Controller
     {
         $rsnumber = $req->code;
         $wonumber = $req->wonbr;
+        // dd($wonumber <> null);
         if ($req->ajax()) {
 
             $datas = DB::table('ret_sparepart')
@@ -1568,16 +1569,28 @@ class SparepartController extends Controller
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'ret_sparepart_det.ret_spd_sparepart_code')
                 ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
                 ->join('inp_supply', 'inp_supply.inp_loc', 'ret_sparepart_det.ret_spd_loc_from')
-                ->when($wonumber, function ($q) {
-                    return $q->join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber', 'ret_sparepart.ret_sp_wonumber')
-                        ->whereColumn('wd_sp_required', '>', 'wd_sp_issued')
-                        ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inp_loc, wd_sp_spcode');
-                }, function ($q) {
-                    return $q->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inp_loc');
-                })
+                // ->when($wonumber != null, function ($q) {
+                //     return $q->join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber', 'ret_sparepart.ret_sp_wonumber')
+                //         ->whereColumn('wd_sp_required', '>', 'wd_sp_issued')
+                //         ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inp_loc, wd_sp_spcode');
+                // }, 
+                // function ($q) {
+                //     return $q->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inp_loc');
+                // })
                 ->where('ret_sp_number', $rsnumber)
-                // ->groupBy('req_sp_number')
                 ->get();
+
+                // if ($wonumber != null) {
+                //     // dd(1);
+                //     $datas = $datas->join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber', 'ret_sparepart.ret_sp_wonumber')
+                //         // ->whereColumn('wd_sp_required', '>', 'wd_sp_issued')
+                //         ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inp_loc');
+                // }else{
+                //     dd(2);
+                //     $datas = $datas->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inp_loc');
+                // }
+
+                // $datas = $datas->get();
 
             $sp_all = DB::table('sp_mstr')
                 ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
@@ -1593,8 +1606,8 @@ class SparepartController extends Controller
                 if ($wonumber != null) {
                     $output .= '<tr>';
                     $output .= '<td>';
-                    $output .= '<input type="text" class="form-control spretdesc" name="spretdesc[]" value="' . $data->wd_sp_spcode . ' -- ' . $data->spm_desc . '" readonly/>';
-                    $output .= '<input type="hidden" class="form-control spret" name="te_spret[]" value="' . $data->wd_sp_spcode . '" readonly/>';
+                    $output .= '<input type="text" class="form-control spretdesc" name="spretdesc[]" value="' . $data->spm_code . ' -- ' . $data->spm_desc . '" readonly/>';
+                    $output .= '<input type="hidden" class="form-control spret" name="te_spret[]" value="' . $data->spm_code . '" readonly/>';
                     $output .= '</td>';
                     $output .= '<td><input type="number" class="form-control" step=".01" min="0.01" max="' . $data->ret_spd_qty_return . '" name="te_qtyret[]" value="' . $data->ret_spd_qty_return . '"></td>';
                     $output .= '<td>';
@@ -2352,11 +2365,11 @@ class SparepartController extends Controller
             ->first();
 
         $sparepart_detail = DB::table('ret_sparepart')
-            ->leftJoin('ret_sparepart_det', 'ret_sparepart_det.ret_spd_mstr_id', 'ret_sparepart.id')
+            ->join('ret_sparepart_det', 'ret_sparepart_det.ret_spd_mstr_id', 'ret_sparepart.id')
             ->join('sp_mstr', 'sp_mstr.spm_code', 'ret_sparepart_det.ret_spd_sparepart_code')
             ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
             ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_desc, ret_sparepart.created_at')
-            ->groupBy('ret_sp_number')
+            // ->groupBy('ret_sp_number')
             ->where('ret_spd_mstr_id', $data->id)
             // ->groupBy('req_spd_mstr_id')
             ->get();
@@ -2365,7 +2378,7 @@ class SparepartController extends Controller
         $datalocsupply = DB::table('inc_source')
             ->get();
 
-        // dd($data);
+        // dd($sparepart_detail);
         return view('sparepart.returnsparepartwhs-detail', compact(
             'data',
             'sparepart_detail',
