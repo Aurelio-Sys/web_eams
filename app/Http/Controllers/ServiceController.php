@@ -616,8 +616,9 @@ class ServiceController extends Controller
                 srta_eng_status,eng_role,srta_eng_reason,service_req_mstr.id')
                     ->where('sr_status', '<>', 'Canceled')
                     // ->where('sr_status', '<>', 'Inprocess')
-                    ->orderBy('sr_req_date', 'DESC')
-                    ->orderBy('sr_number', 'DESC')
+                    // ->orderBy('sr_req_date', 'DESC')
+                    ->orderByRaw("FIELD(sr_priority, 'high', 'medium', 'low')")
+                    // ->orderBy('sr_number', 'DESC')
                     ->groupBy('sr_number');
 
 
@@ -2014,8 +2015,9 @@ class ServiceController extends Controller
                 srta_eng_status,eng_role,srta_eng_reason,service_req_mstr.id')
                     ->where('sr_status', '<>', 'Canceled')
                     // ->where('sr_status', '<>', 'Inprocess')
-                    ->orderBy('sr_req_date', 'DESC')
-                    ->orderBy('sr_number', 'DESC')
+                    // ->orderBy('sr_req_date', 'DESC')
+                    // ->orderBy('sr_number', 'DESC')
+                    ->orderByRaw("FIELD(sr_priority, 'high', 'medium', 'low')")
                     ->groupBy('sr_number');
 
 

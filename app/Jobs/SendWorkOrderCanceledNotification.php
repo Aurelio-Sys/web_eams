@@ -49,7 +49,6 @@ class SendWorkOrderCanceledNotification implements ShouldQueue
                     ->where('sr_number', '=', $srnumber)
                     ->where('wo_number', '=', $wonumber)
                     ->first();
-
         
         $getemail = DB::table('users')
                     ->where('username', $getdatasr->sr_req_by)
