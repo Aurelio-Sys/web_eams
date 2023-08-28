@@ -25,8 +25,8 @@ class CreateRetSparepartDet extends Migration
             $table->string('ret_spd_lot_from');
             $table->string('ret_spd_loc_to');
             $table->string('ret_spd_site_to');
-            $table->string('ret_spd_engnote');
-            $table->string('ret_spd_whsnote');
+            $table->string('ret_spd_engnote')->nullable();
+            $table->string('ret_spd_whsnote')->nullable();
             $table->timestamps();
         });
     }

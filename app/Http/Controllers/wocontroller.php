@@ -267,12 +267,16 @@ class wocontroller extends Controller
             if (Session::get('role') == 'ADMIN') {
                 $data = DB::table('wo_mstr')
                     ->leftJoin('users', 'wo_mstr.wo_createdby', 'users.username')
-                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code');
+                    ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+                    ->leftjoin('release_trans_approval', 'release_trans_approval.retr_mstr_id', 'wo_mstr.id')
+                    ->groupBy('wo_number');
             } elseif (Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR') {
                 $data = DB::table('wo_mstr')
                     ->leftJoin('users', 'wo_mstr.wo_createdby', 'users.username')
                     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
-                    ->where('wo_department', '=', Session::get('department'));
+                    ->leftjoin('release_trans_approval', 'release_trans_approval.retr_mstr_id', 'wo_mstr.id')
+                    ->where('wo_department', '=', Session::get('department'))
+                    ->groupBy('wo_number');
             } else {
                 $username = Session::get('username');
 
@@ -281,13 +285,15 @@ class wocontroller extends Controller
                 $data = DB::table('wo_mstr')
                     ->leftJoin('users', 'wo_mstr.wo_createdby', 'users.username')
                     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+                    ->leftjoin('release_trans_approval', 'release_trans_approval.retr_mstr_id', 'wo_mstr.id')
                     ->where(function ($query) use ($username) {
                         $query->where('wo_list_engineer', '=', $username . ';')
                             ->orWhere('wo_list_engineer', 'LIKE', $username . ';%')
                             ->orWhere('wo_list_engineer', 'LIKE', '%;' . $username . ';%')
                             ->orWhere('wo_list_engineer', 'LIKE', '%;' . $username)
                             ->orWhere('wo_list_engineer', '=', $username);
-                    });
+                    })
+                    ->groupBy('wo_number');
             }
 
             if ($req->s_nomorwo) {
@@ -1577,6 +1583,7 @@ class wocontroller extends Controller
                             ->where('sr_number', '=', $checksr->wo_sr_number)
                             ->update([
                                 'sr_status' => 'Canceled',
+                                'sr_wocancel_note' => $req->notecancel,
                                 'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
 
@@ -1609,6 +1616,7 @@ class wocontroller extends Controller
                                 'sr_fail_code' => $getdatasr->sr_fail_code,
                                 'sr_impact' => $getdatasr->sr_impact,
                                 'sr_priority' => $getdatasr->sr_priority,
+                                'sr_wocancel_note' => $req->notecancel,
                                 'sr_action' => 'WO Canceled',
                                 'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -1671,11 +1679,34 @@ class wocontroller extends Controller
                                 'sr_fail_code' => $getdatasr->sr_fail_code,
                                 'sr_impact' => $getdatasr->sr_impact,
                                 'sr_priority' => $getdatasr->sr_priority,
+                                'sr_wodelete_note' => $req->notecancel,
                                 'sr_action' => 'WO Deleted',
                                 'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
                     }
+
+                    //update status sr approval eng menjadi waiting fo approval lagi
+                    DB::table('sr_trans_approval_eng')
+                        ->where('srta_eng_mstr_id', $getdatasr->id)
+                        ->update([
+                            'srta_eng_reason' => null,
+                            'srta_eng_status' => 'Waiting for engineer approval',
+                            'srta_eng_approved_by' => null,
+                            'updated_at' => null,
+                        ]);
+
+                    DB::table('sr_trans_approval_eng_hist')
+                        ->insert([
+                            'srtah_eng_sr_number' => $getdatasr->sr_number,
+                            'srtah_eng_dept_approval' => $getdatasr->sr_eng_approver,
+                            'srtah_eng_role_approval' => 'SPVSR',
+                            'srtah_eng_status' => 'Waiting for engineer approval',
+                            'srtah_eng_reason' => 'WO deleted and SR back to open',
+                            'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                        ]);
+
 
                     //hapus data wo
 
@@ -1764,6 +1795,7 @@ class wocontroller extends Controller
                                 ->where('sr_number', '=', $checksr->wo_sr_number)
                                 ->update([
                                     'sr_status' => 'Canceled',
+                                    'sr_wocancel_note' => $req->notecancel,
                                     'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 ]);
 
@@ -1796,6 +1828,7 @@ class wocontroller extends Controller
                                     'sr_fail_code' => $getdatasr->sr_fail_code,
                                     'sr_impact' => $getdatasr->sr_impact,
                                     'sr_priority' => $getdatasr->sr_priority,
+                                    'sr_wocancel_note' => $req->notecancel,
                                     'sr_action' => 'WO Canceled',
                                     'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                     'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -1858,6 +1891,7 @@ class wocontroller extends Controller
                                     'sr_fail_code' => $getdatasr->sr_fail_code,
                                     'sr_impact' => $getdatasr->sr_impact,
                                     'sr_priority' => $getdatasr->sr_priority,
+                                    'sr_wodelete_note' => $req->notecancel,
                                     'sr_action' => 'WO Deleted',
                                     'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                     'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),

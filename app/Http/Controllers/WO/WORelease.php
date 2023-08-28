@@ -636,6 +636,7 @@ class WORelease extends Controller
             'retrh_sr_number'        => $womstr->wo_sr_number,
             'retrh_dept_approval'    => $user->dept_user,
             'retrh_role_approval'    => $user->role_user,
+            'retrh_sequence'         => $woapprover->retr_sequence,
             'retrh_status'           => 'WO Approved',
             'retrh_reason'           => $reason,
             // 'retrh_sequence'         => $woapprover->retr_sequence,
