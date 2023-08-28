@@ -66,14 +66,16 @@ class DownrptController extends Controller
             ->selectRaw('sr_asset as asset,count(sr_number) as jmltr')
             ->leftjoin('asset_mstr','asset_code','=','sr_asset')
             ->whereSr_fail_type('BRE')
+            ->where('sr_status','<>','Canceled')
             ->groupBy('sr_asset');
-
+// dd($datamtbfsr->get());
         /** Mencari data dari WO yang tidak ada SR nya */
         $datamtbfwo = DB::table('wo_mstr')
             ->selectRaw('wo_asset_code as asset,count(wo_number) as jmltr')
             ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
             ->whereWo_failure_type('BRE')
             ->whereWo_type('CM')
+            ->where('wo_status','<>','canceled')
             ->where(function ($query) {
                 $query->whereNull('wo_sr_number')
                     ->orWhere('wo_sr_number', '');
@@ -86,19 +88,21 @@ class DownrptController extends Controller
             ->Join('wo_mstr','wo_mstr.wo_number','=','service_req_mstr.wo_number')
             ->leftjoin('asset_mstr','asset_code','=','sr_asset')
             ->whereSr_fail_type('BRE')
-            ->wherein('wo_status',['finished','Closed']);
-
+            ->where('sr_status','<>','Canceled')
+            ->wherein('wo_status',['finished','Closed','Acceptance']);
+// dd($datamttfsr->get());
         $datamttfwo = DB::table('wo_mstr')
             ->selectRaw('wo_asset_code as asset,wo_start_date as tglawal,wo_job_finishdate as tglakhir')
             ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
             ->whereWo_failure_type('BRE')
             ->whereWo_type('CM')
+            ->where('wo_status','<>','canceled')
             ->where(function ($query) {
                 $query->whereNull('wo_sr_number')
                     ->orWhere('wo_sr_number', '');
             })
-            ->wherein('wo_status',['finished','Closed']);
-
+            ->wherein('wo_status',['finished','Closed','acceptance']);
+// dd($datamttfwo->get());
         /** Perhitungan MDT -> seperti MTTF namun ditambahkan jam nya yang diambil adalah yang setelah approval WO */
         $datamdtsr = DB::table('service_req_mstr')
             ->selectRaw('wo_mstr.id as woid, sr_asset as asset,sr_req_date as tglawal,sr_req_time as jamawal,wo_job_finishdate as tglakhir,wo_job_finishtime as jamakhir')
@@ -106,7 +110,7 @@ class DownrptController extends Controller
             ->leftjoin('asset_mstr','asset_code','=','sr_asset')
             ->whereSr_fail_type('BRE')
             ->wherein('wo_status',['acceptance','Closed']);
-            
+// dd($datamdtsr->get());            
         $datamdtwo = DB::table('wo_mstr')   /** Untuk WO jam awalnya ambil dari jam input, karena tidak ada inputan untuk jam dan tanggalnya */
             ->selectRaw('wo_mstr.id as woid,wo_asset_code as asset,wo_start_date as tglawal,TIME(wo_system_create) as jamawal,wo_job_finishdate as tglakhir,wo_job_finishtime as jamakhir')
             ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
@@ -117,7 +121,7 @@ class DownrptController extends Controller
                     ->orWhere('wo_sr_number', '');
             })
             ->wherein('wo_status',['acceptance','Closed']);
-
+// dd($datamdtwo->get());
         /** Perhitungan MTTR -> seperti MDT namun statusnya dari rreporting WO sampai dengan user acceptance */
         $datamttrsr = DB::table('service_req_mstr')
             ->selectRaw('sr_asset as asset,sr_req_date as tglawal,sr_req_time as jamawal,wo_job_finishdate as tglakhir,wo_job_finishtime as jamakhir')
@@ -203,7 +207,7 @@ class DownrptController extends Controller
         /** Perhitungan MTBF */
         $datamtbfsr = $datamtbfsr->get();
         $datamtbfwo = $datamtbfwo->get();
-
+// dd($datamtbfsr,$datamtbfwo);
         /** Menggabungkan dan menjumlahkan transaksi dari data SR dan WO */
         $datasrwo = [];
         foreach ($datamtbfsr as $sr) {
@@ -236,7 +240,7 @@ class DownrptController extends Controller
 
         // Konversi array asosiatif menjadi indeks numerik jika diperlukan
         $datagabung = array_values($datasrwo);
-
+// dd($datagabung);
         foreach($datagabung as $ds) {
             $dsasset = $ds['asset'];
             $dsjmltr = $ds['jmltr'];
@@ -345,7 +349,6 @@ class DownrptController extends Controller
             ->select('woid','asset', DB::raw('MIN(tglawal) as tglawal'), DB::raw('MAX(tglakhir) as tglakhir'), DB::raw('MAX(jamawal) as jamawal'), DB::raw('MAX(jamakhir) as jamakhir'))
             ->orderBy('asset')
             ->orderBy('tglawal')
-            ->whereAsset('MSNTL104')
             ->get();
 // dd($datamdt);
         $uniqueMdt = $datamdt->pluck('asset')->unique();
@@ -423,7 +426,6 @@ class DownrptController extends Controller
             ->select('asset', DB::raw('MIN(tglawal) as tglawal'), DB::raw('MAX(tglakhir) as tglakhir'), DB::raw('MAX(jamawal) as jamawal'), DB::raw('MAX(jamakhir) as jamakhir'))
             ->orderBy('asset')
             ->orderBy('tglawal')
-            ->whereAsset('MSNTL104')
             ->get();
 
         $uniqueMdt = $datamdt->pluck('asset')->unique();
