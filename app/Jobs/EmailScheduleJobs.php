@@ -16,8 +16,8 @@ use PDF;
 use App;
 use Illuminate\Support\Facades\Auth\Authenticatable;
 
-// class EmailScheduleJobs implements ShouldQueue
-class EmailScheduleJobs
+class EmailScheduleJobs implements ShouldQueue
+// class EmailScheduleJobs
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -485,9 +485,6 @@ class EmailScheduleJobs
                 ->where('role_user', '=', $approver->srta_role_approval)
                 ->get();
 
-            $emailuser = DB::table('users')
-                ->where('username', $requestor)
-                ->first();
             // dd($user);
 
             $emails = '';
@@ -528,34 +525,6 @@ class EmailScheduleJobs
                 $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel                
 
             }
-
-            //email ke user
-            Mail::send(
-                'emailrequestor',
-                [
-                    'pesan' => 'Service Request Approved by Department ' . $role,
-                    'note1' => $srnumber,
-                    'note2' => $asset,
-                ],
-                function ($message) use ($emailuser) {
-                    $message->subject('eAMS - Service Request Approved by Department');
-                    // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
-                    $message->to($emailuser->email_user);
-                }
-            );
-
-            $user = App\User::where('id', '=', $emailuser->id)->first();
-            $details = [
-                'body' => 'Service Request Approved by Department ' . $role,
-                'url' => 'srbrowse',
-                'nbr' => $srnumber,
-                'note' => 'Please check'
-
-            ]; // isi data yang dioper
-
-            $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel                
-
-
         } else if ($a == 8) { //kirim email ke engineer approver
             $asset = $this->asset;
             $requestor = $this->requestor;
@@ -566,12 +535,26 @@ class EmailScheduleJobs
 
             $srmstr = DB::table('service_req_mstr')->where('sr_number', $srnumber)->first();
 
-            $emailrequestor = DB::table('eng_mstr')
+            $engapprover = DB::table('eng_mstr')
+                ->join('users', 'eng_mstr.eng_code', '=', 'users.username')
+                ->where('approver', '=', 1)
+                ->where('eng_active', '=', 'Yes')
+                ->where('eng_dept', '=', $srmstr->sr_eng_approver)
+                ->where('eng_role', '=', 'SPVSR')
+                ->get();
+
+            if ($engapprover != null) {
+                //jika di departemen itu ada role SPVSR maka email akan ke SPVSR tersebut
+                $emailrequestor = $engapprover;
+            } else {
+                //jika di departemen itu tidak ada role SPVSR maka email akan ke engineer yang memiliki hak approver (rolenya tidak harus SPVSR)
+                $emailrequestor = DB::table('eng_mstr')
                 ->join('users', 'eng_mstr.eng_code', '=', 'users.username')
                 ->where('approver', '=', 1)
                 ->where('eng_active', '=', 'Yes')
                 ->where('eng_dept', '=', $srmstr->sr_eng_approver)
                 ->get();
+            }
 
             $emailuser = DB::table('users')
                 ->where('username', $requestor)
@@ -1140,7 +1123,7 @@ class EmailScheduleJobs
                 // dd($approver);
                 $user = App\User::where('id', '=', $approver->ID)->first();
                 $details = [
-                    'body' => 'Request Sparepart Approval needed for '.$rsnumber.'',
+                    'body' => 'Request Sparepart Approval needed for ' . $rsnumber . '',
                     'url' => 'reqspapproval',
                     'nbr' => $rsnumber,
                     'note' => 'Please review and provide approval promptly'
@@ -1150,8 +1133,6 @@ class EmailScheduleJobs
                 $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel                
 
             }
-
-
         } else if ($a == 18) { //kirim email ke engineer yg melakukan request sparepart ketika request sparepart released di approved
             $asset = $this->asset;
             $requestor = $this->requestor;
@@ -1170,7 +1151,7 @@ class EmailScheduleJobs
                     'note1' => $srnumber,
                     'note2' => $asset,
                 ],
-                function ($message) use ($emailrequestor,$srnumber) {
+                function ($message) use ($emailrequestor, $srnumber) {
                     $message->subject('eAMS - Request Sparepart ' . $srnumber . ' has been approved');
                     // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
                     $message->to($emailrequestor->email_user);
@@ -1219,13 +1200,13 @@ class EmailScheduleJobs
                 Mail::send(
                     'emailrequestor',
                     [
-                        'pesan' => 'Request Sparepart '. $rsnumber .' has been rejected',
+                        'pesan' => 'Request Sparepart ' . $rsnumber . ' has been rejected',
                         'note1' => $wonumber,
                         'note2' => $asset,
                         'header1' => 'Work Order'
                     ],
                     function ($message) use ($wo, $listto, $rsnumber) {
-                        $message->subject('eAMS - Work Order '.$rsnumber.' has been rejected');
+                        $message->subject('eAMS - Work Order ' . $rsnumber . ' has been rejected');
                         // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
                         $message->to(array_filter($listto));
                     }
@@ -1235,7 +1216,7 @@ class EmailScheduleJobs
                 foreach ($data as $data) {
                     $user = App\User::where('id', '=', $data->id)->first();
                     $details = [
-                        'body' => 'Request Sparepart '.$rsnumber.' has been rejected',
+                        'body' => 'Request Sparepart ' . $rsnumber . ' has been rejected',
                         'url' => 'reqspapproval',
                         'nbr' => $rsnumber,
                         'note' => 'Please check'

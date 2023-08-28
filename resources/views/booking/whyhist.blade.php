@@ -45,6 +45,11 @@
                     <input id="s_problem" type="text" class="form-control" name="s_problem"
                     value="" autofocus autocomplete="off"/>
                 </div>
+                <label for="s_key" class="col-md-2 col-sm-2 col-form-label text-md-right">Keyword</label>
+                <div class="col-md-4 col-sm-4 mb-2 input-group">
+                    <input id="s_key" type="text" class="form-control" name="s_key"
+                    value="" autofocus autocomplete="off"/>
+                </div>
                 <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
                 <div class="col-md-2 col-sm-4 mb-2 input-group">
                     <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
@@ -114,6 +119,12 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label for="t_key" class="col-md-2 col-form-label text-md-right">Keyword</label>
+                        <div class="col-md-9">
+                           <input type="text" id="t_key" name="t_key" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
                      <label for="t_problem" class="col-md-2 col-form-label text-md-right">Problem</label>
                      <div class="col-md-9">
                         <textarea id="t_problem" name="t_problem" rows="2" cols="50" class="form-control"></textarea>
@@ -171,7 +182,7 @@
     <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
         <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel">Inventory Supply Modify</h5>
+        <h5 class="modal-title text-center" id="exampleModalLabel">5 Why Modify</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -180,7 +191,7 @@
             {{ csrf_field() }}
             <div class="modal-body">
                 <div class="form-group row">
-                    <label for="t_asset" class="col-md-2 col-form-label text-md-right">Asset</label>
+                    <label for="te_asset" class="col-md-2 col-form-label text-md-right">Asset</label>
                     <div class="col-md-9">
                        <input type="text" class="form-control" id="te_asset" name="te_asset" readonly>
                        <input type="hidden" id="te_id" name="te_id">
@@ -195,6 +206,12 @@
                           <option value="{{$dw->wo_number}}">{{$dw->wo_number}}</option>
                           @endforeach
                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="te_key" class="col-md-2 col-form-label text-md-right">Keyword</label>
+                    <div class="col-md-9">
+                       <input type="text" class="form-control" id="te_key" name="te_key">
                     </div>
                 </div>
                 <div class="form-group row">
@@ -266,6 +283,104 @@
     </div>
 </div>
 
+<!-- Modal View -->
+<div class="modal fade" id="viewModal" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title text-center" id="exampleModalLabel">5 Why Modify</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <form class="form-horizontal" method="post" action="" enctype="multipart/form-data">
+            {{ csrf_field() }}
+            <div class="modal-body">
+                <div class="form-group row">
+                    <label for="v_asset" class="col-md-2 col-form-label text-md-right">Asset</label>
+                    <div class="col-md-9">
+                       <input type="text" class="form-control" id="v_asset" name="v_asset" readonly>
+                       <input type="hidden" id="v_id" name="v_id">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="v_wo" class="col-md-2 col-form-label text-md-right">WO Number</label>
+                    <div class="col-md-9">
+                       <select class="form-control" id="v_wo" name="v_wo" readonly>
+                          <option value=""></option>
+                          @foreach($datawo as $dw)
+                          <option value="{{$dw->wo_number}}">{{$dw->wo_number}}</option>
+                          @endforeach
+                       </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="v_key" class="col-md-2 col-form-label text-md-right">Keyword</label>
+                    <div class="col-md-9">
+                       <input type="text" class="form-control" id="v_key" name="v_key" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                 <label for="v_problem" class="col-md-2 col-form-label text-md-right">Problem</label>
+                 <div class="col-md-9">
+                    <textarea id="v_problem" name="v_problem" rows="2" cols="50" class="form-control" readonly></textarea>
+                 </div>
+                </div>
+                <div class="form-group row">
+                 <label for="v_why1" class="col-md-2 col-form-label text-md-right">Why 1</label>
+                 <div class="col-md-9">
+                    <textarea id="v_why1" name="v_why1" rows="2" cols="50" class="form-control" readonly></textarea>
+                 </div>
+                </div>
+                <div class="form-group row">
+                 <label for="v_why2" class="col-md-2 col-form-label text-md-right">Why 2</label>
+                 <div class="col-md-9">
+                    <textarea id="v_why2" name="v_why2" rows="2" cols="50" class="form-control" readonly></textarea>
+                 </div>
+                </div>
+                <div class="form-group row">
+                 <label for="v_why3" class="col-md-2 col-form-label text-md-right">Why 3</label>
+                 <div class="col-md-9">
+                    <textarea id="v_why3" name="v_why3" rows="2" cols="50" class="form-control" readonly></textarea>
+                 </div>
+                </div>
+                <div class="form-group row">
+                 <label for="v_why4" class="col-md-2 col-form-label text-md-right">Why 4</label>
+                 <div class="col-md-9">
+                    <textarea id="v_why4" name="v_why4" rows="2" cols="50" class="form-control" readonly></textarea>
+                 </div>
+                </div>
+                <div class="form-group row">
+                 <label for="v_why5" class="col-md-2 col-form-label text-md-right">Why 5</label>
+                 <div class="col-md-9">
+                    <textarea id="v_why5" name="v_why5" rows="2" cols="50" class="form-control" readonly></textarea>
+                 </div>
+                </div>
+                <div class="form-group row">
+                    <label for="file" class="col-md-2 col-form-label text-md-right">Current File</label>
+                    <div class="col-md-9">
+                      <table class="table table-bordered">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                          </tr>
+                        </thead>
+                        <tbody id="vlistupload">
+        
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
+            </div>
+        </form>
+    </div>
+    </div>
+</div>
+
 <!-- Modal Delete -->
 <div class="modal fade" id="deleteModal" role="dialog" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
@@ -307,6 +422,7 @@
            var id = $(this).data('id');
            var asset = $(this).data('asset');
            var wo = $(this).data('wo');
+           var key = $(this).data('key');
            var problem = $(this).data('problem');
            var why1 = $(this).data('why1');
            var why2 = $(this).data('why2');
@@ -317,6 +433,7 @@
            document.getElementById('te_id').value = id;
            document.getElementById('te_asset').value = asset;
            document.getElementById('te_wo').value = wo;
+           document.getElementById('te_key').value = key;
            document.getElementById('te_problem').value = problem;
            document.getElementById('te_why1').value = why1;
            document.getElementById('te_why2').value = why2;
@@ -332,6 +449,40 @@
                 }
             })
 
+       });
+
+       $(document).on('click', '.viewdata', function() {
+            $('#viewModal').modal('show');
+
+            var id = $(this).data('id');
+            var asset = $(this).data('asset');
+            var wo = $(this).data('wo');
+            var key = $(this).data('key');
+            var problem = $(this).data('problem');
+            var why1 = $(this).data('why1');
+            var why2 = $(this).data('why2');
+            var why3 = $(this).data('why3');
+            var why4 = $(this).data('why4');
+            var why5 = $(this).data('why5');
+
+            {{--  document.getElementById('v_id').value = id;  --}}
+            document.getElementById('v_asset').value = asset;
+            document.getElementById('v_wo').value = wo;
+            document.getElementById('v_key').value = key;
+            document.getElementById('v_problem').value = problem;
+            document.getElementById('v_why1').value = why1;
+            document.getElementById('v_why2').value = why2;
+            document.getElementById('v_why3').value = why3;
+            document.getElementById('v_why4').value = why4;
+            document.getElementById('v_why5').value = why5;
+
+            $.ajax({
+                url: "/whyfileview/" + id,
+                success: function(data) {
+                console.log(data);
+                $('#vlistupload').html('').append(data);
+                }
+            })
        });
 
        $(document).on('click', '.deletedata', function(e){

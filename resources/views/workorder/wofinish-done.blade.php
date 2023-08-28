@@ -843,13 +843,14 @@
         });
 
         $(document).on('click', '.loclotfrom', function() {
-            $('#loadingtable').modal('show');
+            
             var row = $(this).closest("tr");
             const spcode = row.find(".hidden_sp").val();
             const qtypotong = row.find(".qtypotong").val();
             const getassetsite = document.getElementById('hidden_assetsite').value;
 
             if (qtypotong > 0) {
+                $('#loadingtable').modal('show');
                 //jika qty yang mau diissue bernilai positif
                 $.ajax({
                     url: '/getwsasupply',

@@ -101,8 +101,8 @@
 --}}
 <div class="col-12 form-group row p-0 m-0">
 
-  <div class="table-responsive col-12">
-    <table class="table table-bordered mini-table mt-4" id="dataTable" width="100%" cellspacing="0">
+  <div class="table-responsive col-12" style="overflow-x: auto; overflow-y: hidden; width: 100rem;">
+    <table class="table table-bordered mini-table mt-4" id="dataTable" width="100%" cellspacing="0" style="width: 75rem !important ; max-width: none !important;">
       <thead>
         <tr style="text-align: center;">
           <th width="10%">WO Number</th>

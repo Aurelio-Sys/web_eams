@@ -332,6 +332,71 @@
                 </label>
               </div>
             </div> 
+
+
+            <!-- Spare Part Transactions -->
+            <h4>
+              <center><strong>Spare Part Transactions</strong></center>
+            </h4>
+            <hr>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Request Sparepart') }}</label>
+              <div class="col-6">
+                <label class="switch" for="reqsp">
+                  <input type="checkbox" class="custom-control-input" id="reqsp" name="reqsp" value="SP03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Request Sparepart Approval') }}</label>
+              <div class="col-6">
+                <label class="switch" for="reqspappr">
+                  <input type="checkbox" class="custom-control-input" id="reqspappr" name="reqspappr" value="SP06" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Transfer Sparepart') }}</label>
+              <div class="col-6">
+                <label class="switch" for="trfsp">
+                  <input type="checkbox" class="custom-control-input" id="trfsp" name="trfsp" value="SP04" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Accumulative Sparepart Transfer ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="accutrf">
+                  <input type="checkbox" class="custom-control-input" id="accutrf" name="accutrf" value="SP05" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Return Sparepart') }}</label>
+              <div class="col-6">
+                <label class="switch" for="retsp">
+                  <input type="checkbox" class="custom-control-input" id="retsp" name="retsp" value="SP07" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Return Sparepart Warehouse') }}</label>
+              <div class="col-6">
+                <label class="switch" for="retspwhs">
+                  <input type="checkbox" class="custom-control-input" id="retspwhs" name="retspwhs" value="SP08" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+
+
+
+
 			      
             <h4>
               <center><strong>Asset Usage</strong></center>
@@ -356,7 +421,16 @@
               </div>
             </div>  --}}
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('PM Generator') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('PM Planning for Meter') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbUSMeter">
+                  <input type="checkbox" class="custom-control-input" id="cbUSMeter" name="cbUSMeter" value="US08" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('PM Planning') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbUSGen">
                   <input type="checkbox" class="custom-control-input" id="cbUSGen" name="cbUSGen" value="US03" />
@@ -402,7 +476,7 @@
             </div>
 
 			
-            <!-- Booking -->
+            <!-- Another Transactions -->
             <h4>
               <center><strong>Another Transactions</strong></center>
             </h4>
@@ -421,60 +495,6 @@
               <div class="col-6">
                 <label class="switch" for="whyhist">
                   <input type="checkbox" class="custom-control-input" id="whyhist" name="whyhist" value="BO02" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Request Sparepart') }}</label>
-              <div class="col-6">
-                <label class="switch" for="reqsp">
-                  <input type="checkbox" class="custom-control-input" id="reqsp" name="reqsp" value="BO03" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Request Sparepart Approval') }}</label>
-              <div class="col-6">
-                <label class="switch" for="reqspappr">
-                  <input type="checkbox" class="custom-control-input" id="reqspappr" name="reqspappr" value="BO06" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Transfer Sparepart') }}</label>
-              <div class="col-6">
-                <label class="switch" for="trfsp">
-                  <input type="checkbox" class="custom-control-input" id="trfsp" name="trfsp" value="BO04" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Accumulative Sparepart Transfer ') }}</label>
-              <div class="col-6">
-                <label class="switch" for="accutrf">
-                  <input type="checkbox" class="custom-control-input" id="accutrf" name="accutrf" value="BO05" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Return Sparepart') }}</label>
-              <div class="col-6">
-                <label class="switch" for="retsp">
-                  <input type="checkbox" class="custom-control-input" id="retsp" name="retsp" value="BO07" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Return Sparepart Warehouse') }}</label>
-              <div class="col-6">
-                <label class="switch" for="retspwhs">
-                  <input type="checkbox" class="custom-control-input" id="retspwhs" name="retspwhs" value="BO08" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -540,6 +560,16 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Downtime Report') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbDownReport">
+                  <input type="checkbox" class="custom-control-input" id="cbDownReport" name="cbDownReport" value="RT15" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            {{--  Ditutup karena sama dengan menu Sparepart Planning
+              <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Remaining Sparepart') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbRptRemsp">
@@ -547,7 +577,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Schedule') }}</label>
               <div class="col-6">
@@ -589,6 +619,15 @@
               <div class="col-6">
                 <label class="switch" for="cbBookSchedule">
                   <input type="checkbox" class="custom-control-input" id="cbBookSchedule" name="cbBookSchedule" value="RT02" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('5 Why View') }}</label>
+              <div class="col-6">
+                <label class="switch" for="viewwhy">
+                  <input type="checkbox" class="custom-control-input" id="viewwhy" name="viewwhy" value="RT13" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -1253,6 +1292,71 @@
               </div>
             </div> 
 			      
+
+            <!-- Spare Part Transactions -->
+            <h4>
+              <center><strong>Spare Part Transactions</strong></center>
+            </h4>
+            <hr>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Request Sparepart') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_reqsp">
+                  <input type="checkbox" class="custom-control-input" id="e_reqsp" name="e_reqsp" value="SP03" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Request Sparepart Approval') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_reqspappr">
+                  <input type="checkbox" class="custom-control-input" id="e_reqspappr" name="e_reqspappr" value="SP06" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Transfer Sparepart') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_trfsp">
+                  <input type="checkbox" class="custom-control-input" id="e_trfsp" name="e_trfsp" value="SP04" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Accumulative Sparepart Transfer ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_accutrf">
+                  <input type="checkbox" class="custom-control-input" id="e_accutrf" name="e_accutrf" value="SP05" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Return Sparepart') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_retsp">
+                  <input type="checkbox" class="custom-control-input" id="e_retsp" name="e_retsp" value="SP07" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Return Sparepart Warehouse') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_retspwhs">
+                  <input type="checkbox" class="custom-control-input" id="e_retspwhs" name="e_retspwhs" value="SP08" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            </div>
+
+
+
+
             <h4>
               <center><strong>Asset Usage</strong></center>
             </h4>
@@ -1276,7 +1380,16 @@
               </div>
             </div>  --}}
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('PM Generator') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('PM Planning for Meter') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbUSMeter">
+                  <input type="checkbox" class="custom-control-input" id="e_cbUSMeter" name="e_cbUSMeter" value="US08" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('PM Planning') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbUSGen">
                   <input type="checkbox" class="custom-control-input" id="e_cbUSGen" name="e_cbUSGen" value="US03" />
@@ -1322,7 +1435,7 @@
             </div>
 
 			
-            <!-- Booking -->
+            <!-- Another Transactions -->
             <h4>
               <center><strong>Another Transactions</strong></center>
             </h4>
@@ -1341,60 +1454,6 @@
               <div class="col-6">
                 <label class="switch" for="e_whyhist">
                   <input type="checkbox" class="custom-control-input" id="e_whyhist" name="e_whyhist" value="BO02" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Request Sparepart') }}</label>
-              <div class="col-6">
-                <label class="switch" for="e_reqsp">
-                  <input type="checkbox" class="custom-control-input" id="e_reqsp" name="e_reqsp" value="BO03" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Request Sparepart Approval') }}</label>
-              <div class="col-6">
-                <label class="switch" for="e_reqspappr">
-                  <input type="checkbox" class="custom-control-input" id="e_reqspappr" name="e_reqspappr" value="BO06" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Transfer Sparepart') }}</label>
-              <div class="col-6">
-                <label class="switch" for="e_trfsp">
-                  <input type="checkbox" class="custom-control-input" id="e_trfsp" name="e_trfsp" value="BO04" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Accumulative Sparepart Transfer ') }}</label>
-              <div class="col-6">
-                <label class="switch" for="e_accutrf">
-                  <input type="checkbox" class="custom-control-input" id="e_accutrf" name="e_accutrf" value="BO05" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Return Sparepart') }}</label>
-              <div class="col-6">
-                <label class="switch" for="e_retsp">
-                  <input type="checkbox" class="custom-control-input" id="e_retsp" name="e_retsp" value="BO07" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Return Sparepart Warehouse') }}</label>
-              <div class="col-6">
-                <label class="switch" for="e_retspwhs">
-                  <input type="checkbox" class="custom-control-input" id="e_retspwhs" name="e_retspwhs" value="BO08" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -1461,6 +1520,16 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Downtime Report') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbDownReport">
+                  <input type="checkbox" class="custom-control-input" id="e_cbDownReport" name="e_cbDownReport" value="RT15" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            {{--  Ditutup karena sama dengan menu Sparepart Planning
+              <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Remaining Sparepart') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbRptRemsp">
@@ -1468,7 +1537,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Schedule') }}</label>
               <div class="col-6">
@@ -1510,6 +1579,15 @@
               <div class="col-6">
                 <label class="switch" for="e_cbBookSchedule">
                   <input type="checkbox" class="custom-control-input" id="e_cbBookSchedule" name="e_cbBookSchedule" value="RT02" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('5 Why View') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_viewwhy">
+                  <input type="checkbox" class="custom-control-input" id="e_viewwhy" name="e_viewwhy" value="RT13" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -2410,6 +2488,11 @@
         } else {
           document.getElementById('e_cbUSmultiMT').checked = false;
         }  --}}
+        if (listmenu.search("US08") >= 0) {
+          document.getElementById('e_cbUSMeter').checked = true;
+        } else {
+          document.getElementById('e_cbUSMeter').checked = false;
+        }
         if (listmenu.search("US03") >= 0) {
           document.getElementById('e_cbUSGen').checked = true;
         } else {
@@ -2447,32 +2530,32 @@
         } else {
           document.getElementById('e_whyhist').checked = false;
         }
-        if (listmenu.search("BO03") >= 0) {
+        if (listmenu.search("SP03") >= 0) {
           document.getElementById('e_reqsp').checked = true;
         } else {
           document.getElementById('e_reqsp').checked = false;
         }
-        if (listmenu.search("BO04") >= 0) {
+        if (listmenu.search("SP04") >= 0) {
           document.getElementById('e_trfsp').checked = true;
         } else {
           document.getElementById('e_trfsp').checked = false;
         }
-        if (listmenu.search("BO05") >= 0) {
+        if (listmenu.search("SP05") >= 0) {
           document.getElementById('e_accutrf').checked = true;
         } else {
           document.getElementById('e_accutrf').checked = false;
         }
-        if (listmenu.search("BO06") >= 0) {
+        if (listmenu.search("SP06") >= 0) {
           document.getElementById('e_reqspappr').checked = true;
         } else {
           document.getElementById('e_reqspappr').checked = false;
         }
-        if (listmenu.search("BO07") >= 0) {
+        if (listmenu.search("SP07") >= 0) {
           document.getElementById('e_retsp').checked = true;
         } else {
           document.getElementById('e_retsp').checked = false;
         }
-        if (listmenu.search("BO08") >= 0) {
+        if (listmenu.search("SP08") >= 0) {
           document.getElementById('e_retspwhs').checked = true;
         } else {
           document.getElementById('e_retspwhs').checked = false;
@@ -2499,11 +2582,16 @@
         } else {
           document.getElementById('e_cbEngReport').checked = false;
         }
-        if (listmenu.search("RT10") >= 0) {
+        if (listmenu.search("RT15") >= 0) {
+          document.getElementById('e_cbDownReport').checked = true;
+        } else {
+          document.getElementById('e_cbDownReport').checked = false;
+        }
+        {{--  if (listmenu.search("RT10") >= 0) {
           document.getElementById('e_cbRptRemsp').checked = true;
         } else {
           document.getElementById('e_cbRptRemsp').checked = false;
-        }
+        }  --}}
         if (listmenu.search("RT03") >= 0) {
           document.getElementById('e_cbAssetSchedule').checked = true;
         } else {
@@ -2528,6 +2616,11 @@
           document.getElementById('e_cbBookSchedule').checked = true;
         } else {
           document.getElementById('e_cbBookSchedule').checked = false;
+        }
+        if (listmenu.search("RT13") >= 0) {
+          document.getElementById('e_viewwhy').checked = true;
+        } else {
+          document.getElementById('e_viewwhy').checked = false;
         }
 
         //Routine Check Main

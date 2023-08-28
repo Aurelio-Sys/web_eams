@@ -22,9 +22,10 @@ class WhyHistController extends Controller
         $s_asset = $req->s_asset;
         $s_wo = $req->s_wo;
         $s_problem = $req->s_problem;
+        $s_key = $req->s_key;
 
         $data = DB::table('why_hist')
-            ->selectRaw('why_hist.id as id, why_asset, why_wo, why_problem, why_why1, why_why2, why_why3, why_why4, why_why5,
+            ->selectRaw('why_hist.id as id, why_asset, why_wo, why_key, why_problem, why_why1, why_why2, why_why3, why_why4, why_why5,
                 why_inputby, why_hist.created_at as created_at, asset_desc')
             ->leftJoin('asset_mstr','asset_code','=','why_asset')
             ->orderBy('why_hist.created_at','desc')
@@ -41,6 +42,9 @@ class WhyHistController extends Controller
         }
         if($s_problem) {
             $data = $data->where('why_problem','like','%'.$s_problem.'%');
+        }
+        if($s_key) {
+            $data = $data->where('why_key','like','%'.$s_key.'%');
         }
 
         $data = $data->paginate(10);
@@ -94,7 +98,7 @@ class WhyHistController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $req)
+    public function store(Request $req) /** Route createwhyhist */
     {
         // dd($req->all());
         DB::beginTransaction();
@@ -103,6 +107,7 @@ class WhyHistController extends Controller
                 ->insert([
                     'why_asset' => $req->t_asset,
                     'why_wo' => $req->t_wo,
+                    'why_key' => $req->t_key,
                     'why_problem' => $req->t_problem,
                     'why_why1' => $req->t_why1,
                     'why_why2' => $req->t_why2,
@@ -205,6 +210,29 @@ class WhyHistController extends Controller
         return response($output);
     }
 
+    public function whyfileview($id)
+    {
+        // dd($id);
+        $datas = DB::table('why_file')
+            ->where('wf_whyid', $id)
+            ->get();
+
+        $output = '';
+        foreach ($datas as $data) {
+
+            $lastindex = strrpos($data->wf_filepath, "/");
+            $filename = substr($data->wf_filepath, $lastindex + 1);
+
+            $output .=  '<tr>
+                            <td> 
+                            <a href="/upload5why/' . $filename . '" target="_blank">' . $filename . '</a> 
+                            </td>
+                        </tr>';
+        }
+
+        return response($output);
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -212,7 +240,7 @@ class WhyHistController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $req)
+    public function update(Request $req) /** route : editwhyhist */
     {
         DB::beginTransaction();
         try {
@@ -221,6 +249,7 @@ class WhyHistController extends Controller
                 ->whereWhy_asset($req->te_asset)
                 ->update([
                     'why_wo' => $req->te_wo,
+                    'why_key' => $req->te_key,
                     'why_problem' => $req->te_problem,
                     'why_why1' => $req->te_why1,
                     'why_why2' => $req->te_why2,

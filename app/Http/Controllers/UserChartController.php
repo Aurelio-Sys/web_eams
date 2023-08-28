@@ -432,13 +432,6 @@ class UserChartController extends Controller
                 ->orderBy('wo_number');
          
             if(isset($engcode)) {
-                // $datawo = $datawo->where(function ($query) use ($engcode) {
-                //     $query->where('wo_engineer1', '=', $engcode)
-                //           ->orWhere('wo_engineer2', '=', $engcode)
-                //           ->orWhere('wo_engineer3', '=', $engcode)
-                //           ->orWhere('wo_engineer4', '=', $engcode)
-                //           ->orWhere('wo_engineer5', '=', $engcode);
-                // });
                 $datawo = $datawo->where('wo_list_engineer','like','%'.$engcode.'%');
             }
             if(isset($sdept)) {

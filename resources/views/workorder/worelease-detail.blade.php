@@ -163,8 +163,8 @@
         <div class="modal-footer">
             <a class="btn btn-danger" href="/worelease" id="btnback">Back</a>
             <button type="submit" class="btn btn-success bt-action" id="btnconf">Release Work Order</button>
-            <button type="button" class="btn bt-action" id="btnloading" style="display:none">
-                <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
+            <button type="button" class="btn btn-block btn-info" id="btnloading" style="display:none; width: 150px !important;">
+                <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
             </button>
         </div>
     </form>

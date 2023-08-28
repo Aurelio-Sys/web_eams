@@ -1571,7 +1571,7 @@ class wocontroller extends Controller
                         DB::table('service_req_mstr')
                             ->where('sr_number', '=', $checksr->wo_sr_number)
                             ->update([
-                                'sr_status' => 'Open',
+                                'sr_status' => 'Canceled',
                                 'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
 
@@ -1579,7 +1579,7 @@ class wocontroller extends Controller
                         $thiswonumber = $checksr->wo_number;
                         $thissrnumber = $checksr->wo_sr_number;
                         $thisnotecancel = $req->notecancel;
-                        SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
+                        SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel,'cancel');
 
 
                         //ambil data sr untuk diinsert ke table service_req_mstr_hist
@@ -1595,7 +1595,7 @@ class wocontroller extends Controller
                                 'sr_asset' => $getdatasr->sr_asset,
                                 'sr_eng_approver' => $getdatasr->sr_eng_approver,
                                 'sr_note' => $getdatasr->sr_note,
-                                'sr_status' => 'Open',
+                                'sr_status' => 'Canceled',
                                 'sr_status_approval' => $getdatasr->sr_status_approval,
                                 'sr_req_by' => $getdatasr->sr_req_by,
                                 'sr_req_date' => $getdatasr->sr_req_date,
@@ -1634,6 +1634,7 @@ class wocontroller extends Controller
                             ->update([
                                 'sr_status' => 'Open',
                                 'wo_number' => null, //dibuat null jika wo akan didelete
+                                'sr_wodelete_note' => $req->notecancel,
                                 'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
 
@@ -1641,7 +1642,7 @@ class wocontroller extends Controller
                         $thiswonumber = $checksr->wo_number;
                         $thissrnumber = $checksr->wo_sr_number;
                         $thisnotecancel = $req->notecancel;
-                        SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
+                        SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel,'delete');
 
                         //ambil data sr untuk diinsert ke table service_req_mstr_hist
                         $getdatasr = DB::table('service_req_mstr')
@@ -1757,7 +1758,7 @@ class wocontroller extends Controller
                             DB::table('service_req_mstr')
                                 ->where('sr_number', '=', $checksr->wo_sr_number)
                                 ->update([
-                                    'sr_status' => 'Open',
+                                    'sr_status' => 'Canceled',
                                     'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 ]);
 
@@ -1765,7 +1766,7 @@ class wocontroller extends Controller
                             $thiswonumber = $checksr->wo_number;
                             $thissrnumber = $checksr->wo_sr_number;
                             $thisnotecancel = $req->notecancel;
-                            SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
+                            SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel,'cancel');
 
 
                             //ambil data sr untuk diinsert ke table service_req_mstr_hist
@@ -1781,7 +1782,7 @@ class wocontroller extends Controller
                                     'sr_asset' => $getdatasr->sr_asset,
                                     'sr_eng_approver' => $getdatasr->sr_eng_approver,
                                     'sr_note' => $getdatasr->sr_note,
-                                    'sr_status' => 'Open',
+                                    'sr_status' => 'Canceled',
                                     'sr_status_approval' => $getdatasr->sr_status_approval,
                                     'sr_req_by' => $getdatasr->sr_req_by,
                                     'sr_req_date' => $getdatasr->sr_req_date,
@@ -1820,6 +1821,7 @@ class wocontroller extends Controller
                                 ->update([
                                     'sr_status' => 'Open',
                                     'wo_number' => null, //dibuat null jika wo akan didelete
+                                    'sr_wodelete_note' => $req->notecancel,
                                     'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 ]);
 
@@ -1827,7 +1829,7 @@ class wocontroller extends Controller
                             $thiswonumber = $checksr->wo_number;
                             $thissrnumber = $checksr->wo_sr_number;
                             $thisnotecancel = $req->notecancel;
-                            SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel);
+                            SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel,'delete');
 
                             //ambil data sr untuk diinsert ke table service_req_mstr_hist
                             $getdatasr = DB::table('service_req_mstr')
@@ -2640,10 +2642,19 @@ class wocontroller extends Controller
         $kodeFailure = explode(';', $data->wo_failure_code);
         $listFailure = [];
         foreach ($kodeFailure as $cFail) {
-            $deskripsiFail = DB::table('fn_mstr')->where('fn_code', '=', $cFail)->first()->fn_desc;
+            $fnData = DB::table('fn_mstr')->where('fn_code', '=', $cFail)->first();
+
+            if ($fnData) {
+                $deskripsiFail = $fnData->fn_desc;
+            } else {
+                // Handle jika data tidak ditemukan
+                $deskripsiFail = "Deskripsi tidak ditemukan";
+            }
+
+            // $deskripsiFail = DB::table('fn_mstr')->where('fn_code', '=', $cFail)->first()->fn_desc;
             array_push($listFailure, $deskripsiFail);
         }
-
+// dd($data);
         return $data;
     }
 
