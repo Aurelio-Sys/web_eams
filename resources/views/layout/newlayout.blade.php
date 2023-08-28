@@ -360,7 +360,7 @@ to get the desired effect
             @if(str_contains(Session::get('menu_access'), 'SP'))
             <li class="nav-item has-treeview">
               <a href="javascript:void(0)" class="nav-link">
-                <i class="nav-icon fa fa-list-alt"></i>
+                <i class="nav-icon fa fa-cubes"></i>
                 <p>
                   Sparepart Transactions
                   <i class="right fas fa-angle-left"></i>
