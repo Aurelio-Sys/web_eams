@@ -393,7 +393,7 @@
         var code = $('#t_code').val();
 
           $.ajax({
-            url:"/cekqcslist?code="+code ,
+            url:"/cekspglist?code="+code ,
             success: function(data) {
               
               if (data == "ada") {

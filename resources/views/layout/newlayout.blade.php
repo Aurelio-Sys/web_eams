@@ -374,6 +374,62 @@ to get the desired effect
             </li>
             @endif
 
+            @if(str_contains(Session::get('menu_access'), 'SP'))
+            <li class="nav-item has-treeview">
+              <a href="javascript:void(0)" class="nav-link">
+                <i class="nav-icon fa fa-list-alt"></i>
+                <p>
+                  Sparepart Transactions
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                @if(str_contains( Session::get('menu_access'), 'SP03'))
+                <li class="nav-item has-treeview">
+                  <a href="{{url('/reqsp')}}" class="nav-link">
+                      <p>Request Sparepart</p>
+                  </a>
+                </li>
+                @endif
+                @if(str_contains( Session::get('menu_access'), 'SP06'))
+                <li class="nav-item has-treeview">
+                  <a href="{{url('/reqspapproval')}}" class="nav-link">
+                      <p>Request Sparepart Approval</p>
+                  </a>
+                </li>
+                @endif
+                @if(str_contains( Session::get('menu_access'), 'SP04'))
+                <li class="nav-item has-treeview">
+                  <a href="{{url('/trfsp')}}" class="nav-link">
+                      <p>Transfer Sparepart</p>
+                  </a>
+                </li>
+                @endif
+                @if(str_contains( Session::get('menu_access'), 'SP05'))
+                  <li class="nav-item has-treeview">
+                    <a href="/accutransfer" class="nav-link">
+                      <p>Accumulative Sparepart Transfer</p>
+                    </a>
+                  </li>
+                @endif
+                @if(str_contains( Session::get('menu_access'), 'SP07'))
+                  <li class="nav-item has-treeview">
+                    <a href="/retsp" class="nav-link">
+                      <p>Return Sparepart</p>
+                    </a>
+                  </li>
+                @endif
+                @if(str_contains( Session::get('menu_access'), 'SP08'))
+                  <li class="nav-item has-treeview">
+                    <a href="/retspwhs" class="nav-link">
+                      <p>Return Sparepart Warehouse</p>
+                    </a>
+                  </li>
+                @endif
+              </ul>
+            </li>
+            @endif
+
             @if(str_contains(Session::get('menu_access'), 'US'))
             <li class="nav-item has-treeview">
               <a href="javascript:void(0)" class="nav-link">
@@ -397,6 +453,14 @@ to get the desired effect
                   <a href="{{route('usbrowse')}}" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Usage Browse</p>
+                  </a>
+                </li>
+                @endif
+                @if(str_contains( Session::get('menu_access'), 'US08'))
+                <li class="nav-item has-treeview">
+                  <a href="{{route('pmmeter')}}" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>PM Planning for Meter</p>
                   </a>
                 </li>
                 @endif
@@ -471,52 +535,10 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
-                @if(str_contains( Session::get('menu_access'), 'BO03'))
-                <li class="nav-item has-treeview">
-                  <a href="{{url('/reqsp')}}" class="nav-link">
-                      <p>Request Sparepart</p>
-                  </a>
-                </li>
-                @endif
-                @if(str_contains( Session::get('menu_access'), 'BO06'))
-                <li class="nav-item has-treeview">
-                  <a href="{{url('/reqspapproval')}}" class="nav-link">
-                      <p>Request Sparepart Approval</p>
-                  </a>
-                </li>
-                @endif
-                @if(str_contains( Session::get('menu_access'), 'BO04'))
-                <li class="nav-item has-treeview">
-                  <a href="{{url('/trfsp')}}" class="nav-link">
-                      <p>Transfer Sparepart</p>
-                  </a>
-                </li>
-                @endif
                 @if(str_contains( Session::get('menu_access'), 'MT30'))
                   <li class="nav-item has-treeview">
                     <a href="/assetmove" class="nav-link">
                       <p>Asset Movement</p>
-                    </a>
-                  </li>
-                @endif
-                @if(str_contains( Session::get('menu_access'), 'BO05'))
-                  <li class="nav-item has-treeview">
-                    <a href="/accutransfer" class="nav-link">
-                      <p>Accumulative Sparepart Transfer</p>
-                    </a>
-                  </li>
-                @endif
-                @if(str_contains( Session::get('menu_access'), 'BO07'))
-                  <li class="nav-item has-treeview">
-                    <a href="/retsp" class="nav-link">
-                      <p>Return Sparepart</p>
-                    </a>
-                  </li>
-                @endif
-                @if(str_contains( Session::get('menu_access'), 'BO08'))
-                  <li class="nav-item has-treeview">
-                    <a href="/retspwhs" class="nav-link">
-                      <p>Return Sparepart Warehouse</p>
                     </a>
                   </li>
                 @endif
@@ -567,14 +589,23 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
-                @if(str_contains( Session::get('menu_access'), 'RT10'))
+                @if(str_contains( Session::get('menu_access'), 'RT15'))
+                <li class="nav-item">
+                  <a href="/downrpt" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>Downtime Report</p>
+                  </a>
+                </li>
+                @endif
+                {{--  Ditutup karena sama dengan menu Sparepart Planning
+                  @if(str_contains( Session::get('menu_access'), 'RT10'))
                 <li class="nav-item">
                   <a href="/remsp" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
                       <p>Remaining Sparepart</p>
                   </a>
                 </li>
-                @endif
+                @endif  --}}
             
                 <li class="nav-item has-treeview">
                   <a href="javascript:void(0)" class="nav-link ">
@@ -611,17 +642,29 @@ to get the desired effect
                       </a>
                     </li>
                     @endif
-                    @if(str_contains( Session::get('menu_access'), 'RT06'))
-                    <li class="nav-item">
-                      <a href="/needsp" class="nav-link ">
-                          <p>Sparepart Needs</p>
-                      </a>
-                    </li>
-                    @endif
                     @if(str_contains( Session::get('menu_access'), 'RT02'))
                     <li class="nav-item">
                       <a href="/bookcal" class="nav-link ">
                           <p>Asset Booking Schedule</p>
+                      </a>
+                    </li>
+                    @endif
+                  </ul><!-- ul Schedule -->
+                </li> <!-- li Schedule -->
+
+                <li class="nav-item has-treeview">
+                  <a href="javascript:void(0)" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>
+                      View Transactions
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    @if(str_contains( Session::get('menu_access'), 'RT13'))
+                    <li class="nav-item">
+                      <a href="/viewwhy" class="nav-link ">
+                          <p>5 Why View</p>
                       </a>
                     </li>
                     @endif

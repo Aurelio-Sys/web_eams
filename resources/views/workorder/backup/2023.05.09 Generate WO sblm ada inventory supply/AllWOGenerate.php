@@ -17,6 +17,7 @@ class AllWOGenerate extends Controller
     //
     public function viewWoGenerator()
     {
+        dd('test');
         return view('workorder.wogenerator-view');
     }
 

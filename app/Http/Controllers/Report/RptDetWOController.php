@@ -94,6 +94,7 @@ class RptDetWOController extends Controller
             $table->string('temp_eng3')->nullable();
             $table->string('temp_eng4')->nullable();
             $table->string('temp_eng5')->nullable();
+            $table->string('temp_dept')->nullable();
             $table->temporary();
         });
 
@@ -125,6 +126,7 @@ class RptDetWOController extends Controller
                 'temp_qty_req' => $da->wd_sp_required,
                 'temp_qty_whs' => $da->wd_sp_issued,
                 'temp_eng1' => $da->wo_list_engineer,
+                'temp_dept' => $da->wo_department,
             ]);
         }
 
@@ -166,6 +168,7 @@ class RptDetWOController extends Controller
                         'temp_qty_req' => $da->spg_qtyreq,
                         'temp_qty_whs' => 0,
                         'temp_eng1' => $ds->wo_list_engineer,
+                        'temp_dept' => $ds->wo_department,
                     ]);
                 }
 
@@ -191,6 +194,7 @@ class RptDetWOController extends Controller
                     'temp_qty_req' => 0,
                     'temp_qty_whs' => 0,
                     'temp_eng1' => $ds->wo_list_engineer,
+                    'temp_dept' => $ds->wo_department,
                 ]);
             }
         }
@@ -212,14 +216,15 @@ class RptDetWOController extends Controller
             $datatemp = $datatemp->whereBetween ('temp_create_date',[$request->s_per1,$request->s_per2]);
         }
         if($request->s_dept) {
-            // dd("dept",$request->s_dept);
-            $a = $request->s_dept;
-            $datatemp = $datatemp->whereIn('temp_creator', function($query) use ($a)
-            {
-                $query->select('username')
-                      ->from('users')
-                      ->where('dept_user','=',$a);
-            });
+            $datatemp = $datatemp->where('temp_dept','=',$request->s_dept);
+            // // dd("dept",$request->s_dept);
+            // $a = $request->s_dept;
+            // $datatemp = $datatemp->whereIn('temp_creator', function($query) use ($a)
+            // {
+            //     $query->select('username')
+            //           ->from('users')
+            //           ->where('dept_user','=',$a);
+            // });
         }
         if($request->s_loc) {
             $a = $request->s_loc;
@@ -247,9 +252,11 @@ class RptDetWOController extends Controller
         Schema::dropIfExists('temp_wo');
         // dd($impact);
         if ($request->dexcel == "excel") {
+            return Excel::download(new ViewExport2($request->swo,$request->sasset,$request->per1,$request->per2,
+            $request->sdept,$request->sloc,$request->seng,$request->stype), 'DataWO.xlsx');
+        } elseif ($request->dexcel == "detail") {
             return Excel::download(new DetailWOExport($request->swo,$request->sasset,$request->per1,$request->per2,
             $request->sdept,$request->sloc,$request->seng,$request->stype), 'DetailWO.xlsx');
-            
         } else {
             // dd($request->s_nomorwo);
             return view('report.rptdetwo', ['impact' => $impact, 'wottype' => $wottype, 'custrnow' => $custrnow, 

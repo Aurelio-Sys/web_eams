@@ -23,6 +23,8 @@ use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\Report\RemainSpController;
 use App\Http\Controllers\Report\RptAssetYearController;
+use App\Http\Controllers\Report\DownrptController;
+use App\Http\Controllers\Report\ViewWhyController;
 use App\Http\Controllers\SP\KebutuhanSPController;
 use App\Http\Controllers\UserChartController;
 use App\Http\Controllers\WO\AllWOGenerate;
@@ -38,6 +40,7 @@ use App\Http\Controllers\Other\WhyHistController;
 use App\Http\Controllers\Routine\RoutineCheckController;
 use App\Http\Controllers\SparepartController;
 use App\Http\Controllers\Training\TrainingController;
+use App\Http\Controllers\Usage\PmMeterController;
 use App\Http\Controllers\wocontroller;
 use App\KebutuhanSP;
 use Illuminate\Routing\Route as RoutingRoute;
@@ -773,6 +776,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/searchwoasset',[WhyHistController::class, 'searchwoasset']); 
 	Route::post('/createwhyhist',[WhyHistController::class, 'store']);
 	route::get('/whyfile/{id}', [WhyHistController::class, 'whyfile'])->name('whyfile');
+	route::get('/whyfileview/{id}', [WhyHistController::class, 'whyfileview'])->name('whyfileview');
 	Route::post('/editwhyhist',[WhyHistController::class, 'update']);
 	Route::post('/delwhyhist', [WhyHistController::class, 'destroy']);
 
@@ -847,6 +851,18 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/trainingplan', [TrainingController::class, 'trainingplan'])->name('trainPlan');
 	Route::get('/trainingexecute', [TrainingController::class, 'trainingexecute'])->name('trainExecute');
 	Route::get('/traininganalyze', [TrainingController::class, 'traininganalyze'])->name('trainAnalyze');
+
+
+	//Downtime Report
+	Route::get('/downrpt', [DownrptController::class, 'index']);
+	Route::get('/exceldownrpt', [DownrptController::class, 'index'])->name('exceldownrpt');
+
+	//PM Planning for Meter
+	Route::get('/pmmeter', [PmMeterController::class, 'index'])->name('pmmeter');
+	Route::post('/pmmetergen', [PmMeterController::class, 'pmmetergen'])->name('pmmetergen');
+
+	// View 5 Why
+	Route::get('/viewwhy', [ViewWhyController::class, 'index'])->name('viewwhy');
 	
 });
 

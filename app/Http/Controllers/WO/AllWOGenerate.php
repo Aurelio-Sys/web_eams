@@ -23,6 +23,7 @@ class AllWOGenerate extends Controller
         $dataasset = DB::table('pma_asset')
             ->leftJoin('asset_mstr','asset_code','pma_asset')
             ->whereAssetActive('Yes')
+            ->whereIn('pma_mea',['B','C'])
             ->orderBy('pma_asset')
             ->groupBy('pma_asset')
             ->get();

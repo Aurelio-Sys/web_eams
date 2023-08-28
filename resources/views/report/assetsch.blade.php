@@ -433,8 +433,8 @@
     $(document).on('click', '.viewwo', function() {
       $('#viewModal').modal('show');
       var wonbr = $(this).data('wonbr');
-      {{--  var srnumber = $(this).data('srnumber');
-      var btnendel1 = document.getElementById("btndeleteen1");
+      var srnumber = $(this).data('srnumber');
+      {{--  var btnendel1 = document.getElementById("btndeleteen1");
       var btnendel2 = document.getElementById("btndeleteen2");
       var btnendel3 = document.getElementById("btndeleteen3");
       var btnendel4 = document.getElementById("btndeleteen4");

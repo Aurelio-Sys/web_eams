@@ -24,12 +24,14 @@ class SendWorkOrderCanceledNotification implements ShouldQueue
     protected $wonumber;
     protected $srnumber;
     protected $notecancel;
-    public function __construct($wonumber,$srnumber,$notecancel)
+    protected $notiftype;
+    public function __construct($wonumber, $srnumber, $notecancel, $notiftype)
     {
         //
         $this->wonumber = $wonumber;
         $this->srnumber = $srnumber;
         $this->notecancel = $notecancel;
+        $this->notiftype = $notiftype;
     }
 
     /**
@@ -44,39 +46,83 @@ class SendWorkOrderCanceledNotification implements ShouldQueue
         $wonumber = $this->wonumber;
         $srnumber = $this->srnumber;
         $notecancel = $this->notecancel;
+        $notiftype = $this->notiftype;
 
-        $getdatasr = DB::table('service_req_mstr')
-                    ->where('sr_number', '=', $srnumber)
-                    ->where('wo_number', '=', $wonumber)
-                    ->first();
-        
-        $getemail = DB::table('users')
-                    ->where('username', $getdatasr->sr_req_by)
-                    ->first();
+        if ($notiftype == 'cancel') {
+            $getdatasr = DB::table('service_req_mstr')
+                ->where('sr_number', '=', $srnumber)
+                ->where('wo_number', '=', $wonumber)
+                ->first();
 
-        Mail::send('emailsendwocancel',
+
+            $getemail = DB::table('users')
+                ->where('username', $getdatasr->sr_req_by)
+                ->first();
+
+            Mail::send(
+                'emailsendwocancel',
                 [
                     'name' => $getemail->name,
                     'wonumber' => $wonumber,
                     'cancellationNote' => $notecancel,
                     'email' => $getemail->email_user,
                     'srnumber' => $srnumber
-                ],function ($message) use($getemail,$wonumber){
-                        $message->subject('eAMS - Service Request Update: Work Order '.$wonumber.' Has Been Canceled');
-                        $message->to($getemail->email_user);
-                });
-        
-        $user = App\User::where('id','=', $getemail->id)->first(); 
-        $details = [
-                    'body' => 'Service Request Update',
-                    'url' => 'srbrowse',
-                    'nbr' => $srnumber,
-                    'note' => 'Service Request Status Open. Please check'
+                ],
+                function ($message) use ($getemail, $wonumber) {
+                    $message->subject('eAMS - Service Request Update: Work Order ' . $wonumber . ' Has Been Canceled');
+                    $message->to($getemail->email_user);
+                }
+            );
 
-        ]; // isi data yang dioper
-    
-    
-        $user->notify(new \App\Notifications\eventNotification($details)); 
+            $user = App\User::where('id', '=', $getemail->id)->first();
+            $details = [
+                'body' => 'Service Request Update',
+                'url' => 'srbrowse',
+                'nbr' => $srnumber,
+                'note' => 'Service Request Status Canceled. Please check'
 
+            ]; // isi data yang dioper
+
+
+            $user->notify(new \App\Notifications\eventNotification($details));
+        }
+
+        if ($notiftype == 'delete') {
+            $getdatasr = DB::table('service_req_mstr')
+                ->where('sr_number', '=', $srnumber)
+                ->first();
+
+
+            $getemail = DB::table('users')
+                ->where('username', $getdatasr->sr_req_by)
+                ->first();
+
+            Mail::send(
+                'emailsendwodelete',
+                [
+                    'name' => $getemail->name,
+                    'wonumber' => $wonumber,
+                    'cancellationNote' => $notecancel,
+                    'email' => $getemail->email_user,
+                    'srnumber' => $srnumber
+                ],
+                function ($message) use ($getemail, $wonumber) {
+                    $message->subject('eAMS - Service Request Update: Work Order ' . $wonumber . ' Has Been Deleted');
+                    $message->to($getemail->email_user);
+                }
+            );
+
+            $user = App\User::where('id', '=', $getemail->id)->first();
+            $details = [
+                'body' => 'Service Request Update',
+                'url' => 'srbrowse',
+                'nbr' => $srnumber,
+                'note' => 'Service Request Status Open. Please check'
+
+            ]; // isi data yang dioper
+
+
+            $user->notify(new \App\Notifications\eventNotification($details));
+        }
     }
 }
