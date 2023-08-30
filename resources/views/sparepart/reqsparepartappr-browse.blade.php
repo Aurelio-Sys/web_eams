@@ -476,7 +476,7 @@
         cols += '</select>';
         cols += '</td>';
         cols += '<td>';
-        cols += '<textarea type="text" id="reqnotes" class="form-control reqnotes" name="reqnotes[]" rows="2" ></textarea>';
+        cols += '<textarea type="text" id="te_reqnote" class="form-control te_reqnote" name="te_reqnote[]" rows="2" ></textarea>';
         cols += '</td>';
         cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
         cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';
