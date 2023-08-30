@@ -271,6 +271,11 @@ class wocontroller extends Controller
                     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                     ->leftjoin('release_trans_approval', 'release_trans_approval.retr_mstr_id', 'wo_mstr.id')
                     ->groupBy('wo_number');
+
+                $engineer = DB::table('eng_mstr')
+                    ->where('eng_active', '=', 'Yes')
+                    ->orderBy('eng_code')
+                    ->get();
             } elseif (Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR') {
                 $data = DB::table('wo_mstr')
                     ->leftJoin('users', 'wo_mstr.wo_createdby', 'users.username')
@@ -278,6 +283,12 @@ class wocontroller extends Controller
                     ->leftjoin('release_trans_approval', 'release_trans_approval.retr_mstr_id', 'wo_mstr.id')
                     ->where('wo_department', '=', Session::get('department'))
                     ->groupBy('wo_number');
+
+                $engineer = DB::table('eng_mstr')
+                    ->where('eng_active', '=', 'Yes')
+                    ->where('eng_dept', '=', Session::get('department'))
+                    ->orderBy('eng_code')
+                    ->get();
             } else {
                 $username = Session::get('username');
 
@@ -295,6 +306,12 @@ class wocontroller extends Controller
                             ->orWhere('wo_list_engineer', '=', $username);
                     })
                     ->groupBy('wo_number');
+
+                $engineer = DB::table('eng_mstr')
+                    ->where('eng_active', '=', 'Yes')
+                    ->where('eng_dept', '=', Session::get('department'))
+                    ->orderBy('eng_code')
+                    ->get();
             }
 
             if ($req->s_nomorwo) {
@@ -317,10 +334,10 @@ class wocontroller extends Controller
 
             $depart = DB::table('dept_mstr')
                 ->get();
-            $engineer = DB::table('eng_mstr')
-                ->where('eng_active', '=', 'Yes')
-                ->orderBy('eng_code')
-                ->get();
+            // $engineer = DB::table('eng_mstr')
+            //     ->where('eng_active', '=', 'Yes')
+            //     ->orderBy('eng_code')
+            //     ->get();
             $asset = DB::table('asset_mstr')
                 ->where('asset_active', '=', 'Yes')
                 ->orderBy('asset_code')
@@ -4262,52 +4279,126 @@ class wocontroller extends Controller
         $datatemp_required = [];
         foreach ($wo_sp as $spdet) {
 
+            if ($datalocsupply->count() > 0) {
+                // Data ditemukan
+                //looping wsa ke qad berdasarkan dari table inventory dengan kondisi inp_asset_site adalah request dari asset wo dan inp_avail nya yes
+                foreach ($datalocsupply as $invsupply) {
+                    //wsa ambil data ke qad
+                    $qadsupplydata = (new WSAServices())->wsagetsupply($spdet->wd_sp_spcode, $invsupply->inp_supply_site, $invsupply->inp_loc);
 
-            //ambil data qty supply di qad
-            foreach ($datalocsupply as $invsupply) {
-                //wsa ambil data ke qad
-                $qadsupplydata = (new WSAServices())->wsagetsupply($spdet->wd_sp_spcode, $invsupply->inp_supply_site, $invsupply->inp_loc);
+                    if ($qadsupplydata === false) {
 
-                if ($qadsupplydata === false) {
-
-                    DB::rollBack();
-                    toast('WSA Connection Failed', 'error')->persistent('Dismiss');
-                    return redirect()->back();
-                } else {
-
-                    // jika hasil WSA ke QAD tidak ditemukan
-                    if ($qadsupplydata[1] !== "false") {
-                        // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
-
-                        $resultWSA = $qadsupplydata[0];
-
-                        $t_domain = (string) $resultWSA[0]->t_domain;
-                        $t_part = (string) $resultWSA[0]->t_part;
-                        $t_site = (string) $resultWSA[0]->t_site;
-                        $t_loc = (string) $resultWSA[0]->t_loc;
-                        $t_qtyoh = (string) $resultWSA[0]->t_qtyoh;
-
-                        array_push($datatemp, [
-                            't_domain' => $t_domain,
-                            't_part' => $t_part,
-                            't_site' => $t_site,
-                            't_loc' => $t_loc,
-                            't_qtyoh' => $t_qtyoh,
-                        ]);
+                        DB::rollBack();
+                        toast('WSA Connection Failed', 'error')->persistent('Dismiss');
+                        return redirect()->back();
                     } else {
-                        $wsa = ModelsQxwsa::first();
-                        $domain = $wsa->wsas_domain;
 
-                        array_push($datatemp, [
-                            't_domain' => $domain,
-                            't_part' => $spdet->wd_sp_spcode,
-                            't_site' => $invsupply->inp_supply_site,
-                            't_loc' => $invsupply->inp_loc,
-                            't_qtyoh' => 0,
-                        ]);
+                        // jika hasil WSA ke QAD tidak ditemukan
+                        if ($qadsupplydata[1] !== "false") {
+                            // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+
+                            $resultWSA = $qadsupplydata[0];
+
+                            $t_domain = (string) $resultWSA[0]->t_domain;
+                            $t_part = (string) $resultWSA[0]->t_part;
+                            $t_site = (string) $resultWSA[0]->t_site;
+                            $t_loc = (string) $resultWSA[0]->t_loc;
+                            $t_qtyoh = (string) $resultWSA[0]->t_qtyoh;
+
+                            array_push($datatemp, [
+                                't_domain' => $t_domain,
+                                't_part' => $t_part,
+                                't_site' => $t_site,
+                                't_loc' => $t_loc,
+                                't_qtyoh' => $t_qtyoh,
+                            ]);
+                        } else {
+                            $wsa = ModelsQxwsa::first();
+                            $domain = $wsa->wsas_domain;
+
+                            array_push($datatemp, [
+                                't_domain' => $domain,
+                                't_part' => $spdet->wd_sp_spcode,
+                                't_site' => $invsupply->inp_supply_site,
+                                't_loc' => $invsupply->inp_loc,
+                                't_qtyoh' => 0,
+                            ]);
+                        }
                     }
+
+                    //tampung didalam array
+
+
+                }
+            } else {
+                // Data tidak ditemukan
+                $wsa = ModelsQxwsa::first();
+                $domain = $wsa->wsas_domain;
+
+                $supplydata_onlyno = DB::table('inp_supply')
+                ->where('inp_asset_site', '=', $data->wo_site)
+                ->where('inp_avail', '=', 'No')
+                ->get();
+
+                foreach($supplydata_onlyno as $thisno){
+                    array_push($datatemp, [
+                        't_domain' => $domain,
+                        't_part' => $spdet->wd_sp_spcode,
+                        't_site' => $thisno->inp_supply_site,
+                        't_loc' => $thisno->inp_loc,
+                        't_qtyoh' => 0,
+                    ]);
                 }
             }
+
+            
+
+
+            //ambil data qty supply di qad
+            // foreach ($datalocsupply as $invsupply) {
+            //     //wsa ambil data ke qad
+            //     $qadsupplydata = (new WSAServices())->wsagetsupply($spdet->wd_sp_spcode, $invsupply->inp_supply_site, $invsupply->inp_loc);
+
+            //     if ($qadsupplydata === false) {
+
+            //         DB::rollBack();
+            //         toast('WSA Connection Failed', 'error')->persistent('Dismiss');
+            //         return redirect()->back();
+            //     } else {
+
+            //         // jika hasil WSA ke QAD tidak ditemukan
+            //         if ($qadsupplydata[1] !== "false") {
+            //             // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+
+            //             $resultWSA = $qadsupplydata[0];
+
+            //             $t_domain = (string) $resultWSA[0]->t_domain;
+            //             $t_part = (string) $resultWSA[0]->t_part;
+            //             $t_site = (string) $resultWSA[0]->t_site;
+            //             $t_loc = (string) $resultWSA[0]->t_loc;
+            //             $t_qtyoh = (string) $resultWSA[0]->t_qtyoh;
+
+            //             array_push($datatemp, [
+            //                 't_domain' => $t_domain,
+            //                 't_part' => $t_part,
+            //                 't_site' => $t_site,
+            //                 't_loc' => $t_loc,
+            //                 't_qtyoh' => $t_qtyoh,
+            //             ]);
+            //         } else {
+            //             $wsa = ModelsQxwsa::first();
+            //             $domain = $wsa->wsas_domain;
+
+            //             array_push($datatemp, [
+            //                 't_domain' => $domain,
+            //                 't_part' => $spdet->wd_sp_spcode,
+            //                 't_site' => $invsupply->inp_supply_site,
+            //                 't_loc' => $invsupply->inp_loc,
+            //                 't_qtyoh' => 0,
+            //             ]);
+            //         }
+            //     }
+            // }
 
             //ambil data qty inv required
             $invreqdata = DB::table('inv_required')
