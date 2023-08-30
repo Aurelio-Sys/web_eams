@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App;
 
-// class SendNotifWOReleaseApproval implements ShouldQueue
-class SendNotifWOReleaseApproval
+class SendNotifWOReleaseApproval implements ShouldQueue
+// class SendNotifWOReleaseApproval
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
