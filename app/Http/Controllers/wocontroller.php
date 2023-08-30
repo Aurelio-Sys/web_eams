@@ -4499,8 +4499,9 @@ class wocontroller extends Controller
                                 <location>' . $record['loc_from'] . '</location>
                                 <lotserial>' . $record['lot_from'] . '</lotserial>
                                 <ordernbr>' . $req->c_wonbr . '</ordernbr>
-                                <drAcct>' .$record['gl_account'].'</drAcct>
                             </inventoryIssue>';
+
+                            // <drAcct>' .$record['gl_account'].'</drAcct>
                     }
 
                     $qdocfooter =   '</dsInventoryIssue>
