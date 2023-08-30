@@ -271,6 +271,11 @@ class wocontroller extends Controller
                     ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                     ->leftjoin('release_trans_approval', 'release_trans_approval.retr_mstr_id', 'wo_mstr.id')
                     ->groupBy('wo_number');
+
+                $engineer = DB::table('eng_mstr')
+                    ->where('eng_active', '=', 'Yes')
+                    ->orderBy('eng_code')
+                    ->get();
             } elseif (Session::get('role') == 'SPVSR' || Session::get('role') == 'SKSSR') {
                 $data = DB::table('wo_mstr')
                     ->leftJoin('users', 'wo_mstr.wo_createdby', 'users.username')
@@ -278,6 +283,12 @@ class wocontroller extends Controller
                     ->leftjoin('release_trans_approval', 'release_trans_approval.retr_mstr_id', 'wo_mstr.id')
                     ->where('wo_department', '=', Session::get('department'))
                     ->groupBy('wo_number');
+
+                $engineer = DB::table('eng_mstr')
+                    ->where('eng_active', '=', 'Yes')
+                    ->where('eng_dept', '=', Session::get('department'))
+                    ->orderBy('eng_code')
+                    ->get();
             } else {
                 $username = Session::get('username');
 
@@ -295,6 +306,12 @@ class wocontroller extends Controller
                             ->orWhere('wo_list_engineer', '=', $username);
                     })
                     ->groupBy('wo_number');
+
+                $engineer = DB::table('eng_mstr')
+                    ->where('eng_active', '=', 'Yes')
+                    ->where('eng_dept', '=', Session::get('department'))
+                    ->orderBy('eng_code')
+                    ->get();
             }
 
             if ($req->s_nomorwo) {
@@ -317,10 +334,10 @@ class wocontroller extends Controller
 
             $depart = DB::table('dept_mstr')
                 ->get();
-            $engineer = DB::table('eng_mstr')
-                ->where('eng_active', '=', 'Yes')
-                ->orderBy('eng_code')
-                ->get();
+            // $engineer = DB::table('eng_mstr')
+            //     ->where('eng_active', '=', 'Yes')
+            //     ->orderBy('eng_code')
+            //     ->get();
             $asset = DB::table('asset_mstr')
                 ->where('asset_active', '=', 'Yes')
                 ->orderBy('asset_code')
