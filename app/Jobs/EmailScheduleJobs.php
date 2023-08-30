@@ -257,7 +257,7 @@ class EmailScheduleJobs implements ShouldQueue
                     $user = App\User::where('id', '=', $approver->id)->first();
                     $details = [
                         'body' => 'New Service Request',
-                        'url' => 'srapproval',
+                        'url' => 'srapprovaleng',
                         'nbr' => $srnumber,
                         'note' => 'Please check'
 
