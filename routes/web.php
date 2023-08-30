@@ -657,6 +657,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// Report Schedule Asset Year
 	Route::get('assetyear', [RptAssetYearController::class, 'index']);
+	Route::get('assetyeardetail', [RptAssetYearController::class, 'assetyeardetail']);
 
 	// Master UM
 	Route::get('/um', [UMController::class, 'index']);

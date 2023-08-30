@@ -192,7 +192,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'SR01'))
                 <li class="nav-item has-treeview">
                   <a href="/servicerequest" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>Service Request Create</p>
                   </a>
                 </li>
@@ -200,7 +199,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'SR03'))
                 <li class="nav-item has-treeview">
                   <a href="/srbrowse" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                      <p>Service Request Maintenance</p>
                   </a>
                 </li>
@@ -208,7 +206,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'SR06'))
                 <li class="nav-item has-treeview">
                   <a href="/srbrowseonly" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                      <p>Service Request Browse</p>
                   </a>
                 </li>
@@ -216,7 +213,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'SR02'))
                 <li class="nav-item has-treeview">
                   <a href="/srapproval" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>Service Request Approval</p>
                   </a>
                 </li>
@@ -224,7 +220,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'SR05'))
                 <li class="nav-item has-treeview">
                   <a href="/srapprovaleng" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>Service Request Approval Engineer</p>
                   </a>
                 </li>
@@ -233,7 +228,6 @@ to get the desired effect
                   @if(str_contains( Session::get('menu_access'), 'SR04'))
                 <li class="nav-item">
                   <a href="/useracceptance" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>User Acceptance</p>
                   </a>
                 </li>
@@ -241,7 +235,6 @@ to get the desired effect
                   @if(str_contains( Session::get('menu_access'), 'SR04'))
                 <li class="nav-item">
                   <a href="/useracceptance" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>User Acceptance</p>
                   </a>
                 </li>
@@ -283,7 +276,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'WO01'))
                 <li class="nav-item ">
                   <a href="/womaint" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                      <p>Work Order Maintenance</p>
                   </a>
                 </li>
@@ -291,7 +283,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'WO05'))
                 <li class="nav-item ">
                   <a href="/wobrowse" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>Work Order Browse</p>
                   </a>
                 </li>  
@@ -299,7 +290,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'WO09'))
                 <li class="nav-item ">
                   <a href="/worelease" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>Work Order Release</p>
                   </a>
                 </li>
@@ -307,7 +297,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'WO10'))
                 <li class="nav-item ">
                   <a href="/woreleaseapprovalbrowse" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>Work Order Release Approval</p>
                   </a>
                 </li>
@@ -315,7 +304,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'WO07'))
                 <li class="nav-item ">
                   <a href="/wotransfer" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>Work Order Transfer</p>
                   </a>
                 </li>
@@ -323,7 +311,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'WO02'))
                 <li class="nav-item ">
                   <a href="/wojoblist" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>Work Order Start</p>
                   </a>
                 </li>
@@ -331,7 +318,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'WO03'))
                 <li class="nav-item">
                   <a href="/woreport" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>Work Order Reporting</p>
                   </a>
                 </li>
@@ -339,7 +325,6 @@ to get the desired effect
                 {{-- @if(str_contains( Session::get('menu_access'), 'WO08'))
                 <li class="nav-item">
                   <a href="/woqc" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>WO QC Approval</p>
                   </a>
                 </li>
@@ -347,7 +332,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'WO08'))
                 <li class="nav-item">
                   <a href="/woapprovalbrowse" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>Work Order Approval</p>
                   </a>
                 </li>
@@ -355,7 +339,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'WO04'))
                 <li class="nav-item">
                   <a href="/returnbacksp" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>Return Sparepart</p>
                   </a>
                 </li>
@@ -377,7 +360,7 @@ to get the desired effect
             @if(str_contains(Session::get('menu_access'), 'SP'))
             <li class="nav-item has-treeview">
               <a href="javascript:void(0)" class="nav-link">
-                <i class="nav-icon fa fa-list-alt"></i>
+                <i class="nav-icon fa fa-cubes"></i>
                 <p>
                   Sparepart Transactions
                   <i class="right fas fa-angle-left"></i>
@@ -443,7 +426,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'US01'))
                 <li class="nav-item has-treeview">
                   <a href="/usagemt" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>Asset Measurement Reporting</p>
                   </a>
                 </li>
@@ -451,7 +433,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'US04'))
                 <li class="nav-item has-treeview">
                   <a href="{{route('usbrowse')}}" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>Usage Browse</p>
                   </a>
                 </li>
@@ -459,7 +440,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'US08'))
                 <li class="nav-item has-treeview">
                   <a href="{{route('pmmeter')}}" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>PM Planning for Meter</p>
                   </a>
                 </li>
@@ -467,7 +447,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'US02'))
                 <li class="nav-item has-treeview">
                   <a href="/usagemulti" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>Asset Multi Batch</p>
                   </a>
                 </li>
@@ -475,7 +454,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'US03'))
                 <li class="nav-item has-treeview">
                   <a href="/viewwogenerator" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>PM Planning</p>
                   </a>
                 </li>
@@ -483,7 +461,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'US05'))
                 <li class="nav-item has-treeview">
                   <a href="/pmconf" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>PM Confirm</p>
                   </a>
                 </li>
@@ -491,7 +468,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'US06'))
                 <li class="nav-item has-treeview">
                   <a href="/pmmssg" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>PM Action Message</p>
                   </a>
                 </li>
@@ -499,7 +475,6 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'US06'))
                 <li class="nav-item has-treeview">
                   <a href="{{url('/needsp')}}" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
                       <p>Sparepart Planning</p>
                   </a>
                 </li> 

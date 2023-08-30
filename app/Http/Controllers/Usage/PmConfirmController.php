@@ -40,7 +40,8 @@ class PmConfirmController extends Controller
             ->whereNotIn('pmo_number', function ($query) {
                 $query->select('pml_pm_number')->from('pml_log');
             })
-            ->wherePmo_asset('BGNKG03')
+            // ->wherePmo_asset('BGNKG03')
+            // ->wherePmo_source('PM Meter')
             ->orderBy('asset_code')
             ->orderBy('pmo_pmcode')
             ->orderBy('id')

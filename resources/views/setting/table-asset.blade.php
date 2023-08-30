@@ -20,7 +20,7 @@
         data-prc_date="{{$show->asset_prcdate}}" data-prc_price="{{$show->asset_prcprice}}" data-type="{{$show->asset_type}}" 
         data-group="{{$show->asset_group}}" data-supp="{{$show->asset_supp}}" data-note="{{$show->asset_note}}" 
         data-active="{{$show->asset_active}}" data-upload="{{$show->asset_upload}}" data-assetimg="{{$show->asset_image}}" 
-        data-qad="{{$show->asset_accounting}}"  data-assetid="{{$show->asset_id}}">
+        data-qad="{{$show->asset_accounting}}"  data-assetid="{{$show->asset_id}}" data-renew="{{$show->asset_renew}}">
         <i class="icon-table fa fa-edit fa-lg"></i></a>
         &ensp;
         <a href="javascript:void(0)" class="deletedata" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal"  
