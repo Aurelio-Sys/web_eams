@@ -791,6 +791,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/reqspcreate', [SparepartController::class, 'reqspcreate'])->name('reqspcreate');
 	Route::post('/reqspsubmit', [SparepartController::class,'reqspsubmit'])->name('reqspsubmit');
 	Route::get('/reqspeditdet',[SparepartController::class, 'reqspeditdet']);
+	Route::get('/reqsproute',[SparepartController::class, 'reqsproute']);
 	Route::get('/reqspviewdet',[SparepartController::class, 'reqspviewdet']);
 	Route::post('/reqspupdate',[SparepartController::class, 'reqspupdate']);
 	Route::post('/reqspcancel', [SparepartController::class, 'reqspcancel']);

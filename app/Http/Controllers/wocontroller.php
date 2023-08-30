@@ -36,6 +36,7 @@ use App;
 use App\Exports\ViewExport2;
 use App\Jobs\SendNotifWoFinish;
 use App\Jobs\SendWorkOrderCanceledNotification;
+use App\Jobs\SendWorkOrderCanceledSpvNotification;
 use App\Models\Qxwsa;
 use App\Services\WSAServices;
 use Exception;
@@ -1591,7 +1592,10 @@ class wocontroller extends Controller
                         $thiswonumber = $checksr->wo_number;
                         $thissrnumber = $checksr->wo_sr_number;
                         $thisnotecancel = $req->notecancel;
-                        SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel,'cancel');
+                        SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel, 'cancel');
+
+                        //kirim notifikasi ke spv eng sr
+                        SendWorkOrderCanceledSpvNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel, 'cancel');
 
 
                         //ambil data sr untuk diinsert ke table service_req_mstr_hist
@@ -1655,7 +1659,10 @@ class wocontroller extends Controller
                         $thiswonumber = $checksr->wo_number;
                         $thissrnumber = $checksr->wo_sr_number;
                         $thisnotecancel = $req->notecancel;
-                        SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel,'delete');
+                        SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel, 'delete');
+
+                        //kirim notifikasi ke spv eng sr
+                        SendWorkOrderCanceledSpvNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel, 'delete');
 
                         //ambil data sr untuk diinsert ke table service_req_mstr_hist
                         $getdatasr = DB::table('service_req_mstr')
@@ -1803,8 +1810,10 @@ class wocontroller extends Controller
                             $thiswonumber = $checksr->wo_number;
                             $thissrnumber = $checksr->wo_sr_number;
                             $thisnotecancel = $req->notecancel;
-                            SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel,'cancel');
+                            SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel, 'cancel');
 
+                            //kirim notifikasi ke spv eng sr
+                            SendWorkOrderCanceledSpvNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel, 'cancel');
 
                             //ambil data sr untuk diinsert ke table service_req_mstr_hist
                             $getdatasr = DB::table('service_req_mstr')
@@ -1867,7 +1876,10 @@ class wocontroller extends Controller
                             $thiswonumber = $checksr->wo_number;
                             $thissrnumber = $checksr->wo_sr_number;
                             $thisnotecancel = $req->notecancel;
-                            SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel,'delete');
+                            SendWorkOrderCanceledNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel, 'delete');
+
+                            //kirim notifikasi ke spv eng sr
+                            SendWorkOrderCanceledSpvNotification::dispatch($thiswonumber, $thissrnumber, $thisnotecancel, 'delete');
 
                             //ambil data sr untuk diinsert ke table service_req_mstr_hist
                             $getdatasr = DB::table('service_req_mstr')
@@ -2693,7 +2705,7 @@ class wocontroller extends Controller
             // $deskripsiFail = DB::table('fn_mstr')->where('fn_code', '=', $cFail)->first()->fn_desc;
             array_push($listFailure, $deskripsiFail);
         }
-// dd($data);
+        // dd($data);
         return $data;
     }
 
@@ -3962,6 +3974,14 @@ class wocontroller extends Controller
                     'wo_actual_start' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                     // 'wo_access'     => 0
                 ]);
+
+            DB::table('wo_trans_history')
+                ->insert([
+                    'wo_number' => $nomorwo,
+                    'wo_action' => 'started',
+                    'system_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    'system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                ]);
             // if ($req->v_nosr != null || $req->v_nosr != '') {
             //     DB::table('service_req_mstr')
             //         ->where('wo_number', '=', $nomorwo)
@@ -3980,6 +4000,14 @@ class wocontroller extends Controller
                     'wo_job_startdate' => null,
                     'wo_job_starttime' => null,
                     'wo_actual_start' => null,
+                ]);
+
+            DB::table('wo_trans_history')
+                ->insert([
+                    'wo_number' => $nomorwo,
+                    'wo_action' => 'back to released (from started)',
+                    'system_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    'system_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                 ]);
             // if ($req->v_nosr != null || $req->v_nosr != '') {
             //     DB::table('service_req_mstr')

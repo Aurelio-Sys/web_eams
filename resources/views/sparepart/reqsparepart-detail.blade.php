@@ -34,7 +34,7 @@
         </div>
 
         <div class="form-group row" style="padding-left: 1em; margin-top: 1.5em;">
-            <label class="col-md-3 col-form-label" style="font-size: 17px">Need date for Spareparts</label>
+            <label class="col-md-3 col-form-label" style="font-size: 17px">Need date for Spareparts <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-3">
                 <input type="date" class="form-control" id="due_date" name="due_date" value="" required>
             </div>
