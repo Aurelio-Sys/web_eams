@@ -3172,13 +3172,12 @@ class wocontroller extends Controller
             ->where('wd_ins_wonumber', '=', $wonumber)
             ->get();
 
-        // dd($datainstruction);
+        // dd($sp_all);
 
         // ambil semua step instruction dari ins_list
         $ins_all = DB::table('ins_list')
             ->select('ins_code', 'ins_desc', 'ins_duration', 'ins_durationum', 'ins_manpower', 'ins_step', 'ins_stepdesc', 'ins_ref')
             ->get();
-
 
         $dataqcparam = DB::table('wo_dets_qc')
             ->where('wd_qc_wonumber', '=', $wonumber)
@@ -3375,7 +3374,7 @@ class wocontroller extends Controller
         if (strpos(Session::get('menu_access'), 'WO08') !== false) {
 
             if (Session::get('role') <> 'QCA') {
-                dd(1);
+                // dd(1);
                 $usernow = DB::table('users')
                     ->join('eng_mstr', 'users.username', 'eng_mstr.eng_code')
                     ->where('eng_code', '=', session()->get('username'))
@@ -3638,7 +3637,7 @@ class wocontroller extends Controller
                                 ->insert($srupdatehist);
 
                             //email terikirm ke user yang membuat SR
-                            // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
+                            EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
                         }
                     } else {
                         //jika user adalah admin, maka semua approval (approval bertingkat) akan menjadi approved
@@ -3688,7 +3687,7 @@ class wocontroller extends Controller
                                 ->insert($srupdatehist);
 
                             //email terikirm ke user yang membuat SR
-                            // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
+                            EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
                         }
                     }
                 } else {
@@ -3722,7 +3721,7 @@ class wocontroller extends Controller
                             ]);
 
                         //email terikirm ke approver selanjutnya
-                        // EmailScheduleJobs::dispatch('', $asset, '14', $tampungarray, '', $srnumber, $roleapprover);
+                        EmailScheduleJobs::dispatch('', $asset, '14', $tampungarray, '', $srnumber, $roleapprover);
                     } else {
                         // dd(2);
                         //jika user adalah admin, maka semua approval (approval bertingkat) akan menjadi approved
@@ -3773,7 +3772,7 @@ class wocontroller extends Controller
                                 ->insert($srupdatehist);
 
                             //email terikirm ke user yang membuat SR
-                            // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
+                            EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
                         }
                     }
                 }
@@ -3817,7 +3816,7 @@ class wocontroller extends Controller
                         ->insert($srupdatehist);
 
                     //email terikirm ke user yang membuat SR
-                    // EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
+                    EmailScheduleJobs::dispatch('', $asset, '12', '', $requestor, $srnumber, '');
                 }
             }
 
@@ -3879,7 +3878,7 @@ class wocontroller extends Controller
             }
 
             //email terkirim ke wo list engineer
-            // EmailScheduleJobs::dispatch('', $asset, '11', '', $requestor, $srnumber, '');
+            EmailScheduleJobs::dispatch('', $asset, '11', '', $requestor, $srnumber, '');
 
             // DB::commit();
             toast('Work order ' . $womstr->wo_number . ' has been rejected', 'success');

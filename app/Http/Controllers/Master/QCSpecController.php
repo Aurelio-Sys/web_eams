@@ -141,14 +141,14 @@ class QCSpecController extends Controller
     {
         if ($req->ajax()) {
             $data = DB::table('qcs_list')
-                ->whereQcs_code($req->code)
+                ->whereRaw("TRIM(qcs_code) = ?", $req->code)
                 ->where( function ($query) {
                     $query->whereNotNull('qcs_spec')
                     ->Where('qcs_spec','!=','');
                 }                )
                 ->orderBy('qcs_spec')
                 ->get();
-
+// dd($data);
             $dataopt = DB::table('opt_mstr')
                 ->orderBy('id')
                 ->get();

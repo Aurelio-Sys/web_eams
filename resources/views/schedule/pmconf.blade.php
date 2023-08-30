@@ -84,6 +84,7 @@
                 <th width="7%">Schedule Date</th>
                 <th width="7%">Due Date</th>
                 <th width="5%">Action</th>  
+                <th width="5%">Source</th>  
             </tr>
         </thead>
         <tbody>
@@ -106,7 +107,6 @@
                     <td>{{$show->pmc_desc}}</td>
                     <td class="td_pmdate">@if($show->pmo_sch_date != "0000-00-00") {{date('d-m-Y', strtotime($show->pmo_sch_date))}} @endif</td>
                     <td>{{date_format($tglakhir,"d-m-Y")}} </td>
-                    {{--  <td class="td_pmnumber">{{$show->pmo_number}}</td>  --}}
 
                     <td>
                         @if($show->pmo_number != "")
@@ -124,8 +124,10 @@
                         @if($show->pmo_wonumber != "" && $show->pmo_number != "")
                             <i class="icon-table fa fa-edit fa-lg detpmco"></i></a>
                         @endif
-                        
+
                     </td>
+                    
+                    <td>{{ $show->pmo_source == "PM Meter" ? "Meter" : "Cal" }}</td>
                 </tr>
                 @empty
                 <tr>

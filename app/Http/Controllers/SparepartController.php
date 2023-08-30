@@ -320,9 +320,6 @@ class SparepartController extends Controller
 
                     // dd($getFirstApprover);
 
-                    //send notifikasi ke approver pertama
-                    SendNotifReqSparepartApproval::dispatch($runningnbr, $requestData['wonbr'], $getFirstApprover->sp_approver_role, Session::get('department'));
-
                     //get wo dan sr mstr
                     $womstr = DB::table('wo_mstr')->where('wo_number', $requestData['wonbr'])->first();
                     $rsmstr = DB::table('req_sparepart')->where('req_sp_number', $runningnbr)->first();
@@ -397,6 +394,9 @@ class SparepartController extends Controller
                             }
                         }
                     }
+
+                    //send notifikasi ke approver pertama
+                    //SendNotifReqSparepartApproval::dispatch($runningnbr, $requestData['wonbr'], $getFirstApprover->sp_approver_role, Session::get('department'));
                 } else {
                     //jika tidak ada approver maka langsung kirim email ke warehouse
                     SendNotifReqSparepart::dispatch($runningnbr);
@@ -411,7 +411,7 @@ class SparepartController extends Controller
                 return redirect()->back();
             }
         } catch (Exception $e) {
-            dd($e);
+            //dd($e);
             DB::rollBack();
             toast('Sparepart Requested Failed', 'error');
             return redirect()->route('reqspbrowse');
@@ -871,7 +871,7 @@ class SparepartController extends Controller
         }
 
         if ($request->s_status) {
-            $data->where('req_sp_status', '=', $request->s_status);
+            $data->where('rqtr_status', '=', $request->s_status);
         }
 
         if ($datefrom != '' || $dateto != '') {
@@ -1305,10 +1305,11 @@ class SparepartController extends Controller
             ->leftJoin('ret_sparepart_det', 'ret_sparepart_det.ret_spd_mstr_id', 'ret_sparepart.id')
             ->join('sp_mstr', 'sp_mstr.spm_code', 'ret_sparepart_det.ret_spd_sparepart_code')
             ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
-            ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_desc, ret_sparepart.created_at')
+            ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_desc, 
+            DATE_FORMAT(ret_sparepart.created_at, "%Y-%m-%d") AS formatted_created_at')
             ->groupBy('ret_sp_number')
             ->orderByDesc('ret_sp_number');
-
+// dd($data);
         $sp_all = DB::table('sp_mstr')
             ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
             ->where('spm_active', '=', 'Yes')
@@ -1320,6 +1321,7 @@ class SparepartController extends Controller
             ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
             ->groupBy('ret_sp_return_by')
             ->get();
+            // dd($request->get('s_datefrom'));
 
         $datefrom = $request->get('s_datefrom') == '' ? '2000-01-01' : date($request->get('s_datefrom'));
         $dateto = $request->get('s_dateto') == '' ? '3000-01-01' : date($request->get('s_dateto'));
@@ -1337,10 +1339,10 @@ class SparepartController extends Controller
             $data->where('ret_sp_status', '=', $request->s_status);
         }
 
-        // if ($datefrom != '' || $dateto != '') {
-        //     $data->where('created_at', '>=', $datefrom);
-        //     $data->where('created_at', '<=', $dateto);
-        // }
+        if ($datefrom != '' || $dateto != '') {
+            $data->whereRaw('DATE_FORMAT(ret_sparepart.created_at, "%Y-%m-%d") >= ?', [$datefrom]);
+            $data->whereRaw('DATE_FORMAT(ret_sparepart.created_at, "%Y-%m-%d") <= ?', [$dateto]);
+        }
 
         if (Session::get('role') <> 'ADMIN') {
             $data = $data->where('ret_sp_dept', Session::get('department'));
@@ -2864,7 +2866,7 @@ class SparepartController extends Controller
         $sparepart = $req->spsearch;
 
         $datalocsupply = DB::table('inp_supply')
-            ->where('inp_avail', '=', 'Yes')
+            // ->where('inp_avail', '=', 'Yes')
             ->get();
 
         $data_assetsite = DB::table('asset_site')

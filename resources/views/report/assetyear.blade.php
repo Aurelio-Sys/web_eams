@@ -32,15 +32,15 @@
             <div class="col-md-4 col-sm-12 mb-2 input-group">
                 <select id="s_type" class="form-control" style="color:black" name="s_type" autofocus autocomplete="off">
                 <option value="">--</option>
+                <option value="CM" {{$stype === "CM" ? "selected" : ""}}>CM</option>
                 <option value="PM" {{$stype === "PM" ? "selected" : ""}}>PM</option>
-                <option value="WO" {{$stype === "WO" ? "selected" : ""}}>WO</option>
                 </select>
             </div>
             <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
             <div class="col-md-4 col-sm-12 mb-2 input-group">
             <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
                 <option value="">--Select Asset--</option>
-                @foreach($dataasset as $assetsearch)
+                @foreach($datasearchasset as $assetsearch)
                 <option value="{{$assetsearch->asset_code}}" {{$assetsearch->asset_code === $sasset ? "selected" : ""}}>{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
                 @endforeach
             </select>
@@ -54,7 +54,7 @@
                 @endforeach
             </select>
             </div>
-            <label for="s_eng" class="col-md-2 col-form-label text-md-right">{{ __('Engineer') }}</label>
+            {{--  <label for="s_eng" class="col-md-2 col-form-label text-md-right">{{ __('Engineer') }}</label>
             <div class="col-md-4 col-sm-12 mb-2 input-group">
             <select id="s_eng" class="form-control" style="color:black" name="s_eng" autofocus autocomplete="off">
                 <option value="">--Select Engineer--</option>
@@ -62,7 +62,7 @@
                 <option value="{{$de->eng_code}}" {{$de->eng_code === $seng ? "selected" : ""}}>{{$de->eng_code}} -- {{$de->eng_desc}}</option>
                 @endforeach
             </select>
-            </div>
+            </div>  --}}
             <div class="col-md-2 col-sm-12 mb-2 input-group">
             <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
             </div>
@@ -90,8 +90,8 @@
             <tr>
                 <th width="10%">Asset</th>
                 <th width="15%">Description</th>
-                <th width="10%">Last Mtc</th>  
-                <th width="5%">Mea</th>  
+                {{--  <th width="10%">Last Mtc</th>  
+                <th width="5%">Mea</th>    --}}
                 <th width="5%" style="text-align: center">Jan</th>  
                 <th width="5%" style="text-align: center">Feb</th>  
                 <th width="5%" style="text-align: center">Mar</th>  
@@ -125,7 +125,7 @@
           Detail Work Order
           <br>
           Asset : <span id="v_code"></span> --  <span id="v_codedesc"></span>
-          Location : <span id="v_code"></span> --  <span id="v_codedesc"></span>
+          {{--  Location : <span id="v_code"></span> --  <span id="v_codedesc"></span>  --}}
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -188,8 +188,8 @@
             var codedesc = $(this).data('codedesc');
             var sch = $(this).data('sch'); 
   
-            {{--  document.getElementById('v_code').innerHTML = code;
-            document.getElementById('v_codedesc').innerHTML = codedesc;  --}}
+            document.getElementById('v_code').innerHTML = code;
+            document.getElementById('v_codedesc').innerHTML = codedesc;
   
             $.ajax({
               url:"assetyeardetail?code="+code+"&sch="+sch,

@@ -220,6 +220,12 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label for="t_renew" class="col-md-4 col-form-label text-md-right">Asset Renewal Date</label>
+                        <div class="col-md-6">
+                            <input id="t_renew" type="date" class="form-control" name="t_renew" placeholder="yy-mm-dd" autocomplete="off" autofocus >
+                        </div>
+                    </div>
+                    <div class="form-group row">
 			            <label for="file" class="col-md-4 col-form-label text-md-right">{{ __('Upload') }}</label>
 			            <div class="col-md-6 input-file-container">  
 			                <input type="file" class="form-control" name="filename[]" multiple>
@@ -377,6 +383,12 @@
                     </div>
                 </div>
                 <div class="form-group row">
+                    <label for="te_renew" class="col-md-4 col-form-label text-md-right">Asset Renewal Date</label>
+                    <div class="col-md-6">
+                        <input id="te_renew" type="date" class="form-control" name="te_renew" placeholder="yy-mm-dd" autocomplete="off" autofocus >
+                    </div>
+                </div>
+                <div class="form-group row">
                     <label for="te_file" class="col-md-4 col-form-label text-md-right">Current File</label>
                     <div class="col-md-6">
                         <table class="table table-bordered">
@@ -482,6 +494,7 @@
            var supp         = $(this).data('supp');
            var note         = $(this).data('note');
            var active       = $(this).data('active');
+           var renew       = $(this).data('renew');
            var upload 		= $(this).data('upload');
            var qad 		= $(this).data('qad');
            var assetid 		= $(this).data('assetid');
@@ -509,6 +522,7 @@
            document.getElementById('te_supp').value         = supp;
            document.getElementById('te_note').value         = note;
            document.getElementById('te_active').value       = active;
+           document.getElementById('te_renew').value       = renew;
            document.getElementById('foto1').src       = assetimg;
            document.getElementById('te_qad').value          = qad;
            document.getElementById('te_assetid').value          = assetid;
