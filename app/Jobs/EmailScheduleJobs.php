@@ -102,7 +102,7 @@ class EmailScheduleJobs implements ShouldQueue
                 $user = App\User::where('id', '=', $email2->id)->first();
                 $details = [
                     'body' => 'There is New WO for you',
-                    'url' => 'wojoblist',
+                    'url' => 'womaint',
                     'nbr' => $wo,
                     'note' => 'Please Check'
 

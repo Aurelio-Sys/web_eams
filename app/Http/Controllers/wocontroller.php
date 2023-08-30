@@ -2424,7 +2424,7 @@ class wocontroller extends Controller
 
                     return view('workorder.table-wostart', ['data' => $data, 'wodet_sp' => $wodet_sp]);
                 }
-            }else{
+            } else {
                 $kondisi = "wo_mstr.id > 0";
 
                 if ($wonumber != '') {
@@ -3373,12 +3373,22 @@ class wocontroller extends Controller
     public function woapprovalbrowse(Request $req)
     {
         if (strpos(Session::get('menu_access'), 'WO08') !== false) {
-            $usernow = DB::table('users')
-                ->join('eng_mstr', 'users.username', 'eng_mstr.eng_code')
-                ->where('eng_code', '=', session()->get('username'))
-                ->where('active', '=', 'Yes')
-                ->where('approver', '=', 1)
-                ->first();
+
+            if (Session::get('role') <> 'QCA') {
+                dd(1);
+                $usernow = DB::table('users')
+                    ->join('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+                    ->where('eng_code', '=', session()->get('username'))
+                    ->where('active', '=', 'Yes')
+                    ->where('approver', '=', 1)
+                    ->first();
+            } else {
+                $usernow = DB::table('users')
+                    // ->leftJoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+                    ->where('username', '=', session()->get('username'))
+                    ->where('active', '=', 'Yes')
+                    ->first();
+            }
             // dd($usernow);
 
             $data = WOMaster::query()
@@ -4343,11 +4353,11 @@ class wocontroller extends Controller
                 $domain = $wsa->wsas_domain;
 
                 $supplydata_onlyno = DB::table('inp_supply')
-                ->where('inp_asset_site', '=', $data->wo_site)
-                ->where('inp_avail', '=', 'No')
-                ->get();
+                    ->where('inp_asset_site', '=', $data->wo_site)
+                    ->where('inp_avail', '=', 'No')
+                    ->get();
 
-                foreach($supplydata_onlyno as $thisno){
+                foreach ($supplydata_onlyno as $thisno) {
                     array_push($datatemp, [
                         't_domain' => $domain,
                         't_part' => $spdet->wd_sp_spcode,
@@ -4358,7 +4368,7 @@ class wocontroller extends Controller
                 }
             }
 
-            
+
 
 
             //ambil data qty supply di qad
