@@ -1506,6 +1506,39 @@
       // document.getElementById('tmpfail2').value = failcode2;
       // document.getElementById('tmpfail3').value = failcode3;
 
+      function ambilenjiner() {
+      // alert(deptcode);
+      $.ajax({
+        url: "engineersearch",
+        success: function(data) {
+
+          // console.log(data);
+          var jmldata = data.length;
+
+          var eng_code = [];
+          var eng_desc = [];
+          var test = [];
+
+
+          for (i = 0; i < jmldata; i++) {
+            eng_code.push(data[i].eng_code);
+            eng_desc.push(data[i].eng_desc);
+
+            test += '<option value=' + eng_code[i] + '>' + eng_code[i] + '--' + eng_desc[i] + '</option>';
+          }
+
+          $('#enjiners').html('').append(test);
+
+
+          // console.log(globalasset);
+
+        }
+
+      })
+    }
+
+    ambilenjiner();
+
       $(document).on('change', '#wotype', function() {
         // console.log('masuk');
         var getAssetG = document.getElementById('hide_editassetgroup').value;
@@ -2024,51 +2057,7 @@
     });
 
 
-    function ambilenjiner() {
-      // alert('ketrigger');
-      $.ajax({
-        url: "/engineersearch",
-        success: function(data) {
-
-          // console.log(data);
-          var jmldata = data.length;
-
-          var eng_code = [];
-          var eng_desc = [];
-          var test = [];
-
-
-          for (i = 0; i < jmldata; i++) {
-            eng_code.push(data[i].eng_code);
-            eng_desc.push(data[i].eng_desc);
-
-            test += '<option value=' + eng_code[i] + '>' + eng_code[i] + '--' + eng_desc[i] + '</option>';
-          }
-
-          // console.log(test);
-
-          // $('#btnsubmit').prop('disabled', false);
-          // document.getElementById('btnsubmit').style.display = '';
-
-          // alert('row exists');
-          // test();
-
-          // $('#enjiner1').html('').append(test);
-          // $('#enjiner2').html('').append(test);
-          // $('#enjiner3').html('').append(test);
-          // $('#enjiner4').html('').append(test);
-          // $('#enjiner5').html('').append(test);
-          $('#enjiners').html('').append(test);
-
-
-          // console.log(globalasset);
-
-        }
-
-      })
-    }
-
-    ambilenjiner();
+    // ambilenjiner();
 
 
 

@@ -700,13 +700,24 @@ class ServiceController extends Controller
         }
     }
 
-    public function engajax(Request $req)
+    public function engineersearch(Request $req)
     {
+        // dd($req->code);
+
+        $dept = Session::get('department');
         if ($req->ajax()) {
-            $eng = DB::table('eng_mstr')
-                ->where('eng_active', '=', 'Yes')
-                ->orderBy('eng_code')
-                ->get();
+            if (Session::get('role') <> 'ADMIN') {
+                $eng = DB::table('eng_mstr')
+                    ->where('eng_active', '=', 'Yes')
+                    ->where('eng_dept', '=', $dept)
+                    ->orderBy('eng_code')
+                    ->get();
+            } else {
+                $eng = DB::table('eng_mstr')
+                    ->where('eng_active', '=', 'Yes')
+                    ->orderBy('eng_code')
+                    ->get();
+            }
 
             // dd($eng);
 
@@ -3472,9 +3483,9 @@ class ServiceController extends Controller
             ->first();
 
         $engapprover = DB::table('service_req_mstr')
-        ->where('sr_number', '=', $sr)
-        ->leftJoin('dept_mstr', 'service_req_mstr.sr_eng_approver', 'dept_mstr.dept_code')
-        ->first();
+            ->where('sr_number', '=', $sr)
+            ->leftJoin('dept_mstr', 'service_req_mstr.sr_eng_approver', 'dept_mstr.dept_code')
+            ->first();
 
         $listFailDesc = [];
 
@@ -3488,7 +3499,7 @@ class ServiceController extends Controller
                     ->first();
 
                 $failure = array('fn_code' => $failcode, 'fn_desc' => $getFailDesc->fn_desc);
-                
+
                 array_push($listFailDesc, $failure);
             }
         } else {
