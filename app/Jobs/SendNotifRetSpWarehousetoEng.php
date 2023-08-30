@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\DB;
 use App;
 use Illuminate\Support\Facades\Mail;
 
-// class SendNotifRetSpWarehousetoEng implements ShouldQueue
-class SendNotifRetSpWarehousetoEng
+class SendNotifRetSpWarehousetoEng implements ShouldQueue
+// class SendNotifRetSpWarehousetoEng
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

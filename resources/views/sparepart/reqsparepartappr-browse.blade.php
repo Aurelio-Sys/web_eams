@@ -56,9 +56,9 @@
                     <div class="col-md-3 col-sm-12 mb-2 input-group">
                         <select id="s_status" type="text" class="form-control" name="s_status">
                             <option value="">--Select Status--</option>
-                            <option value="open">open</option>
-                            <option value="closed">closed</option>
-                            <option value="canceled">canceled</option>
+                            <option value="waiting for approval">waiting for approval</option>
+                            <option value="approved">approved</option>
+                            <option value="revision">rejected</option>
                         </select>
                     </div>
                     <label for="" class="col-md-2 col-form-label text-md-right">{{ __('') }}</label>
@@ -476,7 +476,7 @@
         cols += '</select>';
         cols += '</td>';
         cols += '<td>';
-        cols += '<textarea type="text" id="reqnotes" class="form-control reqnotes" name="reqnotes[]" rows="2" ></textarea>';
+        cols += '<textarea type="text" id="te_reqnote" class="form-control te_reqnote" name="te_reqnote[]" rows="2" ></textarea>';
         cols += '</td>';
         cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
         cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';

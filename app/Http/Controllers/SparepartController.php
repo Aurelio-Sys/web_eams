@@ -90,19 +90,88 @@ class SparepartController extends Controller
 
         $loc_to = DB::table('inp_supply')->get();
 
-        //nomor wo akan di filter berdasarkan departmen user yang login harus sama dengan departmen wo, kecuali admin dapat mengakses semua nomor wo
-        $womstr = WOMaster::where('wo_status', '<>', 'closed')
-            ->where('wo_status', '<>', 'finished')
-            ->where('wo_status', '<>', 'acceptance')
-            ->where('wo_status', '<>', 'canceled')
-            ->when(Session::get('role') <> 'ADMIN', function ($q) {
-                return $q->where('wo_department', Session::get('department'));
+        //nomor wo akan di filter berdasarkan teknisi yang di assign pada wo tersebut, kecuali admin dapat mengakses semua nomor wo
+        $username = Session::get('username');
+
+        $womstr = WOMaster::where(function ($status) {
+            $status->where('wo_status', '=', 'firm')
+                ->orWhere('wo_status', '=', 'released')
+                ->orWhere('wo_status', '=', 'started');
+        })
+            ->when(Session::get('role') <> 'ADMIN', function ($q) use ($username) {
+                return $q
+                    ->where(function ($q) use ($username) {
+                        $q->where('wo_list_engineer', '=', $username . ';')
+                            ->orWhere('wo_list_engineer', 'LIKE', $username . ';%')
+                            ->orWhere('wo_list_engineer', 'LIKE', '%;' . $username . ';%')
+                            ->orWhere('wo_list_engineer', 'LIKE', '%;' . $username)
+                            ->orWhere('wo_list_engineer', '=', $username);
+                    });
+                // ->where('wo_department', Session::get('department'));
             })
             ->get();
 
         // dd($womstr);
 
         return view('sparepart.reqsparepart-detail', compact('data', 'wo_sp', 'sp_all', 'loc_to', 'womstr'));
+    }
+
+    //REQUEST SPAREPART ROUTE
+    public function reqsproute(Request $request)
+    {
+        $rsnumber = $request->code;
+        $datars = DB::table('req_sparepart')
+            ->where('req_sp_number', '=', $rsnumber)
+            ->first();
+
+        $dataApprover = DB::table('reqsp_trans_approval')
+            ->leftJoin('users', 'reqsp_trans_approval.rqtr_approved_by', '=', 'users.id')
+            ->selectRaw('reqsp_trans_approval.*, users.username, users.dept_user')
+            ->where('rqtr_mstr_id', '=', $datars->id)
+            ->get();
+        // dd($dataApprover);
+        $output = '';
+
+        if ($dataApprover->count() != 0) {
+            foreach ($dataApprover as $key => $approver) {
+
+                // foreach($userApprover as $user){
+                $output .= '<tr>';
+                $output .= '<td>';
+                $output .= $key + 1;
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= $approver->rqtr_dept_approval != null ? $approver->rqtr_dept_approval : $approver->dept_user;
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= $approver->rqtr_role_approval;
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= $approver->rqtr_reason;
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= $approver->rqtr_status;
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= is_null($approver->username) ? '' : $approver->username;
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= is_null($approver->updated_at) ? '' : $approver->updated_at;
+                $output .= '</td>';
+                $output .= '</tr>';
+                // }
+            }
+        } else {
+            $output .= '<tr>';
+            $output .= '<td colspan="7" style="color:red">';
+            $output .= '<center>You have not setup the approver, please cancel this request sparepart,<br>setup the approver first and create new request sparepart! </center>';
+            $output .= '</td>';
+            $output .= '</tr>';
+        }
+
+
+
+        return response($output);
     }
 
     //REQUEST SPAREPART SUBMIT AFTER CREATE
@@ -185,10 +254,10 @@ class SparepartController extends Controller
                     ]);
 
                 DB::table('running_mstr')
-                    ->where('rt_nbr', '=', $tablern->rt_nbr)
+                    ->where('rs_nbr', '=', $tablern->rs_nbr)
                     ->update([
                         'year' => $newyear,
-                        'rt_nbr' => $newtemprunnbr
+                        'rs_nbr' => $newtemprunnbr
                     ]);
 
                 //simpan ke dalam req_sparepart_det
@@ -250,9 +319,6 @@ class SparepartController extends Controller
                         ->first();
 
                     // dd($getFirstApprover);
-
-                    //send notifikasi ke approver pertama
-                    SendNotifReqSparepartApproval::dispatch($runningnbr, $requestData['wonbr'], $getFirstApprover->sp_approver_role, Session::get('department'));
 
                     //get wo dan sr mstr
                     $womstr = DB::table('wo_mstr')->where('wo_number', $requestData['wonbr'])->first();
@@ -328,10 +394,13 @@ class SparepartController extends Controller
                             }
                         }
                     }
-                }
 
-                //kirim email ke warehouse
-                // SendNotifReqSparepart::dispatch($runningnbr);
+                    //send notifikasi ke approver pertama
+                    //SendNotifReqSparepartApproval::dispatch($runningnbr, $requestData['wonbr'], $getFirstApprover->sp_approver_role, Session::get('department'));
+                } else {
+                    //jika tidak ada approver maka langsung kirim email ke warehouse
+                    SendNotifReqSparepart::dispatch($runningnbr);
+                }
 
                 DB::commit();
 
@@ -342,7 +411,7 @@ class SparepartController extends Controller
                 return redirect()->back();
             }
         } catch (Exception $e) {
-            dd($e);
+            //dd($e);
             DB::rollBack();
             toast('Sparepart Requested Failed', 'error');
             return redirect()->route('reqspbrowse');
@@ -540,6 +609,7 @@ class SparepartController extends Controller
     public function reqspupdate(Request $req)
     {
         $newData = $req->all();
+        // dd($newData);
 
         if ($req->te_spreq) {
             // cek apakah ada duplikat sparepart
@@ -645,6 +715,42 @@ class SparepartController extends Controller
             }
         }
 
+        $reqspapproval = DB::table('reqsp_trans_approval')->where('rqtr_mstr_id', $reqspmstr->id)->first();
+
+        $reqspapprovalrole = DB::table('reqsp_trans_approval')
+        ->where('rqtr_mstr_id', $reqspmstr->id)
+        ->orderBy('rqtr_sequence', 'asc')
+        ->first();
+// dd($reqspapproval);
+        if ($reqspapproval->rqtr_status == 'revision') {
+
+            DB::table('reqsp_trans_approval')
+                ->where('rqtr_mstr_id', $reqspmstr->id)
+                ->update([
+                    'rqtr_status' => 'waiting for approval',
+                    'rqtr_reason' => null,
+                    'rqtr_approved_by' => null,
+                    'updated_at' => null,
+                ]);
+
+            DB::table('reqsp_trans_approval_hist')
+                ->insert([
+                    'rqtrh_rs_number' => $reqspmstr->req_sp_number,
+                    'rqtrh_wo_number' => $reqspmstr->req_sp_wonumber,
+                    'rqtrh_dept_approval' => $reqspmstr->req_sp_dept,
+                    'rqtrh_role_approval' => 'SPVSR',
+                    'rqtrh_sequence' => 1,
+                    'rqtrh_status' => 'waiting for approval',
+                    'rqtrh_reason' => 'Request SP ready for approval again',
+                    'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                ]);
+
+
+            //email terkirim ke spv approval level 1
+            SendNotifReqSparepartApproval::dispatch($reqspmstr->req_sp_number, $reqspmstr->req_sp_wonumber, $reqspapprovalrole->rqtr_role_approval, $reqspapprovalrole->rqtr_dept_approval);
+        }
+
         $reqspdet = DB::table('req_sparepart_det')->where('req_spd_mstr_id', $reqspmstr->id)->get();
 
         if (count($reqspdet) == 0) {
@@ -699,91 +805,89 @@ class SparepartController extends Controller
     //REQUEST SPAREPART APPROVAL BROWSE
     public function reqspapprovalbrowse(Request $request)
     {
-        if (strpos(Session::get('menu_access'), 'BO06') !== false) {
-            $usernow = DB::table('users')
-                ->join('eng_mstr', 'users.username', 'eng_mstr.eng_code')
-                ->where('eng_code', '=', session()->get('username'))
-                ->where('active', '=', 'Yes')
-                ->where('approver', '=', 1)
-                ->first();
-            // dd($engineer);
+        // if (strpos(Session::get('menu_access'), 'BO06') !== false) {
+        $usernow = DB::table('users')
+            ->join('eng_mstr', 'users.username', 'eng_mstr.eng_code')
+            ->where('eng_code', '=', session()->get('username'))
+            ->where('active', '=', 'Yes')
+            ->where('approver', '=', 1)
+            ->first();
+        // dd($engineer);
 
-            $data = ReqSPMstr::query()
-                ->with(['getCurrentApprover'])
-                ->whereHas('getReqSPTransAppr', function ($q) {
-                    $q->where('rqtr_status', '=', 'waiting for approval');
-                    $q->orWhere('rqtr_status', '=', 'approved');
-                    $q->orWhere('rqtr_status', '=', 'revision');
+        $data = ReqSPMstr::query()
+            ->with(['getCurrentApprover'])
+            ->whereHas('getReqSPTransAppr', function ($q) {
+                $q->where('rqtr_status', '=', 'waiting for approval');
+                $q->orWhere('rqtr_status', '=', 'approved');
+                $q->orWhere('rqtr_status', '=', 'revision');
+            });
+
+        $data = $data
+            ->leftJoin('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
+            ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
+            ->join('users', 'req_sparepart.req_sp_requested_by', 'users.username')
+            ->groupBy('req_sp_number')
+            ->orderBy('req_sp_due_date', 'ASC');
+
+        //pengecekan apakah user yg login adalah approver atau tidak
+        if ($usernow != null) {
+            //jika approver bukan admin
+            if (Session::get('role') <> 'ADMIN') {
+                $data = $data->join('reqsp_trans_approval', function ($join) {
+                    $join->on('req_sparepart.id', '=', 'reqsp_trans_approval.rqtr_mstr_id')
+                        ->where('rqtr_dept_approval', '=', Session::get('department'))
+                        ->where('rqtr_role_approval', '=', Session::get('role'));
                 });
-
-            $data = $data
-                ->leftJoin('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
-                ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
-                ->join('users', 'req_sparepart.req_sp_requested_by', 'users.username')
-                ->groupBy('req_sp_number')
-                ->orderBy('req_sp_due_date', 'ASC');
-
-            //pengecekan apakah user yg login adalah approver atau tidak
-            if ($usernow != null) {
-                //jika approver bukan admin
-                if (Session::get('role') <> 'ADMIN') {
-                    $data = $data->join('reqsp_trans_approval', function ($join) {
-                        $join->on('req_sparepart.id', '=', 'reqsp_trans_approval.rqtr_mstr_id')
-                            ->where('rqtr_dept_approval', '=', Session::get('department'))
-                            ->where('rqtr_role_approval', '=', Session::get('role'));
-                    });
-                } else {
-                    $data = $data->join('reqsp_trans_approval', 'reqsp_trans_approval.rqtr_mstr_id', 'req_sparepart.id');
-                }
             } else {
-                toast('Anda tidak memiliki akses menu untuk melakukan approval, silahkan kontak admin', 'error');
-                return back();
+                $data = $data->join('reqsp_trans_approval', 'reqsp_trans_approval.rqtr_mstr_id', 'req_sparepart.id');
             }
-
-
-            $sp_all = DB::table('sp_mstr')
-                ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
-                ->where('spm_active', '=', 'Yes')
-                ->get();
-
-            $loc_to = DB::table('inp_supply')->get();
-
-            $requestby = DB::table('req_sparepart')
-                ->join('users', 'users.username', 'req_sparepart.req_sp_requested_by')
-                ->groupBy('req_sp_requested_by')
-                ->get();
-
-            $datefrom = $request->get('s_datefrom') == '' ? '2000-01-01' : date($request->get('s_datefrom'));
-            $dateto = $request->get('s_dateto') == '' ? '3000-01-01' : date($request->get('s_dateto'));
-
-            if ($request->s_nomorrs) {
-                $data->where('req_sp_number', 'like', '%' . $request->s_nomorrs . '%');
-            }
-
-            if ($request->s_reqby) {
-                $data->where('req_sp_requested_by', '=', $request->s_reqby);
-            }
-
-            if ($request->s_status) {
-                $data->where('req_sp_status', '=', $request->s_status);
-            }
-
-            if ($datefrom != '' || $dateto != '') {
-                $data->where('req_sp_due_date', '>=', $datefrom);
-                $data->where('req_sp_due_date', '<=', $dateto);
-            }
-
-            $data = $data
-                ->selectRaw('req_sparepart.*, sp_mstr.*, users.username, rqtr_status, rqtr_dept_approval, rqtr_role_approval, rqtr_reason, rqtr_approved_by, reqsp_trans_approval.updated_at')
-                ->paginate(10);
-
-            // dd($data);
-
-            return view('sparepart.reqsparepartappr-browse', ['data' => $data, 'sp_all' => $sp_all, 'loc_to' => $loc_to, 'requestby' => $requestby,]);
         } else {
-            toast('Anda tidak memiliki akses menu, Silahkan kontak admin', 'error');
+            toast('Anda tidak memiliki akses menu untuk melakukan approval, silahkan kontak admin', 'error');
             return back();
         }
+
+
+        $sp_all = DB::table('sp_mstr')
+            ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
+            ->where('spm_active', '=', 'Yes')
+            ->get();
+
+        $loc_to = DB::table('inp_supply')->get();
+
+        $requestby = DB::table('req_sparepart')
+            ->join('users', 'users.username', 'req_sparepart.req_sp_requested_by')
+            ->groupBy('req_sp_requested_by')
+            ->get();
+
+        $datefrom = $request->get('s_datefrom') == '' ? '2000-01-01' : date($request->get('s_datefrom'));
+        $dateto = $request->get('s_dateto') == '' ? '3000-01-01' : date($request->get('s_dateto'));
+
+        if ($request->s_nomorrs) {
+            $data->where('req_sp_number', 'like', '%' . $request->s_nomorrs . '%');
+        }
+
+        if ($request->s_reqby) {
+            $data->where('req_sp_requested_by', '=', $request->s_reqby);
+        }
+
+        if ($request->s_status) {
+            $data->where('rqtr_status', '=', $request->s_status);
+        }
+
+        if ($datefrom != '' || $dateto != '') {
+            $data->where('req_sp_due_date', '>=', $datefrom);
+            $data->where('req_sp_due_date', '<=', $dateto);
+        }
+
+        $data = $data
+            ->selectRaw('req_sparepart.*, sp_mstr.*, users.username, rqtr_status, rqtr_dept_approval, rqtr_role_approval, rqtr_reason, rqtr_approved_by, reqsp_trans_approval.updated_at')
+            ->paginate(10);
+
+        // dd($data);
+
+        return view('sparepart.reqsparepartappr-browse', ['data' => $data, 'sp_all' => $sp_all, 'loc_to' => $loc_to, 'requestby' => $requestby,]);
+        // } 
+
     }
 
     //REQUEST SPAREPART APPROVAL
@@ -863,7 +967,7 @@ class SparepartController extends Controller
             'rqtrh_role_approval'    => $user->role_user,
             'rqtrh_status'           => 'Request SP Approved',
             'rqtrh_reason'           => $reason,
-            // 'rqtrh_sequence'         => $woapprover->rqtr_sequence,
+            'rqtrh_sequence'         => $woapprover->rqtr_sequence,
             'rqtrh_approved_by'      => $user->id,
             'updated_at' => Carbon::now()->toDateTimeString(),
         ];
@@ -1055,13 +1159,24 @@ class SparepartController extends Controller
     {
         if (Session::get('role') == 'ADMIN' || Session::get('role') == 'WHS') {
 
-            $count_reqapprover = DB::table('sp_approver_mstr')->count();
-            
+            $count_reqapprover = DB::table('reqsp_trans_approval')->count();
+
             $data = DB::table('req_sparepart')
                 ->leftJoin('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
-                ->where(function ($query) use ($count_reqapprover){ //kondisi untuk menampilkan request sparepart yang sudah di approved all level
-                    $query->whereIn('req_sparepart.id', function ($subquery) use($count_reqapprover) {
+                // ->when($count_reqapprover <> 0, function ($q) use ($count_reqapprover) {
+                //     return $q->where(function ($query) use ($count_reqapprover) { //kondisi untuk menampilkan request sparepart yang sudah di approved all level
+                //         $query->whereIn('req_sparepart.id', function ($subquery) use ($count_reqapprover) {
+                //             $subquery->select('rqtr_mstr_id')
+                //                 ->from('reqsp_trans_approval')
+                //                 ->whereIn('rqtr_status', ['approved'])
+                //                 ->groupBy('rqtr_mstr_id')
+                //                 ->havingRaw("COUNT(*) = $count_reqapprover"); // Menentukan jumlah level approval yang statusnya harus approved
+                //         });
+                //     });
+                // })
+                ->where(function ($query) use ($count_reqapprover) { //kondisi untuk menampilkan request sparepart yang sudah di approved all level
+                    $query->whereIn('req_sparepart.id', function ($subquery) use ($count_reqapprover) {
                         $subquery->select('rqtr_mstr_id')
                             ->from('reqsp_trans_approval')
                             ->whereIn('rqtr_status', ['approved'])
@@ -1069,9 +1184,10 @@ class SparepartController extends Controller
                             ->havingRaw("COUNT(*) = $count_reqapprover"); // Menentukan jumlah level approval yang statusnya harus approved
                     });
                 })
-                ->where('req_sp_status', '!=', 'canceled')
+                ->where('req_sp_status', '<>', 'canceled')
                 ->groupBy('req_sp_number')
                 ->orderBy('req_sp_due_date', 'ASC');
+            // dd($data);
 
             $sp_all = DB::table('sp_mstr')
                 ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
@@ -1189,10 +1305,11 @@ class SparepartController extends Controller
             ->leftJoin('ret_sparepart_det', 'ret_sparepart_det.ret_spd_mstr_id', 'ret_sparepart.id')
             ->join('sp_mstr', 'sp_mstr.spm_code', 'ret_sparepart_det.ret_spd_sparepart_code')
             ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
-            ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_desc, ret_sparepart.created_at')
+            ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_desc, 
+            DATE_FORMAT(ret_sparepart.created_at, "%Y-%m-%d") AS formatted_created_at')
             ->groupBy('ret_sp_number')
             ->orderByDesc('ret_sp_number');
-
+// dd($data);
         $sp_all = DB::table('sp_mstr')
             ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
             ->where('spm_active', '=', 'Yes')
@@ -1204,6 +1321,7 @@ class SparepartController extends Controller
             ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
             ->groupBy('ret_sp_return_by')
             ->get();
+            // dd($request->get('s_datefrom'));
 
         $datefrom = $request->get('s_datefrom') == '' ? '2000-01-01' : date($request->get('s_datefrom'));
         $dateto = $request->get('s_dateto') == '' ? '3000-01-01' : date($request->get('s_dateto'));
@@ -1221,10 +1339,10 @@ class SparepartController extends Controller
             $data->where('ret_sp_status', '=', $request->s_status);
         }
 
-        // if ($datefrom != '' || $dateto != '') {
-        //     $data->where('created_at', '>=', $datefrom);
-        //     $data->where('created_at', '<=', $dateto);
-        // }
+        if ($datefrom != '' || $dateto != '') {
+            $data->whereRaw('DATE_FORMAT(ret_sparepart.created_at, "%Y-%m-%d") >= ?', [$datefrom]);
+            $data->whereRaw('DATE_FORMAT(ret_sparepart.created_at, "%Y-%m-%d") <= ?', [$dateto]);
+        }
 
         if (Session::get('role') <> 'ADMIN') {
             $data = $data->where('ret_sp_dept', Session::get('department'));
@@ -1561,6 +1679,7 @@ class SparepartController extends Controller
     {
         $rsnumber = $req->code;
         $wonumber = $req->wonbr;
+        // dd($wonumber <> null);
         if ($req->ajax()) {
 
             $datas = DB::table('ret_sparepart')
@@ -1568,16 +1687,28 @@ class SparepartController extends Controller
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'ret_sparepart_det.ret_spd_sparepart_code')
                 ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
                 ->join('inp_supply', 'inp_supply.inp_loc', 'ret_sparepart_det.ret_spd_loc_from')
-                ->when($wonumber, function ($q) {
-                    return $q->join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber', 'ret_sparepart.ret_sp_wonumber')
-                        ->whereColumn('wd_sp_required', '>', 'wd_sp_issued')
-                        ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inp_loc, wd_sp_spcode');
-                }, function ($q) {
-                    return $q->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inp_loc');
-                })
+                // ->when($wonumber != null, function ($q) {
+                //     return $q->join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber', 'ret_sparepart.ret_sp_wonumber')
+                //         ->whereColumn('wd_sp_required', '>', 'wd_sp_issued')
+                //         ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inp_loc, wd_sp_spcode');
+                // }, 
+                // function ($q) {
+                //     return $q->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inp_loc');
+                // })
                 ->where('ret_sp_number', $rsnumber)
-                // ->groupBy('req_sp_number')
                 ->get();
+
+            // if ($wonumber != null) {
+            //     // dd(1);
+            //     $datas = $datas->join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber', 'ret_sparepart.ret_sp_wonumber')
+            //         // ->whereColumn('wd_sp_required', '>', 'wd_sp_issued')
+            //         ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inp_loc');
+            // }else{
+            //     dd(2);
+            //     $datas = $datas->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_code, spm_desc, inp_loc');
+            // }
+
+            // $datas = $datas->get();
 
             $sp_all = DB::table('sp_mstr')
                 ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
@@ -1593,8 +1724,8 @@ class SparepartController extends Controller
                 if ($wonumber != null) {
                     $output .= '<tr>';
                     $output .= '<td>';
-                    $output .= '<input type="text" class="form-control spretdesc" name="spretdesc[]" value="' . $data->wd_sp_spcode . ' -- ' . $data->spm_desc . '" readonly/>';
-                    $output .= '<input type="hidden" class="form-control spret" name="te_spret[]" value="' . $data->wd_sp_spcode . '" readonly/>';
+                    $output .= '<input type="text" class="form-control spretdesc" name="spretdesc[]" value="' . $data->spm_code . ' -- ' . $data->spm_desc . '" readonly/>';
+                    $output .= '<input type="hidden" class="form-control spret" name="te_spret[]" value="' . $data->spm_code . '" readonly/>';
                     $output .= '</td>';
                     $output .= '<td><input type="number" class="form-control" step=".01" min="0.01" max="' . $data->ret_spd_qty_return . '" name="te_qtyret[]" value="' . $data->ret_spd_qty_return . '"></td>';
                     $output .= '<td>';
@@ -2352,11 +2483,11 @@ class SparepartController extends Controller
             ->first();
 
         $sparepart_detail = DB::table('ret_sparepart')
-            ->leftJoin('ret_sparepart_det', 'ret_sparepart_det.ret_spd_mstr_id', 'ret_sparepart.id')
+            ->join('ret_sparepart_det', 'ret_sparepart_det.ret_spd_mstr_id', 'ret_sparepart.id')
             ->join('sp_mstr', 'sp_mstr.spm_code', 'ret_sparepart_det.ret_spd_sparepart_code')
             ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
             ->selectRaw('ret_sparepart.*, ret_sparepart_det.*, users.username, spm_desc, ret_sparepart.created_at')
-            ->groupBy('ret_sp_number')
+            // ->groupBy('ret_sp_number')
             ->where('ret_spd_mstr_id', $data->id)
             // ->groupBy('req_spd_mstr_id')
             ->get();
@@ -2365,7 +2496,7 @@ class SparepartController extends Controller
         $datalocsupply = DB::table('inc_source')
             ->get();
 
-        // dd($data);
+        // dd($sparepart_detail);
         return view('sparepart.returnsparepartwhs-detail', compact(
             'data',
             'sparepart_detail',
@@ -2735,7 +2866,7 @@ class SparepartController extends Controller
         $sparepart = $req->spsearch;
 
         $datalocsupply = DB::table('inp_supply')
-            ->where('inp_avail', '=', 'Yes')
+            // ->where('inp_avail', '=', 'Yes')
             ->get();
 
         $data_assetsite = DB::table('asset_site')

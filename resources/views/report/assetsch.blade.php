@@ -181,6 +181,19 @@
                                 @endif
                             @endforeach
                         @endif
+
+                        {{--  Menampilkan reminder asset renewal data dari asset_mstr field asset_renew  --}}
+                        @php($tglrenew = 0)
+                        @php($angkaBulan = date('m', strtotime($bulan)))
+                        @php($stringTanggal = sprintf('%02d-%02d-%04d', $i, $angkaBulan, substr($bulan, -4)))
+                        @php($tanggalObj = DateTime::createFromFormat('d-m-Y', $stringTanggal))
+                        @php($tglrenew = $datarenew->where('asset_renew','=',$tanggalObj->format('Y-m-d')))
+                        @if($tglrenew->count() > 0)
+                          <a href="javascript:void(0)" class="viewrenew" data-toggle="modal"  title="View Asset"  data-target="#renewModal"
+                            data-tglrenew="aa"> 
+                            <span class="badge badge-danger">Asset Renewal</span>
+                          </a>
+                        @endif
                     </td>
                 @endif
                 @if($i == $skrg)
@@ -418,6 +431,36 @@
   </div>
 </div>
 
+<!--Modal Renew-->
+<div class="modal fade" id="renewModal" role="dialog" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center" id="exampleModalLabel">Asset Renewal View</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <input type="hidden" id="v_counter" value=0>
+      <div class="modal-body">
+        <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>File Name</th>
+                  </tr>
+                </thead>
+                <tbody id="tabelRenew">
+
+                </tbody>
+              </table>  
+      <div class="modal-footer">
+        <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+
 <!--Modal Loading-->
 <div class="modal fade" id="loadingtable" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -472,6 +515,8 @@
           var wotype = vamp.wo_master.wo_type;
           var wostart = vamp.wo_master.wo_job_startdate ? new Date(vamp.wo_master.wo_job_startdate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
           var wofinish = vamp.wo_master.wo_job_finishdate ? new Date(vamp.wo_master.wo_job_finishdate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
+          var wofinishtime = vamp.wo_master.wo_job_finishtime ? vamp.wo_master.wo_job_finishtime : "";
+          var wostarttime = vamp.wo_master.wo_job_starttime ? vamp.wo_master.wo_job_starttime : "";
   
           let combineFailure = [];
   
@@ -510,8 +555,8 @@
           document.getElementById('v_rejectreason').value = rejectreason;
           document.getElementById('v_status').value = status;
           document.getElementById('v_wotype').value = wotype;
-          document.getElementById('v_wostart').value = wostart;
-          document.getElementById('v_wofinish').value = wofinish;
+          document.getElementById('v_wostart').value = wostart + " " + wostarttime;;
+          document.getElementById('v_wofinish').value = wofinish + " " + wofinishtime;
           
   
         },complete: function(vamp) {
@@ -583,6 +628,20 @@
     document.getElementById('pm_lastno').value = lastno;
     document.getElementById('pm_lastdate').value = lastdate.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3-$2-$1");
 
+  });
+
+  $(document).on('click', '.viewrenew', function() {
+    $('#renewModal').modal('show');
+    var tglrenew = $(this).data('tglrenew');
+    {{--  alert(tglrenew);
+  
+    $.ajax({
+      url: "/listuploadviewxx/" + srnumber,
+      success: function(data) {
+        // console.log(data);
+        $('#tabelRenew').html('').append(data);
+      }
+    })  --}}
   });
 
 </script>

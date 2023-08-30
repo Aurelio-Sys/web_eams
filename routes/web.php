@@ -40,6 +40,7 @@ use App\Http\Controllers\Usage\PmConfirmController;
 use App\Http\Controllers\Usage\PmmssgController;
 use App\Http\Controllers\Other\WhyHistController;
 use App\Http\Controllers\Routine\RoutineCheckController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SparepartController;
 use App\Http\Controllers\Training\TrainingController;
 use App\Http\Controllers\Usage\PmMeterController;
@@ -509,7 +510,8 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/failuresearch','ServiceController@failuresearch');
 	route::get('/srapproval', 'ServiceController@srapproval');
 	route::get('/srapprovaleng', 'ServiceController@srapprovaleng');
-	route::get('/engineersearch','ServiceController@engajax');
+	// route::get('/engineersearch','ServiceController@engajax');
+	Route::get('/engineersearch',[ServiceController::class, 'engineersearch']);
 	route::post('/approval', 'ServiceController@approval');
 	route::post('/approvaleng', 'ServiceController@approvaleng');
 	route::get('/srapproval/searchapproval', 'ServiceController@searchapproval');
@@ -659,6 +661,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// Report Schedule Asset Year
 	Route::get('assetyear', [RptAssetYearController::class, 'index']);
+	Route::get('assetyeardetail', [RptAssetYearController::class, 'assetyeardetail']);
 
 	// Master UM
 	Route::get('/um', [UMController::class, 'index']);
@@ -791,6 +794,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/reqspcreate', [SparepartController::class, 'reqspcreate'])->name('reqspcreate');
 	Route::post('/reqspsubmit', [SparepartController::class,'reqspsubmit'])->name('reqspsubmit');
 	Route::get('/reqspeditdet',[SparepartController::class, 'reqspeditdet']);
+	Route::get('/reqsproute',[SparepartController::class, 'reqsproute']);
 	Route::get('/reqspviewdet',[SparepartController::class, 'reqspviewdet']);
 	Route::post('/reqspupdate',[SparepartController::class, 'reqspupdate']);
 	Route::post('/reqspcancel', [SparepartController::class, 'reqspcancel']);

@@ -46,14 +46,14 @@ class PmMeterController extends Controller
                     ->on('pma_asset.pma_meterum', '=', 'tmptable.um');
             })
             ->whereIn('pma_mea', ['M', 'B'])
-            ->where('pma_asset', 'BGNKG03')
+            // ->where('pma_asset', 'BGNKG03')
             ->whereRaw('(pma_meter + pma_lastmea) < maxmea')
             ->get();
 // dd($results);
         // Mencari data Work order yang sudah terbentuk
         $datawo = DB::table('wo_mstr')
             ->whereWo_type('PM')
-            ->where('wo_asset_code', 'BGNKG03')
+            // ->where('wo_asset_code', 'BGNKG03')
             ->whereIn('wo_status',['firm','released','started','finished'])
             ->get();
 

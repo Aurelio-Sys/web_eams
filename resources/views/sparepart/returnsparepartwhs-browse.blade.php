@@ -10,7 +10,7 @@
 </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-<form action="/trfsp" method="GET">
+<form action="/retsp" method="GET">
     <div class="container-fluid mb-2">
         <div class="row">
             <div class="col-md-12">
