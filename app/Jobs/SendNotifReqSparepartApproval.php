@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App;
 
-// class SendNotifReqSparepartApproval implements ShouldQueue
-class SendNotifReqSparepartApproval
+class SendNotifReqSparepartApproval implements ShouldQueue
+// class SendNotifReqSparepartApproval
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

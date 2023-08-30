@@ -256,6 +256,66 @@
     </div>
 </div>
 
+<!-- Request Sparepart Route -->
+<div class="modal fade" id="routeModal" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center" id="exampleModalLabel">Route to Action</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="form-horizontal" method="post" action="#">
+                <!-- <form class="form-horizontal" method="post" action="#"> -->
+                {{ csrf_field() }}
+                <div class="modal-body">
+                    <div class="form-group row" style="margin: 0px 0px 0.8em 0px;">
+                        <label for="r_rsnumber" class="col-md-3 col-form-label">RS Number</label>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" id="r_rsnumber" name="r_rsnumber" readonly>
+                        </div>
+                        <label for="r_reqby" class="col-md-3 col-form-label">Requested By</label>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" id="r_reqby" name="r_reqby" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group row" style="margin: 0px 0px 1.5em 0px;">
+                        <label for="r_wonumber" class="col-md-3 col-form-label">WO Number</label>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" id="r_wonumber" name="r_wonumber" readonly>
+                        </div>
+                        <label for="r_duedate" class="col-md-3 col-form-label">Needed Date</label>
+                        <div class="col-md-3">
+                            <input type="date" class="form-control" id="r_duedate" name="r_duedate" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
+                            <thead>
+                                <th style="width:10%">No.</th>
+                                <th style="width:10%">Department</th>
+                                <th style="width:10%">Role</th>
+                                <th style="width:15%">Reason</th>
+                                <th style="width:15%">Status</th>
+                                <th style="width:10%">Approved By</th>
+                                <th style="width:15%">Timestamp</th>
+                            </thead>
+                            <tbody id='r_detailapp'></tbody>
+                            
+                        </table>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
+                    <!-- <button type="submit" class="btn btn-success bt-action" id="btnedit">Save</button> -->
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
 @section('scripts')
 <script>
@@ -326,6 +386,32 @@
 
     });
 
+    $(document).on('click', '.routereqsp', function() {
+
+        $('#routeModal').modal('show');
+
+        var rsnumber = $(this).data('rsnumber');
+        var reqby = $(this).data('reqby');
+        var duedate = $(this).data('duedate');
+        var wonumber = $(this).data('wonumber');
+
+        // console.log(duedate);
+
+        document.getElementById('r_rsnumber').value = rsnumber;
+        document.getElementById('r_reqby').value = reqby;
+        document.getElementById('r_duedate').value = duedate;
+        document.getElementById('r_wonumber').value = wonumber;
+
+        $.ajax({
+            url: "reqsproute?code=" + rsnumber,
+            success: function(data) {
+                // console.log(data);
+                $('#r_detailapp').html('').append(data);
+            }
+        })
+
+    });
+
     $("#ed_addrow").on("click", function() {
 
         var newRow = $("<tr>");
@@ -353,7 +439,7 @@
         cols += '</select>';
         cols += '</td>';
         cols += '<td>';
-        cols += '<textarea type="text" id="reqnotes" class="form-control reqnotes" name="reqnotes[]" rows="2" ></textarea>';
+        cols += '<textarea type="text" id="te_reqnote" class="form-control te_reqnote" name="te_reqnote[]" rows="2" ></textarea>';
         cols += '</td>';
         cols += '<td width="15%"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
         cols += '<input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>';

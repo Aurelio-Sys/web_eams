@@ -415,7 +415,7 @@
       $.ajax({
         url: "/wojoblist/pagination?page=" + page + "&sorttype=" + sort_type + "&sortby=" + sort_by + "&wonumber=" + wonumber + "&woasset=" + woasset + "&wostatus=" + wostatus + "&wopriority=" + wopriority,
         success: function(data) {
-          console.log(data);
+          // console.log(data);
           $('tbody').html('');
           $('tbody').html(data);
         }
