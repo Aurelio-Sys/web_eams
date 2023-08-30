@@ -4201,7 +4201,7 @@ class wocontroller extends Controller
                 foreach($supplydata_onlyno as $thisno){
                     array_push($datatemp, [
                         't_domain' => $domain,
-                        't_part' => $spdet->wd_sp_spcod,
+                        't_part' => $spdet->wd_sp_spcode,
                         't_site' => $thisno->inp_supply_site,
                         't_loc' => $thisno->inp_loc,
                         't_qtyoh' => 0,
