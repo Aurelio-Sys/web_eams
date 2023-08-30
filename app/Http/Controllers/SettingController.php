@@ -1764,7 +1764,7 @@ class SettingController extends Controller
             $data = DB::table('asset_mstr')
                 ->selectRaw('asset_type.*, asset_group.*, asset_loc.*, asset_mstr.id as asset_id, asset_code, asset_desc, asset_site, asset_loc, asset_um, asset_sn, 
                 asset_supp, asset_prcdate, asset_prcprice, asset_type, asset_group, asset_accounting, asset_note, asset_active, asset_image, 
-                asset_imagepath, asset_upload, asset_editedby')
+                asset_imagepath, asset_upload, asset_editedby, asset_renew')
                 ->leftjoin('asset_type','asset_mstr.asset_type','asset_type.astype_code')
                 ->leftjoin('asset_group','asset_mstr.asset_group','asset_group.asgroup_code')
                 ->leftJoin('asset_loc','asloc_code','=','asset_loc')
@@ -1850,20 +1850,20 @@ class SettingController extends Controller
             });
 
             /* ini ditutup dulu, nanti dibuka lagi */
-            $domain = ModelsQxwsa::first();
-            $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
+            // $domain = ModelsQxwsa::first();
+            // $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
 
-            if ($datawsa === false) {
-                toast('WSA Failed', 'error')->persistent('Dismiss');
-                return redirect()->back();
-            } else {
-                foreach ($datawsa[0] as $datas) {
-                    DB::table('temp_asset')->insert([
-                        'temp_code' => $datas->t_code,
-                        'temp_desc' => $datas->t_desc,
-                    ]);
-                }
-            } 
+            // if ($datawsa === false) {
+            //     toast('WSA Failed', 'error')->persistent('Dismiss');
+            //     return redirect()->back();
+            // } else {
+            //     foreach ($datawsa[0] as $datas) {
+            //         DB::table('temp_asset')->insert([
+            //             'temp_code' => $datas->t_code,
+            //             'temp_desc' => $datas->t_desc,
+            //         ]);
+            //     }
+            // } 
 
             $dataassetqad = DB::table('temp_asset')
                 ->orderBy('temp_code')
@@ -1967,6 +1967,7 @@ class SettingController extends Controller
                 'asset_supp'        => $req->t_supp,
                 'asset_note'        => $req->t_note,  
                 'asset_active'      => $req->t_active,    
+                'asset_renew'      => $req->t_renew,    
                 'asset_image'       => $imagename,  
                 'asset_imagepath'  => $imagepath,  
                 'asset_accounting'         => $req->t_qad,   
@@ -2182,6 +2183,7 @@ class SettingController extends Controller
             'asset_supp'        => $req->te_supp,
             'asset_note'        => $req->te_note,        
             'asset_active'      => $req->te_active, 
+            'asset_renew'      => $req->te_renew, 
             'asset_accounting'         => $req->te_qad,  
             'updated_at'        => Carbon::now()->toDateTimeString(),
             'asset_editedby'         => Session::get('username'),
