@@ -4183,7 +4183,7 @@ class wocontroller extends Controller
 
                             array_push($datatemp, [
                                 't_domain' => $domain,
-                                't_part' => $spdet->wd_sp_spcod,
+                                't_part' => $spdet->wd_sp_spcode,
                                 't_site' => $invsupply->inp_supply_site,
                                 't_loc' => $invsupply->inp_loc,
                                 't_qtyoh' => 0,
