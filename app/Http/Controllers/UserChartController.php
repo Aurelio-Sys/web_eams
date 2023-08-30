@@ -764,6 +764,11 @@ class UserChartController extends Controller
 
         $foto = $dataAsset->where('asset_code','=',"")->first();
 
+        /** Mencari data asset yang ada data tanggal renewal */
+        $datarenew = DB::table('asset_mstr')
+            ->whereNotNull('asset_renew')
+            ->get();
+
         $datawo = DB::table('wo_mstr')
             ->select('wo_number','wo_status','wo_start_date','wo_list_engineer','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note',
                 'wo_job_startdate','wo_job_finishdate','wo_type','wo_location','wo_site','asloc_desc')
@@ -861,9 +866,9 @@ class UserChartController extends Controller
         }
 
         $datapm = $datapm->get();
-// dd($datapm);
+// dd($datarenew);
         return view('report.assetsch',compact('skrg','hari','kosong','bulan','datawo','dataAsset','foto','datafn','dataloc',
-            'sloc','sstatus','dataeng','datapm','datalastwo'));
+            'sloc','sstatus','dataeng','datapm','datalastwo','datarenew'));
     }
 
     public function engrpt(Request $req)

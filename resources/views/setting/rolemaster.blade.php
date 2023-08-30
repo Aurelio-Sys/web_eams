@@ -605,7 +605,7 @@
                 </label>
               </div>
             </div>
-            <div class="form-group row">
+            {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Sparepart Needs') }}</label>
               <div class="col-6">
                 <label class="switch" for="cbRptSpneed">
@@ -613,7 +613,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Booking Schedule') }}</label>
               <div class="col-6">
@@ -1556,7 +1556,7 @@
                 </label>
               </div>
             </div>
-            <div class="form-group row">
+            {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Sparepart Needs') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_cbRptSpneed">
@@ -1564,7 +1564,7 @@
                   <div class="slider round"></div>
                 </label>
               </div>
-            </div>
+            </div>  --}}
             <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Booking Schedule') }}</label>
               <div class="col-6">
@@ -2585,11 +2585,11 @@
         } else {
           document.getElementById('e_cbEngSchedule').checked = false;
         }
-        if (listmenu.search("RT06") >= 0) {
+        {{--  if (listmenu.search("RT06") >= 0) {
           document.getElementById('e_cbRptSpneed').checked = true;
         } else {
           document.getElementById('e_cbRptSpneed').checked = false;
-        }
+        }  --}}
         if (listmenu.search("RT02") >= 0) {
           document.getElementById('e_cbBookSchedule').checked = true;
         } else {

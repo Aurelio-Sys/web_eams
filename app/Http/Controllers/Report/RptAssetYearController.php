@@ -103,9 +103,19 @@ class RptAssetYearController extends Controller
 
         Schema::dropIfExists('temp_asset');
 
+        /** dibedakan sama data asset karena kalo sama nanti muncul di search nya cuman 10  asset karena paging */
+        $datasearchasset = DB::table('asset_mstr')
+            ->orderBy('asset_code')
+            ->where('asset_active','=','Yes')
+            ->get();
+
         $dataasset = DB::table('asset_mstr')
             ->orderBy('asset_code')
             ->where('asset_active','=','Yes');
+
+        if(!$req->s_asset && !$req->s_loc && !$req->s_eng && !$req->s_type) {
+            $dataasset = $dataasset->where('id','<',0);
+        }
 
         if ($req->s_asset) {
             $dataasset->where('asset_code', '=', $req->s_asset);
@@ -129,25 +139,25 @@ class RptAssetYearController extends Controller
                             });
             });
         }
-        if($req->s_type == "WO") {
+        if($req->s_type == "CM") {
             $dataasset = $dataasset->whereIn('asset_code', function($query) use ($bulan)
             {
-                $query->select('wo_asset')
+                $query->select('wo_asset_code')
                         ->from('wo_mstr')
-                        ->whereYear('wo_created_at','=',$bulan)
-                        ->where('wo_type','<>','auto');
+                        ->whereYear('wo_start_date','=',$bulan)
+                        ->where('wo_type','=','CM');
             });
         }
         if($req->s_type == "PM") {
             $dataasset = $dataasset->whereIn('asset_code', function($query) use ($bulan)
             {
-                $query->select('wo_asset')
+                $query->select('wo_asset_code')
                         ->from('wo_mstr')
-                        ->whereYear('wo_created_at','=',$bulan)
-                        ->where('wo_type','=','auto');
+                        ->whereYear('wo_start_date','=',$bulan)
+                        ->where('wo_type','=','PM');
             });
         }
-
+// dd($dataasset->get());
         $dataasset = $dataasset->paginate(10);
 
         $dataeng = DB::table('eng_mstr')
@@ -163,7 +173,7 @@ class RptAssetYearController extends Controller
 
         return view('report.assetyear', ['data' => $data, 'datatemp' => $datatemp, 'datawo' => $datawo, 'bulan' => $bulan,
             'dataasset' => $dataasset, 'sasset' => $sasset, 'swo' => $req->s_nomorwo, 'sasset' => $req->s_asset,
-            'sloc' => $req->s_loc, 'seng' => $req->s_eng,
+            'sloc' => $req->s_loc, 'seng' => $req->s_eng, 'datasearchasset' => $datasearchasset,
             'dataloc' => $dataloc, 'dataeng' => $dataeng, 'stype' => $req->s_type, 'datapm' => $datapm]);
     }
 
@@ -173,22 +183,22 @@ class RptAssetYearController extends Controller
 
             $code = $req->code;
             $sch = $req->sch;
-dd($req->all());
-            $data = DB::table('asset_loc')
-            ->orderBy('asloc_code')
-            ->get();
+// dd($req->all());
+            // $data = DB::table('asset_loc')
+            // ->orderBy('asloc_code')
+            // ->get();
 
-            // $data = DB::table('wo_mstr')
-            //     // ->whereWo_asset_code($code)
-            //     ->get();
+            $data = DB::table('wo_mstr')
+                ->whereWo_asset_code($code)
+                ->get();
 // dd($data);
             $output = '';
             foreach ($data as $data) {
                 $output .= '<tr>'.
                 '<td>'.$data->wo_number.'</td>'.
-                '<td>'.$data->wo_number.'</td>'.
-                '<td>'.$data->wo_number.'</td>'.
-                '<td>'.$data->wo_number.'</td>'.
+                '<td>'.$data->wo_start_date.'</td>'.
+                '<td>'.$data->wo_status.'</td>'.
+                '<td>'.$data->wo_list_engineer.'</td>'.
                 '</tr>';
             }
 
