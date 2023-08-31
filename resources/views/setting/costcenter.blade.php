@@ -19,6 +19,7 @@
 @section('content')
 
 <!--FORM Search Disini -->
+<form action="/costcenter" method="GET">
 <div class="container-fluid mb-2">
     <div class="row">
       <div class="col-md-12">
@@ -42,7 +43,7 @@
                 </div>
                 <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('') }}</label>
                 <div class="col-md-2 mb-2 input-group">
-                    <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" />
+                    <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
                 </div>
                 <div class="col-md-2 col-sm-12 mb-2 input-group">
                     <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
@@ -53,8 +54,8 @@
         </div>
     </div>
 </div>
+</form>
 
-<!-- Bagian Searching -->
 <div class="col-md-12"><hr></div>
 
 <div class="table-responsive col-12">
@@ -201,69 +202,6 @@
             $('#id_icon').html('');
             $('#post_title_icon').html('');
        }
-
-       function fetch_data(page, sort_type, sort_by, code, desc){
-            $.ajax({
-                url:"deptmaster/pagination?page="+page+"&sorttype="+sort_type+"&sortby="+sort_by+"&code="+code+"&desc="+desc,
-                success:function(data){
-                    console.log(data);
-                    $('tbody').html('');
-                    $('tbody').html(data);
-                }
-            })
-        }
-
-        $(document).on('click', '#btnsearch', function(){
-
-            var code = $('#s_code').val();
-            var desc = $('#s_desc').val();
-            var column_name = $('#hidden_column_name').val();
-			var sort_type = $('#hidden_sort_type').val();
-            var page = 1;
-            
-            document.getElementById('tmpcode').value = code;
-            document.getElementById('tmpdesc').value = desc;
-
-            fetch_data(page, sort_type, column_name, code, desc);
-        });
-
-       $(document).on('click', '.sorting', function(){
-			var column_name = $(this).data('column_name');
-			var order_type = $(this).data('sorting_type');
-			var reverse_order = '';
-			if(order_type == 'asc')
-			{
-			$(this).data('sorting_type', 'desc');
-			reverse_order = 'desc';
-			clear_icon();
-			$('#'+column_name+'_icon').html('<span class="glyphicon glyphicon-triangle-bottom"></span>');
-			}
-			if(order_type == 'desc')
-			{
-			$(this).data('sorting_type', 'asc');
-			reverse_order = 'asc';
-			clear_icon();
-			$('#'+column_name+'_icon').html('<span class="glyphicon glyphicon-triangle-top"></span>');
-			}
-			$('#hidden_column_name').val(column_name);
-			$('#hidden_sort_type').val(reverse_order);
-            var page = $('#hidden_page').val();
-            var code = $('#s_code').val();
-            var desc = $('#s_desc').val();
-			fetch_data(page, reverse_order, column_name, code, desc);
-     	});
-       
-       
-       $(document).on('click', '.pagination a', function(event){
-            event.preventDefault();
-            var page = $(this).attr('href').split('page=')[1];
-            $('#hidden_page').val(page);
-            var column_name = $('#hidden_column_name').val();
-            var sort_type = $('#hidden_sort_type').val();
-            var code = $('#s_code').val();
-            var desc = $('#s_desc').val();
-            fetch_data(page, sort_type, column_name, code, desc);
-       });
 
        $(document).on('click', '#btnrefresh', function() {
 

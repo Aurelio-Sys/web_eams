@@ -17,11 +17,23 @@ class CostCenterController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $req)
     {
+        $s_code = $req->s_code;
+        $s_desc = $req->s_desc;
+// dd($req->all());
         $data = DB::table('cc_mstr')
-                ->orderby('cc_code')
-                ->paginate(10);
+                ->orderby('cc_code');
+
+        if($s_code) {
+            $data = $data->where('cc_code','like','%'.$s_code.'%');
+            // dd($data->get());
+        }
+        if($s_desc) {
+            $data = $data->where('cc_desc','like','%'.$s_desc.'%');
+        }
+        
+        $data = $data->paginate(10);
 
         return view('setting.costcenter', ['data' => $data]);
     }
