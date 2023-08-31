@@ -263,18 +263,6 @@ class SparepartController extends Controller
                 //simpan ke dalam req_sparepart_det
                 foreach ($groupedData as $loopsp) {
 
-                    //simpan list spare part yang di released ke table wo_det jika nomor wo dipilih
-                    if ($requestData['wonbr'] != null) {
-                        DB::table('wo_dets_sp')
-                            ->insert([
-                                'wd_sp_wonumber' => $requestData['wonbr'],
-                                'wd_sp_spcode' => $loopsp['spreq'],
-                                'wd_sp_required' => $loopsp['qtyrequest'],
-                                'wd_sp_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                                'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                            ]);
-                    }
-
                     DB::table('req_sparepart_det')
                         ->insert([
                             'req_spd_mstr_id' => $reqspmstrid,
@@ -718,10 +706,10 @@ class SparepartController extends Controller
         $reqspapproval = DB::table('reqsp_trans_approval')->where('rqtr_mstr_id', $reqspmstr->id)->first();
 
         $reqspapprovalrole = DB::table('reqsp_trans_approval')
-        ->where('rqtr_mstr_id', $reqspmstr->id)
-        ->orderBy('rqtr_sequence', 'asc')
-        ->first();
-// dd($reqspapproval);
+            ->where('rqtr_mstr_id', $reqspmstr->id)
+            ->orderBy('rqtr_sequence', 'asc')
+            ->first();
+        // dd($reqspapproval);
         if ($reqspapproval->rqtr_status == 'revision') {
 
             DB::table('reqsp_trans_approval')
@@ -1159,8 +1147,7 @@ class SparepartController extends Controller
     {
         if (Session::get('role') == 'ADMIN' || Session::get('role') == 'WHS') {
 
-            $count_reqapprover = DB::table('reqsp_trans_approval')->count();
-
+            $count_reqapprover = DB::table('sp_approver_mstr')->count();
             $data = DB::table('req_sparepart')
                 ->leftJoin('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
@@ -1309,7 +1296,7 @@ class SparepartController extends Controller
             DATE_FORMAT(ret_sparepart.created_at, "%Y-%m-%d") AS formatted_created_at')
             ->groupBy('ret_sp_number')
             ->orderByDesc('ret_sp_number');
-// dd($data);
+        // dd($data);
         $sp_all = DB::table('sp_mstr')
             ->select('spm_code', 'spm_desc', 'spm_um', 'spm_site', 'spm_loc', 'spm_lot')
             ->where('spm_active', '=', 'Yes')
@@ -1321,7 +1308,7 @@ class SparepartController extends Controller
             ->join('users', 'users.username', 'ret_sparepart.ret_sp_return_by')
             ->groupBy('ret_sp_return_by')
             ->get();
-            // dd($request->get('s_datefrom'));
+        // dd($request->get('s_datefrom'));
 
         $datefrom = $request->get('s_datefrom') == '' ? '2000-01-01' : date($request->get('s_datefrom'));
         $dateto = $request->get('s_dateto') == '' ? '3000-01-01' : date($request->get('s_dateto'));
@@ -2286,6 +2273,18 @@ class SparepartController extends Controller
                             'req_sp_status' => 'closed',
                             'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                         ]);
+
+                    //simpan list spare part yang di released ke table wo_det jika nomor wo dipilih
+                    if ($reqspmstr->req_sp_wonumber != null) {
+                        DB::table('wo_dets_sp')
+                            ->insert([
+                                'wd_sp_wonumber' => $reqspmstr->req_sp_wonumber,
+                                'wd_sp_spcode' => $req->hidden_spcode[$index],
+                                'wd_sp_required' => $req->qtytotransfer[$index],
+                                'wd_sp_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+                    }
                 }
             }
 
