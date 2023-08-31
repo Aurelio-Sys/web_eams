@@ -2865,7 +2865,7 @@ class SparepartController extends Controller
         $sparepart = $req->spsearch;
 
         $datalocsupply = DB::table('inp_supply')
-            ->where('inp_avail', '=', 'Yes')
+            // ->where('inp_avail', '=', 'Yes')
             ->get();
 
         $data_assetsite = DB::table('asset_site')

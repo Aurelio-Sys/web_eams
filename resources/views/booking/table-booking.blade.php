@@ -36,6 +36,7 @@
             <i class="icon-table fa fa-edit fa-lg"></i></a>
         &ensp; 
         @endif
+        {{--  ditutup dulu, lupa approve booking aturannya kaya gimana
         @if(Session::get('role') != 'USER')
         <a href="javascript:void(0)" class="appdata" id='appdata' data-toggle="tooltip"  title="Booking Approval" data-target="#approveModal"
             data-code="{{$show->book_code}}" data-asset="{{$show->book_asset}}" 
@@ -44,7 +45,7 @@
             data-note="{{$show->book_note}}" data-allday="{{$show->book_allday}}">
             <i class="icon-table fas fa-thumbs-up fa-lg"></i></a>
         &ensp; 
-        @endif
+        @endif  --}}
         @if($show->book_status == 'Open')
             <a href="javascript:void(0)" class="deletedata" id='deletedata' data-toggle="tooltip"  title="Booking Delete" data-target="#deleteModal"
             data-code="{{$show->book_code}}" data-asset="{{$show->book_asset}}"
