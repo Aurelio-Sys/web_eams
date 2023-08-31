@@ -168,10 +168,12 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6 chart-wrapper">
+        <div class="col-md-12 chart-wrapper">
             <canvas id="wograph" class="chart-canvas" height="150"></canvas>
         </div>
-        <div class="col-md-6 chart-wrapper">
+    </div>
+    <div class="row">
+        <div class="col-md-12 chart-wrapper">
             <canvas id="woperdept" class="chart-canvas" height="150"></canvas>
         </div>
     </div>
@@ -239,8 +241,8 @@
                 success: function(data) {
                     var departments = data.map(item => item.dept_desc);
 
-                    var totalCosts = data.map(item => parseFloat(item.total_sparepart_cost));
-
+                    var totalCosts = data.map(item => item.total_sparepart_cost ? parseFloat(item.total_sparepart_cost) : 0);
+                    
                     var totalSum = totalCosts.reduce((acc, cost) => acc + cost, 0);
 
                     // Menampilkan totalSum di elemen dengan id "totalcost"
