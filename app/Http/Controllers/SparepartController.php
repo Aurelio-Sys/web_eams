@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Qxwsa as ModelsQxwsa;
 use App\ReqSPMstr;
+use App\Services\CreateTempTable;
 use App\WOMaster;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
@@ -3294,10 +3295,18 @@ class SparepartController extends Controller
 
     //Spare Part Stock Browse
     public function spstockbrowse(){
-        $datastock = DB::table('sp_stock_report')
-                    ->get();
+        $wsa = (new WSAServices())->wsainvstock(Session::get('domain'));
+        if($wsa === false){
+            alert()->error('Error', 'WSA Failed');
+            return redirect()->back();
+        }else{
+            $tempStockItem = (new CreateTempTable())->invstockDetail($wsa[0]);
+        }
 
+        $data = $tempStockItem[0];
 
-        return view('report.spstock', ['datastock' => $datastock]);
+        // dd($data);
+    
+        return view('report.spstock', compact('data'));
     }
 }

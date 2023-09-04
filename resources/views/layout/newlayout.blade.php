@@ -166,7 +166,7 @@ to get the desired effect
             <li class="nav-item ">
               <a href="/traininghome" class="nav-link ">
                 <i class="nav-icon fas fa-book-open"></i>
-                  <p>Introduction</p>
+                <p>Introduction</p>
               </a>
             </li>
 
@@ -174,7 +174,7 @@ to get the desired effect
             <li class="nav-item ">
               <a href="/myroutine" class="nav-link ">
                 <i class="nav-icon fas fa-user-clock"></i>
-                  <p>My Routine Check</p>
+                <p>My Routine Check</p>
               </a>
             </li>
             @endif
@@ -192,39 +192,39 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'SR01'))
                 <li class="nav-item has-treeview">
                   <a href="/servicerequest" class="nav-link ">
-                      <p>Service Request Create</p>
+                    <p>Service Request Create</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'SR03'))
                 <li class="nav-item has-treeview">
                   <a href="/srbrowse" class="nav-link ">
-                     <p>Service Request Maintenance</p>
+                    <p>Service Request Maintenance</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'SR06'))
                 <li class="nav-item has-treeview">
                   <a href="/srbrowseonly" class="nav-link ">
-                     <p>Service Request Browse</p>
+                    <p>Service Request Browse</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'SR02'))
                 <li class="nav-item has-treeview">
                   <a href="/srapproval" class="nav-link ">
-                      <p>Service Request Approval</p>
+                    <p>Service Request Approval</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'SR05'))
                 <li class="nav-item has-treeview">
                   <a href="/srapprovaleng" class="nav-link ">
-                      <p>Service Request Approval Engineer</p>
+                    <p>Service Request Approval Engineer</p>
                   </a>
                 </li>
                 @endif
-                {{--  Dua Kelinci tidak menggunakan user acceptance
+                {{-- Dua Kelinci tidak menggunakan user acceptance
                   @if(str_contains( Session::get('menu_access'), 'SR04'))
                 <li class="nav-item">
                   <a href="/useracceptance" class="nav-link ">
@@ -232,10 +232,10 @@ to get the desired effect
                   </a>
                 </li>
                 @endif  --}}
-                  @if(str_contains( Session::get('menu_access'), 'SR04'))
+                @if(str_contains( Session::get('menu_access'), 'SR04'))
                 <li class="nav-item">
                   <a href="/useracceptance" class="nav-link ">
-                      <p>User Acceptance</p>
+                    <p>User Acceptance</p>
                   </a>
                 </li>
                 @endif
@@ -264,7 +264,7 @@ to get the desired effect
                 </a>
                 </li>
                 @endif -->
-                {{--  Ditutup karena tidak digunakan lagi, bisa menggunakan create WO
+                {{-- Ditutup karena tidak digunakan lagi, bisa menggunakan create WO
                 @if(str_contains( Session::get('menu_access'), 'WO06'))
                 <li class="nav-item ">
                   <a href="/wocreatedirectmenu" class="nav-link ">
@@ -276,49 +276,49 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'WO01'))
                 <li class="nav-item ">
                   <a href="/womaint" class="nav-link ">
-                     <p>Work Order Maintenance</p>
+                    <p>Work Order Maintenance</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'WO05'))
                 <li class="nav-item ">
                   <a href="/wobrowse" class="nav-link ">
-                      <p>Work Order Browse</p>
+                    <p>Work Order Browse</p>
                   </a>
-                </li>  
+                </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'WO09'))
                 <li class="nav-item ">
                   <a href="/worelease" class="nav-link ">
-                      <p>Work Order Release</p>
+                    <p>Work Order Release</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'WO10'))
                 <li class="nav-item ">
                   <a href="/woreleaseapprovalbrowse" class="nav-link ">
-                      <p>Work Order Release Approval</p>
+                    <p>Work Order Release Approval</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'WO07'))
                 <li class="nav-item ">
                   <a href="/wotransfer" class="nav-link ">
-                      <p>Work Order Transfer</p>
+                    <p>Work Order Transfer</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'WO02'))
                 <li class="nav-item ">
                   <a href="/wojoblist" class="nav-link ">
-                      <p>Work Order Start</p>
+                    <p>Work Order Start</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'WO03'))
                 <li class="nav-item">
                   <a href="/woreport" class="nav-link ">
-                      <p>Work Order Reporting</p>
+                    <p>Work Order Reporting</p>
                   </a>
                 </li>
                 @endif
@@ -332,14 +332,14 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'WO08'))
                 <li class="nav-item">
                   <a href="/woapprovalbrowse" class="nav-link ">
-                      <p>Work Order Approval</p>
+                    <p>Work Order Approval</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'WO04'))
                 <li class="nav-item">
                   <a href="/returnbacksp" class="nav-link ">
-                      <p>Return Sparepart</p>
+                    <p>Return Sparepart</p>
                   </a>
                 </li>
                 @endif
@@ -370,44 +370,44 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'SP03'))
                 <li class="nav-item has-treeview">
                   <a href="{{url('/reqsp')}}" class="nav-link">
-                      <p>Request Sparepart</p>
+                    <p>Request Sparepart</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'SP06'))
                 <li class="nav-item has-treeview">
                   <a href="{{url('/reqspapproval')}}" class="nav-link">
-                      <p>Request Sparepart Approval</p>
+                    <p>Request Sparepart Approval</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'SP04'))
                 <li class="nav-item has-treeview">
                   <a href="{{url('/trfsp')}}" class="nav-link">
-                      <p>Transfer Sparepart</p>
+                    <p>Transfer Sparepart</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'SP05'))
-                  <li class="nav-item has-treeview">
-                    <a href="/accutransfer" class="nav-link">
-                      <p>Accumulative Sparepart Transfer</p>
-                    </a>
-                  </li>
+                <li class="nav-item has-treeview">
+                  <a href="/accutransfer" class="nav-link">
+                    <p>Accumulative Sparepart Transfer</p>
+                  </a>
+                </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'SP07'))
-                  <li class="nav-item has-treeview">
-                    <a href="/retsp" class="nav-link">
-                      <p>Return Sparepart</p>
-                    </a>
-                  </li>
+                <li class="nav-item has-treeview">
+                  <a href="/retsp" class="nav-link">
+                    <p>Return Sparepart</p>
+                  </a>
+                </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'SP08'))
-                  <li class="nav-item has-treeview">
-                    <a href="/retspwhs" class="nav-link">
-                      <p>Return Sparepart Warehouse</p>
-                    </a>
-                  </li>
+                <li class="nav-item has-treeview">
+                  <a href="/retspwhs" class="nav-link">
+                    <p>Return Sparepart Warehouse</p>
+                  </a>
+                </li>
                 @endif
               </ul>
             </li>
@@ -426,66 +426,66 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'US01'))
                 <li class="nav-item has-treeview">
                   <a href="/usagemt" class="nav-link ">
-                      <p>Asset Measurement Reporting</p>
+                    <p>Asset Measurement Reporting</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'US04'))
                 <li class="nav-item has-treeview">
                   <a href="{{route('usbrowse')}}" class="nav-link ">
-                      <p>Usage Browse</p>
+                    <p>Usage Browse</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'US08'))
                 <li class="nav-item has-treeview">
                   <a href="{{route('pmmeter')}}" class="nav-link ">
-                      <p>PM Planning for Meter</p>
+                    <p>PM Planning for Meter</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'US02'))
                 <li class="nav-item has-treeview">
                   <a href="/usagemulti" class="nav-link ">
-                      <p>Asset Multi Batch</p>
+                    <p>Asset Multi Batch</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'US03'))
                 <li class="nav-item has-treeview">
                   <a href="/viewwogenerator" class="nav-link ">
-                      <p>PM Planning</p>
+                    <p>PM Planning</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'US05'))
                 <li class="nav-item has-treeview">
                   <a href="/pmconf" class="nav-link ">
-                      <p>PM Confirm</p>
+                    <p>PM Confirm</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'US06'))
                 <li class="nav-item has-treeview">
                   <a href="/pmmssg" class="nav-link ">
-                      <p>PM Action Message</p>
+                    <p>PM Action Message</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'US06'))
                 <li class="nav-item has-treeview">
                   <a href="{{url('/needsp')}}" class="nav-link ">
-                      <p>Sparepart Planning</p>
+                    <p>Sparepart Planning</p>
                   </a>
-                </li> 
-              @endif
-    
-                
+                </li>
+                @endif
+
+
               </ul>
             </li>
             @endif
 
-           
+
             @if(str_contains(Session::get('menu_access'), 'BO'))
             <li class="nav-item has-treeview">
               <a href="javascript:void(0)" class="nav-link">
@@ -499,23 +499,23 @@ to get the desired effect
                 @if(str_contains( Session::get('menu_access'), 'BO01'))
                 <li class="nav-item has-treeview">
                   <a href="{{url('/booking')}}" class="nav-link">
-                      <p>Asset Booking</p>
+                    <p>Asset Booking</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'BO02'))
                 <li class="nav-item has-treeview">
                   <a href="{{url('/whyhist')}}" class="nav-link">
-                      <p>5 Why Transaction</p>
+                    <p>5 Why Transaction</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'MT30'))
-                  <li class="nav-item has-treeview">
-                    <a href="/assetmove" class="nav-link">
-                      <p>Asset Movement</p>
-                    </a>
-                  </li>
+                <li class="nav-item has-treeview">
+                  <a href="/assetmove" class="nav-link">
+                    <p>Asset Movement</p>
+                  </a>
+                </li>
                 @endif
               </ul>
             </li>
@@ -536,7 +536,7 @@ to get the desired effect
                 <li class="nav-item">
                   <a href="/rptdetwo" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>Detail WO Report</p>
+                    <p>Detail WO Report</p>
                   </a>
                 </li>
                 @endif
@@ -544,7 +544,7 @@ to get the desired effect
                 <li class="nav-item">
                   <a href="/rptcost" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>Cost Report</p>
+                    <p>Cost Report</p>
                   </a>
                 </li>
                 @endif
@@ -552,7 +552,7 @@ to get the desired effect
                 <li class="nav-item">
                   <a href="/assetrpt" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>Asset Report</p>
+                    <p>Asset Report</p>
                   </a>
                 </li>
                 @endif
@@ -560,7 +560,7 @@ to get the desired effect
                 <li class="nav-item">
                   <a href="/engrpt" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>Engineer Report</p>
+                    <p>Engineer Report</p>
                   </a>
                 </li>
                 @endif
@@ -568,11 +568,11 @@ to get the desired effect
                 <li class="nav-item">
                   <a href="/downrpt" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
-                      <p>Downtime Report</p>
+                    <p>Downtime Report</p>
                   </a>
                 </li>
                 @endif
-                {{--  Ditutup karena sama dengan menu Sparepart Planning
+                {{-- Ditutup karena sama dengan menu Sparepart Planning
                   @if(str_contains( Session::get('menu_access'), 'RT10'))
                 <li class="nav-item">
                   <a href="/remsp" class="nav-link ">
@@ -581,7 +581,7 @@ to get the desired effect
                   </a>
                 </li>
                 @endif  --}}
-            
+
                 <li class="nav-item has-treeview">
                   <a href="javascript:void(0)" class="nav-link ">
                     <i class="nav-icon far fa-circle"></i>
@@ -591,7 +591,7 @@ to get the desired effect
                     </p>
                   </a>
                   <ul class="nav nav-treeview">
-                    {{--  <li class="nav-item">
+                    {{-- <li class="nav-item">
                       <a href="/allrpt" class="nav-link ">
                           <p>All Asset Schedule</p>
                       </a>
@@ -599,28 +599,28 @@ to get the desired effect
                     @if(str_contains( Session::get('menu_access'), 'RT03'))
                     <li class="nav-item">
                       <a href="/assetsch" class="nav-link ">
-                          <p>Asset Schedule</p>
+                        <p>Asset Schedule</p>
                       </a>
                     </li>
                     @endif
                     @if(str_contains( Session::get('menu_access'), 'RT07'))
                     <li class="nav-item">
                       <a href="/assetyear" class="nav-link ">
-                          <p>Asset Schedule (Year)</p>
+                        <p>Asset Schedule (Year)</p>
                       </a>
                     </li>
                     @endif
                     @if(str_contains( Session::get('menu_access'), 'RT01'))
                     <li class="nav-item">
                       <a href="/engsch" class="nav-link ">
-                          <p>Engineer Schedule</p>
+                        <p>Engineer Schedule</p>
                       </a>
                     </li>
                     @endif
                     @if(str_contains( Session::get('menu_access'), 'RT02'))
                     <li class="nav-item">
                       <a href="/bookcal" class="nav-link ">
-                          <p>Asset Booking Schedule</p>
+                        <p>Asset Booking Schedule</p>
                       </a>
                     </li>
                     @endif
@@ -639,7 +639,7 @@ to get the desired effect
                     @if(str_contains( Session::get('menu_access'), 'RT13'))
                     <li class="nav-item">
                       <a href="/viewwhy" class="nav-link ">
-                          <p>5 Why View</p>
+                        <p>5 Why View</p>
                       </a>
                     </li>
                     @endif
@@ -734,7 +734,7 @@ to get the desired effect
                       </a>
                     </li>
                     @endif
-                    {{--  Belum Digunakan
+                    {{-- Belum Digunakan
                       @if(str_contains(Session::get('menu_access'), 'MT30'))
                     <li class="nav-item">
                       <a href="/picklogic" class="nav-link ">
@@ -749,7 +749,7 @@ to get the desired effect
                       </a>
                     </li>
                     @endif
-                    
+
                   </ul><!-- ul Control File -->
                 </li> <!-- li Control File -->
                 @endif <!-- endif Control File -->
@@ -800,7 +800,7 @@ to get the desired effect
                     </p>
                   </a>
                   <ul class="nav nav-treeview">
-                    {{--  @if(str_contains( Session::get('menu_access'), 'MT10'))
+                    {{-- @if(str_contains( Session::get('menu_access'), 'MT10'))
                       <li class="nav-item">
                         <a href="/sptmaster" class="nav-link ">
                           <p>Sparepart Type</p>
@@ -814,27 +814,27 @@ to get the desired effect
                         </a>
                       </li>
                       @endif  --}}
-                      @if(str_contains( Session::get('menu_access'), 'MTD27'))
-                      <li class="nav-item">
-                        <a href="/sitemaster" class="nav-link ">
-                          <p>Sparepart Site</p>
-                        </a>
-                      </li>
-                      @endif
-                      @if(str_contains( Session::get('menu_access'), 'MTD29'))
-                      <li class="nav-item">
-                        <a href="/areamaster" class="nav-link ">
-                          <p>Sparepart Location</p>
-                        </a>
-                      </li>
-                      @endif
-                      @if(str_contains( Session::get('menu_access'), 'MTD12'))
-                      <li class="nav-item">
-                        <a href="/spmmaster" class="nav-link ">
-                          <p>Sparepart Maintenance</p>
-                        </a>
-                      </li>
-                      @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTD27'))
+                    <li class="nav-item">
+                      <a href="/sitemaster" class="nav-link ">
+                        <p>Sparepart Site</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTD29'))
+                    <li class="nav-item">
+                      <a href="/areamaster" class="nav-link ">
+                        <p>Sparepart Location</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTD12'))
+                    <li class="nav-item">
+                      <a href="/spmmaster" class="nav-link ">
+                        <p>Sparepart Maintenance</p>
+                      </a>
+                    </li>
+                    @endif
                   </ul><!-- ul sparepart -->
                 </li> <!-- li sparepart -->
                 @endif <!-- endif Sparepart -->
@@ -876,192 +876,197 @@ to get the desired effect
                         <p>Asset Site</p>
                       </a>
                     </li>
-                  @endif
-                  @if(str_contains( Session::get('menu_access'), 'MTE28'))
-                  <li class="nav-item">
-                    <a href="/assetloc" class="nav-link">
-                      <p>Asset Location</p>
-                    </a>
-                  </li>
-                  @endif
-                  @if(str_contains( Session::get('menu_access'), 'MTE36'))
-                  <li class="nav-item">
-                    <a href="/um" class="nav-link">
-                      <p>UM Maintenance</p>
-                    </a>
-                  </li>
-                  @endif
-                  @if(str_contains( Session::get('menu_access'), 'MTE08'))
-                  <li class="nav-item">
-                    <a href="/assetmaster" class="nav-link">
-                      <p>Asset Maintenance</p>
-                    </a>
-                  </li>
-                  @endif
-                  
-                  {{--  <li class="nav-item">
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTE28'))
+                    <li class="nav-item">
+                      <a href="/assetloc" class="nav-link">
+                        <p>Asset Location</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTE36'))
+                    <li class="nav-item">
+                      <a href="/um" class="nav-link">
+                        <p>UM Maintenance</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTE08'))
+                    <li class="nav-item">
+                      <a href="/assetmaster" class="nav-link">
+                        <p>Asset Maintenance</p>
+                      </a>
+                    </li>
+                    @endif
+
+                    {{-- <li class="nav-item">
                     <a href="/pmdets" class="nav-link">
                       <p>Asset PM Details</p>
                     </a>
                   </li>  --}}
-                  @if(str_contains( Session::get('menu_access'), 'MTE09'))
-                  <li class="nav-item">
-                    <a href="/asparmaster" class="nav-link">
-                      <p>Asset Hierarchy</p>
-                    </a>
-                  </li>
-                  @endif
-                  
-                  <!-- @if(str_contains( Session::get('menu_access'), 'MTE31'))
+                    @if(str_contains( Session::get('menu_access'), 'MTE09'))
+                    <li class="nav-item">
+                      <a href="/asparmaster" class="nav-link">
+                        <p>Asset Hierarchy</p>
+                      </a>
+                    </li>
+                    @endif
+
+                    <!-- @if(str_contains( Session::get('menu_access'), 'MTE31'))
                   <li class="nav-item">
                     <a href="/pmeng" class="nav-link">
                       <p>Engineer For PM</p>
                     </a>
                   </li>
                   @endif  -->
-                  @if(str_contains( Session::get('menu_access'), 'MTE37'))
-                  <li class="nav-item">
-                    <a href="/asfn" class="nav-link">
-                      <p>Mapping Asset - Failure</p>
-                    </a>
-                  </li>
-                  @endif
-                  @if(str_contains( Session::get('menu_access'), 'MTE42'))
-                  <li class="nav-item">
-                    <a href="/pmasset" class="nav-link">
-                      <p>Preventive Maintenance</p>
-                    </a>
-                  </li>
-                  @endif
-                  
-                </ul><!-- ul asset -->
-              </li> <!-- li asset -->
-              @endif <!-- endif asset -->
-              
-              @if(str_contains( Session::get('menu_access'), 'MTF')) <!-- if access Instruction -->
-              <li class="nav-item has-treeview">
-                <a href="javascript:void(0)" class="nav-link ">
-                  <i class="nav-icon far fa-circle"></i>
-                  <p>
-                    Instruction
-                    <i class="right fas fa-angle-left"></i>
-                  </p>
-                </a>
-                <ul class="nav nav-treeview">
-                  @if(str_contains( Session::get('menu_access'), 'MTF35'))
-                  <li class="nav-item">
-                    {{--  <a href="/insmaster" class="nav-link ">  --}}
-                    <a href="/inslist" class="nav-link ">
-                      <p>Instruction List</p>
-                    </a>
-                  </li>
-                  @endif
-                  @if(str_contains( Session::get('menu_access'), 'MTF41'))
-                  <li class="nav-item">
-                    {{--  <a href="/insmaster" class="nav-link ">  --}}
-                    <a href="/splist" class="nav-link ">
-                      <p>Sparepart List</p>
-                    </a>
-                  </li>
-                  @endif
-                  @if(str_contains( Session::get('menu_access'), 'MTF40'))
-                  <li class="nav-item">
-                    <a href="/qcspec" class="nav-link ">
-                      <p>QC Spesification</p>
-                    </a>
-                  </li>
-                  @endif
-                  @if(str_contains( Session::get('menu_access'), 'MTF39'))
+                    @if(str_contains( Session::get('menu_access'), 'MTE37'))
+                    <li class="nav-item">
+                      <a href="/asfn" class="nav-link">
+                        <p>Mapping Asset - Failure</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTE42'))
+                    <li class="nav-item">
+                      <a href="/pmasset" class="nav-link">
+                        <p>Preventive Maintenance</p>
+                      </a>
+                    </li>
+                    @endif
+
+                  </ul><!-- ul asset -->
+                </li> <!-- li asset -->
+                @endif <!-- endif asset -->
+
+                @if(str_contains( Session::get('menu_access'), 'MTF')) <!-- if access Instruction -->
+                <li class="nav-item has-treeview">
+                  <a href="javascript:void(0)" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>
+                      Instruction
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    @if(str_contains( Session::get('menu_access'), 'MTF35'))
+                    <li class="nav-item">
+                      {{-- <a href="/insmaster" class="nav-link ">  --}}
+                      <a href="/inslist" class="nav-link ">
+                        <p>Instruction List</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTF41'))
+                    <li class="nav-item">
+                      {{-- <a href="/insmaster" class="nav-link ">  --}}
+                      <a href="/splist" class="nav-link ">
+                        <p>Sparepart List</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTF40'))
+                    <li class="nav-item">
+                      <a href="/qcspec" class="nav-link ">
+                        <p>QC Spesification</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTF39'))
                     <li class="nav-item">
                       <a href="/pmcode" class="nav-link">
                         <p>Maintenance Code</p>
                       </a>
                     </li>
-                  @endif
-                  @if(str_contains( Session::get('menu_access'), 'MTF48'))
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTF48'))
                     <li class="nav-item">
                       <a href="/notmssg" class="nav-link">
                         <p>Message Maintenance</p>
                       </a>
                     </li>
-                  @endif
-                  @if(str_contains( Session::get('menu_access'), 'MTF43'))
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTF43'))
                     <li class="nav-item">
                       <a href="/rcmmstr" class="nav-link">
                         <p>Routine Check Maintenance</p>
                       </a>
                     </li>
-                  @endif
-                </ul><!-- ul Instruction -->
-              </li> <!-- li Instruction --> 
-              @endif <!-- endif Instruction -->
+                    @endif
+                  </ul><!-- ul Instruction -->
+                </li> <!-- li Instruction -->
+                @endif <!-- endif Instruction -->
 
-              @if(str_contains( Session::get('menu_access'), 'MTG')) <!-- if access Approval -->
-              <!-- start li Approval --> 
-              <li class="nav-item has-treeview">
-                <a href="javascript:void(0)" class="nav-link ">
-                  <i class="nav-icon far fa-circle"></i>
-                  <p>
-                    Approval
-                    <i class="right fas fa-angle-left"></i>
-                  </p>
-                </a>
-                <ul class="nav nav-treeview">
-                  @if(str_contains( Session::get('menu_access'), 'MTG44'))
-                  <li class="nav-item">
-                    <a href="/appsr" class="nav-link ">
-                      <p>Approval SR</p>
-                    </a>
-                  </li>
-                  @endif
-                  @if(str_contains( Session::get('menu_access'), 'MTG45'))
-                  <li class="nav-item">
-                    <a href="/appwo" class="nav-link ">
-                      <p>Approval WO</p>
-                    </a>
-                  </li>
-                  @endif
-                  @if(str_contains( Session::get('menu_access'), 'MTG49'))
-                  <li class="nav-item">
-                    <a href="/appsp" class="nav-link ">
-                      <p>Approval SP</p>
-                    </a>
-                  </li>
-                  @endif
-                </ul><!-- ul Approval -->
-              </li> <!-- li Approval --> 
-              @endif <!-- endif Approval -->
+                @if(str_contains( Session::get('menu_access'), 'MTG')) <!-- if access Approval -->
+                <!-- start li Approval -->
+                <li class="nav-item has-treeview">
+                  <a href="javascript:void(0)" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>
+                      Approval
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    @if(str_contains( Session::get('menu_access'), 'MTG44'))
+                    <li class="nav-item">
+                      <a href="/appsr" class="nav-link ">
+                        <p>Approval SR</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTG45'))
+                    <li class="nav-item">
+                      <a href="/appwo" class="nav-link ">
+                        <p>Approval WO</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTG49'))
+                    <li class="nav-item">
+                      <a href="/appsp" class="nav-link ">
+                        <p>Approval SP</p>
+                      </a>
+                    </li>
+                    @endif
+                  </ul><!-- ul Approval -->
+                </li> <!-- li Approval -->
+                @endif <!-- endif Approval -->
 
-              @if(str_contains( Session::get('menu_access'), 'MTH')) <!-- if access Inventory -->
-              <!-- start li Inventory --> 
-              <li class="nav-item has-treeview">
-                <a href="javascript:void(0)" class="nav-link ">
-                  <i class="nav-icon far fa-circle"></i>
-                  <p>
-                    Inventory
-                    <i class="right fas fa-angle-left"></i>
-                  </p>
-                </a>
-                <ul class="nav nav-treeview">
-                  @if(str_contains( Session::get('menu_access'), 'MTH46'))
-                  <li class="nav-item">
-                    <a href="/invso" class="nav-link ">
-                      <p>Inventory Source</p>
-                    </a>
-                  </li>
-                  @endif
-                  @if(str_contains( Session::get('menu_access'), 'MTH47'))
-                  <li class="nav-item">
-                    <a href="/invsu" class="nav-link ">
-                      <p>Inventory Supply</p>
-                    </a>
-                  </li>
-                  @endif
-                </ul><!-- ul Inventory -->
-              </li> <!-- li Inventory --> 
-              @endif <!-- endif Inventory -->
+                @if(str_contains( Session::get('menu_access'), 'MTH')) <!-- if access Inventory -->
+                <!-- start li Inventory -->
+                <li class="nav-item has-treeview">
+                  <a href="javascript:void(0)" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>
+                      Inventory
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    @if(str_contains( Session::get('menu_access'), 'MTH46'))
+                    <li class="nav-item">
+                      <a href="/invso" class="nav-link ">
+                        <p>Inventory Source</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTH47'))
+                    <li class="nav-item">
+                      <a href="/invsu" class="nav-link ">
+                        <p>Inventory Supply</p>
+                      </a>
+                    </li>
+                    @endif
+                    <li class="nav-item">
+                      <a href="/spstockbrowse" class="nav-link ">
+                        <p>Sparepart Stock Report</p>
+                      </a>
+                    </li>
+                  </ul><!-- ul Inventory -->
+                </li> <!-- li Inventory -->
+                @endif <!-- endif Inventory -->
 
-                {{--  Belum perlu digunakan
+                {{-- Belum perlu digunakan
                   @if(str_contains( Session::get('menu_access'), 'MT19'))
                 <li class="nav-item">
                   <a href="/inv" class="nav-link ">

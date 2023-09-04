@@ -66,4 +66,34 @@ class CreateTempTable
 
         return [$table_cost];
     }
+
+    public function invstockDetail($data){
+        Schema::create('temp_invstock', function ($table) {
+            $table->string('part')->nullable();
+            $table->string('partdesc')->nullable();
+            $table->string('site')->nullable();
+            $table->string('loc')->nullable();
+            $table->string('locdesc')->nullable();
+            $table->string('lot')->nullable();
+            $table->float('qtyoh', 15, 2);
+        });
+
+        foreach ($data as $datas) {
+            DB::table('temp_invstock')->insert([
+                'part' => $datas->t_part,
+                'partdesc' => $datas->t_partdesc,
+                'site' => $datas->t_site,
+                'loc' => $datas->t_loc,
+                'locdesc' => $datas->t_locdesc,
+                'lot' => $datas->t_lot,
+                'qtyoh' => $datas->t_qtyoh,
+            ]);
+        }
+
+        $table_invstock = DB::table('temp_invstock')->get();
+
+        Schema::dropIfExists('temp_invstock');
+
+        return [$table_invstock];
+    }
 }
