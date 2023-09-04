@@ -3291,4 +3291,13 @@ class SparepartController extends Controller
             return redirect()->back();
         }
     }
+
+    //Spare Part Stock Browse
+    public function spstockbrowse(){
+        $datastock = DB::table('sp_stock_report')
+                    ->get();
+
+
+        return view('report.spstock', ['datastock' => $datastock]);
+    }
 }
