@@ -43,7 +43,7 @@ class WHSConfirm extends Controller
 
                 if($ApproverCheck === 0){
                     $data = DB::table('wo_mstr')
-                        ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
+                        ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority',DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as total_qty'))
                         ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
                         ->join('wo_dets_sp','wo_dets_sp.wd_sp_wonumber','wo_mstr.wo_number')
                         ->where(function ($status) {
@@ -53,7 +53,7 @@ class WHSConfirm extends Controller
                         ->groupBy('wo_mstr.wo_number');
                 }else{
                     $data = DB::table('wo_mstr')
-                        ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
+                        ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority', DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as total_qty'))
                         ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
                         ->join('wo_dets_sp','wo_dets_sp.wd_sp_wonumber','wo_mstr.wo_number')
                         ->join('release_trans_approval', function ($join) {
