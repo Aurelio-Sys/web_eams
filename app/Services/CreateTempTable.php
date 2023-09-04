@@ -90,7 +90,7 @@ class CreateTempTable
             ]);
         }
 
-        $table_invstock = DB::table('temp_invstock')->get();
+        $table_invstock = DB::table('temp_invstock')->orderBy('part','asc')->get();
 
         Schema::dropIfExists('temp_invstock');
 
