@@ -18,11 +18,14 @@ class RoutineCheckController extends Controller
 
         $username = Session::get('username');
 
+        $currentDate = Carbon::now()->toDateString();
+
         if(Session::get('role') == 'ADMIN' || Session::get('role') == 'SPVSR'){
             $dataroutinebrowse = DB::table('rcm_activity_log')
             ->leftJoin('asset_mstr', 'asset_mstr.asset_code', 'rcm_activity_log.ra_asset_code')
             ->select('rcm_activity_log.id as id', 'ra_asset_code', 'asset_desc', 'ra_qcs_code', 'ra_qcs_desc', 'ra_schedule_time', 'ra_already_check')
             ->where('ra_already_check', '=', 0)
+            ->whereDate('rcm_activity_log.created_at','=', $currentDate)
             ->orderBy('ra_schedule_time', 'asc')
             ->get();
         }else{
@@ -30,6 +33,7 @@ class RoutineCheckController extends Controller
             ->leftJoin('asset_mstr', 'asset_mstr.asset_code', 'rcm_activity_log.ra_asset_code')
             ->select('rcm_activity_log.id as id', 'ra_asset_code', 'asset_desc', 'ra_qcs_code', 'ra_qcs_desc', 'ra_schedule_time', 'ra_already_check')
             ->where('ra_already_check', '=', 0)
+            ->whereDate('rcm_activity_log.created_at','=', $currentDate)
             ->where(function ($query) use ($username) {
                 $query->where('ra_eng_list', '=', $username . ';')
                     ->orWhere('ra_eng_list', 'LIKE', $username . ';%')

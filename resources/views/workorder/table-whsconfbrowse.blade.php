@@ -14,7 +14,7 @@
 </tr>
 @empty
 <tr>
-    <td colspan="7" style="color: red; text-align: center;" >No Data Available</td>
+    <td colspan="7" style="color: red; text-align: center;">No Data Available</td>
 </tr>
 @endforelse
 <tr>

@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Qxwsa as ModelsQxwsa;
 use App\ReqSPMstr;
+use App\Services\CreateTempTable;
 use App\WOMaster;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
@@ -3290,5 +3291,22 @@ class SparepartController extends Controller
             toast('Transfer failed', 'error');
             return redirect()->back();
         }
+    }
+
+    //Spare Part Stock Browse
+    public function spstockbrowse(){
+        $wsa = (new WSAServices())->wsainvstock(Session::get('domain'));
+        if($wsa === false){
+            alert()->error('Error', 'WSA Failed');
+            return redirect()->back();
+        }else{
+            $tempStockItem = (new CreateTempTable())->invstockDetail($wsa[0]);
+        }
+
+        $data = $tempStockItem[0];
+
+        // dd($data);
+    
+        return view('report.spstock', compact('data'));
     }
 }
