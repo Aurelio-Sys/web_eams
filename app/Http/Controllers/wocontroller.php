@@ -3164,8 +3164,6 @@ class wocontroller extends Controller
             ->where('spm_active', '=', 'Yes')
             ->get();
 
-        dd($sp_all);
-
         // ambil data instruction step dari wo_dets_ins
         $datainstruction = DB::table('wo_dets_ins')
             ->leftJoin('um_mstr', 'um_mstr.um_code', 'wo_dets_ins.wd_ins_durationum')

@@ -75,7 +75,7 @@
         <div class="table-responsive modal-body">
             <div class="form-group row">
                 <div class="table-responsive col-lg-12 col-md-12 tag-container" style="overflow-x: auto; display:inline-table; white-space: nowrap; padding:0; text-align:center; position:relative">
-                    <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0" >
+                    <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <td style="text-align: center; width: 5% !important; font-weight: bold;">Spare Part Code</td>
@@ -83,6 +83,7 @@
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty Required</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Total Required</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Supply Stock</td>
+                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty Transferred</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Location & Lot From</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Location To</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty to Transfer</td>
@@ -102,7 +103,7 @@
                                     {{$spd->wd_sp_required}}
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
-                                @php
+                                    @php
 
                                     $tSpcode = $spd->wd_sp_spcode;
                                     $tAssetSite = $data->wo_site;
@@ -110,41 +111,44 @@
                                     $tTotalReq = null;
 
                                     foreach ($datatemp_required as $totreq) {
-                                        if ($totreq['t_spcode'] === $tSpcode && $totreq['t_asset_site'] === $tAssetSite) {
-                                            $tTotalReq = $totreq['t_total_req'];
-                                            break;
-                                        }
+                                    if ($totreq['t_spcode'] === $tSpcode && $totreq['t_asset_site'] === $tAssetSite) {
+                                    $tTotalReq = $totreq['t_total_req'];
+                                    break;
                                     }
-                                @endphp
-                                {{ $tTotalReq }}
+                                    }
+                                    @endphp
+                                    {{ $tTotalReq }}
                                 </td>
                                 <td style="vertical-align:middle;text-align:left;">
-                                @php
+                                    @php
 
                                     $tSpcode = $spd->wd_sp_spcode;
 
                                     $tTotalStock = null;
 
                                     foreach ($result as $totstock) {
-                                        if ($totstock['part'] === $tSpcode) {
-                                            $tTotalStock = $totstock['qtyoh'];
-                                            break;
-                                        }
+                                    if ($totstock['part'] === $tSpcode) {
+                                    $tTotalStock = $totstock['qtyoh'];
+                                    break;
                                     }
-                                @endphp
-                                {{number_format($tTotalStock, 2)}}
+                                    }
+                                    @endphp
+                                    {{number_format($tTotalStock, 2)}}
+                                </td>
+                                <td style="vertical-align:middle;text-align:left;">
+                                    {{$spd->wd_sp_whtf}}
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" data-index="{{ $index }}"  required placeholder="Click Here">
+                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" data-index="{{ $index }}" required placeholder="Click Here">
                                     <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
                                     <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
-                                    <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" /> 
+                                    <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     <select id="locto" class="form-control locto selectpicker" name="locto[]" data-dropup-auto="false" data-live-search="true" required>
                                         <option></option>
-                                        @foreach ( $datalocsupply as $dtloc  )
-                                            <option value="{{$dtloc->inp_loc}}" data-siteto="{{$dtloc->inp_supply_site}}">{{$dtloc->inp_supply_site}}, {{$dtloc->inp_loc}}</option>
+                                        @foreach ( $datalocsupply as $dtloc )
+                                        <option value="{{$dtloc->inp_loc}}" data-siteto="{{$dtloc->inp_supply_site}}">{{$dtloc->inp_supply_site}}, {{$dtloc->inp_loc}}</option>
                                         @endforeach
                                     </select>
                                     <input type="hidden" class="hidden_siteto" name="hidden_siteto[]" value="" />
@@ -156,13 +160,13 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" style="color: red; text-align: center;" >No Data Available</td>
+                                <td colspan="7" style="color: red; text-align: center;">No Data Available</td>
                             </tr>
                             @endforelse
                         </tbody>
                         <tfoot>
                             <tr>
-                                
+
                             </tr>
                         </tfoot>
                     </table>
@@ -170,9 +174,9 @@
             </div>
         </div>
 
-        <div class="container" style="text-align: center;" >
+        <div class="container" style="text-align: center;">
             <label>
-                <input type="checkbox" id="confirmation-checkbox" required/> Confirm Transfer
+                <input type="checkbox" id="confirmation-checkbox" required /> Confirm Transfer
             </label>
         </div>
 
@@ -194,7 +198,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body" id="thistablemodal">
-                
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -205,9 +209,9 @@
 
 
 <div class="modal fade" id="loadingtable" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <h1 class="animate__animated animate__bounce" style="display:inline;width:100%;text-align:center;color:white;font-size:larger;text-align:center">Loading...</h1>
-  </div>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <h1 class="animate__animated animate__bounce" style="display:inline;width:100%;text-align:center;color:white;font-size:larger;text-align:center">Loading...</h1>
+    </div>
 </div>
 @endsection
 
@@ -221,14 +225,49 @@
 
     $(document).ready(function() {
         $('#submit').submit(function(event) {
+            // Cek apakah semua qtytotransfer bernilai 0
+            const inputs = $('.qtytotransfer');
+            let allZero = true;
+
+            for (const input of inputs) {
+                if (parseFloat(input.value) > 0) {
+                    allZero = false;
+                    break;
+                }
+            }
+
+            // Jika semua bernilai 0, tampilkan alert dan hentikan submit
+            if (allZero) {
+                event.preventDefault();
+                alert('Please enter a value greater than 0 for at least one Qty to Transfer field.');
+                return;
+            }
+
+            // Tampilkan elemen loading dan sembunyikan tombol lain
             document.getElementById('btnconf').style.display = 'none';
             document.getElementById('btnback').style.display = 'none';
             document.getElementById('btnloading').style.display = '';
+
+        });
+
+        $(document).on('keyup', '.qtytotransfer', function() {
+            var thisrow = $(this);
+            var valueinput = thisrow.val();
+
+            if (valueinput !== '0') {
+                // console.log('add required');
+                thisrow.closest('tr').find('.loclotfrom').attr('required', 'required');
+                thisrow.closest('tr').find('.locto').attr('required', 'required');
+            } else {
+                // console.log('hapus required');
+                thisrow.closest('tr').find('.loclotfrom').removeAttr('required');
+                thisrow.closest('tr').find('.locto').removeAttr('required');
+            }
         });
 
         // untuk membuat readonly
-        $(".readonly").on('keydown paste focus mousedown', function(e){
-        if(e.keyCode != 9) // ignore tab
+        $(".readonly").on('keydown paste focus mousedown', function(e) {
+            if (e.keyCode != 9) // ignore tab
                 e.preventDefault();
         });
 
@@ -247,7 +286,7 @@
         // });
 
         $(document).on('click', '.loclotfrom', function() {
-            $('#loadingtable').modal('show'); 
+            $('#loadingtable').modal('show');
             var row = $(this).closest("tr");
             const spcode = row.find(".hidden_spcode").val();
             const getassetsite = document.getElementById('hidden_assetsite').value;
@@ -256,8 +295,8 @@
                 url: '/getwsastockfrom',
                 method: 'GET',
                 data: {
-                    assetsite : getassetsite,
-                    spcode : spcode,
+                    assetsite: getassetsite,
+                    spcode: spcode,
                 },
                 success: function(vamp) {
 
@@ -310,14 +349,15 @@
                             const loclot = `${site}, ${loc}, ${lot}`;
 
                             row.find(".loclotfrom").val(loclot);
-                            row.find(".loclotfrom").attr('title',loclot);
-                            
+                            row.find(".loclotfrom").attr('title', loclot);
+
 
                             const qtyohold = row.find(".qtytotransfer").val();
 
                             //jika lebih besar yang diminta dari pada yg dimiliki di inventory supply maka qty to transfer maks = qty onhand di inv source
-                            if(parseFloat(qtyohold) > parseFloat(qtyoh)){
-                                row.find(".qtytotransfer").attr("max", qtyoh).val(qtyoh);
+                            if (parseFloat(qtyohold.replace(/,/g, '')) > parseFloat(qtyoh.replace(/,/g, ''))) {
+                                row.find(".qtytotransfer").attr("max", qtyoh);
+
                             }
 
                             $('#myModal').modal('hide');
@@ -332,25 +372,26 @@
 
                     // memanggil modal setelah tabel dimuat
                     $('#myModal').modal('show');
-                    
 
-                },complete: function(vamp) {
+
+                },
+                complete: function(vamp) {
                     //  $('.modal-backdrop').modal('hide');
                     // alert($('.modal-backdrop').hasClass('in'));
 
                     setTimeout(function() {
-                    $('#loadingtable').modal('hide');
+                        $('#loadingtable').modal('hide');
                     }, 500);
 
                     setTimeout(function() {
-                    $('#viewModal').modal('show');
+                        $('#viewModal').modal('show');
                     }, 1000);
 
                 }
             })
         });
 
-        $(document).on('change', 'select.locto', function(){
+        $(document).on('change', 'select.locto', function() {
 
             var row = $(this).closest("tr");
             const locto = row.find(':selected').val();
@@ -359,7 +400,7 @@
 
             row.find('.hidden_siteto').val(siteto);
             row.find('.hidden_locto').val(locto);
-            
+
         });
 
         const confirmationCheckbox = document.getElementById("confirmation-checkbox");

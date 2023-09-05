@@ -15,7 +15,7 @@
 
 
   <!-- IonIcons -->
-  <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"> -->
 
   <!--table mobile -->
   <link rel="stylesheet" type="text/css" href="{{url('assets/css/so_mobile.css')}}">
@@ -25,20 +25,20 @@
   <!-- Theme style -->
   <link rel="stylesheet" href="{{url('dist/css/adminlte.min.css')}}">
   <!-- Google Font: Source Sans Pro -->
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <!-- <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet"> -->
 
   <link href="{{url('plugins/select2/css/select2.min.css')}}" rel="stylesheet" />
   <link rel="stylesheet" href="{{url('assets/css/checkbox.css')}}">
   <!-- select2 bootstrap theme -->
   <link rel="stylesheet" href="{{url('plugins/select2-bootstrap4-theme/select2-bootstrap4.css')}}">
   <link rel="stylesheet" href="{{url('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="{{url('plugins/jquery-ui-themes-1.12.1/jquery-ui.css')}}">
 
   <!--sweetalert-->
   <link rel="stylesheet" href="{{url('plugins\sweetalert2\sweetalert2.min.css')}}">
 
   <!--animatecss-->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <link rel="stylesheet" href="{{url('plugins\animate.css-4.1.1\animate.min.css')}}" />
 
 
 </head>
