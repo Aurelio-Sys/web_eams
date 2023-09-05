@@ -183,7 +183,7 @@
 
 @endsection
 @section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
+<script src="{{asset('plugins/chartjs-plugin-datalabels/chartjs-plugin-datalabels.js')}}"></script>
 <script>
     function noexpitm(event, array) {
         if (array[0]) {
