@@ -5836,11 +5836,17 @@ class SettingController extends Controller
                 ->orderby('dept_code')
                 ->paginate(10);
 
-            $datacc = DB::table('cc_mstr')
-                ->orderBy('cc_code')
+            /** Pada departement tidak jadi ada default cost center nya. Cost Center dipiih manual pada saat reporting WO */
+            // $datacc = DB::table('cc_mstr')
+            //     ->orderBy('cc_code')
+            //     ->get();
+
+            /** Default lokasi sparepart pada menu ini digunakan pada saat warehouse akan melakukan transfer sparepart */
+            $datasupply = DB::table('inp_supply')
+                ->orderBy('inp_loc')
                 ->get();
 
-            return view('setting.departemen', ['data' => $data, 'datacc' => $datacc]);
+        return view('setting.departemen', ['data' => $data, 'datasupply' => $datasupply /* , 'datacc' => $datacc */]);
         } else {
             toast('You do not have menu access, please contact admin.', 'error');
             return back();
@@ -5876,7 +5882,7 @@ class SettingController extends Controller
                 'dept_code'   => $req->t_code,
                 'dept_desc'   => $req->t_desc,
                 'dept_running_nbr' => $req->t_runningnbr,      
-                'dept_cc'   => $req->t_cc,          
+                'dept_inv'   => $req->t_inv,          
                 'created_at'    => Carbon::now()->toDateTimeString(),
                 'updated_at'    => Carbon::now()->toDateTimeString(),
                 'edited_by'     => Session::get('username'),
@@ -5904,7 +5910,7 @@ class SettingController extends Controller
             ->update([
                 'dept_desc'   => $req->te_desc,
                 'dept_running_nbr' => $req->te_runningnbr,
-                'dept_cc' => $req->te_cc,
+                'dept_inv' => $req->te_inv,
                 'updated_at'    => Carbon::now()->toDateTimeString(),
                 'edited_by'     => Session::get('username'),
             ]);

@@ -37,6 +37,12 @@ class RptCostController extends Controller
 
         $data = DB::table('asset_mstr')
             ->leftJoin('asset_loc','asloc_code','=','asset_loc')
+            /** Yang where in ini nanti dihapus saja. buat tes yang tampil biar yang ada transaksinya aja */
+            ->whereIn('asset_code', function($q) use ($bulan) {
+                $q->select('wo_asset_code')
+                  ->from('wo_mstr')
+                  ->whereYear('wo_start_date','=',$bulan);
+            })
             ->orderBy('asset_code');
 
         if($req->s_loc) {
@@ -193,10 +199,6 @@ class RptCostController extends Controller
         }
 
         $bulan = Carbon::createFromDate($tgl)->isoFormat('YYYY');
-
-        $data = DB::table('asset_mstr')
-        ->leftJoin('asset_loc','asloc_code','=','asset_loc')
-            ->orderBy('asset_code');
 
         if ($req->asset) {
             $data->where('asset_code', '=', $req->asset);

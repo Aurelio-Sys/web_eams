@@ -112,12 +112,12 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_cc" class="col-md-4 col-form-label text-md-right">Cost Center</label>
+                        <label for="t_inv" class="col-md-4 col-form-label text-md-right">Location Supply</label>
                         <div class="col-md-6">
-                            <select id="t_cc" class="form-control" name="t_cc">
+                            <select id="t_inv" class="form-control" name="t_inv">
                                 <option value="">--Select Data--</option>
-                                @foreach($datacc as $dc)
-                                <option value="{{$dc->cc_code}}">{{$dc->cc_code}} -- {{$dc->cc_desc}}</option>
+                                @foreach($datasupply as $ds)
+                                <option value="{{$ds->inp_loc}}">{{$ds->inp_supply_site}} -- {{$ds->inp_loc}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -167,12 +167,12 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="te_cc" class="col-md-4 col-form-label text-md-right">Cost Center</label>
+                    <label for="te_inv" class="col-md-4 col-form-label text-md-right">Location Supply</label>
                     <div class="col-md-6">
-                        <select id="te_cc" class="form-control" name="te_cc">
+                        <select id="te_inv" class="form-control" name="te_inv">
                             <option value="">--Select Data--</option>
-                            @foreach($datacc as $dc)
-                            <option value="{{$dc->cc_code}}">{{$dc->cc_code}} -- {{$dc->cc_desc}}</option>
+                            @foreach($datasupply as $ds)
+                            <option value="{{$ds->inp_loc}}">{{$ds->inp_supply_site}} -- {{$ds->inp_loc}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -220,14 +220,14 @@
            var code = $(this).data('code');
            var desc = $(this).data('desc');
            var runningnbr = $(this).data('runningnbr');
-           var cost = $(this).data('cost');
+           var inv = $(this).data('inv');
 
            document.getElementById('te_code').value = code;
            document.getElementById('te_desc').value = desc;
            document.getElementById('te_runningnbr').value = runningnbr;
-           document.getElementById('te_cc').value = cost;
+           document.getElementById('te_inv').value = inv;
 
-           $("#te_cc").select2({
+           $("#te_inv").select2({
                 width: '100%',
                 theme: 'bootstrap4',
             });
@@ -441,7 +441,7 @@
             return true;
         }
 
-        $("#t_cc").select2({
+        $("#t_inv").select2({
             width: '100%',
             theme: 'bootstrap4',
         });

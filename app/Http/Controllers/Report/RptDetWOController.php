@@ -198,7 +198,7 @@ class RptDetWOController extends Controller
                 ]);
             }
         }
-
+// dd($request->all());
         $datatemp = DB::table('temp_wo')
         // ->where('temp_wo','=','PM-23-004839')
         ->orderBy('temp_create_date','desc')
@@ -252,10 +252,10 @@ class RptDetWOController extends Controller
         Schema::dropIfExists('temp_wo');
         // dd($impact);
         if ($request->dexcel == "excel") {
-            return Excel::download(new ViewExport2($request->swo,$request->sasset,$request->per1,$request->per2,
+            return Excel::download(new ViewExport2($request->swo,$request->sasset,$request->s_per1,$request->s_per2,
             $request->sdept,$request->sloc,$request->seng,$request->stype), 'DataWO.xlsx');
         } elseif ($request->dexcel == "detail") {
-            return Excel::download(new DetailWOExport($request->swo,$request->sasset,$request->per1,$request->per2,
+            return Excel::download(new DetailWOExport($request->swo,$request->sasset,$request->s_per1,$request->s_per2,
             $request->sdept,$request->sloc,$request->seng,$request->stype), 'DetailWO.xlsx');
         } else {
             // dd($request->s_nomorwo);
