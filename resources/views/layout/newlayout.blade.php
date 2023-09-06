@@ -1057,11 +1057,13 @@ to get the desired effect
                       </a>
                     </li>
                     @endif
+                    @if (str_contains( Session::get('menu_access'), 'MTH48'))
                     <li class="nav-item">
                       <a href="/spstockbrowse" class="nav-link ">
-                        <p>Sparepart Stock Report</p>
+                        <p>Inventory Check Stock</p>
                       </a>
                     </li>
+                    @endif
                   </ul><!-- ul Inventory -->
                 </li> <!-- li Inventory -->
                 @endif <!-- endif Inventory -->
