@@ -71,6 +71,7 @@
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Request SP Note</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Location & Lot From</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Location To</td>
+                                <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty Transferred</td>
                                 <td style="text-align: center; width: 10% !important; font-weight: bold;">Qty to Transfer</td>
                                 <td style="text-align: center; width: 12% !important; font-weight: bold;">Transfer SP Note</td>
                             </tr>
@@ -103,10 +104,17 @@
                                     <input type="hidden" class="hidden_locto" name="hidden_locto[]" value="{{$spd->req_spd_loc_to}}" />
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
-                                    <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0" value="{{$spd->req_spd_qty_request}}" step="0.01" required />
+                                    {{$sumqtytransferred}}
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
-                                    <textarea type="text" id="notes" class="form-control notes" name="notes[]" rows="2" ></textarea>
+                                    <?php
+                                    //jumlah qty yg di trf adalah qty request dikurang qty yg pernah di transfer
+                                    $qtytotrf = $spd->req_spd_qty_request - $sumqtytransferred;
+                                    ?>
+                                    <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0" value="{{$qtytotrf}}" max="{{$qtytotrf}}" step="0.01" required />
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <textarea type="text" id="notes" class="form-control notes" name="notes[]" rows="2"></textarea>
                                 </td>
                             </tr>
                             @empty
@@ -258,6 +266,7 @@
                                 const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
 
                                 row.find(".loclotfrom").val(loclot);
+                                // console.log(row.find(".loclotfrom").val(loclot));
                                 row.find(".loclotfrom").attr('title', loclot);
 
 
