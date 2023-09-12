@@ -76,6 +76,7 @@
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Total Required</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Total Supply</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Qty Required</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Qty WH Transfer</th>
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
@@ -120,6 +121,9 @@
                                 <td style="vertical-align:middle;text-align:right;">
                                     {{number_format($datas->wd_sp_required,2)}}
                                 </td>
+                                <td style="vertical-align:middle;text-align:right;">
+                                    {{number_format($datas->wd_sp_whtf,2)}}
+                                </td>   
                             </tr>
                             
                             @empty

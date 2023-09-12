@@ -857,6 +857,10 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/trainingexecute', [TrainingController::class, 'trainingexecute'])->name('trainExecute');
 	Route::get('/traininganalyze', [TrainingController::class, 'traininganalyze'])->name('trainAnalyze');
 
+	//Spare Part Stock
+	Route::get('/spstockbrowse',[SparepartController::class, 'spstockbrowse']);
+	
+
 
 	//Downtime Report
 	Route::get('/downrpt', [DownrptController::class, 'index']);
