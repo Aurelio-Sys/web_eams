@@ -9,11 +9,31 @@
         <div class="col-md-12">
           <hr>
         </div>
+        {{--  Buka ini jika inputan dilakukan secara manual
         <div class="row">                 
           <div class="col-sm-2">    
             <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Cost Center Create</button>
           </div><!-- /.col -->  
-        </div><!-- /.row -->
+        </div><!-- /.row -->  --}}
+        <form action="/addcc" method="post" id="submit">
+            {{ method_field('post') }}
+            {{ csrf_field() }}
+    
+            <div class="row">
+                <div class="col-md-4">
+                    <select class="form-control" id="q_code" name="q_code">
+                        <option> -- Select Data -- </option>
+                        @foreach ($datamstr as $ds)
+                            <option value="{{$ds->temp_code}}" data-desc="{{$ds->temp_desc}}">{{$ds->temp_code}} -- {{$ds->temp_desc}}</option>    
+                        @endforeach
+                    </select>
+                    <input type="hidden" name="q_desc" id="q_desc" />                          
+                </div>
+                <div class="col-md-2">
+                    <input type="submit" class="btn btn-block btn-primary" id="btnload" value="Add to eAMS" />
+                </div>
+            </div>
+        </form>
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
@@ -273,6 +293,21 @@
       
             return true;
         }
+
+        /* Fungsi untuk menampung deskripsi yang akan dilempar ke controller */
+        $(document).on('change', '#q_code', function() {
+            var select = document.getElementById('q_code');
+            var selectedOption = select.options[select.selectedIndex];
+    
+            var desc = selectedOption.getAttribute("data-desc");
+    
+            document.getElementById('q_desc').value = desc;
+        });
+
+        $('#q_code').select2({
+            width: '100%',
+            theme: 'bootstrap4',
+        });
     </script>
 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">

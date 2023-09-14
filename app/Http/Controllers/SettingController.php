@@ -247,7 +247,7 @@ class SettingController extends Controller
         $access = $req->cc .$req->dept . $req->Skill . $req->Eng . $req->RoleMaint . $req->EngGroup . $req->cbRunning . $req->SetWsa . $req->SetFntype . $req->Fn . $req->SetImp . 
             $req->Astype . $req->Asgroup . $req->Supp . $req->SetAssetsite . $req->SetAssetloc . $req->Asset . $req->Aspar . $req->SetMove . $req->SetEngpm . $req->SetUm . $req->SetAsfn . $req->pmasset . 
             $req->Spt . $req->Spg . $req->SetSpsite . $req->SetSploc . $req->Spm . $req->Rep . $req->SetRepgroup . $req->SetIns . $req->SetSplist . $req->qcspec . $req->SetPmcode . $req->notmssg . $req->rcmmstr .
-            $req->appsr . $req->appwo . $req->appsp . $req->invso . $req->invsu .
+            $req->appsr . $req->appwo . $req->appsp . $req->invso . $req->invsu . $req->accmstr .
             $req->cbWoCreatedirect . $req->cbWoMaint . $req->cbWoBrowse . $req->cbWoRelease . $req->cbWoWhsConf . $req->cbWoStart . $req->cbWoReport . $req->cbWoQc . $req->cbWoReleaseApproval .
             $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbSRapprovaleng . $req->cbSRbrowseonly .
             $req->cbUSMT . $req->cbUSmultiMT . $req->cbUSMeter . $req->cbUSGen . $req->pmconf . $req->ksp . $req->cbUSBrowse .
@@ -315,7 +315,7 @@ class SettingController extends Controller
         $access = $req->e_cc . $req->e_dept . $req->e_Skill . $req->e_Eng . $req->e_RoleMaint . $req->e_EngGroup . $req->e_cbRunning . $req->e_SetWsa . $req->e_SetFntype . $req->e_Fn . $req->e_SetImp . 
             $req->e_Astype . $req->e_Asgroup . $req->e_Supp . $req->e_SetAssetsite . $req->e_SetAssetloc . $req->e_Asset . $req->e_Aspar . $req->e_SetMove . $req->e_SetEngpm . $req->e_SetUm . $req->e_SetAsfn . $req->e_pmasset . 
             $req->e_Spt . $req->e_Spg . $req->e_SetSpsite . $req->e_SetSploc . $req->e_Spm . $req->e_Rep . $req->e_SetRepgroup . $req->e_SetIns . $req->e_SetSplist . $req->e_qcspec . $req->e_SetPmcode . $req->e_notmssg . $req->e_rcmmstr .
-            $req->e_appsr . $req->e_appwo . $req->e_appsp . $req->e_invso . $req->e_invsu .
+            $req->e_appsr . $req->e_appwo . $req->e_appsp . $req->e_invso . $req->e_invsu . $req->e_accmstr .
             $req->e_cbWoCreatedirect . $req->e_cbWoMaint . $req->e_cbWoBrowse . $req->e_cbWoRelease . $req->e_cbWoWhsConf . $req->e_cbWoStart . $req->e_cbWoReport . $req->e_cbWoQc . $req->e_cbWoReleaseApproval .
             $req->e_cbSRcreate . $req->e_cbSRapprove . $req->e_cbSRbrowse . $req->e_cbSRapprovaleng . $req->e_cbSRbrowseonly .
             $req->e_cbUSMT . $req->e_cbUSmultiMT . $req->e_cbUSMeter . $req->e_cbUSGen . $req->e_pmconf . $req->e_ksp . $req->e_cbUSBrowse .
@@ -1580,15 +1580,69 @@ class SettingController extends Controller
     public function suppmaster(Request $req)
     {   
         if (strpos(Session::get('menu_access'), 'MTE07') !== false) {
+            /** Cara input Supplier adalah pilih supplier yang ada di combo box (data dari QAD) lalu Add to eAMS untuk menyimpan daya supplier ke eAMS. */
             $data = DB::table('supp_mstr')
                 ->orderby('supp_code')
                 ->paginate(10);
 
-            return view('setting.supplier', ['data' => $data]);
+            /** Menarik data supplier dari QAD */
+            Schema::create('temp_supp', function ($table) {
+                $table->increments('id');
+                $table->string('temp_code');
+                $table->string('temp_desc');
+                $table->temporary();
+            });
+
+            $domain = ModelsQxwsa::first();
+
+            $suppdata = (new WSAServices())->wsasupp($domain->wsas_domain);
+
+            if ($suppdata === false) {
+                toast('WSA Failed', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+
+                if ($suppdata[1] == "false") {
+                    toast('Data Supplier tidak ditemukan', 'error')->persistent('Dismiss');
+                    return redirect()->back();
+                } else {
+                    
+                    foreach ($suppdata[0] as $datas) {
+                        DB::table('temp_supp')->insert([
+                            'temp_code' => $datas->t_suppcode,
+                            'temp_desc' => $datas->t_suppname,
+                        ]);
+                    }
+                }
+            }
+
+            $datasupp = DB::table('temp_supp')
+                ->orderBy('temp_code')
+                ->get();
+
+            Schema::dropIfExists('temp_supp');
+
+            return view('setting.supplier', compact('data','datasupp'));
         } else {
             toast('You do not have menu access, please contact admin.', 'error');
             return back();
         }
+    }
+
+    /** Fungsi untuk menyimpan supplier yang dipilih untuk disimpan ke eAMS */
+    public function addsupp(Request $req){
+        // dd($req->all());
+        $supp = SuppMstr::firstOrNew(['supp_code'=>$req->t_supp,
+                                        'supp_desc'=> $req->t_suppdesc]);
+        $supp->supp_code = $req->t_supp;
+        $supp->supp_desc = $req->t_suppdesc;
+        $supp->created_at = Carbon::now()->toDateTimeString();
+        $supp->updated_at = Carbon::now()->toDateTimeString();
+        $supp->edited_by = Session::get('username');
+        $supp->save();
+
+        toast('Supplier Created.', 'success');
+        return back();
     }
 
     public function loadsupp(){

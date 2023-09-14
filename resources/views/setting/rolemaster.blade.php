@@ -641,15 +641,6 @@
             </h4>
             <hr>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Cost Center Maintenance') }}</label>
-              <div class="col-6">
-                <label class="switch" for="cc">
-                  <input type="checkbox" class="custom-control-input" id="cc" name="cc" value="MTA50" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Department Maintenance') }}</label>
               <div class="col-6">
                 <label class="switch" for="dept">
@@ -1007,6 +998,24 @@
               <div class="col-6">
                 <label class="switch" for="invsu">
                   <input type="checkbox" class="custom-control-input" id="invsu" name="invsu" value="MTH47" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Account Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="accmstr">
+                  <input type="checkbox" class="custom-control-input" id="accmstr" name="accmstr" value="MTH51" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Cost Center Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cc">
+                  <input type="checkbox" class="custom-control-input" id="cc" name="cc" value="MTH50" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -1601,15 +1610,6 @@
             </h4>
             <hr>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Cost Center Maintenance') }}</label>
-              <div class="col-6">
-                <label class="switch" for="e_cc">
-                  <input type="checkbox" class="custom-control-input" id="e_cc" name="e_cc" value="MTA50" />
-                  <div class="slider round"></div>
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Department Maintenance') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_dept">
@@ -1971,6 +1971,24 @@
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Account Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_accmstr">
+                  <input type="checkbox" class="custom-control-input" id="e_accmstr" name="e_accmstr" value="MTH51" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-right min-txt">{{ __('Cost Center Maintenance') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cc">
+                  <input type="checkbox" class="custom-control-input" id="e_cc" name="e_cc" value="MTH50" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
             {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Instruction Details Maintenance') }}</label>
               <div class="col-6">
@@ -2121,7 +2139,7 @@
         var listmenu = data;
         
         // Setting
-        if (listmenu.search("MTA50") >= 0) {
+        if (listmenu.search("MTH50") >= 0) {
           document.getElementById('e_cc').checked = true;
         } else {
           document.getElementById('e_cc').checked = false;
@@ -2340,6 +2358,11 @@
           document.getElementById('e_invsu').checked = true;
         } else {
           document.getElementById('e_invsu').checked = false;
+        }
+        if (listmenu.search("MTH51") >= 0) {
+          document.getElementById('e_accmstr').checked = true;
+        } else {
+          document.getElementById('e_accmstr').checked = false;
         }
         
         {{--  if (listmenu.search("MT03") >= 0) {

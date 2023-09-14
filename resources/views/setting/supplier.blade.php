@@ -1,36 +1,57 @@
 @extends('layout.newlayout')
 @section('content-header')
 	  
-	  	  <div class="container-fluid">
-        <div class="row">          
-          <div class="col-sm-4">
+<div class="container-fluid">
+    <div class="row">          
+        <div class="col-sm-4">
             <h1 class="m-0 text-dark">Supplier Maintenance</h1>
-          </div>    
-        </div><!-- /.row -->
-        <div class="col-md-12">
-          <hr>
+        </div>    
+    </div><!-- /.row -->
+    <div class="col-md-12">
+        <hr>
+    </div>
+    <!-- Jika data supplier input manual, maka buka create supplier yang ini
+    <div class="row">                 
+        <div class="col-sm-2">    
+        <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Supplier Create</button>
         </div>
-        <!-- <div class="row">                 
-          <div class="col-sm-2">    
-            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Supplier Create</button>
-            </div>
+    </div>
+    -->
+    {{--  Jika data supplier load semua data dari QAD, maka buka tombol load yang ini
+    <div class="row">
+        <div class="col-md-2">
+            <form action="/loadsupp" method="post" id="submit">
+                {{ method_field('post') }}
+                {{ csrf_field() }}
+                
+                    <input type="submit" class="btn btn-block btn-primary" id="btnload" value="Load Data" />
+                    <button type="button" class="btn btn-info" id="s_btnloading" style="display:none;">
+                        <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
+                    </button>
+                
+            </form>
         </div>
-        -->
+    </div>  --}}
+    <form action="/addsupp" method="post" id="submit">
+        {{ method_field('post') }}
+        {{ csrf_field() }}
+
         <div class="row">
+            <div class="col-md-4">
+                <select class="form-control" id="t_supp" name="t_supp">
+                    <option> -- Select Data -- </option>
+                    @foreach ($datasupp as $ds)
+                        <option value="{{$ds->temp_code}}" data-desc="{{$ds->temp_desc}}">{{$ds->temp_code}} -- {{$ds->temp_desc}}</option>    
+                    @endforeach
+                </select>
+                <input type="hidden" name="t_suppdesc" id="t_suppdesc" />                          
+            </div>
             <div class="col-md-2">
-                <form action="/loadsupp" method="post" id="submit">
-                    {{ method_field('post') }}
-                    {{ csrf_field() }}
-                    
-                        <input type="submit" class="btn btn-block btn-primary" id="btnload" value="Load Data" />
-                        <button type="button" class="btn btn-info" id="s_btnloading" style="display:none;">
-                            <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
-                        </button>
-                    
-                </form>
+                <input type="submit" class="btn btn-block btn-primary" id="btnload" value="Add to eAMS" />
             </div>
         </div>
-      </div><!-- /.container-fluid -->
+    </form>
+</div><!-- /.container-fluid -->
 @endsection
 @section('content')
 <!-- Bagian Searching -->
@@ -340,6 +361,21 @@
               }
             })
         });
+
+        $('#t_supp').select2({
+            width: '100%',
+            theme: 'bootstrap4',
+        });
+
+        /* Fungsi untuk menampung nama supplier yang akan dilempar ke controller */
+        $(document).on('change', '#t_supp', function() {
+            var select = document.getElementById('t_supp');
+            var selectedOption = select.options[select.selectedIndex];
+    
+            var desc = selectedOption.getAttribute("data-desc");
+    
+            document.getElementById('t_suppdesc').value = desc;
+        });
 
     </script>
 

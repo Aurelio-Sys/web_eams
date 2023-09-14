@@ -19,6 +19,7 @@ use App\Http\Controllers\Master\AppWoController;
 use App\Http\Controllers\Master\AppSpController;
 use App\Http\Controllers\Master\InvSoController;
 use App\Http\Controllers\Master\InvSuController;
+use App\Http\Controllers\Master\AccountController;
 use App\Http\Controllers\Master\NotmssgController;
 use App\Http\Controllers\Master\CostCenterController;
 use App\Http\Controllers\Report\RptDetWOController;
@@ -177,6 +178,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/suppsearch', 'SettingController@suppsearch');
 	route::get('/suppmaster/pagination', 'SettingController@supppagination');
 	route::post('/loadsupp', 'SettingController@loadsupp');
+	route::post('/addsupp', 'SettingController@addsupp');
 
 	//asset master
 	route::get('/assetmaster', 'SettingController@assetmaster');
@@ -875,8 +877,14 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/costcenter',[CostCenterController::class, 'index']); 
 	Route::get('/cekcc',[CostCenterController::class, 'cekcc']);
 	Route::post('/createcc',[CostCenterController::class, 'store']);
+	Route::post('/addcc',[CostCenterController::class, 'addcc']);
 	Route::post('/editcc',[CostCenterController::class, 'update']);
 	Route::post('/deletecc',[CostCenterController::class, 'destroy']);
+
+	// Account Maintenance
+	Route::get('/accmstr',[AccountController::class, 'index']); 
+	Route::post('/addacc',[AccountController::class, 'store']); 
+	Route::post('/deleteacc',[AccountController::class, 'destroy']); 
 	
 	// new dashboard DK
 	Route::get('/expensemt', [HomeController::class, 'expenseMT']); //biaya maintenance per department
