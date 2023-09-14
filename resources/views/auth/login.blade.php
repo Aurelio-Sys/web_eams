@@ -6,7 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="assets/css/loginstyle.css">
     
-      <script src="https://kit.fontawesome.com/a076d05399.js"></script>
     <title>Login</title>
 </head>
 <body> 
