@@ -59,6 +59,30 @@ class ServiceController extends Controller
         );
     }
 
+    public function assetbyloc (Request $req){
+        
+        //Filter asset by location
+        if ($req->ajax()) {
+            $asset_loc = $req->assetloc;
+            $asset = DB::table('asset_mstr')
+            ->leftJoin('asset_loc', 'asloc_code', '=', 'asset_loc')
+            ->where('asset_active', '=', 'Yes')
+            ->where('asset_loc', '=', $asset_loc)
+            ->orderBy('asset_code')
+            ->get();
+
+            $outputcode = "";
+            foreach ($asset as $thiscode) {
+                $outputcode .= '<option value="' . $thiscode->asset_code . '" data-assetgroup="' . $thiscode->asset_group . '"> ' . $thiscode->asset_code . ' -- ' . $thiscode->asset_desc . ' -- ' . $thiscode->asloc_desc . '</option>';
+            }
+
+            return response()->json([
+                // 'optionfailtype' => $outputtype,
+                'optionassetcode' => $outputcode,
+            ]);
+        }
+    }
+
 
     public function servicerequest(Request $req) /* route : servicerequest  blade : servicerequest_create */
     {
@@ -95,7 +119,9 @@ class ServiceController extends Controller
             ->where('approver', '=', 1)
             ->groupBy('eng_dept')
             ->orderBy('eng_code')
-            ->get();
+            ->get();   
+            
+        $assetloc = DB::table('asset_loc')->get();
 
         // Default Value Failure Type dan Code
         if ($req->ajax()) {
@@ -149,7 +175,7 @@ class ServiceController extends Controller
 
         return view('service.servicerequest_create', [
             'showasset' => $asset, 'dept' => $datadepart,  'wotype' => $wotype,
-            'impact' => $impact, 'dataapp' => $dataapp
+            'impact' => $impact, 'dataapp' => $dataapp, 'assetloc'=> $assetloc
         ]);
     }
 
@@ -616,8 +642,8 @@ class ServiceController extends Controller
                 srta_eng_status,eng_role,srta_eng_reason,service_req_mstr.id')
                     ->where('sr_status', '<>', 'Canceled')
                     // ->where('sr_status', '<>', 'Inprocess')
-                    // ->orderBy('sr_req_date', 'DESC')
-                    ->orderByRaw("FIELD(sr_priority, 'high', 'medium', 'low')")
+                    ->orderBy('sr_req_date', 'DESC')
+                    // ->orderByRaw("FIELD(sr_priority, 'high', 'medium', 'low')")
                     // ->orderBy('sr_number', 'DESC')
                     ->groupBy('sr_number');
 
@@ -648,7 +674,7 @@ class ServiceController extends Controller
                 srta_eng_status,eng_role,srta_eng_reason,service_req_mstr.id')
                     ->where('sr_status', '=', 'nostatus')
                     ->orderBy('sr_req_date', 'DESC')
-                    ->orderBy('sr_number', 'DESC')
+                    // ->orderBy('sr_number', 'DESC')
                     ->groupBy('sr_number');
             }
 
@@ -2029,9 +2055,9 @@ class ServiceController extends Controller
                 srta_eng_status,eng_role,srta_eng_reason,service_req_mstr.id')
                     ->where('sr_status', '<>', 'Canceled')
                     // ->where('sr_status', '<>', 'Inprocess')
-                    // ->orderBy('sr_req_date', 'DESC')
+                    ->orderBy('sr_req_date', 'DESC')
                     // ->orderBy('sr_number', 'DESC')
-                    ->orderByRaw("FIELD(sr_priority, 'high', 'medium', 'low')")
+                    // ->orderByRaw("FIELD(sr_priority, 'high', 'medium', 'low')")
                     ->groupBy('sr_number');
 
 
@@ -2095,7 +2121,7 @@ class ServiceController extends Controller
                     ->where('sr_status', '<>', 'Canceled')
                     ->whereRaw($kondisi)
                     ->orderBy('sr_req_date', 'DESC')
-                    ->orderBy('sr_number', 'DESC')
+                    // ->orderBy('sr_number', 'DESC')
                     ->groupBy('sr_number');
 
                 /* Jika bukan admin, maka yang muncul adalah approver sesuai login */

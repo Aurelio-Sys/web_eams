@@ -222,8 +222,9 @@
         <!-- <th>Priority</th> -->
         <!-- <th>Department</th> -->
         <th>Req by</th>
-        <th>Req Date</th>
-        <th>Req Time</th>
+        <th width="8%">Req Date</th>
+        <th width="8%">Req Time</th>
+        <th>Eng Approver</th>
         <th>Action</th>
         <th>Approval</th>
         <!-- <th>Cancel</th> -->

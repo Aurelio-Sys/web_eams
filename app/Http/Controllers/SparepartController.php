@@ -326,6 +326,7 @@ class SparepartController extends Controller
                             'req_sph_qtyreq' => $loopsp['qtyrequest'],
                             'req_sph_siteto' => $loopsp['siteto'],
                             'req_sph_locto' => $loopsp['locto'],
+                            'req_sph_reqnote' => $loopsp['reqnote'],
                             'req_sph_duedate' => $req->due_date,
                             'req_sph_action' => 'request sparepart created',
                             'created_at' => Carbon::now()->toDateTimeString(),
@@ -715,6 +716,7 @@ class SparepartController extends Controller
                                 'req_sph_qtyreq' => $data['qtyrequest'],
                                 'req_sph_siteto' => $data['siteto'],
                                 'req_sph_locto' => $data['locto'],
+                                'req_sph_reqnote' => $data['reqnote'],
                                 'req_sph_action' => 'sparepart updated',
                                 'created_at' => Carbon::now()->toDateTimeString(),
                             ]);
@@ -726,6 +728,7 @@ class SparepartController extends Controller
                                 'req_sph_qtyreq' => $data['qtyrequest'],
                                 'req_sph_siteto' => $data['siteto'],
                                 'req_sph_locto' => $data['locto'],
+                                'req_sph_reqnote' => $data['reqnote'],
                                 'req_sph_duedate' => $req->e_duedate,
                                 'req_sph_action' => 'due date and sparepart updated',
                                 'created_at' => Carbon::now()->toDateTimeString(),
@@ -740,6 +743,7 @@ class SparepartController extends Controller
                             'req_sph_qtyreq' => $data['qtyrequest'],
                             'req_sph_siteto' => $data['siteto'],
                             'req_sph_locto' => $data['locto'],
+                            'req_sph_reqnote' => $data['reqnote'],
                             'req_sph_action' => 'sparepart deleted',
                             'created_at' => Carbon::now()->toDateTimeString(),
                         ]);
@@ -1241,7 +1245,8 @@ class SparepartController extends Controller
         $dateto = $request->get('s_dateto') == '' ? '3000-01-01' : date($request->get('s_dateto'));
 
         if ($request->s_nomorrs) {
-            $data->where('req_sp_number', 'like', '%' . $request->s_nomorrs . '%');
+            $data->where('req_sp_number', 'like', '%' . $request->s_nomorrs . '%')
+                ->orWhere('req_sp_wonumber', 'like', '%' . $request->s_nomorrs . '%');
         }
 
         if ($request->s_reqby) {
@@ -1285,11 +1290,13 @@ class SparepartController extends Controller
             ->get();
 
         $sumqtytransferred = DB::table('req_sparepart_det')
-        ->join('req_sparepart', 'req_sparepart.id', 'req_sparepart_det.req_spd_mstr_id')
-        ->where('req_spd_mstr_id', $data->id)
-        ->sum('req_spd_qty_transfer');
-        
-        // dd($data);
+            ->join('req_sparepart', 'req_sparepart.id', 'req_sparepart_det.req_spd_mstr_id')
+            ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
+            ->where('req_spd_mstr_id', $data->id)
+            // ->get();
+            ->sum('req_spd_qty_transfer');
+
+        // dd($sumqtytransferred);
         return view('sparepart.trfsparepart-detail', compact(
             'data',
             'sparepart_detail',
@@ -1305,40 +1312,91 @@ class SparepartController extends Controller
         // dd($req->code);
         if ($req->ajax()) {
 
-            // $data = DB::table('req_sparepart')
-            //     ->join('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
-            //     ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
-            //     ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
-            //     ->where('req_sp_number', $rsnumber)
-            //     ->get();
-            $data = DB::table('req_sparepart_hist')
-                ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_hist.req_sph_spcode')
-                ->join('req_sparepart', 'req_sparepart.req_sp_number', 'req_sparepart_hist.req_sph_number')
+            $data = DB::table('req_sparepart')
                 ->join('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
-                ->selectRaw('req_sparepart_hist.*,spm_desc,req_spd_reqnote,req_spd_note')
-                ->where(function ($query) use ($rsnumber) {
-                    $query->where('req_sph_action', '=', 'request sparepart partial transferred')
-                          ->orWhere('req_sph_action', '=', 'request sparepart closed');
-                })
-                ->where('req_sph_number', $rsnumber)
+                ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
+                ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
+                ->where('req_sp_number', $rsnumber)
                 ->get();
+            // $data = DB::table('req_sparepart_hist')
+            //     ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_hist.req_sph_spcode')
+            //     ->join('req_sparepart', 'req_sparepart.req_sp_number', 'req_sparepart_hist.req_sph_number')
+            //     ->join('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
+            //     ->selectRaw('req_sparepart_hist.*,spm_desc,req_spd_reqnote,req_spd_note')
+            //     ->where(function ($query) use ($rsnumber) {
+            //         $query->where('req_sph_action', '=', 'request sparepart partial transferred')
+            //               ->orWhere('req_sph_action', '=', 'request sparepart closed');
+            //     })
+            //     ->where('req_sph_number', $rsnumber)
+            //     ->get();
             // dd($data);
 
             $output = '';
             foreach ($data as $data) {
                 $output .= '<tr>';
-                $output .= '<td><input type="hidden" name="te_spreq[]" readonly>' . $data->req_sph_spcode . ' -- ' . $data->spm_desc . '</td>';
+                $output .= '<td><input type="hidden" name="te_spreq[]" readonly>' . $data->req_spd_sparepart_code . ' -- ' . $data->spm_desc . '</td>';
                 $output .= '</td>';
-                $output .= '<td><input type="hidden" name="te_qtyreq[]" readonly>' . $data->req_sph_qtyreq . '</td>';
+                $output .= '<td><input type="hidden" name="te_qtyreq[]" readonly>' . $data->req_spd_qty_request . '</td>';
                 // $output .= '<td><input type="hidden" name="te_sitefrom[]" readonly>' . $data->req_spd_site_from . '</td>';
-                $output .= '<td><input type="hidden" name="te_locnlotfrom[]" readonly>' . $data->req_sph_sitefrom . ' & ' . $data->req_sph_locfrom . ' & ' . $data->req_sph_lotfrom . '</td>';
+                $output .= '<td><input type="hidden" name="te_locnlotfrom[]" readonly>' . $data->req_spd_site_from . ' & ' . $data->req_spd_loc_from . ' & ' . $data->req_spd_lot_from . '</td>';
                 $output .= '<td><input type="hidden" name="te_reqnote[]" readonly>' . $data->req_spd_reqnote . '</td>';
-                $output .= '<td><input type="hidden" name="te_qtytrf[]" readonly>' . $data->req_sph_qtytrf . '</td>';
+                $output .= '<td><input type="hidden" name="te_qtytrf[]" readonly>' . $data->req_spd_qty_transfer . '</td>';
                 // $output .= '<td><input type="hidden" name="te_siteto[]" readonly>' . $data->req_spd_site_to . '</td>';
-                $output .= '<td><input type="hidden" name="te_locto[]" readonly>' . $data->req_sph_siteto . ' & ' . $data->req_sph_locto . '</td>';
+                $output .= '<td><input type="hidden" name="te_locto[]" readonly>' . $data->req_spd_site_to . ' & ' . $data->req_spd_loc_to . '</td>';
                 $output .= '<td><input type="hidden" name="te_note[]" readonly>' . $data->req_spd_note . '</td>';
-                $output .= '</td>';
-                $output .= '<td><input type="hidden" name="te_note[]" readonly>' . $data->created_at . '</td>';
+                $output .= '</tr>';
+            }
+
+            // dd($output);
+
+            return response($output);
+        }
+    }
+
+    //TRANSFER SPAREPART VIEW HISTORY DETAIL
+    public function trfspviewhist(Request $req)
+    {
+        $rsnumber = $req->code;
+        // dd($req->code);
+        if ($req->ajax()) {
+
+            $data = DB::table('req_sparepart_hist')
+                ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_hist.req_sph_spcode')
+                // ->join('req_sparepart', 'req_sparepart.req_sp_number', 'req_sparepart_hist.req_sph_number')
+                // ->join('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
+                ->selectRaw('req_sparepart_hist.*,spm_desc')
+                ->where(function ($query) use ($rsnumber) {
+                    $query->where('req_sph_action', '=', 'request sparepart partial transferred')
+                        ->orWhere('req_sph_action', '=', 'request sparepart closed');
+                })
+                ->where('req_sph_number', $rsnumber)
+                ->orderByDesc('created_at')
+                ->get();
+            // dd($data);
+
+            $output = '';
+            if ($data->count() > 0) {
+                foreach ($data as $data) {
+                    $output .= '<tr>';
+                    $output .= '<td><input type="hidden" name="te_spreq[]" readonly>' . $data->req_sph_spcode . ' -- ' . $data->spm_desc . '</td>';
+                    $output .= '</td>';
+                    $output .= '<td><input type="hidden" name="te_qtyreq[]" readonly>' . $data->req_sph_qtyreq . '</td>';
+                    // $output .= '<td><input type="hidden" name="te_sitefrom[]" readonly>' . $data->req_spd_site_from . '</td>';
+                    $output .= '<td><input type="hidden" name="te_locnlotfrom[]" readonly>' . $data->req_sph_sitefrom . ' & ' . $data->req_sph_locfrom . ' & ' . $data->req_sph_lotfrom . '</td>';
+                    $output .= '<td><input type="hidden" name="te_reqnote[]" readonly>' . $data->req_sph_reqnote . '</td>';
+                    $output .= '<td><input type="hidden" name="te_qtytrf[]" readonly>' . $data->req_sph_qtytrf . '</td>';
+                    // $output .= '<td><input type="hidden" name="te_siteto[]" readonly>' . $data->req_spd_site_to . '</td>';
+                    $output .= '<td><input type="hidden" name="te_locto[]" readonly>' . $data->req_sph_siteto . ' & ' . $data->req_sph_locto . '</td>';
+                    $output .= '<td><input type="hidden" name="te_note[]" readonly>' . $data->req_sph_note . '</td>';
+                    $output .= '</td>';
+                    $output .= '<td><input type="hidden" name="te_note[]" readonly>' . $data->created_at . '</td>';
+                    $output .= '</td>';
+                    $output .= '</tr>';
+                }
+            } else {
+                $output .= '<tr>';
+                $output .= '<td colspan="12" style="color:red">';
+                $output .= '<center> No sparepart transaction yet </center>';
                 $output .= '</td>';
                 $output .= '</tr>';
             }
@@ -2145,34 +2203,37 @@ class SparepartController extends Controller
         });
 
         foreach ($req->hidden_spcode as $index => $spcode) {
-            $getActualStockSource = (new WSAServices())->wsacekstoksource($spcode, $req->hidden_sitefrom[$index], $req->hidden_locfrom[$index], $req->hidden_lotfrom[$index]);
+            // dd($req->loclotfrom[$index], $req->locto[$index], $req->qtytotransfer[$index]);
+            if ($req->loclotfrom[$index] != null && $req->hidden_locto[$index] != null && $req->qtytotransfer[$index] > 0) {
+                $getActualStockSource = (new WSAServices())->wsacekstoksource($spcode, $req->hidden_sitefrom[$index], $req->hidden_locfrom[$index], $req->hidden_lotfrom[$index]);
 
-            if ($getActualStockSource === false) {
-                toast('WSA Connection Failed', 'error')->persistent('Dismiss');
-                return redirect()->back();
-            } else {
-
-                // jika hasil WSA ke QAD tidak ditemukan
-                if ($getActualStockSource[1] == "false") {
-                    toast('Something went wrong with the data', 'error')->persistent('Dismiss');
+                if ($getActualStockSource === false) {
+                    toast('WSA Connection Failed', 'error')->persistent('Dismiss');
                     return redirect()->back();
-                }
+                } else {
+
+                    // jika hasil WSA ke QAD tidak ditemukan
+                    if ($getActualStockSource[1] == "false") {
+                        toast('Something went wrong with the data', 'error')->persistent('Dismiss');
+                        return redirect()->back();
+                    }
 
 
-                // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+                    // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
 
-                $resultWSA = $getActualStockSource[0];
+                    $resultWSA = $getActualStockSource[0];
 
-                //kumpulkan hasilnya ke dalam 1 array sebagai penampung list location dan lot from
-                foreach ($resultWSA as $thisresult) {
-                    DB::table('temp_table')
-                        ->insert([
-                            't_part' => $thisresult->t_part,
-                            't_site' => $thisresult->t_site,
-                            't_loc' => $thisresult->t_loc,
-                            't_lot' => $thisresult->t_lot,
-                            't_qtyoh' => $thisresult->t_qtyoh,
-                        ]);
+                    //kumpulkan hasilnya ke dalam 1 array sebagai penampung list location dan lot from
+                    foreach ($resultWSA as $thisresult) {
+                        DB::table('temp_table')
+                            ->insert([
+                                't_part' => $thisresult->t_part,
+                                't_site' => $thisresult->t_site,
+                                't_loc' => $thisresult->t_loc,
+                                't_lot' => $thisresult->t_lot,
+                                't_qtyoh' => $thisresult->t_qtyoh,
+                            ]);
+                    }
                 }
             }
         }
@@ -2189,12 +2250,14 @@ class SparepartController extends Controller
 
             $notEnough = "";
             foreach ($req->qtytotransfer as $index => $qtytotransfer) {
-                foreach ($dataStockQAD as $source) {
-                    if ($req->hidden_spcode[$index] == $source->t_part && $req->hidden_sitefrom[$index] == $source->t_site && $req->hidden_locfrom[$index] == $source->t_loc && $req->hidden_lotfrom[$index] == $source->t_lot) {
-                        if (floatval($req->qtytotransfer[$index]) > floatval($source->t_qtyoh)) {
-                            //jika tidak cukup berikan alert
-                            // dump($source->t_qtyoh);
-                            $notEnough .= $req->hidden_spcode[$index] . ", ";
+                if ($req->loclotfrom[$index] != null && $req->hidden_locto[$index] != null && $qtytotransfer > 0) {
+                    foreach ($dataStockQAD as $source) {
+                        if ($req->hidden_spcode[$index] == $source->t_part && $req->hidden_sitefrom[$index] == $source->t_site && $req->hidden_locfrom[$index] == $source->t_loc && $req->hidden_lotfrom[$index] == $source->t_lot) {
+                            if (floatval($req->qtytotransfer[$index]) > floatval($source->t_qtyoh)) {
+                                //jika tidak cukup berikan alert
+                                // dump($source->t_qtyoh);
+                                $notEnough .= $req->hidden_spcode[$index] . ", ";
+                            }
                         }
                     }
                 }
@@ -2322,72 +2385,79 @@ class SparepartController extends Controller
                         ->where('req_spd_sparepart_code', '=', $req->hidden_spcode[$index])
                         ->first();
 
-                    if ($reqspdet->req_spd_qty_request != $req->qtytotransfer[$index]) {
-                        //jika qty transfer tidak sama dengan request maka akan ditambahkan dengan qty yang pernah di transfer (partial)
-                        DB::table('req_sparepart_det')
-                        ->where('req_spd_mstr_id', '=', $reqspmstr->id)
-                        ->where('req_spd_sparepart_code', '=', $req->hidden_spcode[$index])
-                        ->update([
-                            'req_spd_qty_transfer' => $reqspdet->req_spd_qty_transfer + $req->qtytotransfer[$index],
-                            'req_spd_site_from' => $req->hidden_sitefrom[$index],
-                            'req_spd_loc_from' => $req->hidden_locfrom[$index],
-                            'req_spd_lot_from' => $req->hidden_lotfrom[$index],
-                            'req_spd_note' => $req->notes[$index],
-                            'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        ]);
+                    if ($req->qtytotransfer[$index] > 0) {
 
-                        // simpan history transferred
-                        DB::table('req_sparepart_hist')
-                            ->insert([
-                                'req_sph_number' => $req->hide_rsnum,
-                                'req_sph_wonumber' => $reqspmstr->req_sp_wonumber ? $reqspmstr->req_sp_wonumber : null,
-                                'req_sph_dept' => $reqspmstr->req_sp_dept,
-                                'req_sph_reqby' => $reqspmstr->req_sp_requested_by,
-                                'req_sph_spcode' => $req->hidden_spcode[$index],
-                                'req_sph_qtyreq' => $reqspdet->req_spd_qty_request,
-                                'req_sph_qtytrf' => $req->qtytotransfer[$index],
-                                'req_sph_siteto' => $reqspdet->req_spd_site_to,
-                                'req_sph_locto' => $reqspdet->req_spd_loc_to,
-                                'req_sph_sitefrom' => $req->hidden_sitefrom[$index],
-                                'req_sph_locfrom' => $req->hidden_locfrom[$index],
-                                'req_sph_lotfrom' => $req->hidden_lotfrom[$index],
-                                'req_sph_duedate' => $reqspmstr->req_sp_due_date,
-                                'req_sph_action' => 'request sparepart partial transferred',
-                                'created_at' => Carbon::now()->toDateTimeString(),
-                            ]);
-                    } else {
+                        if ($reqspdet->req_spd_qty_request != $req->qtytotransfer[$index]) {
+                            //jika qty transfer tidak sama dengan request maka akan ditambahkan dengan qty yang pernah di transfer (partial)
+                            DB::table('req_sparepart_det')
+                                ->where('req_spd_mstr_id', '=', $reqspmstr->id)
+                                ->where('req_spd_sparepart_code', '=', $req->hidden_spcode[$index])
+                                ->update([
+                                    'req_spd_qty_transfer' => $reqspdet->req_spd_qty_transfer + $req->qtytotransfer[$index],
+                                    'req_spd_site_from' => $req->hidden_sitefrom[$index],
+                                    'req_spd_loc_from' => $req->hidden_locfrom[$index],
+                                    'req_spd_lot_from' => $req->hidden_lotfrom[$index],
+                                    'req_spd_note' => $req->notes[$index],
+                                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                ]);
 
-                        DB::table('req_sparepart_det')
-                        ->where('req_spd_mstr_id', '=', $reqspmstr->id)
-                        ->where('req_spd_sparepart_code', '=', $req->hidden_spcode[$index])
-                        ->update([
-                            'req_spd_qty_transfer' => $req->qtytotransfer[$index],
-                            'req_spd_site_from' => $req->hidden_sitefrom[$index],
-                            'req_spd_loc_from' => $req->hidden_locfrom[$index],
-                            'req_spd_lot_from' => $req->hidden_lotfrom[$index],
-                            'req_spd_note' => $req->notes[$index],
-                            'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        ]);
+                            // simpan history transferred
+                            DB::table('req_sparepart_hist')
+                                ->insert([
+                                    'req_sph_number' => $req->hide_rsnum,
+                                    'req_sph_wonumber' => $reqspmstr->req_sp_wonumber ? $reqspmstr->req_sp_wonumber : null,
+                                    'req_sph_dept' => $reqspmstr->req_sp_dept,
+                                    'req_sph_reqby' => $reqspmstr->req_sp_requested_by,
+                                    'req_sph_spcode' => $req->hidden_spcode[$index],
+                                    'req_sph_qtyreq' => $reqspdet->req_spd_qty_request,
+                                    'req_sph_qtytrf' => $req->qtytotransfer[$index],
+                                    'req_sph_siteto' => $reqspdet->req_spd_site_to,
+                                    'req_sph_locto' => $reqspdet->req_spd_loc_to,
+                                    'req_sph_sitefrom' => $req->hidden_sitefrom[$index],
+                                    'req_sph_locfrom' => $req->hidden_locfrom[$index],
+                                    'req_sph_lotfrom' => $req->hidden_lotfrom[$index],
+                                    'req_sph_reqnote' => $reqspdet->req_spd_reqnote,
+                                    'req_sph_note' => $req->notes[$index],
+                                    'req_sph_duedate' => $reqspmstr->req_sp_due_date,
+                                    'req_sph_action' => 'request sparepart partial transferred',
+                                    'created_at' => Carbon::now()->toDateTimeString(),
+                                ]);
+                        } else {
 
-                        // simpan history transferred
-                        DB::table('req_sparepart_hist')
-                            ->insert([
-                                'req_sph_number' => $req->hide_rsnum,
-                                'req_sph_wonumber' => $reqspmstr->req_sp_wonumber ? $reqspmstr->req_sp_wonumber : null,
-                                'req_sph_dept' => $reqspmstr->req_sp_dept,
-                                'req_sph_reqby' => $reqspmstr->req_sp_requested_by,
-                                'req_sph_spcode' => $req->hidden_spcode[$index],
-                                'req_sph_qtyreq' => $reqspdet->req_spd_qty_request,
-                                'req_sph_qtytrf' => $req->qtytotransfer[$index],
-                                'req_sph_siteto' => $reqspdet->req_spd_site_to,
-                                'req_sph_locto' => $reqspdet->req_spd_loc_to,
-                                'req_sph_sitefrom' => $req->hidden_sitefrom[$index],
-                                'req_sph_locfrom' => $req->hidden_locfrom[$index],
-                                'req_sph_lotfrom' => $req->hidden_lotfrom[$index],
-                                'req_sph_duedate' => $reqspmstr->req_sp_due_date,
-                                'req_sph_action' => 'request sparepart closed',
-                                'created_at' => Carbon::now()->toDateTimeString(),
-                            ]);
+                            DB::table('req_sparepart_det')
+                                ->where('req_spd_mstr_id', '=', $reqspmstr->id)
+                                ->where('req_spd_sparepart_code', '=', $req->hidden_spcode[$index])
+                                ->update([
+                                    'req_spd_qty_transfer' => $req->qtytotransfer[$index],
+                                    'req_spd_site_from' => $req->hidden_sitefrom[$index],
+                                    'req_spd_loc_from' => $req->hidden_locfrom[$index],
+                                    'req_spd_lot_from' => $req->hidden_lotfrom[$index],
+                                    'req_spd_note' => $req->notes[$index],
+                                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                ]);
+
+                            // simpan history transferred
+                            DB::table('req_sparepart_hist')
+                                ->insert([
+                                    'req_sph_number' => $req->hide_rsnum,
+                                    'req_sph_wonumber' => $reqspmstr->req_sp_wonumber ? $reqspmstr->req_sp_wonumber : null,
+                                    'req_sph_dept' => $reqspmstr->req_sp_dept,
+                                    'req_sph_reqby' => $reqspmstr->req_sp_requested_by,
+                                    'req_sph_spcode' => $req->hidden_spcode[$index],
+                                    'req_sph_qtyreq' => $reqspdet->req_spd_qty_request,
+                                    'req_sph_qtytrf' => $req->qtytotransfer[$index],
+                                    'req_sph_siteto' => $reqspdet->req_spd_site_to,
+                                    'req_sph_locto' => $reqspdet->req_spd_loc_to,
+                                    'req_sph_sitefrom' => $req->hidden_sitefrom[$index],
+                                    'req_sph_locfrom' => $req->hidden_locfrom[$index],
+                                    'req_sph_lotfrom' => $req->hidden_lotfrom[$index],
+                                    'req_sph_reqnote' => $reqspdet->req_spd_reqnote,
+                                    'req_sph_note' => $req->notes[$index],
+                                    'req_sph_duedate' => $reqspmstr->req_sp_due_date,
+                                    'req_sph_action' => 'request sparepart closed',
+                                    'created_at' => Carbon::now()->toDateTimeString(),
+                                ]);
+                        }
                     }
 
 
@@ -2398,6 +2468,7 @@ class SparepartController extends Controller
                                 'wd_sp_wonumber' => $reqspmstr->req_sp_wonumber,
                                 'wd_sp_spcode' => $req->hidden_spcode[$index],
                                 'wd_sp_required' => $req->qtytotransfer[$index],
+                                'wd_sp_whtf' => $req->qtytotransfer[$index],
                                 'wd_sp_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
@@ -2413,7 +2484,7 @@ class SparepartController extends Controller
                 ->where('req_spd_mstr_id', '=', $reqspmstr->id)
                 ->sum('req_spd_qty_transfer');
 
-                // dd($sumqtyreq, $sumqtytrf);
+            // dd($sumqtyreq, $sumqtytrf);
             if ($sumqtyreq != $sumqtytrf) {
                 //jika qty yg di transfer tidak sesuai jumlah qty request dia masih bisa transfer lagi
                 DB::table('req_sparepart')
@@ -3441,19 +3512,20 @@ class SparepartController extends Controller
     }
 
     //Spare Part Stock Browse
-    public function spstockbrowse(){
+    public function spstockbrowse()
+    {
         $wsa = (new WSAServices())->wsainvstock(Session::get('domain'));
-        if($wsa === false){
+        if ($wsa === false) {
             alert()->error('Error', 'WSA Failed');
             return redirect()->back();
-        }else{
+        } else {
             $tempStockItem = (new CreateTempTable())->invstockDetail($wsa[0]);
         }
 
         $data = $tempStockItem[0];
 
         // dd($data);
-    
+
         return view('report.spstock', compact('data'));
     }
 }

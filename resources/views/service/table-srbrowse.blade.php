@@ -16,6 +16,7 @@
 
     <td>{{date('d-m-Y', strtotime($show->sr_req_date))}}</td>
     <td>{{date('H:i', strtotime($show->sr_req_time))}}</td>
+    <td>{{$show->sr_eng_approver}} - {{$show->u11}}</td>
 
     
     <td style="text-align: center;">

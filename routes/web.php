@@ -503,6 +503,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('batchwo','UsageController@batchwo');
 
 	// bagian tommy
+	route::get('/assetbyloc', 'ServiceController@assetbyloc')->name('assetbyloc');
 	route::get('/servicerequest', 'ServiceController@servicerequest')->name('srcreate');
 	route::post('/inputsr', 'ServiceController@inputsr');
 	route::get('/failuresearch','ServiceController@failuresearch');
@@ -808,6 +809,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/trfspsubmit', [SparepartController::class,'trfspsubmit'])->name('trfspsubmit');
 	Route::get('/gettrfspwsastockfrom', [SparepartController::class, 'gettrfspwsastockfrom']);
 	Route::get('/trfspviewdet', [SparepartController::class, 'trfspviewdet']);
+	Route::get('/trfspviewhist', [SparepartController::class, 'trfspviewhist']);
 
 	//Return Sparepart
 	Route::get('/retsp', [SparepartController::class, 'retspbrowse'])->name('retspbrowse');
