@@ -17,6 +17,12 @@
         -moz-box-sizing: border-box;
         box-sizing: border-box;
     }
+
+    .table-wo {
+        height: 200px;
+        overflow-y: auto;
+        /* Bilah gulir vertikal */
+    }
 </style>
 
 <!-- <div class="row mt-2">
@@ -42,12 +48,14 @@
         <div class="form-group row" style="padding-left: 1em; margin-top: 1.5em;">
             <label class="col-md-3 col-form-label" style="font-size: 17px">WO Number</label>
             <div class="col-md-3">
-                <select name="wonbr" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" autofocus>
+                <!-- <select name="wonbr" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" autofocus>
                     <option value=""> -- Select WO Number -- </option>
                     @foreach($womstr as $da)
                     <option value="{{$da->wo_number}}"> {{$da->wo_number}} </option>
                     @endforeach
-                </select>
+                </select> -->
+                <input type="text" id="wonbr" class="form-control wonbr readonly" name="wonbr" data-toggle="tooltip" readonly required placeholder="Click Here">
+                <input type="hidden" class="hidden_wonbr" name="hidden_wonbr" id="hidden_wonbr" value="" />
             </div>
         </div>
 
@@ -141,6 +149,23 @@
         </div>
     </form>
 </div>
+
+<div id="woNbrModal" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Select WO Number</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body table-wo" id='wonbrtablemodal'>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -152,6 +177,90 @@
         $('.selectpicker').selectpicker().focus();
 
     }
+
+    $(document).on('click', '.wonbr', function() {
+        var row = $(this).closest("tr");
+        const spcode = row.find(".hidden_spcode").val();
+
+        $('#woNbrModal').modal('show');
+
+        $.ajax({
+            url: "reqspwonbr",
+            success: function(data) {
+                // console.log(data);
+                // $('#wonbrtablemodal').html('').append(data);
+                // select elemen HTML tempat menampilkan tabel
+                const tableContainer = document.getElementById("wonbrtablemodal");
+
+                // hapus tabel lama (jika ada)
+                if (tableContainer.hasChildNodes()) {
+                    tableContainer.removeChild(tableContainer.firstChild);
+                }
+
+                // membuat elemen tabel
+                const table = document.createElement("table");
+                table.setAttribute("class", "table table-bordered table-hover");
+
+                // membuat header tabel
+                const headerRow = document.createElement("tr");
+                const headerColumns = ["WO Number", "SR Number", "Asset", "WO Note", "Action"];
+                headerColumns.forEach((columnTitle) => {
+                    const headerColumn = document.createElement("th");
+                    headerColumn.textContent = columnTitle;
+                    headerRow.appendChild(headerColumn);
+                });
+                table.appendChild(headerRow);
+
+                // membuat baris record untuk setiap objek dalam dataLocLotFrom
+                data.forEach((record) => {
+                    const rowtable = document.createElement("tr");
+                    const columns = ["wo_number", "wo_sr_number", "wo_asset", "wo_note"];
+                    columns.forEach((columnKey) => {
+                        const column = document.createElement("td");
+                        column.textContent = record[columnKey];
+                        rowtable.appendChild(column);
+                    });
+                    const selectColumn = document.createElement("td");
+                    const selectButton = document.createElement("button");
+                    selectButton.setAttribute("class", "btn btn-primary");
+                    selectButton.textContent = "Select";
+                    selectButton.setAttribute("type", "button");
+                    selectButton.addEventListener("click", function() {
+                        // aksi yang ingin dilakukan saat tombol select diklik
+                        const wonumber = record.wo_number;
+                        
+                        document.getElementById('wonbr').value = wonumber;
+                        document.getElementById('hidden_wonbr').value = wonumber;
+
+                        $('#woNbrModal').modal('hide');
+                    });
+                    selectColumn.appendChild(selectButton);
+                    rowtable.appendChild(selectColumn);
+                    table.appendChild(rowtable);
+                });
+
+                // menampilkan tabel pada elemen HTML yang dituju
+                tableContainer.appendChild(table);
+
+                // memanggil modal setelah tabel dimuat
+                $('#woNbrModal').modal('show');
+
+            }
+        })
+
+    });
+
+    // $(document).on('change', 'select.locto', function() {
+
+    //     var row = $(this).closest("tr");
+    //     const locto = row.find(':selected').val();
+    //     const siteto = row.find(':selected').data('siteto');
+
+
+    //     row.find('.hidden_siteto').val(siteto);
+    //     row.find('.hidden_locto').val(locto);
+
+    // });
 
     $(document).ready(function() {
         $("#addrow").on("click", function() {

@@ -1,6 +1,9 @@
 @forelse ( $data as $datas )
 <tr>
-    <td>{{ $datas->wo_number }}</td>
+    @php
+    $color = ($datas->total_qty == 0) ? 'green' : 'red';
+    @endphp
+    <td style="background-color: {{ $color }};">{{ $datas->wo_number }}</td>
     <td>{{ $datas->asset_code }} -- {{ $datas->asset_desc }}</td>
     <td>{{ $datas->wo_start_date }}</td>
     <td>{{ $datas->wo_due_date }}</td>
@@ -11,7 +14,7 @@
 </tr>
 @empty
 <tr>
-    <td colspan="7" style="color: red; text-align: center;" >No Data Available</td>
+    <td colspan="7" style="color: red; text-align: center;">No Data Available</td>
 </tr>
 @endforelse
 <tr>

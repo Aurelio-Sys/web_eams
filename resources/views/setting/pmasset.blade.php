@@ -524,11 +524,6 @@
                 
                 }
               })
-
-              $("#t_pmcode").select2({
-                width : '100%',
-                theme : 'bootstrap4',
-             });
           });
 
           $("#t_durum").select2({

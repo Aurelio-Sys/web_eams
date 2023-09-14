@@ -1011,6 +1011,15 @@
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Inventory Check Stock') }}</label>
+              <div class="col-6">
+                <label class="switch" for="invstk">
+                  <input type="checkbox" class="custom-control-input" id="invstk" name="invstk" value="MTH48" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
             {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Instruction Details Maintenance') }}</label>
               <div class="col-6">
@@ -1971,6 +1980,15 @@
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Inventory Check Stock') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_invstk">
+                  <input type="checkbox" class="custom-control-input" id="e_invstk" name="e_invstk" value="MTH48" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
             {{--  <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Instruction Details Maintenance') }}</label>
               <div class="col-6">
@@ -2336,6 +2354,11 @@
           document.getElementById('e_invsu').checked = true;
         } else {
           document.getElementById('e_invsu').checked = false;
+        }
+        if (listmenu.search("MTH48") >= 0) {
+          document.getElementById('e_invstk').checked = true;
+        } else {
+          document.getElementById('e_invstk').checked = false;
         }
         
         {{--  if (listmenu.search("MT03") >= 0) {

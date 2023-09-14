@@ -29,7 +29,7 @@
                 <div class="col-12 form-group row">
 
                     <!--FORM Search Disini-->
-                    <label for="s_nomorrs" class="col-md-2 col-form-label text-md-right">{{ __('RS Number') }}</label>
+                    <label for="s_nomorrs" class="col-md-2 col-form-label text-md-right">{{ __('RS / WO Number') }}</label>
                     <div class="col-md-3 col-sm-12 mb-2 input-group">
                         <input id="s_nomorrs" type="text" class="form-control" name="s_nomorrs" value="" autofocus autocomplete="off">
                     </div>
@@ -151,7 +151,7 @@
                 </div>
                 <div class="form-group row col-md-12">
                     <label for="v_message" class="col-md-4 col-form-label text-md-left">eAMS Message</label>
-                    <div class="col-md-6" id="v_message">
+                    <div id="v_message">
                         <!-- <p id="v_message"></p> -->
                     </div>
                 </div>

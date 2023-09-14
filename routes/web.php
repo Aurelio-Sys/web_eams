@@ -797,6 +797,7 @@ Route::group(['middleware' => ['auth']], function() {
 	//Request Sparepart
 	Route::get('/reqsp', [SparepartController::class, 'reqspbrowse'])->name('reqspbrowse');
 	Route::get('/reqspcreate', [SparepartController::class, 'reqspcreate'])->name('reqspcreate');
+	Route::get('/reqspwonbr', [SparepartController::class, 'reqspwonbr'])->name('reqspwonbr');
 	Route::post('/reqspsubmit', [SparepartController::class,'reqspsubmit'])->name('reqspsubmit');
 	Route::get('/reqspeditdet',[SparepartController::class, 'reqspeditdet']);
 	Route::get('/reqsproute',[SparepartController::class, 'reqsproute']);
@@ -862,6 +863,10 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/trainingplan', [TrainingController::class, 'trainingplan'])->name('trainPlan');
 	Route::get('/trainingexecute', [TrainingController::class, 'trainingexecute'])->name('trainExecute');
 	Route::get('/traininganalyze', [TrainingController::class, 'traininganalyze'])->name('trainAnalyze');
+
+	//Spare Part Stock
+	Route::get('/spstockbrowse',[SparepartController::class, 'spstockbrowse']);
+	
 
 
 	//Downtime Report

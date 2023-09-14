@@ -137,6 +137,7 @@
                             <!-- <th width="8%">Site To</th> -->
                             <th width="15%">Site & Location To</th>
                             <th width="15%">Transfer SP Note</th>
+                            <th width="15%">Timestamp</th>
                         </thead>
                         <tbody id='v_detailapp'></tbody>
                     </table>

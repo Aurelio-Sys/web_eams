@@ -43,7 +43,7 @@ class WHSConfirm extends Controller
 
                 if($ApproverCheck === 0){
                     $data = DB::table('wo_mstr')
-                        ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
+                        ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority',DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as total_qty'))
                         ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
                         ->join('wo_dets_sp','wo_dets_sp.wd_sp_wonumber','wo_mstr.wo_number')
                         ->where(function ($status) {
@@ -53,7 +53,7 @@ class WHSConfirm extends Controller
                         ->groupBy('wo_mstr.wo_number');
                 }else{
                     $data = DB::table('wo_mstr')
-                        ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority')
+                        ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority', DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as total_qty'))
                         ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
                         ->join('wo_dets_sp','wo_dets_sp.wd_sp_wonumber','wo_mstr.wo_number')
                         ->join('release_trans_approval', function ($join) {
@@ -133,7 +133,7 @@ class WHSConfirm extends Controller
 
         $datalocsupply = DB::table('inp_supply')
                         ->where('inp_asset_site', '=', $data->wo_site)
-                        ->where('inp_avail', '=', 'Yes')
+                        // ->where('inp_avail', '=', 'Yes')
                         ->get();
         $datatemp = [];
         $datatemp_required = [];
@@ -242,36 +242,38 @@ class WHSConfirm extends Controller
         });
 
         foreach($req->hidden_spcode as $index => $spcode){
-            $getActualStockSource = (new WSAServices())->wsacekstoksource($spcode,$req->hidden_sitefrom[$index],$req->hidden_locfrom[$index],$req->hidden_lotfrom[$index]);
+            if($req->loclotfrom[$index] != null && $req->locto[$index] != null && $req->qtytotransfer[$index] > 0){
+                $getActualStockSource = (new WSAServices())->wsacekstoksource($spcode,$req->hidden_sitefrom[$index],$req->hidden_locfrom[$index],$req->hidden_lotfrom[$index]);
 
-            if ($getActualStockSource === false) {
-                toast('WSA Connection Failed', 'error')->persistent('Dismiss');
-                return redirect()->back();
-            } else {
-
-                // jika hasil WSA ke QAD tidak ditemukan
-                if ($getActualStockSource[1] == "false") {
-                    toast('Something went wrong with the data', 'error')->persistent('Dismiss');
+                if ($getActualStockSource === false) {
+                    toast('WSA Connection Failed', 'error')->persistent('Dismiss');
                     return redirect()->back();
-                }
+                } else {
+
+                    // jika hasil WSA ke QAD tidak ditemukan
+                    if ($getActualStockSource[1] == "false") {
+                        toast('Something went wrong with the data', 'error')->persistent('Dismiss');
+                        return redirect()->back();
+                    }
 
 
-                // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
-                
-                $resultWSA = $getActualStockSource[0];
- 
-                //kumpulkan hasilnya ke dalam 1 array sebagai penampung list location dan lot from
-                foreach($resultWSA as $thisresult){
-                    DB::table('temp_table')
-                        ->insert([
-                            't_part' => $thisresult->t_part,
-                            't_site' => $thisresult->t_site,
-                            't_loc' => $thisresult->t_loc,
-                            't_lot' => $thisresult->t_lot,
-                            't_qtyoh' => $thisresult->t_qtyoh,
-                        ]);
+                    // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+                    
+                    $resultWSA = $getActualStockSource[0];
+    
+                    //kumpulkan hasilnya ke dalam 1 array sebagai penampung list location dan lot from
+                    foreach($resultWSA as $thisresult){
+                        DB::table('temp_table')
+                            ->insert([
+                                't_part' => $thisresult->t_part,
+                                't_site' => $thisresult->t_site,
+                                't_loc' => $thisresult->t_loc,
+                                't_lot' => $thisresult->t_lot,
+                                't_qtyoh' => $thisresult->t_qtyoh,
+                            ]);
+                    }
+                    
                 }
-                
             }
 
         }
@@ -288,12 +290,14 @@ class WHSConfirm extends Controller
 
             $notEnough = "";
             foreach($req->qtytotransfer as $index => $qtytotransfer){
-                foreach($dataStockQAD as $source){
-                    if($req->hidden_spcode[$index] == $source->t_part && $req->hidden_sitefrom[$index] == $source->t_site && $req->hidden_locfrom[$index] == $source->t_loc && $req->hidden_lotfrom[$index] == $source->t_lot){
-                        if(floatval($req->qtytotransfer[$index]) > floatval($source->t_qtyoh)){
-                            //jika tidak cukup berikan alert
-                            // dump($source->t_qtyoh);
-                            $notEnough .= $req->hidden_spcode[$index] . ", ";
+                if($req->loclotfrom[$index] != null && $req->locto[$index] != null && $qtytotransfer > 0){
+                    foreach($dataStockQAD as $source){
+                        if($req->hidden_spcode[$index] == $source->t_part && $req->hidden_sitefrom[$index] == $source->t_site && $req->hidden_locfrom[$index] == $source->t_loc && $req->hidden_lotfrom[$index] == $source->t_lot){
+                            if(floatval($req->qtytotransfer[$index]) > floatval($source->t_qtyoh)){
+                                //jika tidak cukup berikan alert
+                                // dump($source->t_qtyoh);
+                                $notEnough .= $req->hidden_spcode[$index] . ", ";
+                            }
                         }
                     }
                 }
