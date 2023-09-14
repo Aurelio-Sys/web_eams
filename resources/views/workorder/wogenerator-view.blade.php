@@ -15,13 +15,21 @@
     {{ method_field('post') }}
     {{ csrf_field() }}
     <div class="form-group row">
+        <label for="t_loc" class="col-md-2 col-form-label text-md-left">Location <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+        <div class="col-md-8">
+            <select class="form-control" name="t_loc" id="t_loc" required>
+                <option value="">-- Select Data --</option>
+                @foreach ($dataloc as $dl)
+                    <option value={{$dl->asloc_code}}>{{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+    <div class="form-group row">
         <label for="t_code" class="col-md-2 col-form-label text-md-left">Asset</label>
         <div class="col-md-8">
             <select class="form-control" name="asset" id="asset">
-                <option value="">-- Select Data --</option>
-                @foreach ($dataasset as $da)
-                    <option value={{$da->asset_code}}>{{$da->asset_code}} -- {{$da->asset_desc}}</option>
-                @endforeach
+                <option value="">-- All Asset --</option>
             </select>
         </div>
     </div>
@@ -33,7 +41,7 @@
             <input type="text" class="form-control" value="{{\Carbon\Carbon::now()->toDateString()}}" readonly />
         </div>
         <div class="col-md-1">
-            <label class="col-form-label text-md-right">Date To</label>
+            <label class="col-form-label text-md-right">Date To <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
         </div>
         <div class="col-md-3">
             <input type="text" class="form-control datepicker" name="todate" id="todate" autocomplete="off" required/>
@@ -68,6 +76,24 @@
         width : '100%',
         theme : 'bootstrap4',
      });
+
+    $("#t_loc").select2({
+        width : '100%',
+        theme : 'bootstrap4',
+    });
+
+    /* Fungsi untuk menampilkan asset sesuai dengan lokasi yang dipilih */
+    $(document).on('change', '#t_loc', function() {
+        var loc = $('#t_loc').val();
+
+          $.ajax({
+              url:"/searchassetpm?loc="+loc,
+              success:function(data){
+                  console.log(data);
+                  $('#asset').html('').append(data);
+              }
+          }) 
+    });
 
 </script>
 @endsection

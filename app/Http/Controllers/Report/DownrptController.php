@@ -68,7 +68,7 @@ class DownrptController extends Controller
             ->whereSr_fail_type('BRE')
             ->where('sr_status','<>','Canceled')
             ->groupBy('sr_asset');
-// dd($datamtbfsr->get());
+
         /** Mencari data dari WO yang tidak ada SR nya */
         $datamtbfwo = DB::table('wo_mstr')
             ->selectRaw('wo_asset_code as asset,count(wo_number) as jmltr')
@@ -90,7 +90,7 @@ class DownrptController extends Controller
             ->whereSr_fail_type('BRE')
             ->where('sr_status','<>','Canceled')
             ->wherein('wo_status',['finished','Closed','Acceptance']);
-// dd($datamttfsr->get());
+
         $datamttfwo = DB::table('wo_mstr')
             ->selectRaw('wo_asset_code as asset,wo_start_date as tglawal,wo_job_finishdate as tglakhir')
             ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
@@ -102,7 +102,7 @@ class DownrptController extends Controller
                     ->orWhere('wo_sr_number', '');
             })
             ->wherein('wo_status',['finished','Closed','acceptance']);
-// dd($datamttfwo->get());
+
         /** Perhitungan MDT -> seperti MTTF namun ditambahkan jam nya yang diambil adalah yang setelah approval WO */
         $datamdtsr = DB::table('service_req_mstr')
             ->selectRaw('wo_mstr.id as woid, sr_asset as asset,sr_req_date as tglawal,sr_req_time as jamawal,wo_job_finishdate as tglakhir,wo_job_finishtime as jamakhir')
@@ -110,7 +110,7 @@ class DownrptController extends Controller
             ->leftjoin('asset_mstr','asset_code','=','sr_asset')
             ->whereSr_fail_type('BRE')
             ->wherein('wo_status',['acceptance','Closed']);
-// dd($datamdtsr->get());            
+            
         $datamdtwo = DB::table('wo_mstr')   /** Untuk WO jam awalnya ambil dari jam input, karena tidak ada inputan untuk jam dan tanggalnya */
             ->selectRaw('wo_mstr.id as woid,wo_asset_code as asset,wo_start_date as tglawal,TIME(wo_system_create) as jamawal,wo_job_finishdate as tglakhir,wo_job_finishtime as jamakhir')
             ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
@@ -121,7 +121,7 @@ class DownrptController extends Controller
                     ->orWhere('wo_sr_number', '');
             })
             ->wherein('wo_status',['acceptance','Closed']);
-// dd($datamdtwo->get());
+
         /** Perhitungan MTTR -> seperti MDT namun statusnya dari rreporting WO sampai dengan user acceptance */
         $datamttrsr = DB::table('service_req_mstr')
             ->selectRaw('sr_asset as asset,sr_req_date as tglawal,sr_req_time as jamawal,wo_job_finishdate as tglakhir,wo_job_finishtime as jamakhir')
@@ -207,7 +207,7 @@ class DownrptController extends Controller
         /** Perhitungan MTBF */
         $datamtbfsr = $datamtbfsr->get();
         $datamtbfwo = $datamtbfwo->get();
-// dd($datamtbfsr,$datamtbfwo);
+
         /** Menggabungkan dan menjumlahkan transaksi dari data SR dan WO */
         $datasrwo = [];
         foreach ($datamtbfsr as $sr) {
@@ -240,7 +240,7 @@ class DownrptController extends Controller
 
         // Konversi array asosiatif menjadi indeks numerik jika diperlukan
         $datagabung = array_values($datasrwo);
-// dd($datagabung);
+
         foreach($datagabung as $ds) {
             $dsasset = $ds['asset'];
             $dsjmltr = $ds['jmltr'];
@@ -350,7 +350,7 @@ class DownrptController extends Controller
             ->orderBy('asset')
             ->orderBy('tglawal')
             ->get();
-// dd($datamdt);
+
         $uniqueMdt = $datamdt->pluck('asset')->unique();
 
         $dataappwo = DB::table('wo_trans_approval')->get();
@@ -486,7 +486,7 @@ class DownrptController extends Controller
                     ]);
             }
         }
-// dd('stop');  
+  
         $datatemp = DB::table('temp_wo')
             ->orderBy('temp_asset');
 
@@ -495,9 +495,8 @@ class DownrptController extends Controller
             // $datatemp = $datatemp->where('id','<',0);
             $datatemp = $datatemp->where('id','<',0);
         }
-        // dd($datatemp->get());
+
         $datatemp = $datatemp->paginate(10); 
-        // dd($datatemp->get());
 
         if ($request->dexcel == "excel") {
 

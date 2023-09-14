@@ -12,7 +12,7 @@
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-<form action="/pmconf" method="GET">
+<form action="/pmmssg" method="GET">
 <!-- Bagian Searching -->
 <div class="container-fluid mb-2">
     <div class="row">

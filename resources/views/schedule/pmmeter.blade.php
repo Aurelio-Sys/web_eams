@@ -14,8 +14,19 @@
     <form class="form-group" id="generate_submit" method="post" action="{{route('pmmetergen')}}">
     {{ method_field('post') }}
     {{ csrf_field() }}
+    <div  class="form-group row">
+        <label for="t_loc" class="col-md-2 col-form-label text-md-left">Location <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+        <div class="col-md-8">
+            <select class="form-control" name="t_loc" id="t_loc" required>
+                <option value="">-- Select Data --</option>
+                @foreach ($dataloc as $dl)
+                    <option value={{$dl->asloc_code}}>{{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
     <div class="form-group row">
-        <label for="t_code" class="col-md-1 col-form-label text-md-right">Asset</label>
+        <label for="t_loc" class="col-md-2 col-form-label text-md-left">Asset</label>
         <div class="col-md-6">
             <select class="form-control" name="asset" id="asset">
                 <option value="">-- Select Data --</option>
@@ -69,6 +80,24 @@
         width : '100%',
         theme : 'bootstrap4',
      });
+
+    $("#t_loc").select2({
+        width : '100%',
+        theme : 'bootstrap4',
+    }); 
+
+    /* Fungsi untuk menampilkan asset sesuai dengan lokasi yang dipilih */
+    $(document).on('change', '#t_loc', function() {
+        var loc = $('#t_loc').val();
+
+          $.ajax({
+              url:"/searchassetmeter?loc="+loc,
+              success:function(data){
+                  console.log(data);
+                  $('#asset').html('').append(data);
+              }
+          }) 
+    });
 
 </script>
 @endsection

@@ -572,6 +572,14 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
+                @if(str_contains( Session::get('menu_access'), 'RT14'))
+                <li class="nav-item">
+                  <a href="/renewrpt" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>Asset Renewal Report</p>
+                  </a>
+                </li>
+                @endif
                 {{-- Ditutup karena sama dengan menu Sparepart Planning
                   @if(str_contains( Session::get('menu_access'), 'RT10'))
                 <li class="nav-item">

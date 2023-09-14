@@ -28,8 +28,43 @@ class AllWOGenerate extends Controller
             ->groupBy('pma_asset')
             ->get();
 
+        $dataloc = DB::table('pma_asset')
+            ->leftJoin('asset_mstr','asset_code','pma_asset')
+            ->leftJoin('asset_loc','asloc_code','=','asset_loc')
+            ->select('asloc_code','asloc_desc')
+            ->whereAssetActive('Yes')
+            ->whereIn('pma_mea',['B','C'])
+            ->orderBy('asset_loc')
+            ->groupBy('asset_loc')
+            ->get();
 
-        return view('workorder.wogenerator-view', compact('dataasset'));
+        return view('workorder.wogenerator-view', compact('dataasset','dataloc'));
+    }
+
+    //untuk menampilkan asset sesuai dengan lokasi yang dipilih
+    public function searchassetpm(Request $req)
+    {
+        if ($req->ajax()) {
+            $loc = $req->get('loc');
+      
+            $data = DB::table('pma_asset')
+                ->leftJoin('asset_mstr','asset_code','pma_asset')
+                ->whereAssetActive('Yes')
+                ->whereIn('pma_mea',['B','C'])
+                ->where('asset_loc','=',$loc)
+                ->orderBy('pma_asset')
+                ->groupBy('pma_asset')
+                ->get();
+
+            $output = '<option value="" >Select</option>';
+            foreach($data as $data){
+
+                $output .= '<option value="'.$data->asset_code.'" >'.$data->asset_code.' -- '.$data->asset_desc.'</option>';
+                           
+            }
+
+            return response($output);
+        }
     }
 
 
@@ -46,12 +81,16 @@ class AllWOGenerate extends Controller
         
         // Mencari data dari master PM untuk dihitung tanggal preventive nya
         $datapm = DB::table('pma_asset')
+            ->leftJoin('asset_mstr','asset_code','=','pma_asset')
             ->orderBy('pma_asset')
             ->orderBy('pma_mea')
             ->orderBy('pma_pmcode');
 
         if($req->asset) {
             $datapm = $datapm->where('pma_asset','=',$req->asset);
+        }
+        if($req->t_loc) {
+            $datapm = $datapm->where('asset_loc','=',$req->t_loc);
         }
 
         $datapm = $datapm->get();
@@ -89,7 +128,6 @@ class AllWOGenerate extends Controller
                     if($ceklastmtc < $fromdate) {
                         $lastmtc = $fromdate;
                         $messege = "NF003";
-                    // } elseif(date_create($dp->pma_start) > $fromdate) {
                     } elseif($ceklastmtc > $fromdate) {
                         $lastmtc = $ceklastmtc;
                     } else {
@@ -121,7 +159,7 @@ class AllWOGenerate extends Controller
                     }
                 }
             } // End foreach($datapm as $dp)
-// dd(DB::table('pmt_temp')->get());
+
             // 1111111111111111111111    End Mencari data PM dari data PM Asset Maintenance     1111111111111111111111
 
             // 2222222222222222222222    Mencari data WO yang sudah terbentuk    2222222222222222222222222222222222222
@@ -173,7 +211,7 @@ class AllWOGenerate extends Controller
 
             $datawo = $datawo->get();
             $tempwo = [];
-// dd($datawo);
+
             foreach($datawo as $dw) {
                 array_push($tempwo,$dw->wo_number);
                 DB::table('temp_wo')
@@ -186,7 +224,7 @@ class AllWOGenerate extends Controller
                         'two_status' => $dw->wo_status,
                     ]);
             } // Eng foreach($datawo as $dw)
-// dd(DB::table('temp_wo')->get());
+
             // 2222222222222222222222222222222       End Mencari data WO    222222222222222222222222222222222
 
             // 33333333333333333333333333        Membandingkan Temporary Schedule dan WO yang sudah terbentuk       33333333333333333333333333
@@ -214,7 +252,7 @@ class AllWOGenerate extends Controller
                         ->whereTwoAvail('No')
                         ->orderBy('two_date')
                         ->get();
-// dd($datawo);
+
                     $rsltwo = "";
                     $rsltwodate = "";
 
@@ -225,7 +263,7 @@ class AllWOGenerate extends Controller
                         $rsltwo = $two->two_number;
                         $rsltwodate = $two->two_date;
                         $rsltsource = 'WO';
-// dump($two->two_number, $two->two_asset, $two->two_pmcode,  $tsch->pmt_asset, $tsch->pmt_pmcode);
+
                         switch (true) {
                             case($two->two_status != "firm") :
                                 $mssg = "NF004";
@@ -256,14 +294,14 @@ class AllWOGenerate extends Controller
                                 'pml_wo_number' => $two->two_number,
                                 'pml_wo_date' => $two->two_date,
                                 'pml_message' => $mssg,
+                                'pml_user'  => Session::get('username'),
+                                'pml_dept'  => Session::get('department'),
+                                'created_at'    => Carbon::now()->toDateTimeString(),
                             ]);
 
 
                         // Field avail di update Yes agar tidak dibandingkan lagi pada saat looping berikutnya dari temp-pm
                         DB::table('temp_wo')
-                            // ->whereTwoAsset($tsch->pmt_asset)
-                            // ->whereTwoPmcode($tsch->pmt_pmcode)
-                            // ->whereTwoDate($two->two_date)
                             ->whereId($two->id)
                             ->update([
                                 'two_avail' => 'Yes',
@@ -307,12 +345,15 @@ class AllWOGenerate extends Controller
                                 'pmo_source' => $rsltsource,
                                 'pmo_wonumber' => $rsltwo,
                                 'pmo_wodate' => $rsltwodate,
+                                'pmo_user'  => Session::get('username'),
+                                'pmo_dept'  => Session::get('department'),
+                                'created_at'    => Carbon::now()->toDateTimeString(),
                             ]);
                     }
                 } // END if(date_create($tsch->pmt_sch_date) <= $todate)
 
             } // End    foreach($datasch as $ds)
-// dd('stop');            
+           
             // Menyimpan data WO yang sudah terbentuk namun tidak dibandingan dengan perhitungan PM karena tanggal proses generate PM lebih kecil dari tanggal WO yang terbentuk
             $datawo = DB::table('temp_wo')
                 ->whereTwoAvail('No')
@@ -329,6 +370,9 @@ class AllWOGenerate extends Controller
                         'pmo_wodate' => $dw->two_date,  
                         'pmo_wonumber' => $dw->two_number,
                         'pmo_source' => 'WO',
+                        'pmo_user'  => Session::get('username'),
+                        'pmo_dept'  => Session::get('department'),
+                        'created_at'    => Carbon::now()->toDateTimeString(),
                     ]);
             }
 
@@ -337,8 +381,7 @@ class AllWOGenerate extends Controller
             $viewwo = collect($tempwo);
             $viewsch = collect($tempsch);
             $viewrslt = collect($tempcrsch);
-            // dump($viewsch, $viewwo, $viewrslt);
-// dd('stop');
+
             DB::commit();
             toast('Work Order Generated Success', 'success');
             return back();

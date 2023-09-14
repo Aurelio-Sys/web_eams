@@ -46,7 +46,13 @@ class PmConfirmController extends Controller
             ->orderBy('pmo_pmcode')
             ->orderBy('id')
             ->groupBy('asset_code','pmo_pmcode','pmo_sch_date');
-// dd($data->get());
+
+        /* Jika bukan admin, maka yang muncul adalah data sesuai dapartemen nya */
+        if (Session::get('role') <> 'ADMIN') {
+            $data = $data->where('pmo_dept', '=', session::get('department'));
+        }
+
+        /** Penambahan kondisi search */
         if($s_code) {
             $data = $data->where(function($query) use ($s_code) {
                 $query->where('asset_code','like','%'.$s_code.'%')
@@ -70,7 +76,8 @@ class PmConfirmController extends Controller
         }
         
 
-        $data = $data->paginate(10);
+        // $data = $data->paginate(10);
+        $data = $data->get();
 
         $datalog = DB::table('pml_log')
             ->orderBy('pml_asset')
@@ -266,8 +273,8 @@ class PmConfirmController extends Controller
                             'wo_ins_code'          => $dins,
                             'wo_sp_code'          => $dspg,
                             'wo_qcspec_code'      => $dqcs,
-                            'wo_createdby'          => 'ADMIN',
-                            'wo_department'       => 'ENG',
+                            'wo_createdby'          => session::get('username'),
+                            'wo_department'       => session::get('department'),
                             'wo_system_create'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             'wo_system_update'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(), 
                         );
