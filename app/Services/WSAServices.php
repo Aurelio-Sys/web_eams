@@ -1102,7 +1102,7 @@ class WSAServices
         return [$dataloop, $qdocResult];
     }
 
-}
+
     public function wsaaccount(){
         $wsa = ModelsQxwsa::first();
 
