@@ -572,6 +572,14 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
+                @if(str_contains( Session::get('menu_access'), 'RT14'))
+                <li class="nav-item">
+                  <a href="/renewrpt" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>Asset Renewal Report</p>
+                  </a>
+                </li>
+                @endif
                 {{-- Ditutup karena sama dengan menu Sparepart Planning
                   @if(str_contains( Session::get('menu_access'), 'RT10'))
                 <li class="nav-item">
@@ -1090,48 +1098,41 @@ to get the desired effect
                 </li> <!-- li Approval -->
                 @endif <!-- endif Approval -->
 
-              @if(str_contains( Session::get('menu_access'), 'MTH')) <!-- if access Inventory -->
-              <!-- start li Inventory --> 
-              <li class="nav-item has-treeview">
-                <a href="javascript:void(0)" class="nav-link ">
-                  <i class="nav-icon far fa-circle"></i>
-                  <p>
-                    Inventory
-                    <i class="right fas fa-angle-left"></i>
-                  </p>
-                </a>
-                <ul class="nav nav-treeview">
-                  @if(str_contains( Session::get('menu_access'), 'MTH46'))
-                  <li class="nav-item">
-                    <a href="/invso" class="nav-link ">
-                      <p>Inventory Source</p>
-                    </a>
-                  </li>
-                  @endif
-                  @if(str_contains( Session::get('menu_access'), 'MTH47'))
-                  <li class="nav-item">
-                    <a href="/invsu" class="nav-link ">
-                      <p>Inventory Supply</p>
-                    </a>
-                  </li>
-                  @endif
-                  @if(str_contains( Session::get('menu_access'), 'MTH51'))
-                  <li class="nav-item">
-                    <a href="/accmstr" class="nav-link ">
-                      <p>Account Maintenance</p>
-                    </a>
-                  </li>
-                  @endif
-                  @if(str_contains( Session::get('menu_access'), 'MTH50'))
+                @if(str_contains( Session::get('menu_access'), 'MTH')) <!-- if access Inventory -->
+                <!-- start li Inventory -->
+                <li class="nav-item has-treeview">
+                  <a href="javascript:void(0)" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                    <p>
+                      Inventory
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    @if(str_contains( Session::get('menu_access'), 'MTH46'))
                     <li class="nav-item">
-                      <a href="/costcenter" class="nav-link ">
-                        <p>Cost Center</p>
+                      <a href="/invso" class="nav-link ">
+                        <p>Inventory Source</p>
                       </a>
                     </li>
-                  @endif
-                </ul><!-- ul Inventory -->
-              </li> <!-- li Inventory --> 
-              @endif <!-- endif Inventory -->
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTH47'))
+                    <li class="nav-item">
+                      <a href="/invsu" class="nav-link ">
+                        <p>Inventory Supply</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if (str_contains( Session::get('menu_access'), 'MTH48'))
+                    <li class="nav-item">
+                      <a href="/spstockbrowse" class="nav-link ">
+                        <p>Inventory Check Stock</p>
+                      </a>
+                    </li>
+                    @endif
+                  </ul><!-- ul Inventory -->
+                </li> <!-- li Inventory -->
+                @endif <!-- endif Inventory -->
 
                 {{-- Belum perlu digunakan
                   @if(str_contains( Session::get('menu_access'), 'MT19'))

@@ -27,9 +27,45 @@ class PmMeterController extends Controller
             ->groupBy('pma_asset')
             ->get();
 
+        $dataloc = DB::table('pma_asset')
+            ->leftJoin('asset_mstr','asset_code','pma_asset')
+            ->leftJoin('asset_loc','asloc_code','=','asset_loc')
+            ->select('asloc_code','asloc_desc')
+            ->whereAssetActive('Yes')
+            ->whereIn('pma_mea',['B','M'])
+            ->orderBy('asset_loc')
+            ->groupBy('asset_loc')
+            ->get();
 
-        return view('schedule.pmmeter', compact('dataasset'));
+        return view('schedule.pmmeter', compact('dataasset','dataloc'));
     }
+
+    //untuk menampilkan asset sesuai dengan lokasi yang dipilih
+    public function searchassetmeter(Request $req)
+    {
+        if ($req->ajax()) {
+            $loc = $req->get('loc');
+      
+            $data = DB::table('pma_asset')
+                ->leftJoin('asset_mstr','asset_code','pma_asset')
+                ->whereAssetActive('Yes')
+                ->whereIn('pma_mea',['B','M'])
+                ->where('asset_loc','=',$loc)
+                ->orderBy('pma_asset')
+                ->groupBy('pma_asset')
+                ->get();
+
+            $output = '<option value="" >Select</option>';
+            foreach($data as $data){
+
+                $output .= '<option value="'.$data->asset_code.'" >'.$data->asset_code.' -- '.$data->asset_desc.'</option>';
+                           
+            }
+
+            return response($output);
+        }
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -41,15 +77,24 @@ class PmMeterController extends Controller
         // Mencari data asset yang hasil pengukurannya harus dilakukan preventive
         $results = DB::table('pma_asset')
             ->select('pma_asset', 'pma_pmcode', 'pma_meter', 'pma_meterum', 'pma_lastmea', 'maxmea')
+            ->leftJoin('asset_mstr','asset_code','=','pma_asset')
             ->join(DB::raw('(SELECT us_asset as asset, us_mea_um as um, MAX(us_last_mea) as maxmea FROM us_hist GROUP BY us_asset, us_mea_um) AS tmptable'), function ($join) {
                 $join->on('pma_asset.pma_asset', '=', 'tmptable.asset')
                     ->on('pma_asset.pma_meterum', '=', 'tmptable.um');
             })
             ->whereIn('pma_mea', ['M', 'B'])
             // ->where('pma_asset', 'BGNKG03')
-            ->whereRaw('(pma_meter + pma_lastmea) < maxmea')
-            ->get();
-// dd($results);
+            ->whereRaw('(pma_meter + pma_lastmea) < maxmea');
+
+        if($req->asset) {
+            $results = $results->where('pma_asset','=',$req->asset);
+        }
+        if($req->t_loc) {
+            $results = $results->where('asset_loc','=',$req->t_loc);
+        }
+
+        $results = $results->get();
+
         // Mencari data Work order yang sudah terbentuk
         $datawo = DB::table('wo_mstr')
             ->whereWo_type('PM')
@@ -88,6 +133,9 @@ class PmMeterController extends Controller
                             'pmo_sch_date' => Carbon::now(),  
                             'pmo_source' => 'PM Meter',
                             'pmo_number' => $idtemp->maxid,
+                            'pmo_user'  => Session::get('username'),
+                            'pmo_dept'  => Session::get('department'),
+                            'created_at'    => Carbon::now()->toDateTimeString(),
                         ]);
                 } else {    // Jika data ada di Work order maka akan di simpan di notif message (tabel pml_log)
                     // dd('2');
@@ -100,6 +148,9 @@ class PmMeterController extends Controller
                             'pml_wo_number' => $cekwo->wo_number,
                             'pml_wo_date' => $cekwo->wo_start_date,
                             'pml_message' => 'NF007',
+                            'pml_user'  => Session::get('username'),
+                            'pml_dept'  => Session::get('department'),
+                            'created_at'    => Carbon::now()->toDateTimeString(),
                         ]);
                 }
                 

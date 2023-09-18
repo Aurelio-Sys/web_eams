@@ -28,7 +28,7 @@
                 <div class="col-12 form-group row">
 
                     <!--FORM Search Disini-->
-                    <label for="s_nomorrs" class="col-md-2 col-form-label text-md-right">{{ __('RS Number') }}</label>
+                    <label for="s_nomorrs" class="col-md-2 col-form-label text-md-right">{{ __('RS / WO Number') }}</label>
                     <div class="col-md-3 col-sm-12 mb-2 input-group">
                         <input id="s_nomorrs" type="text" class="form-control" name="s_nomorrs" value="" autofocus autocomplete="off">
                     </div>
@@ -87,6 +87,7 @@
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="10%">Request By<span id="username_icon"></span></th>
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="10%">Due Date<span id="username_icon"></span></th>
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="10%">Status<span id="username_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="10%">Status Approval<span id="username_icon"></span></th>
                 <th width="10%">Action</th>
             </tr>
         </thead>
@@ -141,6 +142,12 @@
                         </thead>
                         <tbody id='v_detailapp'></tbody>
                     </table>
+                    <div class="form-group row col-md-12" id="v_cancel">
+                        <label for="vi_reason" class="col-md-4 col-form-label text-md-left">Cancel Reason</label>
+                        <div class="col-md-6">
+                            <textarea id="vi_reason" name="vi_reason" class="form-control" rows="2" readonly></textarea>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -302,7 +309,7 @@
                                 <th style="width:15%">Timestamp</th>
                             </thead>
                             <tbody id='r_detailapp'></tbody>
-                            
+
                         </table>
                     </div>
                 </div>
@@ -333,11 +340,13 @@
         var reqby = $(this).data('reqby');
         var duedate = $(this).data('duedate');
         var wonumber = $(this).data('wonumber');
+        var reason = $(this).data('reason');
 
         document.getElementById('v_rsnumber').value = rsnumber;
         document.getElementById('v_reqby').value = reqby;
         document.getElementById('v_duedate').value = duedate;
         document.getElementById('v_wonumber').value = wonumber;
+        document.getElementById('vi_reason').value = reason;
 
         $.ajax({
             url: "reqspviewdet?code=" + rsnumber,
@@ -346,6 +355,16 @@
                 $('#v_detailapp').html('').append(data);
             }
         })
+
+        if (reason != '') {
+            document.getElementById('v_cancel').style.visibility = '';
+            document.getElementById('v_cancel').style.width = '100%';
+            document.getElementById('v_cancel').style.height = '100%';
+        } else {
+            document.getElementById('v_cancel').style.visibility = 'hidden';
+            document.getElementById('v_cancel').style.width = 0;
+            document.getElementById('v_cancel').style.height = 0;
+        }
 
     });
 

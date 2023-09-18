@@ -87,15 +87,23 @@
             <form class="form-horizontal" method="post" action="/creatpmasset">
                 {{ csrf_field() }}
                 <div class="modal-body">
-                  <div class="form-group row">
+                 <div class="form-group row">
+                    <label for="t_loc" class="col-md-3 col-form-label text-md-right">Location <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                    <div class="col-md-8">
+                       <select class="form-control " id="t_loc" name="t_loc" required>
+                       <option value="">-- Select Data --</option>
+                       @foreach($dataloc as $dl)
+                       <option value="{{$dl->asloc_code}}">{{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
+                       @endforeach
+                       </select>
+                    </div>
+                 </div>
+                 <div class="form-group row">
                      <label for="t_asset" class="col-md-3 col-form-label text-md-right">Asset <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                      <div class="col-md-8">
-                        <select class="form-control " id="t_asset" name="t_asset" required>
-                        <option value="">-- Select Data --</option>
-                        @foreach($dataasset as $da)
-                        <option value="{{$da->asset_code}}">{{$da->asset_code}} -- {{$da->asset_desc}}</option>
-                        @endforeach
-                        </select>
+                      <select id="t_asset" class="form-control" name="t_asset" required>
+                                
+                      </select>
                      </div>
                  </div>
                  <div class="form-group row">
@@ -112,7 +120,7 @@
                   <div class="form-group row">
                      <label for="t_time" class="col-md-3 col-form-label text-md-right">Lead Time</label>
                      <div class="col-md-3">
-                           <input type="number" class="form-control" id="t_time" name="t_time" autocomplete="off" step="0.01">
+                           <input type="number" class="form-control" id="t_time" name="t_time" autocomplete="off" step="0.01" value="0">
                      </div>
                      <label for="t_time" class="col-md-2 col-form-label text-md-left">Days</label>
                   </div>
@@ -377,10 +385,28 @@
             theme : 'bootstrap4',
          });
 
+         $("#t_loc").select2({
+          width : '100%',
+          theme : 'bootstrap4',
+       });
+
          $("#t_pmcode").select2({
             width : '100%',
             theme : 'bootstrap4',
          });
+
+      /* Fungsi untuk menampilkan asset sesuai dengan lokasi yang dipilih */
+      $(document).on('change', '#t_loc', function() {
+        var loc = $('#t_loc').val();
+
+          $.ajax({
+              url:"/searchasset?loc="+loc,
+              success:function(data){
+                  console.log(data);
+                  $('#t_asset').html('').append(data);
+              }
+          }) 
+      });
 
          function pickeng(){
 

@@ -28,12 +28,12 @@ class PmmssgController extends Controller
             ->orderBy('pml_asset')
             ->orderBy('pml_pmcode');
 
-        // if($s_code) {
-        //     $data = $data->where('asset_code','like','%'.$s_code.'%');
-        // }
-        // if($s_desc) {
-        //     $data = $data->where('pmo_pmcode','like','%'.$s_desc.'%');
-        // }
+        if($s_code) {
+            $data = $data->where('asset_code','like','%'.$s_code.'%');
+        }
+        if($s_desc) {
+            $data = $data->where('pml_pmcode','like','%'.$s_desc.'%');
+        }
 
         $data = $data->paginate(10);
 

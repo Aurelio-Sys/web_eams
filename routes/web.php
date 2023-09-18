@@ -28,6 +28,7 @@ use App\Http\Controllers\Report\RemainSpController;
 use App\Http\Controllers\Report\RptAssetYearController;
 use App\Http\Controllers\Report\DownrptController;
 use App\Http\Controllers\Report\ViewWhyController;
+use App\Http\Controllers\Report\RptRenewController;
 use App\Http\Controllers\SP\KebutuhanSPController;
 use App\Http\Controllers\UserChartController;
 use App\Http\Controllers\WO\AllWOGenerate;
@@ -605,6 +606,7 @@ Route::group(['middleware' => ['auth']], function() {
 	//Generate WO PM
 	Route::get('/viewwogenerator', [AllWOGenerate::class, 'viewWoGenerator'])->name('viewWOGen');
 	Route::post('/wogenerator', [AllWOGenerate::class, 'getAll'])->name('indexWoGenerate');
+	Route::get('/searchassetpm',[AllWOGenerate::class, 'searchassetpm']);
 
 	// List Spare part
 	Route::get('/kebutuhansp', [KebutuhanSPController::class, 'index'])->name('browseKsp');
@@ -664,6 +666,10 @@ Route::group(['middleware' => ['auth']], function() {
 	// Report Schedule Asset Year
 	Route::get('assetyear', [RptAssetYearController::class, 'index']);
 	Route::get('assetyeardetail', [RptAssetYearController::class, 'assetyeardetail']);
+
+	// Report Asset Renewal Year
+	Route::get('renewrpt', [RptRenewController::class, 'index']);
+	Route::get('/excelrenewrpt', [RptRenewController::class, 'excelrenewrpt'])->name('excelrenewrpt');
 
 	// Master UM
 	Route::get('/um', [UMController::class, 'index']);
@@ -734,6 +740,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/pmasset',[PmassetController::class, 'index']);
 	route::get('/cekpmmtc', [PmassetController::class, 'cekpmmtc']);
 	Route::get('/pickeng',[PmassetController::class, 'pickeng']);
+	Route::get('/searchasset',[PmassetController::class, 'searchasset']);
 	Route::post('/creatpmasset',[PmassetController::class, 'store']);
 	Route::post('/editpmasset',[PmassetController::class, 'update']);
 	Route::post('/delpmasset', [PmassetController::class, 'destroy']);
@@ -794,6 +801,7 @@ Route::group(['middleware' => ['auth']], function() {
 	//Request Sparepart
 	Route::get('/reqsp', [SparepartController::class, 'reqspbrowse'])->name('reqspbrowse');
 	Route::get('/reqspcreate', [SparepartController::class, 'reqspcreate'])->name('reqspcreate');
+	Route::get('/reqspwonbr', [SparepartController::class, 'reqspwonbr'])->name('reqspwonbr');
 	Route::post('/reqspsubmit', [SparepartController::class,'reqspsubmit'])->name('reqspsubmit');
 	Route::get('/reqspeditdet',[SparepartController::class, 'reqspeditdet']);
 	Route::get('/reqsproute',[SparepartController::class, 'reqsproute']);
@@ -872,6 +880,7 @@ Route::group(['middleware' => ['auth']], function() {
 	//PM Planning for Meter
 	Route::get('/pmmeter', [PmMeterController::class, 'index'])->name('pmmeter');
 	Route::post('/pmmetergen', [PmMeterController::class, 'pmmetergen'])->name('pmmetergen');
+	Route::get('/searchassetmeter',[PmMeterController::class, 'searchassetmeter']);
 
 	// View 5 Why
 	Route::get('/viewwhy', [ViewWhyController::class, 'index'])->name('viewwhy');

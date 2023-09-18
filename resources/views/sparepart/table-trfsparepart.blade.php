@@ -6,7 +6,7 @@
     <td>{{ date("d-m-Y",strtotime($datas->req_sp_due_date)) }}</td>
     <td>{{ $datas->req_sp_status }}</td>
     <td style="text-align: center;">
-    @if($datas->req_sp_status == 'open')
+    @if($datas->req_sp_status != 'closed')
     <a class="btn btn-info" href="{{route('trfspdet', $datas->req_sp_number)}}"><i class="fa fa-check-circle"></i> Confirm</a>
     @else
     <a class="btn btn-secondary viewtrfsp" style="padding: 0.4em 1.2em;" href="javascript:void(0)"

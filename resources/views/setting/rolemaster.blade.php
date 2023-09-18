@@ -568,6 +568,15 @@
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Renewal Report') }}</label>
+              <div class="col-6">
+                <label class="switch" for="cbRptRenew">
+                  <input type="checkbox" class="custom-control-input" id="cbRptRenew" name="cbRptRenew" value="RT14" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
             {{--  Ditutup karena sama dengan menu Sparepart Planning
               <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Remaining Sparepart') }}</label>
@@ -998,6 +1007,15 @@
               <div class="col-6">
                 <label class="switch" for="invsu">
                   <input type="checkbox" class="custom-control-input" id="invsu" name="invsu" value="MTH47" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Inventory Check Stock') }}</label>
+              <div class="col-6">
+                <label class="switch" for="invstk">
+                  <input type="checkbox" class="custom-control-input" id="invstk" name="invstk" value="MTH48" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -1536,6 +1554,15 @@
                   <div class="slider round"></div>
                 </label>
               </div>
+            </div> 
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset Renewal Report') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_cbRptRenew">
+                  <input type="checkbox" class="custom-control-input" id="e_cbRptRenew" name="e_cbRptRenew" value="RT14" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
             </div>
             {{--  Ditutup karena sama dengan menu Sparepart Planning
               <div class="form-group row">
@@ -1972,6 +1999,15 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Inventory Check Stock') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_invstk">
+                  <input type="checkbox" class="custom-control-input" id="e_invstk" name="e_invstk" value="MTH48" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Account Maintenance') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_accmstr">
@@ -2359,6 +2395,11 @@
         } else {
           document.getElementById('e_invsu').checked = false;
         }
+        if (listmenu.search("MTH48") >= 0) {
+          document.getElementById('e_invstk').checked = true;
+        } else {
+          document.getElementById('e_invstk').checked = false;
+        }
         if (listmenu.search("MTH51") >= 0) {
           document.getElementById('e_accmstr').checked = true;
         } else {
@@ -2609,6 +2650,11 @@
           document.getElementById('e_cbDownReport').checked = true;
         } else {
           document.getElementById('e_cbDownReport').checked = false;
+        }
+        if (listmenu.search("RT14") >= 0) {
+          document.getElementById('e_cbRptRenew').checked = true;
+        } else {
+          document.getElementById('e_cbRptRenew').checked = false;
         }
         {{--  if (listmenu.search("RT10") >= 0) {
           document.getElementById('e_cbRptRemsp').checked = true;

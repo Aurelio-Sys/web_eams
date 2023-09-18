@@ -57,7 +57,11 @@ class PmassetController extends Controller
             ->orderBy('um_code')
             ->get();
 
-        return view('setting.pmasset', compact('data','dataasset','datapm','dataeng','dataum'));
+        $dataloc = DB::table('asset_loc')
+            ->orderBy('asloc_code')
+            ->get();
+
+        return view('setting.pmasset', compact('data','dataasset','datapm','dataeng','dataum','dataloc'));
     }
 
     /**
@@ -99,6 +103,28 @@ class PmassetController extends Controller
             return response()->json($array);
         }
     }
+
+    //untuk menampilkan asset sesuai dengan lokasi yang dipilih
+    public function searchasset(Request $req)
+    {
+        if ($req->ajax()) {
+            $loc = $req->get('loc');
+      
+            $data = DB::table('asset_mstr')
+                    ->where('asset_loc','=',$loc)
+                    ->get();
+
+            $output = '<option value="" >Select</option>';
+            foreach($data as $data){
+
+                $output .= '<option value="'.$data->asset_code.'" >'.$data->asset_code.' -- '.$data->asset_desc.'</option>';
+                           
+            }
+
+            return response($output);
+        }
+    }
+
 
     /**
      * Store a newly created resource in storage.
