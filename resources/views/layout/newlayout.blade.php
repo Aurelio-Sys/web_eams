@@ -1130,6 +1130,20 @@ to get the desired effect
                       </a>
                     </li>
                     @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTH51'))
+                    <li class="nav-item">
+                      <a href="/accmstr" class="nav-link ">
+                        <p>Account Maintenance</p>
+                      </a>
+                    </li>
+                    @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTH50'))
+                      <li class="nav-item">
+                        <a href="/costcenter" class="nav-link ">
+                          <p>Cost Center</p>
+                        </a>
+                      </li>
+                    @endif
                   </ul><!-- ul Inventory -->
                 </li> <!-- li Inventory -->
                 @endif <!-- endif Inventory -->
