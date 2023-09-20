@@ -1484,10 +1484,7 @@ class SparepartController extends Controller
         $womstr = DB::table('wo_dets_sp')
             ->join('wo_mstr', 'wo_mstr.wo_number', 'wo_dets_sp.wd_sp_wonumber')
             ->leftJoin('ret_sparepart_det', 'ret_sparepart_det.ret_spd_wonumber', 'wo_dets_sp.wd_sp_wonumber')
-            ->where('wo_status', '<>', 'closed')
-            ->where('wo_status', '<>', 'finished')
-            ->where('wo_status', '<>', 'acceptance')
-            ->where('wo_status', '<>', 'canceled')
+            ->where('wo_status', '=', 'closed')
             ->when(Session::get('role') <> 'ADMIN', function ($q) {
                 return $q->where('wo_department', Session::get('department'));
             })
