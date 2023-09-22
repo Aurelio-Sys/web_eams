@@ -3395,7 +3395,7 @@ class wocontroller extends Controller
                     $q->orWhere('wotr_status', '=', 'approved');
                     $q->orWhere('wotr_status', '=', 'revision');
                     $q->where('wo_status', '=', 'finished');
-                    $q->orWhere('wo_status', '=', 'started');
+                    // $q->orWhere('wo_status', '=', 'started');
                 });
             $data = $data
                 ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
@@ -3440,7 +3440,7 @@ class wocontroller extends Controller
                 ->join('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
                 ->where(function ($status) {
                     $status->where('wo_status', '=', 'finished'); //status finished --> setelah selesai melakukan wo reporting
-                    $status->orWhere('wo_status', '=', 'started'); //status finished --> setelah selesai melakukan wo reporting
+                    // $status->orWhere('wo_status', '=', 'started'); //status finished --> setelah selesai melakukan wo reporting
                 })
                 ->groupBy('asset_code')
                 ->orderBy('asset_code')

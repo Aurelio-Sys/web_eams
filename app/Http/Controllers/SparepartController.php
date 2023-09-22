@@ -527,6 +527,7 @@ class SparepartController extends Controller
                 $output .= '<td><input type="hidden" name="te_spreq[]" readonly>' . $data->req_spd_sparepart_code . ' -- ' . $data->spm_desc . '</td>';
                 $output .= '</td>';
                 $output .= '<td><input type="hidden" name="te_qtyreq[]" readonly>' . $data->req_spd_qty_request . '</td>';
+                $output .= '<td><input type="hidden" name="te_qtyreq[]" readonly>' . $data->req_spd_qty_transfer . '</td>';
                 $output .= '<td><input type="hidden" name="te_locto[]" readonly>' . $data->req_spd_loc_to . '</td>';
                 $output .= '<td><input type="hidden" name="te_reqnote[]" readonly>' . $data->req_spd_reqnote . '</td>';
                 $output .= '</td>';
@@ -1383,11 +1384,12 @@ class SparepartController extends Controller
                     $output .= '<td><input type="hidden" name="te_qtyreq[]" readonly>' . $data->req_sph_qtyreq . '</td>';
                     // $output .= '<td><input type="hidden" name="te_sitefrom[]" readonly>' . $data->req_spd_site_from . '</td>';
                     $output .= '<td><input type="hidden" name="te_locnlotfrom[]" readonly>' . $data->req_sph_sitefrom . ' & ' . $data->req_sph_locfrom . ' & ' . $data->req_sph_lotfrom . '</td>';
-                    $output .= '<td><input type="hidden" name="te_reqnote[]" readonly>' . $data->req_sph_reqnote . '</td>';
+                    // $output .= '<td><input type="hidden" name="te_reqnote[]" readonly>' . $data->req_sph_reqnote . '</td>';
                     $output .= '<td><input type="hidden" name="te_qtytrf[]" readonly>' . $data->req_sph_qtytrf . '</td>';
                     // $output .= '<td><input type="hidden" name="te_siteto[]" readonly>' . $data->req_spd_site_to . '</td>';
                     $output .= '<td><input type="hidden" name="te_locto[]" readonly>' . $data->req_sph_siteto . ' & ' . $data->req_sph_locto . '</td>';
                     $output .= '<td><input type="hidden" name="te_note[]" readonly>' . $data->req_sph_note . '</td>';
+                    $output .= '<td><input type="hidden" name="te_note[]" readonly>' . $data->req_sph_trfby . '</td>';
                     $output .= '</td>';
                     $output .= '<td><input type="hidden" name="te_note[]" readonly>' . $data->created_at . '</td>';
                     $output .= '</td>';
@@ -1498,6 +1500,30 @@ class SparepartController extends Controller
         return view('sparepart.returnsparepart-detail', compact('data', 'wo_sp', 'sp_all', 'loc_from', 'womstr'));
     }
 
+    //RETURN SPAREPART CREATE (WO NUMBER)
+    public function retspwonbr()
+    {
+        //nomor wo akan di filter berdasarkan departmen user yang login harus sama dengan departmen wo, kecuali admin dapat mengakses semua nomor wo
+        $username = Session::get('username');
+
+        $data = DB::table('wo_dets_sp')
+            ->join('wo_mstr', 'wo_mstr.wo_number', 'wo_dets_sp.wd_sp_wonumber')
+            ->leftJoin('ret_sparepart_det', 'ret_sparepart_det.ret_spd_wonumber', 'wo_dets_sp.wd_sp_wonumber')
+            ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+            ->where('wo_status', '=', 'closed')
+            ->when(Session::get('role') <> 'ADMIN', function ($q) {
+                return $q->where('wo_department', Session::get('department'));
+            })
+            ->whereColumn('wd_sp_required', '>', 'wd_sp_issued') //untuk validasi bahwa qty yg mau dikembalikan sudah pernah di issued namun tidak full issued
+            ->where('wd_already_returned', 0) //untuk validasi bahwa sp pada nomor tersebut belum pernah dikembalikan
+            ->groupBy('wd_sp_wonumber')
+            ->select(DB::raw('wo_number,wo_sr_number,CONCAT(asset_code, " - ", asset_desc) as wo_asset,wo_note'))
+            ->get();
+
+        // dd($womstr);
+        return response()->json($data);
+    }
+
     //RETURN SPAREPART TO VIEW SPAREPART FROM WO
     public function retsplistwo(Request $req)
     {
@@ -1530,7 +1556,7 @@ class SparepartController extends Controller
                 $output .= '</td>';
                 $output .= '<td>';
                 $output .= '<select name="locto[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
-                $output .= '<option value = ""> -- Select Location To -- </option>';
+                $output .= '<option value = ""> -- Select Location From -- </option>';
                 foreach ($loc_from as $loc) {
                     $selected = ($loc->inp_loc === $data->inp_loc) ? 'selected' : '';
                     $output .= '<option data-siteto="' . $loc->inp_supply_site . '" value="' . $loc->inp_loc . '"' . $selected . '>' . $loc->inp_loc . '</option>';
@@ -2405,6 +2431,7 @@ class SparepartController extends Controller
                                     'req_sph_wonumber' => $reqspmstr->req_sp_wonumber ? $reqspmstr->req_sp_wonumber : null,
                                     'req_sph_dept' => $reqspmstr->req_sp_dept,
                                     'req_sph_reqby' => $reqspmstr->req_sp_requested_by,
+                                    'req_sph_trfby' => $user->username,
                                     'req_sph_spcode' => $req->hidden_spcode[$index],
                                     'req_sph_qtyreq' => $reqspdet->req_spd_qty_request,
                                     'req_sph_qtytrf' => $req->qtytotransfer[$index],
@@ -2440,6 +2467,7 @@ class SparepartController extends Controller
                                     'req_sph_wonumber' => $reqspmstr->req_sp_wonumber ? $reqspmstr->req_sp_wonumber : null,
                                     'req_sph_dept' => $reqspmstr->req_sp_dept,
                                     'req_sph_reqby' => $reqspmstr->req_sp_requested_by,
+                                    'req_sph_trfby' => $user->username,
                                     'req_sph_spcode' => $req->hidden_spcode[$index],
                                     'req_sph_qtyreq' => $reqspdet->req_spd_qty_request,
                                     'req_sph_qtytrf' => $req->qtytotransfer[$index],
@@ -2877,30 +2905,83 @@ class SparepartController extends Controller
                             </itemDetail>
                         </item>';
 
-
-                    DB::table('ret_sparepart_det')
-                        ->where('ret_spd_mstr_id', '=', $retspmstr->id)
-                        ->where('ret_spd_sparepart_code', '=', $req->hidden_spcode[$index])
-                        ->update([
-                            'ret_spd_qty_transfer' => $req->qtytotransfer[$index],
-                            'ret_spd_site_to' => $req->hidden_siteto[$index],
-                            'ret_spd_loc_to' => $req->hidden_locto[$index],
-                            'ret_spd_lot_to' => $req->hidden_lotto[$index],
-                            'ret_spd_whsnote' => $req->notes[$index],
-                            'ret_sp_flag' => 1,
-                            'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        ]);
-
                     $user = Auth::user();
 
-                    DB::table('ret_sparepart')
-                        ->where('ret_sp_number', '=', $req->hide_rsnum)
-                        ->update([
-                            'ret_sp_transfered_by' => $user->username,
-                            'ret_sp_transfer_date' => Carbon::now('ASIA/JAKARTA')->format('Y-m-d'),
-                            'ret_sp_status' => 'closed',
-                            'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        ]);
+                    $retspdet = DB::table('ret_sparepart_det')
+                        ->where('ret_spd_mstr_id', '=', $retspmstr->id)
+                        ->where('ret_spd_sparepart_code', '=', $req->hidden_spcode[$index])
+                        ->first();
+
+                    if ($req->qtytotransfer[$index] > 0) {
+                        if ($retspdet->ret_spd_qty_return != $req->qtytotransfer[$index]) {
+                            //jika qty transfer tidak sama dengan qty return maka akan ditambahkan dengan qty yang pernah di transfer (partial)
+                            DB::table('ret_sparepart_det')
+                                ->where('ret_spd_mstr_id', '=', $retspmstr->id)
+                                ->where('ret_spd_sparepart_code', '=', $req->hidden_spcode[$index])
+                                ->update([
+                                    'ret_spd_qty_transfer' => $retspdet->ret_spd_qty_transfer + $req->qtytotransfer[$index],
+                                    'ret_spd_site_to' => $req->hidden_siteto[$index],
+                                    'ret_spd_loc_to' => $req->hidden_locto[$index],
+                                    'ret_spd_lot_to' => $req->hidden_lotto[$index],
+                                    'ret_spd_whsnote' => $req->notes[$index],
+                                    'ret_sp_flag' => 1,
+                                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                ]);
+
+                            DB::table('ret_sparepart_hist')
+                                ->insert([
+                                    'ret_sph_number' =>  $req->hide_rsnum,
+                                    'ret_sph_wonumber' =>  $retspmstr->ret_sp_wonumber,
+                                    'ret_sph_dept' =>  $retspmstr->ret_sp_dept,
+                                    'ret_sph_retby' =>  $retspmstr->ret_sp_return_by,
+                                    'ret_sph_trfby' => $user->username,
+                                    'ret_sph_spcode' => $req->hidden_spcode[$index],
+                                    'ret_sph_qtytrf' => $req->qtytotransfer[$index],
+                                    'ret_sph_siteto' => $req->hidden_siteto[$index],
+                                    'ret_sph_locto' => $req->hidden_locto[$index],
+                                    'ret_sph_lotto' => $req->hidden_lotto[$index],
+                                    'ret_sph_sitefrom' => $req->hidden_sitefrom[$index],
+                                    'ret_sph_locfrom' => $req->hidden_locfrom[$index],
+                                    'ret_sph_whsnote' => $req->notes[$index],
+                                    'ret_sph_action' => 'return sparepart partial transferred',
+                                    'created_at' => Carbon::now('ASIA/JAKARTA'),
+                                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                ]);
+                        } else {
+                            DB::table('ret_sparepart_det')
+                                ->where('ret_spd_mstr_id', '=', $retspmstr->id)
+                                ->where('ret_spd_sparepart_code', '=', $req->hidden_spcode[$index])
+                                ->update([
+                                    'ret_spd_qty_transfer' => $req->qtytotransfer[$index],
+                                    'ret_spd_site_to' => $req->hidden_siteto[$index],
+                                    'ret_spd_loc_to' => $req->hidden_locto[$index],
+                                    'ret_spd_lot_to' => $req->hidden_lotto[$index],
+                                    'ret_spd_whsnote' => $req->notes[$index],
+                                    'ret_sp_flag' => 1,
+                                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                ]);
+
+                            DB::table('ret_sparepart_hist')
+                                ->insert([
+                                    'ret_sph_number' =>  $req->hide_rsnum,
+                                    'ret_sph_wonumber' =>  $retspmstr->ret_sp_wonumber,
+                                    'ret_sph_dept' =>  $retspmstr->ret_sp_dept,
+                                    'ret_sph_retby' =>  $retspmstr->ret_sp_return_by,
+                                    'ret_sph_trfby' => $user->username,
+                                    'ret_sph_spcode' => $req->hidden_spcode[$index],
+                                    'ret_sph_qtytrf' => $req->qtytotransfer[$index],
+                                    'ret_sph_siteto' => $req->hidden_siteto[$index],
+                                    'ret_sph_locto' => $req->hidden_locto[$index],
+                                    'ret_sph_lotto' => $req->hidden_lotto[$index],
+                                    'ret_sph_sitefrom' => $req->hidden_sitefrom[$index],
+                                    'ret_sph_locfrom' => $req->hidden_locfrom[$index],
+                                    'ret_sph_whsnote' => $req->notes[$index],
+                                    'ret_sph_action' => 'return sparepart closed',
+                                    'created_at' => Carbon::now('ASIA/JAKARTA'),
+                                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                ]);
+                        }
+                    }
 
                     DB::table('wo_dets_sp')
                         ->where('wd_sp_wonumber', '=', $retspmstr->ret_sp_wonumber)
@@ -2908,24 +2989,34 @@ class SparepartController extends Controller
                             'wd_already_returned' => 1
                         ]);
 
-                    DB::table('ret_sparepart_hist')
-                        ->insert([
-                            'ret_sph_number' =>  $req->hide_rsnum,
-                            'ret_sph_wonumber' =>  $retspmstr->ret_sp_wonumber,
-                            'ret_sph_dept' =>  $retspmstr->ret_sp_dept,
-                            'ret_sph_retby' =>  $retspmstr->ret_sp_return_by,
-                            'ret_sph_trfby' => $user->username,
-                            'ret_sph_spcode' => $req->hidden_spcode[$index],
-                            'ret_sph_action' => 'sparepart return from warehouse completed',
-                            'ret_sph_qtytrf' => $req->qtytotransfer[$index],
-                            'ret_sph_siteto' => $req->hidden_siteto[$index],
-                            'ret_sph_locto' => $req->hidden_locto[$index],
-                            // 'ret_sph_lotto' => $req->hidden_lotto[$index],
-                            'ret_sph_sitefrom' => $req->hidden_sitefrom[$index],
-                            'ret_sph_locfrom' => $req->hidden_locfrom[$index],
-                            'created_at' => Carbon::now('ASIA/JAKARTA'),
-                            'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        ]);
+                    $sumqtyret = DB::table('ret_sparepart_det')
+                        ->where('ret_spd_mstr_id', '=', $retspmstr->id)
+                        ->sum('ret_spd_qty_return');
+
+                    $sumqtytrf = DB::table('ret_sparepart_det')
+                        ->where('ret_spd_mstr_id', '=', $retspmstr->id)
+                        ->sum('ret_spd_qty_transfer');
+
+
+                    if ($sumqtyret != $sumqtytrf) {
+                        DB::table('ret_sparepart')
+                            ->where('ret_sp_number', '=', $req->hide_rsnum)
+                            ->update([
+                                'ret_sp_transfered_by' => $user->username,
+                                'ret_sp_transfer_date' => Carbon::now('ASIA/JAKARTA')->format('Y-m-d'),
+                                'ret_sp_status' => 'partial transferred',
+                                'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+                    } else {
+                        DB::table('ret_sparepart')
+                            ->where('ret_sp_number', '=', $req->hide_rsnum)
+                            ->update([
+                                'ret_sp_transfered_by' => $user->username,
+                                'ret_sp_transfer_date' => Carbon::now('ASIA/JAKARTA')->format('Y-m-d'),
+                                'ret_sp_status' => 'closed',
+                                'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
+                    }
                 }
             }
 

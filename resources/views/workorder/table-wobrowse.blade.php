@@ -28,7 +28,7 @@
     <a href="javascript:void(0)" class="viewwo" data-toggle="tooltip"  title="View WO" data-wonumber="{{$show->wo_number}}" data-srnumber="{{$show->wo_sr_number}}">
       <i class="icon-table fa fa-eye fa-lg"></i>
     </a>
-    @if ( $show->wo_status !== 'closed' && $show->wo_status !== 'canceled' && $show->retr_status !== 'approved' )
+    @if ( $show->wo_status !== 'closed' && $show->wo_status !== 'finished' && $show->wo_status !== 'acceptance' && $show->wo_status !== 'canceled' && $show->retr_status !== 'approved' )
     <a href="javascript:void(0)" class="editwo2" data-toggle="tooltip"  title="Edit WO"  data-target="#editModal" data-wonumber="{{$show->wo_number}}" data-status="{{$show->wo_status}}" data-wotype="{{$show->wo_type}}">
       <i class="icon-table fa fa-edit fa-lg"></i>
     </a>

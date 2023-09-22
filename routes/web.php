@@ -827,6 +827,7 @@ Route::group(['middleware' => ['auth']], function() {
 	//Return Sparepart
 	Route::get('/retsp', [SparepartController::class, 'retspbrowse'])->name('retspbrowse');
 	Route::get('/retspcreate', [SparepartController::class, 'retspcreate'])->name('retspcreate');
+	Route::get('/retspwonbr', [SparepartController::class, 'retspwonbr'])->name('retspwonbr');
 	Route::get('/retsplistwo', [SparepartController::class, 'retsplistwo'])->name('splistWO');
 	Route::post('/retspsubmit', [SparepartController::class,'retspsubmit'])->name('retspsubmit');
 	Route::get('/retspeditdet',[SparepartController::class, 'retspeditdet']);
