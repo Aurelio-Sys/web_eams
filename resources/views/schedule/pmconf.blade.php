@@ -326,6 +326,20 @@
             }        
         });
 
+        $(document).on('change', '#t_all', function(e) {
+            var isChecked = $(this).prop('checked'); // Mendapatkan status centang checkbox "t_all"
+        
+            // Mengubah status centang semua checkbox "cek"
+            $('.cek').prop('checked', isChecked);
+
+            if(isChecked == true) {
+                $('.tick').val(1);
+            } else {
+                $('.tick').val(0);
+            }
+            
+        });
+        
 
 
         $("#s_loc").select2({

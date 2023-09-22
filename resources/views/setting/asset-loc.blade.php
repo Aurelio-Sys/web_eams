@@ -4,7 +4,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-4">
-            <h1 class="m-0 text-dark">Location Maintenance</h1>
+            <h1 class="m-0 text-dark">Asset Location Maintenance</h1>
         </div>
     </div><!-- /.row -->
     <div class="col-md-12">
@@ -66,7 +66,7 @@
                 </div>
                 <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
                 <div class="col-md-2 col-sm-4 mb-2 input-group">
-                    <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" />
+                    <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
                 </div>
                 <div class="col-md-2 col-sm-4 mb-2 input-group">
                     <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
@@ -106,12 +106,12 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">Location Create</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Asset Location Create</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/createaassetloc">
+            <form class="form-horizontal" method="post" action="/createaassetloc" onsubmit="return validateInput()">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
@@ -154,7 +154,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">Location Modify</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Asset Location Modify</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -197,7 +197,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">Location Delete</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Asset Location Delete</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -298,6 +298,20 @@
             }
         })
     });
+
+    function validateInput() {
+        var t_code = document.getElementById("t_locationid").value;
+  
+        // Regular expression to match only letters and numbers
+        var pattern = /^[a-zsA-Z0-9-_]*$/;
+  
+        if (!pattern.test(t_code)) {
+            alert("The User Code must consist of alphanumeric characters without spaces or special characters.");
+            return false;
+        }
+  
+        return true;
+    }
 </script>
 
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">

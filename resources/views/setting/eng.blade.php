@@ -562,6 +562,12 @@
                 {{--  document.getElementById('divesite').style.display='none';
                 document.getElementById('diveloc').style.display='none';  --}}
             }
+
+            $("#te_dept").select2({
+                width : '100%',
+                theme : 'bootstrap4',
+                
+            });
            
        });
 
@@ -787,6 +793,12 @@
       
             return true;
         }
+
+        $("#t_dept").select2({
+            width : '100%',
+            theme : 'bootstrap4',
+            
+        });
         
     </script>
 

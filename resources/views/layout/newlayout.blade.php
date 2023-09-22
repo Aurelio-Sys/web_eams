@@ -580,6 +580,14 @@ to get the desired effect
                   </a>
                 </li>
                 @endif
+                @if(str_contains( Session::get('menu_access'), 'RT16'))
+                <li class="nav-item">
+                  <a href="/sptrpt" class="nav-link ">
+                    <i class="nav-icon far fa-circle"></i>
+                      <p>Sparepart Report</p>
+                  </a>
+                </li>
+                @endif
                 {{-- Ditutup karena sama dengan menu Sparepart Planning
                   @if(str_contains( Session::get('menu_access'), 'RT10'))
                 <li class="nav-item">

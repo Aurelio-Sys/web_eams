@@ -71,8 +71,10 @@ class AssetLocController extends Controller
      */
     public function store(Request $request)
     {
+        /** Kode lokasi tidak boleh sama. Jika mempunya nama lokasi nya sama tapi beda site, sebaiknya dibedakan saja site nya. 
+         * Karena jika satu lokasi bisa digunakan multi site, maka akan berpengaruh ke banyak transaksi */
         $cekData = DB::table('asset_loc')
-                ->where('asloc_site','=',$request->t_site)
+                // ->where('asloc_site','=',$request->t_site)
                 ->where('asloc_code','=',$request->t_locationid)
                 ->get();
 

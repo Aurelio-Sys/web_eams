@@ -26,6 +26,7 @@ use App\Http\Controllers\Report\RptAssetYearController;
 use App\Http\Controllers\Report\DownrptController;
 use App\Http\Controllers\Report\ViewWhyController;
 use App\Http\Controllers\Report\RptRenewController;
+use App\Http\Controllers\Report\SptRptController;
 use App\Http\Controllers\SP\KebutuhanSPController;
 use App\Http\Controllers\UserChartController;
 use App\Http\Controllers\WO\AllWOGenerate;
@@ -621,6 +622,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// Asset Site
 	Route::get('/assetsite', [AssetSiteController::class, 'index']);
+	route::get('/cekasitecode', [AssetSiteController::class, 'cekasitecode']);
 	Route::post('/createaassetsite', [AssetSiteController::class, 'store']);
 	Route::post('/editassetsite', [AssetSiteController::class, 'edit']);
 	Route::post('/deleteassetsite', [AssetSiteController::class, 'destroy']);
@@ -883,6 +885,9 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// View 5 Why
 	Route::get('/viewwhy', [ViewWhyController::class, 'index'])->name('viewwhy');
+
+	// View 5 Why
+	Route::get('/sptrpt', [SptRptController::class, 'index']);
 	
 });
 

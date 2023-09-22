@@ -252,7 +252,7 @@ class SettingController extends Controller
             $req->cbSRcreate . $req->cbSRapprove . $req->cbSRbrowse . $req->cbSRapprovaleng . $req->cbSRbrowseonly .
             $req->cbUSMT . $req->cbUSmultiMT . $req->cbUSMeter . $req->cbUSGen . $req->pmconf . $req->ksp . $req->cbUSBrowse .
             $req->cbBoas . $req->whyhist . $req->reqsp . $req->trfsp . $req->cbUA . $req->reqspappr . $req->retsp . $req->retspwhs .
-            $req->cbRptDet . $req->cbRptCost . $req->cbAssetReport . $req->cbEngReport . $req->cbDownReport . $req->e_cbRptRenew . $req->cbRptRemsp . 
+            $req->cbRptDet . $req->cbRptCost . $req->cbAssetReport . $req->cbEngReport . $req->cbDownReport . $req->cbRptRenew . $req->sptrpt . $req->cbRptRemsp . 
             $req->cbAssetSchedule . $req->cbRptSchyear . $req->cbEngSchedule . $req->cbRptSpneed . $req->cbBookSchedule .
             $req->viewwhy .
             $req->accutrf . $req->cbRCBrowse;
@@ -320,7 +320,7 @@ class SettingController extends Controller
             $req->e_cbSRcreate . $req->e_cbSRapprove . $req->e_cbSRbrowse . $req->e_cbSRapprovaleng . $req->e_cbSRbrowseonly .
             $req->e_cbUSMT . $req->e_cbUSmultiMT . $req->e_cbUSMeter . $req->e_cbUSGen . $req->e_pmconf . $req->e_ksp . $req->e_cbUSBrowse .
             $req->e_cbBoas . $req->e_whyhist . $req->e_reqsp . $req->e_trfsp . $req->e_cbUA . $req->e_reqspappr . $req->e_retsp . $req->e_retspwhs .
-            $req->e_cbRptDet . $req->e_cbRptCost . $req->e_cbAssetReport . $req->e_cbEngReport . $req->e_cbDownReport .  $req->e_cbRptRenew . $req->e_cbRptRemsp . 
+            $req->e_cbRptDet . $req->e_cbRptCost . $req->e_cbAssetReport . $req->e_cbEngReport . $req->e_cbDownReport .  $req->e_cbRptRenew . $req->e_sptrpt . $req->e_cbRptRemsp . 
             $req->e_cbAssetSchedule . $req->e_cbRptSchyear . $req->e_cbEngSchedule . $req->e_cbRptSpneed . $req->e_cbBookSchedule .
             $req->e_viewwhy .
             $req->e_accutrf . $req->e_cbRCBrowse;
@@ -5459,8 +5459,8 @@ class SettingController extends Controller
             'password.same' => 'Password & Confirm Password Harus sama'
         ]);
 
-        $cekData = DB::table('eng_mstr')
-                    ->where('eng_code','=',$req->t_code)
+        $cekData = DB::table('users')
+                    ->where('username','=',$req->t_code)
                     ->get();
 
         if ($cekData->count() > 0) {
