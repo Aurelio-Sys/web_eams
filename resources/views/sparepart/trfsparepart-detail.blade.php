@@ -104,12 +104,13 @@
                                     <input type="hidden" class="hidden_locto" name="hidden_locto[]" value="{{$spd->req_spd_loc_to}}" />
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
-                                    {{$sumqtytransferred}}
+                                    {{$spd->req_spd_qty_transfer}}
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
                                     <?php
                                     //jumlah qty yg di trf adalah qty request dikurang qty yg pernah di transfer
-                                    $qtytotrf = $spd->req_spd_qty_request - $sumqtytransferred;
+                                    $qtytotrf = $spd->req_spd_qty_request - $spd->req_spd_qty_transfer;
+                                    // dd($spd->req_spd_qty_request);
                                     ?>
                                     <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0" value="{{$qtytotrf}}" max="{{$qtytotrf}}" step="0.01" required />
                                 </td>
@@ -183,6 +184,47 @@
     }
 
     $(document).ready(function() {
+
+        $('#submit').submit(function(event) {
+            // Cek apakah semua qtytotransfer bernilai 0
+            const inputs = $('.qtytotransfer');
+            let allZero = true;
+
+            for (const input of inputs) {
+                if (parseFloat(input.value) > 0) {
+                    allZero = false;
+                    break;
+                }
+            }
+
+            // Jika semua bernilai 0, tampilkan alert dan hentikan submit
+            if (allZero) {
+                event.preventDefault();
+                alert('Please enter a value greater than 0 for at least one Qty to Transfer field.');
+                return;
+            }
+
+            // Tampilkan elemen loading dan sembunyikan tombol lain
+            document.getElementById('btnconf').style.display = 'none';
+            document.getElementById('btnback').style.display = 'none';
+            document.getElementById('btnloading').style.display = '';
+
+        });
+
+        $(document).on('keyup', '.qtytotransfer', function() {
+            var thisrow = $(this);
+            var valueinput = thisrow.val();
+
+            if (valueinput !== '0') {
+                // console.log('add required');
+                thisrow.closest('tr').find('.loclotfrom').attr('required', 'required');
+                thisrow.closest('tr').find('.locto').attr('required', 'required');
+            } else {
+                // console.log('hapus required');
+                thisrow.closest('tr').find('.loclotfrom').removeAttr('required');
+                thisrow.closest('tr').find('.locto').removeAttr('required');
+            }
+        });
 
         // untuk membuat readonly
         $(".readonly").on('keydown paste focus mousedown', function(e) {

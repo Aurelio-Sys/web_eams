@@ -577,6 +577,15 @@
                 </label>
               </div>
             </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Sparepart Report') }}</label>
+              <div class="col-6">
+                <label class="switch" for="sptrpt">
+                  <input type="checkbox" class="custom-control-input" id="sptrpt" name="sptrpt" value="RT16" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
             {{--  Ditutup karena sama dengan menu Sparepart Planning
               <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Remaining Sparepart') }}</label>
@@ -1560,6 +1569,15 @@
               <div class="col-6">
                 <label class="switch" for="e_cbRptRenew">
                   <input type="checkbox" class="custom-control-input" id="e_cbRptRenew" name="e_cbRptRenew" value="RT14" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Sparepart Report') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_sptrpt">
+                  <input type="checkbox" class="custom-control-input" id="e_sptrpt" name="e_sptrpt" value="RT16" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -2655,6 +2673,11 @@
           document.getElementById('e_cbRptRenew').checked = true;
         } else {
           document.getElementById('e_cbRptRenew').checked = false;
+        }
+        if (listmenu.search("RT16") >= 0) {
+          document.getElementById('e_sptrpt').checked = true;
+        } else {
+          document.getElementById('e_sptrpt').checked = false;
         }
         {{--  if (listmenu.search("RT10") >= 0) {
           document.getElementById('e_cbRptRemsp').checked = true;

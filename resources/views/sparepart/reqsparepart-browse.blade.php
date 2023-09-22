@@ -323,6 +323,66 @@
     </div>
 </div>
 
+<!-- transfer Sparepart View History -->
+<div class="modal fade" id="histModal" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center" id="exampleModalLabel">Transfer Sparepart History Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row" style="margin: 0px 0px 0.8em 0px;">
+                    <label for="v_rsnumber" class="col-md-2 col-form-label">RS Number</label>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" id="h_rsnumber" name="h_rsnumber" readonly>
+                    </div>
+                    <label for="v_reqby" class="col-md-2 col-form-label">Requested By</label>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" id="h_reqby" name="h_reqby" readonly>
+                    </div>
+                    <label for="v_duedate" class="col-md-2 col-form-label">Needed Date</label>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" id="h_duedate" name="h_duedate" readonly>
+                    </div>
+                </div>
+                <div class="form-group row" style="margin: 0px 0px 1.5em 0px;">
+                    <label for="v_trfby" class="col-md-2 col-form-label">Transferred By</label>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" id="h_trfby" name="h_trfby" readonly>
+                    </div>
+                    <label for="v_trfdate" class="col-md-2 col-form-label">Transferred Date</label>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" id="h_trfdate" name="h_trfdate" readonly>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <table width="100%" id='asetTable' class='table table-striped table-bordered dataTable no-footer order-list'>
+                        <thead>
+                            <th width="20%">Spare part</th>
+                            <th width="8%">Qty Req</th>
+                            <!-- <th width="8%">Site From</th> -->
+                            <th width="20%">Site & Location & Lot From</th>
+                            <th width="15%">Request SP Note</th>
+                            <th width="8%">Qty Trf</th>
+                            <!-- <th width="8%">Site To</th> -->
+                            <th width="15%">Site & Location To</th>
+                            <th width="15%">Transfer SP Note</th>
+                            <th width="15%">Timestamp</th>
+                        </thead>
+                        <tbody id='h_detailapp'></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 @section('scripts')
 <script>
@@ -426,6 +486,32 @@
             success: function(data) {
                 // console.log(data);
                 $('#r_detailapp').html('').append(data);
+            }
+        })
+
+    });
+
+    $(document).on('click', '.histtrfsp', function() {
+
+        $('#histModal').modal('show');
+
+        var rsnumber = $(this).data('rsnumber');
+        var reqby = $(this).data('reqby');
+        var duedate = $(this).data('duedate');
+        var trfby = $(this).data('trfby');
+        var trfdate = $(this).data('trfdate');
+
+        document.getElementById('h_rsnumber').value = rsnumber;
+        document.getElementById('h_reqby').value = reqby;
+        document.getElementById('h_duedate').value = duedate;
+        document.getElementById('h_trfby').value = trfby;
+        document.getElementById('h_trfdate').value = trfdate;
+
+        $.ajax({
+            url: "trfspviewhist?code=" + rsnumber,
+            success: function(data) {
+                // console.log(data);
+                $('#h_detailapp').html('').append(data);
             }
         })
 

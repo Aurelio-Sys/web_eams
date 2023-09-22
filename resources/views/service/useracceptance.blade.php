@@ -321,7 +321,7 @@ A2110114 : menampilkan data detail SR dan WO sebelum user accept
           <div class="form-group row">
             <label for="sracceptance" class="col-md-2 col-form-label">Acceptance Reason</label>
             <div class="col-md-10">
-              <textarea id="sracceptance" type="text" class="form-control" name="sracceptance" rows="3"></textarea>
+              <textarea id="sracceptance" type="text" class="form-control" name="sracceptance" rows="3" required></textarea>
             </div>
           </div>
           <div class="modal-footer">

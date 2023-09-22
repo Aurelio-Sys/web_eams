@@ -18,14 +18,20 @@
   <form method="post" id="srform" action="/inputsr" style="background-color: white; padding: 2%;" enctype="multipart/form-data">
     {{csrf_field()}}
     <div class="form-group row">
-      <label for="assetcode" class="col-md-2 col-lg-3 col-form-label my-auto">Asset <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+      <label for="assetloc" class="col-md-2 col-lg-3 col-form-label my-auto">Asset Location <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
       <div class="col-md-5 col-sm-12">
-        <select id="assetcode" name="assetcode" class="form-control" required>
-          <option value="">-- Select Asset --</option>
-          @foreach($showasset as $show)
-          <option value="{{$show->asset_code}}" data-assetgroup="{{$show->asset_group}}">{{$show->asset_code.' -- '.$show->asset_desc." -- ".$show->asloc_desc}}</option>
+        <select id="assetloc" name="assetloc" class="form-control" required>
+          <option value="">-- Select Asset Location--</option>
+          @foreach($assetloc as $show)
+          <option value="{{$show->asloc_code}}">{{$show->asloc_code.' -- '.$show->asloc_desc}}</option>
           @endforeach
         </select>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="assetcode" class="col-md-2 col-lg-3 col-form-label my-auto">Asset <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+      <div class="col-md-5 col-sm-12">
+        <select id="assetcode" name="assetcode" class="form-control" required></select>
       </div>
     </div>
     <input type="hidden" id="hide_assetgroup" />
@@ -171,7 +177,8 @@
 
     $("#assetcode").select2({
       width: '100%',
-      allowClear: true
+      allowClear: true,
+      placeholder: 'Select Asset Code',
       // theme : 'bootstrap4',
     });
 
@@ -186,9 +193,10 @@
       theme: 'bootstrap4',
     });
 
-    $("#assetcode").select2({
+    $("#assetloc").select2({
       width: '100%',
-      theme: 'bootstrap4',
+      allowClear: true,
+      placeholder: 'Select Asset Location',
 
     });
     $("#t_app").select2({
@@ -236,6 +244,27 @@
       allowClear: true,
       multiple: true,
     });
+  });
+
+  $("#assetloc").change(function() {
+    var selectedAssetLoc = $("#assetloc").val();
+    // console.log(selectedAssetLoc);
+    $.ajax({
+      url: "/assetbyloc",
+      data: {
+        assetloc: selectedAssetLoc,
+      },
+      success: function(data) {
+        // var type = data.optionfailtype;
+        var code = data.optionassetcode;
+
+        // $('#wotype').html(type);
+        $('#assetcode').html('');
+        $('#assetcode').html(code);
+      }
+    });
+
+
   });
 
   $("#assetcode").change(function() {
