@@ -371,7 +371,7 @@ class DownrptController extends Controller
                 /** Mencari tanggal approvaal terakhir */
                 $qappwo = $dataappwo->where('wotr_mstr_id', '=', $dm->woid);
 
-                $maxUpdated = $dataappwo->max('updated_at');
+                $maxUpdated = $qappwo->max('updated_at');
 
                 // Gabungkan tanggal dan waktu menjadi DateTime
                 $awal = \DateTime::createFromFormat('Y-m-d H:i:s', $dm->tglawal . ' ' . $dm->jamawal);
@@ -382,8 +382,9 @@ class DownrptController extends Controller
 
                 // Hitung selisih waktu dalam menit
                 $selisih_jam = ($selisih->days * 24) + $selisih->h;
+                $selisih_menit = $selisih->i / 60 ;
 
-                $jmlmenit = $jmlmenit + $selisih_jam;
+                $jmlmenit = $jmlmenit + $selisih_jam + $selisih_menit;
             }
             
             $mdt = $jmlmenit / $casset;
@@ -452,8 +453,9 @@ class DownrptController extends Controller
 
                 // Hitung selisih waktu dalam menit
                 $selisih_jam = ($selisih->days * 24) + $selisih->h;
+                $selisih_menit = $selisih->i / 60 ;
 
-                $jmlmenit = $jmlmenit + $selisih_jam;
+                $jmlmenit = $jmlmenit + $selisih_jam + $selisih_menit;
             }
             
             $mttr = $jmlmenit / $casset;

@@ -35,8 +35,8 @@
 </div><!-- /.container-fluid -->
 @endsection
 @section('content')
+<form action="/assetsite" method="GET">
 <!-- Bagian Searching -->
-
 <div class="container-fluid mb-2">
     <div class="row">
       <div class="col-md-12">
@@ -58,7 +58,7 @@
                 </div>
                 <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
                 <div class="col-md-2 col-sm-4 mb-2 input-group">
-                    <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" />
+                    <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
                 </div>
                 <div class="col-md-2 col-sm-4 mb-2 input-group">
                     <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
@@ -69,6 +69,7 @@
         </div>
     </div>
 </div>
+</form>
 <div class="col-md-12">
     <hr>
 </div>
@@ -78,7 +79,7 @@
             <tr>
                 <th width="30%">Code<span id="location_id_icon"></span></th>
                 <th width="60%">Description</th>
-                <!--<th width="10%">Action</th>-->
+                <th width="10%">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -101,7 +102,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-horizontal" method="post" action="/createaassetsite">
+            <form class="form-horizontal" method="post" action="/createaassetsite" onsubmit="return validateInput()">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group row">
@@ -222,66 +223,6 @@
         $('#post_title_icon').html('');
     }
 
-    function fetch_data(page, sort_type, sort_by, code, desc) {
-        $.ajax({
-            url: "sitemaster/pagination?page=" + page + "&sorttype=" + sort_type + "&sortby=" + sort_by + "&code=" + code + "&desc=" + desc,
-            success: function(data) {
-                console.log(data);
-                $('tbody').html('');
-                $('tbody').html(data);
-            }
-        })
-    }
-
-    $(document).on('click', '#btnsearch', function() {
-
-        var code = $('#s_code').val();
-        var desc = $('#s_desc').val();
-        var column_name = $('#hidden_column_name').val();
-        var sort_type = $('#hidden_sort_type').val();
-        var page = 1;
-
-        document.getElementById('tmpcode').value = code;
-        document.getElementById('tmpdesc').value = desc;
-
-        fetch_data(page, sort_type, column_name, code, desc);
-    });
-
-    $(document).on('click', '.sorting', function() {
-        var column_name = $(this).data('column_name');
-        var order_type = $(this).data('sorting_type');
-        var reverse_order = '';
-        if (order_type == 'asc') {
-            $(this).data('sorting_type', 'desc');
-            reverse_order = 'desc';
-            clear_icon();
-            $('#' + column_name + '_icon').html('<span class="glyphicon glyphicon-triangle-bottom"></span>');
-        }
-        if (order_type == 'desc') {
-            $(this).data('sorting_type', 'asc');
-            reverse_order = 'asc';
-            clear_icon();
-            $('#' + column_name + '_icon').html('<span class="glyphicon glyphicon-triangle-top"></span>');
-        }
-        $('#hidden_column_name').val(column_name);
-        $('#hidden_sort_type').val(reverse_order);
-        var page = $('#hidden_page').val();
-        var code = $('#s_code').val();
-        var desc = $('#s_desc').val();
-        fetch_data(page, sort_type, column_name, code, desc);
-    });
-
-
-    $(document).on('click', '.pagination a', function(event) {
-        event.preventDefault();
-        var page = $(this).attr('href').split('page=')[1];
-        $('#hidden_page').val(page);
-        var column_name = $('#hidden_column_name').val();
-        var sort_type = $('#hidden_sort_type').val();
-        var code = $('#s_code').val();
-        var desc = $('#s_desc').val();
-        fetch_data(page, sort_type, column_name, code, desc);
-    });
 
     $(document).on('click', '#btnrefresh', function() {
 
@@ -306,18 +247,16 @@
         var desc = $('#t_sitedesc').val();
 
         $.ajax({
-            url: "/ceksite?code=" + code + "&desc=" + desc,
+            url: "/cekasitecode?code=" + code + "&desc=" + desc,
             success: function(data) {
-
-                if (data == "ada") {
-                    alert("Site Already Regitered!!");
-                    document.getElementById('t_sitecode').value = '';
-                    document.getElementById('t_sitecode').focus();
-                }
-                console.log(data);
-
+              console.log(data);
+              if (data == "ada") {
+                alert("Code is Already Registerd!!");
+                document.getElementById('t_sitecode').value = '';
+                document.getElementById('t_sitecode').focus();
+              }
             }
-        })
+          })
     });
 
     $(document).on('change', '#t_sitedesc', function() {
@@ -326,7 +265,7 @@
         var desc = $('#t_sitedesc').val();
 
         $.ajax({
-            url: "/ceksite?code=" + code + "&desc=" + desc,
+            url: "/cekasitecode?code=" + code + "&desc=" + desc,
             success: function(data) {
 
                 if (data == "ada") {
@@ -339,6 +278,20 @@
             }
         })
     });
+
+    function validateInput() {
+        var t_code = document.getElementById("t_sitecode").value;
+  
+        // Regular expression to match only letters and numbers
+        var pattern = /^[a-zsA-Z0-9-_]*$/;
+  
+        if (!pattern.test(t_code)) {
+            alert("The User Code must consist of alphanumeric characters without spaces or special characters.");
+            return false;
+        }
+  
+        return true;
+    }
 </script>
 
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">

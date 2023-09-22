@@ -15,10 +15,21 @@ class AssetSiteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $req)
     {
-        $data = DB::table('asset_site')
-            ->paginate(10);
+        $s_code = $req->s_code;
+        $s_desc = $req->s_desc;
+        
+        $data = DB::table('asset_site');
+// dd($req->all());
+        if($s_code) {
+            $data = $data->where('assite_code','like','%'.$s_code.'%');
+        }
+        if($s_desc) {
+            $data = $data->where('assite_desc','like','%'.$s_desc.'%');
+        }   
+
+        $data = $data->paginate(10);
 
         return view('setting.asset-site', ['data' => $data]);
     }
@@ -39,6 +50,28 @@ class AssetSiteController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+    // melakukan pengecekan double input pada blade
+    public function cekasitecode(Request $req)
+    {
+
+        $cekCode = DB::table('asset_site')
+            ->where('assite_code','=',$req->code)
+            ->count();
+
+        $cekDesc = DB::table('asset_site')
+            ->where('assite_desc','=',$req->desc)
+            ->count();
+
+        $cek = $cekCode + $cekDesc;
+                
+        if ($cek == 0) {
+            return "tidak";
+        } else {
+            return "ada";
+        }
+    }
+
     public function store(Request $request)
     {
         $this->validate($request, [
@@ -49,7 +82,16 @@ class AssetSiteController extends Controller
             'assite_desc.unique' => 'Site Description is Already Registerd!!'
         ]);
 
-        DB::table('asset_site')
+        $cekCode = DB::table('asset_site')
+            ->where('assite_code','=',$request->site_code)
+            ->get();
+
+        $cekDesc = DB::table('asset_site')
+            ->where('assite_desc','=',$request->site_desc)
+            ->get();
+
+        if ($cekCode->count() == 0 && $cekDesc->count() == 0) {
+            DB::table('asset_site')
             ->insert([
                 'assite_code'     => $request->site_code,
                 'assite_desc'     => $request->site_desc,
@@ -58,8 +100,16 @@ class AssetSiteController extends Controller
                 'edited_by'     => Session::get('username'),
             ]);
 
-        toast('Asset Site Created.', 'success');
-        return back();
+            toast('Asset Site Created.', 'success');
+            return back();
+        } elseif($cekCode->count() > 0) {
+            toast('Site Code is Already Registerd!!', 'error');
+            return back();
+        } else {
+            toast('Site Desc is Already Registerd!!', 'error');
+            return back();
+        }
+        
     }
 
     /**
