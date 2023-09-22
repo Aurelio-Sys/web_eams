@@ -137,6 +137,7 @@
                         <thead>
                             <th width="30%">Spare part</th>
                             <th width="15%">Qty Request</th>
+                            <th width="15%">Qty Transfer</th>
                             <th width="20%">Location To</th>
                             <th width="20%">Note</th>
                         </thead>
@@ -202,6 +203,7 @@
                             <thead>
                                 <th width="30%">Spare part</th>
                                 <th width="15%">Qty Request</th>
+                                <th width="15%">Qty Transfer</th>
                                 <th width="20%">Location To</th>
                                 <th width="20%">Note</th>
                                 <!-- <th width="10%">Delete</th> -->

@@ -160,7 +160,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="form-group row" style="margin: 0px 0px 0.8em 0px;">
+                <div class="form-group row" style="margin: 0px 0px 1.5em 0px;">
                     <label for="v_rsnumber" class="col-md-2 col-form-label">RS Number</label>
                     <div class="col-md-2">
                         <input type="text" class="form-control" id="h_rsnumber" name="h_rsnumber" readonly>
@@ -174,7 +174,7 @@
                         <input type="text" class="form-control" id="h_duedate" name="h_duedate" readonly>
                     </div>
                 </div>
-                <div class="form-group row" style="margin: 0px 0px 1.5em 0px;">
+                <div class="form-group row" style="margin: 0px 0px 1.5em 0px;display:none">
                     <label for="v_trfby" class="col-md-2 col-form-label">Transferred By</label>
                     <div class="col-md-2">
                         <input type="text" class="form-control" id="h_trfby" name="h_trfby" readonly>
@@ -191,11 +191,12 @@
                             <th width="8%">Qty Req</th>
                             <!-- <th width="8%">Site From</th> -->
                             <th width="20%">Site & Location & Lot From</th>
-                            <th width="15%">Request SP Note</th>
+                            <!-- <th width="15%">Request SP Note</th> -->
                             <th width="8%">Qty Trf</th>
                             <!-- <th width="8%">Site To</th> -->
                             <th width="15%">Site & Location To</th>
                             <th width="15%">Transfer SP Note</th>
+                            <th width="15%">Transferred By</th>
                             <th width="15%">Timestamp</th>
                         </thead>
                         <tbody id='h_detailapp'></tbody>
