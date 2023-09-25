@@ -823,10 +823,12 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/gettrfspwsastockfrom', [SparepartController::class, 'gettrfspwsastockfrom']);
 	Route::get('/trfspviewdet', [SparepartController::class, 'trfspviewdet']);
 	Route::get('/trfspviewhist', [SparepartController::class, 'trfspviewhist']);
-
+	
 	//Return Sparepart
 	Route::get('/retsp', [SparepartController::class, 'retspbrowse'])->name('retspbrowse');
 	Route::get('/retspcreate', [SparepartController::class, 'retspcreate'])->name('retspcreate');
+	Route::get('/retspwonbr', [SparepartController::class, 'retspwonbr'])->name('retspwonbr');
+	Route::get('/retspviewhist', [SparepartController::class, 'retspviewhist']);
 	Route::get('/retsplistwo', [SparepartController::class, 'retsplistwo'])->name('splistWO');
 	Route::post('/retspsubmit', [SparepartController::class,'retspsubmit'])->name('retspsubmit');
 	Route::get('/retspeditdet',[SparepartController::class, 'retspeditdet']);

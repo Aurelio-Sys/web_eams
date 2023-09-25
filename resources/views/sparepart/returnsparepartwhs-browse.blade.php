@@ -157,67 +157,155 @@
             </div>
         </div>
     </div>
-    @endsection
-    @section('scripts')
-    <script>
-        $(document).on('click', '.viewtrfsp', function() {
+</div>
 
-            $('#viewModal').modal('show');
+<!-- transfer Sparepart View History -->
+<div class="modal fade" id="histModal" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center" id="exampleModalLabel">Transfer Sparepart History Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row" style="margin: 0px 0px 1.5em 0px;">
+                    <label for="v_rsnumber" class="col-md-2 col-form-label">RT Number</label>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" id="h_rsnumber" name="h_rsnumber" readonly>
+                    </div>
+                    <label for="v_reqby" class="col-md-2 col-form-label">Requested By</label>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" id="h_reqby" name="h_reqby" readonly>
+                    </div>
+                    <label for="v_duedate" class="col-md-2 col-form-label" style="display: none;">Needed Date</label>
+                    <div class="col-md-2" style="display: none;">
+                        <input type="text" class="form-control" id="h_duedate" name="h_duedate" readonly>
+                    </div>
+                </div>
+                <div class="form-group row" style="margin: 0px 0px 1.5em 0px;display:none">
+                    <label for="v_trfby" class="col-md-2 col-form-label">Transferred By</label>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" id="h_trfby" name="h_trfby" readonly>
+                    </div>
+                    <label for="v_trfdate" class="col-md-2 col-form-label">Transferred Date</label>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" id="h_trfdate" name="h_trfdate" readonly>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <table width="100%" id='asetTable' class='table table-striped table-bordered dataTable no-footer order-list'>
+                        <thead>
+                            <th width="20%">Spare part</th>
+                            <th width="8%">Qty Req</th>
+                            <!-- <th width="8%">Site From</th> -->
+                            <th width="15%">Site & Location</th>
+                            <!-- <th width="15%">Request SP Note</th> -->
+                            <th width="8%">Qty Trf</th>
+                            <!-- <th width="8%">Site To</th> -->
+                            <th width="20%">Site & Location & Lot From</th>
+                            <th width="15%">Transfer SP Note</th>
+                            <th width="15%">Transferred By</th>
+                            <th width="15%">Timestamp</th>
+                        </thead>
+                        <tbody id='h_detailapp'></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info bt-action" id="btnclose" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+@section('scripts')
+<script>
+    $(document).on('click', '.viewtrfsp', function() {
 
-            var rsnumber = $(this).data('rsnumber');
-            var wonumber = $(this).data('wonumber');
-            var retby = $(this).data('retby');
-            var duedate = $(this).data('duedate');
-            var trfby = $(this).data('trfby');
-            var trfdate = $(this).data('trfdate');
-            var cancelnote = $(this).data('cancelnote');
+        $('#viewModal').modal('show');
 
-            document.getElementById('v_rsnumber').value = rsnumber;
-            document.getElementById('v_wonumber').value = wonumber;
-            document.getElementById('v_retby').value = retby;
-            document.getElementById('v_retdate').value = duedate;
-            document.getElementById('v_trfby').value = trfby;
-            document.getElementById('v_trfdate').value = trfdate;
-            document.getElementById('v_reason').value = cancelnote;
+        var rsnumber = $(this).data('rsnumber');
+        var wonumber = $(this).data('wonumber');
+        var retby = $(this).data('retby');
+        var duedate = $(this).data('duedate');
+        var trfby = $(this).data('trfby');
+        var trfdate = $(this).data('trfdate');
+        var cancelnote = $(this).data('cancelnote');
 
-            $.ajax({
-                url: "retspwhsviewdet?code=" + rsnumber,
-                success: function(data) {
-                    // console.log(data);
-                    $('#v_detailapp').html('').append(data);
-                }
-            })
+        document.getElementById('v_rsnumber').value = rsnumber;
+        document.getElementById('v_wonumber').value = wonumber;
+        document.getElementById('v_retby').value = retby;
+        document.getElementById('v_retdate').value = duedate;
+        document.getElementById('v_trfby').value = trfby;
+        document.getElementById('v_trfdate').value = trfdate;
+        document.getElementById('v_reason').value = cancelnote;
 
-            if (cancelnote != '') {
-                document.getElementById('v_cancelnote').style.display = '';
-            } else {
-                document.getElementById('v_cancelnote').style.display = 'none';
-
+        $.ajax({
+            url: "retspwhsviewdet?code=" + rsnumber,
+            success: function(data) {
+                // console.log(data);
+                $('#v_detailapp').html('').append(data);
             }
+        })
 
-        });
+        if (cancelnote != '') {
+            document.getElementById('v_cancelnote').style.display = '';
+        } else {
+            document.getElementById('v_cancelnote').style.display = 'none';
 
-        function resetSearch() {
-            $('#s_nomorwo').val('');
-            $('#s_asset').val('');
-            $('#s_priority').val('');
         }
 
-        $(document).ready(function() {
-            var cur_url = window.location.href;
+    });
 
-            let paramString = cur_url.split('?')[1];
-            let queryString = new URLSearchParams(paramString);
+    $(document).on('click', '.histtrfsp', function() {
 
-            let asset = queryString.get('s_asset');
-            let priority = queryString.get('s_priority');
+        $('#histModal').modal('show');
 
-            $('#s_asset').val(asset).trigger('change');
-            $('#s_priority').val(priority).trigger('change');
-        });
+        var rsnumber = $(this).data('rsnumber');
+        var reqby = $(this).data('reqby');
+        var duedate = $(this).data('duedate');
+        var trfby = $(this).data('trfby');
+        var trfdate = $(this).data('trfdate');
 
-        $(document).on('click', '#btnrefresh', function() {
-            resetSearch();
-        });
-    </script>
-    @endsection
+        document.getElementById('h_rsnumber').value = rsnumber;
+        document.getElementById('h_reqby').value = reqby;
+        document.getElementById('h_duedate').value = duedate;
+        document.getElementById('h_trfby').value = trfby;
+        document.getElementById('h_trfdate').value = trfdate;
+
+        $.ajax({
+            url: "retspviewhist?code=" + rsnumber,
+            success: function(data) {
+                // console.log(data);
+                $('#h_detailapp').html('').append(data);
+            }
+        })
+
+    });
+
+    function resetSearch() {
+        $('#s_nomorwo').val('');
+        $('#s_asset').val('');
+        $('#s_priority').val('');
+    }
+
+    $(document).ready(function() {
+        var cur_url = window.location.href;
+
+        let paramString = cur_url.split('?')[1];
+        let queryString = new URLSearchParams(paramString);
+
+        let asset = queryString.get('s_asset');
+        let priority = queryString.get('s_priority');
+
+        $('#s_asset').val(asset).trigger('change');
+        $('#s_priority').val(priority).trigger('change');
+    });
+
+    $(document).on('click', '#btnrefresh', function() {
+        resetSearch();
+    });
+</script>
+@endsection
