@@ -4764,6 +4764,8 @@ class wocontroller extends Controller
                                 'lotser_wohist_report' => $record['lot_from'],
                                 'qtychange_wohist_report' => $record['qty_potong'],
                                 'userid_wohist_report' => Session::get('username'),
+                                'gl_acc_wohist_report' => $record['gl_account'],
+                                'cost_center_wohist_report' => $record['cost_center'],
                             ]);
                     }
 
@@ -4974,6 +4976,8 @@ class wocontroller extends Controller
                                     'lotser_wohist_report' => $record['lot_from'],
                                     'qtychange_wohist_report' => $record['qty_potong'],
                                     'userid_wohist_report' => Session::get('username'),
+                                    'gl_acc_wohist_report' => $record['gl_account'],
+                                    'cost_center_wohist_report' => $record['cost_center'],
                                 ]);
                     }
 
