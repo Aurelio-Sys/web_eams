@@ -103,10 +103,15 @@
                                     <input type="hidden" class="hidden_lotto" name="hidden_lotto[]" value="" />
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
-                                    <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0.01" value="{{$spd->ret_spd_qty_return}}" step="0.01" max="{{$spd->ret_spd_qty_return}}" readonly />
+                                    <?php
+                                    //jumlah qty yg di trf adalah qty request dikurang qty yg pernah di transfer
+                                    $qtytotrf = $spd->ret_spd_qty_return - $spd->ret_spd_qty_transfer;
+                                    // dd($spd->req_spd_qty_request);
+                                    ?>
+                                    <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0" value="{{$qtytotrf}}" step="0.01" max="{{$qtytotrf}}" />
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
-                                    <textarea type="text" id="notes" class="form-control notes" name="notes[]" rows="2" ></textarea>
+                                    <textarea type="text" id="notes" class="form-control notes" name="notes[]" rows="2"></textarea>
                                 </td>
                             </tr>
                             @empty
