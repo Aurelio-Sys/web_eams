@@ -652,6 +652,13 @@ to get the desired effect
                     </p>
                   </a>
                   <ul class="nav nav-treeview">
+                    @if(str_contains( Session::get('menu_access'), 'RT17'))
+                    <li class="nav-item">
+                      <a href="/viewasset" class="nav-link ">
+                        <p>Asset View</p>
+                      </a>
+                    </li>
+                    @endif
                     @if(str_contains( Session::get('menu_access'), 'RT13'))
                     <li class="nav-item">
                       <a href="/viewwhy" class="nav-link ">

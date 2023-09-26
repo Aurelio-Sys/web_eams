@@ -4711,6 +4711,18 @@ class wocontroller extends Controller
                                 <lotserial>' . $record['lot_from'] . '</lotserial>
                                 <ordernbr>' . $req->c_wonbr . '</ordernbr>
                             </inventoryIssue>';
+
+                        DB::table('wo_reporting_trans_hist')
+                            ->insert([
+                                'spcode_wohist_report' => $record['sparepart_code'],
+                                'wonumber_wohist_report' => $req->c_wonbr,
+                                'trans_type' => 'ISS-UNP',
+                                'site_wohist_report' => $record['site_from'],
+                                'location_wohist_report' => $record['loc_from'],
+                                'lotser_wohist_report' => $record['lot_from'],
+                                'qtychange_wohist_report' => $record['qty_potong'],
+                                'userid_wohist_report' => Session::get('username'),
+                            ]);
                     }
 
                     $qdocfooter =   '</dsInventoryIssue>
@@ -4908,6 +4920,18 @@ class wocontroller extends Controller
                                 <lotserial>' . $record['lot_from'] . '</lotserial>
                                 <ordernbr>' . $req->c_wonbr . '</ordernbr>
                             </inventoryReceipt>';
+
+                            DB::table('wo_reporting_trans_hist')
+                                ->insert([
+                                    'spcode_wohist_report' => $record['sparepart_code'],
+                                    'wonumber_wohist_report' => $req->c_wonbr,
+                                    'trans_type' => 'RCT-UNP',
+                                    'site_wohist_report' => $record['site_from'],
+                                    'location_wohist_report' => $record['loc_from'],
+                                    'lotser_wohist_report' => $record['lot_from'],
+                                    'qtychange_wohist_report' => $record['qty_potong'],
+                                    'userid_wohist_report' => Session::get('username'),
+                                ]);
                     }
 
                     $qdocfooter =   '</dsInventoryReceipt>
