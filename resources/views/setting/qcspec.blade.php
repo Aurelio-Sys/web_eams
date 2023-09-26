@@ -103,8 +103,8 @@
                               <th width="15%">Operator</th>
                               <th width="15%">Value 1</th>
                               <th width="15%">Value 2</th>
-                              <th width="5%">Um</th>
-                              <th width="10%">Delete</th>
+                              <th width="10%">Um</th>
+                              <th width="5%">Delete</th>
                             </tr>
                           </thead>
                           <tbody id='detailapp'>
@@ -164,8 +164,8 @@
                         <th width="15%">Operator</th>
                         <th width="15%">Value 1</th>
                         <th width="15%">Value 2</th>
-                        <th width="5%">Um</th>
-                        <th>Delete</th>
+                        <th width="10%">Um</th>
+                        <th width="5%">Delete</th>
                     </thead>
                     <tbody id='ed_detailapp'></tbody>
                     <tfoot>

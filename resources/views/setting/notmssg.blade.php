@@ -45,10 +45,14 @@
 
       </tbody>
     </table>
-    <div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
+      <button type="submit" class="btn btn-success bt-action" id="btnconf">Save</button>
+    </div>
+    {{--  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
       <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
       <button type="submit" class="btn btn-success bt-action" id="btnedit">Save</button>
-    </div>
+    </div>  --}}
 </div>
 </form>
 @endsection
