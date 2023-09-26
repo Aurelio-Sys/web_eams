@@ -642,6 +642,15 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset View') }}</label>
+              <div class="col-6">
+                <label class="switch" for="viewasset">
+                  <input type="checkbox" class="custom-control-input" id="viewasset" name="viewasset" value="RT17" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('5 Why View') }}</label>
               <div class="col-6">
                 <label class="switch" for="viewwhy">
@@ -1615,6 +1624,15 @@
               <div class="col-6">
                 <label class="switch" for="e_cbBookSchedule">
                   <input type="checkbox" class="custom-control-input" id="e_cbBookSchedule" name="e_cbBookSchedule" value="RT02" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Asset View') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_viewasset">
+                  <input type="checkbox" class="custom-control-input" id="e_viewasset" name="e_viewasset" value="RT17" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -2668,6 +2686,11 @@
           document.getElementById('e_viewwhy').checked = true;
         } else {
           document.getElementById('e_viewwhy').checked = false;
+        }
+        if (listmenu.search("RT17") >= 0) {
+          document.getElementById('e_viewasset').checked = true;
+        } else {
+          document.getElementById('e_viewasset').checked = false;
         }
 
         //Routine Check Main

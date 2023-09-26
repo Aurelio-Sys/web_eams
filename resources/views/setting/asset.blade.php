@@ -50,14 +50,24 @@
                         <input id="s_group" type="text" class="form-control" name="s_group"
                         value="{{$s_group}}" autofocus autocomplete="off"/>
                     </div>
-                    <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
+                    <label for="s_per1" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
+                    <div class="col-md-2 col-sm-12 mb-2 input-group">
+                        <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
+                    </div>
+                    <div class="col-md-1 col-sm-6 mb-1 input-group justify-content-md-center">
+                        <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'/><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                    <div class="col-md-2 col-sm-12 mb-2 input-group">
+                        <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="Export to Excel" style="float:right" />
+                    </div>
+                    {{--  <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
                     <div class="col-md-8 col-sm-8 mb-8 input-group">
                         <button class="btn btn-block btn-primary  col-md-3" id="btnsearch" style="float:right"/>Search</button>
                         &nbsp;&nbsp;&nbsp;
                         <button class="btn btn-block btn-primary  col-md-1" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
                         &nbsp;&nbsp;&nbsp;
                         <input type="button" class="btn btn-block btn-primary  col-md-3" id="btnexcel" value="Export to Excel" style="float:right" />
-                    </div>
+                    </div>  --}}
                 </div>
             </div>
         </div>

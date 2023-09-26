@@ -254,7 +254,7 @@ class SettingController extends Controller
             $req->cbBoas . $req->whyhist . $req->reqsp . $req->trfsp . $req->cbUA . $req->reqspappr . $req->retsp . $req->retspwhs .
             $req->cbRptDet . $req->cbRptCost . $req->cbAssetReport . $req->cbEngReport . $req->cbDownReport . $req->cbRptRenew . $req->sptrpt . $req->cbRptRemsp . 
             $req->cbAssetSchedule . $req->cbRptSchyear . $req->cbEngSchedule . $req->cbRptSpneed . $req->cbBookSchedule .
-            $req->viewwhy .
+            $req->viewasset . $req->viewwhy .
             $req->accutrf . $req->cbRCBrowse;
         
 
@@ -322,7 +322,7 @@ class SettingController extends Controller
             $req->e_cbBoas . $req->e_whyhist . $req->e_reqsp . $req->e_trfsp . $req->e_cbUA . $req->e_reqspappr . $req->e_retsp . $req->e_retspwhs .
             $req->e_cbRptDet . $req->e_cbRptCost . $req->e_cbAssetReport . $req->e_cbEngReport . $req->e_cbDownReport .  $req->e_cbRptRenew . $req->e_sptrpt . $req->e_cbRptRemsp . 
             $req->e_cbAssetSchedule . $req->e_cbRptSchyear . $req->e_cbEngSchedule . $req->e_cbRptSpneed . $req->e_cbBookSchedule .
-            $req->e_viewwhy .
+            $req->e_viewasset . $req->e_viewwhy .
             $req->e_accutrf . $req->e_cbRCBrowse;
         
 
@@ -1764,7 +1764,7 @@ class SettingController extends Controller
             $data = DB::table('asset_mstr')
                 ->selectRaw('asset_type.*, asset_group.*, asset_loc.*, asset_mstr.id as asset_id, asset_code, asset_desc, asset_site, asset_loc, asset_um, asset_sn, 
                 asset_supp, asset_prcdate, asset_prcprice, asset_type, asset_group, asset_accounting, asset_note, asset_active, asset_image, 
-                asset_imagepath, asset_upload, asset_editedby, asset_renew')
+                asset_imagepath, asset_upload, asset_editedby, asset_renew, asloc_desc, astype_desc, asgroup_desc')
                 ->leftjoin('asset_type','asset_mstr.asset_type','asset_type.astype_code')
                 ->leftjoin('asset_group','asset_mstr.asset_group','asset_group.asgroup_code')
                 ->leftJoin('asset_loc','asloc_code','=','asset_loc')
@@ -1850,20 +1850,20 @@ class SettingController extends Controller
             });
 
             /* ini ditutup dulu, nanti dibuka lagi */
-            // $domain = ModelsQxwsa::first();
-            // $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
+            $domain = ModelsQxwsa::first();
+            $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
 
-            // if ($datawsa === false) {
-            //     toast('WSA Failed', 'error')->persistent('Dismiss');
-            //     return redirect()->back();
-            // } else {
-            //     foreach ($datawsa[0] as $datas) {
-            //         DB::table('temp_asset')->insert([
-            //             'temp_code' => $datas->t_code,
-            //             'temp_desc' => $datas->t_desc,
-            //         ]);
-            //     }
-            // } 
+            if ($datawsa === false) {
+                toast('WSA Failed', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+                foreach ($datawsa[0] as $datas) {
+                    DB::table('temp_asset')->insert([
+                        'temp_code' => $datas->t_code,
+                        'temp_desc' => $datas->t_desc,
+                    ]);
+                }
+            } 
 
             $dataassetqad = DB::table('temp_asset')
                 ->orderBy('temp_code')

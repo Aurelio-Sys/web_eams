@@ -140,6 +140,7 @@ class QCSpecController extends Controller
     public function editdetqcs(Request $req)
     {
         if ($req->ajax()) {
+            /* Ini ditutup dulu, ngga tau kenapa dulu bikinnya begini
             $data = DB::table('qcs_list')
                 ->whereRaw("TRIM(qcs_code) = ?", $req->code)
                 ->where( function ($query) {
@@ -148,11 +149,16 @@ class QCSpecController extends Controller
                 }                )
                 ->orderBy('qcs_spec')
                 ->get();
-// dd($data);
+            */
+
+            $data = DB::table('qcs_list')
+                ->whereQcs_code($req->code)
+                ->get();
+
             $dataopt = DB::table('opt_mstr')
                 ->orderBy('id')
                 ->get();
-
+// dd($data);
             $output = '';
             foreach ($data as $data) {
                 $output .= '<tr>'.
@@ -162,7 +168,7 @@ class QCSpecController extends Controller
                             '<td><select class="form-control te_op" name="te_op[]" required>';
                 
                 foreach($dataopt as $do) {
-                    $selected = ($do->id === $data->qcs_op) ? "selected" : "";
+                    $selected = ($do->id == $data->qcs_op) ? "selected" : "";
                     $output .= '<option value="'.$do->id.'" '.$selected.'>'.$do->opt_desc.'</option>';
                 }
 
