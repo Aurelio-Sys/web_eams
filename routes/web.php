@@ -863,6 +863,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/myroutine', [RoutineCheckController::class, 'myroutinebrowse'])->name('myroutine');
 	Route::get('/myroutine/detail/{id}', [RoutineCheckController::class, 'routincheckdetail'])->name('myrcdetail');
 	Route::post('/myroutinesubmit', [RoutineCheckController::class, 'routinesubmit'])->name('routinesubmit');
+	Route::get('/myroutinecheck/toexcel', [RoutineCheckController::class, 'rctoexcel'])->name('routineCheckExcel');
 
 	//Training Module
 	Route::get('/traininghome', [TrainingController::class, 'traininghome']);

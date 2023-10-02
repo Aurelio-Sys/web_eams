@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Routine;
 
+use App\Exports\routineCheckExport;
 use App\Http\Controllers\Controller;
 use App\Jobs\SendAlertRoutineCheck;
 use Carbon\Carbon;
@@ -9,6 +10,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RoutineCheckController extends Controller
 {
@@ -45,9 +47,13 @@ class RoutineCheckController extends Controller
             ->get();
         }
 
+        $getAsset = DB::table('asset_mstr')
+                        ->where('asset_active','=', 'Yes')
+                        ->get();
+
         
 
-        return view('routine-check.routine-browse',['datasroutine' => $dataroutinebrowse]);
+        return view('routine-check.routine-browse',['datasroutine' => $dataroutinebrowse, 'datasasset' => $getAsset]);
     }
 
     public function routincheckdetail($id){
@@ -170,5 +176,15 @@ class RoutineCheckController extends Controller
             return redirect()->back();
 
         }
+    }
+
+    public function rctoexcel(Request $req){
+        $qcspec = $req->ex_qcspc;
+        $asset = $req->ex_asset;
+        $datefrom = $req->ex_datefrom;
+        $dateto = $req->ex_dateto;
+
+        return Excel::download(new routineCheckExport($qcspec,$asset,$datefrom,$dateto),'Report_Routine_Check_'.date("Y_m_d_H:i:s").'.xlsx');
+
     }
 }
