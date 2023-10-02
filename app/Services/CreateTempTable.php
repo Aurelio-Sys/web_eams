@@ -68,15 +68,17 @@ class CreateTempTable
     }
 
     public function invstockDetail($data){
-        Schema::create('temp_invstock', function ($table) {
-            $table->string('part')->nullable();
-            $table->string('partdesc')->nullable();
-            $table->string('site')->nullable();
-            $table->string('loc')->nullable();
-            $table->string('locdesc')->nullable();
-            $table->string('lot')->nullable();
-            $table->float('qtyoh', 15, 2);
-        });
+        // Schema::create('temp_invstock', function ($table) {
+        //     $table->string('part')->nullable();
+        //     $table->string('partdesc')->nullable();
+        //     $table->string('site')->nullable();
+        //     $table->string('loc')->nullable();
+        //     $table->string('locdesc')->nullable();
+        //     $table->string('lot')->nullable();
+        //     $table->float('qtyoh', 15, 2);
+        // });
+
+        DB::table('temp_invstock')->truncate();
 
         foreach ($data as $datas) {
             DB::table('temp_invstock')->insert([
@@ -90,10 +92,10 @@ class CreateTempTable
             ]);
         }
 
-        $table_invstock = DB::table('temp_invstock')->orderBy('part','asc')->get();
+        // $table_invstock = DB::table('temp_invstock')->orderBy('part','asc')->get();
 
-        Schema::dropIfExists('temp_invstock');
+        // Schema::dropIfExists('temp_invstock');
 
-        return [$table_invstock];
+        // return [$table_invstock];
     }
 }

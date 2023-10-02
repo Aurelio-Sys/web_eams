@@ -878,7 +878,8 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/traininganalyze', [TrainingController::class, 'traininganalyze'])->name('trainAnalyze');
 
 	//Spare Part Stock
-	Route::get('/spstockbrowse',[SparepartController::class, 'spstockbrowse']);
+	Route::get('/spstockbrowse',[SparepartController::class, 'spstockbrowse'])->name('spStockBrw');
+	Route::post('/loadspstock', [SparepartController::class, 'loadspstock']);
 	
 
 
