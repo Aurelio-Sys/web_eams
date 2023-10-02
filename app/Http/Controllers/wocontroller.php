@@ -3565,7 +3565,7 @@ class wocontroller extends Controller
                 'sr_status'         => 'Acceptance',
                 'sr_status_approval' => 'User acceptance',
                 'sr_eng_approver'   => $srmstr->sr_eng_approver,
-                'sr_action'         => 'SR needs to user acceptance',
+                'sr_action'         => 'SR requires user acceptance',
                 'created_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                 'updated_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
             ];
