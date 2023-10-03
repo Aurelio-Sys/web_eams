@@ -3657,8 +3657,28 @@ class SparepartController extends Controller
     }
 
     //Spare Part Stock Browse
-    public function spstockbrowse()
+    public function spstockbrowse(Request $req)
     {
+        $databrw = DB::table('temp_invstock');
+
+        if ($req->s_search) {
+            $databrw->where('part', 'LIKE', '%'.$req->s_search.'%')
+                    ->orWhere('partdesc', 'LIKE', '%'.$req->s_search.'%')
+                    ->orWhere('site', 'LIKE', '%'.$req->s_search.'%')
+                    ->orWhere('loc', 'LIKE', '%'.$req->s_search.'%')
+                    ->orWhere('lot', 'LIKE', '%'.$req->s_search.'%')
+                    ->orWhere('qtyoh', 'LIKE', '%'.$req->s_search.'%');
+        }
+
+        $databrw = $databrw->orderBy('part','asc')->paginate(30);
+
+        return view('report.spstock', [
+            'data' => $databrw
+        ]);
+
+    }
+
+    public function loadspstock(){
         $wsa = (new WSAServices())->wsainvstock(Session::get('domain'));
         if ($wsa === false) {
             alert()->error('Error', 'WSA Failed');
@@ -3667,10 +3687,7 @@ class SparepartController extends Controller
             $tempStockItem = (new CreateTempTable())->invstockDetail($wsa[0]);
         }
 
-        $data = $tempStockItem[0];
-
-        // dd($data);
-
-        return view('report.spstock', compact('data'));
+        alert()->success('Success','Data Stock Spare Part berhasil diload');
+        return redirect()->route('spStockBrw');
     }
 }
