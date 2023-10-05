@@ -175,7 +175,16 @@ div #munculgambar .gambar:hover{
               @endforeach
             </select>
           </div>
-          <label for="" class="col-md-3 col-form-label text-md-right">{{ __('') }}</label>
+          <label for="" class="col-md-3 col-form-label text-md-right">{{ __('Department') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_dept" type="text" class="form-control" name="s_dept">
+              <option value="">--Select Department--</option>
+              @foreach ( $dept as $department )
+                <option value="{{$department->dept_code}}">{{$department->dept_code}} -- {{$department->dept_desc}}</option>
+              @endforeach
+            </select>
+          </div>
+          <label for="s_status" class="col-md-2 col-form-label text-md-left">{{ __('') }}</label>
           <div class="col-md-2 col-sm-12 mb-2 input-group">
             <button class="btn btn-block btn-primary" id="btnsearch" style="float:right">Search</button>
           </div>
@@ -209,6 +218,7 @@ div #munculgambar .gambar:hover{
         <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="7%">Due Date<span id="username_icon"></span></th>
         <th class="sorting" data-sorting_type="asc" data-column_name="wo_status" width="7%">Status<span id="username_icon"></span></th>
         <th class="sorting" data-sorting_type="asc" data-column_name="wo_priority" width="7%">Type</th>
+        <th class="sorting" data-sorting_type="asc" data-column_name="wo_priority" width="12%">Department</th>
         <th class="sorting" data-sorting_type="asc" data-column_name="wo_created_at" width="7%">Req Date<span id="username_icon"></span></th>
         <th class="sorting" data-sorting_type="asc" data-column_name="wo_creator" width="7%">Requested by</th>
         <th width="15%">Action</th>
@@ -1273,8 +1283,11 @@ div #munculgambar .gambar:hover{
   $('#s_asset').select2({
     width: '100%',
     theme: 'bootstrap4',
+  });
 
-
+  $('#s_dept').select2({
+    width: '100%',
+    theme: 'bootstrap4',
   });
 
   $('.c_asset').select2({
