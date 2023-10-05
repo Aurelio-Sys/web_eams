@@ -2,7 +2,7 @@
 @section('content-header')
 <div class="container-fluid">
   <div class="row">
-    <div class="col-sm-4">
+    <div class="col-sm-6">
       <h1 class="m-0 text-dark">Spare Part Stock Report</h1>
     </div>
   </div><!-- /.row -->
@@ -14,14 +14,34 @@
 @section('content')
 
 <!-- Bagian Searching -->
-<div class="row">
-  <div class="col-md-4">
-    <div class="input-group mb-3">
-      <input type="text" class="form-control" placeholder="Cari data..." aria-label="Cari data..." onkeyup="searchFunction()" id="searchInput">
+<form action="/spstockbrowse" method="GET">
+  <div class="row mb-2">
+
+    <div class="col-md-3">
+      <input type="text" class="form-control" placeholder="Cari data..." aria-label="Cari data..." id="searchInput" name="s_search">
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-block btn-primary" id="btnsearch" style="float:right" />Search</button>
+    </div>
+    <div class="col-md-2">
+      <button class="btn btn-primary" id='btnrefresh'><i class="fas fa-sync-alt"></i></button>
     </div>
   </div>
-</div>
+</form>
+<form action="/loadspstock" method="post" id="submit">
+  <div class="row mb-2">
+    <div class="col-md-4">
 
+      {{ method_field('post') }}
+      {{ csrf_field() }}
+
+      <input type="submit" class="btn btn-primary" id="btnload" value="Load Data" />
+      <button type="button" class="btn btn-info" id="s_btnloading" style="display:none;">
+        <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
+      </button>
+    </div>
+  </div>
+</form>
 <div class="table-responsive col-12">
   <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
     <thead>
@@ -48,32 +68,17 @@
 
 @section('scripts')
 <script>
-  function searchFunction() {
-    var input, table, tr, td, i, txtValue;
-    input = document.getElementById("searchInput");
-    table = document.getElementById("dataTable");
-    tr = table.getElementsByTagName("tr");
-    for (i = 0; i < tr.length; i++) {
-      if (i == 0) {
-        tr[i].style.display = "";
-        continue;
-      }
-      td = tr[i].getElementsByTagName("td");
-      var flag = false;
-      for (j = 0; j < td.length; j++) {
-        txtValue = td[j].textContent || td[j].innerText;
-        if (txtValue.toUpperCase().indexOf(input.value.toUpperCase()) > -1) {
-          flag = true;
-          break;
-        }
-      }
-      if (flag) {
-        tr[i].style.display = "";
-      } else {
-        tr[i].style.display = "none";
-      }
-    }
+  $("#submit").submit(function(e) {
+    document.getElementById('btnload').style.display = 'none';
+    document.getElementById('s_btnloading').style.display = '';
+  });
+
+  function resetSearch() {
+    $('#s_search').val('');
   }
+  $(document).on('click', '#btnrefresh', function() {
+    resetSearch();
+  });
 </script>
 
 @endsection

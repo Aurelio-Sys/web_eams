@@ -391,7 +391,7 @@ class SparepartController extends Controller
                                         // 'rqtrh_dept_approval' => 'WHS',
                                         'rqtrh_role_approval' => $nextroleapprover,
                                         'rqtrh_sequence' => $nextseqapprover,
-                                        'rqtrh_status' => 'Request SP ready for approval',
+                                        'rqtrh_status' => 'request sparepart ready for approval',
                                         'created_at' => Carbon::now()->toDateTimeString(),
                                         'updated_at' => Carbon::now()->toDateTimeString(),
                                     ]);
@@ -417,7 +417,7 @@ class SparepartController extends Controller
                                         'rqtrh_dept_approval' => session()->get('department'),
                                         'rqtrh_role_approval' => $nextroleapprover,
                                         'rqtrh_sequence' => $nextseqapprover,
-                                        'rqtrh_status' => 'Request SP ready for approval',
+                                        'rqtrh_status' => 'request sparepart ready for approval',
                                         'created_at' => Carbon::now()->toDateTimeString(),
                                         'updated_at' => Carbon::now()->toDateTimeString(),
                                     ]);
@@ -777,7 +777,7 @@ class SparepartController extends Controller
                     'rqtrh_dept_approval' => $reqspmstr->req_sp_dept,
                     'rqtrh_role_approval' => 'SPVSR',
                     'rqtrh_sequence' => 1,
-                    'rqtrh_status' => 'waiting for approval',
+                    'rqtrh_status' => 'request sparepart ready for approval again',
                     'rqtrh_reason' => 'Request SP ready for approval again',
                     'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                     'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -1004,7 +1004,7 @@ class SparepartController extends Controller
             'rqtrh_wo_number'        => $reqspmstr->req_sp_wonumber,
             'rqtrh_dept_approval'    => $user->dept_user,
             'rqtrh_role_approval'    => $user->role_user,
-            'rqtrh_status'           => 'Request SP Approved',
+            'rqtrh_status'           => 'request sparepart approved',
             'rqtrh_reason'           => $reason,
             'rqtrh_sequence'         => $woapprover->rqtr_sequence,
             'rqtrh_approved_by'      => $user->id,
@@ -1025,7 +1025,7 @@ class SparepartController extends Controller
             'rqtrh_wo_number'        => $reqspmstr->req_sp_wonumber,
             'rqtrh_dept_approval'    => $user->dept_user,
             'rqtrh_role_approval'    => $user->role_user,
-            'rqtrh_status'           => 'Request SP waiting for approval again',
+            'rqtrh_status'           => 'request sparepart ready for approval again',
             // 'rqtrh_reason'           => $reason,
             // 'rqtrh_sequence'         => $woapprover->rqtr_sequence,
             // 'rqtrh_approved_by'      => $user->id,
@@ -1045,7 +1045,7 @@ class SparepartController extends Controller
             'rqtrh_rs_number'        => $reqspmstr->req_sp_number,
             'rqtrh_wo_number'        => $reqspmstr->req_sp_wonumber,
             'rqtrh_dept_approval'    => $user->dept_user,
-            'rqtrh_status'           => 'Request SP Rejected',
+            'rqtrh_status'           => 'request sparepart rejected',
             'rqtrh_reason'           => $reason,
             'rqtrh_sequence'         => $woapprover->rqtr_sequence,
             'rqtrh_approved_by'      => $user->id,
@@ -3657,8 +3657,28 @@ class SparepartController extends Controller
     }
 
     //Spare Part Stock Browse
-    public function spstockbrowse()
+    public function spstockbrowse(Request $req)
     {
+        $databrw = DB::table('temp_invstock');
+
+        if ($req->s_search) {
+            $databrw->where('part', 'LIKE', '%'.$req->s_search.'%')
+                    ->orWhere('partdesc', 'LIKE', '%'.$req->s_search.'%')
+                    ->orWhere('site', 'LIKE', '%'.$req->s_search.'%')
+                    ->orWhere('loc', 'LIKE', '%'.$req->s_search.'%')
+                    ->orWhere('lot', 'LIKE', '%'.$req->s_search.'%')
+                    ->orWhere('qtyoh', 'LIKE', '%'.$req->s_search.'%');
+        }
+
+        $databrw = $databrw->orderBy('part','asc')->paginate(30);
+
+        return view('report.spstock', [
+            'data' => $databrw
+        ]);
+
+    }
+
+    public function loadspstock(){
         $wsa = (new WSAServices())->wsainvstock(Session::get('domain'));
         if ($wsa === false) {
             alert()->error('Error', 'WSA Failed');
@@ -3667,10 +3687,7 @@ class SparepartController extends Controller
             $tempStockItem = (new CreateTempTable())->invstockDetail($wsa[0]);
         }
 
-        $data = $tempStockItem[0];
-
-        // dd($data);
-
-        return view('report.spstock', compact('data'));
+        alert()->success('Success','Data Stock Spare Part berhasil diload');
+        return redirect()->route('spStockBrw');
     }
 }

@@ -13,3 +13,8 @@
     </td>
 </tr>
 @endforelse
+<tr>
+    <td style="border: none !important;" colspan="8">
+        {{ $data->appends($_GET)->links() }}
+    </td>
+</tr>
