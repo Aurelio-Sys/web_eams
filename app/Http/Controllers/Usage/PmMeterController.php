@@ -122,7 +122,11 @@ class PmMeterController extends Controller
                     ->first();
 
                 // Mencari data di work order berdasarkan asset dan pm code nya
-                $cekwo = $datawo->where('wo_asset_code','=',$dc->pma_asset)->where('wo_mt_code','=',$dc->pma_pmcode)->first();
+                $cekwo = $datawo->where('wo_asset_code','=',$dc->pma_asset)
+                    ->where('wo_mt_code','=',$dc->pma_pmcode)
+                    ->whereNotIn('wo_status',['finished','canceled'])
+                    ->first();
+                // dd($cekwo);
                 // Jika data tidak ada di work order maka akan disimpan di pm confirm (tabel pmo_confirm)
                 if(!$cekwo) {
                     // dd('1');

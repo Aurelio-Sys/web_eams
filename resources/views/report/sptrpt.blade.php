@@ -29,72 +29,70 @@
 </style>
 
 <form action="/sptrpt" method="GET">
-  <div class="row">
-    <div class="col-md-12">
-      <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
-    </div>  
-  </div>
-  <!-- Element div yang akan collapse atau expand -->
-  <div class="collapse" id="collapseExample">
-      <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
-      <div class="card card-body bg-black rounded-0">
-        <div class="col-12 form-group row">
-          <!--FORM Search Disini-->
-          <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
-          <div class="col-md-4 col-sm-12 mb-2 input-group">
-            <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
-              <option value="">--Select Asset--</option>
-              @foreach($asset1 as $assetsearch)
-                <option value="{{$assetsearch->asset_code}}" {{$assetsearch->asset_code === $sasset ? "selected" : ""}}>{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
-              @endforeach
-            </select>
+  <div class="container-fluid mb-2">
+      <div class="row">
+          <div class="col-md-12">
+              <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
           </div>
-          <label for="s_type" class="col-md-2 col-form-label text-md-right" style="display: none;">{{ __('Type') }}</label>
-          <div class="col-md-4 col-sm-12 mb-2 input-group" style="display: none;">
-            <select id="s_type" class="form-control" style="color:black" name="s_type" autofocus autocomplete="off">
-              <option value="">--</option>
-              <option value="CM" {{$stype === "CM" ? "selected" : ""}}>CM</option>
-              <option value="PM" {{$stype === "PM" ? "selected" : ""}}>PM</option>
-            </select>
+      </div>
+      <!-- Element div yang akan collapse atau expand -->
+      <div class="collapse" id="collapseExample">
+          <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+          <div class="card card-body bg-black rounded-0">
+              <div class="col-12 form-group row">
+
+                  <!--FORM Search Disini-->
+                  <label for="s_sp" class="col-md-2 col-form-label text-md-right">{{ __('Sparepart') }}</label>
+                  <div class="col-md-3 col-sm-12 mb-2 input-group">
+                      <select id="s_sp" class="form-control" style="color:black" name="s_sp" autofocus autocomplete="off">
+                        <option value="">--Select--</option>
+                        @foreach($datasp as $ds)
+                        <option value="{{$ds->spm_code}}" {{$ds->spm_code === $ssp ? 'selected' : ''}}>{{$ds->spm_code}} -- {{$ds->spm_desc}}</option>
+                        @endforeach
+                      </select>
+                  </div>
+                  <label for="s_nomorrs" class="col-md-2 col-form-label text-md-right">{{ __('Transactions Number') }}</label>
+                  <div class="col-md-3 col-sm-12 mb-2 input-group">
+                      <input id="s_nomorrs" type="text" class="form-control" name="s_nomorrs" value="{{$snomorrs}}" autofocus autocomplete="off">
+                  </div>
+                  <div class="col-md-1"></div>
+                  <label for="s_reqby" class="col-md-2 col-form-label text-md-right">{{ __('Transactions By') }}</label>
+                  <div class="col-md-3 col-sm-12 mb-2 input-group">
+                      <select id="s_reqby" class="form-control" style="color:black" name="s_reqby" autofocus autocomplete="off">
+                          <option value="">--Select--</option>
+                          @foreach($requestby as $reqby)
+                          <option value="{{$reqby->eng_code}}" {{$reqby->eng_code === $sreqby ? 'selected' : ''}}>{{$reqby->eng_code}} -- {{$reqby->eng_desc}}</option>
+                          @endforeach
+                      </select>
+                  </div>
+                  <label for="s_dept" class="col-md-2 col-form-label text-md-right">{{ __('Department') }}</label>
+                  <div class="col-md-3 col-sm-12 mb-2 input-group">
+                    <select id="s_dept" class="form-control" style="color:black" name="s_dept" autofocus autocomplete="off">
+                      <option value="">--Select--</option>
+                      @foreach($datadept as $dd)
+                      <option value="{{$dd->dept_code}}" {{$dd->dept_code === $sdept ? 'selected' : ''}}>{{$dd->dept_code}} -- {{$dd->dept_desc}}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                  <div class="col-md-1"></div>
+                  <label for="s_datefrom" class="col-md-2 col-form-label text-md-right">{{ __('Date From') }}</label>
+                  <div class="col-md-3 col-sm-12 mb-2 input-group">
+                      <input id="s_datefrom" type="date" class="form-control" name="s_datefrom" value="{{$sdatefrom}}" autofocus autocomplete="off">
+                  </div>
+                  <label for="s_daeto" class="col-md-2 col-form-label text-md-right">{{ __('Date To') }}</label>
+                  <div class="col-md-3 col-sm-12 mb-2 input-group">
+                      <input id="s_dateto" type="date" class="form-control" name="s_dateto" value="{{$sdateto}}" autofocus autocomplete="off">
+                  </div>
+                  <div class="col-md-1"></div>
+                  <label for="" class="col-md-2 col-form-label text-md-right">{{ __('') }}</label>
+                  <div class="col-md-2 col-sm-12 mb-2 input-group">
+                      <button class="btn btn-block btn-primary" id="btnsearch" style="float:right" />Search</button>
+                  </div>
+                  <div class="col-md-2 col-sm-12 mb-2 input-group">
+                      <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
+                  </div>
+              </div>
           </div>
-          <label for="s_site" class="col-md-2 col-form-label text-md-right">{{ __('Site') }}</label>
-          <div class="col-md-4 col-sm-12 mb-2 input-group">
-            <select id="s_site" class="form-control" style="color:black" name="s_site" autofocus autocomplete="off">
-              <option value="">--Select Site--</option>
-              @foreach($datasite as $ds)
-                <option value="{{$ds->assite_code}}" {{$ds->assite_code === $sloc ? "selected" : ""}}>{{$ds->assite_code}} -- {{$ds->assite_desc}}</option>
-              @endforeach
-            </select>
-          </div>
-          <label for="s_loc" class="col-md-2 col-form-label text-md-right">{{ __('Location') }}</label>
-          <div class="col-md-4 col-sm-12 mb-2 input-group">
-            <select id="s_loc" class="form-control" style="color:black" name="s_loc" autofocus autocomplete="off">
-              <option value="">--Select Location--</option>
-              @foreach($dataloc as $dl)
-                <option value="{{$dl->asloc_code}}" {{$dl->asloc_code === $sloc ? "selected" : ""}}>{{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
-              @endforeach
-            </select>
-          </div>
-          <label for="s_per1" class="col-md-6 col-form-label text-md-right">{{ __('') }}</label>
-          <label for="s_per1" class="col-md-2 col-form-label text-md-right">{{ __('Period') }}</label>
-          <div class="col-md-4 col-sm-12 mb-2 input-group">
-            <input type="date" name="s_per1" id="s_per1" class="form-control" value="{{$sper1}}">
-          </div>
-          <label for="s_per2" class="col-md-2 col-form-label text-md-right">{{ __('s/d') }}</label>
-          <div class="col-md-4 col-sm-12 mb-2 input-group">
-            <input type="date" name="s_per2" id="s_per2" class="form-control" value="{{$sper2}}">
-          </div>
-          <label for="s_per1" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
-          <div class="col-md-2 col-sm-12 mb-2 input-group">
-            <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
-          </div>
-          <div class="col-md-1 col-sm-6 mb-1 input-group justify-content-md-center">
-            <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'/><i class="fas fa-sync-alt"></i></button>
-          </div>
-          <div class="col-md-2 col-sm-12 mb-2 input-group">
-            <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="Export to Excel" style="float:right" />
-          </div>
-        </div>
       </div>
   </div>
 </form>
@@ -120,6 +118,10 @@
         <th>Date</th>
         <th>Type</th>
         <th>Trans No.</th>
+        <th>Trans By</th>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Dept Name</th>
         <th>Qty</th>
       </tr>
     </thead>
@@ -143,18 +145,20 @@
 
 @section('scripts')
 <script>
-  $('#s_asset').select2({
+  $('#s_reqby').select2({
     width: '100%',
     theme: 'bootstrap4',
   });
-  $('#s_loc').select2({
+
+  $('#s_sp').select2({
     width: '100%',
     theme: 'bootstrap4',
   });
-  $('#s_site').select2({
-   width: '100%',
-   theme: 'bootstrap4',
- });
+
+  $('#s_dept').select2({
+    width: '100%',
+    theme: 'bootstrap4',
+  });
 
   function clear_icon() {
     $('#id_icon').html('');
@@ -162,17 +166,17 @@
   }
 
   function resetSearch() {
-    $('#s_asset').val('');
-    $('#s_per1').val('');
-    $('#s_per2').val('');
-    $('#s_loc').val('');
-    $('#s_site').val('');
-    $('#s_type').val('');
+    $('#s_sp').val('');
+    $('#s_nomorrs').val('');
+    $('#s_reqby').val('');
+    $('#s_dept').val('');
+    $('#s_datefrom').val('');
+    $('#s_dateto').val('');
   }
 
   $(document).on('click', '#btnrefresh', function() {
-    document.getElementById('s_per1').required = false;
-    document.getElementById('s_per2').required = false;
+    {{--  document.getElementById('s_per1').required = false;
+    document.getElementById('s_per2').required = false;  --}}
 
     resetSearch();
   });
