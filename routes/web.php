@@ -487,6 +487,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/wocreatemenu', 'wocontroller@wocreatemenu')->name('wocreatemenu');
 	route::get('/wocreate/pagination', 'wocontroller@wopagingcreate');
 	route::post('/createenwo', 'wocontroller@createenwo');
+	route::get('/assetbyloc_wo', [wocontroller::class, 'assetbyloc_wo']);
 
 	//work order browse
 	route::get('/wobrowse', 'wocontroller@wobrowsemenu')->name('wobrowse');

@@ -78,7 +78,8 @@ class wocontroller extends Controller
 
             $data = DB::table('wo_mstr')
                 ->leftJoin('users', 'wo_mstr.wo_createdby', 'users.username')
-                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code');
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+                ->leftJoin('dept_mstr', 'dept_mstr.dept_code', 'wo_mstr.wo_department');
 
             if ($req->s_nomorwo) {
                 $data->where('wo_number', 'like', '%' . $req->s_nomorwo . '%');
@@ -94,6 +95,10 @@ class wocontroller extends Controller
             }
             if ($req->s_engineer) {
                 $data->where('wo_list_engineer', 'like', '%' . $req->s_engineer . '%');
+            }
+
+            if ($req->s_dept) {
+                $data->where('wo_department', $req->s_dept);
             }
 
             $data = $data->orderby('wo_system_create', 'desc')->orderBy('wo_number', 'desc')->paginate(10);
@@ -367,16 +372,41 @@ class wocontroller extends Controller
             // dd($wottype);
             $ceksrfile = DB::table(('service_req_upload'))
                 ->get();
+
+            $assetloc = DB::table('asset_loc')->get();
             return view('workorder.wobrowse', [
                 'impact' => $impact, 'wottype' => $wottype, 'data' => $data,
                 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset,
                 'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '',
                 'maintenancelist' => $maintenance, 'ceksrfile' => $ceksrfile, 'inslist' => $inslist, 'splist' => $splist,
-                'qclist' => $qclist
+                'qclist' => $qclist, 'assetloc' => $assetloc
             ]);
         } else {
             toast('Anda tidak memiliki akses menu, Silahkan kontak admin', 'error');
             return back();
+        }
+    }
+
+    public function assetbyloc_wo (Request $req){
+        
+        //Filter asset by location
+        if ($req->ajax()) {
+            $asset_loc = $req->assetloc;
+            $asset = DB::table('asset_mstr')
+            ->where('asset_active', '=', 'Yes')
+            ->where('asset_loc', '=', $asset_loc)
+            ->orderBy('asset_code')
+            ->get();
+
+            $outputcode = "";
+            foreach ($asset as $thiscode) {
+                $outputcode .= '<option value="'.$thiscode->asset_code.'" data-assetsite="'.$thiscode->asset_site.'" data-assetloc="'.$thiscode->asset_loc.'" data-assetgroup="'.$thiscode->asset_group.'">'.$thiscode->asset_code.' - '.$thiscode->asset_desc.'</option>';
+            }
+
+            return response()->json([
+                // 'optionfailtype' => $outputtype,
+                'optionassetcode' => $outputcode,
+            ]);
         }
     }
 
