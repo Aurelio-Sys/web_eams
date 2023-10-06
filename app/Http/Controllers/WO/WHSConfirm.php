@@ -40,7 +40,7 @@ class WHSConfirm extends Controller
             ->get();
 
         if (Session::get('role') == 'ADMIN' || Session::get('role') == 'WHS') {
-            $ApproverCheck = DB::table('sr_approver_mstr')->count();
+            $ApproverCheck = DB::table('sp_approver_mstr')->count();
 
             if ($ApproverCheck === 0) {
                 $data = DB::table('wo_mstr')
@@ -126,6 +126,10 @@ class WHSConfirm extends Controller
             ->where('wo_number', '=', $id)
             ->first();
 
+        $getDept = DB::table('dept_mstr')
+            ->where('dept_code','=', $data->wo_department)
+            ->first();
+
         $sparepart_detail = DB::table('wo_dets_sp')
             ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
             ->where('wd_sp_wonumber', '=', $id)
@@ -133,8 +137,10 @@ class WHSConfirm extends Controller
 
         $datalocsupply = DB::table('inp_supply')
             ->where('inp_asset_site', '=', $data->wo_site)
+            ->where('inp_loc','=', $getDept->dept_inv)
             // ->where('inp_avail', '=', 'Yes')
             ->get();
+
         $datatemp = [];
         $datatemp_required = [];
         foreach ($sparepart_detail as $spdet) {
