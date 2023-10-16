@@ -42,6 +42,8 @@
     </div>
   </div>
 </form>
+
+
 <div class="table-responsive col-12">
   <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
     <thead>
@@ -75,7 +77,9 @@
 
   function resetSearch() {
     $('#s_search').val('');
+
   }
+
   $(document).on('click', '#btnrefresh', function() {
     resetSearch();
   });

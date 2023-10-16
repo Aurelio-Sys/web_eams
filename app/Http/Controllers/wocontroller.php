@@ -3112,10 +3112,15 @@ class wocontroller extends Controller
             ->where('wd_qc_wonumber', '=', $wonumber)
             ->get();
 
+        $costcenter_data = DB::table('cc_mstr')->get();
+        
+        $glacc_data = DB::table('acc_mstr')->get();
+
         return view('workorder.wofinish-done', [
             'header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all,
             'instruction' => $datainstruction, 'inslist' => $ins_all, 'um' => $um,
-            'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure
+            'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure,
+            'costcenter' => $costcenter_data, 'glacc' => $glacc_data
         ]);
     }
 
@@ -3343,10 +3348,26 @@ class wocontroller extends Controller
         $assetsite = $req->get('assetsite');
         $spcode = $req->get('spcode');
 
-        //ambil data dari tabel inp_supply berdasarkan asset site nya
-        $getSource = DB::table('inp_supply')
+        $getDept = DB::table('dept_mstr')
+                        ->where('dept_code','=', Session::get('department'))
+                        ->first();
+
+        if($getDept->dept_inv !== null || $getDept->dept_inv !== ''){
+            $getSource = DB::table('inp_supply')
+            ->where('inp_asset_site', '=', $assetsite)
+            ->where('inp_loc','=', $getDept->dept_inv)
+            ->get();
+
+        }else{
+
+            //ambil data dari tabel inp_supply berdasarkan asset site nya
+            $getSource = DB::table('inp_supply')
             ->where('inp_asset_site', '=', $assetsite)
             ->get();
+
+        }
+
+
 
         $data = [];
 
@@ -4560,6 +4581,8 @@ class wocontroller extends Controller
                         $qtyRequired = $req->qtyrequired[$index];
                         $qtyIssued = $req->qtyissued[$index];
                         $qtyPotong = $req->qtypotong[$index];
+                        $glAccount = $req->glacc[$index];
+                        $costCenter = $req->costcenter[$index];
 
                         $data = [
                             "sparepart_code" => $sparepartCode,
@@ -4568,7 +4591,9 @@ class wocontroller extends Controller
                             "lot_from" => $lotFrom,
                             "qty_required" => $qtyRequired,
                             "qty_issued" => $qtyIssued,
-                            "qty_potong" => $qtyPotong
+                            "qty_potong" => $qtyPotong,
+                            "gl_account" => $glAccount,
+                            "cost_center" => $costCenter
                         ];
 
                         $dataArrayReceipt[] = $data;
@@ -4752,8 +4777,13 @@ class wocontroller extends Controller
                                 <location>' . $record['loc_from'] . '</location>
                                 <lotserial>' . $record['lot_from'] . '</lotserial>
                                 <ordernbr>' . $req->c_wonbr . '</ordernbr>
+                                <drAcct>' .$record['gl_account'].'</drAcct>
+                                <drCc>'.$record['cost_center'].'</drCc>
                             </inventoryIssue>';
 
+<<<<<<<<< Temporary merge branch 1
+                            // <drAcct>' .$record['gl_account'].'</drAcct>
+=========
                         DB::table('wo_reporting_trans_hist')
                             ->insert([
                                 'spcode_wohist_report' => $record['sparepart_code'],
@@ -4764,6 +4794,8 @@ class wocontroller extends Controller
                                 'lotser_wohist_report' => $record['lot_from'],
                                 'qtychange_wohist_report' => $record['qty_potong'],
                                 'userid_wohist_report' => Session::get('username'),
+                                'gl_acc_wohist_report' => $record['gl_account'],
+                                'cost_center_wohist_report' => $record['cost_center'],
                             ]);
                     }
 
@@ -4960,6 +4992,8 @@ class wocontroller extends Controller
                                 <location>' . $record['loc_from'] . '</location>
                                 <lotserial>' . $record['lot_from'] . '</lotserial>
                                 <ordernbr>' . $req->c_wonbr . '</ordernbr>
+                                <crAcct>' .$record['gl_account'].'</crAcct>
+                                <crCc>'.$record['cost_center'].'</crCc>
                             </inventoryReceipt>';
 
                             DB::table('wo_reporting_trans_hist')
@@ -4972,6 +5006,8 @@ class wocontroller extends Controller
                                     'lotser_wohist_report' => $record['lot_from'],
                                     'qtychange_wohist_report' => $record['qty_potong'],
                                     'userid_wohist_report' => Session::get('username'),
+                                    'gl_acc_wohist_report' => $record['gl_account'],
+                                    'cost_center_wohist_report' => $record['cost_center'],
                                 ]);
                     }
 

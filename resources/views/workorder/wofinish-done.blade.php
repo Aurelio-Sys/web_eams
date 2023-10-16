@@ -195,10 +195,20 @@
                                         <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />
                                     </td>
                                     <td style="vertical-align: middle; text-align: left;">
-                                        <input type="text" class="form-control costcenter" name="costcenter[]" data-toggle="tooltip" autocomplete="off" readonly value="{{$header->wo_cost_center}}"/>
+                                        <select style="display: inline-block !important;" class="form-control selectpicker ccenter" name="costcenter[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px">
+                                            <option value=""> -- Select Cost Center --</option>
+                                            @foreach (  $costcenter as $cc )
+                                            <option value="{{$cc->cc_code}}" >{{$cc->cc_code}} -- {{$cc->cc_desc}}</option>
+                                            @endforeach
+                                        </select>
                                     </td>
                                     <td style="vertical-align: middle; text-align: left;">
-                                        <input type="text" class="form-control glacc" name="glacc[]" data-toggle="tooltip" autocomplete="off" readonly value="{{$datas->spm_account}}"/>
+                                        <select style="display: inline-block !important;" class="form-control selectpicker glacc" name="glacc[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px">
+                                            <option value=""> -- Select GL Account --</option>
+                                            @foreach (  $glacc as $glaccount )
+                                            <option value="{{$glaccount->acc_code}}" >{{$glaccount->acc_code}} -- {{$glaccount->acc_desc}}</option>
+                                            @endforeach
+                                        </select>
                                     </td>
                                     <td style="vertical-align:middle;text-align:center;">
 
@@ -626,11 +636,21 @@
             cols += '</td>';
 
             cols += '<td style="vertical-align: middle; text-align:center;">';
-            cols += '<input type="text" class="form-control costcenter" name="costcenter[]" data-toggle="tooltip" autocomplete="off" readonly value="{{$header->wo_cost_center}}"/>';
+            cols += '<select style="display: inline-block !important;" class="form-control selectpicker ccenter" name="costcenter[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px">';
+            cols += '<option value=""> -- Select Cost Center --</option>'
+            @foreach (  $costcenter as $cc )
+            cols += '<option value="{{$cc->cc_code}}" >{{$cc->cc_code}} -- {{$cc->cc_desc}}</option>';
+            @endforeach
+            cols += '</select>';
             cols += '</td>';
 
             cols += '<td style="vertical-align: middle; text-align:center;">';
-            cols += '<input type="text" class="form-control glacc" name="glacc[]" data-toggle="tooltip" autocomplete="off" readonly/>';
+            cols += '<select style="display: inline-block !important;" class="form-control selectpicker glacc" name="glacc[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px">';
+            cols += '<option value=""> -- Select GL Account --</option>';
+            @foreach (  $glacc as $glaccount )
+            cols += '<option value="{{$glaccount->acc_code}}" >{{$glaccount->acc_code}} -- {{$glaccount->acc_desc}}</option>';
+            @endforeach
+            cols += '</select>';
             cols += '</td>';
 
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>';
@@ -855,11 +875,11 @@
             const spreqOption = $(this).val();
 
             var selectedOption = $(this).find('option:selected');
-            var glAccount = selectedOption.attr('data-glaccount');
+            // var glAccount = selectedOption.attr('data-glaccount');
 
 
             row.find(".hidden_sp").val(spreqOption);
-            row.find(".glacc").val(glAccount);
+            // row.find(".glacc").val(glAccount);
 
         });
 

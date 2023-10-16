@@ -156,6 +156,21 @@ class SparepartController extends Controller
         // dd($womstr);
         return response()->json($data);
     }
+
+    //REQUEST SPAREPART CREATE (WO NUMBER) UNTUK FILTER LOKASI SUPPLY
+    public function reqspwonbrsupp(Request $req)
+    {
+        $wonbr = $req->code;
+
+        $data = WOMaster::where('wo_number', $wonbr)
+            ->join('dept_mstr', 'dept_mstr.dept_code', 'wo_mstr.wo_department')
+            ->join('inp_supply', 'inp_supply.inp_loc', 'dept_mstr.dept_inv')
+            // ->select(DB::raw('wo_number,wo_sr_number,CONCAT(asset_code, " - ", asset_desc) as wo_asset,wo_note'))
+            ->first();
+
+        // dd($womstr);
+        return response()->json($data);
+    }
     //REQUEST SPAREPART ROUTE
     public function reqsproute(Request $request)
     {
@@ -1532,8 +1547,10 @@ class SparepartController extends Controller
         $splistwo = WOMaster::join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber', 'wo_mstr.wo_number')
             ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
             ->leftJoin('inp_supply', 'inp_supply.inp_loc', 'wo_dets_sp.wd_sp_loc_issued')
+            ->leftjoin('dept_mstr as u1', 'wo_mstr.wo_department', 'u1.dept_code')
             ->whereColumn('wd_sp_required', '>', 'wd_sp_issued') //untuk validasi bahwa qty yg mau dikembalikan sudah pernah di issued namun tidak full issued
             ->where('wo_number', $wo_number)
+            ->select(DB::raw('wd_sp_spcode,spm_desc,wd_sp_required,wd_sp_issued,inp_loc,u1.dept_inv as dept_inp_loc'))
             ->get();
 
         $loc_from = DB::table('inp_supply')->get();
@@ -1558,7 +1575,13 @@ class SparepartController extends Controller
                 $output .= '<select name="locto[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
                 $output .= '<option value = ""> -- Select Location From -- </option>';
                 foreach ($loc_from as $loc) {
-                    $selected = ($loc->inp_loc === $data->inp_loc) ? 'selected' : '';
+                    if ($data->inp_loc == null) {
+                        //jika dia belum pernah issued maka lokasi supplynya null dan akan disamakan dengan lokasi supply sesuai dengan wo departemen
+                        $selected = ($loc->inp_loc === $data->dept_inp_loc) ? 'selected' : '';
+                    }else{
+                        //jika dia sudah pernah issued maka lokasi supplynya mengikuti lokasi issued
+                        $selected = ($loc->inp_loc === $data->inp_loc) ? 'selected' : '';
+                    }
                     $output .= '<option data-siteto="' . $loc->inp_supply_site . '" value="' . $loc->inp_loc . '"' . $selected . '>' . $loc->inp_loc . '</option>';
                 }
                 $output .= '</select>';
@@ -3676,9 +3699,11 @@ class SparepartController extends Controller
             'data' => $databrw
         ]);
 
+
     }
 
     public function loadspstock(){
+
         $wsa = (new WSAServices())->wsainvstock(Session::get('domain'));
         if ($wsa === false) {
             alert()->error('Error', 'WSA Failed');
@@ -3687,7 +3712,11 @@ class SparepartController extends Controller
             $tempStockItem = (new CreateTempTable())->invstockDetail($wsa[0]);
         }
 
+        // dd($data);
+
         alert()->success('Success','Data Stock Spare Part berhasil diload');
         return redirect()->route('spStockBrw');
+
+
     }
 }

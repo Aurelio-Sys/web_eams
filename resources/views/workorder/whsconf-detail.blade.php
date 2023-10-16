@@ -148,7 +148,7 @@
                                     <select id="locto" class="form-control locto selectpicker" name="locto[]" data-dropup-auto="false" data-live-search="true" required>
                                         <option></option>
                                         @foreach ( $datalocsupply as $dtloc )
-                                        <option value="{{$dtloc->inp_loc}}" data-siteto="{{$dtloc->inp_supply_site}}">{{$dtloc->inp_supply_site}}, {{$dtloc->inp_loc}}</option>
+                                        <option value="{{$dtloc->inp_loc}}" data-siteto="{{$dtloc->inp_supply_site}}" selected>{{$dtloc->inp_supply_site}}, {{$dtloc->inp_loc}}</option>
                                         @endforeach
                                     </select>
                                     <input type="hidden" class="hidden_siteto" name="hidden_siteto[]" value="" />

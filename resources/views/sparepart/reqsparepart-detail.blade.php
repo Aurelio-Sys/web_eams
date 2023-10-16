@@ -228,7 +228,7 @@
                     selectButton.addEventListener("click", function() {
                         // aksi yang ingin dilakukan saat tombol select diklik
                         const wonumber = record.wo_number;
-                        
+
                         document.getElementById('wonbr').value = wonumber;
                         document.getElementById('hidden_wonbr').value = wonumber;
 
@@ -263,65 +263,79 @@
     // });
 
     $(document).ready(function() {
+
+
         $("#addrow").on("click", function() {
 
-            // var line = document.getElementById('line').value;
+            //passing nomor wo yang dipilih ke controller untuk mendapatkan data wo
+            const wonbr = document.getElementById('wonbr').value;
 
-            var rowCount = $('#createTable tr').length;
+            $.ajax({
+                url: "reqspwonbrsupp?code=" + wonbr,
+                success: function(data) {
 
-            var currow = rowCount - 2;
+                    // var line = document.getElementById('line').value;
 
-            // alert(currow);
+                    var rowCount = $('#createTable tr').length;
 
-            var lastline = parseInt($('#createTable tr:eq(' + currow + ') td:eq(0) input[type="number"]').val()) + 1;
+                    var currow = rowCount - 2;
 
-            if (lastline !== lastline) {
-                // check apa NaN
-                lastline = 1;
-            }
+                    // alert(currow);
 
-            // alert(lastline);
+                    var lastline = parseInt($('#createTable tr:eq(' + currow + ') td:eq(0) input[type="number"]').val()) + 1;
 
-            var newRow = $("<tr>");
-            var cols = "";
+                    if (lastline !== lastline) {
+                        // check apa NaN
+                        lastline = 1;
+                    }
 
-            cols += '<td>';
-            cols += '<select name="spreq[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
-            cols += '<option value = ""> -- Select Sparepart -- </option>';
-            @foreach($sp_all as $da)
-            cols += '<option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
-            @endforeach
-            cols += '</select>';
-            cols += '</td>';
+                    // alert(lastline);
 
-            cols += '<td>';
-            cols += '<input type="number" class="form-control qtyrequest" name="qtyrequest[]" step=".01" min="0" required />';
-            cols += '</td>';
+                    var newRow = $("<tr>");
+                    var cols = "";
 
-            cols += '<td>';
-            cols += '<select name="locto[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
-            cols += '<option value = ""> -- Select Location To -- </option>';
-            @foreach($loc_to as $loc)
-            cols += '<option data-siteto="{{$loc->inp_supply_site}}" value="{{$loc->inp_loc}}">{{$loc->inp_loc}}</option>';
-            @endforeach
-            cols += '</select>';
-            cols += '<input type="hidden" class="siteto" name="siteto[]" value=""/>';
-            cols += '</td>';
-            cols += '<td>';
-            cols += '<textarea type="text" id="reqnote" class="form-control reqnote" name="reqnote[]" rows="2" ></textarea>';
-            cols += '</td>';
+                    cols += '<td>';
+                    cols += '<select name="spreq[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
+                    cols += '<option value = ""> -- Select Sparepart -- </option>';
+                    @foreach($sp_all as $da)
+                    cols += '<option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
+                    @endforeach
+                    cols += '</select>';
+                    cols += '</td>';
 
-            cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
-            cols += '<input type="hidden" class="op" name="op[]" value="A"/>';
-            cols += '</tr>';
-            counter++;
+                    cols += '<td>';
+                    cols += '<input type="number" class="form-control qtyrequest" name="qtyrequest[]" step=".01" min="0" required />';
+                    cols += '</td>';
 
-            newRow.append(cols);
-            $("#detailapp").append(newRow);
+                    cols += '<td>';
+                    cols += '<select name="locto[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
+                    cols += '<option value = ""> -- Select Location To -- </option>';
+                    //validasi location supply berdasarkan nomor wo
+                    var dataFromPHP = <?php echo json_encode($loc_to); ?>;
+                    dataFromPHP.forEach(function(loc){
+                        var selected = (loc.inp_loc === data.inp_loc) ? 'selected' : '';
+                        cols += '<option data-siteto="'+ loc.inp_supply_site +'" value="'+ loc.inp_loc +'"' + selected + '>'+ loc.inp_loc +'</option>';
+                    });
+                    cols += '</select>';
+                    cols += '<input type="hidden" class="siteto" name="siteto[]" value=""/>';
+                    cols += '</td>';
+                    cols += '<td>';
+                    cols += '<textarea type="text" id="reqnote" class="form-control reqnote" name="reqnote[]" rows="2" ></textarea>';
+                    cols += '</td>';
 
-            // selectRefresh();
+                    cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
+                    cols += '<input type="hidden" class="op" name="op[]" value="A"/>';
+                    cols += '</tr>';
+                    counter++;
 
-            selectPicker();
+                    newRow.append(cols);
+                    $("#detailapp").append(newRow);
+
+                    // selectRefresh();
+
+                    selectPicker();
+                }
+            })
         });
 
         $("table.order-list").on("click", ".ibtnDel", function(event) {

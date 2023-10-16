@@ -808,6 +808,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/reqsp', [SparepartController::class, 'reqspbrowse'])->name('reqspbrowse');
 	Route::get('/reqspcreate', [SparepartController::class, 'reqspcreate'])->name('reqspcreate');
 	Route::get('/reqspwonbr', [SparepartController::class, 'reqspwonbr'])->name('reqspwonbr');
+	Route::get('/reqspwonbrsupp', [SparepartController::class, 'reqspwonbrsupp'])->name('reqspwonbrsupp');
 	Route::post('/reqspsubmit', [SparepartController::class,'reqspsubmit'])->name('reqspsubmit');
 	Route::get('/reqspeditdet',[SparepartController::class, 'reqspeditdet']);
 	Route::get('/reqsproute',[SparepartController::class, 'reqsproute']);

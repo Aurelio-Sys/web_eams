@@ -334,7 +334,7 @@
 
             cols += '<td>';
             cols += '<select name="locto[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
-            cols += '<option value = ""> -- Select Location To -- </option>';
+            cols += '<option value = ""> -- Select Location From -- </option>';
             @foreach($loc_from as $loc)
             cols += '<option data-siteto="{{$loc->inp_supply_site}}" value="{{$loc->inp_loc}}">{{$loc->inp_loc}}</option>';
             @endforeach
