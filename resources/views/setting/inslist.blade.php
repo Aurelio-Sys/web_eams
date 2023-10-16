@@ -281,6 +281,11 @@
               }
             })
 
+            $("#te_durum").select2({
+                width : '100%',
+                theme : 'bootstrap4',
+            });
+
        });
 
        $(document).on('click', '.deletedata', function(e){
@@ -357,10 +362,7 @@
          width : '100%',
          theme : 'bootstrap4',
         });
-        $("#te_durum").select2({
-            width : '100%',
-            theme : 'bootstrap4',
-        });
+        
 
      //cek dobel code saat menu Create
      $(document).on('change', '#t_code', function() {

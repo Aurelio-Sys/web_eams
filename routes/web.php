@@ -30,6 +30,8 @@ use App\Http\Controllers\Report\DownrptController;
 use App\Http\Controllers\Report\ViewWhyController;
 use App\Http\Controllers\Report\RptRenewController;
 use App\Http\Controllers\Report\SptRptController;
+use App\Http\Controllers\Report\ViewAssetController;
+use App\Http\Controllers\Report\StartnotifController;
 use App\Http\Controllers\SP\KebutuhanSPController;
 use App\Http\Controllers\UserChartController;
 use App\Http\Controllers\WO\AllWOGenerate;
@@ -486,6 +488,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/wocreatemenu', 'wocontroller@wocreatemenu')->name('wocreatemenu');
 	route::get('/wocreate/pagination', 'wocontroller@wopagingcreate');
 	route::post('/createenwo', 'wocontroller@createenwo');
+	route::get('/assetbyloc_wo', [wocontroller::class, 'assetbyloc_wo']);
 
 	//work order browse
 	route::get('/wobrowse', 'wocontroller@wobrowsemenu')->name('wobrowse');
@@ -823,11 +826,12 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/gettrfspwsastockfrom', [SparepartController::class, 'gettrfspwsastockfrom']);
 	Route::get('/trfspviewdet', [SparepartController::class, 'trfspviewdet']);
 	Route::get('/trfspviewhist', [SparepartController::class, 'trfspviewhist']);
-
+	
 	//Return Sparepart
 	Route::get('/retsp', [SparepartController::class, 'retspbrowse'])->name('retspbrowse');
 	Route::get('/retspcreate', [SparepartController::class, 'retspcreate'])->name('retspcreate');
 	Route::get('/retspwonbr', [SparepartController::class, 'retspwonbr'])->name('retspwonbr');
+	Route::get('/retspviewhist', [SparepartController::class, 'retspviewhist']);
 	Route::get('/retsplistwo', [SparepartController::class, 'retsplistwo'])->name('splistWO');
 	Route::post('/retspsubmit', [SparepartController::class,'retspsubmit'])->name('retspsubmit');
 	Route::get('/retspeditdet',[SparepartController::class, 'retspeditdet']);
@@ -865,6 +869,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/myroutine', [RoutineCheckController::class, 'myroutinebrowse'])->name('myroutine');
 	Route::get('/myroutine/detail/{id}', [RoutineCheckController::class, 'routincheckdetail'])->name('myrcdetail');
 	Route::post('/myroutinesubmit', [RoutineCheckController::class, 'routinesubmit'])->name('routinesubmit');
+	Route::get('/myroutinecheck/toexcel', [RoutineCheckController::class, 'rctoexcel'])->name('routineCheckExcel');
 
 	//Training Module
 	Route::get('/traininghome', [TrainingController::class, 'traininghome']);
@@ -874,7 +879,8 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/traininganalyze', [TrainingController::class, 'traininganalyze'])->name('trainAnalyze');
 
 	//Spare Part Stock
-	Route::get('/spstockbrowse',[SparepartController::class, 'spstockbrowse']);
+	Route::get('/spstockbrowse',[SparepartController::class, 'spstockbrowse'])->name('spStockBrw');
+	Route::post('/loadspstock', [SparepartController::class, 'loadspstock']);
 	
 
 
@@ -887,11 +893,16 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/pmmetergen', [PmMeterController::class, 'pmmetergen'])->name('pmmetergen');
 	Route::get('/searchassetmeter',[PmMeterController::class, 'searchassetmeter']);
 
-	// View 5 Why
+	// View 
 	Route::get('/viewwhy', [ViewWhyController::class, 'index'])->name('viewwhy');
+	Route::get('/viewasset', [ViewAssetController::class, 'index'])->name('viewasset');
+	Route::get('/assetfile', [ViewAssetController::class, 'assetfile'])->name('assetfile');
 
-	// View 5 Why
+	// Sparepart Report
 	Route::get('/sptrpt', [SptRptController::class, 'index']);
+
+	// Digunakan untuk menampilkan notifikasi setiap user
+	Route::get('/startnotif', [StartnotifController::class, 'index']);
 	
 
 	// Cost Center Maintenance

@@ -926,7 +926,7 @@
                                 const lot = record.t_lot;
                                 let qtyoh = record.t_qtyoh;
 
-                                qtyoh = qtyoh.replace(',', '');
+                                
                                 row.find(".hidden_sitefrom").val(site);
                                 row.find(".hidden_locfrom").val(loc);
                                 row.find(".hidden_lotfrom").val(lot);
@@ -939,8 +939,8 @@
                                 const qtyohold = row.find(".qtypotong").val();
 
                                 //jika lebih besar yang diminta dari pada yg dimiliki di inventory supply maka qty to transfer maks = qty onhand di inv source
-                                if (parseFloat(qtyohold) > parseFloat(qtyoh)) {
-                                    row.find(".qtypotong").attr("max", qtyoh).val(qtyoh);
+                                if (parseFloat(qtyohold.replace(/,/g, '')) > parseFloat(qtyoh.replace(/,/g, ''))) {
+                                    row.find(".qtypotong").attr("max", qtyoh);
                                 }
 
                                 $('#myModal').modal('hide');
@@ -1029,7 +1029,6 @@
                                 const lot = (record.wd_sp_lot_issued != null) ? record.wd_sp_lot_issued : '';
 
                                 let qtyoh = record.wd_sp_issued;
-                                qtyoh = qtyoh.replace(',', '');
                                 row.find(".hidden_sitefrom").val(site);
                                 row.find(".hidden_locfrom").val(loc);
                                 row.find(".hidden_lotfrom").val(lot);
@@ -1042,8 +1041,8 @@
                                 const qtyohold = row.find(".qtypotong").val();
 
                                 //jika lebih besar yang diminta dari pada yg dimiliki di inventory supply maka qty to transfer maks = qty onhand di inv source
-                                if (parseFloat(qtyohold) < parseFloat(qtyoh)) {
-                                    row.find(".qtypotong").attr("min", -qtyoh).val(-qtyoh);
+                                if (parseFloat(qtyohold.replace(/,/g, '')) < parseFloat(qtyoh.replace(/,/g, ''))) {
+                                    row.find(".qtypotong").attr("min", -qtyoh);
                                 }
 
                                 $('#myModal').modal('hide');
