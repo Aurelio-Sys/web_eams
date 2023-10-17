@@ -860,7 +860,7 @@ class SettingController extends Controller
         $hasher = app('hash');
 
         $users = DB::table("users")
-                    ->select('id','password')
+                    ->select('id','password','username')
                     ->where("users.id",$id)
                     ->first();
 
@@ -874,6 +874,17 @@ class SettingController extends Controller
                 DB::table('users')
                 ->where('id', $id)
                 ->update(['password' => Hash::make($password)]);
+
+                /** Menyimpan data di tabel history perubahan data user */
+                DB::table('user_hist')
+                ->insert([
+                    'ush_username'      => $users->username,
+                    'ush_password'      => Hash::make($password),
+                    'ush_action'        => 'Password Updated',
+                    'ush_editby'        => Session::get('username'),
+                    'created_at'        => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    'updated_at'        => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                ]);
 
                 toast('Password successfully updated', 'success');
                 return back();
@@ -5516,6 +5527,7 @@ class SettingController extends Controller
                     'updated_at'        => Carbon::now()->toDateTimeString(),
                     'edited_by'         => Session::get('username'),
                 ]);
+
             }
 
             // input ke tabel user
@@ -5533,6 +5545,29 @@ class SettingController extends Controller
                 'edited_by'     => Session::get('username'),
                 );
             DB::table('users')->insert($dataarray);
+
+            /** Menyimpan data di tabel history perubahan data user */
+            DB::table('user_hist')
+                ->insert([
+                    'ush_username'          => $req->t_code,
+                    'ush_name'          => $req->t_desc,
+                    'ush_dept'          => $req->t_dept,
+                    'ush_approver'          => $req->t_app,
+                    'ush_birth_date'    => $req->t_brt_date,
+                    'ush_active'        => $req->t_active,
+                    'ush_access'        => $req->t_acc,
+                    'ush_join_date'     => $req->t_join,
+                    'ush_rate_hour'     => $req->t_rate,
+                    'ush_skill'         => $skill,
+                    'ush_email'         => $req->t_email,
+                    'ush_role'          => $req->t_role,
+                    'ush_photo'         => $filename,
+                    'ush_password'      => Hash::make($req->password),
+                    'ush_action'        => 'User Created',
+                    'ush_editby'         => Session::get('username'),
+                    'created_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    'updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                ]);
 
             toast('User Created.', 'success');
             return back();
@@ -5711,6 +5746,38 @@ class SettingController extends Controller
             ]);
         }
 
+        /** Menyimpan data di tabel history perubahan data user */
+        if(is_null($req->te_pass)) {
+            /** Mengambil password dari data yang sebelumnya */
+            $cekpassuser = DB::table('users')
+                ->where('username','=',$req->te_code)
+                ->first();
+            $pass = $cekpassuser->password;
+        } else {
+            $pass = Hash::make($req->te_pass);
+        }
+        DB::table('user_hist')
+            ->insert([
+                'ush_username'      => $req->te_code,
+                'ush_name'          => $req->te_desc,
+                'ush_dept'          => $req->te_dept,
+                'ush_approver'      => $req->te_app,
+                'ush_birth_date'    => $req->te_brt_date,
+                'ush_active'        => $req->te_active,
+                'ush_access'        => $req->te_acc,
+                'ush_join_date'     => $req->te_join,
+                'ush_rate_hour'     => $req->te_rate,
+                'ush_skill'         => $skill,
+                'ush_email'         => $req->te_email,
+                'ush_role'          => $req->te_role,
+                'ush_photo'         => '',
+                'ush_password'      => $pass,
+                'ush_action'        => 'User Updated',
+                'ush_editby'        => Session::get('username'),
+                'created_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                'updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+            ]);
+
         toast('User Data Updated.', 'success');
         return back();
     }
@@ -5725,6 +5792,16 @@ class SettingController extends Controller
         DB::table('eng_mstr')
             ->where('eng_code', '=', $req->d_code)
             ->delete();
+
+        /** Menyimpan data di tabel history perubahan data user */
+        DB::table('user_hist')
+            ->insert([
+                'ush_username'      => $req->d_code,
+                'ush_action'        => 'User Deleted',
+                'ush_editby'        => Session::get('username'),
+                'created_at'        => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                'updated_at'        => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+            ]);
 
         toast('Deleted User Successfully.', 'success');
         return back();
