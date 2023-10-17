@@ -31,6 +31,7 @@ use App\Http\Controllers\Report\ViewWhyController;
 use App\Http\Controllers\Report\RptRenewController;
 use App\Http\Controllers\Report\SptRptController;
 use App\Http\Controllers\Report\ViewAssetController;
+use App\Http\Controllers\Report\StartnotifController;
 use App\Http\Controllers\SP\KebutuhanSPController;
 use App\Http\Controllers\UserChartController;
 use App\Http\Controllers\WO\AllWOGenerate;
@@ -900,6 +901,9 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// Sparepart Report
 	Route::get('/sptrpt', [SptRptController::class, 'index']);
+
+	// Digunakan untuk menampilkan notifikasi setiap user
+	Route::get('/startnotif', [StartnotifController::class, 'index']);
 	
 
 	// Cost Center Maintenance
