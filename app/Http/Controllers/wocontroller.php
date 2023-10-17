@@ -4781,9 +4781,9 @@ class wocontroller extends Controller
                                 <drCc>'.$record['cost_center'].'</drCc>
                             </inventoryIssue>';
 
+<<<<<<<<< Temporary merge branch 1
                             // <drAcct>' .$record['gl_account'].'</drAcct>
-                            //<drCc>'.$record['cost_center'].'</drCc>
-
+=========
                         DB::table('wo_reporting_trans_hist')
                             ->insert([
                                 'spcode_wohist_report' => $record['sparepart_code'],
