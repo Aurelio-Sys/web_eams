@@ -163,8 +163,8 @@
                                 <th style="text-align: center; width: 5% !important; font-weight: bold;">Issued</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Issue</th>
                                 <th style="text-align: center; width: 18% !important; font-weight: bold;">Location & Lot</th>
-                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Cost Center</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">GL Account</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Cost Center</th>
                                 <th style="text-align: center; width: 5% !important; font-weight: bold;">Action</th>
                             </tr>
                         </thead>
@@ -195,18 +195,18 @@
                                         <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />
                                     </td>
                                     <td style="vertical-align: middle; text-align: left;">
-                                        <select style="display: inline-block !important;" class="form-control selectpicker ccenter" name="costcenter[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px">
-                                            <option value=""> -- Select Cost Center --</option>
-                                            @foreach (  $costcenter as $cc )
-                                            <option value="{{$cc->cc_code}}" >{{$cc->cc_code}} -- {{$cc->cc_desc}}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td style="vertical-align: middle; text-align: left;">
                                         <select style="display: inline-block !important;" class="form-control selectpicker glacc" name="glacc[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px">
                                             <option value=""> -- Select GL Account --</option>
                                             @foreach (  $glacc as $glaccount )
                                             <option value="{{$glaccount->acc_code}}" >{{$glaccount->acc_code}} -- {{$glaccount->acc_desc}}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    <td style="vertical-align: middle; text-align: left;">
+                                        <select style="display: inline-block !important;" class="form-control selectpicker ccenter" name="costcenter[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px">
+                                            <option value=""> -- Select Cost Center --</option>
+                                            @foreach (  $costcenter as $cc )
+                                            <option value="{{$cc->cc_code}}" >{{$cc->cc_code}} -- {{$cc->cc_desc}}</option>
                                             @endforeach
                                         </select>
                                     </td>
