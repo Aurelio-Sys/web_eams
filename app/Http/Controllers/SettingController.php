@@ -5973,8 +5973,9 @@ class SettingController extends Controller
             //     ->get();
 
             /** Default lokasi sparepart pada menu ini digunakan pada saat warehouse akan melakukan transfer sparepart */
-            $datasupply = DB::table('inp_supply')
-                ->orderBy('inp_loc')
+            $datasupply = DB::table('loc_mstr')
+                ->join('inp_supply', 'loc_mstr.loc_site', '=', 'inp_supply.inp_supply_site')
+                ->whereColumn('loc_mstr.loc_code', '=', 'inp_supply.inp_loc')
                 ->get();
 
         return view('setting.departemen', ['data' => $data, 'datasupply' => $datasupply /* , 'datacc' => $datacc */]);

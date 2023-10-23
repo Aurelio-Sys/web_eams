@@ -505,19 +505,17 @@
           var failuretype_desc = vamp.failure_type.wotyp_desc ? vamp.failure_type.wotyp_desc : '';
           var note = vamp.wo_master.wo_note;
           var startdate = vamp.wo_master.wo_start_date;
-          startdate = new Date(startdate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
           var duedate = vamp.wo_master.wo_due_date;
-          duedate = new Date(duedate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
           var createdby = vamp.wo_master.wo_createdby;
           var department = vamp.wo_master.wo_department ? vamp.wo_master.wo_department : '';
           var rejectreason = vamp.sr_acceptance_note ? vamp.sr_acceptance_note : '';
           var status = vamp.wo_master.wo_status;
           var wotype = vamp.wo_master.wo_type;
-          var wostart = vamp.wo_master.wo_job_startdate ? new Date(vamp.wo_master.wo_job_startdate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
-          var wofinish = vamp.wo_master.wo_job_finishdate ? new Date(vamp.wo_master.wo_job_finishdate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
+          var wostart = vamp.wo_master.wo_job_startdate ? vamp.wo_master.wo_job_startdate : "";
+          var wofinish = vamp.wo_master.wo_job_finishdate ? vamp.wo_master.wo_job_finishdate : "";
           var wofinishtime = vamp.wo_master.wo_job_finishtime ? vamp.wo_master.wo_job_finishtime : "";
           var wostarttime = vamp.wo_master.wo_job_starttime ? vamp.wo_master.wo_job_starttime : "";
-  
+
           let combineFailure = [];
   
           vamp.failurecode.forEach(function(failure) {
@@ -547,16 +545,16 @@
           document.getElementById('v_engineerl').value = combineEngineer.join('\n');
           document.getElementById('v_note').value = note;
           document.getElementById('v_nosr').value = srnumber;
-          document.getElementById('v_startdate').value = startdate;
-          document.getElementById('v_duedate').value = duedate;
+          document.getElementById('v_startdate').value = startdate.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3-$2-$1");
+          document.getElementById('v_duedate').value = duedate.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3-$2-$1");
           document.getElementById('v_creator').value = createdby;
           document.getElementById('v_dept').value = department;
           document.getElementById('v_srnote').value = srnote;
           document.getElementById('v_rejectreason').value = rejectreason;
           document.getElementById('v_status').value = status;
           document.getElementById('v_wotype').value = wotype;
-          document.getElementById('v_wostart').value = wostart + " " + wostarttime;;
-          document.getElementById('v_wofinish').value = wofinish + " " + wofinishtime;
+          document.getElementById('v_wostart').value = wostart.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3-$2-$1") + " " + wostarttime;
+          document.getElementById('v_wofinish').value = wofinish.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3-$2-$1") + " " + wofinishtime;
           
   
         },complete: function(vamp) {

@@ -855,7 +855,7 @@ class SparepartController extends Controller
     }
 
     //REQUEST SPAREPART APPROVAL BROWSE
-    public function reqspapprovalbrowse(Request $request)
+    public function reqspapprovalbrowse(Request $request) /** Route : reqspapproval  Blade : sparepart.reqsparepartappr-browse */
     {
         // if (strpos(Session::get('menu_access'), 'BO06') !== false) {
         $usernow = DB::table('users')
@@ -937,9 +937,15 @@ class SparepartController extends Controller
             ->selectRaw('req_sparepart.*, sp_mstr.*, users.username, rqtr_status, rqtr_dept_approval, rqtr_role_approval, rqtr_reason, rqtr_approved_by, reqsp_trans_approval.updated_at')
             ->paginate(10);
 
+        /** tyas tambahin, mencari nama asset dan jenis kerusakan jika berdasarkan WO */
+        $datawo = DB::table('wo_mstr')
+            ->leftJoin('asset_mstr','asset_code','wo_asset_code')
+            ->leftJoin('asset_loc','asloc_code','=','asset_loc')
+            ->get();
+
         // dd($data);
 
-        return view('sparepart.reqsparepartappr-browse', ['data' => $data, 'sp_all' => $sp_all, 'loc_to' => $loc_to, 'requestby' => $requestby,]);
+        return view('sparepart.reqsparepartappr-browse', ['data' => $data, 'sp_all' => $sp_all, 'loc_to' => $loc_to, 'requestby' => $requestby, 'datawo' => $datawo]);
         // } 
 
     }

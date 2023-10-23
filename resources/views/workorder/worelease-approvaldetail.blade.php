@@ -141,8 +141,12 @@
                 <div class="col-md-3 h-50">
                     <label for="c_duedate" class="col-md-12 col-form-label text-md-left p-0">Due Date WO</label>
                 </div>
-                <div class="col-md-6 h-50">
-
+                {{--  tyas tambahin keterangan kerusakan dan note --}}
+                <div class="col-md-3 h-50">
+                    <label for="c_failure" class="col-md-12 col-form-label text-md-left p-0">Failure</label>
+                </div>
+                <div class="col-md-3 h-50">
+                    <label for="c_note" class="col-md-12 col-form-label text-md-left p-0">Note</label>
                 </div>
                 <div class="col-md-3 h-50">
                     <input id="c_startdate" type="text" class="form-control pl-0 col-md-12 c_startdate" style="background:transparent;border:none;text-align:left" name="c_startdate" value="{{$header->wo_start_date}}" readonly />
@@ -150,6 +154,33 @@
                 <div class="col-md-3 h-50">
                     <input id="c_duedate" type="text" class="form-control pl-0 col-md-12 c_duedate" style="background:transparent;border:none;text-align:left" name="c_duedate" value="{{$header->wo_due_date}}" readonly />
                     <input type="hidden" id="hidden_assetsite" name="hidden_assetsite" value="{{$header->wo_site}}" />
+                </div>
+                <div class="col-md-3 h-50">
+                    {{--  Mencari deskripsi failure  --}}
+                    @php
+                        $kodes = explode(';', $header->wo_failure_code);
+                        $deskripsi = $failure->whereIn('fn_code', $kodes);
+
+                        $descfailure = "";
+                        $ke = 0;
+                        if ($deskripsi) {
+                            foreach ($deskripsi as $dk) {
+                                if (empty($descfailure)) {
+                                    $descfailure = $dk->fn_code . ' - ' . $dk->fn_desc;
+                                } else {
+                                    $descfailure .= '; ' . $dk->fn_code . ' - ' . $dk->fn_desc; // Menggabungkan deskripsi dengan tanda titik koma
+                                }
+                            }
+                            $descfailure = str_replace(';', "\n", $descfailure);
+                        } else {
+                            $descfailure = "-";
+                        }
+                        
+                    @endphp
+                    <textarea id="c_failure" name="c_failure" class="form-control pl-0 col-md-12 c_failure" rows="3" readonly style="background:transparent;border:none;text-align:left">{{$descfailure}}</textarea>
+                </div>
+                <div class="col-md-3 h-50">
+                    <input id="c_note" type="text" class="form-control pl-0 col-md-12 c_note" style="background:transparent;border:none;text-align:left" name="c_note" value="{{$header->wo_note}}" readonly />
                 </div>
             </div>
 

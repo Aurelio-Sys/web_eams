@@ -44,6 +44,7 @@ class AccountController extends Controller
             $table->increments('id');
             $table->string('temp_code');
             $table->string('temp_desc');
+            $table->string('temp_cc');
             $table->temporary();
         });
 
@@ -65,6 +66,7 @@ class AccountController extends Controller
                     DB::table('temp_mstr')->insert([
                         'temp_code' => $datas->t_code,
                         'temp_desc' => $datas->t_desc,
+                        'temp_cc' => $datas->t_cc,
                     ]);
                 }
             }
@@ -97,12 +99,13 @@ class AccountController extends Controller
      */
     public function store(Request $req)
     {
+        dd($req->all());
         DB::beginTransaction();
         try {
             
             DB::table('acc_mstr')->updateOrInsert(
                 ['acc_code' => $req->t_code],
-                ['acc_desc' => $req->t_desc]
+                ['acc_desc' => $req->t_desc, 'acc_cc' => $req->t_cc]
             ); 
 
             DB::commit();

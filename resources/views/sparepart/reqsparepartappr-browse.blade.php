@@ -188,7 +188,7 @@
                             <input type="text" class="form-control" id="e_reqby" name="e_reqby" readonly>
                         </div>
                     </div>
-                    <div class="form-group row" style="margin: 0px 0px 1.5em 0px;">
+                    <div class="form-group row" style="margin: 0px 0px 0.8em 0px;">
                         <label for="e_wonumber" class="col-md-3 col-form-label">WO Number</label>
                         <div class="col-md-3">
                             <input type="text" class="form-control" id="e_wonumber" name="e_wonumber" readonly>
@@ -196,6 +196,27 @@
                         <label for="e_duedate" class="col-md-3 col-form-label">Needed Date</label>
                         <div class="col-md-3">
                             <input type="date" class="form-control" id="e_duedate" name="e_duedate" readonly>
+                        </div>
+                    </div>
+                    {{--  tyas tambahin, keterangan dan asset nya  --}}
+                    <div class="form-group row" style="margin: 0px 0px 0.8em 0px;">
+                        <label for="e_asset" class="col-md-3 col-form-label">Asset</label>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" id="e_asset" name="e_asset" readonly>
+                        </div>
+                        <label for="e_failure" class="col-md-3 col-form-label">Failure</label>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" id="e_failure" name="e_failure" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group row" style="margin: 0px 0px 0.8em 0px;">
+                        <label for="e_location" class="col-md-3 col-form-label">Location</label>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" id="e_location" name="e_location" readonly>
+                        </div>
+                        <label for="e_note" class="col-md-3 col-form-label">Note</label>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" id="e_note" name="e_note" readonly>
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -542,6 +563,20 @@
 
     $(document).on('click', '#btnrefresh', function() {
         resetSearch();
+    });
+
+    /* tyas tambahin, kalau reject reason harus diisi */
+    $(document).on('click', '#btreject', function(event) {
+        var rejectreason = document.getElementById('v_reason').value;
+  
+        if (rejectreason == "") {
+          $("#v_reason").attr('required', true);
+        }
+    });
+
+    /* tyas tambahin, kalau habis reject reason selanjutnya jadi mandatory meski klik approve makanya ditambahin validasi ini */
+    $(document).on('click', '#btnapproval', function(event) {
+        $("#v_reason").attr('required', false);
     });
 </script>
 @endsection

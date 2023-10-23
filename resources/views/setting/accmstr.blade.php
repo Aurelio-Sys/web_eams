@@ -19,10 +19,13 @@
                 <select class="form-control" id="t_code" name="t_code">
                     <option> -- Select Data -- </option>
                     @foreach ($datamstr as $ds)
-                        <option value="{{$ds->temp_code}}" data-desc="{{$ds->temp_desc}}">{{$ds->temp_code}} -- {{$ds->temp_desc}}</option>    
+                        <option value="{{$ds->temp_code}}" data-desc="{{$ds->temp_desc}}" data-cc="{{$ds->temp_cc}}">
+                            {{$ds->temp_code}} -- {{$ds->temp_desc}}
+                        </option>    
                     @endforeach
                 </select>
                 <input type="hidden" name="t_desc" id="t_desc" />                          
+                <input type="hidden" name="t_cc" id="t_cc" />                          
             </div>
             <div class="col-md-2">
                 <input type="submit" class="btn btn-block btn-primary" id="btnload" value="Add to eAMS" />
@@ -149,6 +152,7 @@
             var desc = selectedOption.getAttribute("data-desc");
     
             document.getElementById('t_desc').value = desc;
+            document.getElementById('t_cc').value = cc;
         });
     
       $(document).on('click', '#btnrefresh', function() {

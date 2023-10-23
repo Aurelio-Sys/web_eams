@@ -1017,5 +1017,19 @@
             })
         });
     });
+
+    /* tyas tambahin, kalau reject reason harus diisi */
+    $(document).on('click', '#btnreject', function(event) {
+        var rejectreason = document.getElementById('v_reason').value;
+  
+        if (rejectreason == "") {
+          $("#v_reason").attr('required', true);
+        }
+    });
+
+    /* tyas tambahin, kalau habis reject reason selanjutnya jadi mandatory meski klik approve makanya ditambahin validasi ini */
+    $(document).on('click', '#btnapprove', function(event) {
+        $("#v_reason").attr('required', false);
+    });
 </script>
 @endsection

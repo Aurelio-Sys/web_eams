@@ -17,6 +17,13 @@
    <td>{{ $datasrappeng ? $datasrappeng : 0 }}</td>
 </tr>
 @endif
+@if(strpos(Session::get('menu_access'), 'SR04') !== false)
+<tr>
+   <td>User Acceptance</td>
+   <td>Acceptance</td>
+   <td>{{ $dataaccep ? $dataaccep : 0 }}</td>
+</tr>
+@endif
 @if(strpos(Session::get('menu_access'), 'WO09') !== false)
 <tr>
    <td>Work Order Release</td>

@@ -3025,7 +3025,7 @@ class wocontroller extends Controller
         ]);
     }
 
-    public function woreportingdetail($wonumber)
+    public function woreportingdetail($wonumber) /** Route : workorder.wofinish-done  Blade : workorder.wofinish-done */
     {
         //ambil data untuk header wo report detail
         $dataheader = DB::table('wo_mstr')
@@ -3098,6 +3098,7 @@ class wocontroller extends Controller
         $datainstruction = DB::table('wo_dets_ins')
             ->leftJoin('um_mstr', 'um_mstr.um_code', 'wo_dets_ins.wd_ins_durationum')
             ->where('wd_ins_wonumber', '=', $wonumber)
+            ->orderBy('wd_ins_step')
             ->get();
 
         // dd($datainstruction);

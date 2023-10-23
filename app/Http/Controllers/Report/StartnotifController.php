@@ -26,6 +26,10 @@ class StartnotifController extends Controller
         $datasrappeng = DB::table('sr_trans_approval_eng')
             ->where('srta_eng_status', '=', 'Waiting for engineer approval');
 
+        /** Notifaksi untuk pembuat SR jika ada SR yang perlu di revisi */
+        $dataaccep = DB::table('service_req_mstr')
+            ->where('sr_status', '=', 'acceptance');
+
         /** Notifkasi untuk teknisi yang mendapatkan WO */
         $datawostart = DB::table('wo_mstr')
             ->where('wo_status', 'released');
@@ -93,6 +97,7 @@ class StartnotifController extends Controller
             case "ADMIN":
                 $datasr = $datasr->count();
                 $datasrappeng = $datasrappeng->count();
+                $dataaccep = $dataaccep->count();
                 $datawofirm = $datawofirm->count();
                 $dataapprels = $dataapprels->count();
                 $datawostart = $datawostart->count();
@@ -104,6 +109,7 @@ class StartnotifController extends Controller
             case "SPVSR":
                 $datasr = $datasr->where('sr_dept','=',Session::get('department'))->count();
                 $datasrappeng = $datasrappeng->where('srta_eng_dept_approval','=',Session::get('department'))->count();
+                $dataaccep = $dataaccep->where('sr_dept','=',Session::get('department'))->count();
                 $datawofirm = $datawofirm->where('wo_department','=',Session::get('department'))->count();
                 $dataapprels = $dataapprels->where('retr_dept_approval','=',Session::get('department'))->count();
                 $datawostart = $datawostart->where('wo_department','=',Session::get('department'))->count();
@@ -115,6 +121,7 @@ class StartnotifController extends Controller
             default:
                 $datasr = $datasr->where('sr_req_by','=',Session::get('username'))->count();
                 $datasrappeng = $datasrappeng->where('srta_eng_dept_approval','=',Session::get('department'))->count();
+                $dataaccep = $dataaccep->where('sr_req_by','=',Session::get('username'))->count();
                 $datawofirm = $datawofirm->where('wo_list_engineer','like','%'.Session::get('username').'%')->count();
                 $dataapprels = $dataapprels->where('retr_dept_approval','=',Session::get('department'))->count();
                 $datawostart = $datawostart->where('wo_list_engineer','like','%'.Session::get('username').'%')->count();
@@ -124,7 +131,7 @@ class StartnotifController extends Controller
                 $datareqspapp = $datareqspapp->where('rqtr_dept_approval','=',Session::get('department'))->count();
         }
 
-        return view('report.startnotif', compact('datasr','datasrappeng','dataapprels','datawotrans',
+        return view('report.startnotif', compact('datasr','datasrappeng','dataaccep','dataapprels','datawotrans',
             'dataappwo','datareqsprev','datareqspapp','datareqsptrans','dataretsptrans','datawofirm','datawostart','datawofinish'));
     }
 
