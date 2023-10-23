@@ -7,7 +7,7 @@
         <h1 class="m-0 text-dark">Asset Booking Schedule</h1>
     </div>
   </div><!-- /.col -->
-  <div style="text-align: right">
+  <div style="text-align: right; display: none;">
     Booking Status  :  
     <span class="badge badge-warning">Open</span>
     <span class="badge badge-success">Approve</span>
@@ -245,11 +245,38 @@
 
            document.getElementById('ta_code').value = code;
            document.getElementById('ta_asset').value = asset + " - " + desc;
-           document.getElementById('ta_start').value = start;
-           document.getElementById('ta_end').value = end;
+           {{--  document.getElementById('ta_start').value = start;
+           document.getElementById('ta_end').value = end;  --}}
            document.getElementById('ta_by').value = by;
            document.getElementById('ta_note').value = note;
            document.getElementById('ta_status').value = status;
+
+           // Membuat format tanggal start menjadi 31-08-2023 05:13 
+            // Convert the input date string to a JavaScript Date object
+            const dateObjectStart = new Date(start);
+            // Get the date and time components
+            const dayStart = dateObjectStart.getDate().toString().padStart(2, '0');
+            const monthStart = (dateObjectStart.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based.
+            const yearStart = dateObjectStart.getFullYear();
+            const hoursStart = dateObjectStart.getHours().toString().padStart(2, '0');
+            const minutesStart = dateObjectStart.getMinutes().toString().padStart(2, '0');
+            // Create the formatted date string for start
+            const formattedDateStart = `${dayStart}-${monthStart}-${yearStart} ${hoursStart}:${minutesStart}`;
+            // Set the formatted date in the element with the 'ta_start' ID
+            document.getElementById('ta_start').value = formattedDateStart;
+            // Membuat format tanggal end menjadi 31-08-2023 05:13 
+            // Convert the input date string to a JavaScript Date object
+            const dateObjectEnd = new Date(end);
+            // Get the date and time components for end
+            const dayEnd = dateObjectEnd.getDate().toString().padStart(2, '0');
+            const monthEnd = (dateObjectEnd.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based.
+            const yearEnd = dateObjectEnd.getFullYear();
+            const hoursEnd = dateObjectEnd.getHours().toString().padStart(2, '0');
+            const minutesEnd = dateObjectEnd.getMinutes().toString().padStart(2, '0');
+            // Create the formatted date string for end
+            const formattedDateEnd = `${dayEnd}-${monthEnd}-${yearEnd} ${hoursEnd}:${minutesEnd}`;
+            // Set the formatted date in the element with the 'ta_end' ID
+            document.getElementById('ta_end').value = formattedDateEnd;
           
             if(allday == "Yes") {
                 document.getElementById("ta_allday").checked = true;
