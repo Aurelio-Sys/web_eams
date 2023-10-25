@@ -201,6 +201,7 @@ class RptDetWOController extends Controller
 
         $datatemp = DB::table('temp_wo')
         // ->where('temp_wo','=','PM-23-004839')
+        ->leftJoin('womaint_upload', 'temp_wo','womaint_wonbr')
         ->orderBy('temp_create_date','desc')
         ->orderBy('temp_wo','desc');
         // dd($datatemp->get());
