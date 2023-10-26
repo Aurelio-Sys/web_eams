@@ -51,7 +51,7 @@ class AccountController extends Controller
         $domain = ModelsQxwsa::first();
 
         $suppdata = (new WSAServices())->wsaaccount($domain->wsas_domain);
-
+// dd($domain->wsas_domain);
         if ($suppdata === false) {
             toast('WSA Failed', 'error')->persistent('Dismiss');
             return redirect()->back();
@@ -99,7 +99,7 @@ class AccountController extends Controller
      */
     public function store(Request $req)
     {
-        dd($req->all());
+        // dd($req->all());
         DB::beginTransaction();
         try {
             

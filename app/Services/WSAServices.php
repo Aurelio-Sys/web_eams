@@ -1122,7 +1122,7 @@ class WSAServices
             '<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
             <Body>
                 <eams_account xmlns="' . $wsa->wsas_path . '">
-                    <inpdomain></inpdomain>
+                    <inpdomain>'.$domain.'</inpdomain>
                 </eams_account>
             </Body>
         </Envelope>';

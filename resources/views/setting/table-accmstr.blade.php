@@ -2,6 +2,7 @@
 <tr>
     <td>{{$show->acc_code}}</td>
     <td>{{$show->acc_desc}}</td>
+    <td>{{$show->acc_cc}}</td>
     <td>
         {{--  Tidak ada edit karena data diambil dari QAD, jadi tidak bisa diedit. Karena data harus sama dengan QAD --}}
         <a href="javascript:void(0)" class="deletedata" data-toggle="tooltip"  title="Delete Data" data-target="#deleteModal" 

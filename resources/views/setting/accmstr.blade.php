@@ -78,8 +78,9 @@
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
             <thead>
                 <tr>
-                    <th width="30%">Code<span id="location_id_icon"></span></th>
+                    <th width="20%">Code<span id="location_id_icon"></span></th>
                     <th width="60%">Description</th>
+                    <th width="10%">Cost Center</th>
                     <th width="10%">Action</th>  
                 </tr>
             </thead>
@@ -150,6 +151,7 @@
             var selectedOption = select.options[select.selectedIndex];
     
             var desc = selectedOption.getAttribute("data-desc");
+            var cc = selectedOption.getAttribute("data-cc");
     
             document.getElementById('t_desc').value = desc;
             document.getElementById('t_cc').value = cc;
