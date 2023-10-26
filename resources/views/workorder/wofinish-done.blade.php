@@ -427,7 +427,7 @@
                 <div class="form-group row col-md-12">
                     <label for="c_note" class="col-md-4 col-form-label text-md-left">Reporting Note <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-6">
-                        <textarea id="c_note" class="form-control c_note" name="c_note" maxlength="250">{{($header->wo_report_note != null) ? $header->wo_report_note  : ''}}</textarea>
+                        <textarea id="c_note" class="form-control c_note" name="c_note" maxlength="250" required>{{($header->wo_report_note != null) ? $header->wo_report_note  : ''}}</textarea>
                     </div>
                 </div>
 
@@ -662,7 +662,7 @@
 
             cols += '<td style="vertical-align:middle;text-align:center;">';
             cols += '<div class="input-group">';
-            cols += '<input type="number" min="0" step="0.01" class="form-control ins_duration" id="input-with-select" name="ins_duration[]"/>';
+            cols += '<input type="number" min="0" step="0.01" class="form-control ins_duration" id="input-with-select" name="ins_duration[]" value="0.00"/>';
             cols += '<div class="input-group-append">';
             cols += '<select class="form-control durationum" name="durationum[]">';
             @foreach($um as $dataum)
