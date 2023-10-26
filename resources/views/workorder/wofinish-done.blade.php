@@ -427,7 +427,7 @@
                 <div class="form-group row col-md-12">
                     <label for="c_note" class="col-md-4 col-form-label text-md-left">Reporting Note <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-6">
-                        <textarea id="c_note" class="form-control c_note" name="c_note" maxlength="250">{{($header->wo_report_note != null) ? $header->wo_report_note  : ''}}</textarea>
+                        <textarea id="c_note" class="form-control c_note" name="c_note" maxlength="250" required>{{($header->wo_report_note != null) ? $header->wo_report_note  : ''}}</textarea>
                     </div>
                 </div>
 

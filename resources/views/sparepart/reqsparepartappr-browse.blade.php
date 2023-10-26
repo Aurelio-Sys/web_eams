@@ -543,5 +543,18 @@
     $(document).on('click', '#btnrefresh', function() {
         resetSearch();
     });
+
+    /* tyas tambahin, kalau reject reason harus diisi */
+    $(document).on('click', '#btreject', function(event) {
+        var rejectreason = document.getElementById('v_reason').value;
+  
+        if (rejectreason == "") {
+          $("#v_reason").attr('required', true);
+        }
+    });
+    /* tyas tambahin, kalau habis reject reason selanjutnya jadi mandatory meski klik approve makanya ditambahin validasi ini */
+    $(document).on('click', '#btnapproval', function(event) {
+        $("#v_reason").attr('required', false);
+    });
 </script>
 @endsection
