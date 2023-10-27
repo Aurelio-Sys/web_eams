@@ -12,7 +12,7 @@
     <td>{{$show->sr_status}}</td>
     <!-- <td>{{$show->sr_priority}}</td> -->
     <!-- <td>{{$show->dept_desc}}</td> -->
-    <td>{{$show->username}}</td>
+    <td>{{$show->username}} - {{$show->name}}</td>
 
     <td>{{date('d-m-Y', strtotime($show->sr_req_date))}}</td>
     <td>{{date('H:i', strtotime($show->sr_req_time))}}</td>

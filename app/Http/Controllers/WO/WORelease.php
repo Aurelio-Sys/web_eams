@@ -1446,7 +1446,8 @@ class WORelease extends Controller
                                 'wd_ins_step' => $ins->ins_step,
                                 'wd_ins_code' => $ins->ins_code,
                                 'wd_ins_stepdesc' => $ins->ins_stepdesc,
-                                'wd_ins_duration' => $ins->ins_duration,
+                                'wd_ins_duration' => $ins->ins_duration ? $ins->ins_duration : 0,
+                                'wd_ins_durationum' => $ins->ins_durationum,
                                 'wd_ins_create' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 'wd_ins_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);

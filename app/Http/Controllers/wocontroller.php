@@ -1738,28 +1738,30 @@ class wocontroller extends Controller
                                 'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
+
+                            DB::table('sr_trans_approval_eng')
+                                ->where('srta_eng_mstr_id', $getdatasr->id)
+                                ->update([
+                                    'srta_eng_reason' => null,
+                                    'srta_eng_status' => 'Waiting for engineer approval',
+                                    'srta_eng_approved_by' => null,
+                                    'updated_at' => null,
+                                ]);
+
+                            DB::table('sr_trans_approval_eng_hist')
+                                ->insert([
+                                    'srtah_eng_sr_number' => $getdatasr->sr_number,
+                                    'srtah_eng_dept_approval' => $getdatasr->sr_eng_approver,
+                                    'srtah_eng_role_approval' => 'SPVSR',
+                                    'srtah_eng_status' => 'Waiting for engineer approval',
+                                    'srtah_eng_reason' => 'WO deleted and SR back to open',
+                                    'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                ]);
                     }
 
                     //update status sr approval eng menjadi waiting fo approval lagi
-                    DB::table('sr_trans_approval_eng')
-                        ->where('srta_eng_mstr_id', $getdatasr->id)
-                        ->update([
-                            'srta_eng_reason' => null,
-                            'srta_eng_status' => 'Waiting for engineer approval',
-                            'srta_eng_approved_by' => null,
-                            'updated_at' => null,
-                        ]);
-
-                    DB::table('sr_trans_approval_eng_hist')
-                        ->insert([
-                            'srtah_eng_sr_number' => $getdatasr->sr_number,
-                            'srtah_eng_dept_approval' => $getdatasr->sr_eng_approver,
-                            'srtah_eng_role_approval' => 'SPVSR',
-                            'srtah_eng_status' => 'Waiting for engineer approval',
-                            'srtah_eng_reason' => 'WO deleted and SR back to open',
-                            'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                            'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        ]);
+                    
 
 
                     //hapus data wo
@@ -1952,6 +1954,26 @@ class wocontroller extends Controller
                                     'sr_priority' => $getdatasr->sr_priority,
                                     'sr_wodelete_note' => $req->notecancel,
                                     'sr_action' => 'WO Deleted',
+                                    'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                ]);
+
+                            DB::table('sr_trans_approval_eng')
+                                ->where('srta_eng_mstr_id', $getdatasr->id)
+                                ->update([
+                                    'srta_eng_reason' => null,
+                                    'srta_eng_status' => 'Waiting for engineer approval',
+                                    'srta_eng_approved_by' => null,
+                                    'updated_at' => null,
+                                ]);
+
+                            DB::table('sr_trans_approval_eng_hist')
+                                ->insert([
+                                    'srtah_eng_sr_number' => $getdatasr->sr_number,
+                                    'srtah_eng_dept_approval' => $getdatasr->sr_eng_approver,
+                                    'srtah_eng_role_approval' => 'SPVSR',
+                                    'srtah_eng_status' => 'Waiting for engineer approval',
+                                    'srtah_eng_reason' => 'WO deleted and SR back to open',
                                     'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                     'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 ]);
@@ -6945,8 +6967,8 @@ class wocontroller extends Controller
             ->get();
 
         /* A211103 */
-        $listfinish = DB::table('acceptance_image')
-            ->whereFile_wonumber($wo)
+        $listfinish = DB::table('womaint_upload')
+            ->where('womaint_wonbr','=',$wo)
             ->get();
 
         $fileName = $wo . '_' . $assetnow->wo_asset_code . '.zip';
@@ -6961,9 +6983,9 @@ class wocontroller extends Controller
 
                 /* A211103 */
                 foreach ($listfinish as $listfinish) {
-                    $files = File::get($listfinish->file_url);
-                    $relativeNameInZipFile = basename($listfinish->file_url);
-                    $zip->addFile($listfinish->file_url, $relativeNameInZipFile);
+                    $files = File::get($listfinish->womaint_wonbr_filepath);
+                    $relativeNameInZipFile = basename($listfinish->womaint_wonbr_filepath);
+                    $zip->addFile($listfinish->womaint_wonbr_filepath, $relativeNameInZipFile);
                 }
 
                 $zip->close();

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Carbon\Carbon;
+use Exception;
 
 class PmassetController extends Controller
 {
@@ -260,12 +261,35 @@ class PmassetController extends Controller
      */
     public function destroy(Request $req)
     {
-        $data = DB::table('pma_asset')
-            ->wherePma_asset($req->d_asset)
-            ->wherePma_pmcode($req->d_pmcode)
-            ->delete();
+        /** Melakukan pengecekan apakah data sudah di pakai di wo_mstr */
+        $cek = DB::table('wo_mstr')
+            ->whereWoMtCode($req->d_pmcode)
+            ->whereWoAssetCode($req->d_asset)
+            ->count();
 
-        toast('Preventive Maintenance Deleted.', 'success');
-        return back();
+        if ($cek > 0) {
+            toast('Data can not be deleted, data has been used for the transaction!!!.', 'error');
+            return back();
+        } else {
+            DB::beginTransaction();
+            try {
+                $data = DB::table('pma_asset')
+                ->wherePma_asset($req->d_asset)
+                ->wherePma_pmcode($req->d_pmcode)
+                ->delete();
+
+                toast('Preventive Maintenance Deleted.', 'success');
+                return back();
+            } catch (Exception $err) {
+                DB::rollBack();
+    
+                dd($err);
+                toast('Preventive Maintenance Error, please re-generate again.', 'success');
+                return back();
+            }
+        }
+        
+
+        
     }
 }

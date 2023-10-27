@@ -48,9 +48,9 @@ class PmConfirmController extends Controller
             ->groupBy('asset_code','pmo_pmcode','pmo_sch_date');
 
         /* Jika bukan admin, maka yang muncul adalah data sesuai dapartemen nya */
-        // if (Session::get('role') <> 'ADMIN') {
-        //     $data = $data->where('pmo_dept', '=', session::get('department'));
-        // }
+        if (Session::get('role') <> 'ADMIN') {
+            $data = $data->where('pmo_dept', '=', session::get('department'));
+        }
 
         /** Penambahan kondisi search */
         if($s_code) {

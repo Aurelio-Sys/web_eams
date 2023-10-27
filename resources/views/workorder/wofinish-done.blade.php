@@ -712,7 +712,7 @@
 
             cols += '<td style="vertical-align:middle;text-align:center;">';
             cols += '<div class="input-group">';
-            cols += '<input type="number" value="0" min="0" step="0.01" class="form-control ins_duration" id="input-with-select" name="ins_duration[]"/>';
+            cols += '<input type="number" min="0" step="0.01" class="form-control ins_duration" id="input-with-select" name="ins_duration[]" value="0.00"/>';
             cols += '<div class="input-group-append">';
             cols += '<select class="form-control durationum" name="durationum[]">';
             @foreach($um as $dataum)
