@@ -1323,8 +1323,7 @@ class SparepartController extends Controller
             'data',
             'sparepart_detail',
             'datalocsupply',
-            'sumqtytransferred',
-        ));
+            'sumqtytransferred'));
     }
 
     //TRANSFER SPAREPART VIEW DETAIL
@@ -2827,7 +2826,7 @@ class SparepartController extends Controller
         return view('sparepart.returnsparepartwhs-detail', compact(
             'data',
             'sparepart_detail',
-            'datalocsupply',
+            'datalocsupply'
         ));
     }
 

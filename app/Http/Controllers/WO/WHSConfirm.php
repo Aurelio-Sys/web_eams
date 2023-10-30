@@ -226,7 +226,7 @@ class WHSConfirm extends Controller
             'sparepart_detail',
             'datalocsupply',
             'datatemp_required',
-            'result',
+            'result'
         ));
     }
 
