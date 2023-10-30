@@ -198,7 +198,7 @@
                                         <select style="display: inline-block !important;" class="form-control selectpicker glacc" name="glacc[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px">
                                             <option value=""> -- Select GL Account --</option>
                                             @foreach (  $glacc as $glaccount )
-                                            <option value="{{$glaccount->acc_code}}" >{{$glaccount->acc_code}} -- {{$glaccount->acc_desc}}</option>
+                                            <option value="{{$glaccount->acc_code}}" data-ccreq="{{$glaccount->acc_cc}}" >{{$glaccount->acc_code}} -- {{$glaccount->acc_desc}}</option>
                                             @endforeach
                                         </select>
                                     </td>
@@ -561,6 +561,20 @@
     }
 
     $(document).ready(function() {
+        $('.glacc').on('change', function() {
+            // Get the selected option element
+            let selectedOption = $(this).find('option:selected');
+            // Check the data-ccreq attribute of the selected option
+            let isCCRequired = selectedOption.data('ccreq');
+            if (isCCRequired === true) {
+                // Set the ccenter select as required
+                $('.ccenter').prop('required', true);
+            } else {
+                // Set the ccenter select as not required
+                $('.ccenter').prop('required', false);
+            }
+        });
+
         $(document).on('change','.ins_check',function(e){
             var checkbox = $(this), // Selected or current checkbox
             value = checkbox.val(); // Value of checkbox
@@ -648,7 +662,7 @@
             cols += '<select style="display: inline-block !important;" class="form-control selectpicker glacc" name="glacc[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px">';
             cols += '<option value=""> -- Select GL Account --</option>';
             @foreach (  $glacc as $glaccount )
-            cols += '<option value="{{$glaccount->acc_code}}" >{{$glaccount->acc_code}} -- {{$glaccount->acc_desc}}</option>';
+            cols += '<option value="{{$glaccount->acc_code}}" data-ccreq="{{$glaccount->acc_cc}}" >{{$glaccount->acc_code}} -- {{$glaccount->acc_desc}}</option>';
             @endforeach
             cols += '</select>';
             cols += '</td>';
