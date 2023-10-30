@@ -2267,7 +2267,7 @@ div #munculgambar .gambar:hover{
       });
 
       if (status == "released" || status == "started") {
-        document.getElementById('e_engineerlist').setAttribute('readonly', true);
+        // document.getElementById('e_engineerlist').setAttribute('readonly', true);
         document.getElementById('e_mtcode').setAttribute('readonly', true);
         document.getElementById('e_inslist').setAttribute('readonly', true);
         document.getElementById('e_splist').setAttribute('readonly', true);
