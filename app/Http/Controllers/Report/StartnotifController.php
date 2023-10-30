@@ -50,9 +50,9 @@ class StartnotifController extends Controller
                 $status->orWhere('wo_status', '=', 'started');
             })
             ->count();
-        /** Notifkasi untuk Wo Start */
+        /** Notifkasi untuk Wo yang bisa dikerjakan */
         $datawofirm = DB::table('wo_mstr')
-            ->where('wo_status', 'released');
+            ->where('wo_status', 'firm');
         /** Notifkasi untuk WO Reporting */
         $datawofinish = DB::table('wo_mstr')
             ->where('wo_status', 'started');

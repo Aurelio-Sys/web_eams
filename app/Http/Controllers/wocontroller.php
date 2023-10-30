@@ -3476,6 +3476,11 @@ class wocontroller extends Controller
                 return back();
             }
 
+            /** Kondisi jika akses dari menu notifikasi */
+            if($req->status) {
+                $data = $data->where('wotr_status', 'waiting for approval');
+            }
+
             $data = $data->paginate(10);
 
             $engineer = DB::table('users')
