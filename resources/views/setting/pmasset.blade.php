@@ -129,7 +129,7 @@
                      <div class="col-md-4">
                      <select class="form-control " id="t_mea" name="t_mea" required>
                         <option value="">--</option>
-                        <option value="C">Caledar</option>
+                        <option value="C">Calendar</option>
                         <option value="M">Meter</option>
                         <option value="B">Both</option>
                      </select>
@@ -232,7 +232,7 @@
                     <div class="col-md-4">
                     <select class="form-control " id="te_mea" name="te_mea" required>
                        <option value="">--</option>
-                       <option value="C">Caledar</option>
+                       <option value="C">Calendar</option>
                        <option value="M">Meter</option>
                        <option value="B">Both</option>
                     </select>

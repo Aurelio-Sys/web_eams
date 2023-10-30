@@ -2,7 +2,7 @@
 <tr>
     <td>Service Request</td>
     <td>Revise</td>
-    <td>{{ $datasr ? $datasr : 0 }}</td>
+    <td><a href="/srbrowse?status=Revise">{{ $datasr ? $datasr : 0 }}</a></td>
 </tr>
 @endif
 {{--  <tr>
@@ -14,7 +14,14 @@
 <tr>
    <td>Service Request Approval Engineer</td>
    <td>Waiting for engineer approval</td>
-   <td>{{ $datasrappeng ? $datasrappeng : 0 }}</td>
+   <td><a href="/srapprovaleng?status=notif">{{ $datasrappeng ? $datasrappeng : 0 }}</a></td>
+</tr>
+@endif
+@if(strpos(Session::get('menu_access'), 'SR04') !== false)
+<tr>
+   <td>User Acceptance</td>
+   <td>Acceptance</td>
+   <td><a href="/useracceptance">{{ $dataaccep ? $dataaccep : 0 }}</a></td>
 </tr>
 @endif
 @if(strpos(Session::get('menu_access'), 'SR04') !== false)
@@ -28,7 +35,7 @@
 <tr>
    <td>Work Order Release</td>
    <td>Firm</td>
-   <td>{{ $datawofirm ? $datawofirm : 0 }}</td>
+   <td><a href="/worelease">{{ $datawofirm ? $datawofirm : 0 }}</a></td>
 </tr>
 @endif
 @if(strpos(Session::get('menu_access'), 'WO10') !== false)
@@ -49,21 +56,21 @@
 <tr>
    <td>Work Order Start</td>
    <td>released</td>
-   <td>{{ $datawostart ? $datawostart : 0 }}</td>
+   <td><a href="/wojoblist">{{ $datawostart ? $datawostart : 0 }}</a></td>
 </tr>
 @endif
 @if(strpos(Session::get('menu_access'), 'WO03') !== false)
 <tr>
    <td>Work Order Reporting</td>
    <td>started</td>
-   <td>{{ $datawofinish ? $datawofinish : 0 }}</td>
+   <td><a href="/woreport">{{ $datawofinish ? $datawofinish : 0 }}</a></td>
 </tr>
 @endif
 @if(strpos(Session::get('menu_access'), 'WO08') !== false)
 <tr>
    <td>Work Order Approval</td>
    <td>waiting for approval</td>
-   <td>{{ $dataappwo ? $dataappwo : 0 }}</td>
+   <td><a href="/woapprovalbrowse?status=notif">{{ $dataappwo ? $dataappwo : 0 }}</a></td>
 </tr>
 @endif
 @if(strpos(Session::get('menu_access'), 'SP03') !== false)

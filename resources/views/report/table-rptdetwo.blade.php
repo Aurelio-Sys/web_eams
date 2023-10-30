@@ -30,7 +30,7 @@
             <i class="icon-table fa fa-print fa-lg"></i></a>
       @endif  --}}
       &ensp;
-      @if($show->temp_status == 'finish' || $show->temp_status == 'closed')  
+      @if(($show->temp_status == 'finished' && $show->womaint_wonbr != null) || ($show->temp_status == 'closed' && $show->womaint_wonbr != null))  
         <a id="adownload" target="_blank" href="{{url('wodownloadfile/'.$show->temp_wo)}}" data-toggle="tooltip"  
             title="Download document" ><i class="icon-table fas fa-download fa-lg"></i></a>  
       @endif
