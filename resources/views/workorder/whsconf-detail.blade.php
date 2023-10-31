@@ -224,6 +224,19 @@
     }
 
     $(document).ready(function() {
+        $('.locto option').each(function(index, val) {
+            // console.log($(this).prop());
+            if ($(this).is(':selected')) {
+                var row = $(this).closest("tr");
+                const locto = row.find(':selected').val();
+                const siteto = row.find(':selected').data('siteto');
+
+
+                row.find('.hidden_siteto').val(siteto);
+                row.find('.hidden_locto').val(locto);
+            }
+        });
+
         $('#submit').submit(function(event) {
             // Cek apakah semua qtytotransfer bernilai 0
             const inputs = $('.qtytotransfer');
