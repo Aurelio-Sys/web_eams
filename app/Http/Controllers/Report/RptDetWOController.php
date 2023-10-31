@@ -70,7 +70,7 @@ class RptDetWOController extends Controller
 
         Schema::create('temp_wo', function ($table) {
             $table->increments('id');
-            $table->string('temp_wo');
+            $table->string('temp_wo')->collation('utf8mb4_general_ci');
             $table->string('temp_sr')->nullable();
             $table->string('temp_type')->nullable();
             $table->string('temp_asset')->charset('utf8mb4')->collation('utf8mb4_general_ci');
