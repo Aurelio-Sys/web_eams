@@ -484,11 +484,12 @@ class SparepartController extends Controller
                 $output .= '<td><input type="number" class="form-control" step=".01" min="0" name="te_qtyreq[]" value="' . $data->req_spd_qty_request . '"></td>';
                 $output .= '<td>';
                 $output .= '<select name="te_locto[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" required>';
-                $output .= '<option value = ""> -- Select Location To -- </option>';
+                $output .= '<option value=""> -- Select Location To -- </option>';
                 foreach ($loc_to as $dat) {
                     $selected = ($dat->inp_loc === $data->inp_loc) ? 'selected' : '';
-                    $output .= '<option value="' . $dat->inp_loc . '" ' . $selected . '> ' . $dat->inp_loc . ' </option>';
+                    $output .= '<option value="' . $dat->inp_loc . '" data-siteto="' . $dat->inp_supply_site . '" ' . $selected . '> ' . $dat->inp_loc . ' </option>';
                 }
+                $output .= '<input type="hidden" class="siteto" name="te_siteto[]" value="' . $dat->inp_supply_site . '"/>';
                 $output .= '</select>';
                 $output .= '</td>';
                 $output .= '<td>';
@@ -516,6 +517,7 @@ class SparepartController extends Controller
                 ->join('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
                 ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
+                ->join('inp_supply', 'inp_supply.inp_asset_site', 'req_sparepart_det.req_spd_loc_to')
                 ->where('req_sp_number', $rsnumber)
                 // ->groupBy('req_sp_number')
                 ->get();
@@ -666,15 +668,19 @@ class SparepartController extends Controller
             $data = [
                 "spreq" => $newData['te_spreq'],
                 "locto" => $newData['te_locto'],
+                "siteto" => $newData['te_siteto'],
                 "qtyrequest" => $newData['te_qtyreq'],
                 "reqnote" => $newData['te_reqnote'],
                 "tick" => $newData['tick'],
             ];
 
+            // dd($data);
+
             $groupedData = collect($data['spreq'])->map(function ($spreq, $key) use ($data) {
                 return [
                     'spreq' => $spreq,
                     'locto' => $data['locto'][$key],
+                    'siteto' => $data['siteto'][$key],
                     'qtyrequest' => $data['qtyrequest'][$key],
                     'reqnote' => $data['reqnote'][$key],
                     "tick" => $data['tick'][$key],
@@ -685,6 +691,7 @@ class SparepartController extends Controller
                 return [
                     'spreq' => $group[0]['spreq'],
                     'locto' => $group[0]['locto'],
+                    'siteto' => $group[0]['siteto'],
                     'reqnote' => $group[0]['reqnote'],
                     'qtyrequest' => $totalqtyrequest,
                     'tick' => $group[0]['tick'],
@@ -704,6 +711,7 @@ class SparepartController extends Controller
                             'req_spd_sparepart_code' => $data['spreq'],
                             'req_spd_qty_request' => $data['qtyrequest'],
                             'req_spd_loc_to' => $data['locto'],
+                            'req_spd_site_to' => $data['siteto'],
                             'req_spd_reqnote' => $data['reqnote'],
                             'updated_at' => Carbon::now()->toDateTimeString(),
                         ]);
@@ -804,13 +812,11 @@ class SparepartController extends Controller
                     'req_sph_action' => 'all sparepart deleted',
                     'created_at' => Carbon::now()->toDateTimeString(),
                 ]);
-
-
-            toast('Request Sparepart Updated Successfully!', 'success');
-            return back();
         } else {
             return back();
         }
+        toast('Sparepart Requested ' . $req->e_rsnumber . ' Number Updated Successfully !', 'success')->autoClose(10000);
+        return redirect()->route('reqspbrowse');
     }
 
     //REQUEST SPAREPART CANCEL
