@@ -508,6 +508,7 @@
           var duedate = vamp.wo_master.wo_due_date;
           var createdby = vamp.wo_master.wo_createdby;
           var department = vamp.wo_master.wo_department ? vamp.wo_master.wo_department : '';
+          var deptdesc = vamp.dept_desc.dept_desc ? vamp.dept_desc.dept_desc : '';
           var rejectreason = vamp.sr_acceptance_note ? vamp.sr_acceptance_note : '';
           var status = vamp.wo_master.wo_status;
           var wotype = vamp.wo_master.wo_type;
@@ -548,7 +549,7 @@
           document.getElementById('v_startdate').value = startdate.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3-$2-$1");
           document.getElementById('v_duedate').value = duedate.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3-$2-$1");
           document.getElementById('v_creator').value = createdby;
-          document.getElementById('v_dept').value = department;
+          document.getElementById('v_dept').value = department + ' - ' + deptdesc;
           document.getElementById('v_srnote').value = srnote;
           document.getElementById('v_rejectreason').value = rejectreason;
           document.getElementById('v_status').value = status;
