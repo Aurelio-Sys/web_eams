@@ -532,7 +532,6 @@ class SparepartController extends Controller
                 ->join('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
                 ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
-                ->join('inp_supply', 'inp_supply.inp_asset_site', 'req_sparepart_det.req_spd_loc_to')
                 ->where('req_sp_number', $rsnumber)
                 // ->groupBy('req_sp_number')
                 ->get();
