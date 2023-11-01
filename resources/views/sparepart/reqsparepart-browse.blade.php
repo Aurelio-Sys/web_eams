@@ -543,6 +543,7 @@
         @foreach($loc_to as $loc)
         cols += '<option value="{{$loc->inp_loc}}">{{$loc->inp_loc}}</option>';
         @endforeach
+        cols += '<input type="hidden" class="siteto" name="te_siteto[]" value="{{$loc->inp_supply_site}}"/>';
         cols += '</select>';
         cols += '</td>';
         cols += '<td>';

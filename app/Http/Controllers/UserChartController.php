@@ -350,7 +350,7 @@ class UserChartController extends Controller
         }
         
         $engcode = $req->input('engcode');
-        $wotype  = $req->input('wotype');
+        $wotype  = $req->input('wotype') ? $req->input('wotype') : 'All'  ;
         $sdept  = $req->input('s_dept');
        
         $skrg = Carbon::createFromDate($tgl)->lastOfMonth()->day;
