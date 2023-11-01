@@ -385,26 +385,10 @@ class UserChartController extends Controller
                 ->join('eng_mstr','eng_code','=','username')
                 ->whereAccess('Engineer')
                 ->whereActive('Yes')
-                ->orderBy('eng_desc')
+                ->orderBy('eng_code')
                 ->get();
 
-        $kondisi = "";
-        switch ($wotype) {
-          case "All":
-            $kondisi = "wo_type <> 'All'";
-            break;
-          case "PM":
-            $kondisi = "wo_type = 'auto'";
-            break;
-          case "WO":
-            $kondisi = "wo_type = 'other'";
-            break;
-          default:
-            $kondisi = "wo_type <> 'All'";
-            $wotype = "All";
-        }
-
-        if (!isset($engcode) && !isset($sdept)){
+        if (!isset($engcode) && !isset($sdept) && $wotype == 'All'){
             // query disamakan dengan assetsch
             $datawo = DB::table('wo_mstr')
                 ->select('wo_number','wo_status','wo_start_date','wo_list_engineer','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note',
@@ -435,7 +419,21 @@ class UserChartController extends Controller
                 $datawo = $datawo->where('wo_list_engineer','like','%'.$engcode.'%');
             }
             if(isset($sdept)) {
-                $datawo = $datawo->where('eng_dept','=',$sdept);
+
+                $engDept = $sdept;
+
+                $datawo = $datawo
+                ->where('wo_list_engineer', 'LIKE', '%'.$engDept.'%')
+                ->orWhereExists(function ($query) use ($engDept) {
+                    $query->select(DB::raw(1))
+                        ->from('eng_mstr')
+                        ->whereRaw("FIND_IN_SET(eng_code, REPLACE(wo_list_engineer, ';', ','))")
+                        ->where('eng_dept', '=', $engDept);
+                });
+
+            }
+            if($wotype <> 'All') {
+                $datawo = $datawo->where('wo_type','=',$wotype);
             }
 
             $datawo = $datawo->get();
@@ -451,7 +449,7 @@ class UserChartController extends Controller
             ->get();
 
         return view('report.engsch',compact('skrg','hari','kosong','bulan','datawo','dataeng','fotoeng','engcode','datafn','wotype',
-            'datadept'));
+            'datadept','sdept'));
     }
     
     public function allrpt(Request $req)

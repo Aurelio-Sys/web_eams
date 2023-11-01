@@ -61,18 +61,27 @@ class UsageController extends Controller
             ->whereAssetActive('Yes')
             ->get();
 
+        // $dataussage = DB::table('us_hist')
+        //     ->select('us_hist.us_asset', 'us_last_mea', 'us_date as tgl', 'us_hist.us_mea_um')
+        //     ->join(
+        //         \DB::raw('(SELECT us_asset,us_mea_um, MAX(us_date) AS max_date FROM us_hist GROUP BY us_asset, us_mea_um) as max_us'),
+        //         function ($join) {
+        //             $join->on('us_hist.us_asset', '=', 'max_us.us_asset');
+        //             $join->on('us_hist.us_date', '=', 'max_us.max_date');
+        //             $join->on('us_hist.us_mea_um', '=', 'max_us.us_mea_um');
+        //         }
+        //     )
+        //     ->get();
+
         $dataussage = DB::table('us_hist')
-            ->select('us_hist.us_asset', 'us_last_mea', 'us_date as tgl', 'us_hist.us_mea_um')
-            ->join(
-                \DB::raw('(SELECT us_asset,us_mea_um, MAX(us_date) AS max_date FROM us_hist GROUP BY us_asset, us_mea_um) as max_us'),
-                function ($join) {
-                    $join->on('us_hist.us_asset', '=', 'max_us.us_asset');
-                    $join->on('us_hist.us_date', '=', 'max_us.max_date');
-                    $join->on('us_hist.us_mea_um', '=', 'max_us.us_mea_um');
-                }
-            )
+            ->select('us_asset', 'us_last_mea', 'us_date as tgl', 'us_mea_um')
+            ->whereIn('us_last_mea', function ($query) {
+                $query->select(DB::raw('MAX(us_last_mea)'))
+                    ->from('us_hist')
+                    ->groupBy('us_asset', 'us_mea_um');
+            })
             ->get();
-// dd($dataussage);
+        
         return view('schedule.usage',['data' => $data, 'asset' => $asset, 'dataussage' => $dataussage]);
         
     }

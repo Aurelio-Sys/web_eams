@@ -98,6 +98,17 @@ class AllWOGenerate extends Controller
         DB::beginTransaction();
         try {
 
+            /** Menghapus data plan yang data PM masternya tidak ada / sudah dihapus */
+            DB::table('pmo_confirm')
+                ->select('pmo_asset', 'pmo_pmcode')
+                ->leftJoin('pma_asset', function ($join) {
+                    $join->on('pmo_confirm.pmo_asset', '=', 'pma_asset.pma_asset')
+                        ->on('pmo_confirm.pmo_pmcode', '=', 'pma_asset.pma_pmcode');
+                })
+                ->whereNull('pma_asset.pma_asset')
+                ->whereNull('pma_asset.pma_pmcode')
+                ->delete();
+            
             $tempsch = [];
             foreach($datapm as $dp) {
                 //Hapus dulu data yang sudah terbentuk, yang asset dan pmcode nya sama, agar terbentuk data yang baru

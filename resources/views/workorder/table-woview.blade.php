@@ -20,6 +20,7 @@
   @else
     <td>CM</td>
   @endif
+  <td>{{ $show->dept_desc}}</td>
   <td>{{ $show->wo_system_create }}</td>
   <td>{{$show->name}}</td>
   <td>

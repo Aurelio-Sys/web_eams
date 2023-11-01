@@ -28,6 +28,7 @@ use App\Http\Controllers\Report\ViewWhyController;
 use App\Http\Controllers\Report\RptRenewController;
 use App\Http\Controllers\Report\SptRptController;
 use App\Http\Controllers\Report\ViewAssetController;
+use App\Http\Controllers\Report\StartnotifController;
 use App\Http\Controllers\SP\KebutuhanSPController;
 use App\Http\Controllers\UserChartController;
 use App\Http\Controllers\WO\AllWOGenerate;
@@ -483,6 +484,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/wocreatemenu', 'wocontroller@wocreatemenu')->name('wocreatemenu');
 	route::get('/wocreate/pagination', 'wocontroller@wopagingcreate');
 	route::post('/createenwo', 'wocontroller@createenwo');
+	route::get('/assetbyloc_wo', [wocontroller::class, 'assetbyloc_wo']);
 
 	//work order browse
 	route::get('/wobrowse', 'wocontroller@wobrowsemenu')->name('wobrowse');
@@ -873,7 +875,8 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/traininganalyze', [TrainingController::class, 'traininganalyze'])->name('trainAnalyze');
 
 	//Spare Part Stock
-	Route::get('/spstockbrowse',[SparepartController::class, 'spstockbrowse']);
+	Route::get('/spstockbrowse',[SparepartController::class, 'spstockbrowse'])->name('spStockBrw');
+	Route::post('/loadspstock', [SparepartController::class, 'loadspstock']);
 	
 
 
@@ -893,6 +896,9 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// Sparepart Report
 	Route::get('/sptrpt', [SptRptController::class, 'index']);
+
+	// Digunakan untuk menampilkan notifikasi setiap user
+	Route::get('/startnotif', [StartnotifController::class, 'index']);
 	
 });
 

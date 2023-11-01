@@ -141,7 +141,7 @@
                 <div class="form-group row">
                     <label for="te_prc_date" class="col-md-2 col-form-label text-md-right">Purchase Date</label>
                     <div class="col-md-4">
-                        <input id="te_prc_date" type="date" class="form-control" name="te_prc_date" readonly >
+                        <input id="te_prc_date" type="text" class="form-control" name="te_prc_date" readonly >
                     </div>
                     <label for="te_qad" class="col-md-2 col-form-label text-md-right">Asset Accounting</label>
                     <div class="col-md-4">
@@ -161,7 +161,7 @@
                 <div class="form-group row">
                     <label for="te_renew" class="col-md-2 col-form-label text-md-right">Asset Renewal Date</label>
                     <div class="col-md-4">
-                        <input id="te_renew" type="date" class="form-control" name="te_renew" placeholder="yy-mm-dd" readonly >
+                        <input id="te_renew" type="text" class="form-control" name="te_renew" readonly >
                     </div>
                     <label for="te_active" class="col-md-2 col-form-label text-md-right">Active</label>
                     <div class="col-md-4">
@@ -249,14 +249,14 @@
            document.getElementById('te_loc').value         = loc + " : " + locdesc  ;
            document.getElementById('te_um').value           = um;
            document.getElementById('te_sn').value           = sn;
-           document.getElementById('te_prc_date').value     = prc_date;
+           document.getElementById('te_prc_date').value     = prc_date.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3-$2-$1");
            document.getElementById('te_prc_price').value    = prc_price;
            document.getElementById('te_type').value         = type + " : " + typedesc  ;
            document.getElementById('te_group').value        = group + " : " + groupdesc  ;
            document.getElementById('te_supp').value         = supp;
            document.getElementById('te_note').value         = note;
            document.getElementById('te_active').value       = active;
-           document.getElementById('te_renew').value       = renew;
+           document.getElementById('te_renew').value       = renew.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3-$2-$1");
            document.getElementById('foto1').src       = assetimg;
            document.getElementById('te_qad').value          = qad;
            document.getElementById('te_assetid').value          = assetid;

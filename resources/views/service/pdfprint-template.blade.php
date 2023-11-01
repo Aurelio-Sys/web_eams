@@ -209,11 +209,24 @@
     <tr>
       <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0px; border-top:0.5px solid; border-bottom:2px solid; width:350px">
         <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diusulkan oleh,</span></p>
-        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->sr_req_by}}</p>
+        
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">
+        @foreach ( $users as $user )
+          @if ($user->username == $srmstr->sr_req_by)
+            {{$user->name}}
+          @endif
+        @endforeach
+        </p>
       </td>
       <td colspan="2" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
         <p style=" margin-bottom:5px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Penanggung Jawab,</span></p>
-        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">{{$srmstr->sr_approver}}</p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">
+        @foreach ( $users as $user )
+          @if ($user->username == $srmstr->sr_approver)
+            {{$user->name}}
+          @endif
+        @endforeach
+        </p>
       </td>
     </tr>
     <tr>
@@ -323,7 +336,12 @@
       </td>
       <td colspan="1" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
         <p style=" margin-bottom:5px; margin-left: 100px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Petugas yang melakukan pemeriksaan,</span></p>
-        <p style=" margin-bottom:5px; margin-left: 100px; margin-top:30px;font-size:12px">{{$srmstr->sr_approver}}</p>
+        <p style=" margin-bottom:5px; margin-left: 100px; margin-top:30px;font-size:12px">
+        @foreach ( $users as $user )
+          @if ($user->username == $srmstr->sr_approver)
+            {{$user->name}}
+          @endif
+        @endforeach
       </td>
     </tr>
     <tr>
@@ -483,7 +501,11 @@
         <p style=" margin-bottom:5px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Penanggung Jawab,</span></p>
         <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">
           @if($womstr != null)
-          {{$womstr->wo_createdby}}
+            @foreach ( $users as $user )
+              @if ($user->username == $womstr->wo_createdby)
+                {{$user->name}}
+              @endif
+            @endforeach
           @else
           &nbsp;
           @endif

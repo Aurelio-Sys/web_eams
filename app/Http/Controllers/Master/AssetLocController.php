@@ -166,7 +166,7 @@ class AssetLocController extends Controller
                 ->get();
 
         if ($cekData->count() == 0) {
-            DB::table('Asset_loc')
+            DB::table('asset_loc')
             ->where('asloc_code', '=', $request->d_locationid)
             ->where('asloc_site', '=', $request->d_site)
             ->delete();

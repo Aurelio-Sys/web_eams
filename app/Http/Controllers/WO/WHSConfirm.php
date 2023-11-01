@@ -40,7 +40,7 @@ class WHSConfirm extends Controller
             ->get();
 
         if (Session::get('role') == 'ADMIN' || Session::get('role') == 'WHS') {
-            $ApproverCheck = DB::table('sr_approver_mstr')->count();
+            $ApproverCheck = DB::table('sp_approver_mstr')->count();
 
             if ($ApproverCheck === 0) {
                 $data = DB::table('wo_mstr')
