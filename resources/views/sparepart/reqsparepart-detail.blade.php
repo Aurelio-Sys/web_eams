@@ -314,7 +314,7 @@
                     var dataFromPHP = <?php echo json_encode($loc_to); ?>;
                     dataFromPHP.forEach(function(loc){
                         var selected = (loc.inp_loc === data.inp_loc) ? 'selected' : '';
-                        cols += '<option data-siteto="'+ loc.inp_supply_site +'" value="'+ loc.inp_loc +'"' + selected + '>'+ loc.inp_loc +'</option>';
+                        cols += '<option data-siteto="'+ loc.inp_supply_site +'" value="'+ loc.inp_loc +';'+ loc.inp_supply_site +'"' + selected + '>'+ loc.inp_loc +'</option>';
                     });
                     cols += '</select>';
                     cols += '<input type="hidden" class="siteto" name="siteto[]" value=""/>';
