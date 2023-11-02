@@ -247,18 +247,26 @@ class SparepartController extends Controller
                     "locto" => $requestData['locto'],
                     "qtyrequest" => $requestData['qtyrequest'],
                     "reqnote" => $requestData['reqnote'],
-                    "siteto" => $requestData['siteto'],
+                    //"siteto" => $locSite[1],
                 ];
 
                 $groupedData = collect($data['spreq'])->map(function ($spreq, $key) use ($data) {
-                    return [
-                        'spreq' => $spreq,
-                        'locto' => $data['locto'][$key],
-                        'siteto' => $data['siteto'][$key],
-                        'qtyrequest' => $data['qtyrequest'][$key],
-                        'reqnote' => $data['reqnote'][$key],
-                    ];
-                })->groupBy('spreq')->map(function ($group) {
+				// Memisahkan nilai dalam string $data['locto'] menggunakan delimiter ;
+				$locSite = explode(';', $data['locto'][$key]);
+
+				// Mengambil nilai dari array hasil pemisahan sesuai dengan indeks $key
+				$loctoValue = isset($locSite[0]) ? $locSite[0] : '';
+				$sitetoValue = isset($locSite[1]) ? $locSite[1] : '';
+
+					return [
+						'spreq' => $spreq,
+						'locto' => $loctoValue, // Menggunakan nilai yang sudah dipisahkan dari $data['locto']
+						'siteto' => $sitetoValue,
+						'qtyrequest' => $data['qtyrequest'][$key],
+						'reqnote' => $data['reqnote'][$key],
+					];
+				})
+				->groupBy('spreq')->map(function ($group) {
                     $totalqtyrequest = $group->sum('qtyrequest');
 
                     return [
