@@ -1,16 +1,20 @@
 @forelse ($data as $show)
 <tr>
-  <td>{{ $show->req_sph_spcode }}</td>
-  <td>{{ $show->spm_desc }}</td>
-  <td>{{ $show->req_sph_locfrom }}</td>
-  <td>{{ $show->req_sph_locfrom }}</td>
-  <td>{{ $show->req_sph_lotfrom }}</td>
-  <td>{{ $show->req_sph_locto }}</td>
-  <td>{{ $show->req_sph_locto }}</td>
-  <td>{{ $show->created_at }}</td>
-  <td>{{ $show->req_sph_action }}</td>
-  <td>{{ $show->req_sph_number }}</td>
-  <td>{{ $show->req_sph_qtytrf }}</td>
+  <td>{{ $show->temp_spcode }}</td>
+  <td>{{ $show->temp_spdesc }}</td>
+  <td>{{ $show->temp_fromloc }}</td>
+  <td>{{ $show->temp_fromlocdesc }}</td>
+  <td>{{ $show->temp_fromlot }}</td>
+  <td>{{ $show->temp_toloc }}</td>
+  <td>{{ $show->temp_tolocdesc }}</td>
+  <td>{{ $show->temp_date }}</td>
+  <td>{{ $show->temp_type }}</td>
+  <td>{{ $show->temp_no }}</td>
+  <td>{{ $show->temp_by }}</td>
+  <td>{{ $show->temp_byname }}</td>
+  <td>{{ $show->temp_dept }}</td>
+  <td>{{ $show->temp_deptdesc }}</td>
+  <td>{{ $show->temp_qty }}</td>
   
   
   {{--  <td>

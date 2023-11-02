@@ -137,7 +137,7 @@
                 </tr>
             @endforelse
             <tr>
-            <td colspan="5" style="border: none !important;">
+            <td colspan="12" style="border: none !important;">
                 {{--  {{ $data->appends($_GET)->links() }}  --}}
             </td>
             </tr>

@@ -48,9 +48,9 @@ class PmConfirmController extends Controller
             ->groupBy('asset_code','pmo_pmcode','pmo_sch_date');
 
         /* Jika bukan admin, maka yang muncul adalah data sesuai dapartemen nya */
-        if (Session::get('role') <> 'ADMIN') {
-            $data = $data->where('pmo_dept', '=', session::get('department'));
-        }
+        // if (Session::get('role') <> 'ADMIN') {
+        //     $data = $data->where('pmo_dept', '=', session::get('department'));
+        // }
 
         /** Penambahan kondisi search */
         if($s_code) {
@@ -191,7 +191,7 @@ class PmConfirmController extends Controller
      */
     public function update(Request $req)
     {
-        // dd($req->all());
+        dd($req->all());
         DB::beginTransaction();
 
         try {
@@ -293,6 +293,46 @@ class PmConfirmController extends Controller
                                 'year' => $newyear,
                                 'wt_nbr' => $newtemprunnbr
                             ]);
+
+                        /** Jika data dari PM Meter, dicatatkan posisi nilai pengukuran saat confirm agar diketahui nilai pengukurannya pada saat PM dilakukan confirm */
+                        // DB::table('us_hist')
+                        //     ->where('us_asset','=',$req->te_asset[$flg])
+                        //     ->where('us_mea_um','=',$datapm->pma_meterum)
+                        //     ->whereIn('us_last_mea', function ($query) {
+                        //         $query->select(DB::raw('MAX(us_last_mea)'))
+                        //             ->from('us_hist')
+                        //             ->where('us_asset', '=', $req->te_asset[$flg])
+                        //             ->where('us_mea_um', '=', $datapm->pma_meterum);
+                        //     })
+                        //     ->update(['us_no_pm' => $runningnbr]);
+
+                        $maximumUsLastMea = DB::table('us_hist')
+                            ->where('us_asset', '=', $req->te_asset[$flg])
+                            ->where('us_mea_um', '=', $datapm->pma_meterum)
+                            ->select(DB::raw('MAX(us_last_mea) as max_us_last_mea'))
+                            ->first();
+
+                        if ($maximumUsLastMea) {
+                            $test = DB::table('us_hist')
+                                ->where('us_asset', '=', $req->te_asset[$flg])
+                                ->where('us_mea_um', '=', $datapm->pma_meterum)
+                                ->where('us_last_mea', '=', $maximumUsLastMea->max_us_last_mea)
+                                ->update(['us_no_pm' => $runningnbr]);
+                        } else {
+                            // Penanganan jika tidak ada data yang cocok
+                        }
+
+
+                        /** Tidak bisa dilakukan update pengukuran di pma_asset karena tanggal last mtc nya disimpan saat WO reporting */
+                        // $maxValue = DB::table('us_hist')
+                        //     ->where('us_asset','=',$req->te_asset[$flg])
+                        //     ->max('us_last_mea');
+                        
+                        // DB::table('pma_asset')
+                        //     ->where('pma_asset', $req->te_asset[$flg])
+                        //     ->where('pma_pmcode', $req->te_pmcode[$flg])
+                        //     ->update(['pma_lastmea' => $maxValue]);
+                        
 
                         // Jika sudah di confirm dari WO, maka hapus dari tabel pmo_confirm agar tidak muncul lagi pada saat memilih confirm WO
                         DB::table('pmo_confirm')

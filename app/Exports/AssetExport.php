@@ -41,7 +41,7 @@ class AssetExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
         ->leftjoin('asset_group','asgroup_code','=','asset_group')
         ->leftjoin('asset_loc','asloc_code','=','asset_loc')
         // ->leftJoin('temp_repair','temp_asset','=','asset_code')
-        ->whereRaw($kondisi)
+        // ->whereRaw($kondisi)
         ->orderby('asset_code');
 
         if($this->sasset) {

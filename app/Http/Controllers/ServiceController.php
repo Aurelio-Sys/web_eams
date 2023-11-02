@@ -70,7 +70,7 @@ class ServiceController extends Controller
             ->where('asset_loc', '=', $asset_loc)
             ->orderBy('asset_code')
             ->get();
-
+// dd($asset);
             $outputcode = "";
             foreach ($asset as $thiscode) {
                 $outputcode .= '<option value="' . $thiscode->asset_code . '" data-assetgroup="' . $thiscode->asset_group . '"> ' . $thiscode->asset_code . ' -- ' . $thiscode->asset_desc . ' -- ' . $thiscode->asloc_desc . '</option>';
@@ -603,7 +603,7 @@ class ServiceController extends Controller
         }
     }
 
-    public function srapprovaleng(Request $req) /* blade : service.servicereq-approval */
+    public function srapprovaleng(Request $req) /* blade : service.servicereq-approvaleng */
     {
         $user = FacadesAuth::user();
 
@@ -676,6 +676,11 @@ class ServiceController extends Controller
                     ->orderBy('sr_req_date', 'DESC')
                     // ->orderBy('sr_number', 'DESC')
                     ->groupBy('sr_number');
+            }
+
+            /** Tambahan kondisi jika akses dari menu notofikasi */
+            if($req->status) {
+                $data = $data->where('srta_eng_status','=','Waiting for engineer approval');
             }
 
             $data = $data->paginate(10);
@@ -1137,7 +1142,7 @@ class ServiceController extends Controller
                     'sr_status'       => 'Revise',
                     'sr_status_approval'       => 'Revise',
                     'sr_eng_approver' => $srmstr->sr_eng_approver,
-                    'sr_action'       => 'Department Approval',
+                    'sr_action'       => 'Department Approval Revision',
                     'created_at'   => Carbon::now()->toDateTimeString(),
                     'updated_at'   => Carbon::now()->toDateTimeString(),
                     //         // 'updated_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -1304,7 +1309,7 @@ class ServiceController extends Controller
                             'sr_status'       => 'Open',
                             'sr_status_approval'       => 'Approved',
                             'sr_eng_approver' => $srmstr->sr_eng_approver,
-                            'sr_action'       => 'Department Approval',
+                            'sr_action'       => 'Department Approval Approved',
                             'created_at'   => Carbon::now()->toDateTimeString(),
                             'updated_at'   => Carbon::now()->toDateTimeString(),
                             // 'updated_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -1602,7 +1607,7 @@ class ServiceController extends Controller
                     'sr_status'       => 'Revise',
                     'sr_status_approval'       => 'Revision from engineer approval',
                     'sr_eng_approver' => $srmstr->sr_eng_approver,
-                    'sr_action'       => 'Engineer Approval',
+                    'sr_action'       => 'Engineer Approval Revision',
                     'created_at'   => Carbon::now()->toDateTimeString(),
                     'updated_at'   => Carbon::now()->toDateTimeString(),
                     //         // 'updated_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -1766,7 +1771,7 @@ class ServiceController extends Controller
                         'sr_status'       => 'Approved',
                         'sr_status_approval'       => 'Approved',
                         'sr_eng_approver' => $srmstr->sr_eng_approver,
-                        'sr_action'       => 'Engineer Approval',
+                        'sr_action'       => 'Engineer Approval Approved',
                         'created_at'   => Carbon::now()->toDateTimeString(),
                         'updated_at'   => Carbon::now()->toDateTimeString(),
                         //         // 'updated_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
@@ -2139,9 +2144,9 @@ class ServiceController extends Controller
         }
     }
 
-    public function srbrowse() /* route : srbrowse   blade : service.servicereqbrowse */
+    public function srbrowse(Request $req) /* route : srbrowse   blade : service.servicereqbrowse */
     {
-        // $q = $req->srnumber;
+
         $dataapps = DB::table('dept_mstr')
             ->leftjoin('service_req_mstr', 'service_req_mstr.sr_eng_approver', 'dept_mstr.dept_code')
             ->selectRaw('dept_mstr.*, service_req_mstr.*')
@@ -2173,6 +2178,11 @@ class ServiceController extends Controller
         /* Jika bukan admin, maka yang muncul adalah approver sesuai login */
         if (Session::get('role') <> 'ADMIN') {
             $data = $data->where('sr_dept', '=', session::get('department'));
+        }
+
+        /** Ditambahkan kondisi ini untuk link dari menu Notification */
+        if($req->status) {
+            $data = $data->where('sr_status','=','Revise');
         }
 
         $data = $data->paginate(10);

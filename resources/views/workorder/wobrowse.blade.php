@@ -96,18 +96,19 @@ div #munculgambar .gambar:hover{
     cursor: pointer;
   }
 
-  select[readonly].select2-hidden-accessible + .select2-container {
-      pointer-events: none;
-      touch-action: none;
+  select[readonly].select2-hidden-accessible+.select2-container {
+    pointer-events: none;
+    touch-action: none;
   }
 
-  select[readonly].select2-hidden-accessible + .select2-container .select2-selection {
-      background: #eee;
-      box-shadow: none;
+  select[readonly].select2-hidden-accessible+.select2-container .select2-selection {
+    background: #eee;
+    box-shadow: none;
   }
 
-  select[readonly].select2-hidden-accessible + .select2-container .select2-selection__arrow, select[readonly].select2-hidden-accessible + .select2-container .select2-selection__clear {
-      display: none;
+  select[readonly].select2-hidden-accessible+.select2-container .select2-selection__arrow,
+  select[readonly].select2-hidden-accessible+.select2-container .select2-selection__clear {
+    display: none;
   }
 </style>
 <!--Table Menu-->
@@ -121,18 +122,18 @@ div #munculgambar .gambar:hover{
 
 <!-- <hr style="margin:0%"> -->
 <div class="container-fluid mb-2">
-  <div class="row"> 
+  <div class="row">
     <div class="col-md-12">
       <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
-    </div>  
+    </div>
   </div>
   <!-- Element div yang akan collapse atau expand -->
   <div class="collapse" id="collapseExample">
-    <form action="{{route('womaint')}}"  method="get">
+    <form action="{{route('womaint')}}" method="get">
       <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
       <div class="card card-body bg-black rounded-0">
         <div class="col-12 form-group row">
-          
+
           <!--FORM Search Disini-->
           <label for="s_nomorwo" class="col-md-2 col-form-label text-md-left">{{ __('Work Order Number') }}</label>
           <div class="col-md-4 col-sm-12 mb-2 input-group">
@@ -143,7 +144,7 @@ div #munculgambar .gambar:hover{
             <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
               <option value="">--Select Asset--</option>
               @foreach ( $asset1 as $assetsearch )
-                <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
+              <option value="{{$assetsearch->asset_code}}">{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
               @endforeach
             </select>
           </div>
@@ -175,7 +176,7 @@ div #munculgambar .gambar:hover{
             <select id="s_engineer" type="text" class="form-control" name="s_engineer">
               <option value="">--Select Engineer--</option>
               @foreach ( $user as $engineersearch )
-                <option value="{{$engineersearch->eng_code}}">{{$engineersearch->eng_code}} -- {{$engineersearch->eng_desc}}</option>
+              <option value="{{$engineersearch->eng_code}}">{{$engineersearch->eng_code}} -- {{$engineersearch->eng_desc}}</option>
               @endforeach
             </select>
           </div>
@@ -189,7 +190,7 @@ div #munculgambar .gambar:hover{
         </div>
       </div>
     </form>
-  </div>  
+  </div>
 </div>
 <input type="hidden" id="tmpwo" value="" />
 <input type="hidden" id="tmpasset" value="" />
@@ -241,13 +242,22 @@ div #munculgambar .gambar:hover{
         <form class="form-horizontal" id="new" method="post" action="createwo" autocomplete="off" enctype="multipart/form-data">
           {{ csrf_field()}}
           <div class="form-group row col-md-12">
+            <label for="assetloc" class="col-md-5 col-form-label my-auto">Asset Location <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+            <div class="col-md-7 col-sm-12">
+              <select id="assetloc" name="assetloc" class="form-control" required>
+                <option value="">-- Select Asset Location--</option>
+                @foreach($assetloc as $show)
+                <option value="{{$show->asloc_code}}">{{$show->asloc_code.' -- '.$show->asloc_desc}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group row col-md-12">
             <label for="c_asset" class="col-md-5 col-form-label text-md-left">Asset<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
             <div class="col-md-7">
               <select id="c_asset" type="text" class="form-control c_asset" name="c_asset" autofocus required>
                 <option value="">--Select Asset--</option>
-                @foreach ($asset2 as $asset2)
-                <option value="{{$asset2->asset_code}}" data-assetsite="{{$asset2->asset_site}}" data-assetloc="{{$asset2->asset_loc}}" data-assetgroup="{{$asset2->asset_group}}">{{$asset2->asset_code}} - {{$asset2->asset_desc}}</option>
-                @endforeach
               </select>
             </div>
           </div>
@@ -283,7 +293,7 @@ div #munculgambar .gambar:hover{
               <select class="form-control" id="c_failuretype" name="c_failuretype">
                 <option></option>
                 @foreach($wottype as $wotypeshow)
-                  <option value="{{$wotypeshow->wotyp_code}}">{{$wotypeshow->wotyp_code}} -- {{$wotypeshow->wotyp_desc}}</option>
+                <option value="{{$wotypeshow->wotyp_code}}">{{$wotypeshow->wotyp_code}} -- {{$wotypeshow->wotyp_desc}}</option>
                 @endforeach
               </select>
               </select>
@@ -314,7 +324,7 @@ div #munculgambar .gambar:hover{
             <div class="col-md-7">
               <select id="c_listengineer" type="text" class="form-control c_listengineer" name="c_listengineer[]" autofocus required multiple="multiple">
                 @foreach($user as $user2)
-                  <option value="{{$user2->eng_code}}">{{$user2->eng_code}} -- {{$user2->eng_desc}}</option>
+                <option value="{{$user2->eng_code}}">{{$user2->eng_code}} -- {{$user2->eng_desc}}</option>
                 @endforeach
               </select>
             </div>
@@ -373,10 +383,10 @@ div #munculgambar .gambar:hover{
           <div class="form-group row col-md-12">
             <label for="c_inslist" class="col-md-5 col-form-label text-md-left">Instruction List</label>
             <div class="col-md-7">
-              <select id="c_inslist" name="c_inslist" class="form-control" >
+              <select id="c_inslist" name="c_inslist" class="form-control">
                 <option></option>
                 @foreach ($inslist as $ins)
-                  <option value="{{$ins->ins_code}}">{{$ins->ins_code}} -- {{$ins->ins_desc}}</option>
+                <option value="{{$ins->ins_code}}">{{$ins->ins_code}} -- {{$ins->ins_desc}}</option>
                 @endforeach
               </select>
             </div>
@@ -387,7 +397,7 @@ div #munculgambar .gambar:hover{
               <select id="c_splist" name="c_splist" class="form-control">
                 <option></option>
                 @foreach ($splist as $sp)
-                  <option value="{{$sp->spg_code}}">{{$sp->spg_code}} -- {{$sp->spg_desc}}</option>
+                <option value="{{$sp->spg_code}}">{{$sp->spg_code}} -- {{$sp->spg_desc}}</option>
                 @endforeach
               </select>
             </div>
@@ -398,7 +408,7 @@ div #munculgambar .gambar:hover{
               <select id="c_qclist" name="c_qclist" class="form-control">
                 <option></option>
                 @foreach ($qclist as $qc)
-                  <option value="{{$qc->qcs_code}}">{{$qc->qcs_code}} -- {{$qc->qcs_desc}}</option>
+                <option value="{{$qc->qcs_code}}">{{$qc->qcs_code}} -- {{$qc->qcs_desc}}</option>
                 @endforeach
               </select>
             </div>
@@ -442,7 +452,7 @@ div #munculgambar .gambar:hover{
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form class="form-horizontal" id="newedit" method="post" action="editwo" enctype="multipart/form-data" >
+      <form class="form-horizontal" id="newedit" method="post" action="editwo" enctype="multipart/form-data">
         {{ csrf_field() }}
         <input type="hidden" id="counter" value=0>
         <input type="hidden" id="counterfail" value=0>
@@ -485,7 +495,7 @@ div #munculgambar .gambar:hover{
               <select name="e_wottype" class="form-control" id="e_wottype" autofocus>
                 <option></option>
                 @foreach($wottype as $wotypeshow)
-                  <option value="{{$wotypeshow->wotyp_code}}">{{$wotypeshow->wotyp_code}} -- {{$wotypeshow->wotyp_desc}}</option>
+                <option value="{{$wotypeshow->wotyp_code}}">{{$wotypeshow->wotyp_code}} -- {{$wotypeshow->wotyp_desc}}</option>
                 @endforeach
               </select>
             </div>
@@ -498,7 +508,7 @@ div #munculgambar .gambar:hover{
             </div>
           </div>
 
-          <input type="hidden" id="hide_editassetgroup"/>
+          <input type="hidden" id="hide_editassetgroup" />
           <div class="form-group row justify-content-center e_impactdiv" id="e_impactdiv">
             <label for="e_impact" class="col-md-5 col-form-label text-md-left">Impact</label>
             <div class="col-md-7">
@@ -547,10 +557,10 @@ div #munculgambar .gambar:hover{
           <div class="form-group row justify-content-center">
             <label for="e_inslist" class="col-md-5 col-form-label text-md-left">Instruction List</label>
             <div class="col-md-7">
-              <select id="e_inslist" name="e_inslist" class="form-control" >
+              <select id="e_inslist" name="e_inslist" class="form-control">
                 <option></option>
                 @foreach ($inslist as $ins)
-                  <option value="{{$ins->ins_code}}">{{$ins->ins_code}} -- {{$ins->ins_desc}}</option>
+                <option value="{{$ins->ins_code}}">{{$ins->ins_code}} -- {{$ins->ins_desc}}</option>
                 @endforeach
               </select>
             </div>
@@ -561,7 +571,7 @@ div #munculgambar .gambar:hover{
               <select id="e_splist" name="e_splist" class="form-control">
                 <option></option>
                 @foreach ($splist as $sp)
-                  <option value="{{$sp->spg_code}}">{{$sp->spg_code}} -- {{$sp->spg_desc}}</option>
+                <option value="{{$sp->spg_code}}">{{$sp->spg_code}} -- {{$sp->spg_desc}}</option>
                 @endforeach
               </select>
             </div>
@@ -572,17 +582,17 @@ div #munculgambar .gambar:hover{
               <select id="e_qclist" name="e_qclist" class="form-control">
                 <option></option>
                 @foreach ($qclist as $qc)
-                  <option value="{{$qc->qcs_code}}">{{$qc->qcs_code}} -- {{$qc->qcs_desc}}</option>
+                <option value="{{$qc->qcs_code}}">{{$qc->qcs_code}} -- {{$qc->qcs_desc}}</option>
                 @endforeach
               </select>
             </div>
           </div>
           <div class="form-group row justify-content-center" id="photodiv">
             <label class="col-md-5 col-form-label text-md-left">Uploaded File</label>
-              <div class="col-md-7" style="overflow-x: auto;">
-                <table class="table table-bordered" style="width: 100%; max-width: 100%;" id="munculgambar_edit">
-                </table>
-              </div>
+            <div class="col-md-7" style="overflow-x: auto;">
+              <table class="table table-bordered" style="width: 100%; max-width: 100%;" id="munculgambar_edit">
+              </table>
+            </div>
           </div>
           <div class="form-group row justify-content-center" id="photodiv">
             <label for="e_uploadfile" class="col-md-5 col-form-label text-md-left">Upload File</label>
@@ -595,7 +605,7 @@ div #munculgambar .gambar:hover{
           <div class="container">
             <div class="row">
               <div class="col-4 pl-0">
-                  <button type="button" class="btn btn-dark maintcode" style="float:left"><b style="font-size: 13px;color:white">Maintenance Code</b></button>
+                <button type="button" class="btn btn-dark maintcode" style="float:left"><b style="font-size: 13px;color:white">Maintenance Code</b></button>
               </div>
               <div class="col-8 text-right">
                 <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
@@ -862,14 +872,14 @@ div #munculgambar .gambar:hover{
           </div>
         </div>
         <div class="form-group row">
-            <label for="v_startdate" class="col-md-2 col-form-label text-md-left">Start Date</label>
-            <div class="col-md-4">
-              <input id="v_startdate" readonly type="date" class="form-control" name="v_startdate" value="{{ old('v_startdate') }}" autofocus>
-            </div>
-            <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
-            <div class="col-md-4">
-              <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
-            </div>
+          <label for="v_startdate" class="col-md-2 col-form-label text-md-left">Start Date</label>
+          <div class="col-md-4">
+            <input id="v_startdate" readonly type="date" class="form-control" name="v_startdate" value="{{ old('v_startdate') }}" autofocus>
+          </div>
+          <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
+          <div class="col-md-4">
+            <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
+          </div>
         </div>
         <div class="form-group row">
           <label class="col-md-2 col-form-label text-md-left">SR Uploaded File</label>
@@ -877,28 +887,28 @@ div #munculgambar .gambar:hover{
             <!-- <table class="table table-bordered" style="width: 100%; max-width: 100%;" id="munculgambar_view_sr">
             </table> -->
             <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <th>File Name</th>
-                  </tr>
-                </thead>
-                <tbody id="munculgambar_view_sr">
+              <thead>
+                <tr>
+                  <th>File Name</th>
+                </tr>
+              </thead>
+              <tbody id="munculgambar_view_sr">
 
-                </tbody>
-              </table>  
+              </tbody>
+            </table>
           </div>
           <label class="col-md-2 col-form-label text-md-left">WO Uploaded File</label>
           <div class="col-md-4" style="overflow-x: auto;">
             <table class="table table-bordered" style="width: 100%; max-width: 100%;" id="munculgambar_view">
-            </table>  
+            </table>
           </div>
         </div>
         <div class="form-group row">
-            <label for="v_rejectreason" class="col-md-2 col-form-label text-md-left">User Acceptance Note</label>
-            <div class="col-md-4">
-              <textarea id="v_rejectreason" readonly type="text" class="form-control" name="v_rejectreason" value="{{ old('v_rejectreason') }}" rows="2" autofocus></textarea>
-            </div>
-            <!-- <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
+          <label for="v_rejectreason" class="col-md-2 col-form-label text-md-left">User Acceptance Note</label>
+          <div class="col-md-4">
+            <textarea id="v_rejectreason" readonly type="text" class="form-control" name="v_rejectreason" value="{{ old('v_rejectreason') }}" rows="2" autofocus></textarea>
+          </div>
+          <!-- <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
             <div class="col-md-4">
               <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
             </div> -->
@@ -1138,8 +1148,8 @@ div #munculgambar .gambar:hover{
         {{ csrf_field() }}
 
         <div class="modal-body">
-          <input type="hidden" name="tmp_wonbr" id="tmp_wonbr"/>
-          <input type="hidden" name="tmp_wostatus" id="tmp_wostatus"/>
+          <input type="hidden" name="tmp_wonbr" id="tmp_wonbr" />
+          <input type="hidden" name="tmp_wostatus" id="tmp_wostatus" />
           Are you sure want to cancel/delete this <i>Work Order</i> <b> <span id="d_wonbr"></span></b> ?
           <div class="form-group row" id="divnotecancel" style="display: none;">
             <label class="col-md-12 col-form-label">Note for Service Request maker : </label>
@@ -1332,19 +1342,19 @@ div #munculgambar .gambar:hover{
 
 @section('scripts')
 <script type="text/javascript">
-    //konfigurasi modal ketika ada modal bertumpuk dan modal terakhir di close tetap bisa scroll ke modal pertama
-    $(document).on('show.bs.modal', '.modal', function() {
-      var zIndex = 1040 + (10 * $('.modal.show').length);
-      $(this).css('z-index', zIndex);
-      setTimeout(function() {
-        $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
-      }, 0);
-    });
+  //konfigurasi modal ketika ada modal bertumpuk dan modal terakhir di close tetap bisa scroll ke modal pertama
+  $(document).on('show.bs.modal', '.modal', function() {
+    var zIndex = 1040 + (10 * $('.modal.show').length);
+    $(this).css('z-index', zIndex);
+    setTimeout(function() {
+      $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+    }, 0);
+  });
 
-    $(document).on('hidden.bs.modal', '.modal', function() {
-      $('.modal.show').length && $(document.body).addClass('modal-open');
-    });
-    //batas konfigurasi modal
+  $(document).on('hidden.bs.modal', '.modal', function() {
+    $('.modal.show').length && $(document.body).addClass('modal-open');
+  });
+  //batas konfigurasi modal
 
 
   $(document).on('submit', '#approvee', function(event) {
@@ -1445,6 +1455,12 @@ div #munculgambar .gambar:hover{
 
   });
 
+  $('#assetloc').select2({
+    placeholder: "Select Asset",
+    width: '100%',
+    theme: 'bootstrap4',
+  });
+
   $('.c_asset').select2({
     placeholder: "Select Asset",
     width: '100%',
@@ -1458,7 +1474,7 @@ div #munculgambar .gambar:hover{
     maximumSelectionLength: 5,
     allowClear: true,
     closeOnSelect: false,
-    templateSelection: function (data, container) {
+    templateSelection: function(data, container) {
       // Memotong teks opsi menjadi 20 karakter
       var text = data.text.slice(0, 20);
       // Mengembalikan teks opsi yang sudah dipotong dan menambahkan tanda elipsis
@@ -1489,6 +1505,8 @@ div #munculgambar .gambar:hover{
     maximumSelectionLength: 5,
   });
 
+
+
   $("#wotype").select2({
     width: '100%',
     // theme : 'bootstrap4',
@@ -1502,10 +1520,10 @@ div #munculgambar .gambar:hover{
     placeholder: "Select Failure Code",
     theme: "bootstrap4",
     allowClear: true,
-    maximumSelectionLength : 5,
-    closeOnSelect : false,
-    allowClear : true,
-    multiple : true,
+    maximumSelectionLength: 5,
+    closeOnSelect: false,
+    allowClear: true,
+    multiple: true,
   });
 
   $('#reportstatuswo').submit(function(e) {
@@ -1598,7 +1616,7 @@ div #munculgambar .gambar:hover{
       url: '/womaint/getwoinfo',
       method: 'GET',
       data: {
-          nomorwo: wonbr,
+        nomorwo: wonbr,
       },
       success: function(vamp) {
         var tempres = JSON.stringify(vamp);
@@ -1780,39 +1798,39 @@ div #munculgambar .gambar:hover{
     }
   });
 
-  $(document).on('change', '#e_wottype', function(){
-      // console.log('masuk');
-      var getAssetG = document.getElementById('hide_editassetgroup').value;
-      var getType = $(this).val();
+  $(document).on('change', '#e_wottype', function() {
+    // console.log('masuk');
+    var getAssetG = document.getElementById('hide_editassetgroup').value;
+    var getType = $(this).val();
 
-      // console.log(getAssetG);
-      // console.log(getType);
-      $.ajax({
-            url: "/checkfailurecodetype",
-            data: {
-              group: getAssetG,
-              type: getType,
+    // console.log(getAssetG);
+    // console.log(getType);
+    $.ajax({
+      url: "/checkfailurecodetype",
+      data: {
+        group: getAssetG,
+        type: getType,
 
-            },
-            success: function(data) {
-              var code = data.optionfailcode;
+      },
+      success: function(data) {
+        var code = data.optionfailcode;
 
-              // console.log(code);
+        // console.log(code);
 
-              var selectthis = document.getElementById('m_failurecode');
+        var selectthis = document.getElementById('m_failurecode');
 
-              // Hapus semua option yang ada
-              selectthis.innerHTML = '';
+        // Hapus semua option yang ada
+        selectthis.innerHTML = '';
 
-              // Tambahkan option baru
-              code.forEach(data => {
-                const option = document.createElement('option');
-                option.value = data.fn_code;
-                option.text = data.fn_code + ' - ' + data.fn_desc;
-                selectthis.add(option);
-              });
-            }
-      })
+        // Tambahkan option baru
+        code.forEach(data => {
+          const option = document.createElement('option');
+          option.value = data.fn_code;
+          option.text = data.fn_code + ' - ' + data.fn_desc;
+          selectthis.add(option);
+        });
+      }
+    })
   });
 
   $(document).on('click', '.viewwo', function() {
@@ -1830,12 +1848,12 @@ div #munculgambar .gambar:hover{
       url: '/womaint/getwoinfo',
       method: 'GET',
       data: {
-          wonumber: wonbr,
+        wonumber: wonbr,
       },
       success: function(vamp) {
 
         // console.log(vamp);
-        
+
         var wonumber = wonbr;
         var srnumber = vamp.wo_master.wo_sr_number;
         var assetcode = vamp.wo_master.wo_asset_code;
@@ -1860,13 +1878,13 @@ div #munculgambar .gambar:hover{
 
         let combineImpact = [];
 
-        vamp.impact.forEach(function(impact){
+        vamp.impact.forEach(function(impact) {
           combineImpact.push(impact.imp_code + " - " + impact.imp_desc);
         });
 
         let combineEngineer = [];
 
-        vamp.engineer.forEach(function(engineer){
+        vamp.engineer.forEach(function(engineer) {
           combineEngineer.push(engineer.eng_code + ' - ' + engineer.eng_desc);
         });
 
@@ -1887,9 +1905,10 @@ div #munculgambar .gambar:hover{
         document.getElementById('v_dept').value = department;
         document.getElementById('v_srnote').value = srnote;
         document.getElementById('v_rejectreason').value = rejectreason;
-        
 
-      },complete: function(vamp) {
+
+      },
+      complete: function(vamp) {
         //  $('.modal-backdrop').modal('hide');
         // alert($('.modal-backdrop').hasClass('in'));
 
@@ -1916,12 +1935,12 @@ div #munculgambar .gambar:hover{
     })
 
     $.ajax({
-        url: "/listuploadview/" + srnumber,
-        success: function(data) {
-          // console.log(data);
-          $('#munculgambar_view_sr').html('').append(data);
-        }
-      })
+      url: "/listuploadview/" + srnumber,
+      success: function(data) {
+        // console.log(data);
+        $('#munculgambar_view_sr').html('').append(data);
+      }
+    })
   });
   // flag tunggu semua menu
 
@@ -1935,9 +1954,9 @@ div #munculgambar .gambar:hover{
     document.getElementById('tmp_wonbr').value = wonbr;
     document.getElementById('tmp_wostatus').value = status;
 
-    if(srnbr !== ''){
+    if (srnbr !== '') {
       document.getElementById('divnotecancel').style.display = "";
-    }else{
+    } else {
       document.getElementById('divnotecancel').style.display = "none";
     }
 
@@ -2023,19 +2042,19 @@ div #munculgambar .gambar:hover{
       });
     }
   });
-  
-  function resetSearch(){
-      $('#s_nomorwo').val('');
-      $('#s_status').val('');
-      $('#s_wotype').val('');
-      $('#s_engineer').val('');
+
+  function resetSearch() {
+    $('#s_nomorwo').val('');
+    $('#s_status').val('');
+    $('#s_wotype').val('');
+    $('#s_engineer').val('');
   }
 
-  $(document).on('click', '#btnrefresh', function(){
-      resetSearch();
+  $(document).on('click', '#btnrefresh', function() {
+    resetSearch();
   });
-  
-  $(document).ready(function(){
+
+  $(document).ready(function() {
     // var currentURL = window.location.href;
     // var urlParams = new URLSearchParams(currentURL);
 
@@ -2069,892 +2088,920 @@ div #munculgambar .gambar:hover{
       allowClear: true,
     });
 
-      $('#e_engineerlist').select2({
-        placeholder: 'Select Engineers',
-        width: '100%',
-        theme: 'bootstrap4',
-        maximumSelectionLength: 5,
-        allowClear: true,
-        closeOnSelect: false,
-          templateSelection: function (data, container) {
-            // Memotong teks opsi menjadi 20 karakter
-            var text = data.text.slice(0, 20);
-            // Mengembalikan teks opsi yang sudah dipotong dan menambahkan tanda elipsis
-            return text + (data.text.length > 20 ? '...' : '');
-          }
-      });
+    $('#e_engineerlist').select2({
+      placeholder: 'Select Engineers',
+      width: '100%',
+      theme: 'bootstrap4',
+      maximumSelectionLength: 5,
+      allowClear: true,
+      closeOnSelect: false,
+      templateSelection: function(data, container) {
+        // Memotong teks opsi menjadi 20 karakter
+        var text = data.text.slice(0, 20);
+        // Mengembalikan teks opsi yang sudah dipotong dan menambahkan tanda elipsis
+        return text + (data.text.length > 20 ? '...' : '');
+      }
+    });
 
-      $('#e_wottype').select2({
-        placeholder: 'Select Failure Type',
-        width: '100%',
-        theme: 'bootstrap4',
-        allowClear: true,
-        closeOnSelect: false,
-          templateSelection: function (data, container) {
-            // Memotong teks opsi menjadi 20 karakter
-            var text = data.text.slice(0, 20);
-            // Mengembalikan teks opsi yang sudah dipotong dan menambahkan tanda elipsis
-            return text + (data.text.length > 20 ? '...' : '');
-          },
-      });
+    $('#e_wottype').select2({
+      placeholder: 'Select Failure Type',
+      width: '100%',
+      theme: 'bootstrap4',
+      allowClear: true,
+      closeOnSelect: false,
+      templateSelection: function(data, container) {
+        // Memotong teks opsi menjadi 20 karakter
+        var text = data.text.slice(0, 20);
+        // Mengembalikan teks opsi yang sudah dipotong dan menambahkan tanda elipsis
+        return text + (data.text.length > 20 ? '...' : '');
+      },
+    });
 
-      $('#e_impact').select2({
-        placeholder: 'Select Impact',
-        width: '100%',
-        theme: 'bootstrap4',
-        maximumSelectionLength: 5,
-        allowClear: true,
-        closeOnSelect: false,
-          templateSelection: function (data, container) {
-            // Memotong teks opsi menjadi 20 karakter
-            var text = data.text.slice(0, 20);
-            // Mengembalikan teks opsi yang sudah dipotong dan menambahkan tanda elipsis
-            return text + (data.text.length > 20 ? '...' : '');
-          }
-      });
+    $('#e_impact').select2({
+      placeholder: 'Select Impact',
+      width: '100%',
+      theme: 'bootstrap4',
+      maximumSelectionLength: 5,
+      allowClear: true,
+      closeOnSelect: false,
+      templateSelection: function(data, container) {
+        // Memotong teks opsi menjadi 20 karakter
+        var text = data.text.slice(0, 20);
+        // Mengembalikan teks opsi yang sudah dipotong dan menambahkan tanda elipsis
+        return text + (data.text.length > 20 ? '...' : '');
+      }
+    });
 
-      $('#m_failurecode').select2({
-        placeholder: 'Select Failure Code',
-        width: '100%',
-        theme: 'bootstrap4',
-        allowClear: true,
-        closeOnSelect: false,
-        maximumSelectionLength: 5,
-        templateSelection: function (data, container) {
-            // Memotong teks opsi menjadi 20 karakter
-            var text = data.text.slice(0, 20);
-            // Mengembalikan teks opsi yang sudah dipotong dan menambahkan tanda elipsis
-            return text + (data.text.length > 20 ? '...' : '');
+    $('#m_failurecode').select2({
+      placeholder: 'Select Failure Code',
+      width: '100%',
+      theme: 'bootstrap4',
+      allowClear: true,
+      closeOnSelect: false,
+      maximumSelectionLength: 5,
+      templateSelection: function(data, container) {
+        // Memotong teks opsi menjadi 20 karakter
+        var text = data.text.slice(0, 20);
+        // Mengembalikan teks opsi yang sudah dipotong dan menambahkan tanda elipsis
+        return text + (data.text.length > 20 ? '...' : '');
+      }
+    });
+
+    $("#e_mtcode").select2({
+      width: '100%',
+      placeholder: "Select Maintenance Code",
+      allowClear: true,
+    });
+
+    $("#e_inslist").select2({
+      width: '100%',
+      placeholder: "Select Instruction List Code",
+      allowClear: true,
+    });
+
+    $("#e_splist").select2({
+      width: '100%',
+      placeholder: "Select Spare Part List Code",
+      allowClear: true,
+    });
+
+    $("#e_qclist").select2({
+      width: '100%',
+      placeholder: "Select QC List Code",
+      allowClear: true,
+    });
+
+    var cur_url = window.location.href;
+
+    let paramString = cur_url.split('?')[1];
+    let queryString = new URLSearchParams(paramString);
+
+    let status = queryString.get('s_status');
+    let wotype = queryString.get('s_wotype');
+    let engineer = queryString.get('s_engineer')
+    $('#s_status').val(status).trigger('change');
+    $('#s_wotype').val(wotype).trigger('change');
+    $('#s_engineer').val(engineer).trigger('change');
+
+    $(document).on('change', '#c_failuretype', function() {
+      var getAssetG = document.getElementById('hide_assetgroup').value;
+      var getType = $(this).val();
+
+      // console.log(getAssetG);
+      // console.log(getType);
+      $.ajax({
+        url: "/checkfailurecodetype",
+        data: {
+          group: getAssetG,
+          type: getType,
+
+        },
+        success: function(data) {
+          var code = data.optionfailcode;
+
+          // console.log(code);
+
+          var selectthis = document.getElementById('failurecode');
+
+          // Hapus semua option yang ada
+          selectthis.innerHTML = '';
+
+          // Tambahkan option baru
+          code.forEach(data => {
+            const option = document.createElement('option');
+            option.value = data.fn_code;
+            option.text = data.fn_code + ' - ' + data.fn_desc;
+            selectthis.add(option);
+          });
+        }
+      })
+    });
+
+    $(document).on('change', '#c_asset', function() {
+      // document.getElementById('womanualchoose').style.display = '';
+      var assetsite = $(this).find(':selected').data('assetsite');
+      var assetloc = $(this).find(':selected').data('assetloc');
+
+      document.getElementById('hide_site').value = assetsite;
+      document.getElementById('hide_loc').value = assetloc;
+
+      var selectedAsset = $(this).find("option:selected").data("assetgroup");
+
+      document.getElementById('hide_assetgroup').value = selectedAsset;
+      $('#failurecode').html('');
+      document.getElementById('c_failuretype').value = '';
+
+      var assetval = document.getElementById('c_asset').value;
+
+    });
+
+    $(document).on('click', '.editwo2', function() {
+      $('#loadingtable').modal('show');
+      // alert('aaa');
+
+      var wonbr = $(this).data('wonumber');
+      var status = $(this).data('status');
+      var wotype = $(this).data('wotype');
+
+      $.ajax({
+        url: '/filtermaintcode',
+        method: 'GET',
+        data: {
+          pmc_type: wotype
+        },
+        success: function(response) {
+          // Manipulasi data di sini
+          // console.log(response);
+
+          var select = $('#e_mtcode');
+          select.empty();
+          select.append('<option value="">Select Maintenance Code</option>');
+          $.each(response, function(key, value) {
+            select.append('<option value="' + value.pmc_code + '">' + value.pmc_code + ' -- ' + value.pmc_desc + '</option>');
+          });
+
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
         }
       });
 
-      $("#e_mtcode").select2({
-        width: '100%',
-        placeholder: "Select Maintenance Code",
-        allowClear: true,
-      });
+      if (status == "released" || status == "started") {
+        // document.getElementById('e_engineerlist').setAttribute('readonly', true);
+        document.getElementById('e_mtcode').setAttribute('readonly', true);
+        document.getElementById('e_inslist').setAttribute('readonly', true);
+        document.getElementById('e_splist').setAttribute('readonly', true);
+        document.getElementById('e_qclist').setAttribute('readonly', true);
+        document.getElementById('e_startdate').setAttribute('readonly', true);
+        document.getElementById('e_duedate').setAttribute('readonly', true);
+      }
 
-      $("#e_inslist").select2({
-        width: '100%',
-        placeholder: "Select Instruction List Code",
-        allowClear: true,
-      });
+      if (status == "firm") {
+        document.getElementById('e_engineerlist').removeAttribute('readonly');
+        document.getElementById('e_mtcode').removeAttribute('readonly');
+        document.getElementById('e_inslist').removeAttribute('readonly');
+        document.getElementById('e_splist').removeAttribute('readonly');
+        document.getElementById('e_qclist').removeAttribute('readonly');
+        document.getElementById('e_startdate').removeAttribute('readonly');
+        document.getElementById('e_duedate').removeAttribute('readonly');
+      }
 
-      $("#e_splist").select2({
-        width: '100%',
-        placeholder: "Select Spare Part List Code",
-        allowClear: true,
-      });
+      var btnendel1 = document.getElementById("btndeleteen1");
+      var btnendel2 = document.getElementById("btndeleteen2");
+      var btnendel3 = document.getElementById("btndeleteen3");
+      var btnendel4 = document.getElementById("btndeleteen4");
+      var btnendel5 = document.getElementById("btndeleteen5");
+      var counter = document.getElementById('counter').value;
+      var counterfail = document.getElementById('counterfail').value;
 
-      $("#e_qclist").select2({
-        width: '100%',
-        placeholder: "Select QC List Code",
-        allowClear: true,
-      });
+      $.ajax({
+        url: '/womaint/getwoinfo',
+        method: 'GET',
+        data: {
+          wonumber: wonbr,
+        },
+        success: function(vamp) {
 
-      var cur_url = window.location.href;
+          console.log(vamp);
 
-      let paramString = cur_url.split('?')[1];
-      let queryString = new URLSearchParams(paramString);
+          var wonumber = vamp.wo_master.wo_number;
+          var srnumber = vamp.wo_master.wo_sr_number;
+          var ewottype = vamp.wo_master.wo_failure_type;
+          var assetgroup = vamp.asset.asset_group;
+          var assetcode = vamp.wo_master.wo_asset_code;
+          var assetdesc = vamp.asset.asset_desc;
+          var englist = vamp.engineer;
+          var failurelist = vamp.failurecode;
+          var impact = vamp.impact;
+          var startdate = vamp.wo_master.wo_start_date;
+          var duedate = vamp.wo_master.wo_due_date;
+          var priority = vamp.wo_master.wo_priority;
+          var wonote = vamp.wo_master.wo_note;
+          var mtcode = vamp.mtcode ? vamp.mtcode.pmc_code : '';
+          var inslist = vamp.inslist ? vamp.inslist.ins_code : '';
+          var splist = vamp.splist ? vamp.splist.spg_code : '';
+          var qcslist = vamp.qcslist ? vamp.qcslist.qcs_code : '';
+          var wostatus = vamp.wo_master.wo_status;
 
-      let status = queryString.get('s_status');
-      let wotype = queryString.get('s_wotype');
-      let engineer = queryString.get('s_engineer')
-      $('#s_status').val(status).trigger('change');
-      $('#s_wotype').val(wotype).trigger('change');
-      $('#s_engineer').val(engineer).trigger('change');
+          let selectOptions = document.getElementById("e_engineerlist").options;
 
-      $(document).on('change', '#c_failuretype', function(){
-        var getAssetG = document.getElementById('hide_assetgroup').value;
-        var getType = $(this).val();
-
-        // console.log(getAssetG);
-        // console.log(getType);
-        $.ajax({
-              url: "/checkfailurecodetype",
-              data: {
-                group: getAssetG,
-                type: getType,
-
-              },
-              success: function(data) {
-                var code = data.optionfailcode;
-
-                // console.log(code);
-
-                var selectthis = document.getElementById('failurecode');
-
-                // Hapus semua option yang ada
-                selectthis.innerHTML = '';
-
-                // Tambahkan option baru
-                code.forEach(data => {
-                  const option = document.createElement('option');
-                  option.value = data.fn_code;
-                  option.text = data.fn_code + ' - ' + data.fn_desc;
-                  selectthis.add(option);
-                });
+          for (let i = 0; i < selectOptions.length; i++) {
+            for (let j = 0; j < englist.length; j++) {
+              if (selectOptions[i].value == englist[j].eng_code) {
+                selectOptions[i].setAttribute("selected", true);
               }
-        })
-      });
-
-      $(document).on('change', '#c_asset', function() {
-        // document.getElementById('womanualchoose').style.display = '';
-        var assetsite = $(this).find(':selected').data('assetsite');
-        var assetloc = $(this).find(':selected').data('assetloc');
-
-        document.getElementById('hide_site').value = assetsite;
-        document.getElementById('hide_loc').value =assetloc;
-
-        var selectedAsset = $(this).find("option:selected").data("assetgroup");
-
-        document.getElementById('hide_assetgroup').value = selectedAsset;
-        $('#failurecode').html('');
-        document.getElementById('c_failuretype').value = '';
-        
-        var assetval = document.getElementById('c_asset').value;
-
-      });
-
-      $(document).on('click', '.editwo2', function() {
-        $('#loadingtable').modal('show');
-        // alert('aaa');
-
-        var wonbr = $(this).data('wonumber');
-        var status = $(this).data('status');
-        var wotype = $(this).data('wotype');
-
-        $.ajax({
-            url: '/filtermaintcode',
-            method: 'GET',
-            data: { pmc_type: wotype },
-            success: function(response) {
-                // Manipulasi data di sini
-                // console.log(response);
-
-                var select = $('#e_mtcode');
-                select.empty();
-                select.append('<option value="">Select Maintenance Code</option>');
-                $.each(response, function(key, value) {
-                  select.append('<option value="' + value.pmc_code + '">' + value.pmc_code + ' -- ' + value.pmc_desc + '</option>');
-                });
-
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
             }
-        });
+          }
 
-        if(status == "released" || status == "started"){
-          document.getElementById('e_engineerlist').setAttribute('readonly', true);
-          document.getElementById('e_mtcode').setAttribute('readonly', true);
-          document.getElementById('e_inslist').setAttribute('readonly', true);
-          document.getElementById('e_splist').setAttribute('readonly', true);
-          document.getElementById('e_qclist').setAttribute('readonly', true);
-          document.getElementById('e_startdate').setAttribute('readonly', true);
-          document.getElementById('e_duedate').setAttribute('readonly', true);
+          $("#e_engineerlist").trigger("change");
+
+          document.getElementById('e_nowo').value = wonumber;
+          document.getElementById('e_nosr').value = srnumber;
+          document.getElementById('e_wottype').value = ewottype;
+          document.getElementById('e_asset').value = assetcode + " - " + assetdesc;
+          document.getElementById('hide_editassetgroup').value = assetgroup;
+          // document.getElementById('e_startdate').value = startdate;
+          document.getElementById('e_duedate').value = duedate;
+          document.getElementById('e_priority').value = priority;
+          document.getElementById('e_note').value = wonote;
+          document.getElementById('e_mtcode').value = mtcode;
+          document.getElementById('e_inslist').value = inslist;
+          document.getElementById('e_splist').value = splist;
+          document.getElementById('e_qclist').value = qcslist;
+          document.getElementById('e_assetcode').value = assetcode;
+
+          // console.log(mtcode);
+
+          //jika mtcode tidak kosong
+          if (mtcode !== "") {
+            $('#e_mtcode').val(mtcode).trigger('change');
+          }
+
+
+          $('#e_inslist').val(inslist).trigger('change');
+          $('#e_splist').val(splist).trigger('change');
+          $('#e_qclist').val(qcslist).trigger('change');
+
+          $('#e_startdate').val(startdate).trigger('change');
+
+          $("#e_wottype").trigger("change");
+
+
+          $.ajax({
+            url: "/checkfailurecodetype",
+            data: {
+              group: assetgroup,
+              type: ewottype,
+            },
+            success: function(data) {
+              var code = data.optionfailcode;
+
+              // console.log(code);
+
+              var selectthis = document.getElementById('m_failurecode');
+
+              // Hapus semua option yang ada
+              selectthis.innerHTML = '';
+
+              // Tambahkan option baru
+              code.forEach(data => {
+                const option = document.createElement('option');
+                option.value = data.fn_code;
+                option.text = data.fn_code + ' - ' + data.fn_desc;
+                selectthis.add(option);
+              });
+
+              let selectOptionsFail = document.getElementById("m_failurecode").options;
+
+              for (let i = 0; i < selectOptionsFail.length; i++) {
+                for (let j = 0; j < failurelist.length; j++) {
+                  if (selectOptionsFail[i].value == failurelist[j].fn_code) {
+                    selectOptionsFail[i].setAttribute("selected", true);
+                  }
+                }
+              }
+
+              $("#m_failurecode").trigger("change");
+
+            }
+          })
+
+          let selectOptionsImp = document.getElementById('e_impact').options;
+
+          for (let i = 0; i < selectOptionsImp.length; i++) {
+            for (let j = 0; j < impact.length; j++) {
+              if (selectOptionsImp[i].value == impact[j].imp_code) {
+                selectOptionsImp[i].setAttribute("selected", true);
+              }
+            }
+          }
+
+          $("#e_impact").trigger("change");
+
+        },
+        complete: function(vamp) {
+          //  $('.modal-backdrop').modal('hide');
+          // alert($('.modal-backdrop').hasClass('in'));
+
+          setTimeout(function() {
+            $('#loadingtable').modal('hide');
+          }, 500);
+
+
+          setTimeout(function() {
+            $('#editModal').modal('show');
+          }, 1000);
+
         }
+      })
 
-        if(status == "firm"){
-          document.getElementById('e_engineerlist').removeAttribute('readonly');
-          document.getElementById('e_mtcode').removeAttribute('readonly');
-          document.getElementById('e_inslist').removeAttribute('readonly');
-          document.getElementById('e_splist').removeAttribute('readonly');
-          document.getElementById('e_qclist').removeAttribute('readonly');
-          document.getElementById('e_startdate').removeAttribute('readonly');
-          document.getElementById('e_duedate').removeAttribute('readonly');
+      $.ajax({
+        url: "/imageview_womaint",
+        data: {
+          wonumber: wonbr,
+        },
+        success: function(data) {
+
+          $('#munculgambar_edit').html('').append(data);
         }
+      })
+    });
 
-        var btnendel1 = document.getElementById("btndeleteen1");
-        var btnendel2 = document.getElementById("btndeleteen2");
-        var btnendel3 = document.getElementById("btndeleteen3");
-        var btnendel4 = document.getElementById("btndeleteen4");
-        var btnendel5 = document.getElementById("btndeleteen5");
-        var counter = document.getElementById('counter').value;
-        var counterfail = document.getElementById('counterfail').value;
+    $("#c_startdate").change(function() {
+      var start_date = new Date($("#c_startdate").val());
+      var due_date = new Date($("#c_duedate").val());
+      var today = new Date();
+      var min_date = start_date.toJSON().slice(0, 10);
 
+
+      $("#c_duedate").prop("min", min_date);
+
+
+      if (start_date > due_date) {
+        $("#c_duedate").val($("#c_startdate").val());
+      }
+    });
+
+    $('input[name="cwotype"]').on('change', function() {
+      // ambil value dari input radio yang dipilih
+      var selectedValue = $('input[name="cwotype"]:checked').val();
+
+      // console.log(selectedValue);
+
+      $.ajax({
+        url: '/filtermaintcode',
+        method: 'GET',
+        data: {
+          pmc_type: selectedValue
+        },
+        success: function(response) {
+          // Manipulasi data di sini
+          // console.log(response);
+
+          var select = $('#c_mtcode');
+          select.empty();
+          select.append('<option value="">Select Maintenance Code</option>');
+          $.each(response, function(key, value) {
+            select.append('<option value="' + value.pmc_code + '">' + value.pmc_code + ' -- ' + value.pmc_desc + '</option>');
+          });
+
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+    });
+
+    $('#c_mtcode').on('change', function() {
+      // alert('ganti');
+      let selectedValue = $(this).val();
+      $.ajax({
+        url: '/searchic',
+        method: 'GET',
+        data: {
+          pmc_code: selectedValue
+        },
+        success: function(response) {
+          // Manipulasi data di sini
+          // console.log(response);
+
+          //jika response tidak kosong
+          if (response && Object.keys(response).length) {
+            let inslistval = response.pmc_ins;
+            let spglistval = response.pmc_spg;
+            let qcslistval = response.pmc_qcs;
+
+            $('#c_inslist option[value !="' + inslistval + '"]').prop('disabled', true);
+            $('#c_inslist option[value="' + inslistval + '"]').prop('disabled', false);
+            $('#c_inslist').val(inslistval).trigger('change');
+
+            $('#c_splist option[value !="' + spglistval + '"]').prop('disabled', true);
+            $('#c_splist option[value="' + spglistval + '"]').prop('disabled', false);
+            $('#c_splist').val(spglistval).trigger('change');
+
+            $('#c_qclist option[value !="' + qcslistval + '"]').prop('disabled', true);
+            $('#c_qclist option[value="' + qcslistval + '"]').prop('disabled', false);
+            $('#c_qclist').val(qcslistval).trigger('change');
+
+            $("#c_inslist").select2({
+              width: '100%',
+              placeholder: "Select Instruction List Code",
+              allowClear: false,
+            });
+
+            $("#c_splist").select2({
+              width: '100%',
+              placeholder: "Select Spare Part List Code",
+              allowClear: false,
+            });
+
+            $("#c_qclist").select2({
+              width: '100%',
+              placeholder: "Select QC List Code",
+              allowClear: false,
+            });
+
+          } else { //jika response kosong karena user click tanda "x" di field select maintenance code
+            $('#c_inslist option[value!=""]').prop('disabled', false);
+            $('#c_inslist').val('').trigger('change');
+
+            $('#c_splist option').prop('disabled', false);
+            $('#c_splist').val('').trigger('change');
+
+            $('#c_qclist option').prop('disabled', false);
+            $('#c_qclist').val('').trigger('change');
+
+            $("#c_inslist").select2({
+              width: '100%',
+              placeholder: "Select Instruction List Code",
+              allowClear: true,
+            });
+
+            $("#c_splist").select2({
+              width: '100%',
+              placeholder: "Select Spare Part List Code",
+              allowClear: true,
+            });
+
+            $("#c_qclist").select2({
+              width: '100%',
+              placeholder: "Select QC List Code",
+              allowClear: true,
+            });
+          }
+
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+    });
+
+    $("#e_startdate").change(function() {
+      var start_date = new Date($("#e_startdate").val());
+      var due_date = new Date($("#e_duedate").val());
+      var today = new Date();
+      var min_date = start_date.toJSON().slice(0, 10);
+
+
+      $("#e_duedate").prop("min", min_date);
+
+
+      if (start_date > due_date) {
+        $("#e_duedate").val($("#e_startdate").val());
+      }
+    });
+
+    $('#e_mtcode').on('change', function() {
+      // alert('ganti');
+      let selectedValue = $(this).val();
+
+      console.log(selectedValue);
+      $.ajax({
+        url: '/searchic',
+        method: 'GET',
+        data: {
+          pmc_code: selectedValue
+        },
+        success: function(response) {
+          // Manipulasi data di sini
+          // console.log(response);
+
+          //jika response tidak kosong
+          if (response && Object.keys(response).length) {
+            let inslistval = response.pmc_ins;
+            let spglistval = response.pmc_spg;
+            let qcslistval = response.pmc_qcs;
+
+            $('#e_inslist option[value !="' + inslistval + '"]').prop('disabled', true);
+            $('#e_inslist option[value="' + inslistval + '"]').prop('disabled', false);
+            $('#e_inslist').val(inslistval).trigger('change');
+
+            $('#e_splist option[value !="' + spglistval + '"]').prop('disabled', true);
+            $('#e_splist option[value="' + spglistval + '"]').prop('disabled', false);
+            $('#e_splist').val(spglistval).trigger('change');
+
+            $('#e_qclist option[value !="' + qcslistval + '"]').prop('disabled', true);
+            $('#e_qclist option[value="' + qcslistval + '"]').prop('disabled', false);
+            $('#e_qclist').val(qcslistval).trigger('change');
+
+            $("#e_inslist").select2({
+              width: '100%',
+              placeholder: "Select Instruction List Code",
+              allowClear: false,
+            });
+
+            $("#e_splist").select2({
+              width: '100%',
+              placeholder: "Select Spare Part List Code",
+              allowClear: false,
+            });
+
+            $("#e_qclist").select2({
+              width: '100%',
+              placeholder: "Select QC List Code",
+              allowClear: false,
+            });
+
+          } else { //jika response kosong karena user click tanda "x" di field select maintenance code
+            $('#e_inslist option[value!=""]').prop('disabled', false);
+            $('#e_inslist').val('').trigger('change');
+
+            $('#e_splist option').prop('disabled', false);
+            $('#e_splist').val('').trigger('change');
+
+            $('#e_qclist option').prop('disabled', false);
+            $('#e_qclist').val('').trigger('change');
+
+            $("#e_inslist").select2({
+              width: '100%',
+              placeholder: "Select Instruction List Code",
+              allowClear: true,
+            });
+
+            $("#e_splist").select2({
+              width: '100%',
+              placeholder: "Select Spare Part List Code",
+              allowClear: true,
+            });
+
+            $("#e_qclist").select2({
+              width: '100%',
+              placeholder: "Select QC List Code",
+              allowClear: true,
+            });
+          }
+
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+    });
+
+    $(document).on('click', '.deleterow', function(e) {
+      var data = $(this).closest('tr').find('.rowval').val();
+
+      Swal.fire({
+        title: '',
+        text: "Delete File ?",
+        icon: '',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Delete'
+      }).then((result) => {
+        if (result.value) {
+          $.ajax({
+            url: "/delfilewomaint/" + data,
+            success: function(data) {
+
+              $('#munculgambar_edit').html('').append(data);
+            }
+          })
+        }
+      })
+    });
+
+    $(document).on('click', '.maintcode', function(e) {
+      $('#maintCodeModal').modal('show');
+
+      //   e.stopPropagation();
+
+      // document.getElementById('btnclose_b').addEventListener('click', function() {
+      //   // Mengatur fokus kembali pada modal pertama
+      //   document.getElementById('maintCodeModal').style.display = 'none';
+      //   document.getElementById('viewModal').style.display = 'block';
+      //   document.getElementById('wotype').focus();
+
+      //   document.body.classList.remove('modal-open');
+      // });
+
+      //muncul saat modal pertama kali muncul
+      //maintenance code
+      var output = '';
+      output += '<tr>';
+      output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Maintenace Code first! </td>';
+      output += '</tr>';
+      $('#b_mtcodetable').html('').append(output);
+
+      //instruction list
+      var output = '';
+      output += '<tr>';
+      output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction List Code first! </td>';
+      output += '</tr>';
+      $('#b_inslisttable').html('').append(output);
+
+      //sparepart list
+      var output = '';
+      output += '<tr>';
+      output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction Sparepart Code first! </td>';
+      output += '</tr>';
+      $('#b_splisttable').html('').append(output);
+
+      //qc list
+      var output = '';
+      output += '<tr>';
+      output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction QC Code first! </td>';
+      output += '</tr>';
+      $('#b_qclisttable').html('').append(output);
+
+      $(document).on('change', '#b_mtcode', function() {
+
+        let selectedValue = $(this).val();
         $.ajax({
-          url: '/womaint/getwoinfo',
+          url: '/searchic',
           method: 'GET',
           data: {
-              wonumber: wonbr,
+            pmc_code: selectedValue
           },
-          success: function(vamp) {
+          success: function(response) {
 
-            console.log(vamp);
+            if (Object.keys(response).length === 0) {
+              //jika data yang dipilih valuenya tidak ada
+              var output = '';
+              output += '<tr>';
+              output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Maintenace Code first! </td>';
+              output += '</tr>';
 
-            var wonumber = vamp.wo_master.wo_number;
-            var srnumber = vamp.wo_master.wo_sr_number;
-            var ewottype = vamp.wo_master.wo_failure_type;
-            var assetgroup = vamp.asset.asset_group;
-            var assetcode = vamp.wo_master.wo_asset_code;
-            var assetdesc = vamp.asset.asset_desc;
-            var englist = vamp.engineer;
-            var failurelist = vamp.failurecode;
-            var impact = vamp.impact;
-            var startdate = vamp.wo_master.wo_start_date;
-            var duedate = vamp.wo_master.wo_due_date;
-            var priority = vamp.wo_master.wo_priority;
-            var wonote = vamp.wo_master.wo_note;
-            var mtcode = vamp.mtcode ? vamp.mtcode.pmc_code : '';
-            var inslist = vamp.inslist ? vamp.inslist.ins_code : '';
-            var splist = vamp.splist ? vamp.splist.spg_code : '';
-            var qcslist = vamp.qcslist ? vamp.qcslist.qcs_code : '';
-            var wostatus = vamp.wo_master.wo_status;
+              $('#b_mtcodetable').html('').append(output);
 
-            let selectOptions = document.getElementById("e_engineerlist").options;
+              $('#b_inslist option[value!=""]').prop('disabled', false);
+              $('#b_inslist').val('').trigger('change');
 
-            for (let i = 0; i < selectOptions.length; i++) {
-              for (let j = 0; j < englist.length; j++) {
-                if (selectOptions[i].value == englist[j].eng_code) {
-                  selectOptions[i].setAttribute("selected", true);
-                }
-              }
+              $('#b_splist option').prop('disabled', false);
+              $('#b_splist').val('').trigger('change');
+
+              $('#b_qclist option').prop('disabled', false);
+              $('#b_qclist').val('').trigger('change');
+
+              $("#b_inslist").select2({
+                width: '100%',
+                placeholder: "Select Instruction List Code",
+                allowClear: true,
+              });
+
+              $("#b_splist").select2({
+                width: '100%',
+                placeholder: "Select Spare Part List Code",
+                allowClear: true,
+              });
+
+              $("#b_qclist").select2({
+                width: '100%',
+                placeholder: "Select QC List Code",
+                allowClear: true,
+              });
+            } else {
+              //jika data yang dipilih valuenya ada
+              var output = '';
+              output += '<tr>';
+              output += '<td>' + response.pmc_code + ' -- ' + response.pmc_desc + '</td>';
+              output += '<td>' + response.pmc_type + '</td>';
+              output += '<td>' + response.pmc_ins + '</td>';
+              output += '<td>' + response.pmc_spg + '</td>';
+              output += '<td>' + response.pmc_qcs + '</td>';
+              output += '</tr>';
+
+              $('#b_mtcodetable').html('').append(output);
+
+              let inslistval = response.pmc_ins;
+              let spglistval = response.pmc_spg;
+              let qcslistval = response.pmc_qcs;
+
+              $('#b_inslist option[value !="' + inslistval + '"]').prop('disabled', true);
+              $('#b_inslist option[value="' + inslistval + '"]').prop('disabled', false);
+              $('#b_inslist').val(inslistval).trigger('change');
+
+              $('#b_splist option[value !="' + spglistval + '"]').prop('disabled', true);
+              $('#b_splist option[value="' + spglistval + '"]').prop('disabled', false);
+              $('#b_splist').val(spglistval).trigger('change');
+
+              $('#b_qclist option[value !="' + qcslistval + '"]').prop('disabled', true);
+              $('#b_qclist option[value="' + qcslistval + '"]').prop('disabled', false);
+              $('#b_qclist').val(qcslistval).trigger('change');
+
+              $("#b_inslist").select2({
+                width: '100%',
+                placeholder: "Select Instruction List Code",
+                allowClear: false,
+              });
+
+              $("#b_splist").select2({
+                width: '100%',
+                placeholder: "Select Spare Part List Code",
+                allowClear: false,
+              });
+
+              $("#b_qclist").select2({
+                width: '100%',
+                placeholder: "Select QC List Code",
+                allowClear: false,
+              });
             }
-
-            $("#e_engineerlist").trigger("change");
-
-            document.getElementById('e_nowo').value = wonumber;
-            document.getElementById('e_nosr').value = srnumber;
-            document.getElementById('e_wottype').value = ewottype;
-            document.getElementById('e_asset').value = assetcode + " - " + assetdesc;
-            document.getElementById('hide_editassetgroup').value = assetgroup;
-            // document.getElementById('e_startdate').value = startdate;
-            document.getElementById('e_duedate').value = duedate;
-            document.getElementById('e_priority').value = priority;
-            document.getElementById('e_note').value = wonote;
-            document.getElementById('e_mtcode').value = mtcode;
-            document.getElementById('e_inslist').value = inslist;
-            document.getElementById('e_splist').value = splist;
-            document.getElementById('e_qclist').value = qcslist;
-            document.getElementById('e_assetcode').value = assetcode;
-
-            // console.log(mtcode);
-
-            //jika mtcode tidak kosong
-            if(mtcode !== ""){
-              $('#e_mtcode').val(mtcode).trigger('change');
-            }
-
-          
-            $('#e_inslist').val(inslist).trigger('change');
-            $('#e_splist').val(splist).trigger('change');
-            $('#e_qclist').val(qcslist).trigger('change');
-
-            $('#e_startdate').val(startdate).trigger('change');
-
-            $("#e_wottype").trigger("change");
-
-
-            $.ajax({
-                  url: "/checkfailurecodetype",
-                  data: {
-                    group: assetgroup,
-                    type: ewottype,
-                  },
-                  success: function(data) {
-                    var code = data.optionfailcode;
-
-                    // console.log(code);
-
-                    var selectthis = document.getElementById('m_failurecode');
-
-                    // Hapus semua option yang ada
-                    selectthis.innerHTML = '';
-
-                    // Tambahkan option baru
-                    code.forEach(data => {
-                      const option = document.createElement('option');
-                      option.value = data.fn_code;
-                      option.text = data.fn_code + ' - ' + data.fn_desc;
-                      selectthis.add(option);
-                    });
-
-                    let selectOptionsFail = document.getElementById("m_failurecode").options;
-
-                    for (let i = 0; i < selectOptionsFail.length; i++) {
-                      for (let j = 0; j < failurelist.length; j++) {
-                        if (selectOptionsFail[i].value == failurelist[j].fn_code) {
-                          selectOptionsFail[i].setAttribute("selected", true);
-                        }
-                      }
-                    }
-                    
-                    $("#m_failurecode").trigger("change");
-
-                  }
-            })
-
-            let selectOptionsImp = document.getElementById('e_impact').options;
-
-            for (let i = 0; i < selectOptionsImp.length; i++) {
-              for (let j = 0; j < impact.length; j++) {
-                if (selectOptionsImp[i].value == impact[j].imp_code) {
-                  selectOptionsImp[i].setAttribute("selected", true);
-                }
-              }
-            }
-
-            $("#e_impact").trigger("change");
-            
-          },
-          complete: function(vamp) {
-            //  $('.modal-backdrop').modal('hide');
-            // alert($('.modal-backdrop').hasClass('in'));
-
-            setTimeout(function() {
-              $('#loadingtable').modal('hide');
-            }, 500);
-
-
-            setTimeout(function() {
-              $('#editModal').modal('show');
-            }, 1000);
-
           }
-        })
-
-        $.ajax({
-          url: "/imageview_womaint",
-          data: {
-            wonumber: wonbr,
-          },
-          success: function(data) {
-
-            $('#munculgambar_edit').html('').append(data);
-          }
-        })
-      });
-
-      $("#c_startdate").change(function() {
-        var start_date = new Date($("#c_startdate").val());
-        var due_date = new Date($("#c_duedate").val());
-        var today = new Date();
-        var min_date = start_date.toJSON().slice(0,10);
-        
-
-        $("#c_duedate").prop("min", min_date);
-       
-
-        if (start_date > due_date) {
-          $("#c_duedate").val($("#c_startdate").val());
-        }
-      });
-
-      $('input[name="cwotype"]').on('change', function() {
-        // ambil value dari input radio yang dipilih
-        var selectedValue = $('input[name="cwotype"]:checked').val();
-
-        // console.log(selectedValue);
-
-        $.ajax({
-            url: '/filtermaintcode',
-            method: 'GET',
-            data: { pmc_type: selectedValue },
-            success: function(response) {
-                // Manipulasi data di sini
-                // console.log(response);
-
-                var select = $('#c_mtcode');
-                select.empty();
-                select.append('<option value="">Select Maintenance Code</option>');
-                $.each(response, function(key, value) {
-                  select.append('<option value="' + value.pmc_code + '">' + value.pmc_code + ' -- ' + value.pmc_desc + '</option>');
-                });
-
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
-            }
         });
       });
 
-      $('#c_mtcode').on('change', function() {
-          // alert('ganti');
-          let selectedValue = $(this).val();
-          $.ajax({
-              url: '/searchic',
-              method: 'GET',
-              data: { pmc_code: selectedValue },
-              success: function(response) {
-                  // Manipulasi data di sini
-                  // console.log(response);
+      $(document).on('change', '#b_inslist', function() {
 
-                  //jika response tidak kosong
-                  if (response && Object.keys(response).length) {
-                      let inslistval = response.pmc_ins;
-                      let spglistval = response.pmc_spg;
-                      let qcslistval = response.pmc_qcs;
-                    
-                    $('#c_inslist option[value !="'+inslistval+'"]').prop('disabled',true);
-                    $('#c_inslist option[value="'+inslistval+'"]').prop('disabled',false);
-                    $('#c_inslist').val(inslistval).trigger('change');
+        let selectedValue = $(this).val();
+        $.ajax({
+          url: '/searchil',
+          method: 'GET',
+          data: {
+            ins_code: selectedValue
+          },
+          success: function(response) {
+            if (Object.keys(response).length === 0) {
+              //jika data yang dipilih valuenya tidak ada
+              var output = '';
+              output += '<tr>';
+              output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction List Code first! </td>';
+              output += '</tr>';
 
-                    $('#c_splist option[value !="'+spglistval+'"]').prop('disabled',true);
-                    $('#c_splist option[value="'+spglistval+'"]').prop('disabled',false);
-                    $('#c_splist').val(spglistval).trigger('change');
-
-                    $('#c_qclist option[value !="'+qcslistval+'"]').prop('disabled',true);
-                    $('#c_qclist option[value="'+qcslistval+'"]').prop('disabled',false);
-                    $('#c_qclist').val(qcslistval).trigger('change');
-
-                    $("#c_inslist").select2({
-                      width: '100%',
-                      placeholder: "Select Instruction List Code",
-                      allowClear: false,
-                    });
-
-                    $("#c_splist").select2({
-                      width: '100%',
-                      placeholder: "Select Spare Part List Code",
-                      allowClear: false,
-                    });
-
-                    $("#c_qclist").select2({
-                      width: '100%',
-                      placeholder: "Select QC List Code",
-                      allowClear: false,
-                    });
-
-                  } else { //jika response kosong karena user click tanda "x" di field select maintenance code
-                    $('#c_inslist option[value!=""]').prop('disabled',false);
-                    $('#c_inslist').val('').trigger('change');
-
-                    $('#c_splist option').prop('disabled',false);
-                    $('#c_splist').val('').trigger('change');
-
-                    $('#c_qclist option').prop('disabled',false);
-                    $('#c_qclist').val('').trigger('change');
-                    
-                    $("#c_inslist").select2({
-                      width: '100%',
-                      placeholder: "Select Instruction List Code",
-                      allowClear: true,
-                    });
-
-                    $("#c_splist").select2({
-                      width: '100%',
-                      placeholder: "Select Spare Part List Code",
-                      allowClear: true,
-                    });
-
-                    $("#c_qclist").select2({
-                      width: '100%',
-                      placeholder: "Select QC List Code",
-                      allowClear: true,
-                    });
-                  }
-
-              },
-              error: function(xhr, status, error) {
-                  console.error(error);
+              $('#b_inslisttable').html('').append(output);
+            } else {
+              //jika data yang dipilih valuenya ada
+              var output = '';
+              for (var i = 0; i < response.length; i++) {
+                output += '<tr>';
+                output += '<td>' + response[i].ins_code + ' -- ' + response[i].ins_desc + '</td>';
+                output += '<td>' + response[i].ins_duration + '</td>';
+                output += '<td>' + response[i].ins_durationum + '</td>';
+                output += '<td>' + response[i].ins_manpower + '</td>';
+                output += '<td>' + response[i].ins_step + '</td>';
+                output += '<td>' + response[i].ins_stepdesc + '</td>';
+                if (response[i].ins_ref == null) {
+                  output += '<td></td>';
+                } else {
+                  output += '<td>' + response[i].ins_ref + '</td>';
+                }
+                output += '</tr>';
               }
-          });
+
+              $('#b_inslisttable').html('').append(output);
+            }
+          }
+        });
       });
 
-      $("#e_startdate").change(function() {
-        var start_date = new Date($("#e_startdate").val());
-        var due_date = new Date($("#e_duedate").val());
-        var today = new Date();
-        var min_date = start_date.toJSON().slice(0,10);
-        
+      $(document).on('change', '#b_splist', function() {
 
-        $("#e_duedate").prop("min", min_date);
-       
+        let selectedValue = $(this).val();
+        $.ajax({
+          url: '/searchis',
+          method: 'GET',
+          data: {
+            spg_code: selectedValue
+          },
+          success: function(response) {
+            if (Object.keys(response).length === 0) {
+              //jika data yang dipilih valuenya tidak ada
+              var output = '';
+              output += '<tr>';
+              output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction Sparepart Code first! </td>';
+              output += '</tr>';
 
-        if (start_date > due_date) {
-          $("#e_duedate").val($("#e_startdate").val());
+              $('#b_splisttable').html('').append(output);
+            } else {
+              //jika data yang dipilih valuenya ada
+              var output = '';
+              for (var i = 0; i < response.length; i++) {
+                output += '<tr>';
+                output += '<td>' + response[i].spg_code + ' -- ' + response[i].spg_desc + '</td>';
+                if (response[i].spg_spcode == null) {
+                  output += '<td></td>';
+                } else {
+                  output += '<td>' + response[i].spg_spcode + '</td>';
+                }
+                if (response[i].spg_qtyreq == null) {
+                  output += '<td></td>';
+                } else {
+                  output += '<td>' + response[i].spg_qtyreq + '</td>';
+                }
+                output += '</tr>';
+              }
+
+              $('#b_splisttable').html('').append(output);
+            }
+          }
+        });
+      });
+
+      $(document).on('change', '#b_qclist', function() {
+
+        let selectedValue = $(this).val();
+        $.ajax({
+          url: '/searchiq',
+          method: 'GET',
+          data: {
+            qcs_code: selectedValue
+          },
+          success: function(response) {
+            if (Object.keys(response).length === 0) {
+              //jika data yang dipilih valuenya tidak ada
+              var output = '';
+              output += '<tr>';
+              output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction QC Code first! </td>';
+              output += '</tr>';
+
+              $('#b_qclisttable').html('').append(output);
+            } else {
+              //jika data yang dipilih valuenya ada
+              var output = '';
+              for (var i = 0; i < response.length; i++) {
+                output += '<tr>';
+                output += '<td>' + response[i].qcs_code + ' -- ' + response[i].qcs_desc + '</td>';
+                output += '<td>' + response[i].qcs_spec + '</td>';
+                if (response[i].qcs_tools == null) {
+                  output += '<td></td>';
+                } else {
+                  output += '<td>' + response[i].qcs_tools + '</td>';
+                }
+                output += '<td>' + response[i].qcs_op + '</td>';
+                output += '<td>' + response[i].qcs_val1 + '</td>';
+                if (response[i].qcs_val2 == null) {
+                  output += '<td></td>';
+                } else {
+                  output += '<td>' + response[i].qcs_val2 + '</td>';
+                }
+                if (response[i].qcs_um == null) {
+                  output += '<td></td>';
+                } else {
+                  output += '<td>' + response[i].qcs_um + '</td>';
+                }
+                output += '</tr>';
+              }
+
+              $('#b_qclisttable').html('').append(output);
+            }
+          }
+        });
+      });
+
+
+    });
+
+    $("#assetloc").change(function() {
+      var selectedAssetLoc = $("#assetloc").val();
+      // console.log(selectedAssetLoc);
+      $.ajax({
+        url: "/assetbyloc_wo",
+        data: {
+          assetloc: selectedAssetLoc,
+        },
+        success: function(data) {
+          // var type = data.optionfailtype;
+          var code = data.optionassetcode;
+
+          // $('#wotype').html(type);
+          $('#c_asset').html('');
+          $('#c_asset').html(code);
+          $('#c_asset').trigger("change");
         }
       });
-
-      $('#e_mtcode').on('change', function() {
-          // alert('ganti');
-          let selectedValue = $(this).val();
-
-          console.log(selectedValue);
-          $.ajax({
-              url: '/searchic',
-              method: 'GET',
-              data: { pmc_code: selectedValue },
-              success: function(response) {
-                  // Manipulasi data di sini
-                  // console.log(response);
-
-                  //jika response tidak kosong
-                  if (response && Object.keys(response).length) {
-                      let inslistval = response.pmc_ins;
-                      let spglistval = response.pmc_spg;
-                      let qcslistval = response.pmc_qcs;
-                    
-                    $('#e_inslist option[value !="'+inslistval+'"]').prop('disabled',true);
-                    $('#e_inslist option[value="'+inslistval+'"]').prop('disabled',false);
-                    $('#e_inslist').val(inslistval).trigger('change');
-
-                    $('#e_splist option[value !="'+spglistval+'"]').prop('disabled',true);
-                    $('#e_splist option[value="'+spglistval+'"]').prop('disabled',false);
-                    $('#e_splist').val(spglistval).trigger('change');
-
-                    $('#e_qclist option[value !="'+qcslistval+'"]').prop('disabled',true);
-                    $('#e_qclist option[value="'+qcslistval+'"]').prop('disabled',false);
-                    $('#e_qclist').val(qcslistval).trigger('change');
-
-                    $("#e_inslist").select2({
-                      width: '100%',
-                      placeholder: "Select Instruction List Code",
-                      allowClear: false,
-                    });
-
-                    $("#e_splist").select2({
-                      width: '100%',
-                      placeholder: "Select Spare Part List Code",
-                      allowClear: false,
-                    });
-
-                    $("#e_qclist").select2({
-                      width: '100%',
-                      placeholder: "Select QC List Code",
-                      allowClear: false,
-                    });
-
-                  } else { //jika response kosong karena user click tanda "x" di field select maintenance code
-                    $('#e_inslist option[value!=""]').prop('disabled',false);
-                    $('#e_inslist').val('').trigger('change');
-
-                    $('#e_splist option').prop('disabled',false);
-                    $('#e_splist').val('').trigger('change');
-
-                    $('#e_qclist option').prop('disabled',false);
-                    $('#e_qclist').val('').trigger('change');
-                    
-                    $("#e_inslist").select2({
-                      width: '100%',
-                      placeholder: "Select Instruction List Code",
-                      allowClear: true,
-                    });
-
-                    $("#e_splist").select2({
-                      width: '100%',
-                      placeholder: "Select Spare Part List Code",
-                      allowClear: true,
-                    });
-
-                    $("#e_qclist").select2({
-                      width: '100%',
-                      placeholder: "Select QC List Code",
-                      allowClear: true,
-                    });
-                  }
-
-              },
-              error: function(xhr, status, error) {
-                  console.error(error);
-              }
-          });
-      });
-
-      $(document).on('click', '.deleterow', function(e) {
-            var data = $(this).closest('tr').find('.rowval').val();
-
-            Swal.fire({
-            title: '',
-            text: "Delete File ?",
-            icon: '',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Delete'
-            }).then((result) => {
-              if (result.value) {
-                  $.ajax({
-                  url: "/delfilewomaint/" + data,
-                  success: function(data) {
-
-                      $('#munculgambar_edit').html('').append(data);
-                  }
-                  })
-              }
-            })
-      });
-
-      $(document).on('click', '.maintcode', function(e) {
-          $('#maintCodeModal').modal('show');
-
-          //   e.stopPropagation();
-
-          // document.getElementById('btnclose_b').addEventListener('click', function() {
-          //   // Mengatur fokus kembali pada modal pertama
-          //   document.getElementById('maintCodeModal').style.display = 'none';
-          //   document.getElementById('viewModal').style.display = 'block';
-          //   document.getElementById('wotype').focus();
-
-          //   document.body.classList.remove('modal-open');
-          // });
-
-          //muncul saat modal pertama kali muncul
-          //maintenance code
-          var output = '';
-          output += '<tr>';
-          output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Maintenace Code first! </td>';
-          output += '</tr>';
-          $('#b_mtcodetable').html('').append(output);
-
-          //instruction list
-          var output = '';
-          output += '<tr>';
-          output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction List Code first! </td>';
-          output += '</tr>';
-          $('#b_inslisttable').html('').append(output);
-
-          //sparepart list
-          var output = '';
-          output += '<tr>';
-          output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction Sparepart Code first! </td>';
-          output += '</tr>';
-          $('#b_splisttable').html('').append(output);
-
-          //qc list
-          var output = '';
-          output += '<tr>';
-          output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction QC Code first! </td>';
-          output += '</tr>';
-          $('#b_qclisttable').html('').append(output);
-
-          $(document).on('change', '#b_mtcode', function() {
-
-            let selectedValue = $(this).val();
-            $.ajax({
-              url: '/searchic',
-              method: 'GET',
-              data: {
-                pmc_code: selectedValue
-              },
-              success: function(response) {
-
-                if (Object.keys(response).length === 0) {
-                  //jika data yang dipilih valuenya tidak ada
-                  var output = '';
-                  output += '<tr>';
-                  output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Maintenace Code first! </td>';
-                  output += '</tr>';
-
-                  $('#b_mtcodetable').html('').append(output);
-
-                  $('#b_inslist option[value!=""]').prop('disabled', false);
-                  $('#b_inslist').val('').trigger('change');
-
-                  $('#b_splist option').prop('disabled', false);
-                  $('#b_splist').val('').trigger('change');
-
-                  $('#b_qclist option').prop('disabled', false);
-                  $('#b_qclist').val('').trigger('change');
-
-                  $("#b_inslist").select2({
-                    width: '100%',
-                    placeholder: "Select Instruction List Code",
-                    allowClear: true,
-                  });
-
-                  $("#b_splist").select2({
-                    width: '100%',
-                    placeholder: "Select Spare Part List Code",
-                    allowClear: true,
-                  });
-
-                  $("#b_qclist").select2({
-                    width: '100%',
-                    placeholder: "Select QC List Code",
-                    allowClear: true,
-                  });
-                } else {
-                  //jika data yang dipilih valuenya ada
-                  var output = '';
-                  output += '<tr>';
-                  output += '<td>' + response.pmc_code + ' -- ' + response.pmc_desc + '</td>';
-                  output += '<td>' + response.pmc_type + '</td>';
-                  output += '<td>' + response.pmc_ins + '</td>';
-                  output += '<td>' + response.pmc_spg + '</td>';
-                  output += '<td>' + response.pmc_qcs + '</td>';
-                  output += '</tr>';
-
-                  $('#b_mtcodetable').html('').append(output);
-
-                  let inslistval = response.pmc_ins;
-                  let spglistval = response.pmc_spg;
-                  let qcslistval = response.pmc_qcs;
-
-                  $('#b_inslist option[value !="' + inslistval + '"]').prop('disabled', true);
-                  $('#b_inslist option[value="' + inslistval + '"]').prop('disabled', false);
-                  $('#b_inslist').val(inslistval).trigger('change');
-
-                  $('#b_splist option[value !="' + spglistval + '"]').prop('disabled', true);
-                  $('#b_splist option[value="' + spglistval + '"]').prop('disabled', false);
-                  $('#b_splist').val(spglistval).trigger('change');
-
-                  $('#b_qclist option[value !="' + qcslistval + '"]').prop('disabled', true);
-                  $('#b_qclist option[value="' + qcslistval + '"]').prop('disabled', false);
-                  $('#b_qclist').val(qcslistval).trigger('change');
-
-                  $("#b_inslist").select2({
-                    width: '100%',
-                    placeholder: "Select Instruction List Code",
-                    allowClear: false,
-                  });
-
-                  $("#b_splist").select2({
-                    width: '100%',
-                    placeholder: "Select Spare Part List Code",
-                    allowClear: false,
-                  });
-
-                  $("#b_qclist").select2({
-                    width: '100%',
-                    placeholder: "Select QC List Code",
-                    allowClear: false,
-                  });
-                }
-              }
-            });
-          });
-
-          $(document).on('change', '#b_inslist', function() {
-
-            let selectedValue = $(this).val();
-            $.ajax({
-              url: '/searchil',
-              method: 'GET',
-              data: {
-                ins_code: selectedValue
-              },
-              success: function(response) {
-                if (Object.keys(response).length === 0) {
-                  //jika data yang dipilih valuenya tidak ada
-                  var output = '';
-                  output += '<tr>';
-                  output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction List Code first! </td>';
-                  output += '</tr>';
-
-                  $('#b_inslisttable').html('').append(output);
-                } else {
-                  //jika data yang dipilih valuenya ada
-                  var output = '';
-                  for (var i = 0; i < response.length; i++) {
-                    output += '<tr>';
-                    output += '<td>' + response[i].ins_code + ' -- ' + response[i].ins_desc + '</td>';
-                    output += '<td>' + response[i].ins_duration + '</td>';
-                    output += '<td>' + response[i].ins_durationum + '</td>';
-                    output += '<td>' + response[i].ins_manpower + '</td>';
-                    output += '<td>' + response[i].ins_step + '</td>';
-                    output += '<td>' + response[i].ins_stepdesc + '</td>';
-                    if (response[i].ins_ref == null) {
-                      output += '<td></td>';
-                    } else {
-                      output += '<td>' + response[i].ins_ref + '</td>';
-                    }
-                    output += '</tr>';
-                  }
-
-                  $('#b_inslisttable').html('').append(output);
-                }
-              }
-            });
-          });
-
-          $(document).on('change', '#b_splist', function() {
-
-            let selectedValue = $(this).val();
-            $.ajax({
-              url: '/searchis',
-              method: 'GET',
-              data: {
-                spg_code: selectedValue
-              },
-              success: function(response) {
-                if (Object.keys(response).length === 0) {
-                  //jika data yang dipilih valuenya tidak ada
-                  var output = '';
-                  output += '<tr>';
-                  output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction Sparepart Code first! </td>';
-                  output += '</tr>';
-
-                  $('#b_splisttable').html('').append(output);
-                } else {
-                  //jika data yang dipilih valuenya ada
-                  var output = '';
-                  for (var i = 0; i < response.length; i++) {
-                    output += '<tr>';
-                    output += '<td>' + response[i].spg_code + ' -- ' + response[i].spg_desc + '</td>';
-                    if (response[i].spg_spcode == null) {
-                      output += '<td></td>';
-                    } else {
-                      output += '<td>' + response[i].spg_spcode + '</td>';
-                    }
-                    if (response[i].spg_qtyreq == null) {
-                      output += '<td></td>';
-                    } else {
-                      output += '<td>' + response[i].spg_qtyreq + '</td>';
-                    }
-                    output += '</tr>';
-                  }
-
-                  $('#b_splisttable').html('').append(output);
-                }
-              }
-            });
-          });
-
-          $(document).on('change', '#b_qclist', function() {
-
-            let selectedValue = $(this).val();
-            $.ajax({
-              url: '/searchiq',
-              method: 'GET',
-              data: {
-                qcs_code: selectedValue
-              },
-              success: function(response) {
-                if (Object.keys(response).length === 0) {
-                  //jika data yang dipilih valuenya tidak ada
-                  var output = '';
-                  output += '<tr>';
-                  output += '<td colspan="12" style="text-align:center; color:red;"> Please select the Instruction QC Code first! </td>';
-                  output += '</tr>';
-
-                  $('#b_qclisttable').html('').append(output);
-                } else {
-                  //jika data yang dipilih valuenya ada
-                  var output = '';
-                  for (var i = 0; i < response.length; i++) {
-                    output += '<tr>';
-                    output += '<td>' + response[i].qcs_code + ' -- ' + response[i].qcs_desc + '</td>';
-                    output += '<td>' + response[i].qcs_spec + '</td>';
-                    if (response[i].qcs_tools == null) {
-                      output += '<td></td>';
-                    } else {
-                      output += '<td>' + response[i].qcs_tools + '</td>';
-                    }
-                    output += '<td>' + response[i].qcs_op + '</td>';
-                    output += '<td>' + response[i].qcs_val1 + '</td>';
-                    if (response[i].qcs_val2 == null) {
-                      output += '<td></td>';
-                    } else {
-                      output += '<td>' + response[i].qcs_val2 + '</td>';
-                    }
-                    if (response[i].qcs_um == null) {
-                      output += '<td></td>';
-                    } else {
-                      output += '<td>' + response[i].qcs_um + '</td>';
-                    }
-                    output += '</tr>';
-                  }
-
-                  $('#b_qclisttable').html('').append(output);
-                }
-              }
-            });
-          });
-
-
-      });
+    });
 
   });
   $(document).on('click', '.reopen', function() {
@@ -3326,6 +3373,5 @@ div #munculgambar .gambar:hover{
 
 
   });
-
 </script>
 @endsection

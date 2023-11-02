@@ -78,7 +78,8 @@ class wocontroller extends Controller
 
             $data = DB::table('wo_mstr')
                 ->leftJoin('users', 'wo_mstr.wo_createdby', 'users.username')
-                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code');
+                ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+                ->leftJoin('dept_mstr', 'dept_mstr.dept_code', 'wo_mstr.wo_department');
 
             if ($req->s_nomorwo) {
                 $data->where('wo_number', 'like', '%' . $req->s_nomorwo . '%');
@@ -94,6 +95,10 @@ class wocontroller extends Controller
             }
             if ($req->s_engineer) {
                 $data->where('wo_list_engineer', 'like', '%' . $req->s_engineer . '%');
+            }
+
+            if ($req->s_dept) {
+                $data->where('wo_department', $req->s_dept);
             }
 
             $data = $data->orderby('wo_system_create', 'desc')->orderBy('wo_number', 'desc')->paginate(10);
@@ -367,16 +372,41 @@ class wocontroller extends Controller
             // dd($wottype);
             $ceksrfile = DB::table(('service_req_upload'))
                 ->get();
+
+            $assetloc = DB::table('asset_loc')->get();
             return view('workorder.wobrowse', [
                 'impact' => $impact, 'wottype' => $wottype, 'data' => $data,
                 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset,
                 'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '',
                 'maintenancelist' => $maintenance, 'ceksrfile' => $ceksrfile, 'inslist' => $inslist, 'splist' => $splist,
-                'qclist' => $qclist
+                'qclist' => $qclist, 'assetloc' => $assetloc
             ]);
         } else {
             toast('Anda tidak memiliki akses menu, Silahkan kontak admin', 'error');
             return back();
+        }
+    }
+
+    public function assetbyloc_wo (Request $req){
+        
+        //Filter asset by location
+        if ($req->ajax()) {
+            $asset_loc = $req->assetloc;
+            $asset = DB::table('asset_mstr')
+            ->where('asset_active', '=', 'Yes')
+            ->where('asset_loc', '=', $asset_loc)
+            ->orderBy('asset_code')
+            ->get();
+
+            $outputcode = "";
+            foreach ($asset as $thiscode) {
+                $outputcode .= '<option value="'.$thiscode->asset_code.'" data-assetsite="'.$thiscode->asset_site.'" data-assetloc="'.$thiscode->asset_loc.'" data-assetgroup="'.$thiscode->asset_group.'">'.$thiscode->asset_code.' - '.$thiscode->asset_desc.'</option>';
+            }
+
+            return response()->json([
+                // 'optionfailtype' => $outputtype,
+                'optionassetcode' => $outputcode,
+            ]);
         }
     }
 
@@ -1708,28 +1738,30 @@ class wocontroller extends Controller
                                 'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
+
+                            DB::table('sr_trans_approval_eng')
+                                ->where('srta_eng_mstr_id', $getdatasr->id)
+                                ->update([
+                                    'srta_eng_reason' => null,
+                                    'srta_eng_status' => 'Waiting for engineer approval',
+                                    'srta_eng_approved_by' => null,
+                                    'updated_at' => null,
+                                ]);
+
+                            DB::table('sr_trans_approval_eng_hist')
+                                ->insert([
+                                    'srtah_eng_sr_number' => $getdatasr->sr_number,
+                                    'srtah_eng_dept_approval' => $getdatasr->sr_eng_approver,
+                                    'srtah_eng_role_approval' => 'SPVSR',
+                                    'srtah_eng_status' => 'Waiting for engineer approval',
+                                    'srtah_eng_reason' => 'WO deleted and SR back to open',
+                                    'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                ]);
                     }
 
                     //update status sr approval eng menjadi waiting fo approval lagi
-                    DB::table('sr_trans_approval_eng')
-                        ->where('srta_eng_mstr_id', $getdatasr->id)
-                        ->update([
-                            'srta_eng_reason' => null,
-                            'srta_eng_status' => 'Waiting for engineer approval',
-                            'srta_eng_approved_by' => null,
-                            'updated_at' => null,
-                        ]);
-
-                    DB::table('sr_trans_approval_eng_hist')
-                        ->insert([
-                            'srtah_eng_sr_number' => $getdatasr->sr_number,
-                            'srtah_eng_dept_approval' => $getdatasr->sr_eng_approver,
-                            'srtah_eng_role_approval' => 'SPVSR',
-                            'srtah_eng_status' => 'Waiting for engineer approval',
-                            'srtah_eng_reason' => 'WO deleted and SR back to open',
-                            'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                            'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                        ]);
+                    
 
 
                     //hapus data wo
@@ -1922,6 +1954,26 @@ class wocontroller extends Controller
                                     'sr_priority' => $getdatasr->sr_priority,
                                     'sr_wodelete_note' => $req->notecancel,
                                     'sr_action' => 'WO Deleted',
+                                    'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                ]);
+
+                            DB::table('sr_trans_approval_eng')
+                                ->where('srta_eng_mstr_id', $getdatasr->id)
+                                ->update([
+                                    'srta_eng_reason' => null,
+                                    'srta_eng_status' => 'Waiting for engineer approval',
+                                    'srta_eng_approved_by' => null,
+                                    'updated_at' => null,
+                                ]);
+
+                            DB::table('sr_trans_approval_eng_hist')
+                                ->insert([
+                                    'srtah_eng_sr_number' => $getdatasr->sr_number,
+                                    'srtah_eng_dept_approval' => $getdatasr->sr_eng_approver,
+                                    'srtah_eng_role_approval' => 'SPVSR',
+                                    'srtah_eng_status' => 'Waiting for engineer approval',
+                                    'srtah_eng_reason' => 'WO deleted and SR back to open',
                                     'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                     'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                                 ]);
@@ -2995,7 +3047,7 @@ class wocontroller extends Controller
         ]);
     }
 
-    public function woreportingdetail($wonumber)
+    public function woreportingdetail($wonumber) /** Route : workorder.wofinish-done  Blade : workorder.wofinish-done */
     {
         //ambil data untuk header wo report detail
         $dataheader = DB::table('wo_mstr')
@@ -3068,6 +3120,7 @@ class wocontroller extends Controller
         $datainstruction = DB::table('wo_dets_ins')
             ->leftJoin('um_mstr', 'um_mstr.um_code', 'wo_dets_ins.wd_ins_durationum')
             ->where('wd_ins_wonumber', '=', $wonumber)
+            ->orderBy('wd_ins_step')
             ->get();
 
         // dd($datainstruction);
@@ -3082,10 +3135,15 @@ class wocontroller extends Controller
             ->where('wd_qc_wonumber', '=', $wonumber)
             ->get();
 
+        $costcenter_data = DB::table('cc_mstr')->get();
+        
+        $glacc_data = DB::table('acc_mstr')->get();
+
         return view('workorder.wofinish-done', [
             'header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all,
             'instruction' => $datainstruction, 'inslist' => $ins_all, 'um' => $um,
-            'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure
+            'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure,
+            'costcenter' => $costcenter_data, 'glacc' => $glacc_data
         ]);
     }
 
@@ -3313,10 +3371,26 @@ class wocontroller extends Controller
         $assetsite = $req->get('assetsite');
         $spcode = $req->get('spcode');
 
-        //ambil data dari tabel inp_supply berdasarkan asset site nya
-        $getSource = DB::table('inp_supply')
+        $getDept = DB::table('dept_mstr')
+                        ->where('dept_code','=', Session::get('department'))
+                        ->first();
+
+        if($getDept->dept_inv !== null || $getDept->dept_inv !== ''){
+            $getSource = DB::table('inp_supply')
+            ->where('inp_asset_site', '=', $assetsite)
+            ->where('inp_loc','=', $getDept->dept_inv)
+            ->get();
+
+        }else{
+
+            //ambil data dari tabel inp_supply berdasarkan asset site nya
+            $getSource = DB::table('inp_supply')
             ->where('inp_asset_site', '=', $assetsite)
             ->get();
+
+        }
+
+
 
         $data = [];
 
@@ -3427,6 +3501,11 @@ class wocontroller extends Controller
             } else {
                 toast('Anda tidak memiliki akses menu untuk melakukan approval, silahkan kontak admin', 'error');
                 return back();
+            }
+
+            /** Kondisi jika akses dari menu notifikasi */
+            if($req->status) {
+                $data = $data->where('wotr_status', 'waiting for approval');
             }
 
             $data = $data->paginate(10);
@@ -3570,7 +3649,7 @@ class wocontroller extends Controller
                 'sr_status'         => 'Acceptance',
                 'sr_status_approval' => 'User acceptance',
                 'sr_eng_approver'   => $srmstr->sr_eng_approver,
-                'sr_action'         => 'SR needs to user acceptance',
+                'sr_action'         => 'SR requires user acceptance',
                 'created_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                 'updated_at'   => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
             ];
@@ -4459,21 +4538,21 @@ class wocontroller extends Controller
             if ($req->has('hidden_sp') && $req->has('hidden_sitefrom') && $req->has('hidden_locfrom') && $req->has('hidden_lotfrom') && $req->has('qtyrequired') && $req->has('qtyissued') && $req->has('qtypotong')) {
                 $domain = ModelsQxwsa::first();
 
-                // $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
+                $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
 
-                // if ($costdata === false) {
-                //     alert()->error('Error', 'WSA Failed');
-                //     return redirect()->route('woreport');
-                // } else {
-                //     if ($costdata[1] == "false") {
-                //         alert()->error('Error', 'Item Cost tidak ditemukan');
-                //         return redirect()->route('woreport');
-                //     } else {
-                //         $tempCost = (new CreateTempTable())->createTempCost($costdata[0]);
+                if ($costdata === false) {
+                    alert()->error('Error', 'WSA Failed');
+                    return redirect()->route('woreport');
+                } else {
+                    if ($costdata[1] == "false") {
+                        alert()->error('Error', 'Item Cost tidak ditemukan');
+                        return redirect()->route('woreport');
+                    } else {
+                        $tempCost = (new CreateTempTable())->createTempCost($costdata[0]);
 
-                //         $tempCost = collect($tempCost[0]);
-                //     }
-                // }
+                        $tempCost = collect($tempCost[0]);
+                    }
+                }
 
 
                 $dataArrayIssued = []; //penampungngan data yg mau diissued unplanned
@@ -4481,7 +4560,7 @@ class wocontroller extends Controller
                 foreach ($req->hidden_sp as $index => $spcode) {
                     //cek jika qty yang diissue lebih dari 0 maka dilakukan issued unplanned
 
-                    $getItemCost = DB::table('sp_mstr')->where('spm_code','=', $spcode)->first();
+                    // $getItemCost = DB::table('sp_mstr')->where('spm_code','=', $spcode)->first();
 
                     if ($req->qtypotong[$index] > 0) {
 
@@ -4530,6 +4609,8 @@ class wocontroller extends Controller
                         $qtyRequired = $req->qtyrequired[$index];
                         $qtyIssued = $req->qtyissued[$index];
                         $qtyPotong = $req->qtypotong[$index];
+                        $glAccount = $req->glacc[$index];
+                        $costCenter = $req->costcenter[$index];
 
                         $data = [
                             "sparepart_code" => $sparepartCode,
@@ -4538,7 +4619,9 @@ class wocontroller extends Controller
                             "lot_from" => $lotFrom,
                             "qty_required" => $qtyRequired,
                             "qty_issued" => $qtyIssued,
-                            "qty_potong" => $qtyPotong
+                            "qty_potong" => $qtyPotong,
+                            "gl_account" => $glAccount,
+                            "cost_center" => $costCenter
                         ];
 
                         $dataArrayReceipt[] = $data;
@@ -4562,8 +4645,8 @@ class wocontroller extends Controller
                         $qtyIssued = $req->qtyissued[$index];
                         $qtyPotong = $req->qtypotong[$index];
 
-                        // $sparepartcost = $tempCost->where('cost_site', '=', $siteFrom)
-                        //     ->where('cost_part', '=', $sparepartCode)->first();
+                        $sparepartcost = $tempCost->where('cost_site', '=', $siteFrom)
+                            ->where('cost_part', '=', $sparepartCode)->first();
 
                         // dd($qtyIssued);
                         //update data untuk pertama kali melakukan report dengan kondisi site,loc,lot issued masih null dan kolom wd_already_issued = false
@@ -4580,7 +4663,7 @@ class wocontroller extends Controller
                                 'wd_sp_site_issued' => $siteFrom,
                                 'wd_sp_loc_issued' => $locFrom,
                                 'wd_sp_lot_issued' => $lotFrom,
-                                'wd_sp_itemcost' => $getItemCost->spm_price,
+                                'wd_sp_itemcost' => $sparepartcost->cost_cost,
                                 'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
 
@@ -4593,7 +4676,7 @@ class wocontroller extends Controller
                                 'wd_sp_loc_issued' => $locFrom,
                                 'wd_sp_lot_issued' => $lotFrom,
                                 'wd_already_issued' => true,
-                                'wd_sp_itemcost' => $getItemCost->spm_price,
+                                'wd_sp_itemcost' => $sparepartcost->cost_cost,
                             ], [
                                 'wd_sp_spcode' => $sparepartCode,
                                 'wd_sp_issued' => DB::raw('wd_sp_issued + ' . $qtyPotong),
@@ -4601,7 +4684,7 @@ class wocontroller extends Controller
                                 'wd_sp_site_issued' => $siteFrom,
                                 'wd_sp_loc_issued' => $locFrom,
                                 'wd_sp_lot_issued' => $lotFrom,
-                                'wd_sp_itemcost' => $getItemCost->spm_price,
+                                'wd_sp_itemcost' => $sparepartcost->cost_cost,
                                 'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
                     }
@@ -4722,9 +4805,9 @@ class wocontroller extends Controller
                                 <location>' . $record['loc_from'] . '</location>
                                 <lotserial>' . $record['lot_from'] . '</lotserial>
                                 <ordernbr>' . $req->c_wonbr . '</ordernbr>
+                                <drAcct>' .$record['gl_account'].'</drAcct>
+                                <drCc>'.$record['cost_center'].'</drCc>
                             </inventoryIssue>';
-
-                            // <drAcct>' .$record['gl_account'].'</drAcct>
 
                         DB::table('wo_reporting_trans_hist')
                             ->insert([
@@ -4736,6 +4819,8 @@ class wocontroller extends Controller
                                 'lotser_wohist_report' => $record['lot_from'],
                                 'qtychange_wohist_report' => $record['qty_potong'],
                                 'userid_wohist_report' => Session::get('username'),
+                                'gl_acc_wohist_report' => $record['gl_account'],
+                                'cost_center_wohist_report' => $record['cost_center'],
                             ]);
                     }
 
@@ -4932,6 +5017,8 @@ class wocontroller extends Controller
                                 <location>' . $record['loc_from'] . '</location>
                                 <lotserial>' . $record['lot_from'] . '</lotserial>
                                 <ordernbr>' . $req->c_wonbr . '</ordernbr>
+                                <crAcct>' .$record['gl_account'].'</crAcct>
+                                <crCc>'.$record['cost_center'].'</crCc>
                             </inventoryReceipt>';
 
                             DB::table('wo_reporting_trans_hist')
@@ -4944,6 +5031,8 @@ class wocontroller extends Controller
                                     'lotser_wohist_report' => $record['lot_from'],
                                     'qtychange_wohist_report' => $record['qty_potong'],
                                     'userid_wohist_report' => Session::get('username'),
+                                    'gl_acc_wohist_report' => $record['gl_account'],
+                                    'cost_center_wohist_report' => $record['cost_center'],
                                 ]);
                     }
 
@@ -6883,8 +6972,8 @@ class wocontroller extends Controller
             ->get();
 
         /* A211103 */
-        $listfinish = DB::table('acceptance_image')
-            ->whereFile_wonumber($wo)
+        $listfinish = DB::table('womaint_upload')
+            ->where('womaint_wonbr','=',$wo)
             ->get();
 
         $fileName = $wo . '_' . $assetnow->wo_asset_code . '.zip';
@@ -6899,9 +6988,9 @@ class wocontroller extends Controller
 
                 /* A211103 */
                 foreach ($listfinish as $listfinish) {
-                    $files = File::get($listfinish->file_url);
-                    $relativeNameInZipFile = basename($listfinish->file_url);
-                    $zip->addFile($listfinish->file_url, $relativeNameInZipFile);
+                    $files = File::get($listfinish->womaint_wonbr_filepath);
+                    $relativeNameInZipFile = basename($listfinish->womaint_wonbr_filepath);
+                    $zip->addFile($listfinish->womaint_wonbr_filepath, $relativeNameInZipFile);
                 }
 
                 $zip->close();

@@ -254,7 +254,7 @@ class SettingController extends Controller
             $req->cbBoas . $req->whyhist . $req->reqsp . $req->trfsp . $req->cbUA . $req->reqspappr . $req->retsp . $req->retspwhs .
             $req->cbRptDet . $req->cbRptCost . $req->cbAssetReport . $req->cbEngReport . $req->cbDownReport . $req->cbRptRenew . $req->sptrpt . $req->cbRptRemsp . 
             $req->cbAssetSchedule . $req->cbRptSchyear . $req->cbEngSchedule . $req->cbRptSpneed . $req->cbBookSchedule .
-            $req->viewwhy .
+            $req->viewasset . $req->viewwhy .
             $req->accutrf . $req->cbRCBrowse;
         
 
@@ -322,7 +322,7 @@ class SettingController extends Controller
             $req->e_cbBoas . $req->e_whyhist . $req->e_reqsp . $req->e_trfsp . $req->e_cbUA . $req->e_reqspappr . $req->e_retsp . $req->e_retspwhs .
             $req->e_cbRptDet . $req->e_cbRptCost . $req->e_cbAssetReport . $req->e_cbEngReport . $req->e_cbDownReport .  $req->e_cbRptRenew . $req->e_sptrpt . $req->e_cbRptRemsp . 
             $req->e_cbAssetSchedule . $req->e_cbRptSchyear . $req->e_cbEngSchedule . $req->e_cbRptSpneed . $req->e_cbBookSchedule .
-            $req->e_viewwhy .
+            $req->e_viewasset . $req->e_viewwhy .
             $req->e_accutrf . $req->e_cbRCBrowse;
         
 
@@ -860,7 +860,7 @@ class SettingController extends Controller
         $hasher = app('hash');
 
         $users = DB::table("users")
-                    ->select('id','password')
+                    ->select('id','password','username')
                     ->where("users.id",$id)
                     ->first();
 
@@ -874,6 +874,17 @@ class SettingController extends Controller
                 DB::table('users')
                 ->where('id', $id)
                 ->update(['password' => Hash::make($password)]);
+
+                /** Menyimpan data di tabel history perubahan data user */
+                DB::table('user_hist')
+                ->insert([
+                    'ush_username'      => $users->username,
+                    'ush_password'      => Hash::make($password),
+                    'ush_action'        => 'Password Updated',
+                    'ush_editby'        => Session::get('username'),
+                    'created_at'        => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    'updated_at'        => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                ]);
 
                 toast('Password successfully updated', 'success');
                 return back();
@@ -1818,7 +1829,7 @@ class SettingController extends Controller
             $data = DB::table('asset_mstr')
                 ->selectRaw('asset_type.*, asset_group.*, asset_loc.*, asset_mstr.id as asset_id, asset_code, asset_desc, asset_site, asset_loc, asset_um, asset_sn, 
                 asset_supp, asset_prcdate, asset_prcprice, asset_type, asset_group, asset_accounting, asset_note, asset_active, asset_image, 
-                asset_imagepath, asset_upload, asset_editedby, asset_renew')
+                asset_imagepath, asset_upload, asset_editedby, asset_renew, asloc_desc, astype_desc, asgroup_desc')
                 ->leftjoin('asset_type','asset_mstr.asset_type','asset_type.astype_code')
                 ->leftjoin('asset_group','asset_mstr.asset_group','asset_group.asgroup_code')
                 ->leftJoin('asset_loc','asloc_code','=','asset_loc')
@@ -1904,20 +1915,20 @@ class SettingController extends Controller
             });
 
             /* ini ditutup dulu, nanti dibuka lagi */
-            // $domain = ModelsQxwsa::first();
-            // $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
+            $domain = ModelsQxwsa::first();
+            $datawsa = (new WSAServices())->wsaassetqad($domain->wsas_domain);
 
-            // if ($datawsa === false) {
-            //     toast('WSA Failed', 'error')->persistent('Dismiss');
-            //     return redirect()->back();
-            // } else {
-            //     foreach ($datawsa[0] as $datas) {
-            //         DB::table('temp_asset')->insert([
-            //             'temp_code' => $datas->t_code,
-            //             'temp_desc' => $datas->t_desc,
-            //         ]);
-            //     }
-            // } 
+            if ($datawsa === false) {
+                toast('WSA Failed', 'error')->persistent('Dismiss');
+                return redirect()->back();
+            } else {
+                foreach ($datawsa[0] as $datas) {
+                    DB::table('temp_asset')->insert([
+                        'temp_code' => $datas->t_code,
+                        'temp_desc' => $datas->t_desc,
+                    ]);
+                }
+            } 
 
             $dataassetqad = DB::table('temp_asset')
                 ->orderBy('temp_code')
@@ -5593,6 +5604,7 @@ class SettingController extends Controller
                     'updated_at'        => Carbon::now()->toDateTimeString(),
                     'edited_by'         => Session::get('username'),
                 ]);
+
             }
 
             // input ke tabel user
@@ -5610,6 +5622,29 @@ class SettingController extends Controller
                 'edited_by'     => Session::get('username'),
                 );
             DB::table('users')->insert($dataarray);
+
+            /** Menyimpan data di tabel history perubahan data user */
+            DB::table('user_hist')
+                ->insert([
+                    'ush_username'          => $req->t_code,
+                    'ush_name'          => $req->t_desc,
+                    'ush_dept'          => $req->t_dept,
+                    'ush_approver'          => $req->t_app,
+                    'ush_birth_date'    => $req->t_brt_date,
+                    'ush_active'        => $req->t_active,
+                    'ush_access'        => $req->t_acc,
+                    'ush_join_date'     => $req->t_join,
+                    'ush_rate_hour'     => $req->t_rate,
+                    'ush_skill'         => $skill,
+                    'ush_email'         => $req->t_email,
+                    'ush_role'          => $req->t_role,
+                    'ush_photo'         => $filename,
+                    'ush_password'      => Hash::make($req->password),
+                    'ush_action'        => 'User Created',
+                    'ush_editby'         => Session::get('username'),
+                    'created_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                    'updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                ]);
 
             toast('User Created.', 'success');
             return back();
@@ -5788,6 +5823,38 @@ class SettingController extends Controller
             ]);
         }
 
+        /** Menyimpan data di tabel history perubahan data user */
+        if(is_null($req->te_pass)) {
+            /** Mengambil password dari data yang sebelumnya */
+            $cekpassuser = DB::table('users')
+                ->where('username','=',$req->te_code)
+                ->first();
+            $pass = $cekpassuser->password;
+        } else {
+            $pass = Hash::make($req->te_pass);
+        }
+        DB::table('user_hist')
+            ->insert([
+                'ush_username'      => $req->te_code,
+                'ush_name'          => $req->te_desc,
+                'ush_dept'          => $req->te_dept,
+                'ush_approver'      => $req->te_app,
+                'ush_birth_date'    => $req->te_brt_date,
+                'ush_active'        => $req->te_active,
+                'ush_access'        => $req->te_acc,
+                'ush_join_date'     => $req->te_join,
+                'ush_rate_hour'     => $req->te_rate,
+                'ush_skill'         => $skill,
+                'ush_email'         => $req->te_email,
+                'ush_role'          => $req->te_role,
+                'ush_photo'         => '',
+                'ush_password'      => $pass,
+                'ush_action'        => 'User Updated',
+                'ush_editby'        => Session::get('username'),
+                'created_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                'updated_at'    => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+            ]);
+
         toast('User Data Updated.', 'success');
         return back();
     }
@@ -5802,6 +5869,16 @@ class SettingController extends Controller
         DB::table('eng_mstr')
             ->where('eng_code', '=', $req->d_code)
             ->delete();
+
+        /** Menyimpan data di tabel history perubahan data user */
+        DB::table('user_hist')
+            ->insert([
+                'ush_username'      => $req->d_code,
+                'ush_action'        => 'User Deleted',
+                'ush_editby'        => Session::get('username'),
+                'created_at'        => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                'updated_at'        => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+            ]);
 
         toast('Deleted User Successfully.', 'success');
         return back();
@@ -5896,8 +5973,9 @@ class SettingController extends Controller
             //     ->get();
 
             /** Default lokasi sparepart pada menu ini digunakan pada saat warehouse akan melakukan transfer sparepart */
-            $datasupply = DB::table('inp_supply')
-                ->orderBy('inp_loc')
+            $datasupply = DB::table('loc_mstr')
+                ->join('inp_supply', 'loc_mstr.loc_site', '=', 'inp_supply.inp_supply_site')
+                ->whereColumn('loc_mstr.loc_code', '=', 'inp_supply.inp_loc')
                 ->get();
 
         return view('setting.departemen', ['data' => $data, 'datasupply' => $datasupply /* , 'datacc' => $datacc */]);

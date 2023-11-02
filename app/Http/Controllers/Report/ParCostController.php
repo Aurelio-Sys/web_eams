@@ -41,7 +41,7 @@ class ParCostController extends Controller
         });
         
         if($spar) {
-            $data = DB::table('')
+            $data = DB::table('');
         }
 
         $datatemp = DB::table('wo_mstr')

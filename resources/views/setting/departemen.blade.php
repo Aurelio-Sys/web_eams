@@ -117,7 +117,7 @@
                             <select id="t_inv" class="form-control" name="t_inv">
                                 <option value="">--Select Data--</option>
                                 @foreach($datasupply as $ds)
-                                <option value="{{$ds->inp_loc}}">{{$ds->inp_supply_site}} -- {{$ds->inp_loc}}</option>
+                                <option value="{{$ds->inp_loc}}">{{$ds->inp_supply_site}} -- {{$ds->inp_loc}} -- {{$ds->loc_desc}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -172,7 +172,7 @@
                         <select id="te_inv" class="form-control" name="te_inv">
                             <option value="">--Select Data--</option>
                             @foreach($datasupply as $ds)
-                            <option value="{{$ds->inp_loc}}">{{$ds->inp_supply_site}} -- {{$ds->inp_loc}}</option>
+                            <option value="{{$ds->inp_loc}}">{{$ds->inp_supply_site}} -- {{$ds->inp_loc}} -- {{$ds->loc_desc}}</option>
                             @endforeach
                         </select>
                     </div>

@@ -28,9 +28,12 @@ class UsageBrowseController extends Controller
             ->Join('asset_site','assite_code','=','us_asset_site')
             ->Join('asset_loc','asloc_code','=','us_asset_loc')
             ->join('pma_asset','pma_asset','=','asset_code')
+            ->where('pma_meterum', '=', DB::raw('us_mea_um'))
             ->wherePmaMea('M')
             ->orderBy('us_date','desc')
-            ->orderBy('us_asset');
+            ->orderBy('us_last_mea','desc')
+            ->orderBy('us_asset')
+            ->orderBy('us_mea_um');
 
         if($sasset) {
             $dataus = $dataus->where('us_asset','=',$sasset);

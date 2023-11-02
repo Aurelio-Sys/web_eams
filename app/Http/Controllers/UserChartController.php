@@ -350,7 +350,7 @@ class UserChartController extends Controller
         }
         
         $engcode = $req->input('engcode');
-        $wotype  = $req->input('wotype');
+        $wotype  = $req->input('wotype') ? $req->input('wotype') : 'All'  ;
         $sdept  = $req->input('s_dept');
        
         $skrg = Carbon::createFromDate($tgl)->lastOfMonth()->day;
@@ -385,26 +385,10 @@ class UserChartController extends Controller
                 ->join('eng_mstr','eng_code','=','username')
                 ->whereAccess('Engineer')
                 ->whereActive('Yes')
-                ->orderBy('eng_desc')
+                ->orderBy('eng_code')
                 ->get();
 
-        $kondisi = "";
-        switch ($wotype) {
-          case "All":
-            $kondisi = "wo_type <> 'All'";
-            break;
-          case "PM":
-            $kondisi = "wo_type = 'auto'";
-            break;
-          case "WO":
-            $kondisi = "wo_type = 'other'";
-            break;
-          default:
-            $kondisi = "wo_type <> 'All'";
-            $wotype = "All";
-        }
-
-        if (!isset($engcode) && !isset($sdept)){
+        if (!isset($engcode) && !isset($sdept) && $wotype == 'All'){
             // query disamakan dengan assetsch
             $datawo = DB::table('wo_mstr')
                 ->select('wo_number','wo_status','wo_start_date','wo_list_engineer','wo_asset_code','asset_desc','wo_sr_number','wo_due_date','wo_createdby','wo_note',
@@ -414,8 +398,7 @@ class UserChartController extends Controller
                 ->join('asset_loc','asloc_code','=','wo_location')
                 ->where('wo_start_date','like',date("Y-m",strtotime($tgl)).'%')
                 ->orderBy('tgl')
-                ->orderBy('wo_number')
-                ->get();
+                ->orderBy('wo_number');
 
             $fotoeng = $dataeng->where('eng_code','=',"")->first();
         }
@@ -435,23 +418,37 @@ class UserChartController extends Controller
                 $datawo = $datawo->where('wo_list_engineer','like','%'.$engcode.'%');
             }
             if(isset($sdept)) {
-                $datawo = $datawo->where('eng_dept','=',$sdept);
-            }
 
-            $datawo = $datawo->get();
+                $engDept = $sdept;
+
+                $datawo = $datawo
+                ->where('wo_list_engineer', 'LIKE', '%'.$engDept.'%')
+                ->orWhereExists(function ($query) use ($engDept) {
+                    $query->select(DB::raw(1))
+                        ->from('eng_mstr')
+                        ->whereRaw("FIND_IN_SET(eng_code, REPLACE(wo_list_engineer, ';', ','))")
+                        ->where('eng_dept', '=', $engDept);
+                });
+
+            }
+            if($wotype <> 'All') {
+                $datawo = $datawo->where('wo_type','=',$wotype);
+            }
           
            $fotoeng = $dataeng->where('eng_code','=',$engcode)->first();
         }
-        // dd(count($datawo));
+
+        $datawo = $datawo->get();
+
         $datafn = DB::table('fn_mstr')
                 ->get();
 
         $datadept = DB::table('dept_mstr')
             ->orderBy('dept_code')
-            ->get();
+            ->get();            
 
         return view('report.engsch',compact('skrg','hari','kosong','bulan','datawo','dataeng','fotoeng','engcode','datafn','wotype',
-            'datadept'));
+            'datadept','sdept'));
     }
     
     public function allrpt(Request $req)

@@ -70,7 +70,7 @@ class RptDetWOController extends Controller
 
         Schema::create('temp_wo', function ($table) {
             $table->increments('id');
-            $table->string('temp_wo');
+            $table->string('temp_wo')->collation('utf8mb4_general_ci');
             $table->string('temp_sr')->nullable();
             $table->string('temp_type')->nullable();
             $table->string('temp_asset')->charset('utf8mb4')->collation('utf8mb4_general_ci');
@@ -201,6 +201,7 @@ class RptDetWOController extends Controller
 // dd($request->all());
         $datatemp = DB::table('temp_wo')
         // ->where('temp_wo','=','PM-23-004839')
+        ->leftJoin('womaint_upload', 'temp_wo','womaint_wonbr')
         ->orderBy('temp_create_date','desc')
         ->orderBy('temp_wo','desc');
         // dd($datatemp->get());

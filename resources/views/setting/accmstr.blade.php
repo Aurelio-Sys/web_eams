@@ -19,10 +19,13 @@
                 <select class="form-control" id="t_code" name="t_code">
                     <option> -- Select Data -- </option>
                     @foreach ($datamstr as $ds)
-                        <option value="{{$ds->temp_code}}" data-desc="{{$ds->temp_desc}}">{{$ds->temp_code}} -- {{$ds->temp_desc}}</option>    
+                        <option value="{{$ds->temp_code}}" data-desc="{{$ds->temp_desc}}" data-cc="{{$ds->temp_cc}}">
+                            {{$ds->temp_code}} -- {{$ds->temp_desc}}
+                        </option>    
                     @endforeach
                 </select>
                 <input type="hidden" name="t_desc" id="t_desc" />                          
+                <input type="hidden" name="t_cc" id="t_cc" />                          
             </div>
             <div class="col-md-2">
                 <input type="submit" class="btn btn-block btn-primary" id="btnload" value="Add to eAMS" />
@@ -75,8 +78,9 @@
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
             <thead>
                 <tr>
-                    <th width="30%">Code<span id="location_id_icon"></span></th>
+                    <th width="20%">Code<span id="location_id_icon"></span></th>
                     <th width="60%">Description</th>
+                    <th width="10%">Cost Center</th>
                     <th width="10%">Action</th>  
                 </tr>
             </thead>
@@ -147,8 +151,10 @@
             var selectedOption = select.options[select.selectedIndex];
     
             var desc = selectedOption.getAttribute("data-desc");
+            var cc = selectedOption.getAttribute("data-cc");
     
             document.getElementById('t_desc').value = desc;
+            document.getElementById('t_cc').value = cc;
         });
     
       $(document).on('click', '#btnrefresh', function() {

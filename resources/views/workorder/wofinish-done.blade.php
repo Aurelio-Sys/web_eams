@@ -163,8 +163,8 @@
                                 <th style="text-align: center; width: 5% !important; font-weight: bold;">Issued</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Issue</th>
                                 <th style="text-align: center; width: 18% !important; font-weight: bold;">Location & Lot</th>
-                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Cost Center</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">GL Account</th>
+                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Cost Center</th>
                                 <th style="text-align: center; width: 5% !important; font-weight: bold;">Action</th>
                             </tr>
                         </thead>
@@ -195,10 +195,20 @@
                                         <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />
                                     </td>
                                     <td style="vertical-align: middle; text-align: left;">
-                                        <input type="text" class="form-control costcenter" name="costcenter[]" data-toggle="tooltip" autocomplete="off" readonly value="{{$header->wo_cost_center}}"/>
+                                        <select style="display: inline-block !important;" class="form-control selectpicker glacc" name="glacc[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px">
+                                            <option value=""> -- Select GL Account --</option>
+                                            @foreach (  $glacc as $glaccount )
+                                            <option value="{{$glaccount->acc_code}}" data-ccreq="{{$glaccount->acc_cc}}" >{{$glaccount->acc_code}} -- {{$glaccount->acc_desc}}</option>
+                                            @endforeach
+                                        </select>
                                     </td>
                                     <td style="vertical-align: middle; text-align: left;">
-                                        <input type="text" class="form-control glacc" name="glacc[]" data-toggle="tooltip" autocomplete="off" readonly value="{{$datas->spm_account}}"/>
+                                        <select style="display: inline-block !important;" class="form-control selectpicker ccenter" name="costcenter[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px">
+                                            <option value=""> -- Select Cost Center --</option>
+                                            @foreach (  $costcenter as $cc )
+                                            <option value="{{$cc->cc_code}}" >{{$cc->cc_code}} -- {{$cc->cc_desc}}</option>
+                                            @endforeach
+                                        </select>
                                     </td>
                                     <td style="vertical-align:middle;text-align:center;">
 
@@ -435,7 +445,7 @@
                 <div class="form-group row col-md-12">
                     <label for="c_note" class="col-md-4 col-form-label text-md-left">Reporting Note <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-6">
-                        <textarea id="c_note" class="form-control c_note" name="c_note" maxlength="250">{{($header->wo_report_note != null) ? $header->wo_report_note  : ''}}</textarea>
+                        <textarea id="c_note" class="form-control c_note" name="c_note" maxlength="250" required>{{($header->wo_report_note != null) ? $header->wo_report_note  : ''}}</textarea>
                     </div>
                 </div>
 
@@ -551,6 +561,20 @@
     }
 
     $(document).ready(function() {
+        $('.glacc').on('change', function() {
+            // Get the selected option element
+            let selectedOption = $(this).find('option:selected');
+            // Check the data-ccreq attribute of the selected option
+            let isCCRequired = selectedOption.data('ccreq');
+            if (isCCRequired === true) {
+                // Set the ccenter select as required
+                $('.ccenter').prop('required', true);
+            } else {
+                // Set the ccenter select as not required
+                $('.ccenter').prop('required', false);
+            }
+        });
+
         $(document).on('change','.ins_check',function(e){
             var checkbox = $(this), // Selected or current checkbox
             value = checkbox.val(); // Value of checkbox
@@ -626,11 +650,21 @@
             cols += '</td>';
 
             cols += '<td style="vertical-align: middle; text-align:center;">';
-            cols += '<input type="text" class="form-control costcenter" name="costcenter[]" data-toggle="tooltip" autocomplete="off" readonly value="{{$header->wo_cost_center}}"/>';
+            cols += '<select style="display: inline-block !important;" class="form-control selectpicker ccenter" name="costcenter[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px">';
+            cols += '<option value=""> -- Select Cost Center --</option>'
+            @foreach (  $costcenter as $cc )
+            cols += '<option value="{{$cc->cc_code}}" >{{$cc->cc_code}} -- {{$cc->cc_desc}}</option>';
+            @endforeach
+            cols += '</select>';
             cols += '</td>';
 
             cols += '<td style="vertical-align: middle; text-align:center;">';
-            cols += '<input type="text" class="form-control glacc" name="glacc[]" data-toggle="tooltip" autocomplete="off" readonly/>';
+            cols += '<select style="display: inline-block !important;" class="form-control selectpicker glacc" name="glacc[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px">';
+            cols += '<option value=""> -- Select GL Account --</option>';
+            @foreach (  $glacc as $glaccount )
+            cols += '<option value="{{$glaccount->acc_code}}" data-ccreq="{{$glaccount->acc_cc}}" >{{$glaccount->acc_code}} -- {{$glaccount->acc_desc}}</option>';
+            @endforeach
+            cols += '</select>';
             cols += '</td>';
 
             cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>';
@@ -678,7 +712,7 @@
 
             cols += '<td style="vertical-align:middle;text-align:center;">';
             cols += '<div class="input-group">';
-            cols += '<input type="number" min="0" step="0.01" class="form-control ins_duration" id="input-with-select" name="ins_duration[]"/>';
+            cols += '<input type="number" min="0" step="0.01" class="form-control ins_duration" id="input-with-select" name="ins_duration[]" value="0.00"/>';
             cols += '<div class="input-group-append">';
             cols += '<select class="form-control durationum" name="durationum[]">';
             @foreach($um as $dataum)
@@ -855,11 +889,11 @@
             const spreqOption = $(this).val();
 
             var selectedOption = $(this).find('option:selected');
-            var glAccount = selectedOption.attr('data-glaccount');
+            // var glAccount = selectedOption.attr('data-glaccount');
 
 
             row.find(".hidden_sp").val(spreqOption);
-            row.find(".glacc").val(glAccount);
+            // row.find(".glacc").val(glAccount);
 
         });
 

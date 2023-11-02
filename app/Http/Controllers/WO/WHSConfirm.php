@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
@@ -38,83 +39,82 @@ class WHSConfirm extends Controller
             ->where('asset_active', '=', 'Yes')
             ->get();
 
-            if(Session::get('role') == 'ADMIN' || Session::get('role') == 'WHS'){
-                $ApproverCheck = DB::table('sr_approver_mstr')->count();
+        if (Session::get('role') == 'ADMIN' || Session::get('role') == 'WHS') {
+            $ApproverCheck = DB::table('sp_approver_mstr')->count();
 
-                if($ApproverCheck === 0){
-                    $data = DB::table('wo_mstr')
-                        ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority',DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as total_qty'))
-                        ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
-                        ->join('wo_dets_sp','wo_dets_sp.wd_sp_wonumber','wo_mstr.wo_number')
-                        ->where(function ($status) {
-                            $status->where('wo_status', '=', 'released');
-                            $status->orWhere('wo_status', '=', 'started');
-                        })
-                        ->groupBy('wo_mstr.wo_number');
-                }else{
-                    $data = DB::table('wo_mstr')
-                        ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority', DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as total_qty'))
-                        ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
-                        ->join('wo_dets_sp','wo_dets_sp.wd_sp_wonumber','wo_mstr.wo_number')
-                        ->join('release_trans_approval', function ($join) {
-                            $join->on('release_trans_approval.retr_mstr_id', '=', 'wo_mstr.id')
-                                 ->where('release_trans_approval.retr_status', '=', 'approved');
-                        })
-                        ->where(function ($status) {
-                            $status->where('wo_status', '=', 'released');
-                            $status->orWhere('wo_status', '=', 'started');
-                        })
-                        ->groupBy('wo_mstr.wo_number');
-                }
-
-            }else{
-                return view('errors.401');
-            }
-    
-            
-    
-            if ($request->s_nomorwo) {
-                $data->where('wo_number', 'like', '%'.$request->s_nomorwo.'%');
-            }
-    
-            if ($request->s_asset) {
-                $data->where('wo_asset_code', '=', $request->s_asset);
-            }
-    
-            if ($request->s_priority) {
-                $data->where('wo_priority', '=', $request->s_priority);
-            }
-    
-            $data = $data->orderBy('wo_number','desc')->orderBy('wo_priority','asc')->paginate(10);
-
-            // dd($data,Session::get('role'));
-
-        return view('workorder.whsconfirm-browse', ['asset1' => $asset1, 'data' => $data]);
-    }
-
-    public function searchWO (Request $req){
-        $data = DB::table('wo_mstr')
-                    ->select('wo_mstr.id as wo_id','wo_number','asset_code','asset_desc','wo_status','wo_start_date','wo_due_date','wo_priority','wd_sp_flag')
-                    ->join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber','wo_mstr.wo_number')
+            if ($ApproverCheck === 0) {
+                $data = DB::table('wo_mstr')
+                    ->select('wo_mstr.id as wo_id', 'wo_number', 'asset_code', 'asset_desc', 'wo_status', 'wo_start_date', 'wo_due_date', 'wo_priority', DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as total_qty'))
                     ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+                    ->join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber', 'wo_mstr.wo_number')
                     ->where(function ($status) {
                         $status->where('wo_status', '=', 'released');
                         $status->orWhere('wo_status', '=', 'started');
                     })
-                    // ->where('wd_sp_flag','=', 1)
-                    ->where('wo_number','=', $req->wo_number)
-                    ->groupBy('wo_number')
-                    ->first();
-            
-        if($data == null){
+                    ->groupBy('wo_mstr.wo_number');
+            } else {
+                $data = DB::table('wo_mstr')
+                    ->select('wo_mstr.id as wo_id', 'wo_number', 'asset_code', 'asset_desc', 'wo_status', 'wo_start_date', 'wo_due_date', 'wo_priority', DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as total_qty'))
+                    ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+                    ->join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber', 'wo_mstr.wo_number')
+                    ->join('release_trans_approval', function ($join) {
+                        $join->on('release_trans_approval.retr_mstr_id', '=', 'wo_mstr.id')
+                            ->where('release_trans_approval.retr_status', '=', 'approved');
+                    })
+                    ->where(function ($status) {
+                        $status->where('wo_status', '=', 'released');
+                        $status->orWhere('wo_status', '=', 'started');
+                    })
+                    ->groupBy('wo_mstr.wo_number');
+            }
+        } else {
+            return view('errors.401');
+        }
+
+
+
+        if ($request->s_nomorwo) {
+            $data->where('wo_number', 'like', '%' . $request->s_nomorwo . '%');
+        }
+
+        if ($request->s_asset) {
+            $data->where('wo_asset_code', '=', $request->s_asset);
+        }
+
+        if ($request->s_priority) {
+            $data->where('wo_priority', '=', $request->s_priority);
+        }
+
+        $data = $data->orderBy('wo_number', 'desc')->orderBy('wo_priority', 'asc')->paginate(10);
+
+        // dd($data,Session::get('role'));
+
+        return view('workorder.whsconfirm-browse', ['asset1' => $asset1, 'data' => $data]);
+    }
+
+    public function searchWO(Request $req)
+    {
+        $data = DB::table('wo_mstr')
+            ->select('wo_mstr.id as wo_id', 'wo_number', 'asset_code', 'asset_desc', 'wo_status', 'wo_start_date', 'wo_due_date', 'wo_priority', 'wd_sp_flag')
+            ->join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber', 'wo_mstr.wo_number')
+            ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
+            ->where(function ($status) {
+                $status->where('wo_status', '=', 'released');
+                $status->orWhere('wo_status', '=', 'started');
+            })
+            // ->where('wd_sp_flag','=', 1)
+            ->where('wo_number', '=', $req->wo_number)
+            ->groupBy('wo_number')
+            ->first();
+
+        if ($data == null) {
             //kalau tidak ada datanya
             alert()->error('Error', 'Data not found')->persistent('Dismiss');
             return redirect()->back();
-        }else{
+        } else {
             //kalau ada datanya
             return redirect()->route('WhsconfDetail', ['id' => $data->wo_number]);
         }
-        
     }
 
     public function detailwhs($id)
@@ -126,24 +126,30 @@ class WHSConfirm extends Controller
             ->where('wo_number', '=', $id)
             ->first();
 
+        $getDept = DB::table('dept_mstr')
+            ->where('dept_code','=', $data->wo_department)
+            ->first();
+
         $sparepart_detail = DB::table('wo_dets_sp')
-                            ->join('sp_mstr','sp_mstr.spm_code','wo_dets_sp.wd_sp_spcode')
-                            ->where('wd_sp_wonumber','=',$id)
-                            ->get();
+            ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
+            ->where('wd_sp_wonumber', '=', $id)
+            ->get();
 
         $datalocsupply = DB::table('inp_supply')
-                        ->where('inp_asset_site', '=', $data->wo_site)
-                        // ->where('inp_avail', '=', 'Yes')
-                        ->get();
+            ->where('inp_asset_site', '=', $data->wo_site)
+            ->where('inp_loc','=', $getDept->dept_inv)
+            // ->where('inp_avail', '=', 'Yes')
+            ->get();
+
         $datatemp = [];
         $datatemp_required = [];
-        foreach($sparepart_detail as $spdet){
-            
+        foreach ($sparepart_detail as $spdet) {
+
 
             //ambil data qty supply di qad
-            foreach($datalocsupply as $invsupply){
+            foreach ($datalocsupply as $invsupply) {
                 //wsa ambil data ke qad
-                $qadsupplydata = (new WSAServices())->wsagetsupply($spdet->wd_sp_spcode,$invsupply->inp_supply_site,$invsupply->inp_loc);
+                $qadsupplydata = (new WSAServices())->wsagetsupply($spdet->wd_sp_spcode, $invsupply->inp_supply_site, $invsupply->inp_loc);
 
                 if ($qadsupplydata === false) {
 
@@ -155,9 +161,9 @@ class WHSConfirm extends Controller
                     // jika hasil WSA ke QAD tidak ditemukan
                     if ($qadsupplydata[1] !== "false") {
                         // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
-                    
+
                         $resultWSA = $qadsupplydata[0];
-                        
+
                         $t_domain = (string) $resultWSA[0]->t_domain;
                         $t_part = (string) $resultWSA[0]->t_part;
                         $t_site = (string) $resultWSA[0]->t_site;
@@ -171,7 +177,7 @@ class WHSConfirm extends Controller
                             't_loc' => $t_loc,
                             't_qtyoh' => $t_qtyoh,
                         ]);
-                    }else{
+                    } else {
                         $wsa = ModelsQxwsa::first();
                         $domain = $wsa->wsas_domain;
 
@@ -182,24 +188,21 @@ class WHSConfirm extends Controller
                             't_loc' => $invsupply->inp_loc,
                             't_qtyoh' => 0,
                         ]);
-
                     }
                 }
-
             }
 
             //ambil data qty inv required
             $invreqdata = DB::table('inv_required')
-                    ->where('ir_spare_part','=', $spdet->wd_sp_spcode)
-                    ->where('ir_site', '=', $data->wo_site)
-                    ->first();
-            
+                ->where('ir_spare_part', '=', $spdet->wd_sp_spcode)
+                ->where('ir_site', '=', $data->wo_site)
+                ->first();
+
             array_push($datatemp_required, [
                 't_spcode' => $invreqdata->ir_spare_part,
                 't_asset_site' => $invreqdata->ir_site,
                 't_total_req' => $invreqdata->inv_qty_required,
             ]);
-            
         }
 
         //proses pengelompokan berdasarkan part sehingga didapat total qty onhand untuk part di data QAD
@@ -207,27 +210,28 @@ class WHSConfirm extends Controller
             $part = $item['t_part'];
             $site = $item['t_site'];
             $qtyoh = $item['t_qtyoh'];
-        
+
             if (!isset($result[$part])) {
                 $result[$part] = [
                     'part' => $part,
                     'qtyoh' => 0,
                 ];
             }
-        
+
             $result[$part]['qtyoh'] += $qtyoh;
-        }                
+        }
 
         return view('workorder.whsconf-detail', compact(
             'data',
             'sparepart_detail',
             'datalocsupply',
             'datatemp_required',
-            'result',
+            'result'
         ));
     }
 
-    public function whssubmit(Request $req){
+    public function whssubmit(Request $req)
+    {
         // dd($req->all()); 
 
         //ambil data dari qad untuk pengecekan kembali stock inventory source di QAD
@@ -241,9 +245,9 @@ class WHSConfirm extends Controller
             $table->temporary();
         });
 
-        foreach($req->hidden_spcode as $index => $spcode){
-            if($req->loclotfrom[$index] != null && $req->locto[$index] != null && $req->qtytotransfer[$index] > 0){
-                $getActualStockSource = (new WSAServices())->wsacekstoksource($spcode,$req->hidden_sitefrom[$index],$req->hidden_locfrom[$index],$req->hidden_lotfrom[$index]);
+        foreach ($req->hidden_spcode as $index => $spcode) {
+            if ($req->loclotfrom[$index] != null && $req->locto[$index] != null && $req->qtytotransfer[$index] > 0) {
+                $getActualStockSource = (new WSAServices())->wsacekstoksource($spcode, $req->hidden_sitefrom[$index], $req->hidden_locfrom[$index], $req->hidden_lotfrom[$index]);
 
                 if ($getActualStockSource === false) {
                     toast('WSA Connection Failed', 'error')->persistent('Dismiss');
@@ -258,11 +262,11 @@ class WHSConfirm extends Controller
 
 
                     // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
-                    
+
                     $resultWSA = $getActualStockSource[0];
-    
+
                     //kumpulkan hasilnya ke dalam 1 array sebagai penampung list location dan lot from
-                    foreach($resultWSA as $thisresult){
+                    foreach ($resultWSA as $thisresult) {
                         DB::table('temp_table')
                             ->insert([
                                 't_part' => $thisresult->t_part,
@@ -272,28 +276,26 @@ class WHSConfirm extends Controller
                                 't_qtyoh' => $thisresult->t_qtyoh,
                             ]);
                     }
-                    
                 }
             }
-
         }
 
         $dataStockQAD = DB::table('temp_table')
-                    ->get();
+            ->get();
 
 
         Schema::dropIfExists('temp_table');
 
         DB::beginTransaction();
 
-        try{
+        try {
 
             $notEnough = "";
-            foreach($req->qtytotransfer as $index => $qtytotransfer){
-                if($req->loclotfrom[$index] != null && $req->locto[$index] != null && $qtytotransfer > 0){
-                    foreach($dataStockQAD as $source){
-                        if($req->hidden_spcode[$index] == $source->t_part && $req->hidden_sitefrom[$index] == $source->t_site && $req->hidden_locfrom[$index] == $source->t_loc && $req->hidden_lotfrom[$index] == $source->t_lot){
-                            if(floatval($req->qtytotransfer[$index]) > floatval($source->t_qtyoh)){
+            foreach ($req->qtytotransfer as $index => $qtytotransfer) {
+                if ($req->loclotfrom[$index] != null && $req->locto[$index] != null && $qtytotransfer > 0) {
+                    foreach ($dataStockQAD as $source) {
+                        if ($req->hidden_spcode[$index] == $source->t_part && $req->hidden_sitefrom[$index] == $source->t_site && $req->hidden_locfrom[$index] == $source->t_loc && $req->hidden_lotfrom[$index] == $source->t_lot) {
+                            if (floatval($req->qtytotransfer[$index]) > floatval($source->t_qtyoh)) {
                                 //jika tidak cukup berikan alert
                                 // dump($source->t_qtyoh);
                                 $notEnough .= $req->hidden_spcode[$index] . ", ";
@@ -302,10 +304,10 @@ class WHSConfirm extends Controller
                     }
                 }
             }
-            
+
             if ($notEnough != "") {
                 $notEnough = rtrim($notEnough, ", "); // hapus koma terakhir
-                alert()->html('<u><b>Alert!</b></u>',"<b>The qty to be transferred does not have sufficient stock for the following spare part code :</b><br>".$notEnough."",'error')->persistent('Dismiss');
+                alert()->html('<u><b>Alert!</b></u>', "<b>The qty to be transferred does not have sufficient stock for the following spare part code :</b><br>" . $notEnough . "", 'error')->persistent('Dismiss');
                 return redirect()->back();
             }
 
@@ -331,8 +333,8 @@ class WHSConfirm extends Controller
             xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing">
             <soapenv:Header>
                 <wsa:Action/>
-                <wsa:To>urn:services-qad-com:'.$qxRcv.'</wsa:To>
-                <wsa:MessageID>urn:services-qad-com::'.$qxRcv.'</wsa:MessageID>
+                <wsa:To>urn:services-qad-com:' . $qxRcv . '</wsa:To>
+                <wsa:MessageID>urn:services-qad-com::' . $qxRcv . '</wsa:MessageID>
                 <wsa:ReferenceParameters>
                 <qcom:suppressResponseDetail>true</qcom:suppressResponseDetail>
                 </wsa:ReferenceParameters>
@@ -346,7 +348,7 @@ class WHSConfirm extends Controller
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                     <qcom:propertyName>domain</qcom:propertyName>
-                    <qcom:propertyValue>'.$domain.'</qcom:propertyValue>
+                    <qcom:propertyValue>' . $domain . '</qcom:propertyValue>
                     </qcom:ttContext>
                     <qcom:ttContext>
                     <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -397,36 +399,68 @@ class WHSConfirm extends Controller
                 <dsItem>';
 
             $qdocBody = '';
-            
+
             /* bisa foreach per item dari sini */
 
-            foreach($req->qtytotransfer as $index => $qtyfromweb){
-                if($qtyfromweb > 0 ){ //jika qty to transfer yang diisi user dari menu wo transfer lebih dari 0, baru lakukan qxtend transfer single item
+            $user = Auth::user();
+
+            $womstr = DB::table('wo_mstr')->where('wo_number', $req->hide_wonum)->first();
+
+            foreach ($req->qtytotransfer as $index => $qtyfromweb) {
+                if ($qtyfromweb > 0) { //jika qty to transfer yang diisi user dari menu wo transfer lebih dari 0, baru lakukan qxtend transfer single item
                     $qdocBody .= '<item>
-                            <part>'.$req->hidden_spcode[$index].'</part>
+                            <part>' . $req->hidden_spcode[$index] . '</part>
                             <itemDetail>
-                                <lotserialQty>'.$qtyfromweb.'</lotserialQty>
-                                <nbr>'.$req->hide_wonum.'</nbr>
-                                <siteFrom>'.$req->hidden_sitefrom[$index].'</siteFrom>
-                                <locFrom>'.$req->hidden_locfrom[$index].'</locFrom>
-                                <lotserFrom>'.$req->hidden_lotfrom[$index].'</lotserFrom>
-                                <siteTo>'.$req->hidden_siteto[$index].'</siteTo>
-                                <locTo>'.$req->hidden_locto[$index].'</locTo>
+                                <lotserialQty>' . $qtyfromweb . '</lotserialQty>
+                                <nbr>' . $req->hide_wonum . '</nbr>
+                                <siteFrom>' . $req->hidden_sitefrom[$index] . '</siteFrom>
+                                <locFrom>' . $req->hidden_locfrom[$index] . '</locFrom>
+                                <lotserFrom>' . $req->hidden_lotfrom[$index] . '</lotserFrom>
+                                <siteTo>' . $req->hidden_siteto[$index] . '</siteTo>
+                                <locTo>' . $req->hidden_locto[$index] . '</locTo>
                             </itemDetail>
                         </item>';
 
 
                     DB::table('wo_dets_sp')
-                        ->where('wd_sp_wonumber','=', $req->hide_wonum)
+                        ->where('wd_sp_wonumber', '=', $req->hide_wonum)
                         ->where('wd_sp_spcode', '=', $req->hidden_spcode[$index])
                         ->update([
                             'wd_sp_flag' => false,
                             'wd_sp_update' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             'wd_sp_whtf' => DB::raw("wd_sp_whtf + $qtyfromweb"),
                         ]);
+
+                    $wodetsp = DB::table('wo_dets_sp')
+                        ->where('wd_sp_wonumber', '=', $req->hide_wonum)
+                        ->where('wd_sp_spcode', '=', $req->hidden_spcode[$index])
+                        ->first();
+
+                    // simpan history transferred
+                    DB::table('req_sparepart_hist')
+                        ->insert([
+                            'req_sph_number' => $req->hide_wonum,
+                            'req_sph_wonumber' => $req->hide_wonum,
+                            'req_sph_dept' => $womstr->wo_department,
+                            'req_sph_reqby' => $womstr->wo_createdby,
+                            'req_sph_trfby' => $user->username,
+                            'req_sph_spcode' => $req->hidden_spcode[$index],
+                            'req_sph_qtyreq' => $wodetsp->wd_sp_required,
+                            'req_sph_qtytrf' => $req->qtytotransfer[$index],
+                            'req_sph_siteto' => $req->hidden_siteto[$index],
+                            'req_sph_locto' => $req->hidden_locto[$index],
+                            'req_sph_sitefrom' => $req->hidden_sitefrom[$index],
+                            'req_sph_locfrom' => $req->hidden_locfrom[$index],
+                            'req_sph_lotfrom' => $req->hidden_lotfrom[$index],
+                            // 'req_sph_reqnote' => $reqspdet->req_spd_reqnote,
+                            // 'req_sph_note' => $req->notes[$index],
+                            // 'req_sph_duedate' => $reqspmstr->req_sp_due_date,
+                            'req_sph_action' => 'wo transfer succesful',
+                            'created_at' => Carbon::now()->toDateTimeString(),
+                        ]);
                 }
             }
-            
+
             // <rmks>'.$dqx->wo_dets_nbr.'</rmks>
             /* endforeach disini */
             // dd($qdocBody);
@@ -438,7 +472,7 @@ class WHSConfirm extends Controller
             $qdocRequest = $qdocHead . $qdocBody . $qdocfooter;
 
             // dd($qdocRequest);
-            
+
             $curlOptions = array(
                 CURLOPT_URL => $qxUrl,
                 CURLOPT_CONNECTTIMEOUT => $timeout,        // in seconds, 0 = unlimited / wait indefinitely.
@@ -490,12 +524,12 @@ class WHSConfirm extends Controller
             $qdocFault = $xmlResp->xpath('//soapenv:faultstring');
             // dd($qdocFault);
 
-            if(!empty($qdocFault)){
+            if (!empty($qdocFault)) {
                 DB::rollBack();
 
                 $qdocFault = (string) $xmlResp->xpath('//soapenv:faultstring')[0];
 
-                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$qdocFault."",'error')->persistent('Dismiss');
+                alert()->html('<u><b>Error Response Qxtend</b></u>', "<b>Detail Response Qxtend :</b><br>" . $qdocFault . "", 'error')->persistent('Dismiss');
                 return redirect()->back();
             }
 
@@ -519,7 +553,7 @@ class WHSConfirm extends Controller
                 foreach ($xmlResp->xpath('//ns3:temp_err_msg') as $temp_err_msg) {
                     $context = $temp_err_msg->xpath('./ns3:tt_msg_context')[0];
                     $desc = $temp_err_msg->xpath('./ns3:tt_msg_desc')[0];
-                    $outputerror .= "&bull;  ".$context . " - " . $desc . "<br>";
+                    $outputerror .= "&bull;  " . $context . " - " . $desc . "<br>";
                 }
 
                 // dd('stop');
@@ -534,16 +568,15 @@ class WHSConfirm extends Controller
 
                 // $output = substr($output, 0, -6);
 
-                alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$outputerror."",'error')->persistent('Dismiss');
+                alert()->html('<u><b>Error Response Qxtend</b></u>', "<b>Detail Response Qxtend :</b><br>" . $outputerror . "", 'error')->persistent('Dismiss');
                 return redirect()->back();
                 /* jika qxtend response error */
             }
 
             DB::commit();
 
-            toast('Work Order Spare Part Transfer for '.$req->hide_wonum.' Successfuly !', 'success');
+            toast('Work Order Spare Part Transfer for ' . $req->hide_wonum . ' Successfuly !', 'success');
             return redirect()->route('browseWhconfirm');
-            
         } catch (Exception $e) {
             dd($e);
             DB::rollBack();
@@ -552,7 +585,8 @@ class WHSConfirm extends Controller
         }
     }
 
-    public function searchlot(Request $req) {
+    public function searchlot(Request $req)
+    {
         // dd($req->all());
         // load stock
 
@@ -560,7 +594,7 @@ class WHSConfirm extends Controller
 
             $domain = ModelsQxwsa::first();
 
-            $stokdata = (new WSAServices())->wsastok($domain->wsas_domain,$req->t_site);
+            $stokdata = (new WSAServices())->wsastok($domain->wsas_domain, $req->t_site);
 
             if ($stokdata === false) {
                 toast('WSA Failed', 'error')->persistent('Dismiss');
@@ -577,7 +611,7 @@ class WHSConfirm extends Controller
                         $table->string('stok_site');
                         $table->string('stok_loc');
                         $table->string('stok_part');
-                        $table->decimal('stok_qty',13,2);
+                        $table->decimal('stok_qty', 13, 2);
                         $table->string('stok_lot');
                         $table->string('stok_exp');
                         $table->string('stok_date');
@@ -597,15 +631,15 @@ class WHSConfirm extends Controller
                     }
 
                     $qstok = DB::table('temp_stok')
-                        ->where('stok_site','=',$req->t_site)
-                        ->where('stok_part','=',$req->t_part)
+                        ->where('stok_site', '=', $req->t_site)
+                        ->where('stok_part', '=', $req->t_part)
                         ->orderBy('stok_date')
                         ->get();
 
                     $output = '<option value="" >Select</option>';
-                    foreach($qstok as $data){
+                    foreach ($qstok as $data) {
                         dump($data->stok_site);
-                        $output .= '<option value="'.$data->stok_lot.','.$data->stok_loc.'" >'.$data->stok_lot.'-- Loc : '.$data->stok_loc.'</option>';
+                        $output .= '<option value="' . $data->stok_lot . ',' . $data->stok_loc . '" >' . $data->stok_lot . '-- Loc : ' . $data->stok_loc . '</option>';
                     }
 
                     Schema::dropIfExists('temp_stok');
@@ -616,19 +650,20 @@ class WHSConfirm extends Controller
         }
     }
 
-    public function getwsastockfrom(Request $req){
+    public function getwsastockfrom(Request $req)
+    {
         $assetsite = $req->get('assetsite');
         $spcode = $req->get('spcode');
 
         //ambil data dari tabel inc_source berdasarkan asset site nya
         $getSource = DB::table('inc_source')
-                        ->where('inc_asset_site','=', $assetsite)
-                        ->get();
+            ->where('inc_asset_site', '=', $assetsite)
+            ->get();
 
         $data = [];
 
-        foreach($getSource as $invsource){
-            $qadsourcedata = (new WSAServices())->wsagetsource($spcode,$invsource->inc_source_site,$invsource->inc_loc);
+        foreach ($getSource as $invsource) {
+            $qadsourcedata = (new WSAServices())->wsagetsource($spcode, $invsource->inc_source_site, $invsource->inc_loc);
 
             if ($qadsourcedata === false) {
                 toast('WSA Connection Failed', 'error')->persistent('Dismiss');
@@ -638,12 +673,12 @@ class WHSConfirm extends Controller
                 // jika hasil WSA ke QAD tidak ditemukan
                 if ($qadsourcedata[1] !== "false") {
 
-                     // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
-                
+                    // jika hasil WSA ditemukan di QAD, ambil dari QAD kemudian disimpan dalam array untuk nantinya dikelompokan lagi data QAD tersebut berdasarkan part dan site
+
                     $resultWSA = $qadsourcedata[0];
-    
+
                     //kumpulkan hasilnya ke dalam 1 array sebagai penampung list location dan lot from
-                    foreach($resultWSA as $thisresult){
+                    foreach ($resultWSA as $thisresult) {
                         array_push($data, [
                             't_domain' => (string) $thisresult->t_domain,
                             't_part' => (string) $thisresult->t_part,
@@ -653,12 +688,7 @@ class WHSConfirm extends Controller
                             't_qtyoh' => number_format((float) $thisresult->t_qtyoh, 2),
                         ]);
                     }
-
                 }
-
-
-               
-                
             }
         }
 

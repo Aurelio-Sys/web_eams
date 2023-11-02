@@ -105,11 +105,23 @@ class AppSrController extends Controller
                 ->orderBy('sr_approver_order')
                 ->get();
 
+            $datarole = DB::table('roles')
+                ->orderBy('role_code')
+                ->get();
+
             $output = '';
             foreach ($data as $data) {
                 $output .= '<tr>'.
-                            '<td><input type="hidden" name="te_seq[]" value="'.$data->sr_approver_order.'">'.$data->sr_approver_order.'</td>'.
-                            '<td><input type="hidden" name="te_role[]" value="'.$data->sr_approver_role.'">'.$data->sr_approver_role.' -- '.$data->role_desc.'</td>'.
+                            '<td><input type="text" class="form-control" name="te_seq[]" value="'.$data->sr_approver_order.'" required autocomplete="off"></td>'.
+                            '<td><select class="form-control te_role" name="te_role[]" required>';
+                
+                foreach($datarole as $do) {
+                    $selected = ($do->role_code == $data->sr_approver_role) ? "selected" : "";
+                    $output .= '<option value="'.$do->role_code.'" '.$selected.'>'.$do->role_code.' -- '.$do->role_desc.'</option>';
+                }
+                
+                $output .= '</select></td>'.
+                            // '<td><input type="text" class="form-control" name="te_role[]" value="'.$data->sr_approver_role.'">'.$data->sr_approver_role.' -- '.$data->role_desc.'</td>'.
                             '<td><input type="checkbox" name="cek[]" class="cek" id="cek" value="0">
                             <input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>'.
                             '</tr>';
@@ -129,7 +141,7 @@ class AppSrController extends Controller
      */
     public function update(Request $req)
     {
-        // dd($req->all());
+        
 
         if($req->te_seq) {
             // cek apakah ada duplikat sequence
@@ -154,7 +166,7 @@ class AppSrController extends Controller
             if(is_null($dcreate)) {
                 $dcreate = Carbon::now()->toDateTimeString();
             }
-
+            
             // delete terlebih dahulu data nya
             DB::table('sr_approver_mstr')
                 ->whereSr_approver_dept($req->te_code)

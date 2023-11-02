@@ -148,7 +148,7 @@
                                     <select id="locto" class="form-control locto selectpicker" name="locto[]" data-dropup-auto="false" data-live-search="true" required>
                                         <option></option>
                                         @foreach ( $datalocsupply as $dtloc )
-                                        <option value="{{$dtloc->inp_loc}}" data-siteto="{{$dtloc->inp_supply_site}}">{{$dtloc->inp_supply_site}}, {{$dtloc->inp_loc}}</option>
+                                        <option value="{{$dtloc->inp_loc}}" data-siteto="{{$dtloc->inp_supply_site}}" selected>{{$dtloc->inp_supply_site}}, {{$dtloc->inp_loc}}</option>
                                         @endforeach
                                     </select>
                                     <input type="hidden" class="hidden_siteto" name="hidden_siteto[]" value="" />
@@ -224,6 +224,19 @@
     }
 
     $(document).ready(function() {
+        $('.locto option').each(function(index, val) {
+            // console.log($(this).prop());
+            if ($(this).is(':selected')) {
+                var row = $(this).closest("tr");
+                const locto = row.find(':selected').val();
+                const siteto = row.find(':selected').data('siteto');
+
+
+                row.find('.hidden_siteto').val(siteto);
+                row.find('.hidden_locto').val(locto);
+            }
+        });
+
         $('#submit').submit(function(event) {
             // Cek apakah semua qtytotransfer bernilai 0
             const inputs = $('.qtytotransfer');

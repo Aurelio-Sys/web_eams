@@ -797,7 +797,16 @@
         $("#t_dept").select2({
             width : '100%',
             theme : 'bootstrap4',
-            
+        });
+
+        $("#s_dept").select2({
+            width : '100%',
+            theme : 'bootstrap4',
+        });
+
+        $("#s_dept").select2({
+            width : '100%',
+            theme : 'bootstrap4',
         });
         
     </script>

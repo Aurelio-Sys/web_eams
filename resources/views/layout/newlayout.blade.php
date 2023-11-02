@@ -179,6 +179,13 @@ to get the desired effect
             </li>
             @endif
 
+            <li class="nav-item ">
+              <a href="/startnotif" class="nav-link ">
+                <i class="nav-icon fas fa-solid fa-bell"></i>
+                <p>Notifications</p>
+              </a>
+            </li>
+
             @if(str_contains( Session::get('menu_access'), 'SR'))
             <li class="nav-item has-treeview">
               <a href="javascript:void(0)" class="nav-link">
@@ -652,6 +659,13 @@ to get the desired effect
                     </p>
                   </a>
                   <ul class="nav nav-treeview">
+                    @if(str_contains( Session::get('menu_access'), 'RT17'))
+                    <li class="nav-item">
+                      <a href="/viewasset" class="nav-link ">
+                        <p>Asset View</p>
+                      </a>
+                    </li>
+                    @endif
                     @if(str_contains( Session::get('menu_access'), 'RT13'))
                     <li class="nav-item">
                       <a href="/viewwhy" class="nav-link ">
