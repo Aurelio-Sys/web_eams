@@ -95,6 +95,12 @@ class ViewExport2 implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
             wo_sr_number, CAST(sr_req_date AS DATE) AS sr_date,CAST(sr_req_time AS TIME) AS sr_time, sr_req_by, IfNull(d2.dept_desc,'-') as 'd1', 
             wo_asset_code, asset_desc,asset_site,asset_loc,asloc_desc,wo_note,
             wo_mt_code,pmc_desc,wo_ins_code,ins_desc,wo_sp_code,spg_desc,wo_qcspec_code,qcs_desc,
+            SUBSTRING_INDEX(SUBSTRING_INDEX(wo_failure_code, ';', 1), ';', -1) AS fncode1,
+            CASE WHEN LOCATE(';', wo_failure_code) > 0 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_failure_code, ';', 2), ';', -1) ELSE '' END AS fncode2,
+            CASE WHEN LENGTH(wo_failure_code) - LENGTH(REPLACE(wo_failure_code, ';', '')) >= 2 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_failure_code, ';', 3), ';', -1) ELSE '' END AS fncode3,
+            CASE WHEN LENGTH(wo_failure_code) - LENGTH(REPLACE(wo_failure_code, ';', '')) >= 3 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_failure_code, ';', 4), ';', -1) ELSE '' END AS fncode4,
+            CASE WHEN LENGTH(wo_failure_code) - LENGTH(REPLACE(wo_failure_code, ';', '')) >= 4 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_failure_code, ';', 5), ';', -1) ELSE '' END AS fncode5,
+            wo_failure_type,wotyp_desc,wo_impact_code,imp_desc,
             SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 1), ';', -1) AS eng1,
             CASE WHEN LOCATE(';', wo_list_engineer) > 0 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 2), ';', -1) ELSE '' END AS eng2,
             CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 2 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 3), ';', -1) ELSE '' END AS eng3,
@@ -116,10 +122,60 @@ class ViewExport2 implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
         ->leftJoin('ins_list','ins_code','=','wo_ins_code')
         ->leftJoin('spg_list','spg_code','wo_sp_code')
         ->leftJoin('qcs_list','qcs_code','=','wo_qcspec_code')
+        ->leftJoin('fn_mstr','fn_code','=','wo_failure_code')
+        ->leftJoin('imp_mstr','imp_code','=','wo_impact_code')
+        ->leftJoin('wotyp_mstr','wotyp_code','=','wo_failure_type')
         ->whereRaw($kondisi)
         ->distinct()
         ->orderby('wo_created_at2','desc')
         ->orderby('wo_time','desc');
+
+        // Cobain
+    //     DB::table('wo_mstr')
+    // ->selectRaw("wo_mstr.wo_number,
+    //     wo_createdby, d1.dept_desc, wo_type, wo_priority, wo_status,
+    //     wo_sr_number, CAST(sr_req_date AS DATE) AS sr_date, CAST(sr_req_time AS TIME) AS sr_time, sr_req_by, IfNull(d2.dept_desc, '-') as 'd1',
+    //     wo_asset_code, asset_desc, asset_site, asset_loc, asloc_desc, wo_note,
+    //     wo_mt_code, pmc_desc, wo_ins_code, ins_desc, wo_sp_code, spg_desc, wo_qcspec_code, qcs_desc,
+    //     fncode1, fncode2, fncode3, fncode4, fncode5,
+    //     wo_failure_type, wotyp_desc, wo_impact_code, imp_desc,
+    //     eng1, eng2, eng3, eng4, eng5,
+    //     TIMESTAMPDIFF(MINUTE, CONCAT(sr_req_date, ' ', sr_req_time), wo_system_create) as selisih3,
+    //     CAST(wo_system_create AS DATE) AS wo_created_at2, CAST(wo_system_create AS TIME) AS wo_time, wo_start_date, wo_released_date, wo_released_time,
+    //     TIMESTAMPDIFF(MINUTE, CONCAT(wo_released_date, ' ', wo_released_time), CONCAT(wo_job_startdate, ' ', wo_job_starttime)) as selisih1,
+    //     wo_job_startdate, wo_job_starttime,
+    //     TIMESTAMPDIFF(MINUTE, CONCAT(wo_job_startdate, ' ', wo_job_starttime), CONCAT(wo_job_finishdate, ' ', wo_job_finishtime)) AS selisih2,
+    //     wo_job_finishdate, wo_job_finishtime, wo_due_date, 
+    //     wo_downtime, wo_downtime_um, wo_report_note")
+    // ->leftJoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+    // ->leftJoin('dept_mstr as d1', 'wo_mstr.wo_department', 'd1.dept_code')
+    // ->leftJoin('service_req_mstr', 'sr_number', '=', 'wo_sr_number')
+    // ->leftJoin('dept_mstr as d2', 'sr_dept', 'd2.dept_code')
+    // ->leftJoin('asset_loc', 'asloc_code', '=', 'asset_loc')
+    // ->leftJoin('pmc_mstr', 'pmc_code', '=', 'wo_mt_code')
+    // ->leftJoin('ins_list', 'ins_code', '=', 'wo_ins_code')
+    // ->leftJoin('spg_list', 'spg_code', 'wo_sp_code')
+    // ->leftJoin('qcs_list', 'qcs_code', '=', 'wo_qcspec_code')
+    // ->leftJoin('fn_mstr', 'fn_code', '=', 'wo_failure_code')
+    // ->leftJoin('imp_mstr', 'imp_code', '=', 'wo_impact_code')
+    // ->leftJoin('wotyp_mstr', 'wotyp_code', '=', 'wo_failure_type')
+    // ->addSelect([
+    //     'SUBSTRING_INDEX(SUBSTRING_INDEX(wo_failure_code, \';\', 1), \';\', -1) AS fncode1',
+    //     'CASE WHEN LOCATE(\';\', wo_failure_code) > 0 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_failure_code, \';\', 2), \';\', -1) ELSE \'\' END AS fncode2',
+    //     'CASE WHEN LENGTH(wo_failure_code) - LENGTH(REPLACE(wo_failure_code, \';\', \'\')) >= 2 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_failure_code, \';\', 3), \';\', -1) ELSE \'\' END AS fncode3',
+    //     'CASE WHEN LENGTH(wo_failure_code) - LENGTH(REPLACE(wo_failure_code, \';\', \'\')) >= 3 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_failure_code, \';\', 4), \';\', -1) ELSE \'\' END AS fncode4',
+    //     'CASE WHEN LENGTH(wo_failure_code) - LENGTH(REPLACE(wo_failure_code, \';\', \'\')) >= 4 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_failure_code, \';\', 5), \';\', -1) ELSE \'\' END AS fncode5',
+    //     'SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, \';\', 1), \';\', -1) AS eng1',
+    //     'CASE WHEN LOCATE(\';\', wo_list_engineer) > 0 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, \';\', 2), \';\', -1) ELSE \'\' END AS eng2',
+    //     'CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, \';\', \'\')) >= 2 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, \';\', 3), \';\', -1) ELSE \'\' END AS eng3',
+    //     'CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, \';\', \'\')) >= 3 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, \';\', 4), \';\', -1) ELSE \'\' END AS eng4',
+    //     'CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, \';\', \'\')) >= 4 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, \';\', 5), \';\', -1) ELSE \'\' END AS eng5'
+    // ])
+    // ->whereRaw($kondisi)
+    // ->distinct()
+    // ->orderBy('wo_created_at2', 'desc')
+    // ->orderBy('wo_time', 'desc');
+
         
     }
     public function headings(): array
@@ -129,6 +185,7 @@ class ViewExport2 implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
         'Service Request Number', 'Requested Date', 'Requested Time','Requested By', 'Departement', 
         'Asset Code','Asset Name','Asset Site','Asset Location Code','Asset Location Desc','Note',
         'Maintenance Code','Maintenance Desc','Instruction List','Instruction Desc','Spare part List','Spare part Desc','QC Spesification','Spesification Desc',
+        'Failure Code 1','Failure Code 2','Failure Code 3','Failure Code 4','Failure Code 5','Failure Type','Failure Type Desc','Impact','Impact Desc',
         'Engineer 1','Engineer 2','Engineer 3','Engineer 4','Engineer 5',
         'SR - WO',
         'WO Date', 'WO Time', 'Schedule Date','Release Date','Release Time','Release - Start',
