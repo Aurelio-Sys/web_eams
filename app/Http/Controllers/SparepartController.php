@@ -517,7 +517,6 @@ class SparepartController extends Controller
                 ->join('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
                 ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
                 ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
-                ->join('inp_supply', 'inp_supply.inp_asset_site', 'req_sparepart_det.req_spd_loc_to')
                 ->where('req_sp_number', $rsnumber)
                 // ->groupBy('req_sp_number')
                 ->get();
@@ -1496,7 +1495,7 @@ class SparepartController extends Controller
             ->when(Session::get('role') <> 'ADMIN', function ($q) {
                 return $q->where('wo_department', Session::get('department'));
             })
-            ->whereColumn('wd_sp_required', '>', 'wd_sp_issued') //untuk validasi bahwa qty yg mau dikembalikan sudah pernah di issued namun tidak full issued
+            ->whereColumn('wd_sp_whtf', '>', 'wd_sp_issued') //untuk validasi bahwa qty yg mau dikembalikan sudah pernah di issued namun tidak full issued
             ->where('wd_already_returned', 0) //untuk validasi bahwa sp pada nomor tersebut belum pernah dikembalikan
             ->groupBy('wd_sp_wonumber')
             ->get();

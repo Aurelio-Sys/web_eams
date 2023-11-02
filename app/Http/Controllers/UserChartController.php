@@ -398,8 +398,7 @@ class UserChartController extends Controller
                 ->join('asset_loc','asloc_code','=','wo_location')
                 ->where('wo_start_date','like',date("Y-m",strtotime($tgl)).'%')
                 ->orderBy('tgl')
-                ->orderBy('wo_number')
-                ->get();
+                ->orderBy('wo_number');
 
             $fotoeng = $dataeng->where('eng_code','=',"")->first();
         }
@@ -435,18 +434,18 @@ class UserChartController extends Controller
             if($wotype <> 'All') {
                 $datawo = $datawo->where('wo_type','=',$wotype);
             }
-
-            $datawo = $datawo->get();
           
            $fotoeng = $dataeng->where('eng_code','=',$engcode)->first();
         }
-        // dd(count($datawo));
+
+        $datawo = $datawo->get();
+
         $datafn = DB::table('fn_mstr')
                 ->get();
 
         $datadept = DB::table('dept_mstr')
             ->orderBy('dept_code')
-            ->get();
+            ->get();            
 
         return view('report.engsch',compact('skrg','hari','kosong','bulan','datawo','dataeng','fotoeng','engcode','datafn','wotype',
             'datadept','sdept'));
