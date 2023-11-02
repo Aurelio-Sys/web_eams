@@ -23,12 +23,14 @@ class SendNotifWoFinish implements ShouldQueue
 
     protected $wonumber;
     protected $userrole;
+    protected $dept;
 
-    public function __construct($wonumber,$userrole)
+    public function __construct($wonumber,$userrole,$dept)
     {
         //
         $this->wonumber = $wonumber;
         $this->userrole = $userrole;
+        $this->dept = $dept;
     }
 
     /**
@@ -41,9 +43,11 @@ class SendNotifWoFinish implements ShouldQueue
         //
         $wonumber = $this->wonumber;
         $userrole = $this->userrole;
+        $dept = $this->dept;
 
         $getUsersEmail = DB::table('users')
                             ->where('role_user', '=', $userrole)
+                            ->where('dept_user','=', $dept)
                             ->where('active', '=', 'Yes')
                             ->get();
 

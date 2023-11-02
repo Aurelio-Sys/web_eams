@@ -5285,8 +5285,9 @@ class wocontroller extends Controller
                         ->first();
 
                     // dd($getFirstApprover);
+                    $wodepartment = DB::table('wo_mstr')->where('wo_number', $req->c_wonbr)->first();
 
-                    SendNotifWoFinish::dispatch($req->c_wonbr, $getFirstApprover->wo_approver_role);
+                    SendNotifWoFinish::dispatch($req->c_wonbr, $getFirstApprover->wo_approver_role, $wodepartment->wo_department);
 
                     //status wo berubah
 
