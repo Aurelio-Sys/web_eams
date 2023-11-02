@@ -494,6 +494,8 @@
             <input type="hidden" name="btnconf" value="reportwo">
             <input type="checkbox" id="finishCheckbox" value="reportwo">
             <label for="finishCheckbox">Finish Report?</label>
+            <!-- Error message display -->
+            <span id="error-message" style="color: red;"></span>
         </div>
 
         <div class="modal-footer">
@@ -790,9 +792,31 @@
         });
 
         $('#newedit').submit(function(event) {
-            document.getElementById('btnconf-submit').style.display = 'none';
-            document.getElementById('btnclose').style.display = 'none';
-            document.getElementById('btnloading').style.display = '';
+
+            var isValid = true;
+            $('.loclotfrom[required]').each(function() {
+                if (!this.value) {
+                    isValid = false;
+                }
+            });
+
+            if (!isValid) {
+                document.getElementById('btnconf-submit').style.display = '';
+                document.getElementById('btnclose').style.display = '';
+                document.getElementById('btnloading').style.display = 'none';
+                $('#error-message').text('Please fill out all "Location & Lot" fields.');
+                event.preventDefault();
+            }else{
+                $('#error-message').text('');
+                document.getElementById('btnconf-submit').style.display = 'none';
+                document.getElementById('btnclose').style.display = 'none';
+                document.getElementById('btnloading').style.display = '';
+                this.submit();
+            }
+            
+            
+
+            
         });
 
         $(document).on('keyup', '.qtypotong', function() {
@@ -800,11 +824,11 @@
             var valueinput = thisrow.val();
 
             if (valueinput !== '0') {
-                // console.log('add required');
-                thisrow.closest('tr').find('.loclotfrom').attr('required', 'required');
+                console.log('add required');
+                thisrow.closest('tr').find('.loclotfrom').prop('required', true);
             } else {
-                // console.log('hapus required');
-                thisrow.closest('tr').find('.loclotfrom').removeAttr('required');
+                console.log('hapus required');
+                thisrow.closest('tr').find('.loclotfrom').prop('required', false);
             }
         });
 
