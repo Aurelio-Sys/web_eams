@@ -3375,7 +3375,7 @@ class wocontroller extends Controller
                         ->where('dept_code','=', Session::get('department'))
                         ->first();
 
-        if($getDept->dept_inv !== null || $getDept->dept_inv !== ''){
+        if($getDept->dept_inv != null && $getDept->dept_inv != '' && $getDept->dept_inv != 'null'){
             $getSource = DB::table('inp_supply')
             ->where('inp_asset_site', '=', $assetsite)
             ->where('inp_loc','=', $getDept->dept_inv)
