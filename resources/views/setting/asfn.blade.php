@@ -12,7 +12,7 @@
     </div>
     <div class="row">                 
         <div class="col-sm-2">    
-            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Asset Movement Create</button>
+            <button class="btn btn-block btn-primary" data-toggle="modal" data-target="#createModal">Mapping Asset - Failure Create</button>
         </div>
     </div>
 </div><!-- /.container-fluid -->
