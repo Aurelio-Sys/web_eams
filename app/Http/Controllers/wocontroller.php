@@ -4527,7 +4527,7 @@ class wocontroller extends Controller
 
     public function reportingwo(Request $req)
     {
-
+        
         // bagian spare part
 
         DB::beginTransaction();
@@ -4573,7 +4573,7 @@ class wocontroller extends Controller
                         $qtyIssued = $req->qtyissued[$index];
                         $qtyPotong = $req->qtypotong[$index];
                         $glAccount = $req->glacc[$index];
-                        $costCenter = $req->costcenter[$index];
+                        $costCenter = isset($req->costcenter[$index]) ? $req->costcenter[$index] : '';
 
                         $data = [
                             "sparepart_code" => $sparepartCode,
@@ -4610,7 +4610,7 @@ class wocontroller extends Controller
                         $qtyIssued = $req->qtyissued[$index];
                         $qtyPotong = $req->qtypotong[$index];
                         $glAccount = $req->glacc[$index];
-                        $costCenter = $req->costcenter[$index];
+                        $costCenter = isset($req->costcenter[$index]) ? $req->costcenter[$index] : '';
 
                         $data = [
                             "sparepart_code" => $sparepartCode,
@@ -4705,7 +4705,7 @@ class wocontroller extends Controller
                 }
 
 
-                // dd($dataArrayIssued,$dataArrayReceipt);
+                // dd($dataArrayIssued);
 
                 if (!empty($dataArrayIssued)) {
 

@@ -195,7 +195,7 @@
                                         <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />
                                     </td>
                                     <td style="vertical-align: middle; text-align: left;">
-                                        <select style="display: inline-block !important;" class="form-control selectpicker glacc" name="glacc[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px">
+                                        <select style="display: inline-block !important;" class="form-control selectpicker glacc" name="glacc[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px" data-container="body">
                                             <option value=""> -- Select GL Account --</option>
                                             @foreach (  $glacc as $glaccount )
                                             <option value="{{$glaccount->acc_code}}" data-ccreq="{{$glaccount->acc_cc}}" >{{$glaccount->acc_code}} -- {{$glaccount->acc_desc}}</option>
@@ -203,7 +203,7 @@
                                         </select>
                                     </td>
                                     <td style="vertical-align: middle; text-align: left;">
-                                        <select style="display: inline-block !important;" class="form-control selectpicker ccenter" name="costcenter[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px">
+                                        <select style="display: inline-block !important;" class="form-control selectpicker ccenter" name="costcenter[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px" data-container="body">
                                             <option value=""> -- Select Cost Center --</option>
                                             @foreach (  $costcenter as $cc )
                                             <option value="{{$cc->cc_code}}" >{{$cc->cc_code}} -- {{$cc->cc_desc}}</option>
@@ -301,7 +301,7 @@
                                     </div>
                                 </td>
                                 <td style="vertical-align:middle;text-align:right; max-width: 100px !important;">
-                                    <select class="form-control selectpicker ins_list_eng" name="ins_list_eng[{{$index}}][option][]" style="max-width: 100px !important;" multiple data-live-search="true" data-max-options="5" data-size="3" data-dropup-auto="false">
+                                    <select class="form-control selectpicker ins_list_eng" name="ins_list_eng[{{$index}}][option][]" style="max-width: 100px !important;" multiple data-live-search="true" data-max-options="5" data-size="3" data-dropup-auto="false" data-container="body">
                                         @foreach ($engineers as $dataeng)
                                         @php
                                         $engCode = $dataeng['eng_code'];
@@ -558,22 +558,31 @@
 
     function selectPicker() {
 
-        $('.selectpicker').selectpicker();
+        $('.selectpicker').selectpicker({
+            
+        });
 
     }
 
     $(document).ready(function() {
-        $('.glacc').on('change', function() {
+        $(document).on('change', '.glacc', function() {
             // Get the selected option element
             let selectedOption = $(this).find('option:selected');
             // Check the data-ccreq attribute of the selected option
             let isCCRequired = selectedOption.data('ccreq');
+
             if (isCCRequired === true) {
                 // Set the ccenter select as required
-                $('.ccenter').prop('required', true);
+                console.log('hapus disabled');
+                
+                $(this).closest('tr').find('.ccenter').prop('disabled', false).selectpicker('refresh');
+                // $('.ccenter').prop('disabled', false).prop('required', true).trigger('change');
             } else {
+                console.log('tambahkan disabled');
                 // Set the ccenter select as not required
-                $('.ccenter').prop('required', false);
+                $(this).closest('tr').find('.ccenter').prop('disabled', true).selectpicker('refresh');
+                // $('.ccenter').prop('disabled', true).prop('required', false).trigger('change');
+
             }
         });
 
@@ -652,19 +661,19 @@
             cols += '</td>';
 
             cols += '<td style="vertical-align: middle; text-align:center;">';
-            cols += '<select style="display: inline-block !important;" class="form-control selectpicker ccenter" name="costcenter[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px">';
-            cols += '<option value=""> -- Select Cost Center --</option>'
-            @foreach (  $costcenter as $cc )
-            cols += '<option value="{{$cc->cc_code}}" >{{$cc->cc_code}} -- {{$cc->cc_desc}}</option>';
+            cols += '<select style="display: inline-block !important;" class="form-control selectpicker glacc" name="glacc[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px" data-container="body">';
+            cols += '<option value=""> -- Select GL Account --</option>';
+            @foreach (  $glacc as $glaccount )
+            cols += '<option value="{{$glaccount->acc_code}}" data-ccreq="{{$glaccount->acc_cc}}" >{{$glaccount->acc_code}} -- {{$glaccount->acc_desc}}</option>';
             @endforeach
             cols += '</select>';
             cols += '</td>';
 
             cols += '<td style="vertical-align: middle; text-align:center;">';
-            cols += '<select style="display: inline-block !important;" class="form-control selectpicker glacc" name="glacc[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px">';
-            cols += '<option value=""> -- Select GL Account --</option>';
-            @foreach (  $glacc as $glaccount )
-            cols += '<option value="{{$glaccount->acc_code}}" data-ccreq="{{$glaccount->acc_cc}}" >{{$glaccount->acc_code}} -- {{$glaccount->acc_desc}}</option>';
+            cols += '<select style="display: inline-block !important;" class="form-control selectpicker ccenter" name="costcenter[]" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="150px" data-container="body">';
+            cols += '<option value=""> -- Select Cost Center --</option>'
+            @foreach (  $costcenter as $cc )
+            cols += '<option value="{{$cc->cc_code}}" >{{$cc->cc_code}} -- {{$cc->cc_desc}}</option>';
             @endforeach
             cols += '</select>';
             cols += '</td>';
