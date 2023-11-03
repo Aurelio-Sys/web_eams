@@ -221,13 +221,18 @@ class WHSConfirm extends Controller
             $result[$part]['qtyoh'] += $qtyoh;
         }
 
-        return view('workorder.whsconf-detail', compact(
-            'data',
-            'sparepart_detail',
-            'datalocsupply',
-            'datatemp_required',
-            'result'
-        ));
+        if (isset($result)) {
+            return view('workorder.whsconf-detail', compact(
+                'data',
+                'sparepart_detail',
+                'datalocsupply',
+                'datatemp_required',
+                'result'
+            ));
+        } else {
+            toast('Please configure the supply location settings in the Department menu or Inventory Supply menu first', 'error')->persistent('Dismiss');
+            return redirect()->back();
+        }
     }
 
     public function whssubmit(Request $req)
