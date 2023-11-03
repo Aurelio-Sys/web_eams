@@ -936,6 +936,7 @@
             const spcode = row.find(".hidden_sp").val();
             const qtypotong = row.find(".qtypotong").val();
             const getassetsite = document.getElementById('hidden_assetsite').value;
+            const wonbr = document.getElementById('c_wonbr').value;
 
             if (qtypotong > 0) {
                 $('#loadingtable').modal('show');
@@ -946,6 +947,7 @@
                     data: {
                         assetsite: getassetsite,
                         spcode: spcode,
+                        wonbr: wonbr,
                     },
                     success: function(vamp) {
                         // console.log(vamp);
