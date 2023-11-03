@@ -134,7 +134,7 @@ class SparepartController extends Controller
         $username = Session::get('username');
 
         $data = WOMaster::where(function ($status) {
-            $status->where('wo_status', '=', 'firm')
+            $status->where('wo_status', '=', 'finished')
                 ->orWhere('wo_status', '=', 'released')
                 ->orWhere('wo_status', '=', 'started');
         })
@@ -1547,7 +1547,7 @@ class SparepartController extends Controller
             ->when(Session::get('role') <> 'ADMIN', function ($q) {
                 return $q->where('wo_department', Session::get('department'));
             })
-            ->whereColumn('wd_sp_required', '>', 'wd_sp_issued') //untuk validasi bahwa qty yg mau dikembalikan sudah pernah di issued namun tidak full issued
+            ->whereColumn('wd_sp_whtf', '>', 'wd_sp_issued') //untuk validasi bahwa qty yg mau dikembalikan sudah pernah di issued namun tidak full issued
             ->where('wd_already_returned', 0) //untuk validasi bahwa sp pada nomor tersebut belum pernah dikembalikan
             ->groupBy('wd_sp_wonumber')
             ->select(DB::raw('wo_number,wo_sr_number,CONCAT(asset_code, " - ", asset_desc) as wo_asset,wo_note'))
@@ -1565,10 +1565,9 @@ class SparepartController extends Controller
         $splistwo = WOMaster::join('wo_dets_sp', 'wo_dets_sp.wd_sp_wonumber', 'wo_mstr.wo_number')
             ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
             ->leftJoin('inp_supply', 'inp_supply.inp_loc', 'wo_dets_sp.wd_sp_loc_issued')
-            ->leftjoin('dept_mstr as u1', 'wo_mstr.wo_department', 'u1.dept_code')
-            ->whereColumn('wd_sp_required', '>', 'wd_sp_issued') //untuk validasi bahwa qty yg mau dikembalikan sudah pernah di issued namun tidak full issued
+            ->whereColumn('wd_sp_whtf', '>', 'wd_sp_issued') //untuk validasi bahwa qty yg mau dikembalikan sudah pernah di issued namun tidak full issued
             ->where('wo_number', $wo_number)
-            ->select(DB::raw('wd_sp_spcode,spm_desc,wd_sp_required,wd_sp_issued,inp_loc,u1.dept_inv as dept_inp_loc'))
+            ->select(DB::raw('wd_sp_spcode,spm_desc,wd_sp_required,wd_sp_whtf,wd_sp_issued,inp_loc,u1.dept_inv as dept_inp_loc'))
             ->get();
 
         $loc_from = DB::table('inp_supply')->get();
@@ -1587,7 +1586,7 @@ class SparepartController extends Controller
                 $output .= '<input type="hidden" class="form-control spret" name="spret[]" value="' . $data->wd_sp_spcode . '" readonly/>';
                 $output .= '</td>';
                 $output .= '<td>';
-                $output .= '<input type="number" class="form-control qtyreturn" name="qtyreturn[]" step=".01" max="' . ($data->wd_sp_required - $data->wd_sp_issued) . '"  min="0.01" value="' . ($data->wd_sp_required - $data->wd_sp_issued) . '" required />';
+                $output .= '<input type="number" class="form-control qtyreturn" name="qtyreturn[]" step=".01" max="' . ($data->wd_sp_whtf - $data->wd_sp_issued) . '"  min="0.01" value="' . ($data->wd_sp_whtf - $data->wd_sp_issued) . '" required />';
                 $output .= '</td>';
                 $output .= '<td>';
                 $output .= '<select name="locto[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
