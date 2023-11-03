@@ -869,64 +869,6 @@ to get the desired effect
                 </li> <!-- li sparepart -->
                 @endif <!-- endif Sparepart -->
 
-                @if(str_contains( Session::get('menu_access'), 'MTF')) <!-- if access Instruction -->
-                <li class="nav-item has-treeview">
-                  <a href="javascript:void(0)" class="nav-link ">
-                    <i class="nav-icon far fa-circle"></i>
-                    <p>
-                      Instruction
-                      <i class="right fas fa-angle-left"></i>
-                    </p>
-                  </a>
-                  <ul class="nav nav-treeview">
-                    @if(str_contains( Session::get('menu_access'), 'MTF35'))
-                    <li class="nav-item">
-                      {{--  <a href="/insmaster" class="nav-link ">  --}}
-                      <a href="/inslist" class="nav-link ">
-                        <p>Instruction List</p>
-                      </a>
-                    </li>
-                    @endif
-                    @if(str_contains( Session::get('menu_access'), 'MTF41'))
-                    <li class="nav-item">
-                      {{--  <a href="/insmaster" class="nav-link ">  --}}
-                      <a href="/splist" class="nav-link ">
-                        <p>Sparepart List</p>
-                      </a>
-                    </li>
-                    @endif
-                    @if(str_contains( Session::get('menu_access'), 'MTF40'))
-                    <li class="nav-item">
-                      <a href="/qcspec" class="nav-link ">
-                        <p>QC Spesification</p>
-                      </a>
-                    </li>
-                    @endif
-                    @if(str_contains( Session::get('menu_access'), 'MTF39'))
-                      <li class="nav-item">
-                        <a href="/pmcode" class="nav-link">
-                          <p>Maintenance Code</p>
-                        </a>
-                      </li>
-                    @endif
-                    @if(str_contains( Session::get('menu_access'), 'MTF48'))
-                      <li class="nav-item">
-                        <a href="/notmssg" class="nav-link">
-                          <p>Message Maintenance</p>
-                        </a>
-                      </li>
-                    @endif
-                    @if(str_contains( Session::get('menu_access'), 'MTF43'))
-                      <li class="nav-item">
-                        <a href="/rcmmstr" class="nav-link">
-                          <p>Routine Check Maintenance</p>
-                        </a>
-                      </li>
-                    @endif
-                  </ul><!-- ul Instruction -->
-                </li> <!-- li Instruction --> 
-                @endif <!-- endif Instruction -->
-
                 @if(str_contains( Session::get('menu_access'), 'MTE')) <!-- if access asset -->
                 <li class="nav-item has-treeview">
                   <a href="javascript:void(0)" class="nav-link ">
