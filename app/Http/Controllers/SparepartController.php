@@ -134,7 +134,7 @@ class SparepartController extends Controller
         $username = Session::get('username');
 
         $data = WOMaster::where(function ($status) {
-            $status->where('wo_status', '=', 'firm')
+            $status->where('wo_status', '=', 'finished')
                 ->orWhere('wo_status', '=', 'released')
                 ->orWhere('wo_status', '=', 'started');
         })
