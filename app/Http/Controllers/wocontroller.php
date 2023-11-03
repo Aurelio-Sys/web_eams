@@ -3373,7 +3373,7 @@ class wocontroller extends Controller
         $wonbr = $req->get('wonbr');
 
         $wonumber = DB::table('wo_mstr')->where('wo_number','=', $wonbr)->first();
-
+        
         $getDept = DB::table('dept_mstr')
                         ->where('dept_code','=', $wonumber->wo_department)
                         ->first();

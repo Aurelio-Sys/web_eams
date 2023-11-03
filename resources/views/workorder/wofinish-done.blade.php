@@ -575,12 +575,12 @@
                 // Set the ccenter select as required
                 console.log('hapus disabled');
                 
-                $(this).closest('tr').find('.ccenter').prop('disabled', false).selectpicker('refresh');
+                $(this).closest('tr').find('.ccenter').prop('disabled', false).prop('required', true).selectpicker('refresh');
                 // $('.ccenter').prop('disabled', false).prop('required', true).trigger('change');
             } else {
                 console.log('tambahkan disabled');
                 // Set the ccenter select as not required
-                $(this).closest('tr').find('.ccenter').prop('disabled', true).selectpicker('refresh');
+                $(this).closest('tr').find('.ccenter').prop('disabled', true).prop('required', false).selectpicker('refresh');
                 // $('.ccenter').prop('disabled', true).prop('required', false).trigger('change');
 
             }
