@@ -155,7 +155,7 @@
                                     <input type="hidden" class="hidden_locto" name="hidden_locto[]" value="" />
                                 </td>
                                 <td style="vertical-align: middle; text-align: center;">
-                                    <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0" value="{{$spd->wd_sp_required - $spd->wd_sp_whtf}}" max="{{$spd->wd_sp_required - $spd->wd_sp_whtf}}" step="0.01" required />
+                                    <input type="number" id="qtytotransfer" class="form-control qtytotransfer" name="qtytotransfer[]" min="0" value="{{$spd->wd_sp_required - $spd->wd_sp_whtf}}" max="{{$spd->wd_sp_required - $spd->wd_sp_whtf < 0 ? 0 : $spd->wd_sp_required - $spd->wd_sp_whtf}}" step="0.01" required />
                                 </td>
                             </tr>
                             @empty

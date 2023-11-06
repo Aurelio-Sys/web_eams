@@ -160,6 +160,7 @@
                             <tr>
                                 <th style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</th>
                                 <th style="text-align: center; width: 5% !important; font-weight: bold;">Required</th>
+                                <th style="text-align: center; width: 5% !important; font-weight: bold;">Transferred</th>
                                 <th style="text-align: center; width: 5% !important; font-weight: bold;">Issued</th>
                                 <th style="text-align: center; width: 10% !important; font-weight: bold;">Issue</th>
                                 <th style="text-align: center; width: 18% !important; font-weight: bold;">Location & Lot</th>
@@ -177,16 +178,20 @@
                                 </td>
                                 @php
                                 $difference = number_format($datas->wd_sp_required - $datas->wd_sp_issued, 2, '.', '');
-                                if ($difference < 0) { $difference=0; } @endphp <td style="vertical-align:middle;text-align:right;">
+                                if ($difference < 0) { $difference=0; } @endphp 
+                                    <td style="vertical-align:middle;text-align:right;">
                                     {{$datas->wd_sp_required}}
                                     <input type="hidden" name="qtyrequired[]" value="{{$datas->wd_sp_required}}" />
+                                    </td>
+                                    <td style="vertical-align:middle;text-align:right;">
+                                    {{$datas->wd_sp_whtf}}
                                     </td>
                                     <td style="vertical-align:middle;text-align:right;">
                                         {{$datas->wd_sp_issued}}
                                         <input type="hidden" class="qtyissued" name="qtyissued[]" value="{{$datas->wd_sp_issued}}" />
                                     </td>
                                     <td style="vertical-align:middle;text-align:center;">
-                                        <input type="number" class="form-control qtypotong" step="0.01" min="{{ $datas->wd_sp_issued == 0 ? 0 : -$datas->wd_sp_issued }}" max="{{$datas->wd_sp_whtf}}" name="qtypotong[]" value="{{$datas->wd_sp_whtf}}" required />
+                                        <input type="number" class="form-control qtypotong" step="0.01" min="{{ $datas->wd_sp_issued == 0 ? 0 : -$datas->wd_sp_issued }}" max="{{$datas->wd_sp_whtf}}" name="qtypotong[]" value="{{$datas->wd_sp_whtf - $datas->wd_sp_issued}}" required />
                                     </td>
                                     <td style="vertical-align: middle; text-align: left;">
                                         <input type="text" id="loclotfrom" class="form-control loclotfrom" name="loclotfrom[]" data-toggle="tooltip" autocomplete="off" readonly placeholder="Click Here" {{$datas->wd_sp_whtf != 0 ? 'required':''}}>
