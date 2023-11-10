@@ -20,50 +20,65 @@
 @endsection
 @section('content')
 <!-- Bagian Searching -->
-<div class="container-fluid mb-2">
-    <div class="row">
-      <div class="col-md-12">
-        <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
-      </div>  
-    </div>
-    <!-- Element div yang akan collapse atau expand -->
-    <div class="collapse" id="collapseExample">
-        <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
-        <div class="card card-body bg-black rounded-0">
-            <div class="col-12 form-group row">
-                <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Site Code</label>
-                <div class="col-md-4 col-sm-4 mb-2 input-group">
-                    <input id="s_code" type="text" class="form-control" name="s_code" value="" autofocus autocomplete="off" />
-                </div>
-                <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Site Description</label>
-                <div class="col-md-4 col-sm-4 mb-2 input-group">
-                    <input id="s_desc" type="text" class="form-control" name="s_desc" value="" autofocus autocomplete="off" />
-                </div>
-                <input type="hidden" id="tmpcode" />
-                <input type="hidden" id="tmpdesc" />
-            </div>
-            <div class="col-12 form-group row">
-                <label for="ss_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Location Code</label>
-                <div class="col-md-4 col-sm-4 mb-2 input-group">
-                    <input id="ss_code" type="text" class="form-control" name="ss_code" value="" autofocus autocomplete="off" />
-                </div>
-                <label for="ss_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Location Description</label>
-                <div class="col-md-4 col-sm-4 mb-2 input-group">
-                    <input id="ss_desc" type="text" class="form-control" name="ss_desc" value="" autofocus autocomplete="off" />
-                </div>
-                <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-right"></label>
-                <div class="col-md-2 col-sm-4 mb-2 input-group">
-                    <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" />
-                </div>
-                <div class="col-md-2 col-sm-4 mb-2 input-group">
-                    <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
-                </div>
-                <input type="hidden" id="tmpscode" />
-                <input type="hidden" id="tmpsdesc" />
-            </div>
+<form action="/assetmove" method="GET">
+<div class="row">
+    <div class="col-md-12">
+    <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
+    </div>  
+</div>
+<!-- Element div yang akan collapse atau expand -->
+<div class="collapse" id="collapseExample">
+    <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+    <div class="card card-body bg-black rounded-0">
+        <div class="col-12 form-group row">
+        <!--FORM Search Disini-->
+        <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
+        <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
+            <option value="">--Select Asset--</option>
+            @foreach($asset as $assetsearch)
+                <option value="{{$assetsearch->asset_code}}" {{$assetsearch->asset_code === $sasset ? "selected" : ""}}>{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
+            @endforeach
+            </select>
+        </div>
+        <label for="s_eng" class="col-md-6 col-form-label text-md-right">{{ __('') }}</label>
+        <label for="s_locfrom" class="col-md-2 col-form-label text-md-right">{{ __('Location From') }}</label>
+        <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_locfrom" class="form-control" style="color:black" name="s_locfrom" autofocus autocomplete="off">
+            <option value="">--Select Location--</option>
+            @foreach($fromLoc as $dl)
+                <option value="{{$dl->asloc_code}}" {{$dl->asloc_code === $slocfrom ? "selected" : ""}}>{{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
+            @endforeach
+            </select>
+        </div>
+        <label for="s_locto" class="col-md-2 col-form-label text-md-right">{{ __('Location To') }}</label>
+        <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_locto" class="form-control" style="color:black" name="s_locto" autofocus autocomplete="off">
+            <option value="">--Select Location--</option>
+            @foreach($toLoc as $dlt)
+                <option value="{{$dlt->asloc_code}}" {{$dlt->asloc_code === $slocto ? "selected" : ""}}>{{$dlt->asloc_code}} -- {{$dlt->asloc_desc}}</option>
+            @endforeach
+            </select>
+        </div>
+        <label for="s_per1" class="col-md-2 col-form-label text-md-right">{{ __('WO Date') }}</label>
+        <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <input type="date" name="s_per1" id="s_per1" class="form-control" value="{{$sper1}}">
+        </div>
+        <label for="s_per2" class="col-md-2 col-form-label text-md-right">{{ __('s/d') }}</label>
+        <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <input type="date" name="s_per2" id="s_per2" class="form-control" value="{{$sper2}}">
+        </div>
+        <div class="col-md-2 col-sm-12 mb-2 input-group">
+            <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
+        </div>
+        <div class="col-md-1 col-sm-6 mb-1 input-group justify-content-md-left">
+            <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'/><i class="fas fa-sync-alt"></i></button>
+        </div>
         </div>
     </div>
 </div>
+</form>
+
 <div class="col-md-12">
     <hr>
 </div>
@@ -75,8 +90,10 @@
                 <th>Description</th>
                 <th>Site From</th>
                 <th>Location From</th>
+                <th>Location From Desc</th>
                 <th>Site To</th>
                 <th>Location To</th>
+                <th>Location To Desc</th>
                 <th>Date</th>
                 <!-- <th>Action</th> -->
             </tr>
@@ -280,97 +297,21 @@
         $('#post_title_icon').html('');
     }
 
-    function fetch_data(page, sort_type, sort_by, code, desc, scode, sdesc) {
-        $.ajax({
-            url: "areamaster/pagination?page=" + page + "&sorttype=" + sort_type + "&sortby=" + sort_by + "&code=" + code + "&desc=" + desc + "&scode=" + scode + "&sdesc=" + sdesc,
-            success: function(data) {
-                console.log(data);
-                $('tbody').html('');
-                $('tbody').html(data);
-            }
-        })
-    }
-
-    $(document).on('click', '#btnsearch', function() {
-        var code = $('#s_code').val();
-        var desc = $('#s_desc').val();
-        var scode = $('#ss_code').val();
-        var sdesc = $('#ss_desc').val();
-
-        var column_name = $('#hidden_column_name').val();
-        var sort_type = $('#hidden_sort_type').val();
-        var page = 1;
-
-        document.getElementById('tmpcode').value = code;
-        document.getElementById('tmpdesc').value = desc;
-        document.getElementById('tmpscode').value = scode;
-        document.getElementById('tmpscode').value = sdesc;
-
-        fetch_data(page, sort_type, column_name, code, desc, scode, sdesc);
-    });
-
-    $(document).on('click', '.sorting', function() {
-        var column_name = $(this).data('column_name');
-        var order_type = $(this).data('sorting_type');
-        var reverse_order = '';
-        if (order_type == 'asc') {
-            $(this).data('sorting_type', 'desc');
-            reverse_order = 'desc';
-            clear_icon();
-            $('#' + column_name + '_icon').html('<span class="glyphicon glyphicon-triangle-bottom"></span>');
-        }
-        if (order_type == 'desc') {
-            $(this).data('sorting_type', 'asc');
-            reverse_order = 'asc';
-            clear_icon();
-            $('#' + column_name + '_icon').html('<span class="glyphicon glyphicon-triangle-top"></span>');
-        }
-        $('#hidden_column_name').val(column_name);
-        $('#hidden_sort_type').val(reverse_order);
-        var page = $('#hidden_page').val();
-        var code = $('#s_code').val();
-        var desc = $('#s_desc').val();
-        var scode = $('#ss_code').val();
-        var sdesc = $('#ss_desc').val();
-        fetch_data(page, sort_type, column_name, code, desc, scode, sdesc);
-    });
-
-
-    $(document).on('click', '.pagination a', function(event) {
-        event.preventDefault();
-        var page = $(this).attr('href').split('page=')[1];
-        $('#hidden_page').val(page);
-        var column_name = $('#hidden_column_name').val();
-        var sort_type = $('#hidden_sort_type').val();
-        var code = $('#s_code').val();
-        var desc = $('#s_desc').val();
-        var scode = $('#ss_code').val();
-        var sdesc = $('#ss_desc').val();
-        fetch_data(page, sort_type, column_name, code, desc, scode, sdesc);
-    });
+    function resetSearch() {
+        $('#s_asset').val('');
+        $('#s_per1').val('');
+        $('#s_per2').val('');
+        $('#s_locfrom').val('');
+        $('#s_locto').val('');
+      }
 
     $(document).on('click', '#btnrefresh', function() {
 
-        var code = '';
-        var desc = '';
-        var scode = '';
-        var sdesc = '';
+        document.getElementById('s_per1').required = false;
+        document.getElementById('s_per2').required = false;
+    
+        resetSearch();
 
-        var column_name = $('#hidden_column_name').val();
-        var sort_type = $('#hidden_sort_type').val();
-        var page = 1;
-
-        document.getElementById('tmpcode').value = code;
-        document.getElementById('tmpdesc').value = desc;
-        document.getElementById('tmpscode').value = scode;
-        document.getElementById('tmpscode').value = sdesc;
-
-        document.getElementById('s_code').value = code;
-        document.getElementById('s_desc').value = desc;
-        document.getElementById('ss_code').value = scode;
-        document.getElementById('ss_desc').value = sdesc;
-
-        fetch_data(page, sort_type, column_name, code, desc, scode, sdesc);
     });
 
     $(document).on('change', '#t_locationid', function() {
@@ -435,16 +376,7 @@
         theme : 'bootstrap4',
         
     });
-    /* $("#t_fromsite").select2({
-        width : '100%',
-        theme : 'bootstrap4',
-        
-    });
-    $("#t_fromloc").select2({
-        width : '100%',
-        theme : 'bootstrap4',
-        
-    }); */
+
     $("#t_tosite").select2({
         width : '100%',
         theme : 'bootstrap4',
@@ -454,6 +386,26 @@
         width : '100%',
         theme : 'bootstrap4',
         
+    });
+
+    $('#s_asset').select2({
+        width: '100%',
+        theme: 'bootstrap4',
+    });
+
+    $('#s_asset').select2({
+        width: '100%',
+        theme: 'bootstrap4',
+    });
+
+    $('#s_locfrom').select2({
+        width: '100%',
+        theme: 'bootstrap4',
+    });
+
+    $('#s_locto').select2({
+        width: '100%',
+        theme: 'bootstrap4',
     });
 
     $(document).on('change', '#t_fromsite', function() {
@@ -479,6 +431,35 @@
                 }
             }) 
         });
+
+    function fper() {
+        var start_date = new Date($("#s_per1").val());
+        var due_date = new Date($("#s_per2").val());
+        var today = new Date();
+        var min_date = start_date.toJSON().slice(0, 10);
+    
+    
+        $("#s_per2").prop("min", min_date);
+    
+    
+        if (start_date > due_date) {
+            $("#s_per2").val($("#s_per1").val());
+        }
+    }
+
+    $("#s_per1").change(function() {
+        document.getElementById('s_per2').required = true;
+        fper();
+    });
+
+    $("#s_per2").change(function() {
+        document.getElementById('s_per1').required = true;
+        fper();
+    });
+
+    $(document).ready(function() {
+        fper();
+    });
 </script>
 
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">

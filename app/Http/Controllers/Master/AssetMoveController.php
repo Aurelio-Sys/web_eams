@@ -16,22 +16,39 @@ class AssetMoveController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $req)
     {
+        $sasset = $req->s_asset;
+        $slocfrom = $req->s_locfrom;
+        $slocto = $req->s_locto;
+        $sper1 = $req->s_per1;
+        $sper2 = $req->s_per2;
+        
         $data = DB::table('asset_move')
+            ->selectRaw('asset_code,asset_desc,asmove_fromsite, asmove_fromloc, f2.asloc_desc as descfrom,
+                asmove_tosite, asmove_toloc, t2.asloc_desc as descto, asmove_date')
             ->join('asset_site as f1','f1.assite_code','=','asmove_fromsite')
             ->join('asset_loc as f2','f2.asloc_code','=','asmove_fromloc')
-            /* ->where(function ($query) {
-                $query->where('f2.asloc_site','=','f1.assite_code');
-            }) */
             ->join('asset_site as t1','t1.assite_code','=','asmove_tosite')
             ->join('asset_loc as t2','t2.asloc_code','=','asmove_toloc')
-            /* ->where(function ($query) {
-                $query->where('t2.asloc_site','=','t1.assite_code');
-            }) */
             ->join('asset_mstr','asset_code','=','asmove_code')
-            ->orderby('asmove_code')
-            ->paginate(10);
+            ->orderby('asmove_date','desc')
+            ->orderby('asmove_code');
+
+        if($sasset) {
+            $data = $data->where('asmove_code','=',$sasset);
+        }
+        if($slocfrom) {
+            $data = $data->where('asmove_fromloc','=',$slocfrom);
+        }
+        if($slocto) {
+            $data = $data->where('asmove_toloc','=',$slocto);
+        }
+        if($sper1) {
+            $data = $data->whereBetween('asmove_date',[$sper1,$sper2]);
+        }
+
+        $data = $data->paginate(10);
             // ->get();
 
         // dd($data);
@@ -54,7 +71,8 @@ class AssetMoveController extends Controller
             ->get();
 
         return view('setting.asset-move', ['data' => $data, 'fromSite' => $fromSite, 'fromLoc' => $fromLoc,
-            'toSite' => $toSite, 'toLoc' => $toLoc, 'asset' => $asset]);
+            'toSite' => $toSite, 'toLoc' => $toLoc, 'asset' => $asset,
+            'sasset' => $sasset, 'slocfrom' => $slocfrom, 'slocto' => $slocto, 'sper1' => $sper1, 'sper2' => $sper2]);
     }
 
     /**

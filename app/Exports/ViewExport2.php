@@ -80,8 +80,9 @@ class ViewExport2 implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
         // Untuk nama engineer belum bisa, program yang lama udah di backup
         return DB::table('wo_mstr')
         ->selectRaw("wo_mstr.wo_number,
-            wo_createdby, d1.dept_desc, wo_type, wo_priority, wo_status, 
-            wo_sr_number, CAST(sr_req_date AS DATE) AS sr_date, CAST(sr_req_time AS TIME) AS sr_time, sr_req_by, IFNULL(d2.dept_desc, '-') as 'd1', 
+            wo_createdby, e1.eng_desc, wo_department, d1.dept_desc, wo_type, wo_priority, wo_status, 
+            wo_sr_number, CAST(sr_req_date AS DATE) AS sr_date, CAST(sr_req_time AS TIME) AS sr_time, sr_req_by, 
+            IFNULL(d2.dept_desc, '-') as 'd1', 
             wo_asset_code, asset_desc, asset_site, asset_loc, asloc_desc, wo_note,
             wo_mt_code, pmc_desc, wo_ins_code, ins_desc, wo_sp_code, spg_desc, wo_qcspec_code, qcs_desc,
             SUBSTRING_INDEX(SUBSTRING_INDEX(wo_failure_code, ';', 1), ';', -1) AS fncode1,
@@ -113,6 +114,7 @@ class ViewExport2 implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
             wo_job_finishdate, wo_job_finishtime, wo_due_date, 
             wo_downtime, wo_downtime_um, wo_report_note")
         ->leftjoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+        ->leftJoin('eng_mstr as e1','eng_code','wo_createdby')
         ->leftJoin('dept_mstr as d1', 'wo_mstr.wo_department', 'd1.dept_code')
         ->leftJoin('service_req_mstr', 'sr_number', '=', 'wo_sr_number')
         ->leftJoin('dept_mstr as d2', 'sr_dept', 'd2.dept_code')
@@ -157,14 +159,15 @@ class ViewExport2 implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
     public function headings(): array
     {
         return ['Work Order Number',
-        'WO Created', 'Departement','Type','Priority','Status',
+        'WO Created','WO Created Name', 'Departement', 'Departement Desc','Type','Priority','Status',
         'Service Request Number', 'Requested Date', 'Requested Time','Requested By', 'Departement', 
         'Asset Code','Asset Name','Asset Site','Asset Location Code','Asset Location Desc','Note',
         'Maintenance Code','Maintenance Desc','Instruction List','Instruction Desc','Spare part List','Spare part Desc','QC Spesification','Spesification Desc',
         'Failure Code 1','Failure Desc 1','Failure Code 2','Failure Desc 2','Failure Code 3','Failure Desc 3',
         'Failure Code 4','Failure Desc 4','Failure Code 5','Failure Desc 5',
         'Failure Type','Failure Type Desc','Impact','Impact Desc',
-        'Engineer 1','Engineer 2','Engineer 3','Engineer 4','Engineer 5',
+        'Engineer 1','Engineer Name 1','Engineer 2','Engineer Name 2','Engineer 3','Engineer Name 3',
+        'Engineer 4','Engineer Name 4','Engineer 5','Engineer Name 5',
         'SR - WO',
         'WO Date', 'WO Time', 'Schedule Date','Release Date','Release Time','Release - Start',
         'Start Date', 'Start Time','Start - Finish',
