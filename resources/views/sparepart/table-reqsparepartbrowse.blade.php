@@ -23,6 +23,9 @@
         <!-- history transfer sparepart -->
         <a class="histtrfsp"  href="javascript:void(0)" type="button" data-toggle="tooltip" title="Transfer History Sparepart" data-rsnumber="{{ $datas->req_sp_number }}" data-reqby="{{ $datas->req_sp_requested_by }}" data-duedate="{{ $datas->req_sp_due_date == '0000-00-00' ? '' : date('m/d/Y', strtotime($datas->req_sp_due_date)) }}" data-trfby="{{ $datas->req_sp_transfered_by }}" data-trfdate="{{ $datas->req_sp_transfer_date == '0000-00-00' ? '' : date('m/d/Y', strtotime($datas->req_sp_transfer_date)) }}" data-status="{{ $datas->req_sp_status }}" data-spcode="{{ $datas->req_spd_sparepart_code }}" data-spdesc="{{ $datas->spm_desc }}" data-qtyreq="{{ $datas->req_spd_qty_request }}" data-qtytrf="{{ $datas->req_spd_qty_transfer }}" data-locfrom="{{ $datas->req_spd_loc_from }}" data-sitefrom="{{ $datas->req_spd_site_from }}" data-lotfrom="{{ $datas->req_spd_lot_from }}" data-locto="{{ $datas->req_spd_loc_to }}" data-siteto="{{ $datas->req_spd_site_to }}" data-note="{{ $datas->req_spd_note }}"><i class="icon-table fa fa-history fa-lg"></i></a>
     </td>
+    <td style="text-align: center;">
+    <a href="{{url('reqspprint/'.$datas->req_sp_number)}}" data-toggle="tooltip"  title="Print Sparepart List" target="_blank" ><i class="icon-table fa fa-print fa-lg"></i></a>
+    </td>
 </tr>
 @empty
 <tr>
