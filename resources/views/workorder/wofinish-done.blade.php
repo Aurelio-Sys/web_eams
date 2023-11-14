@@ -194,7 +194,7 @@
                                         <input type="number" class="form-control qtypotong" step="0.01" min="{{ $datas->wd_sp_issued == 0 ? 0 : -$datas->wd_sp_issued }}" max="{{$datas->wd_sp_whtf}}" name="qtypotong[]" value="{{$datas->wd_sp_whtf - $datas->wd_sp_issued}}" required />
                                     </td>
                                     <td style="vertical-align: middle; text-align: left;">
-                                        <input type="text" id="loclotfrom" class="form-control loclotfrom" name="loclotfrom[]" data-toggle="tooltip" autocomplete="off" readonly placeholder="Click Here" {{$datas->wd_sp_whtf != 0 ? 'required':''}}>
+                                        <input type="text" id="loclotfrom" class="form-control loclotfrom" name="loclotfrom[]" data-toggle="tooltip" autocomplete="off" readonly placeholder="Click Here" {{$datas->wd_sp_whtf - $datas->wd_sp_issued <> 0 ? 'required':''}}>
                                         <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
                                         <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
                                         <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />
@@ -893,10 +893,10 @@
 
             if (valueinput !== '0') {
                 console.log('add required');
-                thisrow.closest('tr').find('.loclotfrom').prop('required', true);
+                thisrow.closest('tr').find('.loclotfrom').prop('required', true).trigger('change');
             } else {
                 console.log('hapus required');
-                thisrow.closest('tr').find('.loclotfrom').prop('required', false);
+                thisrow.closest('tr').find('.loclotfrom').prop('required', false).trigger('change');
             }
         });
 
