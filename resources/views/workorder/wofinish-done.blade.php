@@ -651,6 +651,10 @@
             cols += '</td>';
 
             cols += '<td style="vertical-align:middle;text-align:center;">';
+            cols += '<input type="hidden" name="qtywhtf[]" value="0" />';
+            cols += '</td>';
+
+            cols += '<td style="vertical-align:middle;text-align:center;">';
             cols += '<input type="hidden" class="qtyissued" name="qtyissued[]" value="0" />';
             cols += '</td>';
 
