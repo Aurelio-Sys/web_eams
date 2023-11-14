@@ -12,36 +12,7 @@
       </div><!-- /.container-fluid -->
 @endsection
 @section('content')
-<form action="{{route('generateSO')}}" method="post" id="genso">
-    {{ method_field('post') }}
-    {{ csrf_field() }}
-    <div class="row mb-4">
-        <label for="t_cust" class="col-form-label col-md-1 text-md-left">Customer</label>
-        <div class="col-md-3">
-            <input type="text" class="form-control" id="t_cust" name="t_cust" value="eams" required> 
-        </div>
-        <label for="site_genso" class="col-form-label col-md-1 text-md-right">Site</label>
-        <div class="col-md-3">
-            <select class="form-control" id="site_genso" name="site_genso" required>
-                    <option></option>
-                @foreach ( $datasite as $site )
-                    <option value="{{$site->site_code}}">{{$site->site_code}} -- {{$site->site_desc}}</option>
-                @endforeach
-            </select>
-        </div>
-        <input type="hidden" id="hs_nomorwo" name="hs_nomorwo">
-        <input type="hidden" id="hs_asset" name="hs_asset">
-        <input type="hidden" id="hs_per1" name="hs_per1">
-        <input type="hidden" id="hs_per2" name="hs_per2">
-        <input type="hidden" id="hs_sp" name="hs_sp">
-        <div class="col-md-2">
-            
-            <button type="button" class="btn btn-info" id="btnloading" style="display:none;">
-                <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
-            </button>
-        </div>
-    </div>
-</form>
+
 <!--FORM Search Disini -->
 <form action="/needsp" method="GET">
     <div class="row">
@@ -69,6 +40,15 @@
                 @endforeach
               </select>
             </div>--}}
+            <label for="s_site" class="col-form-label col-md-1 text-md-left">Site</label>
+            <div class="col-md-4">
+                <select class="form-control" id="s_site" name="s_site" required>
+                        <option></option>
+                    @foreach ( $datasite as $site )
+                        <option value="{{$site->site_code}}">{{$site->site_code}} -- {{$site->site_desc}}</option>
+                    @endforeach
+                </select>
+            </div>
             <label for="s_eng" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
             <label for="s_sp" class="col-md-1 col-form-label text-md-left">{{ __('Sparepart') }}</label>
             <div class="col-md-4 col-sm-12 mb-2 input-group">
@@ -78,16 +58,6 @@
                   <option value="{{$ds->spm_code}}" {{$ds->spm_code === $ssp ? "selected" : ""}}>{{$ds->spm_code}} -- {{$ds->spm_desc}}</option>
                 @endforeach
               </select>
-            </div>
-            <label for="s_eng" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
-            <label for="s_site" class="col-form-label col-md-1 text-md-left">Site</label>
-            <div class="col-md-4">
-                <select class="form-control" id="s_site" name="s_site" required>
-                        <option></option>
-                    @foreach ( $datasite as $site )
-                        <option value="{{$site->site_code}}">{{$site->site_code}} -- {{$site->site_desc}}</option>
-                    @endforeach
-                </select>
             </div>
             <label for="s_eng" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
             <label for="s_per1" class="col-md-1 col-form-label text-md-left">{{ __('WO Date') }}</label>
@@ -105,9 +75,8 @@
             <div class="col-md-1 col-sm-6 mb-1 input-group justify-content-md-center">
               <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'/><i class="fas fa-sync-alt"></i></button>
             </div>
-            <div class="col-md-2 col-sm-12 mb-2 input-group">
-              <button type="submit" id="btngenso" class="btn btn-primary btn-block" style="float:right">Generate SO</button>
-            </div>
+            
+          
             
             <label for="s_eng" class="col-md-4 col-form-label text-md-right">{{ __('') }}</label>
             <div class="col-md-4 col-sm-12 mb-2 input-group">
@@ -116,6 +85,34 @@
           </div>
         </div>
     </div>
+</form>
+
+<div class="col-md-12"><hr></div>
+
+<!--FORM Generate SO -->
+<form action="{{route('generateSO')}}" method="post" id="genso">
+  {{ method_field('post') }}
+  {{ csrf_field() }}
+  <div class="row mb-4">
+      <label for="t_cust" class="col-form-label col-md-1 text-md-left">Customer</label>
+      <div class="col-md-3">
+          <input type="text" class="form-control" id="t_cust" name="t_cust" value="eams" required> 
+          <input type="hidden" class="form-control" id="site_genso" name="site_genso"> 
+      </div>
+
+      <input type="hidden" id="hs_per1" name="hs_per1" >
+      <input type="hidden" id="hs_per2" name="hs_per2" >
+      <input type="hidden" id="hs_sp" name="hs_sp">
+      <div class="col-md-2 col-sm-12 mb-2 input-group">
+        <button type="submit" id="btngenso" class="btn btn-primary btn-block" style="float:right">Generate SO</button>
+      </div>
+      <div class="col-md-2">
+        
+          <button type="button" class="btn btn-info" id="btnloading" style="display:none;">
+              <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
+          </button>
+      </div>
+  </div>
 </form>
 
 <!-- Bagian Searching -->
@@ -190,34 +187,30 @@
                 document.getElementById('btnloading').style.display = '';
             });
 
-            /* Kirim dara search ke form Generasl SO */
-            var currentURL = window.location.href;
-            var urlParams = new URLSearchParams(currentURL);
+            /* Kirim data search ke form Generasl SO */
+            var urlParams = new URLSearchParams(window.location.search);
+
 
             var s_sp = urlParams.get('s_sp');
-            var s_asset = urlParams.get('s_asset');
+            var s_site = urlParams.get('s_site');
             var s_per1 = urlParams.get('s_per1');
             var s_per2 = urlParams.get('s_per2');
-
+            
             document.getElementById('s_site').required = false;
 
             document.getElementById('hs_sp').value = s_sp;
-            document.getElementById('hs_asset').value =s_asset;
+            document.getElementById('site_genso').value =s_site;
             document.getElementById('hs_per1').value =s_per1;
             document.getElementById('hs_per2').value =s_per2;
         });
+
+      
 
        function clear_icon()
        {
             $('#id_icon').html('');
             $('#post_title_icon').html('');
        }
-
-       $('#site_genso').select2({
-            width:'100%',
-            placeholder: 'Select Site',
-            allowClear: true,
-       });
 
        $('#s_site').select2({
         width:'100%',
@@ -240,6 +233,25 @@
         $('#s_sp').select2({
             width: '100%',
             theme: 'bootstrap4',
+        });
+
+        /* Menampung variabel ke Form Generate */
+        $(document).on('change', '#s_site', function() {
+          var site = document.getElementById('s_site').value;
+
+          document.getElementById('site_genso').value = site;
+        });
+
+    
+        $(document).on('change', '#s_per1', function() {
+          var per1 = document.getElementById('s_per1').value;
+
+          document.getElementById('hs_per1').value = per1;
+        });
+        $(document).on('change', '#s_per2', function() {
+          var per2 = document.getElementById('s_per2').value;
+
+          document.getElementById('hs_per2').value = per2;
         });
 
         $(document).on('click', '#btnrefresh', function() {
