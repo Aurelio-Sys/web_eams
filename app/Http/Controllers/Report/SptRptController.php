@@ -134,11 +134,12 @@ class SptRptController extends Controller
         /** Mencari data dari history WO Reporting */
         $datawo = DB::table('wo_reporting_trans_hist')
             ->leftJoin('sp_mstr','spm_code','=','spcode_wohist_report')
-            ->leftJoin('users','username','=','userid_wohist_report')
-            ->leftJoin('dept_mstr','dept_code','=','dept_user')
+            ->leftJoin('eng_mstr','eng_code','=','userid_wohist_report')
+            ->leftJoin('dept_mstr','dept_code','=','eng_dept')
             // ->where('ret_sph_action','<>','return sparepart created')
             ->selectRaw('spcode_wohist_report,spm_desc,location_wohist_report,lotser_wohist_report,wohist_report_created_at as tgl,
-                "WO Reporting" as tipe,wonumber_wohist_report,qtychange_wohist_report,userid_wohist_report,name,dept_user,dept_desc')
+                "WO Reporting" as tipe,wonumber_wohist_report,qtychange_wohist_report,userid_wohist_report,eng_desc,
+                eng_dept,dept_desc')
             ->orderBy('tgl')
             ->orderBy('spcode_wohist_report')
             ->get();
@@ -156,7 +157,7 @@ class SptRptController extends Controller
                 'temp_type' => $rt->tipe,
                 'temp_no' => $rt->wonumber_wohist_report,
                 'temp_by' => $rt->userid_wohist_report,
-                'temp_byname' => $rs->name,
+                'temp_byname' => $rs->eng_desc,
                 'temp_dept' => $rs->dept_user,
                 'temp_deptdesc' => $rs->dept_desc,
                 'temp_qty' => $rt->qtychange_wohist_report,

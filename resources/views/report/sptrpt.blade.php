@@ -108,8 +108,14 @@
   <table class="table table-bordered mt-0" id="dataTable" width="100%" cellspacing="0" style="width:100%;padding: .2rem !important;">
     <thead>
       <tr style="text-align: center;">
+        <th>Trans No.</th>
+        <th>Trans By</th>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Dept Name</th>
         <th>Sparepart</th>
         <th>Desc</th>
+        <th>Qty</th>
         <th>Location From</th>
         <th>Location Desc From</th>
         <th>Lot From</th>
@@ -117,12 +123,6 @@
         <th>Location Desc To</th>
         <th>Date</th>
         <th>Type</th>
-        <th>Trans No.</th>
-        <th>Trans By</th>
-        <th>Name</th>
-        <th>Department</th>
-        <th>Dept Name</th>
-        <th>Qty</th>
       </tr>
     </thead>
     <tbody>

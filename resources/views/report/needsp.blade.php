@@ -35,7 +35,7 @@
         <input type="hidden" id="hs_per2" name="hs_per2">
         <input type="hidden" id="hs_sp" name="hs_sp">
         <div class="col-md-2">
-            <button type="submit" id="btngenso" class="btn btn-primary">Generate SO</button>
+            
             <button type="button" class="btn btn-info" id="btnloading" style="display:none;">
                 <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
             </button>
@@ -59,7 +59,7 @@
               <label for="s_nomorwo" class="col-md-2 col-form-label text-md-right">{{ __('Work Order Number') }}</label>
             <div class="col-md-4 col-sm-12 mb-2 input-group">
               <input id="s_nomorwo" type="text" class="form-control" name="s_nomorwo" value="{{$swo}}" autofocus autocomplete="off">
-            </div>  --}}
+            </div>  
             <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
             <div class="col-md-4 col-sm-12 mb-2 input-group">
               <select id="s_asset" class="form-control" style="color:black" name="s_asset" autofocus autocomplete="off">
@@ -68,7 +68,7 @@
                   <option value="{{$assetsearch->asset_code}}" {{$assetsearch->asset_code === $sasset ? "selected" : ""}}>{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
                 @endforeach
               </select>
-            </div>
+            </div>--}}
             <label for="s_eng" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
             <label for="s_sp" class="col-md-1 col-form-label text-md-left">{{ __('Sparepart') }}</label>
             <div class="col-md-4 col-sm-12 mb-2 input-group">
@@ -79,7 +79,18 @@
                 @endforeach
               </select>
             </div>
-            <label for="s_per1" class="col-md-2 col-form-label text-md-right">{{ __('WO Date') }}</label>
+            <label for="s_eng" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
+            <label for="s_site" class="col-form-label col-md-1 text-md-left">Site</label>
+            <div class="col-md-4">
+                <select class="form-control" id="s_site" name="s_site" required>
+                        <option></option>
+                    @foreach ( $datasite as $site )
+                        <option value="{{$site->site_code}}">{{$site->site_code}} -- {{$site->site_desc}}</option>
+                    @endforeach
+                </select>
+            </div>
+            <label for="s_eng" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
+            <label for="s_per1" class="col-md-1 col-form-label text-md-left">{{ __('WO Date') }}</label>
             <div class="col-md-4 col-sm-12 mb-2 input-group">
               <input type="date" name="s_per1" id="s_per1" class="form-control" value="{{$sper1}}">
             </div>
@@ -94,6 +105,10 @@
             <div class="col-md-1 col-sm-6 mb-1 input-group justify-content-md-center">
               <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'/><i class="fas fa-sync-alt"></i></button>
             </div>
+            <div class="col-md-2 col-sm-12 mb-2 input-group">
+              <button type="submit" id="btngenso" class="btn btn-primary btn-block" style="float:right">Generate SO</button>
+            </div>
+            
             <label for="s_eng" class="col-md-4 col-form-label text-md-right">{{ __('') }}</label>
             <div class="col-md-4 col-sm-12 mb-2 input-group">
               <label for="s_eng" class="col-md-2 col-form-label text-md-right">{{ __('') }}</label>
@@ -110,9 +125,10 @@
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
             <tr>
-              <th width="15%">Sch Date</th>
+              <th width="10%">Site</th>
               <th width="25%">Sparepart</th>
-              <th width="40%">Desc</th>  
+              <th width="35%">Desc</th>  
+              <th width="10%">Sch Date</th>
               <th width="10%">Qty Req</th>  
               <th width="10%">Detail</th>  
             </tr>
@@ -183,6 +199,8 @@
             var s_per1 = urlParams.get('s_per1');
             var s_per2 = urlParams.get('s_per2');
 
+            document.getElementById('s_site').required = false;
+
             document.getElementById('hs_sp').value = s_sp;
             document.getElementById('hs_asset').value =s_asset;
             document.getElementById('hs_per1').value =s_per1;
@@ -200,6 +218,12 @@
             placeholder: 'Select Site',
             allowClear: true,
        });
+
+       $('#s_site').select2({
+        width:'100%',
+        placeholder: 'Select Site',
+        allowClear: true,
+   });
 
        function resetSearch() {
             $('#s_nomorwo').val('');
@@ -221,8 +245,13 @@
         $(document).on('click', '#btnrefresh', function() {
             document.getElementById('s_per1').required = false;
             document.getElementById('s_per2').required = false;
+            document.getElementById('s_site').required = false;
         
             resetSearch();
+        });
+
+        $(document).on('click', '#btngenso', function() {
+          document.getElementById('s_site').required = true;
         });
 
         $(document).on('click', '.view', function() {
