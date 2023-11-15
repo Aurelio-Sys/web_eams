@@ -74,6 +74,17 @@
                       @endforeach
                     </select>
                   </div>
+                  <label for="s_dept" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
+                  <label for="s_dept" class="col-md-2 col-form-label text-md-right">{{ __('Type') }}</label>
+                  <div class="col-md-3 col-sm-12 mb-2 input-group">
+                    <select id="s_type" class="form-control" style="color:black" name="s_type">
+                      <option value="">--Select--</option>
+                      @foreach($datatype as $dt)
+                      <option value="{{$dt->temp_type}}" {{$dt->temp_type === $stype ? 'selected' : ''}}>{{$dt->temp_type}}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                  <label for="s_dept" class="col-md-6 col-form-label text-md-right">{{ __('') }}</label>
                   <div class="col-md-1"></div>
                   <label for="s_datefrom" class="col-md-2 col-form-label text-md-right">{{ __('Date From') }}</label>
                   <div class="col-md-3 col-sm-12 mb-2 input-group">
@@ -172,6 +183,7 @@
     $('#s_dept').val('');
     $('#s_datefrom').val('');
     $('#s_dateto').val('');
+    $('#s_type').val('');
   }
 
   $(document).on('click', '#btnrefresh', function() {

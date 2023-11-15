@@ -138,7 +138,7 @@ class SptRptController extends Controller
             ->leftJoin('dept_mstr','dept_code','=','eng_dept')
             // ->where('ret_sph_action','<>','return sparepart created')
             ->selectRaw('spcode_wohist_report,spm_desc,location_wohist_report,lotser_wohist_report,wohist_report_created_at as tgl,
-                "WO Reporting" as tipe,wonumber_wohist_report,qtychange_wohist_report,userid_wohist_report,eng_desc,
+                "wo reporting" as tipe,wonumber_wohist_report,qtychange_wohist_report,userid_wohist_report,eng_desc,
                 eng_dept,dept_desc')
             ->orderBy('tgl')
             ->orderBy('spcode_wohist_report')
@@ -181,6 +181,9 @@ class SptRptController extends Controller
         if ($request->s_dept) {
             $data->where('temp_dept', '=', $request->s_dept);
         }
+        if ($request->s_type) {
+            $data->where('temp_type','=',$request->s_type);
+        }
 
         $datefrom = $request->get('s_datefrom') == '' ? '2000-01-01' : date($request->get('s_datefrom'));
         $dateto = $request->get('s_dateto') == '' ? '3000-01-01' : date($request->get('s_dateto'));
@@ -191,6 +194,13 @@ class SptRptController extends Controller
         }
 
         $data = $data->paginate(10);
+
+        /** Untuk menampilkan pilihan filter Type */
+        $datatype = DB::table('temp_trans')
+            ->select('temp_type')
+            ->groupBy('temp_type')
+            ->orderBy('temp_type')
+            ->get();
 
         if ($request->dexcel == "excel") {
 
@@ -243,7 +253,8 @@ class SptRptController extends Controller
 
         } else {
             return view('report.sptrpt', ['data' => $data, 'requestby' => $requestby, 'datasp' => $datasp, 'datadept' => $datadept,
-            'ssp' => $request->s_sp, 'sreqby' => $request->s_reqby, 'sdept' => $request->s_dept,
+            'datatype' => $datatype,
+            'ssp' => $request->s_sp, 'sreqby' => $request->s_reqby, 'sdept' => $request->s_dept, 'stype' => $request->s_type,
             'sdatefrom' => $request->s_datefrom, 'sdateto' => $request->s_dateto, 'snomorrs' => $request->s_nomorrs]);
         }
         Schema::dropIfExists('temp_trans');
