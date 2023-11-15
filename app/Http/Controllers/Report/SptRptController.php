@@ -104,7 +104,7 @@ class SptRptController extends Controller
             ->leftJoin('users','username','=','ret_sph_retby')
             ->leftJoin('dept_mstr','dept_code','=','dept_user')
             ->where('ret_sph_action','<>','return sparepart created')
-            ->selectRaw('ret_sph_spcode,spm_desc,ret_sph_locfrom,ret_sph_lotfrom,ret_sph_locto,ret_sparepart_hist.created_at as tgl,
+            ->selectRaw('ret_sph_spcode,spm_desc,ret_sph_locfrom,ret_sph_lotto,ret_sph_locto,ret_sparepart_hist.created_at as tgl,
                 ret_sph_action,ret_sph_number,ret_sph_qtytrf,ret_sph_retby,name,dept_user,dept_desc')
             ->orderBy('ret_sparepart_hist.created_at')
             ->orderBy('ret_sph_spcode')
@@ -117,7 +117,7 @@ class SptRptController extends Controller
                 'temp_spdesc' => $rt->spm_desc,
                 'temp_fromloc' => $rt->ret_sph_locfrom,
                 'temp_fromlocdesc' => $datasploc->where('loc_code', $rt->ret_sph_locfrom)->pluck('loc_desc')->first() ,
-                'temp_fromlot' => $rt->ret_sph_lotfrom,
+                'temp_fromlot' => $rt->ret_sph_lotto,
                 'temp_toloc' => $rt->ret_sph_locto,
                 'temp_tolocdesc' => $datasploc->where('loc_code', $rt->ret_sph_locto)->pluck('loc_desc')->first() ,
                 'temp_date' => $rt->tgl,
@@ -157,9 +157,9 @@ class SptRptController extends Controller
                 'temp_type' => $rt->tipe,
                 'temp_no' => $rt->wonumber_wohist_report,
                 'temp_by' => $rt->userid_wohist_report,
-                'temp_byname' => $rs->eng_desc,
-                'temp_dept' => $rs->dept_user,
-                'temp_deptdesc' => $rs->dept_desc,
+                'temp_byname' => $rt->eng_desc,
+                'temp_dept' => $rt->eng_dept,
+                'temp_deptdesc' => $rt->dept_desc,
                 'temp_qty' => $rt->qtychange_wohist_report,
             ]);
         }
