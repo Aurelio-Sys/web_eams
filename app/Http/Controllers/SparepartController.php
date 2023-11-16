@@ -1587,7 +1587,7 @@ class SparepartController extends Controller
             ->leftJoin('inp_supply', 'inp_supply.inp_loc', 'wo_dets_sp.wd_sp_loc_issued')
             ->whereColumn('wd_sp_whtf', '>', 'wd_sp_issued') //untuk validasi bahwa qty yg mau dikembalikan sudah pernah di issued namun tidak full issued
             ->where('wo_number', $wo_number)
-            ->select(DB::raw('wd_sp_spcode,spm_desc,wd_sp_required,wd_sp_whtf,wd_sp_issued,inp_loc,u1.dept_inv as dept_inp_loc'))
+            ->select(DB::raw('wd_sp_spcode,spm_desc,wd_sp_required,wd_sp_whtf,wd_sp_issued,inp_loc'))
             ->get();
 
         $loc_from = DB::table('inp_supply')->get();
