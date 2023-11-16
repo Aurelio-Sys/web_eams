@@ -16,6 +16,8 @@ class SendNotifRetSpWarehousetoEng implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $failOnTimeout = false;
+
     /**
      * Create a new job instance.
      *
