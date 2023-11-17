@@ -191,7 +191,7 @@ class PmConfirmController extends Controller
      */
     public function update(Request $req)
     {
-        dd($req->all());
+        // dd($req->all());
         DB::beginTransaction();
 
         try {

@@ -3102,11 +3102,19 @@ class wocontroller extends Controller
 
         //ambil data spare part dari wo_dets_sp
         $datasparepart = DB::table('wo_dets_sp')
-            ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
-            ->where('wd_sp_wonumber', '=', $wonumber)
-            ->groupBy('wd_sp_wonumber', 'wd_sp_spcode')
-            ->select('*', DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued', DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as wd_sp_whtf')))
-            ->get();
+                    ->join('sp_mstr', 'sp_mstr.spm_code', '=', 'wo_dets_sp.wd_sp_spcode')
+                    ->where('wo_dets_sp.wd_sp_wonumber', '=', $wonumber)
+                    ->groupBy('wo_dets_sp.wd_sp_wonumber', 'wo_dets_sp.wd_sp_spcode')
+                    ->select(
+                        'wd_sp_wonumber',
+                        'wd_sp_spcode',
+                        'sp_mstr.spm_code',
+                        'sp_mstr.spm_desc',
+                        DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'),
+                        DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'),
+                        DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as wd_sp_whtf')
+                    )
+                    ->get();
 
         // dd($datasparepart);
 
@@ -3208,11 +3216,19 @@ class wocontroller extends Controller
 
         //ambil data spare part dari wo_dets_sp
         $datasparepart = DB::table('wo_dets_sp')
-            ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
-            ->where('wd_sp_wonumber', '=', $wonumber)
-            ->groupBy('wd_sp_wonumber', 'wd_sp_spcode')
-            ->select('*', DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'), DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as wd_sp_whtf'))
-            ->get();
+                        ->join('sp_mstr', 'sp_mstr.spm_code', '=', 'wo_dets_sp.wd_sp_spcode')
+                        ->where('wo_dets_sp.wd_sp_wonumber', '=', $wonumber)
+                        ->groupBy('wo_dets_sp.wd_sp_wonumber', 'wo_dets_sp.wd_sp_spcode')
+                        ->select(
+                            'wd_sp_wonumber',
+                            'wd_sp_spcode',
+                            'sp_mstr.spm_code',
+                            'sp_mstr.spm_desc',
+                            DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'),
+                            DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'),
+                            DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as wd_sp_whtf')
+                        )
+                        ->get();
 
         // dd($datasparepart);
 
@@ -4359,11 +4375,19 @@ class wocontroller extends Controller
 
 
         $wo_sp = DB::table('wo_dets_sp')
-            ->join('sp_mstr', 'sp_mstr.spm_code', 'wo_dets_sp.wd_sp_spcode')
-            ->where('wd_sp_wonumber', '=', $wonumber)
-            ->groupBy('wd_sp_wonumber', 'wd_sp_spcode')
-            ->select('*', DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'), DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'))
-            ->get();
+                ->join('sp_mstr', 'sp_mstr.spm_code', '=', 'wo_dets_sp.wd_sp_spcode')
+                ->where('wo_dets_sp.wd_sp_wonumber', '=', $wonumber)
+                ->groupBy('wo_dets_sp.wd_sp_wonumber', 'wo_dets_sp.wd_sp_spcode')
+                ->select(
+                    'wd_sp_wonumber',
+                    'wd_sp_spcode',
+                    'sp_mstr.spm_code',
+                    'sp_mstr.spm_desc',
+                    DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'),
+                    DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'),
+                    DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as wd_sp_whtf')
+                )
+                ->get();
 
         $datalocsupply = DB::table('inp_supply')
             ->where('inp_asset_site', '=', $data->wo_site)

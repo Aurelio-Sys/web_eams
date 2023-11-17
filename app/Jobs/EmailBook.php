@@ -19,6 +19,8 @@ class EmailBook implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $failOnTimeout = false;
+
 
     public function __construct()
     {

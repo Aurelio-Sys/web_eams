@@ -21,6 +21,8 @@ class Emaill implements ShouldQueue
      */
 
      protected $runningnbr;
+
+     public $failOnTimeout = false;
     
     public function __construct($runningnbr)
     {
