@@ -22,6 +22,7 @@ use App\Http\Controllers\Master\InvSuController;
 use App\Http\Controllers\Master\AccountController;
 use App\Http\Controllers\Master\NotmssgController;
 use App\Http\Controllers\Master\CostCenterController;
+use App\Http\Controllers\Master\SpCostController;
 use App\Http\Controllers\Report\RptDetWOController;
 use App\Http\Controllers\Report\RptCostController;
 use App\Http\Controllers\Report\RemainSpController;
@@ -923,6 +924,10 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/expensemt', [HomeController::class, 'expenseMT']); //biaya maintenance per department
 	Route::get('/wograph', [HomeController::class, 'WoGraph']); // Grafik WO status
 	Route::get('/wodeptstats', [HomeController::class, 'WoDeptStats']); //Grafik WO per department
+
+	// Sparepart Cost -> untuk melakukan load data Cost Set dari QAD. Data pada menu ini digunakan untuk menyimpan data harga sparepart per periode
+	Route::get('/spcost',[SpCostController::class, 'index']); 
+	Route::post('/loadspcost',[SpCostController::class, 'store']); 
 	
 });
 

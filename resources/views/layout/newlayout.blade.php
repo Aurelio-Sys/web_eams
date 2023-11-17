@@ -865,6 +865,13 @@ to get the desired effect
                       </a>
                     </li>
                     @endif
+                    @if(str_contains( Session::get('menu_access'), 'MTD52'))
+                    <li class="nav-item">
+                      <a href="/spcost" class="nav-link ">
+                        <p>Sparepart Cost</p>
+                      </a>
+                    </li>
+                    @endif
                   </ul><!-- ul sparepart -->
                 </li> <!-- li sparepart -->
                 @endif <!-- endif Sparepart -->
