@@ -19,6 +19,7 @@ use App\Models\Qxwsa as ModelsQxwsa;
 use App\ReqSPMstr;
 use App\Services\CreateTempTable;
 use App\WOMaster;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
 
@@ -562,6 +563,53 @@ class SparepartController extends Controller
 
             return response($output);
         }
+    }
+
+    //REQUEST SPAREPART PRINT
+    public function reqspprint(Request $req, $reqspnbr)
+    {
+        $rsnumber = $req->code;
+        // dd($req->code);
+        // if ($req->ajax()) {
+
+            $data = DB::table('req_sparepart')
+                ->join('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
+                ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
+                ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
+                ->where('req_sp_number', $reqspnbr)
+                // ->groupBy('req_sp_number')
+                ->first();
+
+            $detail = DB::table('req_sparepart')
+            ->join('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
+                ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
+                ->join('inp_supply', 'inp_supply.inp_loc', 'req_sparepart_det.req_spd_loc_to')
+                ->where('req_sp_number', $reqspnbr)
+                ->get();
+            // dd($data);
+
+            // $output = '';
+            // foreach ($data as $data) {
+            //     $output .= '<tr>';
+            //     $output .= '<td><input type="hidden" name="te_spreq[]" readonly>' . $data->req_spd_sparepart_code . ' -- ' . $data->spm_desc . '</td>';
+            //     $output .= '</td>';
+            //     $output .= '<td><input type="hidden" name="te_qtyreq[]" readonly>' . $data->req_spd_qty_request . '</td>';
+            //     $output .= '<td><input type="hidden" name="te_qtyreq[]" readonly>' . $data->req_spd_qty_transfer . '</td>';
+            //     $output .= '<td><input type="hidden" name="te_locto[]" readonly>' . $data->req_spd_loc_to . '</td>';
+            //     $output .= '<td><input type="hidden" name="te_reqnote[]" readonly>' . $data->req_spd_reqnote . '</td>';
+            //     $output .= '</td>';
+            //     $output .= '</tr>';
+            // }
+
+            // dd($output);
+
+            // return response($output);
+            $pdf = PDF::loadview('sparepart.reqsparepart-pdf', [
+                'data' => $data, 'detail' => $detail, 
+            ])->setPaper('A4', 'portrait');
+            //return view('picklistbrowse.shipperprint-template',['printdata1' => $printdata1, 'printdata2' => $printdata2, 'runningnbr' => $runningnbr,'user' => $user,'last' =>$countprint]);
+            return $pdf->stream($reqspnbr . '.pdf');
+        // }
     }
 
     //REQUEST SPAREPART VIEW EAMS MESSAGE
@@ -1567,7 +1615,7 @@ class SparepartController extends Controller
             ->leftJoin('inp_supply', 'inp_supply.inp_loc', 'wo_dets_sp.wd_sp_loc_issued')
             ->whereColumn('wd_sp_whtf', '>', 'wd_sp_issued') //untuk validasi bahwa qty yg mau dikembalikan sudah pernah di issued namun tidak full issued
             ->where('wo_number', $wo_number)
-            ->select(DB::raw('wd_sp_spcode,spm_desc,wd_sp_required,wd_sp_whtf,wd_sp_issued,inp_loc,u1.dept_inv as dept_inp_loc'))
+            ->select(DB::raw('wd_sp_spcode,spm_desc,wd_sp_required,wd_sp_whtf,wd_sp_issued,inp_loc'))
             ->get();
 
         $loc_from = DB::table('inp_supply')->get();

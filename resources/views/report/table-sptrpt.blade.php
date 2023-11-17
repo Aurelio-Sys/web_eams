@@ -1,7 +1,13 @@
 @forelse ($data as $show)
 <tr>
+  <td>{{ $show->temp_no }}</td>
+  <td>{{ $show->temp_by }}</td>
+  <td>{{ $show->temp_byname }}</td>
+  <td>{{ $show->temp_dept }}</td>
+  <td>{{ $show->temp_deptdesc }}</td>
   <td>{{ $show->temp_spcode }}</td>
   <td>{{ $show->temp_spdesc }}</td>
+  <td>{{ $show->temp_qty }}</td>
   <td>{{ $show->temp_fromloc }}</td>
   <td>{{ $show->temp_fromlocdesc }}</td>
   <td>{{ $show->temp_fromlot }}</td>
@@ -9,12 +15,8 @@
   <td>{{ $show->temp_tolocdesc }}</td>
   <td>{{ $show->temp_date }}</td>
   <td>{{ $show->temp_type }}</td>
-  <td>{{ $show->temp_no }}</td>
-  <td>{{ $show->temp_by }}</td>
-  <td>{{ $show->temp_byname }}</td>
-  <td>{{ $show->temp_dept }}</td>
-  <td>{{ $show->temp_deptdesc }}</td>
-  <td>{{ $show->temp_qty }}</td>
+  
+  
   
   
   {{--  <td>

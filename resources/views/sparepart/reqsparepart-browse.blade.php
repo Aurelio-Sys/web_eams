@@ -89,6 +89,7 @@
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="10%">Status<span id="username_icon"></span></th>
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="10%">Status Approval<span id="username_icon"></span></th>
                 <th width="10%">Action</th>
+                <th width="10%">PDF</th>
             </tr>
         </thead>
         <tbody>
