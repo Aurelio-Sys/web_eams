@@ -28,7 +28,7 @@ class UMController extends Controller
             $data = $data->where('um_code','like','%'.$s_code.'%');
         }
         if($s_desc) {
-            $data = $data->where('um_decs','like','%'.$s_desc.'%');
+            $data = $data->where('um_desc','like','%'.$s_desc.'%');
         }
 
         $data = $data->paginate(10);
