@@ -19,8 +19,9 @@ class impController extends Controller
     public function home()
     {
 
-        $data = DB::table('imp_mstr')
-            ->get();
+        $data = DB::table('imp_mstr');
+            
+        $data = $data->paginate(1);
 
         return view('/setting/imp', compact('data'));
     }

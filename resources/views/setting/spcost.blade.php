@@ -6,24 +6,37 @@
             <h1 class="m-0 text-dark">Sparepart Cost</h1>
         </div>
     </div><!-- /.row -->
+    <div class="row">
     <div class="col-md-12">
         <hr>
     </div>
+    </div>
 
-    <div class="row">
-        <div class="col-md-2">
-            <form action="/loadspcost" method="post" id="submit">
-                {{ method_field('post') }}
-                {{ csrf_field() }}
-
+    <form action="/loadspcost" method="post" id="submit">
+        {{ method_field('post') }}
+        {{ csrf_field() }}
+        <div class="row mb-4">
+            <p class="pb-0 m-0">Inputkan periode PC Cost dengan format YYMM.</p>
+        </div>
+        <div class="row mb-4">
+            <label for="t_cust" class="col-form-label col-md-1 text-md-left">Period</label>
+            <div class="col-md-3">
+                <input type="text" class="form-control" id="t_period" name="t_period" required autocomplete="off"> 
+            </div>
+    
+            <div class="col-md-2 col-sm-12 mb-2 input-group">
                 <input type="submit" class="btn btn-block btn-primary" id="btnload" value="Load Data" />
+            </div>
+            <div class="col-md-2">
+                
                 <button type="button" class="btn btn-info" id="s_btnloading" style="display:none;">
                     <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
                 </button>
-
-            </form>
+            </div>
         </div>
-    </div>
+
+    </form>
+
 </div><!-- /.container-fluid -->
 @endsection
 @section('content')

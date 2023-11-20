@@ -75,29 +75,30 @@ class SpCostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request) /** Route : loadspcost */
     {
         $domain = ModelsQxwsa::first();
 
         /** Load data cost dari Item Cost Set */
         
-        $datacost = (new WSAServices())->wsacostset($domain->wsas_domain);
+        $datacost = (new WSAServices())->wsacostset($domain->wsas_domain,$request->t_period);
 
         /** Hapus dulu data yang sudah ada */
-        DB::statement('TRUNCATE TABLE sp_cost');    // di truncate agar id nya tidak selalu bertambah
+        //DB::statement('TRUNCATE TABLE sp_cost');    // di truncate agar id nya tidak selalu bertambah
 
-        // DB::table('sp_cost')
-        //     ->delete();
+        DB::table('sp_cost')
+            ->where('spc_costset','=',$request->t_period)
+            ->delete();
 
         if ($datacost === false) {
             toast('WSA Failed', 'error')->persistent('Dismiss');
             return redirect()->back();
         } else {
             if ($datacost[1] == "false") {
-                // toast('Data Sparepart pada Site ' . $da->site_code . ' tidak ditemukan', 'error')->persistent('Dismiss');
-                // return redirect()->back();
+                toast('No Data Found', 'error')->persistent('Dismiss');
+                return redirect()->back();
             } else {
-                
+                // dd('test');
                 foreach ($datacost[0] as $datas) {
                     DB::table('sp_cost')
                         ->insert([
@@ -108,11 +109,9 @@ class SpCostController extends Controller
                         ]);
                 }
             }
+            toast('Spare Part Loaded.', 'success');
+            return back();
         } /** else ($datacost === false) { */
-        
-
-        toast('Spare Part Loaded.', 'success');
-        return back();
     }
 
     /**

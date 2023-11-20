@@ -631,7 +631,7 @@ class WSAServices
         return [$dataloop, $qdocResult];
     }
 
-    public function wsacostset($dom)
+    public function wsacostset($dom,$period)
     {
         $wsa = ModelsQxwsa::first();
 
@@ -652,9 +652,12 @@ class WSAServices
             <Body>
                 <eams_item_costset xmlns="' . $wsa->wsas_path . '">
                     <inpdomain>' . $domain . '</inpdomain>
+                    <inpperiod>' . $period . '</inpperiod>
                 </eams_item_costset>
             </Body>
         </Envelope>';
+
+        // dd($qdocRequest);
 
         $curlOptions = array(
             CURLOPT_URL => $qxUrl,

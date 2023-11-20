@@ -16,9 +16,9 @@ class CreateSpCostTable extends Migration
         Schema::create('sp_cost', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('spc_period',16);
-            $table->string('spc_part',50);
+            $table->string('spc_part',50)->index();
             $table->string('spc_um',16);
-            $table->string('spc_costset',16);
+            $table->string('spc_costset',16)->index();
             $table->decimal('spc_cost',16,4);
             $table->timestamps();
         });
