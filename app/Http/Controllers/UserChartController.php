@@ -1785,7 +1785,11 @@ class UserChartController extends Controller
     
     public function generateso(Request $req) /** Blade : needsp */
     {
-dd($req->all());
+        if(!$req->site_genso) {
+            toast('Site is required!!', 'error')->persistent('Dismiss');
+            return redirect()->back();
+        }
+
         DB::beginTransaction();
 
         try {
