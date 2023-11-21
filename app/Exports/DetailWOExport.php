@@ -64,7 +64,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
             ->leftJoin('sp_mstr','spm_code','=','wd_sp_spcode')
             ->leftJoin('sp_cost', function ($join) {
                 $join->on('sp_cost.spc_part', '=', 'sp_mstr.spm_code')
-                     ->whereRaw("DATE_FORMAT(sp_cost.spc_period, '%y%m') = DATE_FORMAT(wo_mstr.wo_job_finishdate, '%y%m')");
+                     ->whereRaw("sp_cost.spc_period = DATE_FORMAT(wo_mstr.wo_job_finishdate, '%y%m')");
             })
             ->orderBy('wd_sp_wonumber');
 
@@ -91,7 +91,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
             ->leftJoin('sp_mstr','spm_code','=','spg_spcode')
             ->leftJoin('sp_cost', function ($join) {
                 $join->on('sp_cost.spc_part', '=', 'sp_mstr.spm_code')
-                     ->whereRaw("DATE_FORMAT(sp_cost.spc_period, '%y%m') = DATE_FORMAT(wo_mstr.wo_job_finishdate, '%y%m')");
+                     ->whereRaw("sp_cost.spc_period = DATE_FORMAT(wo_mstr.wo_job_finishdate, '%y%m')");
             });
 
         /* 2a Jika tidak ada SparepartList nya */

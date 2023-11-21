@@ -88,8 +88,12 @@ class RptCostController extends Controller
 
         $dataharga = DB::table('wo_mstr')
             ->selectRaw('wo_asset_code,wo_type,month(wo_start_date) as "bln",year(wo_start_date) as "thn",
-                sum(wd_sp_issued * wd_sp_itemcost) as jml')
+                sum(wd_sp_issued * spc_cost) as jml')
             ->leftJoin('wo_dets_sp','wd_sp_wonumber','=','wo_number')
+            ->leftJoin('sp_cost', function ($join) {
+                $join->on('sp_cost.spc_part', '=', 'wo_dets_sp.wd_sp_spcode')
+                     ->whereRaw("sp_cost.spc_period = DATE_FORMAT(wo_mstr.wo_job_finishdate, '%y%m')");
+            })
             ->whereYear('wo_start_date','=',$bulan)
             ->groupBy('wo_asset_code')
             ->groupBy('bln')
@@ -121,9 +125,13 @@ class RptCostController extends Controller
             /** Mencari asset yang terdaftar di asset hierarchy */
             $datapar = DB::table('asset_par')
             ->selectRaw('aspar_par,wo_type,month(wo_start_date) as "bln",year(wo_start_date) as "thn"')
-            ->selectRaw('SUM(wd_sp_issued * wd_sp_itemcost) as jml')
+            ->selectRaw('SUM(wd_sp_issued * spc_cost) as jml')
             ->leftJoin('wo_mstr', 'wo_asset_code', '=', 'aspar_child')
             ->leftJoin('wo_dets_sp', 'wo_number', '=', 'wd_sp_wonumber')
+            ->leftJoin('sp_cost', function ($join) {
+                $join->on('sp_cost.spc_part', '=', 'wo_dets_sp.wd_sp_spcode')
+                     ->whereRaw("sp_cost.spc_period = DATE_FORMAT(wo_mstr.wo_job_finishdate, '%y%m')");
+            })
             ->whereYear('wo_start_date','=',$bulan)
             ->groupBy('aspar_par')
             ->groupBy('bln')
@@ -220,8 +228,12 @@ class RptCostController extends Controller
 
         $dataharga = DB::table('wo_mstr')
             ->selectRaw('wo_asset_code,month(wo_system_create) as "bln",year(wo_system_create) as "thn",
-                sum(wo_dets_sp_price * wo_dets_sp_qty) as jml')
+                sum(spc_cost * wo_dets_sp_qty) as jml')
             ->leftJoin('wo_dets','wo_dets_nbr','=','wo_nbr')
+            ->leftJoin('sp_cost', function ($join) {
+                $join->on('sp_cost.spc_part', '=', 'wo_dets_sp.wd_sp_spcode')
+                     ->whereRaw("sp_cost.spc_period = DATE_FORMAT(wo_mstr.wo_job_finishdate, '%y%m')");
+            })
             ->groupBy('wo_asset_code')
             ->groupBy('bln')
             ->groupBy('thn')
@@ -312,10 +324,20 @@ class RptCostController extends Controller
             foreach ($data as $data) {
                 $eng = "";
 
-                $dataharga = DB::table('wo_dets_sp')
+                $dataharga = DB::table('wo_mstr')
+                ->selectRaw('sum(wd_sp_issued * spc_cost) as jml')
+                ->leftJoin('wo_dets_sp','wd_sp_wonumber','=','wo_number')
+                ->leftJoin('sp_cost', function ($join) {
+                    $join->on('sp_cost.spc_part', '=', 'wo_dets_sp.wd_sp_spcode')
+                         ->whereRaw("sp_cost.spc_period = DATE_FORMAT(wo_mstr.wo_job_finishdate, '%y%m')");
+                })
+                ->whereWd_sp_wonumber($data->wo_number)
+                ->first();
+                
+                /* DB::table('wo_dets_sp')
                     ->selectRaw('sum(wd_sp_issued * wd_sp_itemcost) as jml')
                     ->whereWd_sp_wonumber($data->wo_number)
-                    ->first();
+                    ->first(); */
 
                 // dump($dataharga->jml);
 

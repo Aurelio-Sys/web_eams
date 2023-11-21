@@ -15,10 +15,10 @@
     <form action="/loadspcost" method="post" id="submit">
         {{ method_field('post') }}
         {{ csrf_field() }}
-        <div class="row mb-4">
+        <div class="row mb-2">
             <p class="pb-0 m-0">Inputkan periode PC Cost dengan format YYMM.</p>
         </div>
-        <div class="row mb-4">
+        <div class="row mb-0">
             <label for="t_cust" class="col-form-label col-md-1 text-md-left">Period</label>
             <div class="col-md-3">
                 <input type="text" class="form-control" id="t_period" name="t_period" required autocomplete="off"> 
