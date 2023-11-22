@@ -2360,6 +2360,7 @@ class SparepartController extends Controller
                             't_loc' => (string) $thisresult->t_loc,
                             't_lot' => (string) $thisresult->t_lot,
                             't_qtyoh' => number_format((float) $thisresult->t_qtyoh, 2),
+                            't_um' => (string) $thisresult->t_um,
                         ]);
                     }
                 }
@@ -2389,6 +2390,7 @@ class SparepartController extends Controller
             $table->string('t_loc')->nullable();
             $table->string('t_lot')->nullable();
             $table->decimal('t_qtyoh', 10, 2);
+            $table->string('t_um');
             $table->temporary();
         });
 
@@ -2418,6 +2420,7 @@ class SparepartController extends Controller
                                 't_loc' => (string) $thisresult->t_loc,
                                 // 't_lot' => (string) $thisresult->t_lot,
                                 't_qtyoh' => number_format((float) $thisresult->t_qtyoh, 2),
+                                't_um' => (string) $thisresult->t_um,
                             ]);
                     }
 
