@@ -1793,7 +1793,7 @@ class UserChartController extends Controller
         DB::beginTransaction();
 
         try {
-
+            $sonumber = 'eams' . $req->site_genso;
             $domain = ModelsQxwsa::first();
 
             $checkso_eams = (new WSAServices())->wsasearchso($domain->wsas_domain);
@@ -2026,7 +2026,7 @@ class UserChartController extends Controller
 
                             $qdocBody .= '<salesOrder>
                                                 <operation>A</operation>
-                                                <soNbr>EAMS</soNbr>
+                                                <soNbr>'.$sonumber.'</soNbr>
                                                 <soCust>'.$req->t_cust.'</soCust>
                                                 <soShipvia>FEDX</soShipvia>
                                                 <soDueDate>'.$lastschedule->temp_sch_date.'</soDueDate>
@@ -2046,7 +2046,7 @@ class UserChartController extends Controller
                                                     <sodDueDate>'.$datas->temp_sch_date.'</sodDueDate>
                                                 </salesOrderDetail>';
                                     $line_nbr++;
-                                    dump($datas->temp_sp);
+                                    // dump($datas->temp_sp);
                                 }
                             }
 
@@ -2430,7 +2430,7 @@ class UserChartController extends Controller
 
                             $qdocBody .= '<salesOrder>
                                                 <operation>A</operation>
-                                                <soNbr>EAMS</soNbr>
+                                                <soNbr>'.$sonumber.'</soNbr>
                                                 <soCust>'.$req->t_cust.'</soCust>
                                                 <soShipvia>FEDX</soShipvia>
                                                 <soDueDate>'.$lastschedule->temp_sch_date.'</soDueDate>
