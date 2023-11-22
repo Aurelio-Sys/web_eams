@@ -162,7 +162,7 @@
                                 <th>WO Type</th>
                                 <th>Status</th>
                                 <th>Cost</th>
-                                <th>Detail</th>
+                                {{--  <th>Detail</th>  --}}
                               </tr>
                             </thead>
                             <tbody id='detailapp'>

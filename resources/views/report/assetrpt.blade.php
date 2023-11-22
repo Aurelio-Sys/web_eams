@@ -53,7 +53,7 @@
                 <select id="s_type" class="form-control" style="color:black" name="s_type" autofocus autocomplete="off">
                 <option value="">--</option>
                 <option value="PM" {{$stype === "PM" ? "selected" : ""}}>PM</option>
-                <option value="WO" {{$stype === "WO" ? "selected" : ""}}>WO</option>
+                <option value="CM" {{$stype === "CM" ? "selected" : ""}}>CM</option>
                 </select>
             </div>
             <label for="s_asset" class="col-md-2 col-form-label text-md-right">{{ __('Asset') }}</label>
@@ -74,8 +74,8 @@
                 @endforeach
             </select>
             </div>
-            <label for="s_eng" class="col-md-2 col-form-label text-md-right">{{ __('Engineer') }}</label>
-            <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <label for="s_eng" class="col-md-2 col-form-label text-md-right" style="display:none">{{ __('Engineer') }}</label>
+            <div class="col-md-4 col-sm-12 mb-2 input-group" style="display:none">
             <select id="s_eng" class="form-control" style="color:black" name="s_eng" autofocus autocomplete="off">
                 <option value="">--Select Engineer--</option>
                 @foreach($dataeng as $de)
@@ -83,6 +83,7 @@
                 @endforeach
             </select>
             </div>
+              <label for="s_eng" class="col-md-2 col-form-label text-md-right">{{ __('') }}</label>
             <div class="col-md-2 col-sm-12 mb-2 input-group">
             <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
             </div>
@@ -155,11 +156,11 @@
          	<div class="panel-body">
               	<div class="modal-body">
                 	<div class="form-group row col-md-12">
-                        <label for="e_code" class="col-md-1 col-form-label text-md-right">{{ __('ID') }}</label>
+                        <label for="e_code" class="col-md-1 col-form-label text-md-right">{{ __('Asset') }}</label>
                         <div class="col-md-4">
                             <input id="e_code" type="text" class="form-control" name="e_code" readonly="true">
                         </div>
-                        <label for="e_desc" class="col-md-1 col-form-label text-md-right">{{ __('Name') }}</label>
+                        <label for="e_desc" class="col-md-1 col-form-label text-md-right">{{ __('Desc') }}</label>
                         <div class="col-md-6">
                             <input id="e_desc" type="text" class="form-control" name="e_desc" readonly="true">
                         </div>
@@ -168,11 +169,11 @@
                         <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
                             <thead>
                               <tr id='full'>
-                                <th width="15%">WO Number</th>
-                                <th width="35%">Asset</th>
-                                <th width="25%">Engineer</th>
+                                <th width="20%">WO Number</th>
+                                {{--  <th width="35%">Asset</th>  --}}
+                                <th width="50%">Engineer</th>
                                 <th width="15%">WO Schedule</th>
-                                <th width="10%">Status</th>
+                                <th width="15%">Status</th>
                               </tr>
                             </thead>
                             <tbody id='detailapp'>
