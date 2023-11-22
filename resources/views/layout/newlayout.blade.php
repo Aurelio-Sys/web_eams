@@ -439,14 +439,14 @@ to get the desired effect
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'US04'))
                 <li class="nav-item has-treeview">
-                  <a href="{{route('usbrowse')}}" class="nav-link ">
+                  <a href="/usbrowse" class="nav-link ">
                     <p>Usage Browse</p>
                   </a>
                 </li>
                 @endif
                 @if(str_contains( Session::get('menu_access'), 'US08'))
                 <li class="nav-item has-treeview">
-                  <a href="{{route('pmmeter')}}" class="nav-link ">
+                  <a href="/pmmeter" class="nav-link ">
                     <p>PM Planning for Meter</p>
                   </a>
                 </li>
@@ -505,7 +505,7 @@ to get the desired effect
               <ul class="nav nav-treeview">
                 @if(str_contains( Session::get('menu_access'), 'BO01'))
                 <li class="nav-item has-treeview">
-                  <a href="{{url('/booking')}}" class="nav-link">
+                  <a href="/booking" class="nav-link">
                     <p>Asset Booking</p>
                   </a>
                 </li>

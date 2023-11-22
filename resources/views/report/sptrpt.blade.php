@@ -74,6 +74,17 @@
                       @endforeach
                     </select>
                   </div>
+                  <label for="s_dept" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
+                  <label for="s_dept" class="col-md-2 col-form-label text-md-right">{{ __('Type') }}</label>
+                  <div class="col-md-3 col-sm-12 mb-2 input-group">
+                    <select id="s_type" class="form-control" style="color:black" name="s_type">
+                      <option value="">--Select--</option>
+                      @foreach($datatype as $dt)
+                      <option value="{{$dt->temp_type}}" {{$dt->temp_type === $stype ? 'selected' : ''}}>{{$dt->temp_type}}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                  <label for="s_dept" class="col-md-6 col-form-label text-md-right">{{ __('') }}</label>
                   <div class="col-md-1"></div>
                   <label for="s_datefrom" class="col-md-2 col-form-label text-md-right">{{ __('Date From') }}</label>
                   <div class="col-md-3 col-sm-12 mb-2 input-group">
@@ -108,8 +119,14 @@
   <table class="table table-bordered mt-0" id="dataTable" width="100%" cellspacing="0" style="width:100%;padding: .2rem !important;">
     <thead>
       <tr style="text-align: center;">
+        <th>Trans No.</th>
+        <th>Trans By</th>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Dept Name</th>
         <th>Sparepart</th>
         <th>Desc</th>
+        <th>Qty</th>
         <th>Location From</th>
         <th>Location Desc From</th>
         <th>Lot From</th>
@@ -117,12 +134,6 @@
         <th>Location Desc To</th>
         <th>Date</th>
         <th>Type</th>
-        <th>Trans No.</th>
-        <th>Trans By</th>
-        <th>Name</th>
-        <th>Department</th>
-        <th>Dept Name</th>
-        <th>Qty</th>
       </tr>
     </thead>
     <tbody>
@@ -172,6 +183,7 @@
     $('#s_dept').val('');
     $('#s_datefrom').val('');
     $('#s_dateto').val('');
+    $('#s_type').val('');
   }
 
   $(document).on('click', '#btnrefresh', function() {

@@ -819,6 +819,7 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('/reqsprouteappr',[SparepartController::class, 'reqsprouteappr']);
 	Route::get('/reqspapproval', [SparepartController::class, 'reqspapprovalbrowse'])->name('approvalBrowseSP');
 	Route::post('/reqspapprove', [SparepartController::class, 'reqspapproval'])->name('approveSP');
+	route::get('/reqspprint/{reqspnbr}',[SparepartController::class, 'reqspprint']);
 
 	//Transfer Sparepart
 	Route::get('/trfsp', [SparepartController::class, 'trfspbrowse'])->name('trfspbrowse');

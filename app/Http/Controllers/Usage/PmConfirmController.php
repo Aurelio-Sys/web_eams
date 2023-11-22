@@ -25,6 +25,19 @@ class PmConfirmController extends Controller
         $s_date1 = $req->s_date1;
         $s_date2 = $req->s_date2;
 
+        // Menghapus data dari tabel hasil proses PM Planning (pmo_confirm) yang tidak ada master data Preventive nya (pma_asset) 
+        // agar tidak error saat dilakukan confirm
+        $recordsWithoutMatch = DB::table('pmo_confirm')
+            ->where(function ($query) {
+                $query->whereNotIn('pmo_asset', function ($subquery) {
+                    $subquery->select('pma_asset')->from('pma_asset');
+                })
+                ->orWhereNotIn('pmo_pmcode', function ($subquery) {
+                    $subquery->select('pma_pmcode')->from('pma_asset');
+                });
+            })
+            ->delete();
+
         // Select data yang pma_pmcode nya bukan kosong
         $data = DB::table('pmo_confirm')
             ->leftJoin('asset_mstr','asset_code','=','pmo_asset')
@@ -239,6 +252,11 @@ class PmConfirmController extends Controller
                             $dleadtime = 0;
                         }
 
+                        if($deng == null) {
+                            toast('Work Order Generated Error, Engineer Does Not Exist.', 'error');
+                            return back();
+                        }
+
                         if(is_null($dleadtime)) {
                             $dleadtime = 0;
                         }
@@ -360,7 +378,7 @@ class PmConfirmController extends Controller
             DB::rollBack();
 
             dd($err);
-            toast('Work Order Generated Error, please re-generate again.', 'success');
+            toast('Work Order Generated Error, please re-generate again.', 'error');
             return back();
         }
         

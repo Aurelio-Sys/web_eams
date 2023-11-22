@@ -26,7 +26,7 @@ class AssetMoveController extends Controller
         
         $data = DB::table('asset_move')
             ->selectRaw('asset_code,asset_desc,asmove_fromsite, asmove_fromloc, f2.asloc_desc as descfrom,
-                asmove_tosite, asmove_toloc, t2.asloc_desc as descto, asmove_date')
+                asmove_tosite, asmove_toloc, t2.asloc_desc as descto, asmove_date, asmove_note')
             ->join('asset_site as f1','f1.assite_code','=','asmove_fromsite')
             ->join('asset_loc as f2','f2.asloc_code','=','asmove_fromloc')
             ->join('asset_site as t1','t1.assite_code','=','asmove_tosite')
@@ -101,7 +101,8 @@ class AssetMoveController extends Controller
                 'asmove_fromloc'      => $request->t_fromloc,
                 'asmove_tosite'      => $request->t_tosite,
                 'asmove_toloc'      => $request->t_toloc, 
-                'asmove_date'   => $request->t_date,               
+                'asmove_date'   => $request->t_date,       
+                'asmove_note' => $request->t_note,        
                 'created_at'    => Carbon::now()->toDateTimeString(),
                 'updated_at'    => Carbon::now()->toDateTimeString(),
                 // 'edited_by'     => Session::get('username'),

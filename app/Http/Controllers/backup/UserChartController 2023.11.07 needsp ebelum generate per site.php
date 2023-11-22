@@ -1506,7 +1506,6 @@ class UserChartController extends Controller
         $sper2 = $req->s_per2;
         $ssp = $req->s_sp;
         $seng = $req->s_eng;
-        $ssite = $req->s_site;
         
         /* Temp table untuk menampung data spare part dari Wo detail, Wo yang belum ada detailnya, Wo yang belum terbentuk */
         Schema::create('temp_wo', function ($table) {
@@ -1516,7 +1515,6 @@ class UserChartController extends Controller
             $table->date('temp_sch_date');
             $table->date('temp_create_date');
             $table->string('temp_status');
-            $table->string('temp_site')->nullable();
             $table->string('temp_sp')->nullable();
             $table->string('temp_sp_desc')->nullable();
             $table->decimal('temp_qty_req',10,2)->nullable();
@@ -1533,7 +1531,6 @@ class UserChartController extends Controller
                         ->groupby('wd_sp_wonumber');
                 })
             ->join('spg_list','spg_code','=','wo_sp_code')
-            ->leftJoin('sp_mstr','spm_code','=','spg_spcode')
             ->whereNotIn('wo_status',['closed','delete','canceled'])
             ->orderBy('wo_start_date')
             ->orderBy('wo_number')
@@ -1546,7 +1543,6 @@ class UserChartController extends Controller
                 'temp_create_date' => $da->wo_system_create,
                 'temp_sch_date' => $da->wo_start_date,
                 'temp_status' => $da->wo_status,
-                'temp_site' => $da->spm_site,
                 'temp_sp' => $da->spg_spcode,
                 'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->spg_spcode)->value('spm_desc'),
                 'temp_qty_req' => $da->spg_qtyreq,
@@ -1558,7 +1554,6 @@ class UserChartController extends Controller
         /* Mencari data sparepart yang sudah ada wo detail nya  di tabel wo_dets_sp */
         $data = DB::table('wo_mstr')
             ->join('wo_dets_sp','wd_sp_wonumber','=','wo_number')
-            ->leftJoin('sp_mstr','spm_code','=','wd_sp_spcode')
             ->whereNotIn('wo_status',['closed','delete','canceled'])
             ->orderBy('wo_start_date')
             ->orderBy('wo_number')
@@ -1571,7 +1566,6 @@ class UserChartController extends Controller
                 'temp_create_date' => $da->wo_system_create,
                 'temp_sch_date' => $da->wo_start_date,
                 'temp_status' => $da->wo_status,
-                'temp_site' => $da->spm_site,
                 'temp_sp' => $da->wd_sp_spcode,
                 'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->wd_sp_spcode)->value('spm_desc'),
                 'temp_qty_req' => $da->wd_sp_required,
@@ -1584,7 +1578,6 @@ class UserChartController extends Controller
         $data = DB::table('pmo_confirm')
             ->leftJoin('pmc_mstr','pmo_pmcode','=','pmc_code')
             ->leftJoin('spg_list','spg_code','=','pmc_spg')
-            ->leftJoin('sp_mstr','spm_code','=','spg_spcode')
             // ->wherePmo_sch_date('2023-07-17')
             ->whereNotNull('pmo_pmcode')
             ->get();
@@ -1596,7 +1589,6 @@ class UserChartController extends Controller
                 'temp_create_date' => $da->pmo_sch_date,
                 'temp_sch_date' => $da->pmo_sch_date,
                 'temp_status' => 'Plan',
-                'temp_site' => $da->spm_site,
                 'temp_sp' => $da->spg_spcode,
                 'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->spg_spcode)->value('spm_desc'),
                 'temp_qty_req' => $da->spg_qtyreq,
@@ -1607,11 +1599,10 @@ class UserChartController extends Controller
 
         $datatemp = DB::table('temp_wo')
             ->whereNotIn('temp_status',['closed','delete'])
-            ->selectRaw('temp_sch_date,temp_sp,temp_sp_desc,sum(temp_qty_req) as sumreq,temp_site')
+            ->selectRaw('temp_sch_date,temp_sp,temp_sp_desc,sum(temp_qty_req) as sumreq')
             // ->whereTemp_sp('BESI')
             ->whereNotNull('temp_sp')
             ->orderBy('temp_sch_date')
-            ->orderBy('temp_site')
             ->orderBy('temp_sp')
             ->groupBy('temp_sch_date','temp_sp');
 // dd($datatemp->get());
@@ -1626,9 +1617,6 @@ class UserChartController extends Controller
         }
         if($ssp) {
             $datatemp = $datatemp->where('temp_sp',$ssp);
-        }
-        if($ssite) {
-            $datatemp = $datatemp->where('temp_site','=',$ssite);
         }
        
         $datatemp = $datatemp->paginate(10);   
@@ -1785,15 +1773,11 @@ class UserChartController extends Controller
     
     public function generateso(Request $req) /** Blade : needsp */
     {
-        if(!$req->site_genso) {
-            toast('Site is required!!', 'error')->persistent('Dismiss');
-            return redirect()->back();
-        }
-
+// dd($req->all());
         DB::beginTransaction();
 
         try {
-            $sonumber = 'eams' . $req->site_genso;
+
             $domain = ModelsQxwsa::first();
 
             $checkso_eams = (new WSAServices())->wsasearchso($domain->wsas_domain);
@@ -1807,11 +1791,10 @@ class UserChartController extends Controller
                     toast('WSA Failed', 'error')->persistent('Dismiss');
                     return redirect()->back();
                 } else {
-                    $sper1 = $req->s_per1;
-                    $sper2 = $req->s_per2;
-                    $ssp = $req->s_sp;
-                    $ssite = $req->site_genso;
-                    
+                    $sasset = $req->hs_asset;
+                    $ssp = $req->hs_sp;
+                    $sper1 = $req->hs_per1;
+                    $sper2 = $req->hs_per2;
                     /* Temp table untuk menampung data spare part dari Wo detail, Wo yang belum ada detailnya, Wo yang belum terbentuk */
                     Schema::create('temp_wo', function ($table) {
                         $table->increments('id');
@@ -1820,7 +1803,6 @@ class UserChartController extends Controller
                         $table->date('temp_sch_date');
                         $table->date('temp_create_date');
                         $table->string('temp_status');
-                        $table->string('temp_site')->nullable();
                         $table->string('temp_sp')->nullable();
                         $table->string('temp_sp_desc')->nullable();
                         $table->decimal('temp_qty_req',10,2)->nullable();
@@ -1828,7 +1810,7 @@ class UserChartController extends Controller
                         $table->decimal('temp_qty_need',10,2)->nullable();
                         $table->temporary();
                     });
-            
+
                     /* Mencari data sparepart dari wo yang statusnya bukan close atau delete dan tidak mempunyai data detail sparepart dari tabel wo_dets_sp */
                     $data = DB::table('wo_mstr')
                         ->whereNotIn('wo_number', function ($query) {
@@ -1837,12 +1819,11 @@ class UserChartController extends Controller
                                     ->groupby('wd_sp_wonumber');
                             })
                         ->join('spg_list','spg_code','=','wo_sp_code')
-                        ->leftJoin('sp_mstr','spm_code','=','spg_spcode')
                         ->whereNotIn('wo_status',['closed','delete','canceled'])
                         ->orderBy('wo_start_date')
                         ->orderBy('wo_number')
                         ->get();
-            
+
                     foreach($data as $da){
                         DB::table('temp_wo')->insert([
                             'temp_wo' => $da->wo_number,
@@ -1850,7 +1831,6 @@ class UserChartController extends Controller
                             'temp_create_date' => $da->wo_system_create,
                             'temp_sch_date' => $da->wo_start_date,
                             'temp_status' => $da->wo_status,
-                            'temp_site' => $da->spm_site,
                             'temp_sp' => $da->spg_spcode,
                             'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->spg_spcode)->value('spm_desc'),
                             'temp_qty_req' => $da->spg_qtyreq,
@@ -1858,16 +1838,15 @@ class UserChartController extends Controller
                             'temp_qty_need' => $da->spg_qtyreq,
                         ]);
                     } 
-                   
+                
                     /* Mencari data sparepart yang sudah ada wo detail nya  di tabel wo_dets_sp */
                     $data = DB::table('wo_mstr')
                         ->join('wo_dets_sp','wd_sp_wonumber','=','wo_number')
-                        ->leftJoin('sp_mstr','spm_code','=','wd_sp_spcode')
                         ->whereNotIn('wo_status',['closed','delete','canceled'])
                         ->orderBy('wo_start_date')
                         ->orderBy('wo_number')
                         ->get();
-            
+
                     foreach($data as $da){
                         DB::table('temp_wo')->insert([
                             'temp_wo' => $da->wo_number,
@@ -1875,7 +1854,6 @@ class UserChartController extends Controller
                             'temp_create_date' => $da->wo_system_create,
                             'temp_sch_date' => $da->wo_start_date,
                             'temp_status' => $da->wo_status,
-                            'temp_site' => $da->spm_site,
                             'temp_sp' => $da->wd_sp_spcode,
                             'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->wd_sp_spcode)->value('spm_desc'),
                             'temp_qty_req' => $da->wd_sp_required,
@@ -1883,12 +1861,11 @@ class UserChartController extends Controller
                             'temp_qty_need' => $da->wd_sp_required - $da->wd_sp_issued, 
                         ]);
                     } 
-            
+
                     /** Mencari data sparepart dari PM Plan (yang belum di confirm) */
                     $data = DB::table('pmo_confirm')
                         ->leftJoin('pmc_mstr','pmo_pmcode','=','pmc_code')
                         ->leftJoin('spg_list','spg_code','=','pmc_spg')
-                        ->leftJoin('sp_mstr','spm_code','=','spg_spcode')
                         // ->wherePmo_sch_date('2023-07-17')
                         ->whereNotNull('pmo_pmcode')
                         ->get();
@@ -1900,7 +1877,6 @@ class UserChartController extends Controller
                             'temp_create_date' => $da->pmo_sch_date,
                             'temp_sch_date' => $da->pmo_sch_date,
                             'temp_status' => 'Plan',
-                            'temp_site' => $da->spm_site,
                             'temp_sp' => $da->spg_spcode,
                             'temp_sp_desc' => DB::table('sp_mstr')->where('spm_code','=',$da->spg_spcode)->value('spm_desc'),
                             'temp_qty_req' => $da->spg_qtyreq,
@@ -1908,30 +1884,28 @@ class UserChartController extends Controller
                             'temp_qty_need' => 0, 
                         ]);
                     } 
-            
+
                     $datatemp = DB::table('temp_wo')
                         ->whereNotIn('temp_status',['closed','delete'])
-                        ->selectRaw('temp_sch_date,temp_sp,temp_sp_desc,sum(temp_qty_req) as sumreq,temp_site')
+                        ->selectRaw('temp_sch_date,temp_sp,temp_sp_desc,sum(temp_qty_req) as sumreq')
                         // ->whereTemp_sp('BESI')
                         ->whereNotNull('temp_sp')
                         ->orderBy('temp_sch_date')
-                        ->orderBy('temp_site')
                         ->orderBy('temp_sp')
                         ->groupBy('temp_sch_date','temp_sp');
             // dd($datatemp->get());
-
+                    if($sasset) {
+                        $datatemp = $datatemp->where('temp_asset','=',$sasset);
+                    }
                     if($sper1) {
                         $datatemp = $datatemp->whereBetween('temp_create_date',[$sper1,$sper2]);
                     }
                     if($ssp) {
                         $datatemp = $datatemp->where('temp_sp',$ssp);
                     }
-                    if($ssite) {
-                        $datatemp = $datatemp->where('temp_site','=',$ssite);
-                    }
                 
                     $datatemp = $datatemp->get();   
-
+            // dd($datatemp);
                     $lastschedule = DB::table('temp_wo')
                             ->orderBy('temp_sch_date','desc')
                             ->first();
@@ -1982,7 +1956,7 @@ class UserChartController extends Controller
                                             <qcom:ttContext>
                                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                                             <qcom:propertyName>version</qcom:propertyName>
-                                            <qcom:propertyValue>ERP3_2</qcom:propertyValue>
+                                            <qcom:propertyValue>ERP3_3</qcom:propertyValue>
                                             </qcom:ttContext>
                                             <qcom:ttContext>
                                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -2026,11 +2000,10 @@ class UserChartController extends Controller
 
                             $qdocBody .= '<salesOrder>
                                                 <operation>A</operation>
-                                                <soNbr>'.$sonumber.'</soNbr>
+                                                <soNbr>EAMS</soNbr>
                                                 <soCust>'.$req->t_cust.'</soCust>
                                                 <soShipvia>FEDX</soShipvia>
-                                                <soDueDate>'.$lastschedule->temp_sch_date.'</soDueDate>
-                                                <soPo>EAMS</soPo>';
+                                                <soDueDate>'.$lastschedule->temp_sch_date.'</soDueDate>';
 
                             $line_nbr = 1;
 
@@ -2046,7 +2019,7 @@ class UserChartController extends Controller
                                                     <sodDueDate>'.$datas->temp_sch_date.'</sodDueDate>
                                                 </salesOrderDetail>';
                                     $line_nbr++;
-                                    // dump($datas->temp_sp);
+                                
                                 }
                             }
 
@@ -2203,7 +2176,7 @@ class UserChartController extends Controller
                                             <qcom:ttContext>
                                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
                                             <qcom:propertyName>version</qcom:propertyName>
-                                            <qcom:propertyValue>ERP3_2</qcom:propertyValue>
+                                            <qcom:propertyValue>ERP3_3</qcom:propertyValue>
                                             </qcom:ttContext>
                                             <qcom:ttContext>
                                             <qcom:propertyQualifier>QAD</qcom:propertyQualifier>
@@ -2430,14 +2403,13 @@ class UserChartController extends Controller
 
                             $qdocBody .= '<salesOrder>
                                                 <operation>A</operation>
-                                                <soNbr>'.$sonumber.'</soNbr>
+                                                <soNbr>EAMS</soNbr>
                                                 <soCust>'.$req->t_cust.'</soCust>
                                                 <soShipvia>FEDX</soShipvia>
-                                                <soDueDate>'.$lastschedule->temp_sch_date.'</soDueDate>
-                                                <soPo>EAMS</soPo>';
+                                                <soDueDate>'.$lastschedule->temp_sch_date.'</soDueDate>';
 
                             $line_nbr = 1;
-                            
+
                             foreach($datatemp as $datas) {
                                 if($datas->sumreq > 0){
                                     $qdocBody .= '<salesOrderDetail>
@@ -2559,6 +2531,7 @@ class UserChartController extends Controller
                                 alert()->html('<u><b>Error Response Qxtend</b></u>',"<b>Detail Response Qxtend :</b><br>".$outputerror."",'error')->persistent('Dismiss');
                                 return redirect()->back();
                             }
+
                             DB::commit();
                             toast('SO EAMS Successfully Created', 'Success');
                             return redirect()->back();

@@ -1,8 +1,11 @@
 @forelse($data as $show)
 <tr>
-    <td>{{date('d-m-Y', strtotime($show->temp_sch_date))}}</td>
+    @php($qsp = $datasp->where('spm_code','=',$show->temp_sp)->first())
+
+    <td>{{$show->temp_site}}</td>
     <td>{{$show->temp_sp}}</td>
     <td>{{$show->temp_sp_desc}}</td>
+    <td>{{date('d-m-Y', strtotime($show->temp_sch_date))}}</td>
     <td style="text-align: right">{{number_format($show->sumreq,2)}}</td>
     <td style="text-align: center">
         <a href="javascript:void(0)" class="view" type="button" data-toggle="tooltip" title="View Service Request"

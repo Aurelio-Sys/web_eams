@@ -104,7 +104,7 @@ class SptRptController extends Controller
             ->leftJoin('users','username','=','ret_sph_retby')
             ->leftJoin('dept_mstr','dept_code','=','dept_user')
             ->where('ret_sph_action','<>','return sparepart created')
-            ->selectRaw('ret_sph_spcode,spm_desc,ret_sph_locfrom,ret_sph_lotfrom,ret_sph_locto,ret_sparepart_hist.created_at as tgl,
+            ->selectRaw('ret_sph_spcode,spm_desc,ret_sph_locfrom,ret_sph_lotto,ret_sph_locto,ret_sparepart_hist.created_at as tgl,
                 ret_sph_action,ret_sph_number,ret_sph_qtytrf,ret_sph_retby,name,dept_user,dept_desc')
             ->orderBy('ret_sparepart_hist.created_at')
             ->orderBy('ret_sph_spcode')
@@ -117,7 +117,7 @@ class SptRptController extends Controller
                 'temp_spdesc' => $rt->spm_desc,
                 'temp_fromloc' => $rt->ret_sph_locfrom,
                 'temp_fromlocdesc' => $datasploc->where('loc_code', $rt->ret_sph_locfrom)->pluck('loc_desc')->first() ,
-                'temp_fromlot' => $rt->ret_sph_lotfrom,
+                'temp_fromlot' => $rt->ret_sph_lotto,
                 'temp_toloc' => $rt->ret_sph_locto,
                 'temp_tolocdesc' => $datasploc->where('loc_code', $rt->ret_sph_locto)->pluck('loc_desc')->first() ,
                 'temp_date' => $rt->tgl,
@@ -134,11 +134,12 @@ class SptRptController extends Controller
         /** Mencari data dari history WO Reporting */
         $datawo = DB::table('wo_reporting_trans_hist')
             ->leftJoin('sp_mstr','spm_code','=','spcode_wohist_report')
-            ->leftJoin('users','username','=','userid_wohist_report')
-            ->leftJoin('dept_mstr','dept_code','=','dept_user')
+            ->leftJoin('eng_mstr','eng_code','=','userid_wohist_report')
+            ->leftJoin('dept_mstr','dept_code','=','eng_dept')
             // ->where('ret_sph_action','<>','return sparepart created')
             ->selectRaw('spcode_wohist_report,spm_desc,location_wohist_report,lotser_wohist_report,wohist_report_created_at as tgl,
-                "WO Reporting" as tipe,wonumber_wohist_report,qtychange_wohist_report,userid_wohist_report,name,dept_user,dept_desc')
+                "wo reporting" as tipe,wonumber_wohist_report,qtychange_wohist_report,userid_wohist_report,eng_desc,
+                eng_dept,dept_desc')
             ->orderBy('tgl')
             ->orderBy('spcode_wohist_report')
             ->get();
@@ -156,9 +157,9 @@ class SptRptController extends Controller
                 'temp_type' => $rt->tipe,
                 'temp_no' => $rt->wonumber_wohist_report,
                 'temp_by' => $rt->userid_wohist_report,
-                'temp_byname' => $rs->name,
-                'temp_dept' => $rs->dept_user,
-                'temp_deptdesc' => $rs->dept_desc,
+                'temp_byname' => $rt->eng_desc,
+                'temp_dept' => $rt->eng_dept,
+                'temp_deptdesc' => $rt->dept_desc,
                 'temp_qty' => $rt->qtychange_wohist_report,
             ]);
         }
@@ -180,6 +181,9 @@ class SptRptController extends Controller
         if ($request->s_dept) {
             $data->where('temp_dept', '=', $request->s_dept);
         }
+        if ($request->s_type) {
+            $data->where('temp_type','=',$request->s_type);
+        }
 
         $datefrom = $request->get('s_datefrom') == '' ? '2000-01-01' : date($request->get('s_datefrom'));
         $dateto = $request->get('s_dateto') == '' ? '3000-01-01' : date($request->get('s_dateto'));
@@ -190,6 +194,13 @@ class SptRptController extends Controller
         }
 
         $data = $data->paginate(10);
+
+        /** Untuk menampilkan pilihan filter Type */
+        $datatype = DB::table('temp_trans')
+            ->select('temp_type')
+            ->groupBy('temp_type')
+            ->orderBy('temp_type')
+            ->get();
 
         if ($request->dexcel == "excel") {
 
@@ -242,7 +253,8 @@ class SptRptController extends Controller
 
         } else {
             return view('report.sptrpt', ['data' => $data, 'requestby' => $requestby, 'datasp' => $datasp, 'datadept' => $datadept,
-            'ssp' => $request->s_sp, 'sreqby' => $request->s_reqby, 'sdept' => $request->s_dept,
+            'datatype' => $datatype,
+            'ssp' => $request->s_sp, 'sreqby' => $request->s_reqby, 'sdept' => $request->s_dept, 'stype' => $request->s_type,
             'sdatefrom' => $request->s_datefrom, 'sdateto' => $request->s_dateto, 'snomorrs' => $request->s_nomorrs]);
         }
         Schema::dropIfExists('temp_trans');
