@@ -96,7 +96,7 @@
   <div class="row mb-4">
       <label for="t_cust" class="col-form-label col-md-1 text-md-left">Customer</label>
       <div class="col-md-3">
-          <input type="text" class="form-control" id="t_cust" name="t_cust" value="eams" required> 
+          <input type="text" class="form-control" id="t_cust" name="t_cust" autocomplete="off" required> 
           <input type="hidden" class="form-control" id="site_genso" name="site_genso"> 
       </div>
 

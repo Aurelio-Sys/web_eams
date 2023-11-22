@@ -20,7 +20,9 @@
     <td>{{$show->rcm_eng}}</td>
     <td>
         <a href="javascript:void(0)" class="editarea2" id='editdata' data-toggle="tooltip"  title="Modify Data" data-target="#editModal"
-        data-asset="{{$show->rcm_asset}}" data-qcs="{{$show->rcm_qcs}}" data-start="{{$show->rcm_start}}"
+        data-asset="{{$show->rcm_asset}}" data-assetdesc="{{$show->asset_desc}}" 
+        data-qcs="{{$show->rcm_qcs}}"  data-qcsdesc="{{$desc1}}" 
+        data-start="{{$show->rcm_start}}"
         data-end="{{$show->rcm_end}}" data-interval="{{$show->rcm_interval}}" data-eng="{{$show->rcm_eng}}"
         data-email="{{$show->rcm_email}}"
         >

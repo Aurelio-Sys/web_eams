@@ -19,6 +19,7 @@
 @section('content')
 
 <!--FORM Search Disini -->
+<form action="/imp" method="GET">
 <div class="container-fluid mb-2">
     <div class="row">
       <div class="col-md-12">
@@ -32,27 +33,24 @@
             <div class="col-12 form-group row">
                 <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Impact Code</label>
                 <div class="col-md-4 mb-2 input-group">
-                    <input id="s_code" type="text" class="form-control" name="s_code"
-                    value="" autofocus autocomplete="off"/>
+                    <input id="s_code" type="text" class="form-control" name="s_code" value="{{$scode}}" autofocus autocomplete="off"/>
                 </div>
                 <label for="s_desc" class="col-md-2 col-sm-2 col-form-label text-md-right">Impact Description</label>
                 <div class="col-md-4 mb-2 input-group">
-                    <input id="s_desc" type="text" class="form-control" name="s_desc"
-                    value="" autofocus autocomplete="off"/>
+                    <input id="s_desc" type="text" class="form-control" name="s_desc" value="{{$sdesc}}" autofocus autocomplete="off"/>
                 </div>
                 <label for="btnsearch" class="col-md-2 col-sm-2 col-form-label text-md-left">{{ __('') }}</label>
                 <div class="col-md-2 mb-2 input-group">
-                    <input type="button" class="btn btn-block btn-primary" id="btnsearch" value="Search" />
+                    <button class="btn btn-block btn-primary" id="btnsearch" style="float:right"/>Search</button>
                 </div>
-                <div class="col-md-2 col-sm-12 mb-2 input-group">
-                    <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
+                <div class="col-md-1 col-sm-6 mb-1 input-group justify-content-md-center">
+                    <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'/><i class="fas fa-sync-alt"></i></button>
                 </div>
-                <input type="hidden" id="tmpcode"/>
-                <input type="hidden" id="tmpdesc"/>
             </div>          
         </div>
     </div>
 </div>
+</form>
 
 <!-- Bagian Searching -->
 <div class="col-md-12"><hr></div>
@@ -68,24 +66,26 @@
         </thead>
         <tbody>
             @foreach($data as $show)
-         <tr>
-            <td>{{$show->imp_code}}</td>
-            <td>{{$show->imp_desc}}</td>
-            <td>
-            <a href="" class="editModal" 
-               data-desc= "{{$show->imp_desc}}" data-toggle='modal' data-code ="{{$show->imp_code}}" data-target="#editModal"><i class="fas fa-edit"></i></button>
-            <a href="" class="deleteModal" 
-               data-desc= "{{$show->imp_desc}}" data-toggle='modal' data-code ="{{$show->imp_code}}"
-               data-toggle='modal' data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>               			
-   
-         </td>
-         </tr>
-         @endforeach
+                <tr>
+                    <td>{{$show->imp_code}}</td>
+                    <td>{{$show->imp_desc}}</td>
+                    <td>
+                    <a href="" class="editModal" 
+                    data-desc= "{{$show->imp_desc}}" data-toggle='modal' data-code ="{{$show->imp_code}}" data-target="#editModal"><i class="fas fa-edit"></i></button>
+                    <a href="" class="deleteModal" 
+                    data-desc= "{{$show->imp_desc}}" data-toggle='modal' data-code ="{{$show->imp_code}}"
+                    data-toggle='modal' data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>               			
+        
+                </td>
+                </tr>
+            @endforeach
+            <tr>
+                <td style="border: none !important;" colspan="15">
+                {{ $data->appends($_GET)->links() }}
+                </td>
+            </tr>
         </tbody>
     </table>
-    <input type="hidden" name="hidden_page" id="hidden_page" value="1"/>
-    <input type="hidden" name="hidden_column_name" id="hidden_column_name" value="imp_code"/>
-    <input type="hidden" name="hidden_sort_type" id="hidden_sort_type" value="asc" />
 </div>
 
 <!-- Modal Create -->
@@ -209,6 +209,14 @@
             document.getElementById('td_desc').innerHTML = desc;
        });
 
+        $(document).on('click', '#btnrefresh', function() {       
+            resetSearch();
+        });
+
+        function resetSearch() {
+            $('#s_code').val('');
+            $('#s_desc').val('');
+        }
        
     </script>
 @endsection

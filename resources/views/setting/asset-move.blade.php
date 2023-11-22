@@ -95,7 +95,7 @@
                 <th>Location To</th>
                 <th>Location To Desc</th>
                 <th>Date</th>
-                <!-- <th>Action</th> -->
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -178,6 +178,12 @@
                             </select>
                         </div>
                     </div>
+                    <div class="form-group row">
+                        <label for="t_note" class="col-md-4 col-form-label text-md-right">Note</label>
+                        <div class="col-md-6">
+                            <textarea id="t_note" class="form-control" name="t_note" ></textarea>
+                        </div>
+                    </div>
                     
                 </div>
 
@@ -234,6 +240,69 @@
     </div>
 </div>
 
+<!-- Modal View -->
+<div class="modal fade" id="viewModal" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center" id="exampleModalLabel">View Asset Movement</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <label for="v_asset" class="col-md-4 col-form-label text-md-right">Asset </label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="v_asset" name="v_asset" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="v_fromsite" class="col-md-4 col-form-label text-md-right">Site From</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="v_fromsite" name="v_fromsite" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="v_fromloc" class="col-md-4 col-form-label text-md-right">Location From</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="v_fromloc" name="v_fromloc" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="v_date" class="col-md-4 col-form-label text-md-right">Movement Date</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="v_date" name="v_date" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="v_tosite" class="col-md-4 col-form-label text-md-right">Site To</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="v_tosite" name="v_tosite" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="v_toloc" class="col-md-4 col-form-label text-md-right">Location To</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="v_toloc" name="v_toloc" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="v_note" class="col-md-4 col-form-label text-md-right">Note</label>
+                    <div class="col-md-6">
+                        <textarea id="v_note" class="form-control" name="v_note" readonly ></textarea>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal Delete -->
 <div class="modal fade" id="deleteModal" role="dialog" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
@@ -276,6 +345,30 @@
         document.getElementById('te_locationdesc').value = desc;
         document.getElementById('te_site').value = site
         document.getElementById('te_dsite').value = site + " - " + dsite;
+    });
+
+    $(document).on('click', '#viewdata', function(e) {
+        $('#viewModal').modal('show');
+
+        var asset = $(this).data('asset');
+        var desc = $(this).data('desc');
+        var fromsite = $(this).data('fromsite');
+        var fromloc = $(this).data('fromloc');
+        var descfrom = $(this).data('descfrom');
+        var tosite = $(this).data('tosite');
+        var toloc = $(this).data('toloc');
+        var descto = $(this).data('descto');
+        var ddate = $(this).data('ddate');
+        ddate = new Date(ddate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        var note = $(this).data('note');
+
+        document.getElementById('v_asset').value = asset + " -- " + desc;
+        document.getElementById('v_fromsite').value = fromsite;
+        document.getElementById('v_fromloc').value = fromloc + " -- " + descfrom;
+        document.getElementById('v_tosite').value = tosite;
+        document.getElementById('v_toloc').value = toloc + " -- " + descto;
+        document.getElementById('v_date').value = ddate;
+        document.getElementById('v_note').value = note;
     });
 
     $(document).on('click', '.deletearea', function(e) {
