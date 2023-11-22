@@ -81,6 +81,9 @@
                                 <td style="vertical-align:middle;text-align:left;">
                                     {{$datas->spm_code}} -- {{$datas->spm_desc}}
                                     <input type="hidden" name="spreq[]" value="{{$datas->spm_code}}" />
+                                    <a href="javascript:void(0)" class="viewstok" data-toggle="tooltip"  title="View Supply Stock" data-spcode="{{$datas->spm_code}}">
+                                        <i class="icon-table fa fa-search fa-lg"></i>
+                                    </a>
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
                                     {{number_format($datas->spg_qtyreq,2)}}
@@ -158,6 +161,23 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body table-wo" id='wonbrtablemodal'>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Stok Supply</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="thistablemodal">
 
             </div>
             <div class="modal-footer">
@@ -291,7 +311,10 @@
             @foreach($sp_all as $da)
             cols += '<option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
             @endforeach
-            cols += '</select>';
+            cols += '</select>&nbsp;';
+            cols += '<a href="javascript:void(0)" class="viewstok" data-toggle="tooltip"  title="View Supply Stock" data-spcode="">';
+            cols += '<i class="icon-table fa fa-search fa-lg"></i>';
+            cols += '</a>';
             cols += '</td>';
 
             cols += '<td>';
@@ -375,6 +398,87 @@
             var row = $(this).closest("tr");
             row.find(".siteto").val(siteTo);
 
+        });
+
+        $(document).on('change', 'select[name="spreq[]"]', function() {
+            // console.log('masuk');
+            var selectedValue = $(this).val();
+            
+            // Mengubah data-spcode pada elemen <a> yang berada dalam <td> yang sama
+            $(this).closest('td').find('.viewstok').attr('data-spcode', selectedValue);
+            // console.log("Updated WO Number: ", $(this).closest('td').find('.viewstok').attr('data-spcode')); 
+        });
+
+        $(document).on('click', '.viewstok', function() {
+            // $('#loadingtable').modal('show');
+            var row = $(this).closest("tr");
+            const spcode = $(this).attr('data-spcode');
+            // const getassetsite = document.getElementById('hidden_assetsite').value;
+
+            $.ajax({
+                url: '/gettrfspwsastockfrom',
+                method: 'GET',
+                data: {
+                    spcode: spcode,
+                },
+                success: function(vamp) {
+
+                    // select elemen HTML tempat menampilkan tabel
+                    const tableContainer = document.getElementById("thistablemodal");
+
+                    // hapus tabel lama (jika ada)
+                    if (tableContainer.hasChildNodes()) {
+                        tableContainer.removeChild(tableContainer.firstChild);
+                    }
+
+                    // membuat elemen tabel
+                    const table = document.createElement("table");
+                    table.setAttribute("class", "table table-bordered table-hover");
+
+                    // membuat header tabel
+                    const headerRow = document.createElement("tr");
+                    const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity"];
+                    headerColumns.forEach((columnTitle) => {
+                        const headerColumn = document.createElement("th");
+                        headerColumn.textContent = columnTitle;
+                        headerRow.appendChild(headerColumn);
+                    });
+                    table.appendChild(headerRow);
+
+                    // membuat baris record untuk setiap objek dalam dataLocLotFrom
+                    vamp.forEach((record) => {
+                        const rowtable = document.createElement("tr");
+                        const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh"];
+                        columns.forEach((columnKey) => {
+                            const column = document.createElement("td");
+                            column.textContent = record[columnKey];
+                            rowtable.appendChild(column);
+                        });
+                        table.appendChild(rowtable);
+                    });
+
+                    // menampilkan tabel pada elemen HTML yang dituju
+                    tableContainer.appendChild(table);
+
+                    // memanggil modal setelah tabel dimuat
+                    $('#myModal').modal('show');
+
+
+                },
+                complete: function(vamp) {
+                    //  $('.modal-backdrop').modal('hide');
+                    // alert($('.modal-backdrop').hasClass('in'));
+
+                    setTimeout(function() {
+                        $('#loadingtable').modal('hide');
+                    }, 500);
+
+                    setTimeout(function() {
+                        $('#viewModal').modal('show');
+                    }, 1000);
+
+                }
+            })
         });
     });
 </script>
