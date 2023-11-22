@@ -895,10 +895,19 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Code ') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Maintenance ') }}</label>
               <div class="col-6">
                 <label class="switch" for="Spm">
                   <input type="checkbox" class="custom-control-input" id="Spm" name="Spm" value="MTD12" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Cost ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="spcost">
+                  <input type="checkbox" class="custom-control-input" id="spcost" name="spcost" value="MTD52" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -1900,10 +1909,19 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Code ') }}</label>
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Maintenance ') }}</label>
               <div class="col-6">
                 <label class="switch" for="e_Spm">
                   <input type="checkbox" class="custom-control-input" id="e_Spm" name="e_Spm" value="MTD12" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="level" class="col-6 col-form-label text-md-right full-txt">{{ __('Spare Part Cost ') }}</label>
+              <div class="col-6">
+                <label class="switch" for="e_spcost">
+                  <input type="checkbox" class="custom-control-input" id="e_spcost" name="e_spcost" value="MTD52" />
                   <div class="slider round"></div>
                 </label>
               </div>
@@ -2340,6 +2358,11 @@
           document.getElementById('e_Spm').checked = true;
         } else {
           document.getElementById('e_Spm').checked = false;
+        }
+        if (listmenu.search("MTD52") >= 0) {
+          document.getElementById('e_spcost').checked = true;
+        } else {
+          document.getElementById('e_spcost').checked = false;
         }
         {{--  if (listmenu.search("MT14") >= 0) {
           document.getElementById('e_Tool').checked = true;

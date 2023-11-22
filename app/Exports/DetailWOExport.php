@@ -57,11 +57,15 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
                 CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 2 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 3), ';', -1) ELSE '' END AS eng3,
                 CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 3 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 4), ';', -1) ELSE '' END AS eng4,
                 CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 4 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 5), ';', -1) ELSE '' END AS eng5,
-                wd_sp_spcode as spcode,spm_desc,spm_price,wd_sp_required as req,wd_sp_whtf,wd_sp_issued ")
+                wd_sp_spcode as spcode,spm_desc,spc_cost,wd_sp_required as req,wd_sp_whtf,wd_sp_issued ")
             ->join('wo_mstr','wo_number','=','wd_sp_wonumber')
             ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
             ->leftJoin('asset_loc','asloc_code','=','asset_loc')
             ->leftJoin('sp_mstr','spm_code','=','wd_sp_spcode')
+            ->leftJoin('sp_cost', function ($join) {
+                $join->on('sp_cost.spc_part', '=', 'sp_mstr.spm_code')
+                     ->whereRaw("sp_cost.spc_period = DATE_FORMAT(wo_mstr.wo_job_finishdate, '%y%m')");
+            })
             ->orderBy('wd_sp_wonumber');
 
 
@@ -76,7 +80,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
             CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 2 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 3), ';', -1) ELSE '' END AS eng3,
             CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 3 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 4), ';', -1) ELSE '' END AS eng4,
             CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 4 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 5), ';', -1) ELSE '' END AS eng5,
-            spm_code as spcode,spm_desc,spm_price,spg_qtyreq as req,'0' as wd_sp_whtf,'0' as wd_sp_issued ")
+            spm_code as spcode,spm_desc,spc_cost,spg_qtyreq as req,'0' as wd_sp_whtf,'0' as wd_sp_issued ")
             // ->where('wo_nbr','=','PM-23-004839')
             ->whereNotIn('wo_number', function($q){
                 $q->select('wd_sp_wonumber')->from('wo_dets_sp');
@@ -84,7 +88,11 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
             ->join('spg_list','spg_code','=','wo_sp_code')
             ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
             ->leftJoin('asset_loc','asloc_code','=','asset_loc')
-            ->leftJoin('sp_mstr','spm_code','=','spg_spcode');
+            ->leftJoin('sp_mstr','spm_code','=','spg_spcode')
+            ->leftJoin('sp_cost', function ($join) {
+                $join->on('sp_cost.spc_part', '=', 'sp_mstr.spm_code')
+                     ->whereRaw("sp_cost.spc_period = DATE_FORMAT(wo_mstr.wo_job_finishdate, '%y%m')");
+            });
 
         /* 2a Jika tidak ada SparepartList nya */
         $datawo = DB::table('wo_mstr')
@@ -95,7 +103,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
             CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 2 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 3), ';', -1) ELSE '' END AS eng3,
             CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 3 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 4), ';', -1) ELSE '' END AS eng4,
             CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 4 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 5), ';', -1) ELSE '' END AS eng5,
-            '' as spcode,'' as spm_desc,'0' as spm_price,'0' as req,'0' as wd_sp_whtf,'0' as wd_sp_issued ")
+            '' as spcode,'' as spm_desc,'0' as spc_cost,'0' as req,'0' as wd_sp_whtf,'0' as wd_sp_issued ")
             // ->where('wo_nbr','=','PM-23-004839')
             ->whereNotIn('wo_number', function($q){
                 $q->select('wd_sp_wonumber')->from('wo_dets_sp');
