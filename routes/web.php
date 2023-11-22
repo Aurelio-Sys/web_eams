@@ -807,9 +807,11 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/reqspsubmit', [SparepartController::class,'reqspsubmit'])->name('reqspsubmit');
 	Route::get('/reqspeditdet',[SparepartController::class, 'reqspeditdet']);
 	Route::get('/reqsproute',[SparepartController::class, 'reqsproute']);
+	Route::get('/reqsproutehist',[SparepartController::class, 'reqsproutehist']);
 	Route::get('/reqspviewdet',[SparepartController::class, 'reqspviewdet']);
 	Route::post('/reqspupdate',[SparepartController::class, 'reqspupdate']);
 	Route::post('/reqspcancel', [SparepartController::class, 'reqspcancel']);
+	Route::post('/reqspapprcancel', [SparepartController::class, 'reqspapprcancel']);
 	Route::get('/reqspviewdetappr',[SparepartController::class, 'reqspviewdetappr']);
 	Route::get('/reqsprouteappr',[SparepartController::class, 'reqsprouteappr']);
 	Route::get('/reqspapproval', [SparepartController::class, 'reqspapprovalbrowse'])->name('approvalBrowseSP');
