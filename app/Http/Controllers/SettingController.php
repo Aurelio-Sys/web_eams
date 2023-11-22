@@ -1996,17 +1996,20 @@ class SettingController extends Controller
                     
                     // Simpan File Upload pada Public
                     $savepath = public_path('uploadasset/');
+                    $filepath = 'uploadasset/';
                     $upload->move($savepath, $filename);
                 
                     // Simpan ke DB Upload
                     DB::table('asset_upload')
                             ->insert([
-                                'filepath' => $savepath.$filename,
+                                'filepath' => $filepath . $filename,
                                 'asset_code' => $req->t_code,
                                 'created_at' => Carbon::now()->toDateTimeString(),
                                 'updated_at' => Carbon::now()->toDateTimeString(),
                             ]);
+                            
                 }
+
             }
 
             toast('Asset Created.', 'success');
@@ -2051,7 +2054,7 @@ class SettingController extends Controller
 
             $output .=  '<tr>
                             <td> 
-                            <a href="/uploadasset/'.$data->id.'" target="_blank">'.$filename.'</a> 
+                            <a href="/' . $data->filepath . '" target="_blank">' . $filename . '</a>
                             </td>
                             <td>
                             <a href="#" class="btn deleterow btn-danger">
@@ -2166,17 +2169,21 @@ class SettingController extends Controller
                 
                 // Simpan File Upload pada Public
                 $savepath = public_path('uploadasset/');
+                $filepath = 'uploadasset/';
                 $upload->move($savepath, $filename);
             
                 // Simpan ke DB Upload
                 DB::table('asset_upload')
                         ->insert([
-                            'filepath' => $savepath.$filename,
+                            'filepath' => $filepath . $filename,
                             'asset_code' => $req->te_code,
                             'created_at' => Carbon::now()->toDateTimeString(),
                             'updated_at' => Carbon::now()->toDateTimeString(),
                         ]);
+
             }
+
+            
         }
 
         DB::table('asset_mstr')

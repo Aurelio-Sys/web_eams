@@ -1785,11 +1785,15 @@ class UserChartController extends Controller
     
     public function generateso(Request $req) /** Blade : needsp */
     {
-dd($req->all());
+        if(!$req->site_genso) {
+            toast('Site is required!!', 'error')->persistent('Dismiss');
+            return redirect()->back();
+        }
+
         DB::beginTransaction();
 
         try {
-
+            $sonumber = 'eams' . $req->site_genso;
             $domain = ModelsQxwsa::first();
 
             $checkso_eams = (new WSAServices())->wsasearchso($domain->wsas_domain);
@@ -2022,7 +2026,7 @@ dd($req->all());
 
                             $qdocBody .= '<salesOrder>
                                                 <operation>A</operation>
-                                                <soNbr>EAMS</soNbr>
+                                                <soNbr>'.$sonumber.'</soNbr>
                                                 <soCust>'.$req->t_cust.'</soCust>
                                                 <soShipvia>FEDX</soShipvia>
                                                 <soDueDate>'.$lastschedule->temp_sch_date.'</soDueDate>
@@ -2042,7 +2046,7 @@ dd($req->all());
                                                     <sodDueDate>'.$datas->temp_sch_date.'</sodDueDate>
                                                 </salesOrderDetail>';
                                     $line_nbr++;
-                                    dump($datas->temp_sp);
+                                    // dump($datas->temp_sp);
                                 }
                             }
 
@@ -2426,7 +2430,7 @@ dd($req->all());
 
                             $qdocBody .= '<salesOrder>
                                                 <operation>A</operation>
-                                                <soNbr>EAMS</soNbr>
+                                                <soNbr>'.$sonumber.'</soNbr>
                                                 <soCust>'.$req->t_cust.'</soCust>
                                                 <soShipvia>FEDX</soShipvia>
                                                 <soDueDate>'.$lastschedule->temp_sch_date.'</soDueDate>

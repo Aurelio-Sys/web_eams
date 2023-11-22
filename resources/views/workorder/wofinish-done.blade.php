@@ -900,7 +900,7 @@
 
                         // membuat header tabel
                         const headerRow = document.createElement("tr");
-                        const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "Select"];
+                        const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "UM", "Select"];
                         headerColumns.forEach((columnTitle) => {
                             const headerColumn = document.createElement("th");
                             headerColumn.textContent = columnTitle;
@@ -911,7 +911,7 @@
                         // membuat baris record untuk setiap objek dalam dataLocLotFrom
                         vamp.forEach((record) => {
                             const rowtable = document.createElement("tr");
-                            const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh"];
+                            const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh", "t_um"];
                             columns.forEach((columnKey) => {
                                 const column = document.createElement("td");
                                 column.textContent = record[columnKey];
