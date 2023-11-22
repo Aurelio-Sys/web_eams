@@ -72,8 +72,8 @@ class ViewExport2 implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
             $kondisi .= " and wo_location = '".$loc."'";
         }
 
-        if($per1 != null ||$per1 != '' ){
-            $kondisi .= " and wo_system_create between CONCAT('".$per1."',' 00:00:00') AND CONCAT('".$per1."',' 23:59:59')";
+        if($per1 != null ||$per2 != '' ){
+            $kondisi .= " and wo_system_create between CONCAT('".$per1."',' 00:00:00') AND CONCAT('".$per2."',' 23:59:59')";
         }
 
         // dd($kondisi);

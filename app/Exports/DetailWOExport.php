@@ -63,7 +63,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
             ->leftJoin('asset_loc','asloc_code','=','asset_loc')
             ->leftJoin('sp_mstr','spm_code','=','wd_sp_spcode')
             ->orderBy('wd_sp_wonumber');
-
+// dd($datadet->get());
 
         /* 2 Mencari data sparepart yang belum ada wo detail nya */
         
@@ -76,7 +76,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
             CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 2 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 3), ';', -1) ELSE '' END AS eng3,
             CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 3 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 4), ';', -1) ELSE '' END AS eng4,
             CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 4 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 5), ';', -1) ELSE '' END AS eng5,
-            spm_code as spcode,spm_desc,spm_price,spg_qtyreq as req,'0' as wd_sp_whtf,'0' as wd_sp_issued ")
+            spg_spcode as spcode,spm_desc,spm_price,spg_qtyreq as req,'0' as wd_sp_whtf,'0' as wd_sp_issued ")
             // ->where('wo_nbr','=','PM-23-004839')
             ->whereNotIn('wo_number', function($q){
                 $q->select('wd_sp_wonumber')->from('wo_dets_sp');
