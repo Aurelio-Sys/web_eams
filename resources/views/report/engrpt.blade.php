@@ -85,7 +85,9 @@
       @php($woeng5 = $datawo->where('wo_engineer5','=',$de->eng_code)->count())
       @php($jmlwo = $woeng1 + $woeng2 + $woeng3 + $woeng4 + $woeng5)  --}}
 
-      @php($jmlwo = $datawo->where('wo_list_engineer','=',$de->eng_code)->count())
+      {{--  @php($jmlwo = $datawo->where('wo_list_engineer', 'like', '%' . $de->eng_code . '%')->count())  --}}
+      {{--  harusnya pakai like tapi belum berhasil  --}}
+      @php($jmlwo = $datawo->where('wo_list_engineer', '=',$de->eng_code)->count())
 
 
       <div class="col-xl-3 col-lg-5 col-md-4 col-xs-12 pl-0 pr-0" >
