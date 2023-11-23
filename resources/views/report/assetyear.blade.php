@@ -135,9 +135,10 @@
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
           <thead>
               <tr>
-                <th width="20%">Wo Number</th>
-                <th width="20%">Wo Date</th>
-                <th width="20%">WO Status</th>  
+                <th width="15%">Wo Number</th>
+                <th width="15%">Wo Date</th>
+                <th width="15%">WO Status</th>  
+                <th width="25%">Maintenance</th>  
                 <th width="40%">Engineer</th>  
               </tr>
           </thead>
@@ -186,13 +187,14 @@
   
             var code = $(this).data('code');
             var codedesc = $(this).data('codedesc');
-            var sch = $(this).data('sch'); 
+            var schbln = $(this).data('schbln'); 
+            var schthn = $(this).data('schthn'); 
   
             document.getElementById('v_code').innerHTML = code;
             document.getElementById('v_codedesc').innerHTML = codedesc;
   
             $.ajax({
-              url:"assetyeardetail?code="+code+"&sch="+sch,
+              url:"assetyeardetail?code="+code+"&schbln="+schbln+"&schthn="+schthn,
               success: function(data) {
                 console.log(data);
                 //alert(data);
