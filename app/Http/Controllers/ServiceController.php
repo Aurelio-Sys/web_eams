@@ -3222,6 +3222,27 @@ class ServiceController extends Controller
         return response($output);
     }
 
+    public function imageview_nodelete(Request $req)
+    {
+        //dd($req->all());
+        $wonumber = $req->wonumber;
+
+        $gambar = DB::table('wo_report_upload')
+            ->where('woreport_wonbr', '=', $wonumber)
+            ->get();
+
+        $output = "";
+        foreach ($gambar as $gambar) {
+            $output .= '<tr>
+                    <input type="hidden" value="' . $gambar->id . '" class="rowval"/>
+                    <td><a href="/' . $gambar->woreport_wonbr_filepath . '" target="_blank">' . $gambar->woreport_filename . '</a></td>
+                </tr>';
+        }
+
+        //return response()->json($gambar);
+        return response($output);
+    }
+
     public function useracceptancesearch(Request $req)
     {
         if ($req->ajax()) {

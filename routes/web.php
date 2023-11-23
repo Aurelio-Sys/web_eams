@@ -557,6 +557,7 @@ Route::group(['middleware' => ['auth']], function() {
 	
 	//image tommy
 	route::get('/imageview', 'ServiceController@imageview');
+	route::get('/imageview_nodelete', 'ServiceController@imageview_nodelete');
 
 	// 27.07.2021 booking tyas
 	route::get('/booking', 'BookingController@booking')->name('bookingBrowse');
