@@ -295,6 +295,12 @@
               </table>  
             </div>
         </div>
+        <div class="form-group row">
+            <label for="v_reportingnote" class="col-md-2 col-form-label text-md-left">WO Report Note</label>
+            <div class="col-md-4">
+              <textarea id="v_reportingnote" readonly type="text" class="form-control" name="v_reportingnote" value="{{ old('v_reportingnote') }}" rows="2" autofocus></textarea>
+            </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Close</button>
@@ -402,6 +408,7 @@
         var wotype = vamp.wo_master.wo_type;
         var wostart = vamp.wo_master.wo_job_startdate ? new Date(vamp.wo_master.wo_job_startdate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
         var wofinish = vamp.wo_master.wo_job_finishdate ? new Date(vamp.wo_master.wo_job_finishdate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
+        var reportnote = vamp.wo_master.wo_report_note ? vamp.wo_master.wo_report_note : '';
 
         let combineFailure = [];
 
@@ -442,6 +449,7 @@
         document.getElementById('v_wotype').value = wotype;
         document.getElementById('v_wostart').value = wostart;
         document.getElementById('v_wofinish').value = wofinish;
+        document.getElementById('v_reportingnote').value = reportnote;
         
 
       },complete: function(vamp) {
