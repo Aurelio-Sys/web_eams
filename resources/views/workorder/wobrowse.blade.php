@@ -914,6 +914,12 @@ div #munculgambar .gambar:hover{
             </table>
           </div>
         </div>
+        <div class="form-group row">
+          <label for="v_reportingnote" class="col-md-2 col-form-label text-md-left">WO Reporting Note</label>
+          <div class="col-md-4">
+            <textarea id="v_reportingnote" readonly type="text" class="form-control" name="v_reportingnote" value="{{ old('v_reportingnote') }}" rows="2" autofocus></textarea>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Close</button>
@@ -1870,6 +1876,8 @@ div #munculgambar .gambar:hover{
         var createdby = vamp.wo_master.wo_createdby;
         var department = vamp.wo_master.wo_department ? vamp.wo_master.wo_department : '';
         var rejectreason = vamp.sr_acceptance_note ? vamp.sr_acceptance_note : '';
+        var reportnote = vamp.wo_master.wo_report_note ? vamp.wo_master.wo_report_note : '';
+
 
         let combineFailure = [];
 
@@ -1906,6 +1914,7 @@ div #munculgambar .gambar:hover{
         document.getElementById('v_dept').value = department;
         document.getElementById('v_srnote').value = srnote;
         document.getElementById('v_rejectreason').value = rejectreason;
+        document.getElementById('v_reportingnote').value = reportnote;
 
 
       },
