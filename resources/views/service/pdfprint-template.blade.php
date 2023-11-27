@@ -468,7 +468,7 @@
               <p style="margin:0;padding:0;font-size:12px">
                 @if($womstr != null)
                 @if($womstr->wo_job_starttime != null)
-                {{date('H:i', strtotime($womstr->wo_finish_time))}}
+                {{date('H:i', strtotime($womstr->wo_job_finishtime))}}
                 @else
                 &nbsp;
                 @endif
@@ -478,7 +478,7 @@
           </tr>
         </table>
       </td>
-    </tr>
+    </tr> 
     <tr>
       <td style="height: 65px;border-left: 2px solid; border-right:1.5px" colspan="3">
         <p style=" margin-bottom:0px; margin-top:0px; margin-left: 5px; font-size:12px">
