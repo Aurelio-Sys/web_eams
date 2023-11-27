@@ -65,7 +65,7 @@ class DownrptController extends Controller
         $datamtbfsr = DB::table('service_req_mstr')
             ->selectRaw('sr_asset as asset,count(sr_number) as jmltr')
             ->leftjoin('asset_mstr','asset_code','=','sr_asset')
-            ->whereSr_fail_type('BRE')
+            /* ->whereSr_fail_type('BRE') */
             ->where('sr_status','<>','Canceled')
             ->groupBy('sr_asset');
 
@@ -73,7 +73,7 @@ class DownrptController extends Controller
         $datamtbfwo = DB::table('wo_mstr')
             ->selectRaw('wo_asset_code as asset,count(wo_number) as jmltr')
             ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
-            ->whereWo_failure_type('BRE')
+            /* ->whereWo_failure_type('BRE') */
             ->whereWo_type('CM')
             ->where('wo_status','<>','canceled')
             ->where(function ($query) {
@@ -87,14 +87,14 @@ class DownrptController extends Controller
             ->selectRaw('sr_asset as asset,sr_req_date as tglawal,wo_job_finishdate as tglakhir')
             ->Join('wo_mstr','wo_mstr.wo_number','=','service_req_mstr.wo_number')
             ->leftjoin('asset_mstr','asset_code','=','sr_asset')
-            ->whereSr_fail_type('BRE')
+            /* ->whereSr_fail_type('BRE') */
             ->where('sr_status','<>','Canceled')
             ->wherein('wo_status',['finished','Closed','Acceptance']);
 
         $datamttfwo = DB::table('wo_mstr')
             ->selectRaw('wo_asset_code as asset,wo_start_date as tglawal,wo_job_finishdate as tglakhir')
             ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
-            ->whereWo_failure_type('BRE')
+            /* ->whereWo_failure_type('BRE') */
             ->whereWo_type('CM')
             ->where('wo_status','<>','canceled')
             ->where(function ($query) {
@@ -108,13 +108,13 @@ class DownrptController extends Controller
             ->selectRaw('wo_mstr.id as woid, sr_asset as asset,sr_req_date as tglawal,sr_req_time as jamawal,wo_job_finishdate as tglakhir,wo_job_finishtime as jamakhir')
             ->Join('wo_mstr','wo_mstr.wo_number','=','service_req_mstr.wo_number')
             ->leftjoin('asset_mstr','asset_code','=','sr_asset')
-            ->whereSr_fail_type('BRE')
+            /* ->whereSr_fail_type('BRE') */
             ->wherein('wo_status',['acceptance','Closed']);
             
         $datamdtwo = DB::table('wo_mstr')   /** Untuk WO jam awalnya ambil dari jam input, karena tidak ada inputan untuk jam dan tanggalnya */
             ->selectRaw('wo_mstr.id as woid,wo_asset_code as asset,wo_start_date as tglawal,TIME(wo_system_create) as jamawal,wo_job_finishdate as tglakhir,wo_job_finishtime as jamakhir')
             ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
-            ->whereWo_failure_type('BRE')
+            /* ->whereWo_failure_type('BRE') */
             ->whereWo_type('CM')
             ->where(function ($query) {
                 $query->whereNull('wo_sr_number')
@@ -127,13 +127,13 @@ class DownrptController extends Controller
             ->selectRaw('sr_asset as asset,sr_req_date as tglawal,sr_req_time as jamawal,wo_job_finishdate as tglakhir,wo_job_finishtime as jamakhir')
             ->leftjoin('asset_mstr','asset_code','=','sr_asset')
             ->Join('wo_mstr','wo_mstr.wo_number','=','service_req_mstr.wo_number')
-            ->whereSr_fail_type('BRE')
+            /* ->whereSr_fail_type('BRE') */
             ->wherein('wo_status',['finished','acceptance','Closed']);
             
         $datamttrwo = DB::table('wo_mstr')   /** Untuk WO jam awalnya ambil dari jam input, karena tidak ada inputan untuk jam dan tanggalnya */
             ->selectRaw('wo_asset_code as asset,wo_start_date as tglawal,TIME(wo_system_create) as jamawal,wo_job_finishdate as tglakhir,wo_job_finishtime as jamakhir')
             ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
-            ->whereWo_failure_type('BRE')
+            /* ->whereWo_failure_type('BRE') */
             ->whereWo_type('CM')
             ->where(function ($query) {
                 $query->whereNull('wo_sr_number')
