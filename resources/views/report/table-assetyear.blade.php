@@ -33,7 +33,8 @@
             @endforeach
             
             <a href="javascript:void(0)" class="view" type="button" data-toggle="tooltip" title="View Service Request"
-            data-code="{{$show->asset_code}}" data-codedesc="{{$show->asset_desc}}" data-sch="a">
+            data-code="{{$show->asset_code}}" data-codedesc="{{$show->asset_desc}}" data-schbln="{{$count}}"
+            data-schthn="{{$bulan}}">
                 @if(count($wotampil) == 2)
                     <span class="badge badge-primary">WO & PM</span>
                 @else

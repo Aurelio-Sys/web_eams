@@ -300,6 +300,7 @@
                         </div>
                     </div>
                     <div class="col-md-12">
+                    <h6 style="margin-top: 10px;font-size: 18px;font-weight:bold">Approval Route</h6>
                         <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
                             <thead>
                                 <th style="width:10%">No.</th>
@@ -311,6 +312,21 @@
                                 <th style="width:15%">Timestamp</th>
                             </thead>
                             <tbody id='r_detailapp'></tbody>
+
+                        </table>
+                        <!-- &nbsp; -->
+                    <h6 style="margin-top: 20px;font-size: 18px;font-weight:bold">Approval Route History</h6>
+                        <table width="100%" id='assetTablex' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
+                            <thead>
+                                <th style="width:10%">No.</th>
+                                <th style="width:10%">Department</th>
+                                <th style="width:10%">Role</th>
+                                <th style="width:15%">Reason</th>
+                                <th style="width:15%">Status</th>
+                                <th style="width:10%">Approved By</th>
+                                <th style="width:15%">Timestamp</th>
+                            </thead>
+                            <tbody id='r_detailappx'></tbody>
 
                         </table>
                     </div>
@@ -489,6 +505,14 @@
             success: function(data) {
                 // console.log(data);
                 $('#r_detailapp').html('').append(data);
+            }
+        })
+
+        $.ajax({
+            url: "reqsproutehist?code=" + rsnumber,
+            success: function(data) {
+                // console.log(data);
+                $('#r_detailappx').html('').append(data);
             }
         })
 

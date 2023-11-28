@@ -67,7 +67,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
                      ->whereRaw("sp_cost.spc_period = DATE_FORMAT(wo_mstr.wo_job_finishdate, '%y%m')");
             })
             ->orderBy('wd_sp_wonumber');
-
+// dd($datadet->get());
 
         /* 2 Mencari data sparepart yang belum ada wo detail nya */
         

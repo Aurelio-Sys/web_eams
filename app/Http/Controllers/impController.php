@@ -16,14 +16,23 @@ use Svg\Tag\Rect;
 
 class impController extends Controller
 {
-    public function home()
+    public function home(Request $req)
     {
-
+        $scode = $req->s_code;
+        $sdesc = $req->s_desc;
+        
         $data = DB::table('imp_mstr');
-            
-        $data = $data->paginate(1);
 
-        return view('/setting/imp', compact('data'));
+        if($scode) {
+            $data = $data->where('imp_code','like','%'.$scode.'%');
+        }
+        if($sdesc) {
+            $data = $data->where('imp_desc','like','%'.$sdesc.'%');
+        }
+
+        $data = $data->paginate(10);
+
+        return view('/setting/imp', compact('data','scode','sdesc'));
     }
 
     public function create(Request $req)

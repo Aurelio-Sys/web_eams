@@ -121,7 +121,7 @@
                     <div class="form-group row">
                         <label for="t_key" class="col-md-2 col-form-label text-md-right">Keyword</label>
                         <div class="col-md-9">
-                           <input type="text" id="t_key" name="t_key" class="form-control">
+                           <input type="text" id="t_key" name="t_key" class="form-control" autocomplete="off">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -520,6 +520,20 @@
                     $('#t_wo').html('').append(data);
                 }
             }) 
+        });
+
+        $(document).on('change','#cek',function(e){
+            var checkbox = $(this), // Selected or current checkbox
+            value = checkbox.val(); // Value of checkbox
+
+
+            if (checkbox.is(':checked'))
+            {
+                $(this).closest("tr").find('.tick').val(1);
+            } else
+            {
+                $(this).closest("tr").find('.tick').val(0);
+            }        
         });
 
     </script>

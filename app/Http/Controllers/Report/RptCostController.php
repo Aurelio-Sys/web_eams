@@ -349,10 +349,11 @@ class RptCostController extends Controller
                 '<td>'.$data->wo_type.'</td>'.
                 '<td>'.$data->wo_status.'</td>'.
                 '<td style="text-align: right">'.number_format($dataharga->jml,2).'</td>'.
-                '<td><a href="javascript:void(0)" class="view" type="button" data-toggle="tooltip" title="View Service Request"
-                    data-sp="{{$show->temp_sp}}" data-spdesc="{{$show->temp_sp_desc}}" data-sch="{{$show->temp_sch_date}}">
-                    <i class="icon-table far fa-eye fa-lg"></i>
-                </a></td>'.
+                // Ditutup dulu, nanti dibuatkan detailnya
+                // '<td><a href="javascript:void(0)" class="view" type="button" data-toggle="tooltip" title="View Service Request"
+                //     data-sp="{{$show->temp_sp}}" data-spdesc="{{$show->temp_sp_desc}}" data-sch="{{$show->temp_sch_date}}">
+                //     <i class="icon-table far fa-eye fa-lg"></i>
+                // </a></td>'.
                 '</tr>';
             }
 

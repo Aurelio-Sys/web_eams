@@ -888,10 +888,17 @@ div #munculgambar .gambar:hover{
             <div class="col-md-4">
               <textarea id="v_rejectreason" readonly type="text" class="form-control" name="v_rejectreason" value="{{ old('v_rejectreason') }}" rows="2" autofocus></textarea>
             </div>
-            <!-- <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
+            <label class="col-md-2 col-form-label text-md-left">WO Report File</label>
+            <div class="col-md-4" style="overflow-x: auto;">
+              <table class="table table-bordered" style="width: 100%; max-width: 100%;" id="fileupload_reporting">
+              </table>  
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="v_reportingnote" class="col-md-2 col-form-label text-md-left">WO Report Note</label>
             <div class="col-md-4">
-              <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
-            </div> -->
+              <textarea id="v_reportingnote" readonly type="text" class="form-control" name="v_reportingnote" value="{{ old('v_reportingnote') }}" rows="2" autofocus></textarea>
+            </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -1696,6 +1703,7 @@ div #munculgambar .gambar:hover{
         var createdby = vamp.wo_master.wo_createdby;
         var department = vamp.wo_master.wo_department ? vamp.wo_master.wo_department : '';
         var rejectreason = vamp.sr_acceptance_note ? vamp.sr_acceptance_note : '';
+        var reportnote = vamp.wo_master.wo_report_note ? vamp.wo_master.wo_report_note : '';
 
         let combineFailure = [];
 
@@ -1732,6 +1740,7 @@ div #munculgambar .gambar:hover{
         document.getElementById('v_dept').value = department;
         document.getElementById('v_srnote').value = srnote;
         document.getElementById('v_rejectreason').value = rejectreason;
+        document.getElementById('v_reportingnote').value = reportnote;
         
 
       },complete: function(vamp) {
@@ -1757,6 +1766,17 @@ div #munculgambar .gambar:hover{
       success: function(data) {
 
         $('#munculgambar_view').html('').append(data);
+      }
+    })
+
+    $.ajax({
+      url: "/imageview_nodelete",
+      data: {
+        wonumber: wonbr,
+      },
+      success: function(data) {
+
+        $('#fileupload_reporting').html('').append(data);
       }
     })
 

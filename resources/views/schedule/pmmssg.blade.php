@@ -106,7 +106,7 @@
 
 <div class="modal-footer">
     <a class="btn btn-danger" href="/pmconf" id="btnback">Back</a>
-    <button type="submit" class="btn btn-success bt-action" id="btnconf">Confirm</button>
+    <!-- <button type="submit" class="btn btn-success bt-action" id="btnconf">Confirm</button> -->
     <button type="button" class="btn bt-action" id="btnloading" style="display:none">
         <i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading
     </button>

@@ -562,6 +562,7 @@ Route::group(['middleware' => ['auth']], function() {
 	
 	//image tommy
 	route::get('/imageview', 'ServiceController@imageview');
+	route::get('/imageview_nodelete', 'ServiceController@imageview_nodelete');
 
 	// 27.07.2021 booking tyas
 	route::get('/booking', 'BookingController@booking')->name('bookingBrowse');
@@ -813,9 +814,11 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/reqspsubmit', [SparepartController::class,'reqspsubmit'])->name('reqspsubmit');
 	Route::get('/reqspeditdet',[SparepartController::class, 'reqspeditdet']);
 	Route::get('/reqsproute',[SparepartController::class, 'reqsproute']);
+	Route::get('/reqsproutehist',[SparepartController::class, 'reqsproutehist']);
 	Route::get('/reqspviewdet',[SparepartController::class, 'reqspviewdet']);
 	Route::post('/reqspupdate',[SparepartController::class, 'reqspupdate']);
 	Route::post('/reqspcancel', [SparepartController::class, 'reqspcancel']);
+	Route::post('/reqspapprcancel', [SparepartController::class, 'reqspapprcancel']);
 	Route::get('/reqspviewdetappr',[SparepartController::class, 'reqspviewdetappr']);
 	Route::get('/reqsprouteappr',[SparepartController::class, 'reqsprouteappr']);
 	Route::get('/reqspapproval', [SparepartController::class, 'reqspapprovalbrowse'])->name('approvalBrowseSP');

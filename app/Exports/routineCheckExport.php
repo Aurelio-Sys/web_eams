@@ -32,12 +32,14 @@ class routineCheckExport implements FromView, ShouldAutoSize, WithStrictNullComp
         $dateto = $this->dateto;
 
         $routinedata = DB::table('rcm_activity_log')
-            ->leftJoin('rcm_activity_detail', 'rcm_activity_detail.id','rcm_activity_log.id')
+            ->leftJoin('rcm_activity_detail', 'rcm_activity_detail.ra_activity_id','rcm_activity_log.id')
             ->leftJoin('asset_mstr', 'asset_mstr.asset_code', 'rcm_activity_log.ra_asset_code')
             ->select('*','rcm_activity_log.id as id','rcm_activity_log.created_at as rcm_create_date');
 
         $routinedata->when(isset($datefrom) && isset($dateto), function ($q) use ($datefrom, $dateto) {
-            $q->whereBetween('rcm_activity_log.created_at', [$datefrom, $dateto]);
+            // $q->whereBetween('rcm_activity_log.created_at', [$datefrom, $dateto]);
+            $q->whereDate('rcm_activity_log.created_at', '>=', $datefrom);
+            $q->whereDate('rcm_activity_log.created_at', '<=', $dateto);
         });
 
 

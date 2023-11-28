@@ -3438,6 +3438,7 @@ class wocontroller extends Controller
                             't_loc' => (string) $thisresult->t_loc,
                             't_lot' => (string) $thisresult->t_lot,
                             't_qtyoh' => number_format((float) $thisresult->t_qtyoh, 2),
+                            't_um' => (string) $thisresult->t_um,
                         ]);
                     }
                 }

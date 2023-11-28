@@ -894,9 +894,14 @@ class UserChartController extends Controller
             ->orderBy('dept_code')
             ->get();
 
+        // Grafik hanya menampilkan data transaksi satu tahun terakhir
+        $tahunKebelakang = Carbon::now()->subYear();
+
         $datawo = DB::table('wo_mstr')
                 ->join('asset_mstr','asset_code','=','wo_asset_code')
-                ->whereNotIn('wo_status', ['closed','finish','delete'])
+                // ->whereNotIn('wo_status', ['closed','finish','delete'])
+                ->where('wo_start_date', '>=', $tahunKebelakang)
+                ->where('wo_start_date', '<=', Carbon::now())
                 ->orderBy('wo_start_date')
                 ->get();
 // dd($datawo);
@@ -920,6 +925,9 @@ class UserChartController extends Controller
 
             $engcode = $req->code;
 
+            // Grafik hanya menampilkan data transaksi satu tahun terakhir
+            $tahunKebelakang = Carbon::now()->subYear();
+
             $data = DB::table('wo_mstr')
                     ->join('asset_mstr','asset_code','=','wo_asset_code')
                     // ->whereNotIn('wo_status', ['closed','finish','delete'])
@@ -931,6 +939,8 @@ class UserChartController extends Controller
                     //       ->orWhere('wo_engineer5', '=', $engcode);
                     // })
                     ->where('wo_list_engineer', 'like', '%' . $engcode . '%')
+                    ->where('wo_start_date', '>=', $tahunKebelakang)
+                    ->where('wo_start_date', '<=', Carbon::now())
                     ->orderBy('wo_start_date')
                     ->get();
 
@@ -950,13 +960,19 @@ class UserChartController extends Controller
                 //     $eng .= ", ".$data->wo_engineer5;
                 // }
 
-                $eng = $data->wo_list_engineer;
+                // Memisahkan data menjadi array berdasarkan tanda ;
+                $array_data = explode(";", $data->wo_list_engineer);
 
+                // Menampilkan setiap elemen array dalam baris terpisah
+                $nilaiBaris = "";
+                foreach ($array_data as $nilai) {
+                    $nilaiBaris .= $nilai . "<br>";
+                }
 
                 $output .= '<tr>'.
                 '<td>'.$data->wo_number.'</td>'.
                 '<td>'.$data->wo_asset_code.' - '.$data->asset_desc.'</td>'.
-                '<td>'.$eng.'</td>'.
+                '<td>'.$nilaiBaris.'</td>'.
                 '<td>'.$data->wo_start_date.'</td>'.
                 '<td>'.$data->wo_due_date.'</td>'.
                 '<td>'.$data->wo_status.'</td>'.
@@ -997,22 +1013,14 @@ class UserChartController extends Controller
                         ->orWhere('wo_engineer5','=',$a);
             });
         }
-        if ($stype == "WO") {
+        if ($stype) {
             $a = $stype;
-            $dataAsset = $dataAsset->whereIn('asset_code', function($query)
+            
+            $dataAsset = $dataAsset->whereIn('asset_code', function($query) use ($a)
             {
-                $query->select('wo_asset')
+                $query->select('wo_asset_code')
                         ->from('wo_mstr')
-                        ->where('wo_type','<>','auto');
-            });
-        }
-        if ($stype == "PM") {
-            $a = $stype;
-            $dataAsset = $dataAsset->whereIn('asset_code', function($query)
-            {
-                $query->select('wo_asset')
-                        ->from('wo_mstr')
-                        ->where('wo_type','=','auto');
+                        ->where('wo_type','=',$a);
             });
         }
 
@@ -1022,11 +1030,19 @@ class UserChartController extends Controller
 
         $dataAsset = $dataAsset->get();
 
+
+        // Mendapatkan tanggal satu tahun kebelakang dari sekarang
+        // Grafik ini hanya menampilkan data transaksi dalam satu tahun kebelakang
+        $tahunKebelakang = Carbon::now()->subYear();
+
         $datawo = DB::table('wo_mstr')
-                ->join('asset_mstr','asset_code','=','wo_asset_code')
-                ->whereNotIn('wo_status', ['closed','finish','delete'])
-                ->orderBy('wo_start_date')
-                ->get();
+            ->join('asset_mstr','asset_code','=','wo_asset_code')
+            ->whereNotIn('wo_status', ['closed', 'finish', 'delete'])
+            ->where('wo_start_date', '>=', $tahunKebelakang)
+            ->where('wo_start_date', '<=', Carbon::now())
+            ->orderBy('wo_start_date')
+            ->get();
+
         
         $dataeng = DB::table('users')
                 ->join('eng_mstr','eng_code','=','username')
@@ -1064,19 +1080,34 @@ class UserChartController extends Controller
 
             $code = $req->code;
 
+            // Mendapatkan tanggal satu tahun kebelakang dari sekarang
+            // Grafik ini hanya menampilkan data transaksi satu tehun kebelakang
+            $tahunKebelakang = Carbon::now()->subYear();
+
             $data = DB::table('wo_mstr')
                     ->join('asset_mstr','asset_code','=','wo_asset_code')
                     ->whereNotIn('wo_status', ['closed','finish','delete'])
                     ->whereWo_asset_code($code)
+                    ->where('wo_start_date', '>=', $tahunKebelakang)
+                    ->where('wo_start_date', '<=', Carbon::now())
                     ->orderBy('wo_start_date')
                     ->get();
 
             $output = '';
             foreach ($data as $data) {
+                // Memisahkan data menjadi array berdasarkan tanda ;
+                $array_data = explode(";", $data->wo_list_engineer);
+
+                // Menampilkan setiap elemen array dalam baris terpisah
+                $nilaiBaris = "";
+                foreach ($array_data as $nilai) {
+                    $nilaiBaris  .= $nilai . "<br>";
+                }
+
                 $output .= '<tr>'.
                 '<td>'.$data->wo_number.'</td>'.
-                '<td>'.$data->wo_asset_code.' - '.$data->asset_desc.'</td>'.
-                '<td>'.$data->wo_list_engineer.'</td>'.
+                // '<td>'.$data->wo_asset_code.' - '.$data->asset_desc.'</td>'.
+                '<td>'.$nilaiBaris .'</td>'.
                 '<td>'.$data->wo_start_date.'</td>'.
                 '<td>'.$data->wo_status.'</td>'.
                 '</tr>';
@@ -1133,30 +1164,33 @@ class UserChartController extends Controller
         foreach ($period as $dt) {
 
             $data = DB::table('wo_mstr')
-                    ->join('asset_mstr','asset_code','=','wo_asset')
-                    ->whereNotIn('wo_status', ['delete'])
-                    ->where(function ($query) use ($engcode) {
-                    $query->where('wo_engineer1', '=', $engcode)
-                          ->orWhere('wo_engineer2', '=', $engcode)
-                          ->orWhere('wo_engineer3', '=', $engcode)
-                          ->orWhere('wo_engineer4', '=', $engcode)
-                          ->orWhere('wo_engineer5', '=', $engcode);
-                    })
-                    ->whereMonth('wo_schedule','=',$dt->format("m"))
-                    ->whereYear('wo_schedule','=',$dt->format("Y"))
+                    ->join('asset_mstr','asset_code','=','wo_asset_code')
+                    // ->whereNotIn('wo_status', ['delete'])
+                    ->where('wo_list_engineer','like','%'.$engcode.'%')
+                    // ->where(function ($query) use ($engcode) {
+                    // $query->where('wo_engineer1', '=', $engcode)
+                    //       ->orWhere('wo_engineer2', '=', $engcode)
+                    //       ->orWhere('wo_engineer3', '=', $engcode)
+                    //       ->orWhere('wo_engineer4', '=', $engcode)
+                    //       ->orWhere('wo_engineer5', '=', $engcode);
+                    // })
+                    ->whereMonth('wo_start_date','=',$dt->format("m"))
+                    ->whereYear('wo_start_date','=',$dt->format("Y"))
                     ->count();
 
             $dataclose = DB::table('wo_mstr')
-                    ->join('asset_mstr','asset_code','=','wo_asset')
-                    ->where(function ($query) use ($engcode) {
-                    $query->where('wo_engineer1', '=', $engcode)
-                          ->orWhere('wo_engineer2', '=', $engcode)
-                          ->orWhere('wo_engineer3', '=', $engcode)
-                          ->orWhere('wo_engineer4', '=', $engcode)
-                          ->orWhere('wo_engineer5', '=', $engcode);
-                    })
-                    ->whereMonth('wo_finish_date','=',$dt->format("m"))
-                    ->whereYear('wo_finish_date','=',$dt->format("Y"))
+                    ->join('asset_mstr','asset_code','=','wo_asset_code')
+                    ->whereIn('wo_status', ['closed','finish','delete'])
+                    ->where('wo_list_engineer','like','%'.$engcode.'%')
+                    // ->where(function ($query) use ($engcode) {
+                    // $query->where('wo_engineer1', '=', $engcode)
+                    //       ->orWhere('wo_engineer2', '=', $engcode)
+                    //       ->orWhere('wo_engineer3', '=', $engcode)
+                    //       ->orWhere('wo_engineer4', '=', $engcode)
+                    //       ->orWhere('wo_engineer5', '=', $engcode);
+                    // })
+                    ->whereMonth('wo_start_date','=',$dt->format("m"))
+                    ->whereYear('wo_start_date','=',$dt->format("Y"))
                     ->count();
 
             if ($jmlwo == "") {
@@ -1785,11 +1819,15 @@ class UserChartController extends Controller
     
     public function generateso(Request $req) /** Blade : needsp */
     {
-dd($req->all());
+        if(!$req->site_genso) {
+            toast('Site is required!!', 'error')->persistent('Dismiss');
+            return redirect()->back();
+        }
+
         DB::beginTransaction();
 
         try {
-
+            $sonumber = 'eams' . $req->site_genso;
             $domain = ModelsQxwsa::first();
 
             $checkso_eams = (new WSAServices())->wsasearchso($domain->wsas_domain);
@@ -2022,7 +2060,7 @@ dd($req->all());
 
                             $qdocBody .= '<salesOrder>
                                                 <operation>A</operation>
-                                                <soNbr>EAMS</soNbr>
+                                                <soNbr>'.$sonumber.'</soNbr>
                                                 <soCust>'.$req->t_cust.'</soCust>
                                                 <soShipvia>FEDX</soShipvia>
                                                 <soDueDate>'.$lastschedule->temp_sch_date.'</soDueDate>
@@ -2042,7 +2080,7 @@ dd($req->all());
                                                     <sodDueDate>'.$datas->temp_sch_date.'</sodDueDate>
                                                 </salesOrderDetail>';
                                     $line_nbr++;
-                                    dump($datas->temp_sp);
+                                    // dump($datas->temp_sp);
                                 }
                             }
 
@@ -2426,7 +2464,7 @@ dd($req->all());
 
                             $qdocBody .= '<salesOrder>
                                                 <operation>A</operation>
-                                                <soNbr>EAMS</soNbr>
+                                                <soNbr>'.$sonumber.'</soNbr>
                                                 <soCust>'.$req->t_cust.'</soCust>
                                                 <soShipvia>FEDX</soShipvia>
                                                 <soDueDate>'.$lastschedule->temp_sch_date.'</soDueDate>

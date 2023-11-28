@@ -172,23 +172,15 @@
                <div class="form-group row">
                   <label for="te_asset" class="col-md-3 col-form-label text-md-right">Asset</label>
                   <div class="col-md-8">
-                     <select class="form-control " id="te_asset" name="te_asset" required>
-                     <option value="">--</option>
-                     @foreach($dataasset as $da)
-                     <option value="{{$da->asset_code}}">{{$da->asset_code}} -- {{$da->asset_desc}}</option>
-                     @endforeach
-                     </select>
+                    <input type="text" class="form-control" id="te_assetdesc" name="te_assetdesc" readonly>
+                    <input type="hidden" class="form-control" id="te_asset" name="te_asset">
                   </div>
               </div>
               <div class="form-group row">
                   <label for="te_qcs" class="col-md-3 col-form-label text-md-right">QC Spesification</label>
                   <div class="col-md-8">
-                     <select class="form-control " id="te_qcs" name="te_qcs" required>
-                     <option value="">--</option>
-                     @foreach($dataqcs as $dq)
-                     <option value="{{$dq->qcs_code}}">{{$dq->qcs_code}} -- {{$dq->qcs_desc}}</option>
-                     @endforeach
-                     </select>
+                    <input type="text" class="form-control" id="te_qcsdesc" name="te_qcsdesc" readonly>
+                    <input type="hidden" class="form-control" id="te_qcs" name="te_qcs">
                   </div>
                </div>
                <div class="form-group row">
@@ -277,7 +269,9 @@
            $('#editModal').modal('show');
 
            var asset = $(this).data('asset');
+           var assetdesc = $(this).data('assetdesc');
            var qcs = $(this).data('qcs');
+           var qcsdesc = $(this).data('qcsdesc');
            var start = $(this).data('start');
            var end = $(this).data('end');
            var interval = $(this).data('interval');
@@ -285,7 +279,9 @@
            var email = $(this).data('email');
 
            document.getElementById('te_asset').value = asset;
+           document.getElementById('te_assetdesc').value = asset + ' -- ' + assetdesc;
            document.getElementById('te_qcs').value = qcs;
+           document.getElementById('te_qcsdesc').value = qcs + ' -- ' + qcsdesc;
            document.getElementById('te_start').value = start;
            document.getElementById('te_end').value = end;
            document.getElementById('te_interval').value = interval;
