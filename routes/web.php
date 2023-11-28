@@ -683,6 +683,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// Usage Browse untuk melihat data measurement asset yang tipe perhitungan Meter yang telah diinput
 	Route::get('/usbrowse', [UsageBrowseController::class, 'index'])->name('usbrowse');
+	Route::get('/excelusbrowse', [UsageBrowseController::class, 'index'])->name('excelusbrowse');
 
 	// Asset - Failure
 	Route::get('/asfn', [AsfnController::class, 'index']);
@@ -900,6 +901,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// Sparepart Report
 	Route::get('/sptrpt', [SptRptController::class, 'index']);
+	Route::get('/excelsptrpt', [SptRptController::class, 'index'])->name('excelSptrpt');
 
 	// Digunakan untuk menampilkan notifikasi setiap user
 	Route::get('/startnotif', [StartnotifController::class, 'index']);

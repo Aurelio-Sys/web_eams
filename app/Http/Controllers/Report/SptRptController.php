@@ -70,7 +70,7 @@ class SptRptController extends Controller
             ->leftJoin('sp_mstr','spm_code','=','req_sph_spcode')
             ->leftJoin('users','username','=','req_sph_reqby')
             ->leftJoin('dept_mstr','dept_code','=','dept_user')
-            ->where('req_sph_action','<>','request sparepart created')
+            ->whereNotIn('req_sph_action',['request sparepart created','canceled by user','sparepart updated','canceled by approver'])
             ->selectRaw('req_sph_spcode,spm_desc,req_sph_locfrom,req_sph_lotfrom,req_sph_locto,req_sparepart_hist.created_at as tgl,
                 req_sph_action,req_sph_number,req_sph_qtytrf,req_sph_reqby,name,dept_user,dept_desc')
             ->orderBy('req_sparepart_hist.created_at')
@@ -103,7 +103,7 @@ class SptRptController extends Controller
             ->leftJoin('sp_mstr','spm_code','=','ret_sph_spcode')
             ->leftJoin('users','username','=','ret_sph_retby')
             ->leftJoin('dept_mstr','dept_code','=','dept_user')
-            ->where('ret_sph_action','<>','return sparepart created')
+            ->whereNotIn('ret_sph_action',['return sparepart created','canceled by user','sparepart updated'])
             ->selectRaw('ret_sph_spcode,spm_desc,ret_sph_locfrom,ret_sph_lotto,ret_sph_locto,ret_sparepart_hist.created_at as tgl,
                 ret_sph_action,ret_sph_number,ret_sph_qtytrf,ret_sph_retby,name,dept_user,dept_desc')
             ->orderBy('ret_sparepart_hist.created_at')
@@ -124,14 +124,14 @@ class SptRptController extends Controller
                 'temp_type' => $rt->ret_sph_action,
                 'temp_no' => $rt->ret_sph_number,
                 'temp_by' => $rt->ret_sph_retby,
-                'temp_byname' => $rs->name,
-                'temp_dept' => $rs->dept_user,
-                'temp_deptdesc' => $rs->dept_desc,
+                'temp_byname' => $rt->name,
+                'temp_dept' => $rt->dept_user,
+                'temp_deptdesc' => $rt->dept_desc,
                 'temp_qty' => $rt->ret_sph_qtytrf,
             ]);
         }
-
-        /** Mencari data dari history WO Reporting */
+		
+		/** Mencari data dari history WO Reporting */
         $datawo = DB::table('wo_reporting_trans_hist')
             ->leftJoin('sp_mstr','spm_code','=','spcode_wohist_report')
             ->leftJoin('eng_mstr','eng_code','=','userid_wohist_report')
@@ -193,6 +193,8 @@ class SptRptController extends Controller
             $data->whereRaw('DATE_FORMAT(temp_date, "%Y-%m-%d") <= ?', [$dateto]);
         }
 
+        $dataexcel = $data->get();
+
         $data = $data->paginate(10);
 
         /** Untuk menampilkan pilihan filter Type */
@@ -204,9 +206,11 @@ class SptRptController extends Controller
 
         if ($request->dexcel == "excel") {
 
-            $dataexcel = DB::table('temp_trans')
-            ->orderBy('temp_asset')
-            ->get();
+            // $dataexcel = DB::table('temp_trans')
+            // ->orderBy('temp_spcode')
+            // ->orderBy('temp_date')
+            // ->orderBy('temp_type')
+            // ->get();
 
             // Membuat objek spreadsheet
             $spreadsheet = new Spreadsheet();
@@ -215,37 +219,48 @@ class SptRptController extends Controller
             $sheet = $spreadsheet->getActiveSheet();
 
             // Isi header kolom
-            $sheet->setCellValue('A1', 'Asset');
-            $sheet->setCellValue('B1', 'Desc');
-            $sheet->setCellValue('C1', 'Site');
-            $sheet->setCellValue('D1', 'Location');
-            $sheet->setCellValue('E1', 'Location Desc');
-            $sheet->setCellValue('F1', 'MTBF (days)');
-            $sheet->setCellValue('G1', 'MTTF (days)');
-            $sheet->setCellValue('H1', 'MDT (hour)');
-            $sheet->setCellValue('I1', 'MTTR (hour)');
-            
+            $sheet->setCellValue('A1', 'Trans No.');
+            $sheet->setCellValue('B1', 'Trans By');
+            $sheet->setCellValue('C1', 'Name');
+            $sheet->setCellValue('D1', 'Department');
+            $sheet->setCellValue('E1', 'Dept Name');
+            $sheet->setCellValue('F1', 'Sparepart');
+            $sheet->setCellValue('G1', 'Desc');
+            $sheet->setCellValue('H1', 'Qty');
+            $sheet->setCellValue('I1', 'Location From');
+            $sheet->setCellValue('J1', 'Location Desc From');
+            $sheet->setCellValue('K1', 'Lot From');
+            $sheet->setCellValue('L1', 'Location To');
+            $sheet->setCellValue('M1', 'Location Desc To');
+            $sheet->setCellValue('N1', 'Date');            
+            $sheet->setCellValue('O1', 'Type');            
 
             // Mengisi data
             $row = 2; // Mulai dari baris kedua (setelah header)
             
             foreach ($dataexcel as $item) {
-                $sheet->setCellValue('A' . $row, $item->temp_asset);
-                $sheet->setCellValue('B' . $row, $item->temp_asset_desc);
-                $sheet->setCellValue('C' . $row, $item->temp_asset_site);
-                $sheet->setCellValue('D' . $row, $item->temp_asset_loc);
-                $sheet->setCellValue('E' . $row, $item->temp_asset_locdesc);
-                $sheet->setCellValue('F' . $row, $item->temp_mtbf);
-                $sheet->setCellValue('G' . $row, $item->temp_mttf);
-                $sheet->setCellValue('H' . $row, $item->temp_mdt);
-                $sheet->setCellValue('I' . $row, $item->temp_mttr);
+                $sheet->setCellValue('A' . $row, $item->temp_no);
+                $sheet->setCellValue('B' . $row, $item->temp_by);
+                $sheet->setCellValue('C' . $row, $item->temp_byname);
+                $sheet->setCellValue('D' . $row, $item->temp_dept);
+                $sheet->setCellValue('E' . $row, $item->temp_deptdesc);
+                $sheet->setCellValue('F' . $row, $item->temp_spcode);
+                $sheet->setCellValue('G' . $row, $item->temp_spdesc);
+                $sheet->setCellValue('H' . $row, $item->temp_qty);
+                $sheet->setCellValue('I' . $row, $item->temp_fromloc);
+                $sheet->setCellValue('J' . $row, $item->temp_fromlocdesc);
+                $sheet->setCellValue('K' . $row, $item->temp_fromlot);
+                $sheet->setCellValue('L' . $row, $item->temp_toloc);
+                $sheet->setCellValue('M' . $row, $item->temp_tolocdesc);
+                $sheet->setCellValue('N' . $row, $item->temp_date);
+                $sheet->setCellValue('O' . $row, $item->temp_type);
 
                 $row++;
             }
 
             // Menyimpan file
             $writer = new Xlsx($spreadsheet);
-            $filename = 'data.xlsx';
+            $filename = 'Data Sparepart eAMS.xlsx';
             $writer->save($filename);
 
             // Mengirim file sebagai respons unduhan
