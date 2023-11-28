@@ -3051,6 +3051,17 @@ class wocontroller extends Controller
             ->first();
 
         // dd($dataheader);
+        $getNoteSR = "";
+
+        if($dataheader->wo_sr_number <> null || $dataheader->wo_sr_number <> ""){
+            $getNoteSR = DB::table('service_req_mstr')
+                        ->where('wo_number', '=', $dataheader->wo_number)
+                        ->select('sr_note')
+                        ->first();
+
+            $getNoteSR = $getNoteSR->sr_note;
+        }
+        
 
         //ambil data failure code
         $asfn_det = DB::table('asfn_det')
@@ -3140,7 +3151,7 @@ class wocontroller extends Controller
         return view('workorder.wofinish-done', [
             'header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all,
             'instruction' => $datainstruction, 'inslist' => $ins_all, 'um' => $um,
-            'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure
+            'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure, 'notesr'=> $getNoteSR
         ]);
     }
 
