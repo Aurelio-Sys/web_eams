@@ -57,7 +57,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
                 CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 2 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 3), ';', -1) ELSE '' END AS eng3,
                 CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 3 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 4), ';', -1) ELSE '' END AS eng4,
                 CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 4 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 5), ';', -1) ELSE '' END AS eng5,
-                wd_sp_spcode as spcode,spm_desc,spm_price,wd_sp_required as req,wd_sp_whtf,wd_sp_issued ")
+                wd_sp_spcode as spcode,spm_desc,wd_sp_itemcost as spm_price,wd_sp_required as req,wd_sp_whtf,wd_sp_issued ")
             ->join('wo_mstr','wo_number','=','wd_sp_wonumber')
             ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
             ->leftJoin('asset_loc','asloc_code','=','asset_loc')
