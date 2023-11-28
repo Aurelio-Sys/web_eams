@@ -23,6 +23,35 @@
         overflow-y: auto;
         /* Bilah gulir vertikal */
     }
+
+    .thlabel {
+        display: none;
+    }
+
+    @media only screen and (max-width: 600px) {
+
+        .dataTable {
+            display: block;
+            width: 100%;
+        }
+
+        .dataTableTh {
+            display: none;
+        }
+
+        .dataTableTd {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            /* Mengubah text-align untuk mini-table pada lebar layar <= 600px */
+            text-align: left;
+        }
+
+        .thlabel {
+            display: block;
+        }
+
+    }
 </style>
 
 <!-- <div class="row mt-2">
@@ -63,14 +92,14 @@
         <div class="modal-body">
             <div class="form-group row">
                 <div class="table-responsive tag-container" style="overflow-x: auto; display:inline-block; white-space: nowrap; padding:0; text-align:center; position:relative">
-                    <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0">
+                    <table id="createTable" class="table table-striped table-bordered dataTable order-list" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</th>
-                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Qty Return</th>
-                                <th style="text-align: center; width: 20% !important; font-weight: bold;">Location From</th>
-                                <th style="text-align: center; width: 20% !important; font-weight: bold;">Note</th>
-                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Delete</th>
+                                <th class="dataTableTh" style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</th>
+                                <th class="dataTableTh" style="text-align: center; width: 10% !important; font-weight: bold;">Qty Return</th>
+                                <th class="dataTableTh" style="text-align: center; width: 20% !important; font-weight: bold;">Location From</th>
+                                <th class="dataTableTh" style="text-align: center; width: 20% !important; font-weight: bold;">Note</th>
+                                <th class="dataTableTh" style="text-align: center; width: 10% !important; font-weight: bold;">Delete</th>
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
@@ -108,7 +137,7 @@
 
 
                             <tr>
-                                <td>
+                                <td class="dataTableTd">
                                     <select name="spret[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="200px" autofocus>
                                         <option value=""> -- Select Spare Part -- </option>
                                         @foreach($sp_all as $da)
@@ -120,15 +149,15 @@
                             </select>
                             </td>
 
-                            <td>
+                            <td class="dataTableTd">
                                 <input type="number" class="form-control qtystandard" name="qtystandard[]" step="1" min="0" required />
                             </td>
 
-                            <td>
+                            <td class="dataTableTd">
                                 <input type="number" class="form-control qtyrequired" name="qtyrequired[]" step="1" min="0" required />
                             </td>
 
-                            <td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>
+                            <td  class="dataTableTd" data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>
                             <input type="hidden" class="op" name="op[]" value="A" />
                             </tr>
                             --}}
@@ -137,7 +166,7 @@
                         </tbody>
                         <tfoot>
                             <tr id="tfootbtn">
-                                <td colspan="7">
+                                <td class="dataTableTd" colspan="7">
                                     <input type="button" class="btn btn-lg btn-block btn-focus" id="addrow" value="Add New Spare Part" style="background-color:#1234A5; color:white; font-size:16px" />
                                 </td>
                             </tr>
@@ -356,7 +385,8 @@
             var newRow = $("<tr>");
             var cols = "";
 
-            cols += '<td>';
+            cols += '<td class="dataTableTd">';
+            cols += '<label class="col-md-3 col-form-label thlabel">Sparepart</label>';
             cols += '<select name="spret[]" style="display: inline-block !important;" class="spret form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
             cols += '<option value = ""> -- Select Sparepart -- </option>';
             @foreach($sp_all as $index => $da)
@@ -368,27 +398,31 @@
             cols += '</a>';
             cols += '</td>';
 
-            cols += '<td>';
+            cols += '<td class="dataTableTd">';
+            cols += '<label class="col-md-3 col-form-label thlabel">Qty Return</label>';
             cols += '<input type="number" class="form-control qtyreturn" name="qtyreturn[]" step=".01" min="0" required />';
             cols += '</td>';
 
-            cols += '<td>';
+            cols += '<td class="dataTableTd">';
             // cols += '<select name="loctox[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
             // cols += '<option value = ""> -- Select Location To -- </option>';
             // @foreach($loc_from as $loc)
             // cols += '<option data-siteto="{{$loc->inp_supply_site}}" value="{{$loc->inp_loc}}">{{$loc->inp_loc}}</option>';
             // @endforeach
             // cols += '</select>';
+            cols += '<label class="col-md-3 col-form-label thlabel">Location From</label>';
             cols += '<input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="locto[]" data-toggle="tooltip" data-index="" data-spcode="" readonly required placeholder="Click Here">';
             cols += '<input type="hidden" class="hidden_sitefrom" name="siteto[]" value="" />';
             cols += '<input type="hidden" class="hidden_locfrom" name="locto[]" value="" />';
-            cols +=  '<input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />';
+            cols += '<input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />';
             cols += '</td>';
-            cols += '<td>';
+            cols += '<td class="dataTableTd">';
+            cols += '<label class="col-md-3 col-form-label thlabel">Note</label>';
             cols += '<textarea type="text" id="retnote" class="form-control retnote" name="retnote[]" rows="2" ></textarea>';
             cols += '</td>';
 
-            cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
+            cols += '<td class="dataTableTd" data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
+            cols += '<label class="col-md-3 col-form-label thlabel">Delete</label>';
             cols += '<input type="hidden" class="op" name="op[]" value="A"/>';
             cols += '</tr>';
             counter++;
@@ -404,7 +438,7 @@
         $(document).on('click', '.loclotfrom', function() {
             var row = $(this).closest("tr");
             const spcode = $(this).data('spcode');
-//alert(spcode);
+            //alert(spcode);
 
             $.ajax({
                 url: '/gettrfspwsastockfrom',
@@ -569,8 +603,8 @@
 
             // Mengubah data-spcode pada elemen <a> yang berada dalam <td> yang sama
             $(this).closest('td').find('.viewstok').attr('data-spcode', selectedValue);
-		$(this).closest('tr').find('.loclotfrom').attr('data-index', selectedIndex);
-$(this).closest('tr').find('.loclotfrom').attr('data-spcode', selectedValue);
+            $(this).closest('tr').find('.loclotfrom').attr('data-index', selectedIndex);
+            $(this).closest('tr').find('.loclotfrom').attr('data-spcode', selectedValue);
             // console.log("Updated WO Number: ", $(this).closest('td').find('.viewstok').attr('data-spcode')); 
         });
 

@@ -1277,7 +1277,7 @@ class SparepartController extends Controller
                 })
                 ->where('req_sp_status', '<>', 'canceled')
                 ->groupBy('req_sp_number')
-                ->orderBy('req_sp_due_date', 'ASC');
+                ->orderBy('req_sp_due_date', 'DESC');
             // dd($data);
 
             $sp_all = DB::table('sp_mstr')
