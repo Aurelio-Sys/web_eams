@@ -41,9 +41,9 @@
             <div class="col-md-1 col-sm-6 mb-1 input-group justify-content-md-center">
             <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'/><i class="fas fa-sync-alt"></i></button>
             </div>
-            {{--  <div class="col-md-2 col-sm-12 mb-2 input-group">
-            <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="Export to Excel" style="float:right" />
-            </div>  --}}
+            <div class="col-md-2 col-sm-12 mb-2 input-group">
+                <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="Export to Excel" style="float:right" />
+            </div>
         </div>
         </div>
     </div>
@@ -198,6 +198,11 @@
             theme : 'bootstrap4',
         });
     
+        $(document).on('click', '#btnexcel', function() {
+            var s_asset = $('#s_asset').val();
+            
+            window.open("/excelusbrowse?dexcel=excel&s_asset=" + s_asset , '_blank');
+        });
     
     </script>
 

@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Carbon\Carbon;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 class UsageBrowseController extends Controller
 {
     /**
@@ -39,6 +41,8 @@ class UsageBrowseController extends Controller
             $dataus = $dataus->where('us_asset','=',$sasset);
         }
 
+        $dataexcel = $dataus->get();
+
         $dataus = $dataus->paginate(10);
 
         $dataasset = DB::table('asset_mstr')
@@ -48,7 +52,60 @@ class UsageBrowseController extends Controller
             ->orderBy('asset_code')
             ->get();
 
-        return view('schedule.usbrowse', compact('dataus','dataasset','sasset'));
+        if ($req->dexcel == "excel") {
+
+            // Membuat objek spreadsheet
+            $spreadsheet = new Spreadsheet();
+
+            // Memilih lembar kerja aktif
+            $sheet = $spreadsheet->getActiveSheet();
+
+            // Isi header kolom
+            $sheet->setCellValue('A1', 'Asset');
+            $sheet->setCellValue('B1', 'Description');
+            $sheet->setCellValue('C1', 'Location');
+            $sheet->setCellValue('D1', 'Location Desc');
+            $sheet->setCellValue('E1', 'Measure');
+            $sheet->setCellValue('F1', 'UM');
+            $sheet->setCellValue('G1', 'Date');
+            $sheet->setCellValue('H1', 'Time');
+            $sheet->setCellValue('I1', 'Result');
+            $sheet->setCellValue('J1', 'Created By');
+            $sheet->setCellValue('K1', 'Created At');
+            $sheet->setCellValue('L1', 'Nomor PM');          
+
+            // Mengisi data
+            $row = 2; // Mulai dari baris kedua (setelah header)
+            
+            foreach ($dataexcel as $item) {
+                $sheet->setCellValue('A' . $row, $item->asset_code);
+                $sheet->setCellValue('B' . $row, $item->asset_desc);
+                $sheet->setCellValue('C' . $row, $item->us_asset_site);
+                $sheet->setCellValue('D' . $row, $item->asloc_desc);
+                $sheet->setCellValue('E' . $row, $item->pma_meter);
+                $sheet->setCellValue('F' . $row, $item->pma_meterum);
+                $sheet->setCellValue('G' . $row, $item->us_date);
+                $sheet->setCellValue('H' . $row, $item->us_time);
+                $sheet->setCellValue('I' . $row, $item->us_last_mea);
+                $sheet->setCellValue('J' . $row, $item->edited_by);
+                $sheet->setCellValue('K' . $row, $item->created_at);
+                $sheet->setCellValue('L' . $row, $item->us_no_pm);
+
+                $row++;
+            }
+
+            // Menyimpan file
+            $writer = new Xlsx($spreadsheet);
+            $filename = 'EAMS Data Usage Asset.xlsx';
+            $writer->save($filename);
+
+            // Mengirim file sebagai respons unduhan
+            return response()->download($filename)->deleteFileAfterSend();
+
+        } else {
+            return view('schedule.usbrowse', compact('dataus','dataasset','sasset'));
+        }
+        
     }
 
     /**
