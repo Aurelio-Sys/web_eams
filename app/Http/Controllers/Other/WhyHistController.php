@@ -148,6 +148,8 @@ class WhyHistController extends Controller
                 }
             }
 
+            
+
         
             DB::commit();
 
@@ -203,7 +205,8 @@ class WhyHistController extends Controller
                             </td>
                             <input type="hidden" value="' . $data->id . '" class="rowval"/>
                             <td><input type="checkbox" name="cek[]" class="cek" id="cek" value="0">
-                            <input type="hidden" name="tick[]" id="tick" class="tick" value="0"></td>
+                            <input type="hidden" name="tick[]" id="tick" class="tick" value="0">
+                            <input type="hidden" name="te_doc[]" id="te_doc" value="'.$data->id.'"></td>
                         </tr>';
         }
 
@@ -242,6 +245,7 @@ class WhyHistController extends Controller
      */
     public function update(Request $req) /** route : editwhyhist */
     {
+        // dd($req->all());
         DB::beginTransaction();
         try {
             DB::table('why_hist')
@@ -280,6 +284,20 @@ class WhyHistController extends Controller
                 }
             }
 
+            /** Menghapus file yang di centang */
+            if($req->te_doc) {
+                $flg = 0;
+                foreach($req->te_doc as $te_doc){
+                    if($req->tick[$flg] == 1) {
+                        DB::table('why_file')
+                            ->where('id','=',$req->te_doc[$flg])
+                            ->delete();
+                    }
+                    $flg += 1;
+                } 
+            }
+            
+
         
             DB::commit();
 
@@ -301,12 +319,22 @@ class WhyHistController extends Controller
      */
     public function destroy(Request $req)
     {
-        // dd($req->all());
-        DB::table('why_hist')
-            ->where('id','=',$req->te_id)
-            ->delete();
+        DB::beginTransaction();
+        try {
+            // dd($req->all());
+            DB::table('why_hist')
+                ->where('id','=',$req->d_code)
+                ->delete();
 
-        toast('Transactions Deleted.', 'success');
-        return back();
+            DB::commit();
+
+            toast('Transactions Deleted.', 'success');
+            return back();
+        } catch (Exception $e) {
+            dd($e);
+            DB::rollBack();
+            toast('Transactions Failed Created', 'error');
+            return back();
+        }
     }
 }
