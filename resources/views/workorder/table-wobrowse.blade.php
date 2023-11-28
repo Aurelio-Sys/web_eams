@@ -37,7 +37,7 @@
     @if($show->wo_status == 'firm' || $show->wo_status == 'released' && $show->retr_status !== 'approved' )
     <a href="" class="deletewo" data-toggle="modal" data-toggle="tooltip" title="Cancel WO" data-target="#deleteModal" data-wonumber="{{$show->wo_number}}" data-wostatus="{{$show->wo_status}}" data-srnumber="{{$show->wo_sr_number}}"><i class="fas fa-window-close fa-lg"></i></a>
     @endif
-
+    <a href="{{url('woprint/'.$show->wo_number)}}" data-toggle="tooltip"  title="Print Work Order" target="_blank" ><i class="icon-table fa fa-print fa-lg"></i></a>
   </td>
 </tr>
 @empty

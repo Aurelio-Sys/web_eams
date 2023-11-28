@@ -3051,6 +3051,17 @@ class wocontroller extends Controller
             ->first();
 
         // dd($dataheader);
+        $getNoteSR = "";
+
+        if($dataheader->wo_sr_number <> null || $dataheader->wo_sr_number <> ""){
+            $getNoteSR = DB::table('service_req_mstr')
+                        ->where('wo_number', '=', $dataheader->wo_number)
+                        ->select('sr_note')
+                        ->first();
+
+            $getNoteSR = $getNoteSR->sr_note;
+        }
+        
 
         //ambil data failure code
         $asfn_det = DB::table('asfn_det')
@@ -3140,7 +3151,7 @@ class wocontroller extends Controller
         return view('workorder.wofinish-done', [
             'header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all,
             'instruction' => $datainstruction, 'inslist' => $ins_all, 'um' => $um,
-            'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure
+            'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure, 'notesr'=> $getNoteSR
         ]);
     }
 
@@ -6712,6 +6723,249 @@ class wocontroller extends Controller
         //  return view('picklistbrowse.shipperprint-template',['printdata1' => $printdata1, 'printdata2' => $printdata2, 'runningnbr' => $runningnbr,'user' => $user,'last' =>$countprint]);
         return $pdf->stream($wo . '.pdf');
         // return view('workorder.pdfprint2-template',['data' => $data,'repair'=>$repair,'counter'=>0,'countdb'=>$countdb,'check'=>$checkstr,'countrepairitre' => $countrepairitr,'printname'=>$printname,'printdate'=>$printdate,'engineerlist'=>$engineerlist]);
+    }
+
+    public function woprint(Request $req, $wo)
+    {
+        // dd($wo);
+        $repair = [];
+        $countdb = [];
+        $checkstr = [];
+        $statusrepair = DB::table('service_req_mstr')
+            ->where('service_req_mstr.sr_number', '=', $wo)
+            ->first();
+        $wonbr = DB::table('wo_mstr')
+            ->where('wo_number', '=', $wo)
+            ->first();
+        
+        if ($wonbr->wo_sr_number != '') {
+            $womstr = DB::table('service_req_mstr')
+            ->where('service_req_mstr.wo_number', '=', $wo)
+            // ->selectRaw('dept_desc, eng_desc, sr_number, sr_fail_type, sr_dept, sr_eng_approver,
+            // sr_req_date, sr_asset, asset_desc, sr_req_by, "" as sr_approver, sr_impact, imp_desc, sr_req_date, sr_req_time, asset_desc, wotyp_desc, sr_fail_code,
+            // sr_note, imp_code, "" as dept_user, sr_req_by, service_req_mstr.wo_number, wo_due_date, wo_start_date')
+            ->leftjoin('eng_mstr', 'service_req_mstr.sr_eng_approver', 'eng_mstr.eng_code')
+            ->leftJoin('dept_mstr', 'service_req_mstr.sr_dept', 'dept_mstr.dept_code')
+            ->leftJoin('asset_mstr', 'service_req_mstr.sr_asset', 'asset_mstr.asset_code')
+            // ->leftJoin('fn_mstr as fn1', 'service_req_mstr.sr_failurecode1', 'fn1.fn_code')
+            // ->leftJoin('fn_mstr as fn2', 'service_req_mstr.sr_failurecode2', 'fn2.fn_code')
+            // ->leftJoin('fn_mstr as fn3', 'service_req_mstr.sr_failurecode3', 'fn3.fn_code')
+            ->leftJoin('wotyp_mstr', 'service_req_mstr.sr_fail_type', 'wotyp_mstr.wotyp_code')
+            // ->leftJoin('service_req_mstr', 'service_req_mstr.sr_number', 'wo_mstr.wo_sr_number')
+            ->leftJoin('wo_mstr', 'service_req_mstr.sr_number', 'wo_mstr.wo_sr_number')
+            // ->leftJoin('imp_mstr', 'service_req_mstr.sr_impact', 'imp_mstr.imp_code')
+            // ->leftJoin('users', 'service_req_mstr.sr_approver', 'users.username')
+            ->first();
+
+            $engapprover = DB::table('wo_mstr')
+            ->where('wo_mstr.wo_number', '=', $wo)
+            ->leftJoin('service_req_mstr', 'wo_mstr.wo_sr_number', 'service_req_mstr.sr_number')
+            ->leftJoin('dept_mstr', 'service_req_mstr.sr_eng_approver', 'dept_mstr.dept_code')
+            ->leftjoin('eng_mstr', function ($join) {
+                $join->on('service_req_mstr.sr_eng_approver', '=', 'eng_mstr.eng_dept') // Add your conditions here
+                     ->where('eng_mstr.eng_active', '=', 'Yes') // Add your conditions here
+                     ->where('eng_mstr.approver', '=', 1) // Add your conditions here
+                     ->where('eng_mstr.eng_role', '=', 'SPVSR'); // Add your conditions here
+            })
+            ->first();
+
+        }else{
+            $womstr = DB::table('wo_mstr')
+            ->where('wo_number', '=', $wo)
+            // ->selectRaw('dept_desc, eng_desc, sr_number, sr_fail_type, sr_dept, sr_eng_approver,
+            // sr_req_date, sr_asset, asset_desc, sr_req_by, "" as sr_approver, sr_impact, imp_desc, sr_req_date, sr_req_time, asset_desc, wotyp_desc, sr_fail_code,
+            // sr_note, imp_code, "" as dept_user, sr_req_by, service_req_mstr.wo_number, wo_due_date, wo_start_date')
+            ->leftjoin('eng_mstr', 'wo_mstr.wo_createdby', 'eng_mstr.eng_code')
+            ->leftJoin('dept_mstr', 'wo_mstr.wo_department', 'dept_mstr.dept_code')
+            ->leftJoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+            // ->leftJoin('fn_mstr as fn1', 'service_req_mstr.sr_failurecode1', 'fn1.fn_code')
+            // ->leftJoin('fn_mstr as fn2', 'service_req_mstr.sr_failurecode2', 'fn2.fn_code')
+            // ->leftJoin('fn_mstr as fn3', 'service_req_mstr.sr_failurecode3', 'fn3.fn_code')
+            ->leftJoin('wotyp_mstr', 'wo_mstr.wo_failure_type', 'wotyp_mstr.wotyp_code')
+            // ->leftJoin('imp_mstr', 'service_req_mstr.sr_impact', 'imp_mstr.imp_code')
+            // ->leftJoin('users', 'service_req_mstr.sr_approver', 'users.username')
+            ->first();
+
+            $engapprover = DB::table('wo_mstr')
+            ->where('wo_mstr.wo_number', '=', $wo)
+            ->leftJoin('dept_mstr', 'wo_mstr.wo_department', 'dept_mstr.dept_code')
+            ->leftjoin('eng_mstr', function ($join) {
+                $join->on('wo_mstr.wo_department', '=', 'eng_mstr.eng_dept')
+                     ->where('eng_mstr.eng_active', '=', 'Yes') // Add your conditions here
+                     ->where('eng_mstr.approver', '=', 1) // Add your conditions here
+                     ->where('eng_mstr.eng_role', '=', 'SPVSR'); // Add your conditions here
+            })
+            ->first();
+        }
+        // dd($engapprover);
+
+        if ($womstr->wo_sr_number != '') {
+            $listFailCodeDesc = [];
+    
+            if ($womstr->sr_fail_code != '') {
+                $listFailCode = explode(',', $womstr->sr_fail_code);
+                foreach ($listFailCode as $failcode) {
+                    $getFailDesc = DB::table('fn_mstr')
+                        ->select('fn_desc')
+                        ->where('fn_code', '=', $failcode)
+                        ->first();
+    
+                    $failure = array('fn_code' => $failcode, 'fn_desc' => $getFailDesc->fn_desc);
+    
+                    array_push($listFailCodeDesc, $failure);
+                }
+            } else {
+                $getFailDesc = '';
+            }
+    
+            $listFailTypeDesc = [];
+    
+            if ($womstr->sr_fail_type != '') {
+                $listFailType = explode(',', $womstr->sr_fail_type);
+    
+                foreach ($listFailType as $failtype) {
+                    $getFailDesc = DB::table('wotyp_mstr')
+                        ->select('wotyp_desc')
+                        ->where('wotyp_code', '=', $failtype)
+                        ->first();
+    
+                    $failure = array('wotyp_code' => $failtype, 'wotyp_desc' => $getFailDesc->wotyp_desc);
+    
+                    array_push($listFailTypeDesc, $failure);
+                }
+            } else {
+                $getFailDesc = '';
+            }
+    
+            $listImpactDesc = [];
+    
+            if ($womstr->sr_impact != '') {
+                $listImpactCode = explode(',', $womstr->sr_impact);
+    
+                foreach ($listImpactCode as $impactcode) {
+                    $getImpactDesc = DB::table('imp_mstr')
+                        ->select('imp_desc')
+                        ->where('imp_code', '=', $impactcode)
+                        ->first();
+    
+                    $impact = array('imp_code' => $impactcode, 'imp_desc' => $getImpactDesc->imp_desc);
+    
+                    array_push($listImpactDesc, $impact);
+                }
+            } else {
+                $getImpactDesc = '';
+            }
+        }else{
+            $listFailCodeDesc = [];
+    
+            if ($womstr->wo_failure_code !== '') {
+                $listFailCode = explode(';', $womstr->wo_failure_code);
+    
+                foreach ($listFailCode as $failcode) {
+                    $getFailDesc = DB::table('fn_mstr')
+                        ->select('fn_desc')
+                        ->where('fn_code', '=', $failcode)
+                        ->first();
+    
+                    $failure = array('fn_code' => $failcode, 'fn_desc' => $getFailDesc->fn_desc);
+    
+                    array_push($listFailCodeDesc, $failure);
+                }
+            } else {
+                $getFailDesc = '';
+            }
+    
+            $listFailTypeDesc = [];
+    
+            if ($womstr->wo_failure_type !== '') {
+                $listFailType = explode(';', $womstr->wo_failure_type);
+    
+                foreach ($listFailType as $failtype) {
+                    $getFailDesc = DB::table('wotyp_mstr')
+                        ->select('wotyp_desc')
+                        ->where('wotyp_code', '=', $failtype)
+                        ->first();
+    
+                    $failure = array('wotyp_code' => $failtype, 'wotyp_desc' => $getFailDesc->wotyp_desc);
+    
+                    array_push($listFailTypeDesc, $failure);
+                }
+            } else {
+                $getFailDesc = '';
+            }
+    
+            $listImpactDesc = [];
+    
+            if ($womstr->wo_impact_code !== '') {
+                $listImpactCode = explode(';', $womstr->wo_impact_code);
+    
+                foreach ($listImpactCode as $impactcode) {
+                    $getImpactDesc = DB::table('imp_mstr')
+                        ->select('imp_desc')
+                        ->where('imp_code', '=', $impactcode)
+                        ->first();
+    
+                    $impact = array('imp_code' => $impactcode, 'imp_desc' => $getImpactDesc->imp_desc);
+    
+                    array_push($listImpactDesc, $impact);
+                }
+            } else {
+                $getImpactDesc = '';
+            }
+
+        }
+
+
+        $dept = DB::table(('dept_mstr'))
+            ->get();
+
+        $engineerlist = [];
+
+        if ($womstr->wo_list_engineer != '') {
+            $listEngineerCode = explode(';', $womstr->wo_list_engineer);
+
+            foreach ($listEngineerCode as $engineercode) {
+                $getEngineerList = DB::table('eng_mstr')
+                    ->select('eng_desc')
+                    ->where('eng_code', '=', $engineercode)
+                    ->first();
+
+                $impact = array('eng_code' => $engineercode, 'eng_desc' => $getEngineerList->eng_desc);
+
+                array_push($engineerlist, $impact);
+            }
+        } else {
+            $getEngineerList = '';
+        }
+
+        // dd($womstr);
+        // // dd($array);
+        $sparepartarray = [];
+        $printdate = Carbon::now('ASIA/JAKARTA')->toDateString();
+        // dd($repair);
+        foreach ($repair as $repair) {
+            foreach ($repair as $repair1) {
+                // dd($repair1);
+                if (!in_array($repair1->spm_desc, $sparepartarray)) {
+                    array_push($sparepartarray, $repair1->spm_desc);
+                }
+            }
+        }
+
+        /* A211014 */
+        $users = DB::table('users')->get();
+        $datasr = DB::table('service_req_mstr')
+            ->whereWo_number($wo)
+            ->first();
+
+        // $pdf = PDF::loadview('workorder.pdfprint-template',['womstr' => $womstr,'wodet' => $wodet, 'data' => $data,'printdate' =>$printdate,'repair'=>$repair,'sparepart'=>$array])->setPaper('A4','portrait');
+        $pdf = PDF::loadview('workorder.pdfprint-template', [
+            'engineerlist' => $engineerlist, 'womstr' => $womstr, 'dept' => $dept, 'printdate' => $printdate, 'users' => $users,
+            'datasr' => $datasr, 'failurecode' => $listFailCodeDesc, 'impact' => $listImpactDesc, 'failuretype' => $listFailTypeDesc,
+            'engapprover' => $engapprover,
+        ])->setPaper('A4', 'portrait');
+        //return view('picklistbrowse.shipperprint-template',['printdata1' => $printdata1, 'printdata2' => $printdata2, 'runningnbr' => $runningnbr,'user' => $user,'last' =>$countprint]);
+        return $pdf->stream($wo . '.pdf');
     }
 
     public function donlodwo(Request $req)
