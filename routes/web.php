@@ -442,7 +442,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/womaint/getnowo','wocontroller@geteditwoold');
 	route::get('/womaint/getwoinfo',[wocontroller::class, 'geteditwo'])->name('editWO');
 	route::get('/womaint/getfailure','wocontroller@getfailure');
-	route::get('/openprint/{wo}','wocontroller@openprint');
+	route::get('/woprint/{wo}','wocontroller@woprint');
 	route::get('/openprint2/{wo}','wocontroller@openprint2');
 	route::get('/wodownloadfile/{wo}','wocontroller@downloadfile');
 	route::get('/wobrowseopen', 'wocontroller@wobrowseopen'); //tyas, link dari Home 

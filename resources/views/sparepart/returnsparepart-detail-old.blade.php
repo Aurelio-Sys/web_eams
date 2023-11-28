@@ -357,10 +357,10 @@
             var cols = "";
 
             cols += '<td>';
-            cols += '<select name="spret[]" style="display: inline-block !important;" class="spret form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
+            cols += '<select name="spret[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
             cols += '<option value = ""> -- Select Sparepart -- </option>';
-            @foreach($sp_all as $index => $da)
-            cols += '<option data-spsite="{{$da->spm_site}}" data-spindex="{{$index}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
+            @foreach($sp_all as $da)
+            cols += '<option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
             @endforeach
             cols += '</select>&nbsp;';
             cols += '<a href="javascript:void(0)" class="viewstok" data-toggle="tooltip"  title="View Supply Stock" data-spcode="">';
@@ -373,16 +373,19 @@
             cols += '</td>';
 
             cols += '<td>';
-            // cols += '<select name="loctox[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
+            // cols += '<select name="locto[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
             // cols += '<option value = ""> -- Select Location To -- </option>';
             // @foreach($loc_from as $loc)
             // cols += '<option data-siteto="{{$loc->inp_supply_site}}" value="{{$loc->inp_loc}}">{{$loc->inp_loc}}</option>';
             // @endforeach
             // cols += '</select>';
-            cols += '<input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="locto[]" data-toggle="tooltip" data-index="" data-spcode="" readonly required placeholder="Click Here">';
-            cols += '<input type="hidden" class="hidden_sitefrom" name="siteto[]" value="" />';
-            cols += '<input type="hidden" class="hidden_locfrom" name="locto[]" value="" />';
+            @foreach($loc_from as $index => $loc)
+            cols += '<input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="locto[]" data-toggle="tooltip" data-index="' + {{$index}} + '" readonly required placeholder="Click Here">';
+            cols += '<input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />';
+            cols += '<input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />';
             cols +=  '<input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />';
+            cols += '<input type="hidden" class="siteto" name="siteto[]" value=""/>';
+            @endforeach
             cols += '</td>';
             cols += '<td>';
             cols += '<textarea type="text" id="retnote" class="form-control retnote" name="retnote[]" rows="2" ></textarea>';
@@ -403,8 +406,7 @@
 
         $(document).on('click', '.loclotfrom', function() {
             var row = $(this).closest("tr");
-            const spcode = $(this).data('spcode');
-//alert(spcode);
+            const spcode = row.find(".hidden_spcode").val();
 
             $.ajax({
                 url: '/gettrfspwsastockfrom',
@@ -463,7 +465,7 @@
 
                                 const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
 
-                                row.find(".loclotfrom").val(loc);
+                                row.find(".loclotfrom").val(loclot);
                                 // console.log(row.find(".loclotfrom").val(loclot));
                                 row.find(".loclotfrom").attr('title', loclot);
 
@@ -565,12 +567,9 @@
         $(document).on('change', 'select[name="spret[]"]', function() {
             // console.log('masuk');
             var selectedValue = $(this).val();
-            var selectedIndex = $('option:selected', this).data('spindex');
-
+            
             // Mengubah data-spcode pada elemen <a> yang berada dalam <td> yang sama
             $(this).closest('td').find('.viewstok').attr('data-spcode', selectedValue);
-		$(this).closest('tr').find('.loclotfrom').attr('data-index', selectedIndex);
-$(this).closest('tr').find('.loclotfrom').attr('data-spcode', selectedValue);
             // console.log("Updated WO Number: ", $(this).closest('td').find('.viewstok').attr('data-spcode')); 
         });
 
