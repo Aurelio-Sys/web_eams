@@ -65,7 +65,7 @@ class DownrptController extends Controller
         $datamtbfsr = DB::table('service_req_mstr')
             ->selectRaw('sr_asset as asset,count(sr_number) as jmltr')
             ->leftjoin('asset_mstr','asset_code','=','sr_asset')
-            /* ->whereSr_fail_type('BRE') */
+            ->whereSr_fail_type('BRE')
             ->where('sr_status','<>','Canceled')
             ->groupBy('sr_asset');
 
@@ -87,14 +87,14 @@ class DownrptController extends Controller
             ->selectRaw('sr_asset as asset,sr_req_date as tglawal,wo_job_finishdate as tglakhir')
             ->Join('wo_mstr','wo_mstr.wo_number','=','service_req_mstr.wo_number')
             ->leftjoin('asset_mstr','asset_code','=','sr_asset')
-            /* ->whereSr_fail_type('BRE') */
+            ->whereSr_fail_type('BRE')
             ->where('sr_status','<>','Canceled')
             ->wherein('wo_status',['finished','Closed','Acceptance']);
 
         $datamttfwo = DB::table('wo_mstr')
             ->selectRaw('wo_asset_code as asset,wo_start_date as tglawal,wo_job_finishdate as tglakhir')
             ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
-            /* ->whereWo_failure_type('BRE') */
+            ->whereWo_failure_type('BRE')
             ->whereWo_type('CM')
             ->where('wo_status','<>','canceled')
             ->where(function ($query) {
@@ -108,13 +108,13 @@ class DownrptController extends Controller
             ->selectRaw('wo_mstr.id as woid, sr_asset as asset,sr_req_date as tglawal,sr_req_time as jamawal,wo_job_finishdate as tglakhir,wo_job_finishtime as jamakhir')
             ->Join('wo_mstr','wo_mstr.wo_number','=','service_req_mstr.wo_number')
             ->leftjoin('asset_mstr','asset_code','=','sr_asset')
-            /* ->whereSr_fail_type('BRE') */
+            ->whereSr_fail_type('BRE')
             ->wherein('wo_status',['acceptance','Closed']);
             
         $datamdtwo = DB::table('wo_mstr')   /** Untuk WO jam awalnya ambil dari jam input, karena tidak ada inputan untuk jam dan tanggalnya */
             ->selectRaw('wo_mstr.id as woid,wo_asset_code as asset,wo_start_date as tglawal,TIME(wo_system_create) as jamawal,wo_job_finishdate as tglakhir,wo_job_finishtime as jamakhir')
             ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
-            /* ->whereWo_failure_type('BRE') */
+            ->whereWo_failure_type('BRE')
             ->whereWo_type('CM')
             ->where(function ($query) {
                 $query->whereNull('wo_sr_number')
@@ -127,13 +127,13 @@ class DownrptController extends Controller
             ->selectRaw('sr_asset as asset,sr_req_date as tglawal,sr_req_time as jamawal,wo_job_finishdate as tglakhir,wo_job_finishtime as jamakhir')
             ->leftjoin('asset_mstr','asset_code','=','sr_asset')
             ->Join('wo_mstr','wo_mstr.wo_number','=','service_req_mstr.wo_number')
-            /* ->whereSr_fail_type('BRE') */
+            ->whereSr_fail_type('BRE')
             ->wherein('wo_status',['finished','acceptance','Closed']);
             
         $datamttrwo = DB::table('wo_mstr')   /** Untuk WO jam awalnya ambil dari jam input, karena tidak ada inputan untuk jam dan tanggalnya */
             ->selectRaw('wo_asset_code as asset,wo_start_date as tglawal,TIME(wo_system_create) as jamawal,wo_job_finishdate as tglakhir,wo_job_finishtime as jamakhir')
             ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
-            /* ->whereWo_failure_type('BRE') */
+            ->whereWo_failure_type('BRE')
             ->whereWo_type('CM')
             ->where(function ($query) {
                 $query->whereNull('wo_sr_number')
@@ -368,7 +368,10 @@ class DownrptController extends Controller
 
             $jmlmenit = 0;      /** Untuk menjumlahkan waktu kerusakan per asset */
             foreach($datamdt as $dm) {
-                /** Mencari tanggal approvaal terakhir */
+                $selisih_jam = 0;
+				$selisih_menit = 0;
+				
+				/** Mencari tanggal approvaal terakhir */
                 $qappwo = $dataappwo->where('wotr_mstr_id', '=', $dm->woid);
 
                 $maxUpdated = $qappwo->max('updated_at');
@@ -376,13 +379,15 @@ class DownrptController extends Controller
                 // Gabungkan tanggal dan waktu menjadi DateTime
                 $awal = \DateTime::createFromFormat('Y-m-d H:i:s', $dm->tglawal . ' ' . $dm->jamawal);
                 $akhir = \DateTime::createFromFormat('Y-m-d H:i:s', $maxUpdated);
-
-                // Hitung selisih antara datetime1 dan datetime2
-                $selisih = $awal->diff($akhir);
-
-                // Hitung selisih waktu dalam menit
-                $selisih_jam = ($selisih->days * 24) + $selisih->h;
-                $selisih_menit = $selisih->i / 60 ;
+				
+				if($awal <> null && $akhir <> null){
+					// Hitung selisih antara datetime1 dan datetime2
+					$selisih = $awal->diff($akhir);
+					
+					// Hitung selisih waktu dalam menit
+					$selisih_jam = ($selisih->days * 24) + $selisih->h;
+					$selisih_menit = $selisih->i / 60 ;
+				}
 
                 $jmlmenit = $jmlmenit + $selisih_jam + $selisih_menit;
             }
@@ -444,17 +449,22 @@ class DownrptController extends Controller
 
             $jmlmenit = 0;      /** Untuk menjumlahkan waktu kerusakan per asset */
             foreach($datamdt as $dm) {
+				$selisih_jam = 0;
+				$selisih_menit = 0;
+				
                 // Gabungkan tanggal dan waktu menjadi DateTime
                 $awal = \DateTime::createFromFormat('Y-m-d H:i:s', $dm->tglawal . ' ' . $dm->jamawal);
                 $akhir = \DateTime::createFromFormat('Y-m-d H:i:s', $dm->tglakhir . ' ' . $dm->jamakhir);
 
-                // Hitung selisih antara datetime1 dan datetime2
-                $selisih = $awal->diff($akhir);
-
-                // Hitung selisih waktu dalam menit
-                $selisih_jam = ($selisih->days * 24) + $selisih->h;
-                $selisih_menit = $selisih->i / 60 ;
-
+                if($awal <> null && $akhir <> null){
+					// Hitung selisih antara datetime1 dan datetime2
+					$selisih = $awal->diff($akhir);
+					
+					// Hitung selisih waktu dalam menit
+					$selisih_jam = ($selisih->days * 24) + $selisih->h;
+					$selisih_menit = $selisih->i / 60 ;
+				}
+			
                 $jmlmenit = $jmlmenit + $selisih_jam + $selisih_menit;
             }
             
