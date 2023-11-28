@@ -139,8 +139,11 @@
                 <div class="col-md-3 h-50">
                     <label for="c_duedate" class="col-md-12 col-form-label text-md-left p-0">Due Date WO</label>
                 </div>
-                <div class="col-md-6 h-50">
-
+                <div class="col-md-3 h-50">
+                    <label for="c_startpengerjaan" class="col-md-12 col-form-label text-md-left p-0">Start Job</label>
+                </div>
+                <div class="col-md-3 h-50">
+                    <label for="c_notesr" class="col-md-12 col-form-label text-md-left p-0">Note Service Request</label>
                 </div>
                 <div class="col-md-3 h-50">
                     <input id="c_startdate" type="text" class="form-control pl-0 col-md-12 c_startdate" style="background:transparent;border:none;text-align:left" name="c_startdate" value="{{$header->wo_start_date}}" readonly />
@@ -148,6 +151,12 @@
                 <div class="col-md-3 h-50">
                     <input id="c_duedate" type="text" class="form-control pl-0 col-md-12 c_duedate" style="background:transparent;border:none;text-align:left" name="c_duedate" value="{{$header->wo_due_date}}" readonly />
                     <input type="hidden" id="hidden_assetsite" name="hidden_assetsite" value="{{$header->wo_site}}" />
+                </div>
+                <div class="col-md-3 h-50">
+                    <input id="c_startpengerjaan" type="text" class="form-control pl-0 col-md-12 c_startpengerjaan" style="background:transparent;border:none;text-align:left" name="c_startpengerjaan" value="{{$header->wo_job_startdate}} {{$header->wo_job_starttime}}" readonly />
+                </div>
+                <div class="col-md-3 h-50">
+                    <textarea id="c_notesr" class="form-control pl-0 col-md-12 c_notesr" style="background:transparent;border:none;text-align:left" name="c_notesr" readonly >{{$notesr}}</textarea>
                 </div>
             </div>
 
@@ -435,7 +444,7 @@
                 </div>
 
                 <div class="form-group row col-md-12">
-                    <label for="downtime" class="col-md-4 col-form-label text-md-left">Downtime <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                    <label for="downtime" class="col-md-4 col-form-label text-md-left">Lama Perbaikan <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-3">
                         <input type="number" id="downtime" min="0" class="form-control" name="downtime" value="{{$header->wo_downtime != null ? $header->wo_downtime : 0}}" required />
                     </div>
