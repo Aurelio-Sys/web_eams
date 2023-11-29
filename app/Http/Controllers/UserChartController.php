@@ -1090,7 +1090,7 @@ class UserChartController extends Controller
                     ->whereWo_asset_code($code)
                     ->where('wo_start_date', '>=', $tahunKebelakang)
                     ->where('wo_start_date', '<=', Carbon::now())
-                    ->orderBy('wo_start_date')
+                    ->orderBy('wo_start_date','desc')
                     ->get();
 
             $output = '';
