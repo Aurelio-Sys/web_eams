@@ -157,6 +157,64 @@ class SparepartController extends Controller
         // dd($womstr);
         return response()->json($data);
     }
+    //REQUEST SPAREPART ROUTE HISTORY
+    public function reqsproutehist(Request $request)
+    {
+        $rsnumber = $request->code;
+        $datars = DB::table('req_sparepart')
+            ->where('req_sp_number', '=', $rsnumber)
+            ->first();
+
+        $dataApprover = DB::table('reqsp_trans_approval_hist')
+            ->leftJoin('users', 'reqsp_trans_approval_hist.rqtrh_approved_by', '=', 'users.id')
+            ->leftJoin('dept_mstr', 'reqsp_trans_approval_hist.rqtrh_dept_approval', '=', 'dept_mstr.dept_code')
+            ->selectRaw('reqsp_trans_approval_hist.*, users.username, users.dept_user, dept_mstr.dept_desc')
+            ->where('rqtrh_rs_number', '=', $rsnumber)
+            ->get();
+        // dd($dataApprover);
+        $output = '';
+
+        if ($dataApprover->count() != 0) {
+            foreach ($dataApprover as $key => $approver) {
+
+                // foreach($userApprover as $user){
+                $output .= '<tr>';
+                $output .= '<td>';
+                $output .= $key + 1;
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= $approver->rqtrh_dept_approval != null ? $approver->rqtrh_dept_approval . ' -- ' . $approver->dept_desc : $approver->dept_user . ' -- ' . $approver->dept_desc;
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= $approver->rqtrh_role_approval;
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= $approver->rqtrh_reason;
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= $approver->rqtrh_status;
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= is_null($approver->username) ? '' : $approver->username;
+                $output .= '</td>';
+                $output .= '<td>';
+                $output .= is_null($approver->updated_at) ? '' : $approver->updated_at;
+                $output .= '</td>';
+                $output .= '</tr>';
+                // }
+            }
+        }
+        // else {
+        //     $output .= '<tr>';
+        //     $output .= '<td colspan="7" style="color:red">';
+        //     $output .= '<center>You have not setup the approver, please cancel this request sparepart,<br>setup the approver first and create new request sparepart! </center>';
+        //     $output .= '</td>';
+        //     $output .= '</tr>';
+        // }
+
+        return response($output);
+    }
+    
     //REQUEST SPAREPART ROUTE
     public function reqsproute(Request $request)
     {
@@ -889,6 +947,76 @@ class SparepartController extends Controller
 
         DB::commit();
         toast('Request Sparepart ' . $rsnumber . ' successfully canceled !', 'success');
+        return back();
+    }
+
+    //REQUEST SPAREPART PPROVAL CANCEL
+    public function reqspapprcancel(Request $req)
+    {
+        // dd($req->all());
+        $rsnumber = $req->c_rsnumber;
+        $reason = $req->c_reason;
+
+        $user = Auth::user();
+
+        $idrs = ReqSPMstr::where('req_sp_number', $rsnumber)->pluck('id')->first();
+
+        //ambil data Req SP
+        $reqspmstr = DB::table('req_sparepart')
+            ->where('req_sp_number', $rsnumber)
+            ->leftJoin('req_sparepart_det', 'req_sparepart_det.req_spd_mstr_id', 'req_sparepart.id')
+            ->join('sp_mstr', 'sp_mstr.spm_code', 'req_sparepart_det.req_spd_sparepart_code')
+            ->Join('users', 'req_sparepart.req_sp_requested_by', 'users.username')
+            ->first();
+
+        $woapprover = DB::table('reqsp_trans_approval')
+            ->where('rqtr_mstr_id', $idrs)
+            ->first();
+
+        DB::table('req_sparepart')
+            ->where('req_sp_number', $rsnumber)
+            ->update([
+                'req_sp_status' => 'canceled',
+                'req_sp_cancel_note' => $reason,
+                'updated_at' => Carbon::now()->toDateTimeString(),
+            ]);
+
+        DB::table('req_sparepart_hist')
+            ->insert([
+                'req_sph_number' => $rsnumber,
+                'req_sph_action' => 'canceled by approver',
+                'created_at' => Carbon::now()->toDateTimeString(),
+            ]);
+
+        //approval cancel
+        $rqtranscancel = [
+            'rqtr_status'      => 'canceled',
+            'rqtr_reason'      => $reason,
+            'rqtr_approved_by' => $user->id,
+            'updated_at' => Carbon::now()->toDateTimeString(),
+        ];
+
+        $rqtranscancelhist = [
+            'rqtrh_rs_number'        => $reqspmstr->req_sp_number,
+            'rqtrh_wo_number'        => $reqspmstr->req_sp_wonumber,
+            'rqtrh_dept_approval'    => $user->dept_user,
+            'rqtrh_role_approval'    => $user->role_user,
+            'rqtrh_status'           => 'request sparepart canceled by approver',
+            'rqtrh_reason'           => $reason,
+            'rqtrh_sequence'         => $woapprover->rqtr_sequence,
+            'rqtrh_approved_by'      => $user->id,
+            'updated_at' => Carbon::now()->toDateTimeString(),
+        ];
+
+        DB::table('reqsp_trans_approval')
+            ->where('rqtr_mstr_id', '=', $idrs)
+            ->update($rqtranscancel);
+
+        DB::table('reqsp_trans_approval_hist')
+            ->insert($rqtranscancelhist);
+
+        DB::commit();
+        toast('Request Sparepart Approval ' . $rsnumber . ' successfully canceled !', 'success');
         return back();
     }
 
