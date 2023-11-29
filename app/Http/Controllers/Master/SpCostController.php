@@ -30,8 +30,8 @@ class SpCostController extends Controller
 
             $data = DB::table('sp_cost')
                 ->Join('sp_mstr','spm_code','=','spc_part')
-                ->orderBy('spc_costset')
-                ->orderby('spm_code');
+                ->orderBy('spc_costset','desc')
+                ->orderby('spc_part');
 
             if($scode) {
                 $data = $data->where('spm_code','=',$scode);
@@ -39,6 +39,9 @@ class SpCostController extends Controller
             if($scostset) {
                 $data = $data->where('spc_costset','=',$scostset);
             }
+			/* if(!$scode && !$scostset) {
+				$data = $data->where('sp_cost.id','<','0');
+			} */
             
             $data = $data->paginate(10);
 
@@ -78,7 +81,7 @@ class SpCostController extends Controller
     public function store(Request $request) /** Route : loadspcost */
     {
         $domain = ModelsQxwsa::first();
-
+//dd($request->all());
         /** Load data cost dari Item Cost Set */
         
         $datacost = (new WSAServices())->wsacostset($domain->wsas_domain,$request->t_period);
@@ -87,7 +90,7 @@ class SpCostController extends Controller
         //DB::statement('TRUNCATE TABLE sp_cost');    // di truncate agar id nya tidak selalu bertambah
 
         DB::table('sp_cost')
-            ->where('spc_costset','=',$request->t_period)
+            ->where('spc_period','=',$request->t_period)
             ->delete();
 
         if ($datacost === false) {

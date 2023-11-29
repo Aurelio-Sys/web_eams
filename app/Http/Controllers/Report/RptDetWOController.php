@@ -23,7 +23,7 @@ class RptDetWOController extends Controller
      */
     public function index(Request $request)
     {
-        // dd($request->all());
+        //dd($request->all());
         $usernow = DB::table('users')
             ->leftjoin('eng_mstr', 'users.username', 'eng_mstr.eng_code')
             ->where('username', '=', session()->get('username'))
@@ -253,10 +253,10 @@ class RptDetWOController extends Controller
         Schema::dropIfExists('temp_wo');
         // dd($impact);
         if ($request->dexcel == "excel") {
-            return Excel::download(new ViewExport2($request->swo,$request->sasset,$request->s_per1,$request->s_per2,
-            $request->sdept,$request->sloc,$request->seng,$request->stype), 'DataWO.xlsx');
+            return Excel::download(new ViewExport2($request->swo,$request->sasset,$request->per1,$request->per2,
+            $request->sdept,$request->sloc,$request->seng,$request->stype,$request->s_per1,$request->s_per2), 'DataWO.xlsx');
         } elseif ($request->dexcel == "detail") {
-            return Excel::download(new DetailWOExport($request->swo,$request->sasset,$request->s_per1,$request->s_per2,
+            return Excel::download(new DetailWOExport($request->swo,$request->sasset,$request->per1,$request->per2,
             $request->sdept,$request->sloc,$request->seng,$request->stype), 'DetailWO.xlsx');
         } else {
             // dd($request->s_nomorwo);

@@ -125,7 +125,7 @@
 
 <!-- Modal View -->
 <div class="modal fade" id="editModal" role="dialog" aria-hidden="true" data-backdrop="static">
-	<div class="modal-dialog modal-lg">
+	<div class="modal-dialog modal-xl">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title text-center" id="exampleModalLabel">Detail Cost per Asset</h5>
@@ -155,14 +155,14 @@
                         <table width="100%" id='assetTable' class='table table-striped table-bordered dataTable no-footer order-list mini-table' style="table-layout: fixed;">
                             <thead>
                               <tr id='full'>
-                                <th>WO Number</th>
-                                <th>Note</th>
-                                <th>Engineer</th>
-                                <th>WO Create</th>
-                                <th>WO Type</th>
-                                <th>Status</th>
-                                <th>Cost</th>
-                                {{--  <th>Detail</th>  --}}
+                                <th width="15%">WO Number</th>
+                                <th width="25%">Note</th>
+                                <th width="20%">Engineer</th>
+                                <th width="10%">WO Create</th>
+                                <th width="5%">WO Type</th>
+                                <th width="10%">Status</th>
+                                <th width="10%">Cost</th>
+                                <th width="5%">Detail</th>
                               </tr>
                             </thead>
                             <tbody id='detailapp'>
@@ -198,6 +198,7 @@
 
         var code         = $(this).data('code');
         var desc         = $(this).data('desc');
+		var loc 		= $(this).data('loc');
         var locdesc      = $(this).data('locdesc');
         var bln      = $(this).data('bln');
         var thn      = $(this).data('thn');
@@ -207,7 +208,7 @@
         
         document.getElementById('e_code').value         = code;
         document.getElementById('e_desc').value         = desc;
-        document.getElementById('e_locdesc').value      = locdesc;
+        document.getElementById('e_locdesc').value      = loc + " -- " + locdesc;
 
         $.ajax({
             url:"rptcostview?code="+code+"&bln="+bln+"&thn="+thn+"&type="+type+"&eng="+eng+"&child="+child,

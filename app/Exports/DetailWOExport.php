@@ -46,11 +46,16 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         $loc = $this->loc;
         $eng = $this->eng;
         $type = $this->type;
-
+		
+		/* Note : 
+			- Mengambil harga dari data PC di pc_cost berdasarkan tanggal issued item. bukan berdasarkan tanggal terbentuknya WO 
+			- Tanggal transaksi adalah tanggal schedule date bukan dari tanggal terbentuknya wo, karena bisa jadi ada wo yang terbentuk skrg tapi jadwalnya untuk next bulan
+			- Detail WO report belum mengambil dari schedule date, harus di cek lagi
+		*/
         
         /* 1 Mencari data sparepart dari wo detail */
         $datadet = DB::table('wo_dets_sp')
-            ->selectRaw("wo_number,wo_start_date,wo_department,wo_status,wo_type,
+            ->selectRaw("wo_number,wo_system_create,wo_start_date,wo_job_finishdate,wo_department,wo_status,wo_type,
                 wo_asset_code,asset_desc,asset_site,asset_loc,asloc_desc,wo_note,
                 SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 1), ';', -1) AS eng1,
                 CASE WHEN LOCATE(';', wo_list_engineer) > 0 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 2), ';', -1) ELSE '' END AS eng2,
@@ -66,14 +71,15 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
                 $join->on('sp_cost.spc_part', '=', 'sp_mstr.spm_code')
                      ->whereRaw("sp_cost.spc_period = DATE_FORMAT(wo_mstr.wo_job_finishdate, '%y%m')");
             })
+			/* ->where('wo_number','=','WO-23-000288') */
             ->orderBy('wd_sp_wonumber');
-// dd($datadet->get());
+//dd($datadet->get());
 
         /* 2 Mencari data sparepart yang belum ada wo detail nya */
         
         /* 2a Jika ada SparepartList nya */
         $dataspg = DB::table('wo_mstr')
-            ->selectRaw("wo_number,wo_start_date,wo_department,wo_status,wo_type,
+            ->selectRaw("wo_number,wo_system_create,wo_start_date,wo_job_finishdate,wo_department,wo_status,wo_type,
             wo_asset_code,asset_desc,asset_site,asset_loc,asloc_desc,wo_note,
             SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 1), ';', -1) AS eng1,
             CASE WHEN LOCATE(';', wo_list_engineer) > 0 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 2), ';', -1) ELSE '' END AS eng2,
@@ -96,7 +102,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
 
         /* 2a Jika tidak ada SparepartList nya */
         $datawo = DB::table('wo_mstr')
-            ->selectRaw("wo_number,wo_start_date,wo_department,wo_status,wo_type,
+            ->selectRaw("wo_number,wo_system_create,wo_start_date,wo_job_finishdate,wo_department,wo_status,wo_type,
             wo_asset_code,asset_desc,asset_site,asset_loc,asloc_desc,wo_note,
             SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 1), ';', -1) AS eng1,
             CASE WHEN LOCATE(';', wo_list_engineer) > 0 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 2), ';', -1) ELSE '' END AS eng2,
@@ -143,12 +149,12 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         //     $dataspg = $dataspg->where('wo_list_engineer','like','%'.$eng.'%');
         // }
         if($per1) {
-            $per1 = $per1.' 00:00:00';
-            $per2 = $per2.' 23:59:59';
+            /* $per1 = $per1.' 00:00:00';
+            $per2 = $per2.' 23:59:59'; */
             $datadet = $datadet->whereBetween('wo_system_create',[$per1,$per2]);
             $datawo = $datawo->whereBetween('wo_system_create',[$per1,$per2]);
             $dataspg = $dataspg->whereBetween('wo_system_create',[$per1,$per2]);
-        }
+        } 
 
         $data = $datadet->union($datawo)->union($dataspg)
             ->orderby('wo_start_date','desc')
@@ -159,7 +165,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
 
     public function headings(): array
     {
-        return ['Work Order Number','WO Start Date', 'Departement','Status','Type',
+        return ['Work Order Number','WO Date','WO Start Date', 'WO Finish Date', 'Departement','Status','Type',
         'Asset Code','Asset Name','Asset Site','Asset Location Code','Asset Location Desc', 'Note',
         'Engineer 1','Engineer 2','Engineer 3','Engineer 4','Engineer 5',
         'Sparepart','Sparepart Desc','Price','Qty Required','Qty Confirm Whs','Qty Used'];

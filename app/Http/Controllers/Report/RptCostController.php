@@ -84,13 +84,16 @@ class RptCostController extends Controller
             $table->temporary();
         });
 
-        // sum(wo_dets_sp_price * wo_dets_sp_qty) as jml')
+        /* Note : 
+			- Mengambil harga dari data PC di pc_cost berdasarkan tanggal issued item. bukan berdasarkan tanggal terbentuknya WO 
+			- Tanggal transaksi adalah tanggal schedule date bukan dari tanggal terbentuknya wo, karena bisa jadi ada wo yang terbentuk skrg tapi jadwalnya untuk next bulan
+		*/
 
         $dataharga = DB::table('wo_mstr')
             ->selectRaw('wo_asset_code,wo_type,month(wo_start_date) as "bln",year(wo_start_date) as "thn",
                 sum(wd_sp_issued * spc_cost) as jml')
             ->leftJoin('wo_dets_sp','wd_sp_wonumber','=','wo_number')
-            ->leftJoin('sp_cost', function ($join) {
+			->leftJoin('sp_cost', function ($join) {
                 $join->on('sp_cost.spc_part', '=', 'wo_dets_sp.wd_sp_spcode')
                      ->whereRaw("sp_cost.spc_period = DATE_FORMAT(wo_mstr.wo_job_finishdate, '%y%m')");
             })
@@ -128,7 +131,7 @@ class RptCostController extends Controller
             ->selectRaw('SUM(wd_sp_issued * spc_cost) as jml')
             ->leftJoin('wo_mstr', 'wo_asset_code', '=', 'aspar_child')
             ->leftJoin('wo_dets_sp', 'wo_number', '=', 'wd_sp_wonumber')
-            ->leftJoin('sp_cost', function ($join) {
+			->leftJoin('sp_cost', function ($join) {
                 $join->on('sp_cost.spc_part', '=', 'wo_dets_sp.wd_sp_spcode')
                      ->whereRaw("sp_cost.spc_period = DATE_FORMAT(wo_mstr.wo_job_finishdate, '%y%m')");
             })
@@ -228,12 +231,8 @@ class RptCostController extends Controller
 
         $dataharga = DB::table('wo_mstr')
             ->selectRaw('wo_asset_code,month(wo_system_create) as "bln",year(wo_system_create) as "thn",
-                sum(spc_cost * wo_dets_sp_qty) as jml')
+                sum(wo_dets_sp_price * wo_dets_sp_qty) as jml')
             ->leftJoin('wo_dets','wo_dets_nbr','=','wo_nbr')
-            ->leftJoin('sp_cost', function ($join) {
-                $join->on('sp_cost.spc_part', '=', 'wo_dets_sp.wd_sp_spcode')
-                     ->whereRaw("sp_cost.spc_period = DATE_FORMAT(wo_mstr.wo_job_finishdate, '%y%m')");
-            })
             ->groupBy('wo_asset_code')
             ->groupBy('bln')
             ->groupBy('thn')
@@ -287,17 +286,18 @@ class RptCostController extends Controller
 
             /** Data untuk seluruh WO */
             $datawo = DB::table('wo_mstr')
-                    ->select('wo_number','wo_note','wo_list_engineer','wo_start_date','wo_type','wo_status')
+                    ->select('wo_number','wo_note','wo_list_engineer','wo_start_date','wo_type','wo_status','wo_job_finishdate')
                     ->join('asset_mstr','asset_code','=','wo_asset_code')
                     ->whereWo_asset_code($code)
                     ->whereMonth('wo_start_date','=',$bln)
                     ->whereYear('wo_start_date','=',$thn)
-                    ->orderBy('wo_start_date');
+                    ->orderBy('wo_start_date','desc')
+					->orderBy('wo_number','desc');
 
             /** Data jika include parent dari hierarchy asset */
             $datapar = DB::table('asset_par')
                     ->leftJoin('wo_mstr', 'wo_asset_code', '=', 'aspar_child')
-                    ->selectRaw('wo_number,CONCAT("child asset ", wo_asset_code) as wo_note,wo_list_engineer,wo_start_date,wo_type,wo_status')
+                    ->selectRaw('wo_number,CONCAT("child asset ", wo_asset_code) as wo_note,wo_list_engineer,wo_start_date,wo_type,wo_status,wo_job_finishdate')
                     ->whereAspar_par($code)
                     ->whereMonth('wo_start_date','=',$bln)
                     ->whereYear('wo_start_date','=',$thn);
@@ -323,23 +323,18 @@ class RptCostController extends Controller
             $output = '';
             foreach ($data as $data) {
                 $eng = "";
+				$tglfinish = $data->wo_job_finishdate;
 
-                $dataharga = DB::table('wo_mstr')
-                ->selectRaw('sum(wd_sp_issued * spc_cost) as jml')
-                ->leftJoin('wo_dets_sp','wd_sp_wonumber','=','wo_number')
-                ->leftJoin('sp_cost', function ($join) {
-                    $join->on('sp_cost.spc_part', '=', 'wo_dets_sp.wd_sp_spcode')
-                         ->whereRaw("sp_cost.spc_period = DATE_FORMAT(wo_mstr.wo_job_finishdate, '%y%m')");
-                })
-                ->whereWd_sp_wonumber($data->wo_number)
-                ->first();
-                
-                /* DB::table('wo_dets_sp')
-                    ->selectRaw('sum(wd_sp_issued * wd_sp_itemcost) as jml')
+                $dataharga = DB::table('wo_dets_sp')
+                    ->selectRaw('sum(wd_sp_issued * spc_cost) as jml')
+					->leftJoin('sp_cost', function ($join) use ($tglfinish) {
+							$join->on('sp_cost.spc_part', '=', 'wo_dets_sp.wd_sp_spcode')
+								 ->whereRaw("sp_cost.spc_period = DATE_FORMAT('".$tglfinish."', '%y%m')");
+						})
                     ->whereWd_sp_wonumber($data->wo_number)
-                    ->first(); */
+                    ->first();
 
-                // dump($dataharga->jml);
+                //dump($dataharga->tosql);
 
                 $output .= '<tr>'.
                 '<td>'.$data->wo_number.'</td>'.
@@ -349,11 +344,10 @@ class RptCostController extends Controller
                 '<td>'.$data->wo_type.'</td>'.
                 '<td>'.$data->wo_status.'</td>'.
                 '<td style="text-align: right">'.number_format($dataharga->jml,2).'</td>'.
-                // Ditutup dulu, nanti dibuatkan detailnya
-                // '<td><a href="javascript:void(0)" class="view" type="button" data-toggle="tooltip" title="View Service Request"
-                //     data-sp="{{$show->temp_sp}}" data-spdesc="{{$show->temp_sp_desc}}" data-sch="{{$show->temp_sch_date}}">
-                //     <i class="icon-table far fa-eye fa-lg"></i>
-                // </a></td>'.
+                '<td><a href="javascript:void(0)" class="view" type="button" data-toggle="tooltip" title="View Service Request"
+                    data-sp="{{$show->temp_sp}}" data-spdesc="{{$show->temp_sp_desc}}" data-sch="{{$show->temp_sch_date}}">
+                    <i class="icon-table far fa-eye fa-lg"></i>
+                </a></td>'.
                 '</tr>';
             }
 

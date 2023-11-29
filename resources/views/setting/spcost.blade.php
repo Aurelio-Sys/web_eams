@@ -21,7 +21,7 @@
         <div class="row mb-0">
             <label for="t_cust" class="col-form-label col-md-1 text-md-left">Period</label>
             <div class="col-md-3">
-                <input type="text" class="form-control" id="t_period" name="t_period" required autocomplete="off"> 
+                <input type="text" class="form-control" id="t_period" name="t_period" required autocomplete="off" maxlength="4"> 
             </div>
     
             <div class="col-md-2 col-sm-12 mb-2 input-group">
