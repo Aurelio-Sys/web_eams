@@ -70,7 +70,7 @@ class SptRptController extends Controller
             ->leftJoin('sp_mstr','spm_code','=','req_sph_spcode')
             ->leftJoin('users','username','=','req_sph_reqby')
             ->leftJoin('dept_mstr','dept_code','=','dept_user')
-            ->whereNotIn('req_sph_action',['request sparepart created','canceled by user','sparepart updated'])
+            ->whereNotIn('req_sph_action',['request sparepart created','canceled by user','sparepart updated','canceled by approver'])
             ->selectRaw('req_sph_spcode,spm_desc,req_sph_locfrom,req_sph_lotfrom,req_sph_locto,req_sparepart_hist.created_at as tgl,
                 req_sph_action,req_sph_number,req_sph_qtytrf,req_sph_reqby,name,dept_user,dept_desc')
             ->orderBy('req_sparepart_hist.created_at')
