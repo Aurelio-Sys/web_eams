@@ -1054,7 +1054,8 @@ class SparepartController extends Controller
             ->join('users', 'req_sparepart.req_sp_requested_by', 'users.username')
             ->where('req_sp_status', '!=', 'canceled')
             ->groupBy('req_sp_number')
-            ->orderBy('req_sp_due_date', 'ASC');
+            ->orderBy('req_sp_due_date', 'desc')
+            ->orderBy('req_sp_number', 'desc');
 
         //pengecekan apakah user yg login adalah approver atau tidak
         if ($usernow != null) {

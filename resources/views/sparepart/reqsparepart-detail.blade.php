@@ -320,7 +320,7 @@
             const wonbr = document.getElementById('wonbr').value;
 
             $.ajax({
-                url: "reqspwonbrsupp?code=" + wonbr,
+                url: "reqspwonbr?code=" + wonbr,
                 success: function(data) {
 
                     // var line = document.getElementById('line').value;
