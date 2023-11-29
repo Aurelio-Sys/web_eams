@@ -99,8 +99,11 @@
                   <div class="col-md-2 col-sm-12 mb-2 input-group">
                       <button class="btn btn-block btn-primary" id="btnsearch" style="float:right" />Search</button>
                   </div>
-                  <div class="col-md-2 col-sm-12 mb-2 input-group">
+                  <div class="col-md-1 col-sm-12 mb-2 input-group d-flex justify-content-center">
                       <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh' /><i class="fas fa-sync-alt"></i></button>
+                  </div>
+                  <div class="col-md-2 col-sm-12 mb-2 input-group">
+                    <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="To Excel" style="float:right" />
                   </div>
               </div>
           </div>
@@ -194,14 +197,16 @@
   });
 
   $(document).on('click', '#btnexcel', function() {
-    var sasset = $('#s_asset').val();
-    var per1 = $('#s_per1').val();
-    var per2 = $('#s_per2').val();
-    var loc = $('#s_loc').val();
-    var site = $('#s_site').val();
+    var s_sp = $('#s_sp').val();
+    var s_nomorrs = $('#s_nomorrs').val();
+    var s_reqby = $('#s_reqby').val();
+    var s_dept = $('#s_dept').val();
+    var s_datefrom = $('#s_datefrom').val();
+    var s_dateto = $('#s_dateto').val();
+    var s_type = $('#s_type').val();
     
-    window.open("/exceldownrpt?dexcel=excel&s_asset=" + sasset + "&s_per1=" + per1 + "&s_per2=" + per2 +
-        "&s_loc=" + loc + "&s_site=" + site , '_blank');
+    window.open("/excelsptrpt?dexcel=excel&s_sp=" + s_sp + "&s_nomorrs=" + s_nomorrs + "&s_reqby=" + s_reqby +
+        "&s_dept=" + s_dept + "&s_datefrom=" + s_datefrom  + "&s_dateto=" + s_dateto  + "&s_type=" + s_type , '_blank');
   });
 
   $(document).on('change', '#s_per1', function() {

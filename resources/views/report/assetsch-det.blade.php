@@ -21,7 +21,9 @@
     data-note="{{$ds->wo_note}}" data-startdate="{{$ds->wo_job_startdate}}" data-finishdate="{{$ds->wo_job_finishdate}}"
     data-status="{{$ds->wo_status}}" data-loc="{{$loc}}">
 
-    @if($ds->wo_status == 'firm' || $ds->wo_status == 'released')
+    @if($ds->wo_status == 'firm')
+        <span class="badge badge-danger">{{$tipe}} : {{$ds->asset_desc}} - {{$eng}}</span>
+    @elseif($ds->wo_status == 'released')
         <span class="badge badge-primary">{{$tipe}} : {{$ds->asset_desc}} - {{$eng}}</span>
     @elseif($ds->wo_status == 'started')
         <span class="badge badge-success">{{$tipe}} : {{$ds->asset_desc}} - {{$eng}}</span>

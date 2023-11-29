@@ -283,6 +283,7 @@ class PmConfirmController extends Controller
                             'wo_site'             => $dataasset->asset_site,
                             'wo_location'         => $dataasset->asset_loc,
                             'wo_type'              => 'PM',
+                            'wo_priority'           => 'medium',
                             'wo_status'              => 'firm',
                             'wo_list_engineer'    => $deng, 
                             'wo_start_date'       => $req->te_pmdate[$flg],
@@ -311,6 +312,69 @@ class PmConfirmController extends Controller
                                 'year' => $newyear,
                                 'wt_nbr' => $newtemprunnbr
                             ]);
+
+                        /** Menyimpan data approval WO */
+                        //get wo dan sr mstr
+                        $womstr = DB::table('wo_mstr')->where('wo_number', $runningnbr)->first();
+
+                        //cek departemen approval
+                        $woapprover = DB::table('wo_approver_mstr')->where('id', '>', 0)->get();
+
+                        if (count($woapprover) > 0) {
+                            for ($i = 0; $i < count($woapprover); $i++) {
+                                $nextroleapprover = $woapprover[$i]->wo_approver_role;
+                                $nextseqapprover = $woapprover[$i]->wo_approver_order;
+
+                                //jika lewat approval QC, department dikosongkan
+                                if ($woapprover[$i]->wo_approver_role == 'QCA') {
+                                    //input ke wo trans approval jika ada approval
+                                    DB::table('wo_trans_approval')
+                                        ->insert([
+                                            'wotr_mstr_id' => $womstr->id,
+                                            'wotr_sr_number' => $womstr->wo_sr_number,
+                                            'wotr_role_approval' => $nextroleapprover,
+                                            'wotr_sequence' => $nextseqapprover,
+                                            'created_at' => Carbon::now()->toDateTimeString(),
+                                        ]);
+
+                                    //input ke wo trans approval hist jika ada approval department
+                                    DB::table('wo_trans_approval_hist')
+                                        ->insert([
+                                            'wotrh_wo_number' => $womstr->wo_number,
+                                            'wotrh_sr_number' => $womstr->wo_sr_number,
+                                            'wotrh_role_approval' => $nextroleapprover,
+                                            'wotrh_sequence' => $nextseqapprover,
+                                            'wotrh_status' => 'WO created',
+                                            'created_at' => Carbon::now()->toDateTimeString(),
+                                            'updated_at' => Carbon::now()->toDateTimeString(),
+                                        ]);
+                                } else {
+                                    //input ke wo trans approval jika ada approval
+                                    DB::table('wo_trans_approval')
+                                        ->insert([
+                                            'wotr_mstr_id' => $womstr->id,
+                                            'wotr_sr_number' => $womstr->wo_sr_number,
+                                            'wotr_dept_approval' => session()->get('department'),
+                                            'wotr_role_approval' => $nextroleapprover,
+                                            'wotr_sequence' => $nextseqapprover,
+                                            'created_at' => Carbon::now()->toDateTimeString(),
+                                        ]);
+
+                                    //input ke wo trans approval hist jika ada approval department
+                                    DB::table('wo_trans_approval_hist')
+                                        ->insert([
+                                            'wotrh_wo_number' => $womstr->wo_number,
+                                            'wotrh_sr_number' => $womstr->wo_sr_number,
+                                            'wotrh_dept_approval' => session()->get('department'),
+                                            'wotrh_role_approval' => $nextroleapprover,
+                                            'wotrh_sequence' => $nextseqapprover,
+                                            'wotrh_status' => 'WO created',
+                                            'created_at' => Carbon::now()->toDateTimeString(),
+                                            'updated_at' => Carbon::now()->toDateTimeString(),
+                                        ]);
+                                }
+                            }
+                        }
 
                         /** Jika data dari PM Meter, dicatatkan posisi nilai pengukuran saat confirm agar diketahui nilai pengukurannya pada saat PM dilakukan confirm */
                         // DB::table('us_hist')
