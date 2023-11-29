@@ -51,9 +51,6 @@
             display: block;
         }
 
-        .table-stok{
-
-        }
     }
 </style>
 
@@ -347,7 +344,7 @@
                     var cols = "";
 
             cols += '<td class="dataTableTd">';
-            cols += '<label class="col-md-3 col-form-label thlabel">Sparepart</label>'
+            cols += '<label class="col-md-3 col-form-label thlabel">Sparepart</label>';
             cols += '<select name="spreq[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
             cols += '<option value = ""> -- Select Sparepart -- </option>';
             @foreach($sp_all as $da)
@@ -360,12 +357,12 @@
             cols += '</td>';
 
             cols += '<td class="dataTableTd">';
-            cols += '<label class="col-md-3 col-form-label thlabel">Qty Request</label>'
+            cols += '<label class="col-md-3 col-form-label thlabel">Qty Request</label>';
             cols += '<input type="number" class="form-control qtyrequest" name="qtyrequest[]" step=".01" min="0" required />';
             cols += '</td>';
 
             cols += '<td class="dataTableTd">';
-            cols += '<label class="col-md-3 col-form-label thlabel">Location To</label>'
+            cols += '<label class="col-md-3 col-form-label thlabel">Location To</label>';
             cols += '<select name="locto[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
             cols += '<option value = ""> -- Select Location To -- </option>';
             @foreach($loc_to as $loc)
@@ -375,12 +372,12 @@
             cols += '<input type="hidden" class="siteto" name="siteto[]" value=""/>';
             cols += '</td>';
             cols += '<td class="dataTableTd">';
-            cols += '<label class="col-md-3 col-form-label thlabel">Note</label>'
+            cols += '<label class="col-md-3 col-form-label thlabel">Note</label>';
             cols += '<textarea type="text" id="reqnote" class="form-control reqnote" name="reqnote[]" rows="2" ></textarea>';
             cols += '</td>';
 
             cols += '<td class="dataTableTd" data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
-            cols += '<label class="col-md-3 col-form-label thlabel">Delete</label>'
+            cols += '<label class="col-md-3 col-form-label thlabel">Delete</label>';
             cols += '<input type="hidden" class="op" name="op[]" value="A"/>';
             cols += '</tr>';
             counter++;

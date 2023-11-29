@@ -23,14 +23,14 @@
     data-status="{{$ds->wo_status}}" data-loc="{{$loc}}">
 
     @if($ds->wo_status == 'firm')
+        <span class="badge badge-danger">{{$tipe}} : {{$eng}} - {{$ds->asset_desc}}</span>
+    @elseif($ds->wo_status == 'released')
         <span class="badge badge-primary">{{$tipe}} : {{$eng}} - {{$ds->asset_desc}}</span>
     @elseif($ds->wo_status == 'started')
         <span class="badge badge-success">{{$tipe}} : {{$eng}} - {{$ds->asset_desc}}</span>
-    @elseif($ds->wo_status == 'acceptance')
+    @elseif($ds->wo_status == 'finished' || $ds->wo_status == 'acceptance')
         <span class="badge badge-warning">{{$tipe}} : {{$eng}} - {{$ds->asset_desc}}</span>
-    @elseif($ds->wo_status == 'finished')
-        <span class="badge badge-warning">{{$tipe}} : {{$eng}} - {{$ds->asset_desc}}</span>
-    @elseif($ds->wo_status == 'closed')
+    @elseif($ds->wo_status == 'closed' || $ds->wo_status == 'canceled')
         <span class="badge badge-secondary">{{$tipe}} : {{$eng}} - {{$ds->asset_desc}}</span>
     @else 
         <span class="badge badge-success">{{$tipe}} : {{$eng}} - {{$ds->asset_desc}}</span>
