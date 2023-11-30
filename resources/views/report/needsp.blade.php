@@ -45,7 +45,7 @@
                 <select class="form-control" id="s_site" name="s_site" required>
                         <option></option>
                     @foreach ( $datasite as $site )
-                        <option value="{{$site->site_code}}">{{$site->site_code}} -- {{$site->site_desc}}</option>
+                        <option value="{{$site->site_code}}" {{$site->site_code === $ssite ? "selected" : ""}}>{{$site->site_code}} -- {{$site->site_desc}}</option>
                     @endforeach
                 </select>
             </div>
