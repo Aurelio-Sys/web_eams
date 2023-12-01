@@ -1166,8 +1166,8 @@ div #munculgambar .gambar:hover{
 
         <div class="modal-footer">
           <button type="button" class="btn btn-info bt-action" id="d_btnclosed" data-dismiss="modal">Back</button>
-          <button type="submit" class="btn btn-danger bt-action" id="d_btnconfd" name="thisbutton" value="btndelete">Delete</button>
-          <button type="submit" class="btn btn-primary bt-action" id="d_btnconfd" name="thisbutton" value="btncancel">Cancel</button>
+          <button type="submit" class="btn btn-danger bt-action" id="d_btnconfd_delete" name="thisbutton" value="btndelete">Delete</button>
+          <button type="submit" class="btn btn-primary bt-action" id="d_btnconfd_cancel" name="thisbutton" value="btncancel">Cancel</button>
           <button type="button" class="btn btn-block btn-info" id="d_btnloadingd" style="display:none">
             <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
           </button>
@@ -1776,7 +1776,8 @@ div #munculgambar .gambar:hover{
   $("#delete").submit(function() {
     //alert('test');
     document.getElementById('d_btnclosed').style.display = 'none';
-    document.getElementById('d_btnconfd').style.display = 'none';
+    document.getElementById('d_btnconfd_cancel').style.display = 'none';
+    document.getElementById('d_btnconfd_delete').style.display = 'none';
     document.getElementById('d_btnloadingd').style.display = '';
   });
 
@@ -1977,8 +1978,10 @@ div #munculgambar .gambar:hover{
 
     if (srnbr !== '') {
       document.getElementById('divnotecancel').style.display = "";
+      document.getElementById('notecancel').required = true;
     } else {
       document.getElementById('divnotecancel').style.display = "none";
+      document.getElementById('notecancel').required = false;
     }
 
   });
