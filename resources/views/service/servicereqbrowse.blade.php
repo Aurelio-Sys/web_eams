@@ -17,6 +17,8 @@
 
     .mini-table {
       border: 0;
+      overflow-x:auto;
+      white-space: nowrap;
     }
 
     .mini-table thead {
@@ -64,7 +66,7 @@
 <!-- Daftar Perubahan 
   A211015 : Merubah view SR 
 -->
-<div class="container-fluid mb-2">
+{{-- <div class="container-fluid mb-2">
   <div class="row">
     <div class="col-md-12">
       <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
@@ -193,6 +195,46 @@
       </div>
     </div>
   </div>
+</div> --}}
+
+<div class="container-fluid mb-2">
+  <div class="card card-body" >
+    <div id="cardheader">
+      <div class="col-12 form-group row datarow">
+        <!--FORM Search Disini-->
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+            <select name="s_filter[]" class="form-control select2drop s_filter" value="" autofocus autocomplete="off">
+              <option value="">--Select Filter--</option>
+              <option value="s_servicenbr">Service Request Number</option>
+              <option value="s_asset">Asset Description</option>
+              <option value="s_status">Status</option>
+              <option value="s_user">Requested By</option>
+              <option value="s_datefrom">Date From</option>
+              <option value="s_dateto">Date To</option>
+            </select>
+        </div>
+        <div class="col-md-1 col-sm-2 mb-2 input-group">
+            <select name="s_operand[]" class="form-control select2drop s_operand" value="" autofocus autocomplete="off">
+              <option value="LIKE">LIKE</option>
+            </select>
+        </div>
+        <div class="col-md-3 col-sm-4 mb-2 input-group">
+          <input type="text" class="form-control s_valuefilter" name="s_valuefilter[]" value="" autofocus autocomplete="off" placeholder="Search Data">
+        </div>
+        <div class="rowbtn">
+          <button type="button" class="btn btn-success mr-1 btnfilter btnaddfilter" >
+            <i class="fas fa-plus fa-lg"></i>
+          </button>
+        </div>
+      </div>
+      
+    </div>
+    
+    <div class="col-md-4 col-sm-12 input-group">
+      <input type="button" class="btn btn-primary col-md-3 btnactionfilter" id="btnsearchnew" value="Search" style="float:right" />
+      <input type="button" class="btn btn-primary col-md-4 btnactionfilter" id="btnexcelnew" value="Export to Excel" style="float:right" />
+    </div>
+  </div>
 </div>
 
 <input type="hidden" id="tmpsrnumber" />
@@ -210,7 +252,7 @@
 
 <!-- table SR -->
 <div class="table-responsive col-12">
-  <table class="table table-bordered mt-4 no-footer mini-table" id="dataTable" width="100%" cellspacing="0">
+  <table class="table table-bordered mt-4 newtable mini-table" id="dataTable" width="100%">
     <thead>
       <tr style="text-align: center;">
         <th>SR Number</th>
@@ -722,7 +764,7 @@
       dateFormat: 'yy-mm-dd'
     });
 
-    $("#s_user").select2({
+    $("#s_user,.select2drop").select2({
       width: '100%',
       // placeholder : "Select User",
       theme: 'bootstrap4',
@@ -823,20 +865,40 @@
     $(document).on('click', '.pagination a', function(event) {
       event.preventDefault();
       var page = $(this).attr('href').split('page=')[1];
-      $('#hidden_page').val(page);
-      var column_name = $('#hidden_column_name').val();
-      var sort_type = $('#hidden_sort_type').val();
-
-      var srnumber = $('#tmpsrnumber').val();
-      var asset = $('#tmpasset').val();
+     
+      var srnumber = '';
+      var asset = '';
       // var priority = $('#tmppriority').val();
       /*var period = $('#tmpperiod').val();*/
-      var status = $('#tmpstatus').val();
-      var requestby = $('#tmpuser').val();
-      var datefrom = $('#s_datefrom').val();
-      var dateto = $('#s_dateto').val();
+      var status = '';
+      var requestby = '';
+      var datefrom = '';
+      var dateto = '';
 
-      fetch_data(page, srnumber, asset, /*priority*/ /*period*/ status, requestby, datefrom, dateto);
+      var searchfilter = $('.s_filter').map(function() {
+        return $(this).val(); // or use .val() if these are form elements
+      }).get();
+
+      var operandfilter = $('.s_operand').map(function() {
+        return $(this).val(); // or use .val() if these are form elements
+      }).get();
+
+      var valuefilter = $('.s_valuefilter').map(function() {
+        return $(this).val(); // or use .val() if these are form elements
+      }).get();
+
+      $.ajax({
+        url: "/srbrowse/searchsr?page=" + page,
+        data: { 
+          searchfilter: searchfilter ,
+          operandfilter: operandfilter,
+          valuefilter: valuefilter
+        },
+        success: function(data) {
+          $('tbody').html('');
+          $('tbody').html(data);
+        }
+      })
     });
 
     $(document).on('click', '#btnrefresh', function() {
@@ -1453,8 +1515,104 @@
 
       // console.log(srnumber, srasset, srstatus, /*srpriority, srperiod,*/ srreq, srdatefrom, srdateto);
 
-      window.open("/donlodsr?srnumber=" + srnumber + "&asset=" + srasset + "&status=" + srstatus + /*"&priority=" + srpriority + "&period=" + srperiod +*/ "&reqby=" + srreq + "&datefrom=" + srdatefrom + "&dateto=" + srdateto, '_blank');
+      window.open("/donlodsr?srnumber=" + srnumber + "&asset=" + srasset + 
+                  "&status=" + srstatus + /*"&priority=" + srpriority + "&period=" + srperiod +*/ 
+                  "&reqby=" + srreq + "&datefrom=" + srdatefrom + "&dateto=" + srdateto, '_blank');
     });
+
+    $(document).on('click', '.btnaddfilter', function(){
+      
+      $('.select2drop').select2('destroy');
+      let parentcard = $(this).closest('#cardheader');
+      let datarow = parentcard.find('.datarow');
+      let datarowHtml = datarow.html();
+
+      let deletebutton = '<div class="">';
+          deletebutton += '<button type="button" class="btn btn-danger mr-1 btnfilter btndeletefilter">';
+          deletebutton += '<i class="fas fa-times fa-lg"></i>';
+          deletebutton += '</button>';
+
+      datarowHtml += deletebutton;
+
+      let text = '<div class="col-12 form-group row datarow">';
+          text += datarowHtml;
+          text += '</div>';
+
+      parentcard.append(text);
+
+      $('.select2drop').select2();
+    });
+
+    $(document).on('click', '.btndeletefilter', function(){
+      let datarow = $(this).closest('.datarow');
+
+      datarow.remove();
+    });
+
+    $(document).on('change','.s_filter', function(){
+      let value = $(this).val();
+      let parentrow = $(this).closest('.datarow');
+      let valuefilter = parentrow.find('.s_valuefilter');
+
+      if(value == 's_datefrom' || value == 's_dateto'){
+        valuefilter.datepicker({
+          dateFormat: 'yy-mm-dd'
+        });
+
+        valuefilter.datepicker('show');
+      }else{
+        valuefilter.datepicker('hide');
+        valuefilter.datepicker('destroy');
+
+      }
+
+    })
+
+    $(document).on('click', '#btnsearchnew', function(){
+      var searchfilter = $('.s_filter').map(function() {
+        return $(this).val(); // or use .val() if these are form elements
+      }).get();
+
+      var operandfilter = $('.s_operand').map(function() {
+        return $(this).val(); // or use .val() if these are form elements
+      }).get();
+
+      var valuefilter = $('.s_valuefilter').map(function() {
+        return $(this).val(); // or use .val() if these are form elements
+      }).get();
+
+      let page = 1;
+
+      $.ajax({
+        url: "/srbrowse/searchsr?page=" + page,
+        data: { 
+          searchfilter: searchfilter ,
+          operandfilter: operandfilter,
+          valuefilter: valuefilter
+        },
+        success: function(data) {
+          $('tbody').html('');
+          $('tbody').html(data);
+        }
+      })
+    });
+
+    $(document).on('click','#btnexcelnew', function(){
+      var searchfilter = $('.s_filter').map(function() {
+        return $(this).val(); // or use .val() if these are form elements
+      }).get();
+
+      var operandfilter = $('.s_operand').map(function() {
+        return $(this).val(); // or use .val() if these are form elements
+      }).get();
+
+      var valuefilter = $('.s_valuefilter').map(function() {
+        return $(this).val(); // or use .val() if these are form elements
+      }).get();
+
+      window.open("/donlodsr?searchfilter=" + searchfilter + "&operandfilter=" + operandfilter + 
+                  "&valuefilter=" + valuefilter, '_blank');
+    })
   });
 </script>
 @endsection

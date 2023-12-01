@@ -2542,12 +2542,45 @@ class ServiceController extends Controller
     public function searchsr(Request $req)
     {
         if ($req->ajax()) {
-            $srnumber = $req->get('srnumber');
-            $asset = $req->get('asset');
-            $status = $req->get('status');
-            $requestby = $req->get('requestby');
-            $datefrom = $req->get('datefrom') == '' ? '2000-01-01' : date($req->get('datefrom'));
-            $dateto = $req->get('dateto') == '' ? '3000-01-01' : date($req->get('dateto'));
+            $srnumber = '';
+            $asset = '';
+            $status = '';
+            $requestby = '';
+            $datefrom = '2000-01-01';
+            $dateto = '3000-01-01';
+
+            $searchfilter = $req->searchfilter;
+            $operandfilter = $req->operandfilter;
+            $valuefilter = $req->valuefilter;
+
+            foreach($searchfilter as $key => $searching){
+                if($searching == 's_servicenbr'){
+                    $srnumber = $valuefilter[$key];
+                }
+                if($searching == 's_asset'){
+                    $asset = $valuefilter[$key];
+                }
+                if($searching == 's_user'){
+                    $requestby = $valuefilter[$key];
+                }
+                if($searching == 's_status'){
+                    $status = $valuefilter[$key];
+                }
+                if($searching == 's_datefrom'){
+                    $datefrom = $valuefilter[$key];
+                }
+                if($searching == 's_dateto'){
+                    $dateto = $valuefilter[$key];
+                }
+            }
+
+
+            // $srnumber = $req->get('srnumber');
+            // $asset = $req->get('asset');
+            // $status = $req->get('status');
+            // $requestby = $req->get('requestby');
+            // $datefrom = $req->get('datefrom') == '' ? '2000-01-01' : date($req->get('datefrom'));
+            // $dateto = $req->get('dateto') == '' ? '3000-01-01' : date($req->get('dateto'));
 
             // dd($datefrom, $dateto);
 
@@ -3324,14 +3357,37 @@ class ServiceController extends Controller
 
     public function donlodsr(Request $req)
     { /* blade : servicereqbrowse */
-        $srnbr    = $req->srnumber;
-        $asset    = $req->asset;
-        $status   = $req->status;
-        $reqby    = $req->reqby;
-        $datefrom = $req->datefrom;
-        $dateto   = $req->dateto;
+        $srnbr    = '';
+        $asset    = '';
+        $status   = '';
+        $reqby    = '';
+        $datefrom = '';
+        $dateto   = '';
 
-        // dd($srnbr,$asset,$status,$reqby,$datefrom,$dateto);
+        $searchfilter = explode(',',$req->searchfilter);
+        $operandfilter = explode(',',$req->operandfilter);
+        $valuefilter = explode(',',$req->valuefilter);
+        
+        foreach($searchfilter as $key => $searching){
+            if($searching == 's_servicenbr'){
+                $srnbr = $valuefilter[$key];
+            }
+            if($searching == 's_asset'){
+                $asset = $valuefilter[$key];
+            }
+            if($searching == 's_user'){
+                $reqby = $valuefilter[$key];
+            }
+            if($searching == 's_status'){
+                $status = $valuefilter[$key];
+            }
+            if($searching == 's_datefrom'){
+                $datefrom = $valuefilter[$key];
+            }
+            if($searching == 's_dateto'){
+                $dateto = $valuefilter[$key];
+            }
+        }
 
         return Excel::download(new ExportSR($srnbr, $status, $asset, $reqby, $datefrom, $dateto), 'Service Request.xlsx');
     }

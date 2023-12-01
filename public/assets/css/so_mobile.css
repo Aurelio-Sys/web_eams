@@ -34,8 +34,16 @@
     }
         
     .foottr .footend{
-        border-bottom: 1px solid black !important;
-        padding: 15px !important;
+        background-color: white;
+    }
+
+    .foottr .footerr{
+        border-bottom: 0px  !important;
+        background-color:rgb(154, 27, 27);
+        color: white !important;
+        padding:15px !important;
+        font-size: 13px;
+        font-weight: bold;
     }
         
 
@@ -63,6 +71,21 @@
 
     .nodata{
         display: none !important;
+    }
+
+    .rowbtn{
+        margin-left: 8px;
+    }
+
+    .btnactionfilter{
+        margin-right: 20px;
+        margin-bottom: 10px;
+    }
+}
+
+@media (min-width: 992px){
+    .btnactionfilter{
+        margin-right: 20px;
     }
 }
 
@@ -135,5 +158,22 @@
     font-size:14px !important;
 }
 
+.newtable {
+    overflow-x:auto;
+    white-space: nowrap;
+}
 
+.newtable {
+    overflow-x:auto;
+    white-space: nowrap;
+}
+
+.newtable tbody tr td{
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+}
+
+.btnfilter {
+    width: 50px;
+}
 

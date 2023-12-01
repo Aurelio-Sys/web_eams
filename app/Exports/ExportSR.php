@@ -54,6 +54,7 @@ class ExportSR implements FromQuery, WithHeadings, ShouldAutoSize, WithStyles
         $datefrom  = $this->datefrom;
         $dateto    = $this->dateto;
 
+
         $kondisi = "service_req_mstr.id > 0";
 
         $data = DB::table('service_req_mstr')
