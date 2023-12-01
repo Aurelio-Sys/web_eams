@@ -151,9 +151,9 @@
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
               <p style="margin-top: 2px; font-size:12px;">
                 @if($srmstr->wo_number == null)
-                : {{$srmstr->sr_number}} / -
+                : {{$srmstr->sr_number}}
                 @elseif($womstr->wo_sr_number == '')
-                : - / {{$womstr->wo_number}}
+                : {{$womstr->wo_number}}
                 @else
                 : {{$womstr->wo_sr_number}} / {{$womstr->wo_number}}
                 @endif
@@ -166,12 +166,10 @@
             </td>
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
               <p style="margin-top: 0px; font-size:12px">
-@if($srmstr->wo_number == null)
-                : {{date('d-m-Y', strtotime($srmstr->sr_req_date))}} & {{date('H:i', strtotime($srmstr->sr_req_time))}} / -
-                @elseif($womstr->wo_sr_number == '')
-                : - / {{date('d-m-Y', strtotime($womstr->wo_system_create))}} & {{date('H:i', strtotime($womstr->wo_system_create))}}
-                @else
+                @if($womstr != null)
                 : {{date('d-m-Y', strtotime($srmstr->sr_req_date))}} & {{date('H:i', strtotime($srmstr->sr_req_time))}} / {{date('d-m-Y', strtotime($womstr->wo_system_create))}} & {{date('H:i', strtotime($womstr->wo_system_create))}}
+                @else
+                : {{date('d-m-Y', strtotime($srmstr->sr_req_date))}} & {{date('H:i', strtotime($srmstr->sr_req_time))}} /
                 @endif
               </p>
             </td>
@@ -213,13 +211,21 @@
         <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diusulkan oleh,</span></p>
         
         <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">
-            {{$srmstr->sr_req_by}}
+        @foreach ( $users as $user )
+          @if ($user->username == $srmstr->sr_req_by)
+            {{$user->name}}
+          @endif
+        @endforeach
         </p>
       </td>
       <td colspan="2" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
         <p style=" margin-bottom:5px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Penanggung Jawab,</span></p>
         <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">
-         {{$engapprover->eng_code}}
+        @foreach ( $users as $user )
+          @if ($user->username == $srmstr->sr_approver)
+            {{$user->name}}
+          @endif
+        @endforeach
         </p>
       </td>
     </tr>
@@ -271,7 +277,7 @@
             <td style="text-align:center;border:1px solid;">
               <p style="margin:0;padding:0;font-size:12px">
                 @if($womstr != null)
-                {{date('d-m-Y', strtotime($womstr->wo_system_create))}}
+                {{date('d/m/Y', strtotime($womstr->wo_system_create))}}
                 @else
                 &nbsp;
                 @endif
@@ -280,7 +286,7 @@
             <td style="text-align:center;border:1px solid;">
               <p style="margin:0;padding:0;font-size:12px">
                 @if($womstr != null)
-                {{date('d-m-Y', strtotime($womstr->wo_system_create))}}
+                {{date('d/m/Y', strtotime($womstr->wo_start_date))}}
                 @else
                 &nbsp;
                 @endif
@@ -289,7 +295,7 @@
             <td style="text-align:center;border:1px solid;">
               <p style="margin:0;padding:0;font-size:12px">
                 @if($womstr != null)
-                {{date('d-m-Y', strtotime($womstr->wo_system_create))}}
+                {{date('d/m/Y', strtotime($womstr->wo_due_date))}}
                 @else
                 &nbsp;
                 @endif
@@ -331,8 +337,11 @@
       <td colspan="1" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
         <p style=" margin-bottom:5px; margin-left: 100px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Petugas yang melakukan pemeriksaan,</span></p>
         <p style=" margin-bottom:5px; margin-left: 100px; margin-top:30px;font-size:12px">
-{{$spvcheckedby->eng_code}}
-</p>
+        @foreach ( $users as $user )
+          @if ($user->username == $srmstr->sr_approver)
+            {{$user->name}}
+          @endif
+        @endforeach
       </td>
     </tr>
     <tr>
@@ -349,9 +358,45 @@
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
               <p style="margin:0;padding:0;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Divisi yang melakukan <b>Penyelesaian Job</b></span> :</p>
               <p style="margin:0px;padding:0px;font-size:12px">
-                @if($womstr != null)
-                @if($womstr->wo_status != 'canceled' && $womstr->sr_status != 'canceled')
-                {{$spvcheckedby->eng_dept}} -- {{$spvcheckedby->dept_desc}}
+                @if($engineerlist != null)
+                @if($engineerlist->eng1 != null)
+                {{$engineerlist->eng1}}
+                @else
+                &nbsp;
+                @endif
+                @endif
+              </p>
+              <p style="margin:0px;padding:0px;font-size:12px">
+                @if($engineerlist != null)
+                @if($engineerlist->eng2 != null)
+                {{$engineerlist->eng2}}
+                @else
+                &nbsp;
+                @endif
+                @endif
+              </p>
+              <p style="margin:0px;padding:0px;font-size:12px">
+                @if($engineerlist != null)
+                @if($engineerlist->eng3 != null)
+                {{$engineerlist->eng3}}
+                @else
+                &nbsp;
+                @endif
+                @endif
+              </p>
+              <p style="margin:0px;padding:0px;font-size:12px">
+                @if($engineerlist != null)
+                @if($engineerlist->eng4 != null)
+                {{$engineerlist->eng4}}
+                @else
+                &nbsp;
+                @endif
+                @endif
+              </p>
+              <p style="margin:0px;padding:0px;font-size:12px">
+                @if($engineerlist != null)
+                @if($engineerlist->eng5 != null)
+                {{$engineerlist->eng5}}
                 @else
                 &nbsp;
                 @endif
@@ -385,7 +430,7 @@
               <p style="margin:0;padding:0;font-size:12px">
                 @if($womstr != null)
                 @if($womstr->wo_job_startdate != null)
-                {{date('d-m-Y', strtotime($womstr->wo_job_startdate))}}
+                {{date('d/m/Y', strtotime($womstr->wo_job_startdate))}}
                 @else
                 &nbsp;
                 @endif
@@ -396,7 +441,7 @@
               <p style="margin:0;padding:0;font-size:12px">
                 @if($womstr != null)
                 @if($womstr->wo_job_finishdate != null)
-                {{date('d-m-Y', strtotime($womstr->wo_job_finishdate))}}
+                {{date('d/m/Y', strtotime($womstr->wo_job_finishdate))}}
                 @else
                 &nbsp;
                 @endif
@@ -433,7 +478,7 @@
           </tr>
         </table>
       </td>
-    </tr>
+    </tr> 
     <tr>
       <td style="height: 65px;border-left: 2px solid; border-right:1.5px" colspan="3">
         <p style=" margin-bottom:0px; margin-top:0px; margin-left: 5px; font-size:12px">
@@ -450,20 +495,20 @@
     <tr>
       <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0px; border-top:0.5px solid; border-bottom:2px solid; width:350px">
         <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diselesaikan oleh,</span></p>
-        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">
-@if($womstr->wo_status == 'closed' || $womstr->wo_status == 'finished' || $womstr->wo_status == 'acceptance')
-          @foreach($engineerlist as $key => $eng)
-          {{$eng['eng_code']}},
-          @endforeach
-	@endif
-</p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px"></p>
       </td>
       <td colspan="2" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
         <p style=" margin-bottom:5px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Penanggung Jawab,</span></p>
         <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">
-          @if($womstr->wo_status == 'closed' || $womstr->wo_status == 'finished' || $womstr->wo_status == 'acceptance')
-          {{$spvcheckedby->eng_code}}
-	@endif
+          @if($womstr != null)
+            @foreach ( $users as $user )
+              @if ($user->username == $womstr->wo_createdby)
+                {{$user->name}}
+              @endif
+            @endforeach
+          @else
+          &nbsp;
+          @endif
         </p>
       </td>
     </tr>
@@ -483,49 +528,29 @@
               <p style="margin:0;padding:0;font-size:12px"><b>Tanggal & Jam Serah Terima</b></p>
             </td>
             <td style="border-top:0px solid;border-right:0px;border-collapse: collapse;">
-              <p style="margin-top: 0px; font-size:12px;">: 
-
-          @if($srmstr->sr_status == 'Acceptance' || $srmstr->sr_status == 'Closed')
-          {{date('d-m-Y', strtotime($dateuseracc))}} & {{date('H:i', strtotime($dateuseracc))}} 
-	@endif
-	
-</p>
+              <p style="margin-top: 0px; font-size:12px;">: </p>
             </td>
           </tr>
         </table>
-      </td>
+      </td>s
     </tr>
     <tr>
       <td style="height: 65px;border-left: 2px solid; border-right:1.5px" colspan="3">
         <p style=" margin-bottom:0px; margin-top:0px; margin-left: 5px; font-size:12px">
           <b><span style="padding-bottom: 0px;border-bottom:1px solid black;">Uraian</span>:</b>
           <br>
-@if($srmstr->sr_status == 'Acceptance' || $srmstr->sr_status == 'Closed')
-          {{$srmstr->sr_acceptance_note}}
-          @else
-          &nbsp; 
-	@endif
+
         </p>
       </td>
     </tr>
     <tr>
       <td colspan="1" style="text-align:center;border-left: 2px solid; border-right:0px; border-top:0.5px solid; border-bottom:2px solid; width:350px">
         <p style=" margin-bottom:5px; margin-top:0px;font-size:12px"><span style="padding-bottom: 0px;border-bottom:1px solid black;">Diserahkan oleh,</span></p>
-        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">
-@if($srmstr->sr_status == 'Acceptance' || $srmstr->sr_status == 'Closed')
-          @foreach($engineerlist as $key => $eng)
-          {{$eng['eng_code']}},
-          @endforeach
-	@endif
-</p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px"></p>
       </td>
       <td colspan="2" style="text-align:center;border-left: 0px; border-top:0.5px solid; border-right: 1.5px solid; border-bottom:2px solid;">
         <p style=" margin-bottom:5px; margin-top:0px"><span style="padding-bottom: 0px;border-bottom:1px solid black;font-size:12px">Diterima oleh,</span></p>
-        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px">
-@if($srmstr->sr_status == 'Acceptance' || $srmstr->sr_status == 'Closed')
-          {{$srmstr->sr_req_by}} 
-	@endif
-</p>
+        <p style=" margin-bottom:5px; margin-top:30px;font-size:12px"></p>
       </td>
     </tr>
 
