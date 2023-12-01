@@ -1090,7 +1090,7 @@ class UserChartController extends Controller
                     ->whereWo_asset_code($code)
                     ->where('wo_start_date', '>=', $tahunKebelakang)
                     ->where('wo_start_date', '<=', Carbon::now())
-                    ->orderBy('wo_start_date')
+                    ->orderBy('wo_start_date','desc')
                     ->get();
 
             $output = '';
@@ -1683,7 +1683,7 @@ class UserChartController extends Controller
 
         return view('report.needsp', ['data' => $datatemp, 'dataasset' => $dataasset, 'datasite' => $datasite,
             'datasp' => $datasp, 'swo' => $swo, 'sasset' => $sasset, 'sper1' => $sper1,
-            'sper2' => $sper2, 'ssp' => $ssp]);
+            'sper2' => $sper2, 'ssp' => $ssp, 'ssite' => $ssite]);
     }
 
     public function needspdetail(Request $req) /** Blade : needsp */
@@ -1830,7 +1830,7 @@ class UserChartController extends Controller
             $sonumber = 'eams' . $req->site_genso;
             $domain = ModelsQxwsa::first();
 
-            $checkso_eams = (new WSAServices())->wsasearchso($domain->wsas_domain);
+            $checkso_eams = (new WSAServices())->wsasearchso($domain->wsas_domain,$sonumber);
 
             if ($checkso_eams === false) {
                 toast('WSA Error', 'error')->persistent('Dismiss');
@@ -1841,8 +1841,9 @@ class UserChartController extends Controller
                     toast('WSA Failed', 'error')->persistent('Dismiss');
                     return redirect()->back();
                 } else {
-                    $sper1 = $req->s_per1;
-                    $sper2 = $req->s_per2;
+                    //dd($req->all());
+                    $sper1 = $req->hs_per1;
+                    $sper2 = $req->hs_per2;
                     $ssp = $req->s_sp;
                     $ssite = $req->site_genso;
                     
@@ -1963,7 +1964,7 @@ class UserChartController extends Controller
                     if($ssite) {
                         $datatemp = $datatemp->where('temp_site','=',$ssite);
                     }
-                
+
                     $datatemp = $datatemp->get();   
 
                     $lastschedule = DB::table('temp_wo')
@@ -2281,7 +2282,7 @@ class UserChartController extends Controller
 
                             $qdocBody .= '<salesOrder>
                                             <operation>R</operation>
-                                            <soNbr>EAMS</soNbr>
+                                            <soNbr>' . $sonumber . '</soNbr>
                                         </salesOrder>';
 
                             $qdocfooter =   '</dsSalesOrder>
@@ -2471,7 +2472,7 @@ class UserChartController extends Controller
                                                 <soPo>EAMS</soPo>';
 
                             $line_nbr = 1;
-                            
+
                             foreach($datatemp as $datas) {
                                 if($datas->sumreq > 0){
                                     $qdocBody .= '<salesOrderDetail>

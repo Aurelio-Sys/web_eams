@@ -82,7 +82,6 @@
                 <th>Start  </th>
                 <th>End  </th>
                 <th>Booked By </th>
-                <th>Status </th>
                 <th>Action</th>             
             </tr>
         </thead>

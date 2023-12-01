@@ -4540,30 +4540,30 @@ class wocontroller extends Controller
 
         // bagian spare part
 
+        $domain = ModelsQxwsa::first();
+
+        $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
+
+        if ($costdata === false) {
+            alert()->error('Error', 'WSA Failed');
+            return redirect()->route('woreport');
+        } else {
+            if ($costdata[1] == "false") {
+                alert()->error('Error', 'Item Cost tidak ditemukan');
+                return redirect()->route('woreport');
+            } else {
+                $tempCost = (new CreateTempTable())->createTempCost($costdata[0]);
+
+                $tempCost = collect($tempCost[0]);
+            }
+        }
+
         DB::beginTransaction();
 
         try {
 
             //cek jika ada spare part yang digunakan saat reporting dan informasi yang dibutuhkan untuk issued unplanned ke QAD lengkap
             if ($req->has('hidden_sp') && $req->has('hidden_sitefrom') && $req->has('hidden_locfrom') && $req->has('hidden_lotfrom') && $req->has('qtyrequired') && $req->has('qtyissued') && $req->has('qtypotong')) {
-                $domain = ModelsQxwsa::first();
-
-                $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
-
-                if ($costdata === false) {
-                    alert()->error('Error', 'WSA Failed');
-                    return redirect()->route('woreport');
-                } else {
-                    if ($costdata[1] == "false") {
-                        alert()->error('Error', 'Item Cost tidak ditemukan');
-                        return redirect()->route('woreport');
-                    } else {
-                        $tempCost = (new CreateTempTable())->createTempCost($costdata[0]);
-
-                        $tempCost = collect($tempCost[0]);
-                    }
-                }
-
 
                 $dataArrayIssued = []; //penampungngan data yg mau diissued unplanned
                 $dataArrayReceipt = []; //penampungan data yang mau direceipt unplanned
