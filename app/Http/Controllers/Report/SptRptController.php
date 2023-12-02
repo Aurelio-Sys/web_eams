@@ -103,7 +103,7 @@ class SptRptController extends Controller
             ->leftJoin('sp_mstr','spm_code','=','ret_sph_spcode')
             ->leftJoin('users','username','=','ret_sph_retby')
             ->leftJoin('dept_mstr','dept_code','=','dept_user')
-            ->whereNotIn('ret_sph_action',['return sparepart created','canceled by user','sparepart updated'])
+            ->whereNotIn('ret_sph_action',['return sparepart created','canceled by user','sparepart updated','sparepart deleted','all sparepart deleted'])
             ->selectRaw('ret_sph_spcode,spm_desc,ret_sph_locfrom,ret_sph_lotto,ret_sph_locto,ret_sparepart_hist.created_at as tgl,
                 ret_sph_action,ret_sph_number,ret_sph_qtytrf,ret_sph_retby,name,dept_user,dept_desc')
             ->orderBy('ret_sparepart_hist.created_at')

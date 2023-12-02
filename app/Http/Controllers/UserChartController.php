@@ -868,6 +868,34 @@ class UserChartController extends Controller
             'sloc','sstatus','dataeng','datapm','datalastwo','datarenew'));
     }
 
+    /** Detail untuk menampilkan data renew */
+    public function assetschrenew($id)
+    {
+        //dd($id);
+
+        // Convert $id to the database date format
+        $idInDatabaseFormat = Carbon::createFromFormat('d-m-Y', $id)->format('Y-m-d');
+
+        // Now, perform the database query
+        $data = DB::table('asset_mstr')
+            ->leftJoin('asset_loc','asloc_code','=','asset_loc')
+            ->where('asset_renew', $idInDatabaseFormat)
+            ->get();
+
+        $output = '';
+        foreach ($data as $data) {
+
+            $output .= '<tr>'.
+                '<td>'.$data->asset_code.'</td>'.
+                '<td>'.$data->asset_desc.'</td>'.
+                '<td>'.$data->asset_loc.'</td>'.
+                '<td>'.$data->asloc_desc.'</td>'.
+                '</tr>';
+        }
+
+        return response($output);
+    }
+
     public function engrpt(Request $req)
     {
        
