@@ -710,7 +710,7 @@ class WSAServices
         return [$dataloop, $qdocResult];
     }
 
-    public function wsasearchso($dom)
+    public function wsasearchso($dom, $sonumber)
     {
         $wsa = ModelsQxwsa::first();
 
