@@ -1779,7 +1779,8 @@ class SettingController extends Controller
                 ->leftjoin('asset_type','asset_mstr.asset_type','asset_type.astype_code')
                 ->leftjoin('asset_group','asset_mstr.asset_group','asset_group.asgroup_code')
                 ->leftJoin('asset_loc','asloc_code','=','asset_loc')
-                ->orderby('asset_code');
+                ->orderByRaw("REGEXP_REPLACE(asset_code, '[0-9]', '') ASC")
+                ->orderByRaw("CAST(REGEXP_REPLACE(asset_code, '\\D', '') AS UNSIGNED) ASC");
     
             if($s_code) {
                 $data = $data->where(function($query) use ($s_code) {
