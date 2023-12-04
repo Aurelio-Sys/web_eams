@@ -3524,11 +3524,32 @@ class ServiceController extends Controller
         $statusrepair = DB::table('service_req_mstr')
             ->where('service_req_mstr.sr_number', '=', $sr)
             ->first();
+$user = FacadesAuth::user();
+
+if ($user->role_user != 'ADMIN') {
+            $spvcheckedby = DB::table('eng_mstr')
+                ->leftJoin('dept_mstr', 'eng_mstr.eng_dept', 'dept_mstr.dept_code')
+                ->where('eng_mstr.eng_active', '=', 'Yes') // Add your conditions here
+                ->where('eng_mstr.approver', '=', 1) // Add your conditions here
+                ->where('eng_mstr.eng_code', '=', $user->username) // Add your conditions here
+                ->where('eng_mstr.eng_role', '=', 'SPVSR') // Add your conditions here
+                ->first();
+        } else {
+            $spvcheckedby = DB::table('eng_mstr')
+                ->leftJoin('dept_mstr', 'eng_mstr.eng_dept', 'dept_mstr.dept_code')
+                ->where('eng_mstr.eng_active', '=', 'Yes') // Add your conditions here
+                ->where('eng_mstr.approver', '=', 1) // Add your conditions here
+                ->where('eng_mstr.eng_code', '=', $user->username) // Add your conditions here
+                ->first();
+        }
+
+//dd($spvcheckedby->eng_code);
+
         $srmstr = DB::table('service_req_mstr')
             ->where('sr_number', '=', $sr)
             ->selectRaw('"" as fn1, "" as fn2, "" as fn3, dept_desc, eng_desc, sr_number, sr_fail_type, sr_dept, sr_eng_approver,
             sr_req_date, sr_asset, asset_desc, sr_req_by, "" as sr_approver, sr_impact, imp_desc, sr_req_date, sr_req_time, asset_desc, wotyp_desc, sr_fail_code,
-            sr_note, imp_code, "" as dept_user, sr_req_by, service_req_mstr.wo_number, wo_due_date, wo_start_date')
+            sr_note, imp_code, "" as dept_user, sr_req_by, service_req_mstr.wo_number, wo_due_date, wo_start_date,sr_acceptance_note,sr_status')
             ->leftjoin('eng_mstr', 'service_req_mstr.sr_req_by', 'eng_mstr.eng_code')
             ->leftJoin('dept_mstr', 'service_req_mstr.sr_dept', 'dept_mstr.dept_code')
             ->leftJoin('asset_mstr', 'service_req_mstr.sr_asset', 'asset_mstr.asset_code')
@@ -3541,14 +3562,26 @@ class ServiceController extends Controller
             // ->leftJoin('users', 'service_req_mstr.sr_approver', 'users.username')
             ->first();
 
-        $engapprover = DB::table('service_req_mstr')
-            ->where('sr_number', '=', $sr)
-            ->leftJoin('dept_mstr', 'service_req_mstr.sr_eng_approver', 'dept_mstr.dept_code')
-            ->first();
+$engapprover = DB::table('service_req_mstr')
+                ->where('sr_number', '=', $sr)
+                ->leftJoin('dept_mstr', 'service_req_mstr.sr_dept', 'dept_mstr.dept_code')
+                ->leftjoin('eng_mstr', function ($join) {
+                    $join->on('service_req_mstr.sr_eng_approver', '=', 'eng_mstr.eng_dept')
+                        ->where('eng_mstr.eng_active', '=', 'Yes') // Add your conditions here
+                        ->where('eng_mstr.approver', '=', 1) // Add your conditions here
+                        ->where('eng_mstr.eng_role', '=', 'SPVSR'); // Add your conditions here
+                })
+                ->first();
+//dd($engapprover);
+
+$useracceptance = DB::table('service_req_mstr')
+                ->where('sr_number', '=', $sr)
+                ->first();
+            $dateuseracc = $useracceptance->updated_at;
 
         $listFailDesc = [];
 
-        if ($srmstr->sr_fail_code !== '') {
+        if ($srmstr->sr_fail_code != '') {
             $listFailCode = explode(',', $srmstr->sr_fail_code);
 
             foreach ($listFailCode as $failcode) {
@@ -3567,7 +3600,7 @@ class ServiceController extends Controller
 
         $listImpactDesc = [];
 
-        if ($srmstr->sr_impact !== '') {
+        if ($srmstr->sr_impact != '') {
             $listImpactCode = explode(',', $srmstr->sr_impact);
 
             foreach ($listImpactCode as $impactcode) {
@@ -3593,22 +3626,28 @@ class ServiceController extends Controller
             })
             ->leftjoin('users', 'wo_mstr.wo_createdby', 'users.username')
             ->leftJoin('dept_mstr', 'wo_mstr.wo_department', 'dept_mstr.dept_code')
+->leftJoin('service_req_mstr', 'wo_mstr.wo_number', 'service_req_mstr.wo_number')
             ->first();
         // dd($womstr);
 
-        // $engineerlist = DB::table('wo_mstr')
-        //     ->when($sr, function ($q, $sr) {
-        //         return $q->where('wo_sr_number', $sr);
-        //     })
-        //     ->selectRaw('a.name as eng1,b.name as eng2,c.name as eng3,d.name as eng4,e.name as eng5')
-        //     ->leftjoin('users as a', 'wo_mstr.wo_engineer1', 'a.username')
-        //     ->leftjoin('users as b', 'wo_mstr.wo_engineer2', 'b.username')
-        //     ->leftjoin('users as c', 'wo_mstr.wo_engineer3', 'c.username')
-        //     ->leftjoin('users as d', 'wo_mstr.wo_engineer4', 'd.username')
-        //     ->leftjoin('users as e', 'wo_mstr.wo_engineer5', 'e.username')
-        //     ->first();
+        $engineerlist = [];
 
-        $engineerlist = "";
+        if ($womstr->wo_list_engineer != '') {
+            $listEngineerCode = explode(';', $womstr->wo_list_engineer);
+
+            foreach ($listEngineerCode as $engineercode) {
+                $getEngineerList = DB::table('eng_mstr')
+                    ->select('eng_desc')
+                    ->where('eng_code', '=', $engineercode)
+                    ->first();
+
+                $impact = array('eng_code' => $engineercode, 'eng_desc' => $getEngineerList->eng_desc);
+
+                array_push($engineerlist, $impact);
+            }
+        } else {
+            $getEngineerList = '';
+        }
 
         // // dd($array);
         $sparepartarray = [];
@@ -3634,7 +3673,7 @@ class ServiceController extends Controller
             'engineerlist' => $engineerlist, 'womstr' => $womstr,
             'srmstr' => $srmstr, 'dept' => $dept, 'printdate' => $printdate, 'users' => $users,
             'datasr' => $datasr, 'failurecode' => $listFailDesc, 'impact' => $listImpactDesc,
-            'engapprover' => $engapprover,
+            'engapprover' => $engapprover, 'spvcheckedby' => $spvcheckedby, 'dateuseracc' => $dateuseracc
         ])->setPaper('A4', 'portrait');
         //return view('picklistbrowse.shipperprint-template',['printdata1' => $printdata1, 'printdata2' => $printdata2, 'runningnbr' => $runningnbr,'user' => $user,'last' =>$countprint]);
         return $pdf->stream($sr . '.pdf');

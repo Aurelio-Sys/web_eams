@@ -31,7 +31,7 @@ class RptDetWOController extends Controller
 
         $data = DB::table('wo_mstr')
             ->join('asset_mstr', 'asset_mstr.asset_code', 'wo_mstr.wo_asset_code')
-            ->orderby('wo_system_create', 'desc')
+            ->orderby('wo_start_date', 'desc')
             ->orderBy('wo_mstr.id', 'desc')
             ->paginate(10);
 
@@ -114,7 +114,7 @@ class RptDetWOController extends Controller
                 'temp_asset_site' => $da->wo_site,
                 'temp_asset_loc' => $da->wo_location,
                 'temp_creator' => $da->wo_createdby,
-                'temp_create_date' => $da->wo_system_create,
+                'temp_create_date' => $da->wo_start_date,
                 'temp_sch_date' => $da->wo_start_date,
                 'temp_fail_type' => $da->wo_failure_type,
                 'temp_fail_code' => $da->wo_failure_code.";".$da->wo_failure_code.";".$da->wo_failure_code,
@@ -156,7 +156,7 @@ class RptDetWOController extends Controller
                         'temp_asset_site' => $ds->wo_site,
                         'temp_asset_loc' => $ds->wo_location,
                         'temp_creator' => $ds->wo_createdby,
-                        'temp_create_date' => $ds->wo_system_create,
+                        'temp_create_date' => $ds->wo_start_date,
                         'temp_sch_date' => $ds->wo_start_date,
                         'temp_fail_type' => $ds->wo_failure_type,
                         'temp_fail_code' => $ds->wo_failure_code.";".$ds->wo_failure_code.";".$ds->wo_failure_code,
@@ -182,7 +182,7 @@ class RptDetWOController extends Controller
                     'temp_asset_site' => $ds->wo_site,
                     'temp_asset_loc' => $ds->wo_location,
                     'temp_creator' => $ds->wo_createdby,
-                    'temp_create_date' => $ds->wo_system_create,
+                    'temp_create_date' => $ds->wo_start_date,
                     'temp_sch_date' => $ds->wo_start_date,
                     'temp_fail_type' => $ds->wo_failure_type,
                     'temp_fail_code' => $ds->wo_failure_code.";".$ds->wo_failure_code.";".$ds->wo_failure_code,

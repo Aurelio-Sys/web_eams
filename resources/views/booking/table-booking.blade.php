@@ -16,7 +16,6 @@
         <td style="color:blue">{{date('d-m-Y  H:i', strtotime($show->book_start))}}</td>
         <td style="color:blue">{{date('d-m-Y  H:i', strtotime($show->book_end))}}</td>
         <td style="color:blue">{{$show->book_edited_by }}</td>
-        <td style="color:blue">{{$show->book_status }}</td>
     @else
         <td>{{$show->book_code}}</td>
         <td>{{$show->book_asset}} - {{$show->asset_desc}} </td>
@@ -24,7 +23,6 @@
         <td>{{date('d-m-Y  H:i', strtotime($show->book_start))}}</td>
         <td>{{date('d-m-Y  H:i', strtotime($show->book_end))}}</td>
         <td>{{$show->book_edited_by }}</td>
-        <td>{{$show->book_status }}</td>
     @endif
    
     <td>

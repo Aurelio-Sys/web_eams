@@ -731,7 +731,7 @@ class WSAServices
             <Body>
                 <eams_search_so xmlns="' . $wsa->wsas_path . '">
                     <inpdomain>' . $domain . '</inpdomain>
-                    <inpsonbr>EAMS</inpsonbr>
+                    <inpsonbr>' . $sonumber . '</inpsonbr>
                 </eams_search_so>
             </Body>
         </Envelope>';

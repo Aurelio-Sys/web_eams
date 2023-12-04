@@ -97,7 +97,7 @@
                                     <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="{{$spd->ret_spd_loc_from}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    <input type="text" id="loclotto" class="form-control loclotto readonly" name="loclotto[]" data-toggle="tooltip" data-index="{{ $index }}" readonly required placeholder="Click Here">
+                                    <input type="text" id="loclotto" class="form-control loclotto readonly" name="loclotto[]" data-toggle="tooltip" data-index="{{ $index }}" required placeholder="Click Here">
                                     <input type="hidden" class="hidden_siteto" name="hidden_siteto[]" value="" />
                                     <input type="hidden" class="hidden_locto" name="hidden_locto[]" value="" />
                                     <input type="hidden" class="hidden_lotto" name="hidden_lotto[]" value="" />
