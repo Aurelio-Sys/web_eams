@@ -224,6 +224,7 @@
             $('#s_per1').val('');
             $('#s_per2').val('');
             $('#s_sp').val('');
+	    $('#site_genso').val('');
         }
         
         $('#s_asset').select2({

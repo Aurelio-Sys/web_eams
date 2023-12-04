@@ -868,6 +868,34 @@ class UserChartController extends Controller
             'sloc','sstatus','dataeng','datapm','datalastwo','datarenew'));
     }
 
+    /** Detail untuk menampilkan data renew */
+    public function assetschrenew($id)
+    {
+        //dd($id);
+
+        // Convert $id to the database date format
+        $idInDatabaseFormat = Carbon::createFromFormat('d-m-Y', $id)->format('Y-m-d');
+
+        // Now, perform the database query
+        $data = DB::table('asset_mstr')
+            ->leftJoin('asset_loc','asloc_code','=','asset_loc')
+            ->where('asset_renew', $idInDatabaseFormat)
+            ->get();
+
+        $output = '';
+        foreach ($data as $data) {
+
+            $output .= '<tr>'.
+                '<td>'.$data->asset_code.'</td>'.
+                '<td>'.$data->asset_desc.'</td>'.
+                '<td>'.$data->asset_loc.'</td>'.
+                '<td>'.$data->asloc_desc.'</td>'.
+                '</tr>';
+        }
+
+        return response($output);
+    }
+
     public function engrpt(Request $req)
     {
        
@@ -1844,7 +1872,7 @@ class UserChartController extends Controller
                     //dd($req->all());
                     $sper1 = $req->hs_per1;
                     $sper2 = $req->hs_per2;
-                    $ssp = $req->s_sp;
+                    $ssp = $req->hs_sp;
                     $ssite = $req->site_genso;
                     
                     /* Temp table untuk menampung data spare part dari Wo detail, Wo yang belum ada detailnya, Wo yang belum terbentuk */
@@ -1960,10 +1988,12 @@ class UserChartController extends Controller
                     }
                     if($ssp) {
                         $datatemp = $datatemp->where('temp_sp',$ssp);
+
                     }
                     if($ssite) {
                         $datatemp = $datatemp->where('temp_site','=',$ssite);
-                    }
+         
+          }
 
                     $datatemp = $datatemp->get();   
 
@@ -2279,7 +2309,6 @@ class UserChartController extends Controller
                                         <dsSalesOrder>';
 
                             $qdocBody = '';
-
                             $qdocBody .= '<salesOrder>
                                             <operation>R</operation>
                                             <soNbr>' . $sonumber . '</soNbr>

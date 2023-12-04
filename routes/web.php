@@ -412,6 +412,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('/bookcal', 'UserChartController@bookcal');
 	route::get('/assetsch', 'UserChartController@assetsch');
 	route::post('/assetsch', 'UserChartController@assetsch');
+	route::get('/assetschrenew/{id}', 'UserChartController@assetschrenew')->name('assetschrenew');
 	route::get('/engrpt', 'UserChartController@engrpt');
 	route::get('/engrptview', 'UserChartController@engrptview');
 	route::get('/assetrpt', 'UserChartController@assetrpt');

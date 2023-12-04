@@ -188,10 +188,11 @@
                         @php($stringTanggal = sprintf('%02d-%02d-%04d', $i, $angkaBulan, substr($bulan, -4)))
                         @php($tanggalObj = DateTime::createFromFormat('d-m-Y', $stringTanggal))
                         @php($tglrenew = $datarenew->where('asset_renew','=',$tanggalObj->format('Y-m-d')))
+                        
                         @if($tglrenew->count() > 0)
                           <a href="javascript:void(0)" class="viewrenew" data-toggle="modal"  title="View Asset"  data-target="#renewModal"
-                            data-tglrenew="aa"> 
-                            <span class="badge badge-danger">Asset Renewal</span>
+                            data-tglrenew="{{$stringTanggal}}"> 
+                            <span class="badge badge-dark">Asset Renewal</span>
                           </a>
                         @endif
                     </td>
@@ -441,12 +442,14 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <input type="hidden" id="v_counter" value=0>
       <div class="modal-body">
         <table class="table table-bordered">
                 <thead>
                   <tr>
-                    <th>File Name</th>
+                    <th width="20%">Asset Code</th>
+                    <th width="30%">Asset Desc</th>
+                    <th width="20%">Location</th>
+                    <th width="30%">Location Desc</th>
                   </tr>
                 </thead>
                 <tbody id="tabelRenew">
@@ -634,15 +637,14 @@
   $(document).on('click', '.viewrenew', function() {
     $('#renewModal').modal('show');
     var tglrenew = $(this).data('tglrenew');
-    {{--  alert(tglrenew);
   
     $.ajax({
-      url: "/listuploadviewxx/" + srnumber,
+      url: "/assetschrenew/" + tglrenew,
       success: function(data) {
         // console.log(data);
         $('#tabelRenew').html('').append(data);
       }
-    })  --}}
+    }) 
   });
 
 </script>

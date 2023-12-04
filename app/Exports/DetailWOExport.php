@@ -137,9 +137,9 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         if($per1) {
             $per1 = $per1.' 00:00:00';
             $per2 = $per2.' 23:59:59';
-            $datadet = $datadet->whereBetween('wo_system_create',[$per1,$per2]);
-            $datawo = $datawo->whereBetween('wo_system_create',[$per1,$per2]);
-            $dataspg = $dataspg->whereBetween('wo_system_create',[$per1,$per2]);
+            $datadet = $datadet->whereBetween('wo_start_date',[$per1,$per2]);
+            $datawo = $datawo->whereBetween('wo_start_date',[$per1,$per2]);
+            $dataspg = $dataspg->whereBetween('wo_start_date',[$per1,$per2]);
         }
 
         $data = $datadet->union($datawo)->union($dataspg)
