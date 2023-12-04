@@ -1872,7 +1872,7 @@ class UserChartController extends Controller
                     //dd($req->all());
                     $sper1 = $req->hs_per1;
                     $sper2 = $req->hs_per2;
-                    $ssp = $req->s_sp;
+                    $ssp = $req->hs_sp;
                     $ssite = $req->site_genso;
                     
                     /* Temp table untuk menampung data spare part dari Wo detail, Wo yang belum ada detailnya, Wo yang belum terbentuk */
@@ -1988,10 +1988,12 @@ class UserChartController extends Controller
                     }
                     if($ssp) {
                         $datatemp = $datatemp->where('temp_sp',$ssp);
+
                     }
                     if($ssite) {
                         $datatemp = $datatemp->where('temp_site','=',$ssite);
-                    }
+         
+          }
 
                     $datatemp = $datatemp->get();   
 
@@ -2307,7 +2309,6 @@ class UserChartController extends Controller
                                         <dsSalesOrder>';
 
                             $qdocBody = '';
-
                             $qdocBody .= '<salesOrder>
                                             <operation>R</operation>
                                             <soNbr>' . $sonumber . '</soNbr>

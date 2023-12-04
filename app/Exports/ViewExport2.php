@@ -73,7 +73,7 @@ class ViewExport2 implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
         }
 
         if($per1 != null ||$per2 != '' ){
-            $kondisi .= " and wo_system_create between CONCAT('".$per1."',' 00:00:00') AND CONCAT('".$per2."',' 23:59:59')";
+            $kondisi .= " and wo_start_date between CONCAT('".$per1."',' 00:00:00') AND CONCAT('".$per2."',' 23:59:59')";
         }
 
         // dd($kondisi);
