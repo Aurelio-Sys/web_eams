@@ -631,52 +631,51 @@ class EmailScheduleJobs implements ShouldQueue
             $flag = $this->a;
             $engineer = $this->tampungarray;
 
-            $data = DB::table('eng_mstr')
-                ->join('users', 'eng_mstr.eng_code', '=', 'users.username')
-                ->where('eng_code', '=', $engineer)
-                ->where('approver', '=', '1')
-                ->get();
+            $array_eng = explode(";", $engineer);
+            $countarray1 = count($array_eng);
 
+            $list2 = [];
 
-            $listto = [];
-            $i = 0;
-            if ($data->count() > 0) {
+            for ($i = 0; $i < $countarray1; $i++) {
+                $email2 = DB::table('eng_mstr')
+                    ->where('eng_code', '=', $array_eng[$i])
+                    ->first();
+                $list2[$i] = $email2->eng_email;
+            }
 
-                foreach ($data as $data1) {
-                    $listto[$i] = $data1->eng_email;
-                    $i++;
+            Mail::send(
+                'emailwo',
+                [
+                    'pesan' => 'Notifikasi New Work Order',
+                    'note1' => $wo,
+                    'note2' => $asset,
+                    'header1' => 'WO Number'
+                ],
+                function ($message) use ($wo, $list2) {
+                    $message->subject('eAMS - New Work Order');
+                    // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
+                    $message->to(array_filter($list2));
                 }
+            );
 
-                // Kirim Email
-                Mail::send(
-                    'emailwo',
-                    [
-                        'pesan' => 'Notifikasi New Work Order',
-                        'note1' => $wo,
-                        'note2' => $asset,
-                        'header1' => 'Work Order'
-                    ],
-                    function ($message) use ($wo, $listto) {
-                        $message->subject('eAMS - New Work Order');
-                        // $message->from('andrew@ptimi.co.id'); // Email Admin Fix
-                        $message->to('tommy@ptimi.co.id');
-                    }
-                );
+            for ($x = 0; $x < $countarray1; $x++) {
+                $email2 = DB::table('eng_mstr')
+                    ->join('users', 'eng_mstr.eng_code', '=', 'users.username')
+                    ->where('eng_code', '=', $array_eng[$x])
+                    ->first();
 
+                $user = App\User::where('id', '=', $email2->id)->first();
+                $details = [
+                    'body' => 'There is New WO for you',
+                    'url' => 'womaint',
+                    'nbr' => $wo,
+                    'note' => 'Please Check'
 
-                foreach ($data as $data) {
-                    $user = App\User::where('id', '=', $data->id)->first();
-                    $details = [
-                        'body' => 'There is new WO for you',
-                        'url' => 'womaint',
-                        'nbr' => $wo,
-                        'note' => 'Please check'
-
-                    ]; // isi data yang dioper
+                ]; // isi data yang dioper
 
 
-                    $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
-                }
+                $user->notify(new \App\Notifications\eventNotification($details)); // syntax laravel
+
             }
         } else if ($a == 5) {
             $wo = $this->wo;

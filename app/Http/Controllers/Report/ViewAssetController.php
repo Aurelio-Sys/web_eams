@@ -66,6 +66,11 @@ class ViewAssetController extends Controller
         
         $data = $data->paginate(10);
 
+        $dataasset = DB::table('asset_mstr')
+            ->orderByRaw("REGEXP_REPLACE(asset_code, '[0-9]', '') ASC")
+            ->orderByRaw("CAST(REGEXP_REPLACE(asset_code, '\\D', '') AS UNSIGNED) ASC")
+            ->get();
+
         $datasite = DB::table('asset_site')
             ->orderby('assite_code')
             ->get();
@@ -143,7 +148,7 @@ class ViewAssetController extends Controller
         return view('report.viewasset', ['data' => $data, 'datasite' => $datasite, 'dataloc' => $dataloc, 
         'dataastype' => $dataastype, 'dataasgroup' => $dataasgroup, 'datasupp' => $datasupp, 'datafn' => $datafn, 
         'repaircode' => $repaircode, 'repairgroup' => $repairgroup, 'datasearch' => $datasearch, 
-        'dataassetqad' => $dataassetqad, 'datameaum' => $datameaum, 
+        'dataassetqad' => $dataassetqad, 'datameaum' => $datameaum, 'dataasset' => $dataasset,
         's_code' =>$req->s_code, 's_loc' =>$req->s_loc, 's_type' =>$req->s_type, 's_group' =>$req->s_group]);
     }
 

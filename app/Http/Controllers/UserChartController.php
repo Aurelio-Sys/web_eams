@@ -1021,12 +1021,25 @@ class UserChartController extends Controller
         $dataAsset = DB::table('asset_mstr')
             ->leftJoin('asset_loc','asloc_code','=','asset_loc')
             ->orderBy('asset_code');
+			
+		// Mendapatkan tanggal satu tahun kebelakang dari sekarang
+        // Grafik ini hanya menampilkan data transaksi dalam satu tahun kebelakang
+        $tahunKebelakang = Carbon::now()->subYear();
+
+        $datawo = DB::table('wo_mstr')
+            ->join('asset_mstr','asset_code','=','wo_asset_code')
+            ->whereNotIn('wo_status', ['closed', 'finish', 'delete'])
+            ->where('wo_start_date', '>=', $tahunKebelakang)
+            ->where('wo_start_date', '<=', Carbon::now())
+            ->orderBy('wo_start_date');
 
         if ($sasset) {
             $dataAsset->where('asset_code', '=', $sasset);
+			$datawo->where('wo_asset_code', '=', $sasset);
         }
         if ($sloc) {
             $dataAsset->where('asset_loc', '=', $sloc);
+			$datawo->where('asset_loc', '=', $sloc);
         }
         if($seng) {
             $a = $seng;
@@ -1050,26 +1063,17 @@ class UserChartController extends Controller
                         ->from('wo_mstr')
                         ->where('wo_type','=',$a);
             });
+			
+			$datawo->where('wo_type', '=', $stype);
         }
 
         if ($stype == "" && $sasset == "" && $sloc == "" && $seng == "") {
             $dataAsset = $dataAsset->where('asset_mstr.id','=',0);
+			$datawo->where('asset_mstr.id', '=', 0);
         }
 
         $dataAsset = $dataAsset->get();
-
-
-        // Mendapatkan tanggal satu tahun kebelakang dari sekarang
-        // Grafik ini hanya menampilkan data transaksi dalam satu tahun kebelakang
-        $tahunKebelakang = Carbon::now()->subYear();
-
-        $datawo = DB::table('wo_mstr')
-            ->join('asset_mstr','asset_code','=','wo_asset_code')
-            ->whereNotIn('wo_status', ['closed', 'finish', 'delete'])
-            ->where('wo_start_date', '>=', $tahunKebelakang)
-            ->where('wo_start_date', '<=', Carbon::now())
-            ->orderBy('wo_start_date')
-            ->get();
+		$datawo = $datawo->get();
 
         
         $dataeng = DB::table('users')
@@ -1107,6 +1111,7 @@ class UserChartController extends Controller
         if ($req->ajax()) {
 
             $code = $req->code;
+			$type = $req->type;
 
             // Mendapatkan tanggal satu tahun kebelakang dari sekarang
             // Grafik ini hanya menampilkan data transaksi satu tehun kebelakang
@@ -1118,8 +1123,13 @@ class UserChartController extends Controller
                     ->whereWo_asset_code($code)
                     ->where('wo_start_date', '>=', $tahunKebelakang)
                     ->where('wo_start_date', '<=', Carbon::now())
-                    ->orderBy('wo_start_date','desc')
-                    ->get();
+                    ->orderBy('wo_start_date','desc');
+					
+			if($type) {
+				$data->where('wo_type', '=', $type);
+			}
+			
+			$data = $data->get();
 
             $output = '';
             foreach ($data as $data) {
@@ -1161,8 +1171,13 @@ class UserChartController extends Controller
                     ->whereNotIn('wo_status', ['closed','finish','delete'])
                     ->whereWo_asset_code($req->code)
                     ->whereMonth('wo_start_date','=',$dt->format("m"))
-                    ->whereYear('wo_start_date','=',$dt->format("Y"))
-                    ->count();
+                    ->whereYear('wo_start_date','=',$dt->format("Y"));
+					
+			if($req->type) {
+				$data->where('wo_type','=',$req->type);
+			}
+			
+			$data = $data->count();
 
             if ($jmlwo == "") {
                 $jmlwo .= $data;

@@ -1382,7 +1382,7 @@ class wocontroller extends Controller
 
             $tampungarray = $womstr->wo_list_engineer;
 
-            EmailScheduleJobs::dispatch($runningnbr, $asset, '1', $tampungarray, '', '', '');
+            EmailScheduleJobs::dispatch($runningnbr, $asset, '1', $thisListEng, '', '', '');
 
             DB::commit();
             toast($runningnbr . ' Successfuly Created !', 'success');
