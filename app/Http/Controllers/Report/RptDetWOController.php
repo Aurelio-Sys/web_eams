@@ -69,7 +69,7 @@ class RptDetWOController extends Controller
             ->get();
 
         Schema::create('temp_wo', function ($table) {
-            $table->increments('id');
+            $table->increments('id')->collation('utf8mb4_general_ci');
             $table->string('temp_wo');
             $table->string('temp_sr')->nullable();
             $table->string('temp_type')->nullable();
@@ -246,6 +246,9 @@ class RptDetWOController extends Controller
         }
         if($request->s_type) {
             $datatemp = $datatemp->where('temp_type','=',$request->s_type);
+        }
+        if($request->s_status) {
+            $datatemp = $datatemp->where('temp_status','=',$request->s_status);
         } 
             
         $datatemp = $datatemp->paginate(10); 
@@ -254,17 +257,18 @@ class RptDetWOController extends Controller
         // dd($impact);
         if ($request->dexcel == "excel") {
             return Excel::download(new ViewExport2($request->swo,$request->sasset,$request->per1,$request->per2,
-            $request->sdept,$request->sloc,$request->seng,$request->stype), 'DataWO.xlsx');
+            $request->sdept,$request->sloc,$request->seng,$request->stype,$request->sstatus), 'DataWO.xlsx');
         } elseif ($request->dexcel == "detail") {
             return Excel::download(new DetailWOExport($request->swo,$request->sasset,$request->per1,$request->per2,
-            $request->sdept,$request->sloc,$request->seng,$request->stype), 'DetailWO.xlsx');
+            $request->sdept,$request->sloc,$request->seng,$request->stype,$request->sstatus), 'DetailWO.xlsx');
         } else {
             // dd($request->s_nomorwo);
             return view('report.rptdetwo', ['impact' => $impact, 'wottype' => $wottype, 'custrnow' => $custrnow, 
             'data' => $datatemp, 'user' => $engineer, 'engine' => $engineer, 'asset1' => $asset, 'asset2' => $asset, 
             'failure' => $failure, 'usernow' => $usernow, 'dept' => $depart, 'fromhome' => '', 'dataloc' => $dataloc,
             'swo' => $request->s_nomorwo, 'sasset' => $request->s_asset, 'sper1' => $request->s_per1, 'sper2' => $request->s_per2,
-            'sdept' => $request->s_dept, 'sloc' => $request->s_loc, 'seng' => $request->s_eng, 'stype' => $request->s_type]);
+            'sdept' => $request->s_dept, 'sloc' => $request->s_loc, 'seng' => $request->s_eng, 'stype' => $request->s_type,
+            'sstatus' => $request->s_status]);
         }
         
 
