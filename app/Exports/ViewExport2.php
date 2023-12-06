@@ -23,7 +23,7 @@ class ViewExport2 implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
             1    => ['font' => ['bold' => true]],
         ];
     }
-    function __construct($wonbr,$sasset,$per1,$per2,$dept,$loc,$eng,$type) {
+    function __construct($wonbr,$sasset,$per1,$per2,$dept,$loc,$eng,$type,$status) {
         $this->wonbr    = $wonbr;
         $this->sasset    = $sasset;
         $this->per1   = $per1;
@@ -32,6 +32,7 @@ class ViewExport2 implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
         $this->loc = $loc;
         $this->eng = $eng;
         $this->type = $type;
+        $this->status = $status;
         // dd($this->stats);
         // dd($wonbr,$status,$asset,$priority,$period);
     }
@@ -45,6 +46,7 @@ class ViewExport2 implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
         $loc = $this->loc;
         $eng = $this->eng;
         $type = $this->type;
+        $status = $this->status;
 
         $kondisi = 'wo_mstr.id > 0';
         // $wonbr = new Array();
@@ -74,6 +76,9 @@ class ViewExport2 implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
 
         if($per1 != null ||$per2 != '' ){
             $kondisi .= " and wo_start_date between CONCAT('".$per1."',' 00:00:00') AND CONCAT('".$per2."',' 23:59:59')";
+        }
+        if($status != null ||$status != '' ){
+            $kondisi .= " and wo_status = '".$status."'";
         }
 
         // dd($kondisi);

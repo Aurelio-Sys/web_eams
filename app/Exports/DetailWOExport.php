@@ -25,7 +25,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         ];
     }
 
-    function __construct($wonbr,$sasset,$per1,$per2,$dept,$loc,$eng,$type) {
+    function __construct($wonbr,$sasset,$per1,$per2,$dept,$loc,$eng,$type,$status) {
         $this->wonbr    = $wonbr;
         $this->sasset    = $sasset;
         $this->per1   = $per1;
@@ -34,6 +34,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         $this->loc = $loc;
         $this->eng = $eng;
         $this->type = $type;
+        $this->status = $status;
     }
 
     public function query()
@@ -46,6 +47,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         $loc = $this->loc;
         $eng = $this->eng;
         $type = $this->type;
+        $status = $this->status;
 
         
         /* 1 Mencari data sparepart dari wo detail */
@@ -140,6 +142,11 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
             $datadet = $datadet->whereBetween('wo_start_date',[$per1,$per2]);
             $datawo = $datawo->whereBetween('wo_start_date',[$per1,$per2]);
             $dataspg = $dataspg->whereBetween('wo_start_date',[$per1,$per2]);
+        }
+        if($status) {
+            $datadet = $datadet->where('wo_status','=',$status);
+            $datawo = $datawo->where('wo_status','=',$status);
+            $dataspg = $dataspg->where('wo_status','=',$status);
         }
 
         $data = $datadet->union($datawo)->union($dataspg)

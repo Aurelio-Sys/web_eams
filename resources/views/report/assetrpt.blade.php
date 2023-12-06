@@ -112,10 +112,11 @@
         <div class="card" style="height:100%">
           <div style="height:55%">
             <a href="" class="editarea2" id='editdata' data-toggle="modal" data-target="#editModal"
-              data-code="{{$de->asset_code}}" data-desc="{{$de->asset_desc}}">
+              data-code="{{$de->asset_code}}" data-desc="{{$de->asset_desc}}" data-type="{{$stype}}">
               <img class="card-img-top" src="/uploadassetimage/{{$de->asset_image}}" alt="Card image cap" width="200" height="200" >
             </a>
             <input type="hidden" name="code" id="code" value="{{$de->asset_code}}">
+			<input type="hidden" name="h_type" id="h_type" value="{{$stype}}">
           </div>
           <div style="height:30%">
               <div class="card-body">
@@ -240,12 +241,13 @@ function noexpitm(event, array){
 
            var code = $(this).data('code');
            var desc = $(this).data('desc');
+		   var type = $(this).data('type');
 
            document.getElementById('e_code').value = code;
            document.getElementById('e_desc').value = desc;
 
            $.ajax({
-              url:"assetrptview?code="+code,
+              url:"assetrptview?code="+code+"&type="+type,
               success: function(data) {
               // console.log(data);
               //alert(data);
@@ -300,10 +302,11 @@ function noexpitm(event, array){
         });
 
         var code = $(event.relatedTarget).data('code');
-        console.log(code);
+		var type = $(event.relatedTarget).data('type');
+        console.log(code, type);
 
         $.ajax({
-            url:"assetgraf?code="+code,
+            url:"assetgraf?code="+code+"&type="+type,
             success: function(data) {
               console.log(data.message);
 
