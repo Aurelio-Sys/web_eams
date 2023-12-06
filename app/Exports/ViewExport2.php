@@ -177,7 +177,7 @@ class ViewExport2 implements FromQuery, WithHeadings, ShouldAutoSize,WithStyles
         'WO Date', 'WO Time', 'Schedule Date','Release Date','Release Time','Release - Start',
         'Start Date', 'Start Time','Start - Finish',
         'Finish Date', 'Finish Time','Due Date',
-        'Downtime','Downtime UM', 'Note Reporting']; /* A211126 */
+        'Lama Perbaikan','Satuan Lama Perbaikan', 'Note Reporting']; /* A211126 */
     }
 
     

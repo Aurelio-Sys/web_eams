@@ -1028,7 +1028,7 @@ class UserChartController extends Controller
 
         $datawo = DB::table('wo_mstr')
             ->join('asset_mstr','asset_code','=','wo_asset_code')
-            ->whereNotIn('wo_status', ['closed', 'finish', 'delete'])
+            //->whereNotIn('wo_status', ['closed', 'finish', 'delete']) Ditempilkan semuaa status untuk dibandingkan dengan WO maintenance
             ->where('wo_start_date', '>=', $tahunKebelakang)
             ->where('wo_start_date', '<=', Carbon::now())
             ->orderBy('wo_start_date');
@@ -1119,7 +1119,7 @@ class UserChartController extends Controller
 
             $data = DB::table('wo_mstr')
                     ->join('asset_mstr','asset_code','=','wo_asset_code')
-                    ->whereNotIn('wo_status', ['closed','finish','delete'])
+                    //->whereNotIn('wo_status', ['closed','finish','delete'])
                     ->whereWo_asset_code($code)
                     ->where('wo_start_date', '>=', $tahunKebelakang)
                     ->where('wo_start_date', '<=', Carbon::now())
@@ -1168,7 +1168,7 @@ class UserChartController extends Controller
 
             $data = DB::table('wo_mstr')
                     ->join('asset_mstr','asset_code','=','wo_asset_code')
-                    ->whereNotIn('wo_status', ['closed','finish','delete'])
+                    //->whereNotIn('wo_status', ['closed','finish','delete'])
                     ->whereWo_asset_code($req->code)
                     ->whereMonth('wo_start_date','=',$dt->format("m"))
                     ->whereYear('wo_start_date','=',$dt->format("Y"));
