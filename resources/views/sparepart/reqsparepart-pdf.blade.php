@@ -155,7 +155,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-2 logo">
-                <img src="{{ public_path('assets/DK-logo.jpg') }}" width="80" height="80" alt="Logo">
+                <img src="{{ public_path('images/Meiji_logo.png') }}" width="80" height="80" alt="Logo">
             </div>
             <div class="col-md-6 title">
                 <h3>Request Sparepart List</h1>

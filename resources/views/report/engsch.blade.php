@@ -9,8 +9,8 @@
   </div><!-- /.col -->
   <div style="text-align: right">
     Work Order Status  :  
-    <span class="badge badge-primary">Firm</span>
-    {{--  <span class="badge badge-danger">Open</span>  --}}
+    <span class="badge badge-danger">Firm</span>
+    <span class="badge badge-primary">Released</span>
     <span class="badge badge-success">Started</span>
     <span class="badge badge-warning">Finish</span>
     <span class="badge badge-secondary">Closed</span>

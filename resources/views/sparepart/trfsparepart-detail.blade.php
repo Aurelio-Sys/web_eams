@@ -93,7 +93,7 @@
                                     {{$spd->req_spd_reqnote}}
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" data-index="{{ $index }}" readonly required placeholder="Click Here">
+                                    <input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="loclotfrom[]" data-toggle="tooltip" data-index="{{ $index }}" placeholder="Click Here" required>
                                     <input type="hidden" class="hidden_sitefrom" name="hidden_sitefrom[]" value="" />
                                     <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="" />
                                     <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />
@@ -271,7 +271,7 @@
 
                     // membuat header tabel
                     const headerRow = document.createElement("tr");
-                    const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "Select"];
+                    const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "UM", "Select"];
                     headerColumns.forEach((columnTitle) => {
                         const headerColumn = document.createElement("th");
                         headerColumn.textContent = columnTitle;
@@ -284,7 +284,7 @@
                         // membuat baris record untuk setiap objek dalam dataLocLotFrom
                         vamp.forEach((record) => {
                             const rowtable = document.createElement("tr");
-                            const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh"];
+                            const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh", "t_um"];
                             columns.forEach((columnKey) => {
                                 const column = document.createElement("td");
                                 column.textContent = record[columnKey];

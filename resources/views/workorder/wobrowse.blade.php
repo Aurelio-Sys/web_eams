@@ -908,10 +908,17 @@ div #munculgambar .gambar:hover{
           <div class="col-md-4">
             <textarea id="v_rejectreason" readonly type="text" class="form-control" name="v_rejectreason" value="{{ old('v_rejectreason') }}" rows="2" autofocus></textarea>
           </div>
-          <!-- <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
-            <div class="col-md-4">
-              <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
-            </div> -->
+          <label class="col-md-2 col-form-label text-md-left">WO Reporting File</label>
+          <div class="col-md-4" style="overflow-x: auto;">
+            <table class="table table-bordered" style="width: 100%; max-width: 100%;" id="fileupload_reporting">
+            </table>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="v_reportingnote" class="col-md-2 col-form-label text-md-left">WO Reporting Note</label>
+          <div class="col-md-4">
+            <textarea id="v_reportingnote" readonly type="text" class="form-control" name="v_reportingnote" value="{{ old('v_reportingnote') }}" rows="2" autofocus></textarea>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -1159,8 +1166,8 @@ div #munculgambar .gambar:hover{
 
         <div class="modal-footer">
           <button type="button" class="btn btn-info bt-action" id="d_btnclosed" data-dismiss="modal">Back</button>
-          <button type="submit" class="btn btn-danger bt-action" id="d_btnconfd" name="thisbutton" value="btndelete">Delete</button>
-          <button type="submit" class="btn btn-primary bt-action" id="d_btnconfd" name="thisbutton" value="btncancel">Cancel</button>
+          <button type="submit" class="btn btn-danger bt-action" id="d_btnconfd_delete" name="thisbutton" value="btndelete">Delete</button>
+          <button type="submit" class="btn btn-primary bt-action" id="d_btnconfd_cancel" name="thisbutton" value="btncancel">Cancel</button>
           <button type="button" class="btn btn-block btn-info" id="d_btnloadingd" style="display:none">
             <i class="fas fa-spinner fa-spin"></i> &nbsp;Loading
           </button>
@@ -1769,7 +1776,8 @@ div #munculgambar .gambar:hover{
   $("#delete").submit(function() {
     //alert('test');
     document.getElementById('d_btnclosed').style.display = 'none';
-    document.getElementById('d_btnconfd').style.display = 'none';
+    document.getElementById('d_btnconfd_cancel').style.display = 'none';
+    document.getElementById('d_btnconfd_delete').style.display = 'none';
     document.getElementById('d_btnloadingd').style.display = '';
   });
 
@@ -1869,6 +1877,8 @@ div #munculgambar .gambar:hover{
         var createdby = vamp.wo_master.wo_createdby;
         var department = vamp.wo_master.wo_department ? vamp.wo_master.wo_department : '';
         var rejectreason = vamp.sr_acceptance_note ? vamp.sr_acceptance_note : '';
+        var reportnote = vamp.wo_master.wo_report_note ? vamp.wo_master.wo_report_note : '';
+
 
         let combineFailure = [];
 
@@ -1905,6 +1915,7 @@ div #munculgambar .gambar:hover{
         document.getElementById('v_dept').value = department;
         document.getElementById('v_srnote').value = srnote;
         document.getElementById('v_rejectreason').value = rejectreason;
+        document.getElementById('v_reportingnote').value = reportnote;
 
 
       },
@@ -1935,6 +1946,17 @@ div #munculgambar .gambar:hover{
     })
 
     $.ajax({
+      url: "/imageview_nodelete",
+      data: {
+        wonumber: wonbr,
+      },
+      success: function(data) {
+
+        $('#fileupload_reporting').html('').append(data);
+      }
+    })
+
+    $.ajax({
       url: "/listuploadview/" + srnumber,
       success: function(data) {
         // console.log(data);
@@ -1956,8 +1978,10 @@ div #munculgambar .gambar:hover{
 
     if (srnbr !== '') {
       document.getElementById('divnotecancel').style.display = "";
+      document.getElementById('notecancel').required = true;
     } else {
       document.getElementById('divnotecancel').style.display = "none";
+      document.getElementById('notecancel').required = false;
     }
 
   });

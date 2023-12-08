@@ -42,7 +42,7 @@
             <button class="btn btn-block btn-primary" style="width: 40px !important" id='btnrefresh'/><i class="fas fa-sync-alt"></i></button>
             </div>
             <div class="col-md-2 col-sm-12 mb-2 input-group">
-            <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="Export to Excel" style="float:right" />
+                <input type="button" class="btn btn-block btn-primary" id="btnexcel" value="Export to Excel" style="float:right" />
             </div>
         </div>
         </div>
@@ -198,10 +198,15 @@
             theme : 'bootstrap4',
         });
     
+        $(document).on('click', '#btnexcel', function() {
+            var s_asset = $('#s_asset').val();
+            
+            window.open("/excelusbrowse?dexcel=excel&s_asset=" + s_asset , '_blank');
+        });
     
     </script>
 
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/js/select2.min.js"></script>
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/js/select2.min.js"></script> -->
 
 @endsection

@@ -182,14 +182,17 @@ class RptAssetYearController extends Controller
         if ($req->ajax()) {
 
             $code = $req->code;
-            $sch = $req->sch;
-// dd($req->all());
+            $schbln = $req->schbln;
+            $schthn = $req->schthn;
+
             // $data = DB::table('asset_loc')
             // ->orderBy('asloc_code')
             // ->get();
 
             $data = DB::table('wo_mstr')
                 ->whereWo_asset_code($code)
+                ->whereMonth('wo_start_date',$schbln)
+                ->whereYear('wo_start_date',$schthn)
                 ->get();
 // dd($data);
             $output = '';
@@ -198,6 +201,7 @@ class RptAssetYearController extends Controller
                 '<td>'.$data->wo_number.'</td>'.
                 '<td>'.$data->wo_start_date.'</td>'.
                 '<td>'.$data->wo_status.'</td>'.
+                '<td>'.$data->wo_mt_code.'</td>'.
                 '<td>'.$data->wo_list_engineer.'</td>'.
                 '</tr>';
             }

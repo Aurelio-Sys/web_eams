@@ -87,7 +87,8 @@
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_nbr" width="10%">WO Number<span id="name_icon"></span></th>
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="10%">Request By<span id="username_icon"></span></th>
                 <th class="sorting" data-sorting_type="asc" data-column_name="wo_duedate" width="10%">Due Date<span id="username_icon"></span></th>
-                <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="10%">Status<span id="username_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="10%">Status Transaksi<span id="username_icon"></span></th>
+                <th class="sorting" data-sorting_type="asc" data-column_name="wo_asset" width="10%">Status Approval<span id="username_icon"></span></th>
                 <th width="10%">Action</th>
             </tr>
         </thead>
@@ -227,7 +228,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-info bt-action" id="e_btnclose" data-dismiss="modal">Back</button>
                     <button type="submit" class="btn btn-danger bt-action" name="action" value="reject" id="btreject">Reject</button>
                     <button type="submit" class="btn btn-success bt-action" name="action" value="approve" id="btnapproval">Approve</button>
                 </div>
@@ -304,13 +305,13 @@
     <div class="modal-dialog modal-dialog-centered modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel">Request Sparepart Cancel</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel">Request Sparepart Approval Cancel</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <input type="hidden" id="statuscancel">
-            <form class="form-horizontal" id="newcancel" method="post" action="reqspcancel" enctype="multipart/form-data">
+            <form class="form-horizontal" id="newcancel" method="post" action="reqspapprcancel" enctype="multipart/form-data">
                 {{csrf_field()}}
 
                 <div style="display: none;">
@@ -321,7 +322,7 @@
                 </div>
 
                 <div class="modal-body">
-                    <span class="col-md-12"><b>Are you sure want to cancel <span id="rsnbr"><b></b></span>
+                    <span class="col-md-12"><b>Are you sure want to cancel approval for <span id="rsnbr"><b></b></span>
                             ?</b></span>
                     <!-- <div class="form-group row" id="divnotecancel"> -->
                     <label class="col-md-12 col-form-label">If you are sure, please fill the cancelation reason <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
@@ -389,6 +390,7 @@
         $('#cancelModal').modal('show');
 
         var rsnumber = $(this).data('rsnumber');
+        // alert(rsnumber);
 
         document.getElementById('c_rsnumber').value = rsnumber;
         document.getElementById('rsnbr').innerHTML = rsnumber;

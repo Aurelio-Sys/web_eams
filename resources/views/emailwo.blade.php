@@ -123,9 +123,7 @@
       <div style="word-wrap: break-word;">
         <h4>{{$note2}}</h4>
       </div>
-      <p>Mohon untuk segera dicek, Klik tombol dibawah</p>
-      <a href="{{url('/')}}" class="button"> Click Here </a>
-      <!-- URL ganti ketika dipasang -->
+      <p>Mohon untuk segera dicek</p>
     </div>
   </div>
 </div>

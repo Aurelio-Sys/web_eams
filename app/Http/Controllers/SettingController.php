@@ -1779,7 +1779,8 @@ class SettingController extends Controller
                 ->leftjoin('asset_type','asset_mstr.asset_type','asset_type.astype_code')
                 ->leftjoin('asset_group','asset_mstr.asset_group','asset_group.asgroup_code')
                 ->leftJoin('asset_loc','asloc_code','=','asset_loc')
-                ->orderby('asset_code');
+                ->orderByRaw("REGEXP_REPLACE(asset_code, '[0-9]', '') ASC")
+                ->orderByRaw("CAST(REGEXP_REPLACE(asset_code, '\\D', '') AS UNSIGNED) ASC");
     
             if($s_code) {
                 $data = $data->where(function($query) use ($s_code) {
@@ -1996,17 +1997,20 @@ class SettingController extends Controller
                     
                     // Simpan File Upload pada Public
                     $savepath = public_path('uploadasset/');
+                    $filepath = 'uploadasset/';
                     $upload->move($savepath, $filename);
                 
                     // Simpan ke DB Upload
                     DB::table('asset_upload')
                             ->insert([
-                                'filepath' => $savepath.$filename,
+                                'filepath' => $filepath . $filename,
                                 'asset_code' => $req->t_code,
                                 'created_at' => Carbon::now()->toDateTimeString(),
                                 'updated_at' => Carbon::now()->toDateTimeString(),
                             ]);
+                            
                 }
+
             }
 
             toast('Asset Created.', 'success');
@@ -2051,7 +2055,7 @@ class SettingController extends Controller
 
             $output .=  '<tr>
                             <td> 
-                            <a href="/uploadasset/'.$data->id.'" target="_blank">'.$filename.'</a> 
+                            <a href="/' . $data->filepath . '" target="_blank">' . $filename . '</a>
                             </td>
                             <td>
                             <a href="#" class="btn deleterow btn-danger">
@@ -2166,17 +2170,21 @@ class SettingController extends Controller
                 
                 // Simpan File Upload pada Public
                 $savepath = public_path('uploadasset/');
+                $filepath = 'uploadasset/';
                 $upload->move($savepath, $filename);
             
                 // Simpan ke DB Upload
                 DB::table('asset_upload')
                         ->insert([
-                            'filepath' => $savepath.$filename,
+                            'filepath' => $filepath . $filename,
                             'asset_code' => $req->te_code,
                             'created_at' => Carbon::now()->toDateTimeString(),
                             'updated_at' => Carbon::now()->toDateTimeString(),
                         ]);
+
             }
+
+            
         }
 
         DB::table('asset_mstr')

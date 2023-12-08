@@ -179,9 +179,9 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="t_note" class="col-md-4 col-form-label text-md-right">Note</label>
+                        <label for="t_note" class="col-md-4 col-form-label text-md-right">Note<span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                         <div class="col-md-6">
-                            <textarea id="t_note" class="form-control" name="t_note" ></textarea>
+                            <textarea id="t_note" class="form-control" name="t_note" required ></textarea>
                         </div>
                     </div>
                     

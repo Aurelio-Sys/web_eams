@@ -97,7 +97,7 @@
                                     <input type="hidden" class="hidden_locfrom" name="hidden_locfrom[]" value="{{$spd->ret_spd_loc_from}}" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    <input type="text" id="loclotto" class="form-control loclotto readonly" name="loclotto[]" data-toggle="tooltip" data-index="{{ $index }}" readonly required placeholder="Click Here">
+                                    <input type="text" id="loclotto" class="form-control loclotto readonly" name="loclotto[]" data-toggle="tooltip" data-index="{{ $index }}" required placeholder="Click Here">
                                     <input type="hidden" class="hidden_siteto" name="hidden_siteto[]" value="" />
                                     <input type="hidden" class="hidden_locto" name="hidden_locto[]" value="" />
                                     <input type="hidden" class="hidden_lotto" name="hidden_lotto[]" value="" />
@@ -226,7 +226,7 @@
 
                     // membuat header tabel
                     const headerRow = document.createElement("tr");
-                    const headerColumns = ["Part", "Site", "Location", "Quantity", "Select"];
+                    const headerColumns = ["Part", "Site", "Location", "Quantity", "UM", "Select"];
                     headerColumns.forEach((columnTitle) => {
                         const headerColumn = document.createElement("th");
                         headerColumn.textContent = columnTitle;
@@ -239,8 +239,8 @@
                         // membuat baris record untuk setiap objek dalam dataLocLotFrom
                         vamp.forEach((record) => {
                             const rowtable = document.createElement("tr");
-                            // const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh"];
-                            const columns = ["t_part", "t_site", "t_loc", "totalqty"];
+                            // const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh", "t_um"];
+                            const columns = ["t_part", "t_site", "t_loc", "totalqty", "t_um"];
                             columns.forEach((columnKey) => {
                                 const column = document.createElement("td");
                                 column.textContent = record[columnKey];
@@ -255,11 +255,11 @@
                                 // aksi yang ingin dilakukan saat tombol select diklik
                                 const site = record.t_site;
                                 const loc = record.t_loc;
-                                // const lot = record.t_lot;
+                                const lot = record.t_lot;
                                 const qtyoh = record.t_qtyoh;
                                 row.find(".hidden_siteto").val(site);
                                 row.find(".hidden_locto").val(loc);
-                                // row.find(".hidden_lotto").val(lot);
+                                 row.find(".hidden_lotto").val(lot);
 
                                 // const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
                                 const loclot = `site: ${site} & loc: ${loc}`;

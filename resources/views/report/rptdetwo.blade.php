@@ -79,7 +79,6 @@
               @endforeach
             </select>
           </div>
-          <label for="s_eng" class="col-md-6 col-form-label text-md-right">{{ __('') }}</label>
           {{--  belum bisa cari cara codin search eng nya
             <label for="s_eng" class="col-md-2 col-form-label text-md-right">{{ __('Engineer') }}</label>
           <div class="col-md-4 col-sm-12 mb-2 input-group">
@@ -90,6 +89,20 @@
               @endforeach
             </select>
           </div>  --}}
+          <label for="s_status" class="col-md-2 col-form-label text-md-right">{{ __('Status') }}</label>
+          <div class="col-md-4 col-sm-12 mb-2 input-group">
+            <select id="s_status" type="text" class="form-control" name="s_status">
+              <option value="">--Select Status--</option>
+              <!-- <option value="plan">Plan</option> -->
+              <option value="firm" {{$sstatus === "firm" ? "selected" : ""}}>Firm</option>
+              <option value="released" {{$sstatus === "released" ? "selected" : ""}}>Released</option>
+              <option value="started" {{$sstatus === "started" ? "selected" : ""}}>Started</option>
+              <option value="finished" {{$sstatus === "finished" ? "selected" : ""}}>Finished</option>
+              <option value="closed" {{$sstatus === "closed" ? "selected" : ""}}>Closed</option>
+              <option value="canceled" {{$sstatus === "canceled" ? "selected" : ""}}>Canceled</option>
+              <option value="acceptance" {{$sstatus === "acceptance" ? "selected" : ""}}>Acceptance</option>
+            </select>
+          </div>
           <label for="s_per1" class="col-md-2 col-form-label text-md-right">{{ __('WO Date') }}</label>
           <div class="col-md-4 col-sm-12 mb-2 input-group">
             <input type="date" name="s_per1" id="s_per1" class="form-control" value="{{$sper1}}">
@@ -289,10 +302,17 @@
             <div class="col-md-4">
               <textarea id="v_rejectreason" readonly type="text" class="form-control" name="v_rejectreason" value="{{ old('v_rejectreason') }}" rows="2" autofocus></textarea>
             </div>
-            <!-- <label for="v_duedate" class="col-md-2 col-form-label text-md-left">Due Date</label>
+            <label class="col-md-2 col-form-label text-md-left">WO Reporting File</label>
+            <div class="col-md-4" style="overflow-x: auto;">
+              <table class="table table-bordered" style="width: 100%; max-width: 100%;" id="fileupload_reporting">
+              </table>  
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="v_reportingnote" class="col-md-2 col-form-label text-md-left">WO Report Note</label>
             <div class="col-md-4">
-              <input id="v_duedate" type="date" class="form-control" name="v_duedate" value="{{ old('v_duedate') }}" autofocus readonly>
-            </div> -->
+              <textarea id="v_reportingnote" readonly type="text" class="form-control" name="v_reportingnote" value="{{ old('v_reportingnote') }}" rows="2" autofocus></textarea>
+            </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -401,6 +421,7 @@
         var wotype = vamp.wo_master.wo_type;
         var wostart = vamp.wo_master.wo_job_startdate ? new Date(vamp.wo_master.wo_job_startdate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
         var wofinish = vamp.wo_master.wo_job_finishdate ? new Date(vamp.wo_master.wo_job_finishdate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
+        var reportnote = vamp.wo_master.wo_report_note ? vamp.wo_master.wo_report_note : '';
 
         let combineFailure = [];
 
@@ -441,6 +462,7 @@
         document.getElementById('v_wotype').value = wotype;
         document.getElementById('v_wostart').value = wostart;
         document.getElementById('v_wofinish').value = wofinish;
+        document.getElementById('v_reportingnote').value = reportnote;
         
 
       },complete: function(vamp) {
@@ -470,6 +492,17 @@
     })
 
     $.ajax({
+      url: "/imageview_nodelete",
+      data: {
+        wonumber: wonbr,
+      },
+      success: function(data) {
+
+        $('#fileupload_reporting').html('').append(data);
+      }
+    })
+
+    $.ajax({
         url: "/listuploadview/" + srnumber,
         success: function(data) {
           // console.log(data);
@@ -493,6 +526,7 @@
     $('#s_loc').val('');
     $('#s_eng').val('');
     $('#s_type').val('');
+    $('#s_status').val('');
   }
 
   $(document).on('click', '#btnrefresh', function() {
@@ -511,9 +545,10 @@
     var loc = $('#s_loc').val();
     var eng = $('#s_eng').val();
     var type = $('#s_type').val();
+    var status = $('#s_status').val();
     
     window.open("/exceldetwo?dexcel=excel&swo=" + swo + "&sasset=" + sasset + "&per1=" + per1 + "&per2=" + per2 +
-        "&sdept=" + dept + "&sloc=" + loc + "&seng=" + eng + "&stype=" + type , '_blank');
+        "&sdept=" + dept + "&sloc=" + loc + "&seng=" + eng + "&stype=" + type + "&sstatus=" + status , '_blank');
   });
 
   $(document).on('click', '#btndetail', function() {
@@ -525,9 +560,10 @@
     var loc = $('#s_loc').val();
     var eng = $('#s_eng').val();
     var type = $('#s_type').val();
+    var status = $('#s_status').val();
     
     window.open("/exceldetwo?dexcel=detail&swo=" + swo + "&sasset=" + sasset + "&per1=" + per1 + "&per2=" + per2 +
-        "&sdept=" + dept + "&sloc=" + loc + "&seng=" + eng + "&stype=" + type , '_blank');
+        "&sdept=" + dept + "&sloc=" + loc + "&seng=" + eng + "&stype=" + type + "&sstatus=" + status , '_blank');
   });
 
   $(document).on('click', '.imageview', function() {

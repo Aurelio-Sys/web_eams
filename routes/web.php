@@ -412,6 +412,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::post('/bookcal', 'UserChartController@bookcal');
 	route::get('/assetsch', 'UserChartController@assetsch');
 	route::post('/assetsch', 'UserChartController@assetsch');
+	route::get('/assetschrenew/{id}', 'UserChartController@assetschrenew')->name('assetschrenew');
 	route::get('/engrpt', 'UserChartController@engrpt');
 	route::get('/engrptview', 'UserChartController@engrptview');
 	route::get('/assetrpt', 'UserChartController@assetrpt');
@@ -437,7 +438,7 @@ Route::group(['middleware' => ['auth']], function() {
 	route::get('/womaint/getnowo','wocontroller@geteditwoold');
 	route::get('/womaint/getwoinfo',[wocontroller::class, 'geteditwo'])->name('editWO');
 	route::get('/womaint/getfailure','wocontroller@getfailure');
-	route::get('/openprint/{wo}','wocontroller@openprint');
+	route::get('/woprint/{wo}','wocontroller@woprint');
 	route::get('/openprint2/{wo}','wocontroller@openprint2');
 	route::get('/wodownloadfile/{wo}','wocontroller@downloadfile');
 	route::get('/wobrowseopen', 'wocontroller@wobrowseopen'); //tyas, link dari Home 
@@ -557,6 +558,7 @@ Route::group(['middleware' => ['auth']], function() {
 	
 	//image tommy
 	route::get('/imageview', 'ServiceController@imageview');
+	route::get('/imageview_nodelete', 'ServiceController@imageview_nodelete');
 
 	// 27.07.2021 booking tyas
 	route::get('/booking', 'BookingController@booking')->name('bookingBrowse');
@@ -682,6 +684,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// Usage Browse untuk melihat data measurement asset yang tipe perhitungan Meter yang telah diinput
 	Route::get('/usbrowse', [UsageBrowseController::class, 'index'])->name('usbrowse');
+	Route::get('/excelusbrowse', [UsageBrowseController::class, 'index'])->name('excelusbrowse');
 
 	// Asset - Failure
 	Route::get('/asfn', [AsfnController::class, 'index']);
@@ -807,9 +810,11 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::post('/reqspsubmit', [SparepartController::class,'reqspsubmit'])->name('reqspsubmit');
 	Route::get('/reqspeditdet',[SparepartController::class, 'reqspeditdet']);
 	Route::get('/reqsproute',[SparepartController::class, 'reqsproute']);
+	Route::get('/reqsproutehist',[SparepartController::class, 'reqsproutehist']);
 	Route::get('/reqspviewdet',[SparepartController::class, 'reqspviewdet']);
 	Route::post('/reqspupdate',[SparepartController::class, 'reqspupdate']);
 	Route::post('/reqspcancel', [SparepartController::class, 'reqspcancel']);
+	Route::post('/reqspapprcancel', [SparepartController::class, 'reqspapprcancel']);
 	Route::get('/reqspviewdetappr',[SparepartController::class, 'reqspviewdetappr']);
 	Route::get('/reqsprouteappr',[SparepartController::class, 'reqsprouteappr']);
 	Route::get('/reqspapproval', [SparepartController::class, 'reqspapprovalbrowse'])->name('approvalBrowseSP');
@@ -897,6 +902,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// Sparepart Report
 	Route::get('/sptrpt', [SptRptController::class, 'index']);
+	Route::get('/excelsptrpt', [SptRptController::class, 'index'])->name('excelSptrpt');
 
 	// Digunakan untuk menampilkan notifikasi setiap user
 	Route::get('/startnotif', [StartnotifController::class, 'index']);

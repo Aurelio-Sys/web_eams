@@ -27,23 +27,39 @@
                 <div class="col-12 form-group row">
                     <label for="s_code" class="col-md-2 col-sm-2 col-form-label text-md-right">Asset</label>
                     <div class="col-md-4 col-sm-4 mb-2 input-group">
-                        <input id="s_code" type="text" class="form-control" name="s_code"
-                        value="{{$s_code}}" autofocus autocomplete="off"/>
+                        <select id="s_code" class="form-control" style="color:black" name="s_code" autofocus autocomplete="off">
+                            <option value="">--Select Asset--</option>
+                            @foreach($dataasset as $assetsearch)
+                              <option value="{{$assetsearch->asset_code}}" {{$assetsearch->asset_code === $s_code ? "selected" : ""}}>{{$assetsearch->asset_code}} -- {{$assetsearch->asset_desc}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <label for="s_loc" class="col-md-2 col-sm-2 col-form-label text-md-right">Location</label>
                     <div class="col-md-4 col-sm-4 mb-2 input-group">
-                        <input id="s_loc" type="text" class="form-control" name="s_loc"
-                        value="{{$s_loc}}" autofocus autocomplete="off"/>
+                        <select id="s_loc" class="form-control" style="color:black" name="s_loc" autofocus autocomplete="off">
+                            <option value="">--Select Location--</option>
+                            @foreach($dataloc as $dl)
+                              <option value="{{$dl->asloc_code}}" {{$dl->asloc_code === $s_loc ? "selected" : ""}}>{{$dl->asloc_code}} -- {{$dl->asloc_desc}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <label for="s_type" class="col-md-2 col-sm-2 col-form-label text-md-right">Type</label>
                     <div class="col-md-4 col-sm-4 mb-2 input-group">
-                        <input id="s_type" type="text" class="form-control" name="s_type"
-                        value="{{$s_type}}" autofocus autocomplete="off"/>
+                        <select id="s_type" class="form-control" style="color:black" name="s_type" autofocus autocomplete="off">
+                            <option value="">--Select Type--</option>
+                            @foreach($dataastype as $dt)
+                              <option value="{{$dt->astype_code}}" {{$dt->astype_code === $s_type ? "selected" : ""}}>{{$dt->astype_code}} -- {{$dt->astype_desc}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <label for="s_group" class="col-md-2 col-sm-2 col-form-label text-md-right">Group</label>
                     <div class="col-md-4 col-sm-4 mb-2 input-group">
-                        <input id="s_group" type="text" class="form-control" name="s_group"
-                        value="{{$s_group}}" autofocus autocomplete="off"/>
+                        <select id="s_group" class="form-control" style="color:black" name="s_group" autofocus autocomplete="off">
+                            <option value="">--Select Type--</option>
+                            @foreach($dataasgroup as $ds)
+                              <option value="{{$ds->asgroup_code}}" {{$ds->asgroup_code === $s_group ? "selected" : ""}}>{{$ds->asgroup_code}} -- {{$ds->asgroup_desc}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <label for="s_per1" class="col-md-1 col-form-label text-md-right">{{ __('') }}</label>
                     <div class="col-md-2 col-sm-12 mb-2 input-group">
@@ -283,6 +299,26 @@
             document.getElementById('s_loc').value  = '';
             document.getElementById('s_type').value  = '';
             document.getElementById('s_group').value  = '';
+        });
+
+        $('#s_code').select2({
+            width: '100%',
+            theme: 'bootstrap4',
+        });
+
+        $('#s_loc').select2({
+            width: '100%',
+            theme: 'bootstrap4',
+        });
+
+        $('#s_type').select2({
+            width: '100%',
+            theme: 'bootstrap4',
+        });
+
+        $('#s_group').select2({
+            width: '100%',
+            theme: 'bootstrap4',
         });
 
     </script>

@@ -139,7 +139,7 @@
                                     <input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />
                                 </td>
                                 <td style="vertical-align:middle;text-align:right;">
-                                    <select id="locto" class="form-control locto selectpicker" name="locto[]" data-dropup-auto="false" data-live-search="true" required>
+                                    <select style="display: inline-block !important;" id="locto" class="form-control locto selectpicker" name="locto[]" data-dropup-auto="false" data-live-search="true" data-container="body" required>
                                         <option></option>
                                         @foreach ( $datalocsupply as $dtloc )
                                         <option value="{{$dtloc->inp_loc}}" data-siteto="{{$dtloc->inp_supply_site}}">{{$dtloc->inp_supply_site}}, {{$dtloc->inp_loc}}</option>
@@ -308,7 +308,7 @@
 
                     // membuat header tabel
                     const headerRow = document.createElement("tr");
-                    const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "Select"];
+                    const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity",  "UM", "Select"];
                     headerColumns.forEach((columnTitle) => {
                         const headerColumn = document.createElement("th");
                         headerColumn.textContent = columnTitle;
@@ -319,7 +319,7 @@
                     // membuat baris record untuk setiap objek dalam dataLocLotFrom
                     vamp.forEach((record) => {
                         const rowtable = document.createElement("tr");
-                        const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh"];
+                        const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh", "t_um"];
                         columns.forEach((columnKey) => {
                             const column = document.createElement("td");
                             column.textContent = record[columnKey];

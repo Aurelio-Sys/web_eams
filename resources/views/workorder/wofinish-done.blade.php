@@ -139,9 +139,6 @@
                 <div class="col-md-3 h-50">
                     <label for="c_duedate" class="col-md-12 col-form-label text-md-left p-0">Due Date WO</label>
                 </div>
-                <div class="col-md-6 h-50">
-
-                </div>
                 <div class="col-md-3 h-50">
                     <input id="c_startdate" type="text" class="form-control pl-0 col-md-12 c_startdate" style="background:transparent;border:none;text-align:left" name="c_startdate" value="{{$header->wo_start_date}}" readonly />
                 </div>
@@ -380,6 +377,18 @@
 
             <div style="border: 1px solid black; margin-top: 5% !important; padding-top: 5%; padding-bottom: 5%; padding-left: 5%; padding-right: 5%;">
                 <div class="form-group row col-md-12">
+                    <label for="c_finishdate" class="col-md-4 col-form-label text-md-left">Start Date</label>
+                    <div class="col-md-3">
+                        <input id="c_startpengerjaan" type="text" class="form-control pl-0 col-md-12 c_startpengerjaan" style="background:transparent;border:none;text-align:left" name="c_startpengerjaan" value="{{$header->wo_job_startdate}} {{$header->wo_job_starttime}}" readonly />
+                    </div>
+                </div>
+                <div class="form-group row col-md-12">
+                    <label for="c_finishdate" class="col-md-4 col-form-label text-md-left">Note Service Request</label>
+                    <div class="col-md-3">
+                        <textarea id="c_notesr" class="form-control pl-0 col-md-12 c_notesr" style="background:transparent;border:none;text-align:left" name="c_notesr" readonly >{{$notesr}}</textarea>
+                    </div>
+                </div>
+                <div class="form-group row col-md-12">
                     <label for="c_finishdate" class="col-md-4 col-form-label text-md-left">Finish Date <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-3">
                         <input id="c_finishdate" type="date" class="form-control c_finishdate" name="c_finishdate" value="{{($header->wo_job_finishdate != null) ? $header->wo_job_finishdate : \Carbon\Carbon::now()->format('Y-m-d')}}" required>
@@ -412,7 +421,7 @@
                 </div>
 
                 <div class="form-group row col-md-12">
-                    <label for="downtime" class="col-md-4 col-form-label text-md-left">Downtime <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
+                    <label for="downtime" class="col-md-4 col-form-label text-md-left">Lama Perbaikan <span id="alert1" style="color: red; font-weight: 200;">*</span></label>
                     <div class="col-md-3">
                         <input type="number" id="downtime" min="0" class="form-control" name="downtime" value="{{$header->wo_downtime != null ? $header->wo_downtime : 0}}" required />
                     </div>
@@ -900,7 +909,7 @@
 
                         // membuat header tabel
                         const headerRow = document.createElement("tr");
-                        const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "Select"];
+                        const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "UM", "Select"];
                         headerColumns.forEach((columnTitle) => {
                             const headerColumn = document.createElement("th");
                             headerColumn.textContent = columnTitle;
@@ -911,7 +920,7 @@
                         // membuat baris record untuk setiap objek dalam dataLocLotFrom
                         vamp.forEach((record) => {
                             const rowtable = document.createElement("tr");
-                            const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh"];
+                            const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh", "t_um"];
                             columns.forEach((columnKey) => {
                                 const column = document.createElement("td");
                                 column.textContent = record[columnKey];

@@ -387,20 +387,21 @@ class wocontroller extends Controller
         }
     }
 
-    public function assetbyloc_wo (Request $req){
-        
+    public function assetbyloc_wo(Request $req)
+    {
+
         //Filter asset by location
         if ($req->ajax()) {
             $asset_loc = $req->assetloc;
             $asset = DB::table('asset_mstr')
-            ->where('asset_active', '=', 'Yes')
-            ->where('asset_loc', '=', $asset_loc)
-            ->orderBy('asset_code')
-            ->get();
+                ->where('asset_active', '=', 'Yes')
+                ->where('asset_loc', '=', $asset_loc)
+                ->orderBy('asset_code')
+                ->get();
 
             $outputcode = "";
             foreach ($asset as $thiscode) {
-                $outputcode .= '<option value="'.$thiscode->asset_code.'" data-assetsite="'.$thiscode->asset_site.'" data-assetloc="'.$thiscode->asset_loc.'" data-assetgroup="'.$thiscode->asset_group.'">'.$thiscode->asset_code.' - '.$thiscode->asset_desc.'</option>';
+                $outputcode .= '<option value="' . $thiscode->asset_code . '" data-assetsite="' . $thiscode->asset_site . '" data-assetloc="' . $thiscode->asset_loc . '" data-assetgroup="' . $thiscode->asset_group . '">' . $thiscode->asset_code . ' - ' . $thiscode->asset_desc . '</option>';
             }
 
             return response()->json([
@@ -1376,7 +1377,7 @@ class wocontroller extends Controller
 
             $tampungarray = $womstr->wo_list_engineer;
 
-            EmailScheduleJobs::dispatch($runningnbr, $asset, '1', $tampungarray, '', '', '');
+            EmailScheduleJobs::dispatch($runningnbr, $asset, '1', $thisListEng, '', '', '');
 
             DB::commit();
             toast($runningnbr . ' Successfuly Created !', 'success');
@@ -1734,29 +1735,29 @@ class wocontroller extends Controller
                                 'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
                             ]);
 
-                            DB::table('sr_trans_approval_eng')
-                                ->where('srta_eng_mstr_id', $getdatasr->id)
-                                ->update([
-                                    'srta_eng_reason' => null,
-                                    'srta_eng_status' => 'Waiting for engineer approval',
-                                    'srta_eng_approved_by' => null,
-                                    'updated_at' => null,
-                                ]);
+                        DB::table('sr_trans_approval_eng')
+                            ->where('srta_eng_mstr_id', $getdatasr->id)
+                            ->update([
+                                'srta_eng_reason' => null,
+                                'srta_eng_status' => 'Waiting for engineer approval',
+                                'srta_eng_approved_by' => null,
+                                'updated_at' => null,
+                            ]);
 
-                            DB::table('sr_trans_approval_eng_hist')
-                                ->insert([
-                                    'srtah_eng_sr_number' => $getdatasr->sr_number,
-                                    'srtah_eng_dept_approval' => $getdatasr->sr_eng_approver,
-                                    'srtah_eng_role_approval' => 'SPVSR',
-                                    'srtah_eng_status' => 'Waiting for engineer approval',
-                                    'srtah_eng_reason' => 'WO deleted and SR back to open',
-                                    'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                                    'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
-                                ]);
+                        DB::table('sr_trans_approval_eng_hist')
+                            ->insert([
+                                'srtah_eng_sr_number' => $getdatasr->sr_number,
+                                'srtah_eng_dept_approval' => $getdatasr->sr_eng_approver,
+                                'srtah_eng_role_approval' => 'SPVSR',
+                                'srtah_eng_status' => 'Waiting for engineer approval',
+                                'srtah_eng_reason' => 'WO deleted and SR back to open',
+                                'created_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                                'updated_at' => Carbon::now('ASIA/JAKARTA')->toDateTimeString(),
+                            ]);
                     }
 
                     //update status sr approval eng menjadi waiting fo approval lagi
-                    
+
 
 
                     //hapus data wo
@@ -3051,6 +3052,17 @@ class wocontroller extends Controller
             ->first();
 
         // dd($dataheader);
+        $getNoteSR = "";
+
+        if ($dataheader->wo_sr_number <> null || $dataheader->wo_sr_number <> "") {
+            $getNoteSR = DB::table('service_req_mstr')
+                ->where('wo_number', '=', $dataheader->wo_number)
+                ->select('sr_note')
+                ->first();
+
+            $getNoteSR = $getNoteSR->sr_note;
+        }
+
 
         //ambil data failure code
         $asfn_det = DB::table('asfn_det')
@@ -3097,19 +3109,19 @@ class wocontroller extends Controller
 
         //ambil data spare part dari wo_dets_sp
         $datasparepart = DB::table('wo_dets_sp')
-                    ->join('sp_mstr', 'sp_mstr.spm_code', '=', 'wo_dets_sp.wd_sp_spcode')
-                    ->where('wo_dets_sp.wd_sp_wonumber', '=', $wonumber)
-                    ->groupBy('wo_dets_sp.wd_sp_wonumber', 'wo_dets_sp.wd_sp_spcode')
-                    ->select(
-                        'wd_sp_wonumber',
-                        'wd_sp_spcode',
-                        'sp_mstr.spm_code',
-                        'sp_mstr.spm_desc',
-                        DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'),
-                        DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'),
-                        DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as wd_sp_whtf')
-                    )
-                    ->get();
+            ->join('sp_mstr', 'sp_mstr.spm_code', '=', 'wo_dets_sp.wd_sp_spcode')
+            ->where('wo_dets_sp.wd_sp_wonumber', '=', $wonumber)
+            ->groupBy('wo_dets_sp.wd_sp_wonumber', 'wo_dets_sp.wd_sp_spcode')
+            ->select(
+                'wd_sp_wonumber',
+                'wd_sp_spcode',
+                'sp_mstr.spm_code',
+                'sp_mstr.spm_desc',
+                DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'),
+                DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'),
+                DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as wd_sp_whtf')
+            )
+            ->get();
 
         // dd($datasparepart);
 
@@ -3140,7 +3152,7 @@ class wocontroller extends Controller
         return view('workorder.wofinish-done', [
             'header' => $dataheader, 'sparepart' => $datasparepart, 'newsparepart' => $sp_all,
             'instruction' => $datainstruction, 'inslist' => $ins_all, 'um' => $um,
-            'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure
+            'engineers' => $engData, 'qcparam' => $dataqcparam, 'failure' => $failure, 'notesr' => $getNoteSR
         ]);
     }
 
@@ -3205,19 +3217,19 @@ class wocontroller extends Controller
 
         //ambil data spare part dari wo_dets_sp
         $datasparepart = DB::table('wo_dets_sp')
-                        ->join('sp_mstr', 'sp_mstr.spm_code', '=', 'wo_dets_sp.wd_sp_spcode')
-                        ->where('wo_dets_sp.wd_sp_wonumber', '=', $wonumber)
-                        ->groupBy('wo_dets_sp.wd_sp_wonumber', 'wo_dets_sp.wd_sp_spcode')
-                        ->select(
-                            'wd_sp_wonumber',
-                            'wd_sp_spcode',
-                            'sp_mstr.spm_code',
-                            'sp_mstr.spm_desc',
-                            DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'),
-                            DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'),
-                            DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as wd_sp_whtf')
-                        )
-                        ->get();
+            ->join('sp_mstr', 'sp_mstr.spm_code', '=', 'wo_dets_sp.wd_sp_spcode')
+            ->where('wo_dets_sp.wd_sp_wonumber', '=', $wonumber)
+            ->groupBy('wo_dets_sp.wd_sp_wonumber', 'wo_dets_sp.wd_sp_spcode')
+            ->select(
+                'wd_sp_wonumber',
+                'wd_sp_spcode',
+                'sp_mstr.spm_code',
+                'sp_mstr.spm_desc',
+                DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'),
+                DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'),
+                DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as wd_sp_whtf')
+            )
+            ->get();
 
         // dd($datasparepart);
 
@@ -3408,6 +3420,7 @@ class wocontroller extends Controller
                             't_loc' => (string) $thisresult->t_loc,
                             't_lot' => (string) $thisresult->t_lot,
                             't_qtyoh' => number_format((float) $thisresult->t_qtyoh, 2),
+                            't_um' => (string) $thisresult->t_um,
                         ]);
                     }
                 }
@@ -3493,7 +3506,7 @@ class wocontroller extends Controller
             }
 
             /** Kondisi jika akses dari menu notifikasi */
-            if($req->status) {
+            if ($req->status) {
                 $data = $data->where('wotr_status', 'waiting for approval');
             }
 
@@ -4345,19 +4358,19 @@ class wocontroller extends Controller
 
 
         $wo_sp = DB::table('wo_dets_sp')
-                ->join('sp_mstr', 'sp_mstr.spm_code', '=', 'wo_dets_sp.wd_sp_spcode')
-                ->where('wo_dets_sp.wd_sp_wonumber', '=', $wonumber)
-                ->groupBy('wo_dets_sp.wd_sp_wonumber', 'wo_dets_sp.wd_sp_spcode')
-                ->select(
-                    'wd_sp_wonumber',
-                    'wd_sp_spcode',
-                    'sp_mstr.spm_code',
-                    'sp_mstr.spm_desc',
-                    DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'),
-                    DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'),
-                    DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as wd_sp_whtf')
-                )
-                ->get();
+            ->join('sp_mstr', 'sp_mstr.spm_code', '=', 'wo_dets_sp.wd_sp_spcode')
+            ->where('wo_dets_sp.wd_sp_wonumber', '=', $wonumber)
+            ->groupBy('wo_dets_sp.wd_sp_wonumber', 'wo_dets_sp.wd_sp_spcode')
+            ->select(
+                'wd_sp_wonumber',
+                'wd_sp_spcode',
+                'sp_mstr.spm_code',
+                'sp_mstr.spm_desc',
+                DB::raw('SUM(wo_dets_sp.wd_sp_required) as wd_sp_required'),
+                DB::raw('SUM(wo_dets_sp.wd_sp_issued) as wd_sp_issued'),
+                DB::raw('SUM(wo_dets_sp.wd_sp_whtf) as wd_sp_whtf')
+            )
+            ->get();
 
         $datalocsupply = DB::table('inp_supply')
             ->where('inp_asset_site', '=', $data->wo_site)
@@ -4527,30 +4540,30 @@ class wocontroller extends Controller
 
         // bagian spare part
 
+        $domain = ModelsQxwsa::first();
+
+        $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
+
+        if ($costdata === false) {
+            alert()->error('Error', 'WSA Failed');
+            return redirect()->route('woreport');
+        } else {
+            if ($costdata[1] == "false") {
+                alert()->error('Error', 'Item Cost tidak ditemukan');
+                return redirect()->route('woreport');
+            } else {
+                $tempCost = (new CreateTempTable())->createTempCost($costdata[0]);
+
+                $tempCost = collect($tempCost[0]);
+            }
+        }
+
         DB::beginTransaction();
 
         try {
 
             //cek jika ada spare part yang digunakan saat reporting dan informasi yang dibutuhkan untuk issued unplanned ke QAD lengkap
             if ($req->has('hidden_sp') && $req->has('hidden_sitefrom') && $req->has('hidden_locfrom') && $req->has('hidden_lotfrom') && $req->has('qtyrequired') && $req->has('qtyissued') && $req->has('qtypotong')) {
-                $domain = ModelsQxwsa::first();
-
-                $costdata = (new WSAServices())->wsacost($domain->wsas_domain);
-
-                if ($costdata === false) {
-                    alert()->error('Error', 'WSA Failed');
-                    return redirect()->route('woreport');
-                } else {
-                    if ($costdata[1] == "false") {
-                        alert()->error('Error', 'Item Cost tidak ditemukan');
-                        return redirect()->route('woreport');
-                    } else {
-                        $tempCost = (new CreateTempTable())->createTempCost($costdata[0]);
-
-                        $tempCost = collect($tempCost[0]);
-                    }
-                }
-
 
                 $dataArrayIssued = []; //penampungngan data yg mau diissued unplanned
                 $dataArrayReceipt = []; //penampungan data yang mau direceipt unplanned
@@ -5002,17 +5015,17 @@ class wocontroller extends Controller
                                 <ordernbr>' . $req->c_wonbr . '</ordernbr>
                             </inventoryReceipt>';
 
-                            DB::table('wo_reporting_trans_hist')
-                                ->insert([
-                                    'spcode_wohist_report' => $record['sparepart_code'],
-                                    'wonumber_wohist_report' => $req->c_wonbr,
-                                    'trans_type' => 'RCT-UNP',
-                                    'site_wohist_report' => $record['site_from'],
-                                    'location_wohist_report' => $record['loc_from'],
-                                    'lotser_wohist_report' => $record['lot_from'],
-                                    'qtychange_wohist_report' => $record['qty_potong'],
-                                    'userid_wohist_report' => Session::get('username'),
-                                ]);
+                        DB::table('wo_reporting_trans_hist')
+                            ->insert([
+                                'spcode_wohist_report' => $record['sparepart_code'],
+                                'wonumber_wohist_report' => $req->c_wonbr,
+                                'trans_type' => 'RCT-UNP',
+                                'site_wohist_report' => $record['site_from'],
+                                'location_wohist_report' => $record['loc_from'],
+                                'lotser_wohist_report' => $record['lot_from'],
+                                'qtychange_wohist_report' => $record['qty_potong'],
+                                'userid_wohist_report' => Session::get('username'),
+                            ]);
                     }
 
                     $qdocfooter =   '</dsInventoryReceipt>
@@ -6713,6 +6726,276 @@ class wocontroller extends Controller
         // return view('workorder.pdfprint2-template',['data' => $data,'repair'=>$repair,'counter'=>0,'countdb'=>$countdb,'check'=>$checkstr,'countrepairitre' => $countrepairitr,'printname'=>$printname,'printdate'=>$printdate,'engineerlist'=>$engineerlist]);
     }
 
+    public function woprint(Request $req, $wo)
+    {
+        // dd($wo);
+        $repair = [];
+        $countdb = [];
+        $checkstr = [];
+        $statusrepair = DB::table('service_req_mstr')
+            ->where('service_req_mstr.sr_number', '=', $wo)
+            ->first();
+        $wonbr = DB::table('wo_mstr')
+            ->where('wo_number', '=', $wo)
+            ->first();
+        // dd($wo); 
+        $user = FacadesAuth::user();
+        // dd($user);
+
+        if ($user->role_user != 'ADMIN') {
+            $spvcheckedby = DB::table('eng_mstr')
+                ->leftJoin('dept_mstr', 'eng_mstr.eng_dept', 'dept_mstr.dept_code')
+                ->where('eng_mstr.eng_active', '=', 'Yes') // Add your conditions here
+                ->where('eng_mstr.approver', '=', 1) // Add your conditions here
+                ->where('eng_mstr.eng_code', '=', $user->username) // Add your conditions here
+                ->where('eng_mstr.eng_role', '=', 'SPVSR') // Add your conditions here
+                ->first();
+        } else {
+            $spvcheckedby = DB::table('eng_mstr')
+                ->leftJoin('dept_mstr', 'eng_mstr.eng_dept', 'dept_mstr.dept_code')
+                ->where('eng_mstr.eng_active', '=', 'Yes') // Add your conditions here
+                ->where('eng_mstr.approver', '=', 1) // Add your conditions here
+                ->where('eng_mstr.eng_code', '=', $user->username) // Add your conditions here
+                ->first();
+        }
+        // dd($spvcheckedby);
+
+        if ($wonbr->wo_sr_number != '') {
+            // dd(1);   
+            $womstr = DB::table('service_req_mstr')
+                ->where('service_req_mstr.wo_number', '=', $wo)
+                ->leftjoin('eng_mstr', 'service_req_mstr.sr_eng_approver', 'eng_mstr.eng_code')
+                ->leftJoin('dept_mstr', 'service_req_mstr.sr_dept', 'dept_mstr.dept_code')
+                ->leftJoin('asset_mstr', 'service_req_mstr.sr_asset', 'asset_mstr.asset_code')
+                // ->leftJoin('fn_mstr as fn1', 'service_req_mstr.sr_failurecode1', 'fn1.fn_code')
+                // ->leftJoin('fn_mstr as fn2', 'service_req_mstr.sr_failurecode2', 'fn2.fn_code')
+                // ->leftJoin('fn_mstr as fn3', 'service_req_mstr.sr_failurecode3', 'fn3.fn_code')
+                ->leftJoin('wotyp_mstr', 'service_req_mstr.sr_fail_type', 'wotyp_mstr.wotyp_code')
+                // ->leftJoin('service_req_mstr', 'service_req_mstr.sr_number', 'wo_mstr.wo_sr_number')
+                ->leftJoin('wo_mstr', 'service_req_mstr.sr_number', 'wo_mstr.wo_sr_number')
+                // ->leftJoin('imp_mstr', 'service_req_mstr.sr_impact', 'imp_mstr.imp_code')
+                // ->leftJoin('users', 'service_req_mstr.sr_approver', 'users.username')
+                ->first();
+
+            $engapprover = DB::table('wo_mstr')
+                ->where('wo_mstr.wo_number', '=', $wo)
+                ->leftJoin('service_req_mstr', 'wo_mstr.wo_sr_number', 'service_req_mstr.sr_number')
+                ->leftJoin('dept_mstr', 'service_req_mstr.sr_eng_approver', 'dept_mstr.dept_code')
+                ->leftjoin('eng_mstr', function ($join) {
+                    $join->on('service_req_mstr.sr_eng_approver', '=', 'eng_mstr.eng_dept') // Add your conditions here
+                        ->where('eng_mstr.eng_active', '=', 'Yes') // Add your conditions here
+                        ->where('eng_mstr.approver', '=', 1) // Add your conditions here
+                        ->where('eng_mstr.eng_role', '=', 'SPVSR'); // Add your conditions here
+                })
+                ->first();
+
+            $useracceptance = DB::table('service_req_mstr')
+                ->where('wo_number', '=', $wo)
+                ->first();
+            $dateuseracc = $useracceptance->updated_at;
+        } else {
+            // dd(2);
+            $womstr = DB::table('wo_mstr')
+                ->where('wo_number', '=', $wo)
+                // ->selectRaw('dept_desc, eng_desc, sr_number, sr_fail_type, sr_dept, sr_eng_approver,
+                // sr_req_date, sr_asset, asset_desc, sr_req_by, "" as sr_approver, sr_impact, imp_desc, sr_req_date, sr_req_time, asset_desc, wotyp_desc, sr_fail_code,
+                // sr_note, imp_code, "" as dept_user, sr_req_by, service_req_mstr.wo_number, wo_due_date, wo_start_date')
+                ->leftjoin('eng_mstr', 'wo_mstr.wo_createdby', 'eng_mstr.eng_code')
+                ->leftJoin('dept_mstr', 'wo_mstr.wo_department', 'dept_mstr.dept_code')
+                ->leftJoin('asset_mstr', 'wo_mstr.wo_asset_code', 'asset_mstr.asset_code')
+                // ->leftJoin('fn_mstr as fn1', 'service_req_mstr.sr_failurecode1', 'fn1.fn_code')
+                // ->leftJoin('fn_mstr as fn2', 'service_req_mstr.sr_failurecode2', 'fn2.fn_code')
+                // ->leftJoin('fn_mstr as fn3', 'service_req_mstr.sr_failurecode3', 'fn3.fn_code')
+                ->leftJoin('wotyp_mstr', 'wo_mstr.wo_failure_type', 'wotyp_mstr.wotyp_code')
+                // ->leftJoin('imp_mstr', 'service_req_mstr.sr_impact', 'imp_mstr.imp_code')
+                // ->leftJoin('users', 'service_req_mstr.sr_approver', 'users.username')
+                ->first();
+
+            $engapprover = DB::table('wo_mstr')
+                ->where('wo_mstr.wo_number', '=', $wo)
+                ->leftJoin('dept_mstr', 'wo_mstr.wo_department', 'dept_mstr.dept_code')
+                ->leftjoin('eng_mstr', function ($join) {
+                    $join->on('wo_mstr.wo_department', '=', 'eng_mstr.eng_dept')
+                        ->where('eng_mstr.eng_active', '=', 'Yes') // Add your conditions here
+                        ->where('eng_mstr.approver', '=', 1) // Add your conditions here
+                        ->where('eng_mstr.eng_role', '=', 'SPVSR'); // Add your conditions here
+                })
+                ->first();
+
+            $useracceptance = '';
+            $dateuseracc = '';
+        }
+
+        //dd($womstr);
+
+        if ($womstr->wo_sr_number != '') {
+            $listFailCodeDesc = [];
+
+            if ($womstr->sr_fail_code != '') {
+                $listFailCode = explode(',', $womstr->sr_fail_code);
+                foreach ($listFailCode as $failcode) {
+                    $getFailDesc = DB::table('fn_mstr')
+                        ->select('fn_desc')
+                        ->where('fn_code', '=', $failcode)
+                        ->first();
+
+                    $failure = array('fn_code' => $failcode, 'fn_desc' => $getFailDesc->fn_desc);
+
+                    array_push($listFailCodeDesc, $failure);
+                }
+            } else {
+                $getFailDesc = '';
+            }
+
+            $listFailTypeDesc = [];
+
+            if ($womstr->sr_fail_type != '') {
+                $listFailType = explode(',', $womstr->sr_fail_type);
+
+                foreach ($listFailType as $failtype) {
+                    $getFailDesc = DB::table('wotyp_mstr')
+                        ->select('wotyp_desc')
+                        ->where('wotyp_code', '=', $failtype)
+                        ->first();
+
+                    $failure = array('wotyp_code' => $failtype, 'wotyp_desc' => $getFailDesc->wotyp_desc);
+
+                    array_push($listFailTypeDesc, $failure);
+                }
+            } else {
+                $getFailDesc = '';
+            }
+
+            $listImpactDesc = [];
+
+            if ($womstr->sr_impact != '') {
+                $listImpactCode = explode(',', $womstr->sr_impact);
+
+                foreach ($listImpactCode as $impactcode) {
+                    $getImpactDesc = DB::table('imp_mstr')
+                        ->select('imp_desc')
+                        ->where('imp_code', '=', $impactcode)
+                        ->first();
+
+                    $impact = array('imp_code' => $impactcode, 'imp_desc' => $getImpactDesc->imp_desc);
+
+                    array_push($listImpactDesc, $impact);
+                }
+            } else {
+                $getImpactDesc = '';
+            }
+        } else {
+            $listFailCodeDesc = [];
+
+            if ($womstr->wo_failure_code != null) {
+                $listFailCode = explode(';', $womstr->wo_failure_code);
+
+                foreach ($listFailCode as $failcode) {
+                    $getFailDesc = DB::table('fn_mstr')
+                        ->select('fn_desc')
+                        ->where('fn_code', '=', $failcode)
+                        ->first();
+
+                    $failure = array('fn_code' => $failcode, 'fn_desc' => $getFailDesc->fn_desc);
+
+                    array_push($listFailCodeDesc, $failure);
+                }
+            } else {
+                $getFailDesc = '';
+            }
+
+            $listFailTypeDesc = [];
+
+            if ($womstr->wo_failure_type != null) {
+                $listFailType = explode(';', $womstr->wo_failure_type);
+
+                foreach ($listFailType as $failtype) {
+                    $getFailDesc = DB::table('wotyp_mstr')
+                        ->select('wotyp_desc')
+                        ->where('wotyp_code', '=', $failtype)
+                        ->first();
+
+                    $failure = array('wotyp_code' => $failtype, 'wotyp_desc' => $getFailDesc->wotyp_desc);
+
+                    array_push($listFailTypeDesc, $failure);
+                }
+            } else {
+                $getFailDesc = '';
+            }
+
+            $listImpactDesc = [];
+
+            if ($womstr->wo_impact_code != null) {
+                $listImpactCode = explode(';', $womstr->wo_impact_code);
+
+                foreach ($listImpactCode as $impactcode) {
+                    $getImpactDesc = DB::table('imp_mstr')
+                        ->select('imp_desc')
+                        ->where('imp_code', '=', $impactcode)
+                        ->first();
+
+                    $impact = array('imp_code' => $impactcode, 'imp_desc' => $getImpactDesc->imp_desc);
+
+                    array_push($listImpactDesc, $impact);
+                }
+            } else {
+                $getImpactDesc = '';
+            }
+        }
+
+
+        $dept = DB::table(('dept_mstr'))
+            ->get();
+
+        $engineerlist = [];
+
+        if ($womstr->wo_list_engineer != '') {
+            $listEngineerCode = explode(';', $womstr->wo_list_engineer);
+
+            foreach ($listEngineerCode as $engineercode) {
+                $getEngineerList = DB::table('eng_mstr')
+                    ->select('eng_desc')
+                    ->where('eng_code', '=', $engineercode)
+                    ->first();
+
+                $impact = array('eng_code' => $engineercode, 'eng_desc' => $getEngineerList->eng_desc);
+
+                array_push($engineerlist, $impact);
+            }
+        } else {
+            $getEngineerList = '';
+        }
+
+        // dd($womstr);
+        // // dd($array);
+        $sparepartarray = [];
+        $printdate = Carbon::now('ASIA/JAKARTA')->toDateString();
+        // dd($repair);
+        foreach ($repair as $repair) {
+            foreach ($repair as $repair1) {
+                // dd($repair1);
+                if (!in_array($repair1->spm_desc, $sparepartarray)) {
+                    array_push($sparepartarray, $repair1->spm_desc);
+                }
+            }
+        }
+
+        /* A211014 */
+        $users = DB::table('users')->get();
+        $datasr = DB::table('service_req_mstr')
+            ->whereWo_number($wo)
+            ->first();
+
+        // $pdf = PDF::loadview('workorder.pdfprint-template',['womstr' => $womstr,'wodet' => $wodet, 'data' => $data,'printdate' =>$printdate,'repair'=>$repair,'sparepart'=>$array])->setPaper('A4','portrait');
+        $pdf = PDF::loadview('workorder.pdfprint-template', [
+            'engineerlist' => $engineerlist, 'womstr' => $womstr, 'dept' => $dept, 'printdate' => $printdate, 'users' => $users,
+            'datasr' => $datasr, 'failurecode' => $listFailCodeDesc, 'impact' => $listImpactDesc, 'failuretype' => $listFailTypeDesc,
+            'engapprover' => $engapprover, 'spvcheckedby' => $spvcheckedby, 'useracceptance' => $useracceptance, 'dateuseracc' => $dateuseracc
+        ])->setPaper('A4', 'portrait');
+        //return view('picklistbrowse.shipperprint-template',['printdata1' => $printdata1, 'printdata2' => $printdata2, 'runningnbr' => $runningnbr,'user' => $user,'last' =>$countprint]);
+        return $pdf->stream($wo . '.pdf');
+    }
+
     public function donlodwo(Request $req)
     {
         // dd('Fungsi belum berjalan');
@@ -6952,7 +7235,7 @@ class wocontroller extends Controller
 
         /* A211103 */
         $listfinish = DB::table('womaint_upload')
-            ->where('womaint_wonbr','=',$wo)
+            ->where('womaint_wonbr', '=', $wo)
             ->get();
 
         $fileName = $wo . '_' . $assetnow->wo_asset_code . '.zip';

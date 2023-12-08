@@ -23,6 +23,35 @@
         overflow-y: auto;
         /* Bilah gulir vertikal */
     }
+
+    .thlabel {
+        display: none;
+    }
+
+    @media only screen and (max-width: 600px) {
+
+        .dataTable {
+            display: block;
+            width: 100%;
+        }
+
+        .dataTableTh {
+            display: none;
+        }
+
+        .dataTableTd {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            /* Mengubah text-align untuk mini-table pada lebar layar <= 600px */
+            text-align: left;
+        }
+
+        .thlabel {
+            display: block;
+        }
+
+    }
 </style>
 
 <!-- <div class="row mt-2">
@@ -63,14 +92,14 @@
         <div class="modal-body">
             <div class="form-group row">
                 <div class="table-responsive tag-container" style="overflow-x: auto; display:inline-block; white-space: nowrap; padding:0; text-align:center; position:relative">
-                    <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0">
+                    <table id="createTable" class="table table-striped table-bordered dataTable order-list" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</th>
-                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Qty Return</th>
-                                <th style="text-align: center; width: 20% !important; font-weight: bold;">Location From</th>
-                                <th style="text-align: center; width: 20% !important; font-weight: bold;">Note</th>
-                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Delete</th>
+                                <th class="dataTableTh" style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</th>
+                                <th class="dataTableTh" style="text-align: center; width: 10% !important; font-weight: bold;">Qty Return</th>
+                                <th class="dataTableTh" style="text-align: center; width: 20% !important; font-weight: bold;">Location From</th>
+                                <th class="dataTableTh" style="text-align: center; width: 20% !important; font-weight: bold;">Note</th>
+                                <th class="dataTableTh" style="text-align: center; width: 10% !important; font-weight: bold;">Delete</th>
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
@@ -108,24 +137,27 @@
 
 
                             <tr>
-                                <td>
+                                <td class="dataTableTd">
                                     <select name="spret[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="200px" autofocus>
                                         <option value=""> -- Select Spare Part -- </option>
                                         @foreach($sp_all as $da)
                                         <option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>
                             @endforeach
+                            <a href="javascript:void(0)" class="viewstok" data-toggle="tooltip" title="View Supply Stock" data-spcode="{{$da->spm_code}}">
+                                <i class="icon-table fa fa-search fa-lg"></i>
+                            </a>
                             </select>
                             </td>
 
-                            <td>
+                            <td class="dataTableTd">
                                 <input type="number" class="form-control qtystandard" name="qtystandard[]" step="1" min="0" required />
                             </td>
 
-                            <td>
+                            <td class="dataTableTd">
                                 <input type="number" class="form-control qtyrequired" name="qtyrequired[]" step="1" min="0" required />
                             </td>
 
-                            <td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>
+                            <td  class="dataTableTd" data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>
                             <input type="hidden" class="op" name="op[]" value="A" />
                             </tr>
                             --}}
@@ -134,7 +166,7 @@
                         </tbody>
                         <tfoot>
                             <tr id="tfootbtn">
-                                <td colspan="7">
+                                <td class="dataTableTd" colspan="7">
                                     <input type="button" class="btn btn-lg btn-block btn-focus" id="addrow" value="Add New Spare Part" style="background-color:#1234A5; color:white; font-size:16px" />
                                 </td>
                             </tr>
@@ -162,6 +194,40 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body table-wo" id='wonbrtablemodal'>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Stok Supply</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="thistablemodal">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModalLoc" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Select Location & Lot From</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="thistablemodalLoc">
 
             </div>
             <div class="modal-footer">
@@ -319,33 +385,44 @@
             var newRow = $("<tr>");
             var cols = "";
 
-            cols += '<td>';
-            cols += '<select name="spret[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
+            cols += '<td class="dataTableTd">';
+            cols += '<label class="col-md-3 col-form-label thlabel">Sparepart</label>';
+            cols += '<select name="spret[]" style="display: inline-block !important;" class="spret form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
             cols += '<option value = ""> -- Select Sparepart -- </option>';
-            @foreach($sp_all as $da)
-            cols += '<option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
+            @foreach($sp_all as $index => $da)
+            cols += '<option data-spsite="{{$da->spm_site}}" data-spindex="{{$index}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
             @endforeach
-            cols += '</select>';
+            cols += '</select>&nbsp;';
+            cols += '<a href="javascript:void(0)" class="viewstok" data-toggle="tooltip"  title="View Supply Stock" data-spcode="">';
+            cols += '<i class="icon-table fa fa-search fa-lg"></i>';
+            cols += '</a>';
             cols += '</td>';
 
-            cols += '<td>';
+            cols += '<td class="dataTableTd">';
+            cols += '<label class="col-md-3 col-form-label thlabel">Qty Return</label>';
             cols += '<input type="number" class="form-control qtyreturn" name="qtyreturn[]" step=".01" min="0" required />';
             cols += '</td>';
 
-            cols += '<td>';
-            cols += '<select name="locto[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
-            cols += '<option value = ""> -- Select Location To -- </option>';
-            @foreach($loc_from as $loc)
-            cols += '<option data-siteto="{{$loc->inp_supply_site}}" value="{{$loc->inp_loc}}">{{$loc->inp_loc}}</option>';
-            @endforeach
-            cols += '</select>';
-            cols += '<input type="hidden" class="siteto" name="siteto[]" value=""/>';
+            cols += '<td class="dataTableTd">';
+            // cols += '<select name="loctox[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
+            // cols += '<option value = ""> -- Select Location To -- </option>';
+            // @foreach($loc_from as $loc)
+            // cols += '<option data-siteto="{{$loc->inp_supply_site}}" value="{{$loc->inp_loc}}">{{$loc->inp_loc}}</option>';
+            // @endforeach
+            // cols += '</select>';
+            cols += '<label class="col-md-3 col-form-label thlabel">Location From</label>';
+            cols += '<input type="text" id="loclotfrom" class="form-control loclotfrom readonly" name="locto[]" data-toggle="tooltip" data-index="" data-spcode="" readonly required placeholder="Click Here">';
+            cols += '<input type="hidden" class="hidden_sitefrom" name="siteto[]" value="" />';
+            cols += '<input type="hidden" class="hidden_locfrom" name="locto[]" value="" />';
+            cols += '<input type="hidden" class="hidden_lotfrom" name="hidden_lotfrom[]" value="" />';
             cols += '</td>';
-            cols += '<td>';
+            cols += '<td class="dataTableTd">';
+            cols += '<label class="col-md-3 col-form-label thlabel">Note</label>';
             cols += '<textarea type="text" id="retnote" class="form-control retnote" name="retnote[]" rows="2" ></textarea>';
             cols += '</td>';
 
-            cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
+            cols += '<td class="dataTableTd" data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
+            cols += '<label class="col-md-3 col-form-label thlabel">Delete</label>';
             cols += '<input type="hidden" class="op" name="op[]" value="A"/>';
             cols += '</tr>';
             counter++;
@@ -356,6 +433,114 @@
             // selectRefresh();
 
             selectPicker();
+        });
+
+        $(document).on('click', '.loclotfrom', function() {
+            var row = $(this).closest("tr");
+            const spcode = $(this).data('spcode');
+            //alert(spcode);
+
+            $.ajax({
+                url: '/gettrfspwsastockfrom',
+                method: 'GET',
+                data: {
+                    spcode: spcode,
+                },
+                success: function(vamp) {
+                    // select elemen HTML tempat menampilkan tabel
+                    const tableContainer = document.getElementById("thistablemodalLoc");
+
+                    // hapus tabel lama (jika ada)
+                    if (tableContainer.hasChildNodes()) {
+                        tableContainer.removeChild(tableContainer.firstChild);
+                    }
+
+                    // membuat elemen tabel
+                    const table = document.createElement("table");
+                    table.setAttribute("class", "table table-bordered table-hover");
+
+                    // membuat header tabel
+                    const headerRow = document.createElement("tr");
+                    const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "UM", "Select"];
+                    headerColumns.forEach((columnTitle) => {
+                        const headerColumn = document.createElement("th");
+                        headerColumn.textContent = columnTitle;
+                        headerRow.appendChild(headerColumn);
+                    });
+                    table.appendChild(headerRow);
+
+                    //validasi apakah wsa aktif atau tidak
+                    if (Array.isArray(vamp)) {
+                        // membuat baris record untuk setiap objek dalam dataLocLotFrom
+                        vamp.forEach((record) => {
+                            const rowtable = document.createElement("tr");
+                            const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh", "t_um"];
+                            columns.forEach((columnKey) => {
+                                const column = document.createElement("td");
+                                column.textContent = record[columnKey];
+                                rowtable.appendChild(column);
+                            });
+                            const selectColumn = document.createElement("td");
+                            const selectButton = document.createElement("button");
+                            selectButton.setAttribute("class", "btn btn-primary");
+                            selectButton.textContent = "Select";
+                            selectButton.setAttribute("type", "button");
+                            selectButton.addEventListener("click", function() {
+                                // aksi yang ingin dilakukan saat tombol select diklik
+                                const site = record.t_site;
+                                const loc = record.t_loc;
+                                const lot = record.t_lot;
+                                const qtyoh = record.t_qtyoh;
+                                row.find(".hidden_sitefrom").val(site);
+                                row.find(".hidden_locfrom").val(loc);
+                                row.find(".hidden_lotfrom").val(lot);
+
+                                const loclot = `site: ${site} & loc: ${loc} & lot: ${lot}`;
+
+                                row.find(".loclotfrom").val(loc);
+                                // console.log(row.find(".loclotfrom").val(loclot));
+                                row.find(".loclotfrom").attr('title', loclot);
+
+
+                                const qtyohold = row.find(".qtytotransfer").val();
+
+                                //jika lebih besar yang diminta dari pada yg dimiliki di inventory supply maka qty to transfer maks = qty onhand di inv source
+                                if (parseFloat(qtyohold) > parseFloat(qtyoh)) {
+                                    row.find(".qtytotransfer").attr("max", qtyoh).val(qtyoh);
+                                }
+
+                                $('#myModalLoc').modal('hide');
+                            });
+                            selectColumn.appendChild(selectButton);
+                            rowtable.appendChild(selectColumn);
+                            table.appendChild(rowtable);
+                        });
+
+                        // menampilkan tabel pada elemen HTML yang dituju
+                        tableContainer.appendChild(table);
+
+                        // memanggil modal setelah tabel dimuat
+                        $('#myModalLoc').modal('show');
+
+                    } else {
+                        alert('WSA Connection Failed !!!');
+                    }
+
+                },
+                complete: function(vamp) {
+                    //  $('.modal-backdrop').modal('hide');
+                    // alert($('.modal-backdrop').hasClass('in'));
+
+                    setTimeout(function() {
+                        $('#loadingtable').modal('hide');
+                    }, 500);
+
+                    setTimeout(function() {
+                        $('#viewModal').modal('show');
+                    }, 1000);
+
+                }
+            })
         });
 
         $("table.order-list").on("click", ".ibtnDel", function(event) {
@@ -409,6 +594,90 @@
             var row = $(this).closest("tr");
             row.find(".siteto").val(siteTo);
 
+        });
+
+        $(document).on('change', 'select[name="spret[]"]', function() {
+            // console.log('masuk');
+            var selectedValue = $(this).val();
+            var selectedIndex = $('option:selected', this).data('spindex');
+
+            // Mengubah data-spcode pada elemen <a> yang berada dalam <td> yang sama
+            $(this).closest('td').find('.viewstok').attr('data-spcode', selectedValue);
+            $(this).closest('tr').find('.loclotfrom').attr('data-index', selectedIndex);
+            $(this).closest('tr').find('.loclotfrom').attr('data-spcode', selectedValue);
+            // console.log("Updated WO Number: ", $(this).closest('td').find('.viewstok').attr('data-spcode')); 
+        });
+
+        $(document).on('click', '.viewstok', function() {
+            // $('#loadingtable').modal('show');
+            var row = $(this).closest("tr");
+            const spcode = $(this).attr('data-spcode');
+            // const getassetsite = document.getElementById('hidden_assetsite').value;
+
+            $.ajax({
+                url: '/gettrfspwsastockfrom',
+                method: 'GET',
+                data: {
+                    spcode: spcode,
+                },
+                success: function(vamp) {
+
+                    // select elemen HTML tempat menampilkan tabel
+                    const tableContainer = document.getElementById("thistablemodal");
+
+                    // hapus tabel lama (jika ada)
+                    if (tableContainer.hasChildNodes()) {
+                        tableContainer.removeChild(tableContainer.firstChild);
+                    }
+
+                    // membuat elemen tabel
+                    const table = document.createElement("table");
+                    table.setAttribute("class", "table table-bordered table-hover");
+
+                    // membuat header tabel
+                    const headerRow = document.createElement("tr");
+                    const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "UM"];
+                    headerColumns.forEach((columnTitle) => {
+                        const headerColumn = document.createElement("th");
+                        headerColumn.textContent = columnTitle;
+                        headerRow.appendChild(headerColumn);
+                    });
+                    table.appendChild(headerRow);
+
+                    // membuat baris record untuk setiap objek dalam dataLocLotFrom
+                    vamp.forEach((record) => {
+                        const rowtable = document.createElement("tr");
+                        const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh", "t_um"];
+                        columns.forEach((columnKey) => {
+                            const column = document.createElement("td");
+                            column.textContent = record[columnKey];
+                            rowtable.appendChild(column);
+                        });
+                        table.appendChild(rowtable);
+                    });
+
+                    // menampilkan tabel pada elemen HTML yang dituju
+                    tableContainer.appendChild(table);
+
+                    // memanggil modal setelah tabel dimuat
+                    $('#myModal').modal('show');
+
+
+                },
+                complete: function(vamp) {
+                    //  $('.modal-backdrop').modal('hide');
+                    // alert($('.modal-backdrop').hasClass('in'));
+
+                    setTimeout(function() {
+                        $('#loadingtable').modal('hide');
+                    }, 500);
+
+                    setTimeout(function() {
+                        $('#viewModal').modal('show');
+                    }, 1000);
+
+                }
+            })
         });
     });
 </script>

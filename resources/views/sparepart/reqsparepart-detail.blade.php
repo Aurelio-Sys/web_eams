@@ -23,6 +23,35 @@
         overflow-y: auto;
         /* Bilah gulir vertikal */
     }
+
+    .thlabel {
+        display: none;
+    }
+
+    @media only screen and (max-width: 600px) {
+
+        .dataTable {
+            display: block;
+            width: 100%;
+        }
+
+        .dataTableTh {
+            display: none;
+        }
+
+        .dataTableTd {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            /* Mengubah text-align untuk mini-table pada lebar layar <= 600px */
+            text-align: left;
+        }
+
+        .thlabel {
+            display: block;
+        }
+
+    }
 </style>
 
 <!-- <div class="row mt-2">
@@ -63,14 +92,14 @@
         <div class="modal-body">
             <div class="form-group row">
                 <div class="table-responsive tag-container" style="overflow-x: auto; display:inline-block; white-space: nowrap; padding:0; text-align:center; position:relative">
-                    <table id="createTable" class="table table-bordered order-list" width="100%" cellspacing="0">
+                    <table id="createTable" class='table table-striped table-bordered dataTable no-footer order-list' width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</th>
-                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Qty Request</th>
-                                <th style="text-align: center; width: 20% !important; font-weight: bold;">Location To</th>
-                                <th style="text-align: center; width: 20% !important; font-weight: bold;">Note</th>
-                                <th style="text-align: center; width: 10% !important; font-weight: bold;">Delete</th>
+                                <th class="dataTableTh" style="text-align: center; width: 30% !important; font-weight: bold;">Spare Part</th>
+                                <th class="dataTableTh" style="text-align: center; width: 10% !important; font-weight: bold;">Qty Request</th>
+                                <th class="dataTableTh" style="text-align: center; width: 20% !important; font-weight: bold;">Location To</th>
+                                <th class="dataTableTh" style="text-align: center; width: 20% !important; font-weight: bold;">Note</th>
+                                <th class="dataTableTh" style="text-align: center; width: 10% !important; font-weight: bold;">Delete</th>
                             </tr>
                         </thead>
                         <tbody id='detailapp'>
@@ -78,21 +107,24 @@
 
                             <tr>
 
-                                <td style="vertical-align:middle;text-align:left;">
+                                <td class="dataTableTd" style="vertical-align:middle;text-align:left;">
                                     {{$datas->spm_code}} -- {{$datas->spm_desc}}
                                     <input type="hidden" name="spreq[]" value="{{$datas->spm_code}}" />
+                                    <a href="javascript:void(0)" class="viewstok" data-toggle="tooltip" title="View Supply Stock" data-spcode="{{$datas->spm_code}}">
+                                        <i class="icon-table fa fa-search fa-lg"></i>
+                                    </a>
                                 </td>
-                                <td style="vertical-align:middle;text-align:right;">
+                                <td class="dataTableTd" style="vertical-align:middle;text-align:right;">
                                     {{number_format($datas->spg_qtyreq,2)}}
                                     <input type="hidden" name="qtystandard[]" value="{{$datas->spg_qtyreq}}" />
                                 </td>
-                                <td style="vertical-align:middle;text-align:center;">
+                                <td class="dataTableTd" style="vertical-align:middle;text-align:center;">
                                     <input type="number" class="form-control" step="1" min="0" name="qtyrequired[]" value="{{$datas->spg_qtyreq}}" required />
                                 </td>
-                                <td style="vertical-align: middle; text-align: center;">
+                                <td class="dataTableTd" style="vertical-align: middle; text-align: center;">
                                     <textarea type="text" id="reqnotes" class="form-control reqnotes" name="reqnotes[]" rows="2"></textarea>
                                 </td>
-                                <td style="vertical-align:middle;text-align:center;">
+                                <td class="dataTableTd" style="vertical-align:middle;text-align:center;">
                                     <input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete">
                                     <input type="hidden" class="tick" name="tick[]" value="0" />
                                 </td>
@@ -104,7 +136,7 @@
 
 
                             <tr>
-                                <td>
+                                <td class="dataTableTd">
                                     <select name="spreq[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="200px" autofocus>
                                         <option value=""> -- Select Spare Part -- </option>
                                         @foreach($sp_all as $da)
@@ -113,15 +145,15 @@
                             </select>
                             </td>
 
-                            <td>
+                            <td class="dataTableTd">
                                 <input type="number" class="form-control qtystandard" name="qtystandard[]" step="1" min="0" required />
                             </td>
 
-                            <td>
+                            <td class="dataTableTd">
                                 <input type="number" class="form-control qtyrequired" name="qtyrequired[]" step="1" min="0" required />
                             </td>
 
-                            <td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>
+                            <td class="dataTableTd" data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus" value="Delete"></td>
                             <input type="hidden" class="op" name="op[]" value="A" />
                             </tr>
                             --}}
@@ -130,7 +162,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="7">
+                                <td class="dataTableTd" colspan="7">
                                     <input type="button" class="btn btn-lg btn-block btn-focus" id="addrow" value="Add New Spare Part" style="background-color:#1234A5; color:white; font-size:16px" />
                                 </td>
                             </tr>
@@ -158,6 +190,23 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body table-wo" id='wonbrtablemodal'>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Stok Supply</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="thistablemodal">
 
             </div>
             <div class="modal-footer">
@@ -228,7 +277,7 @@
                     selectButton.addEventListener("click", function() {
                         // aksi yang ingin dilakukan saat tombol select diklik
                         const wonumber = record.wo_number;
-                        
+
                         document.getElementById('wonbr').value = wonumber;
                         document.getElementById('hidden_wonbr').value = wonumber;
 
@@ -285,20 +334,26 @@
             var newRow = $("<tr>");
             var cols = "";
 
-            cols += '<td>';
+            cols += '<td class="dataTableTd">';
+            cols += '<label class="col-md-3 col-form-label thlabel">Sparepart</label>';
             cols += '<select name="spreq[]" style="display: inline-block !important;" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
             cols += '<option value = ""> -- Select Sparepart -- </option>';
             @foreach($sp_all as $da)
             cols += '<option data-spsite="{{$da->spm_site}}" value="{{$da->spm_code}}"> {{$da->spm_code}} -- {{$da->spm_desc}} </option>';
             @endforeach
-            cols += '</select>';
+            cols += '</select>&nbsp;';
+            cols += '<a href="javascript:void(0)" class="viewstok" data-toggle="tooltip"  title="View Supply Stock" data-spcode="">';
+            cols += '<i class="icon-table fa fa-search fa-lg"></i>';
+            cols += '</a>';
             cols += '</td>';
 
-            cols += '<td>';
+            cols += '<td class="dataTableTd">';
+            cols += '<label class="col-md-3 col-form-label thlabel">Qty Request</label>';
             cols += '<input type="number" class="form-control qtyrequest" name="qtyrequest[]" step=".01" min="0" required />';
             cols += '</td>';
 
-            cols += '<td>';
+            cols += '<td class="dataTableTd">';
+            cols += '<label class="col-md-3 col-form-label thlabel">Location To</label>';
             cols += '<select name="locto[]" style="display: inline-block !important;" class="form-control selectpicker locto" data-live-search="true" data-dropup-auto="false" data-size="4" data-width="350px" autofocus required>';
             cols += '<option value = ""> -- Select Location To -- </option>';
             @foreach($loc_to as $loc)
@@ -307,11 +362,13 @@
             cols += '</select>';
             cols += '<input type="hidden" class="siteto" name="siteto[]" value=""/>';
             cols += '</td>';
-            cols += '<td>';
+            cols += '<td class="dataTableTd">';
+            cols += '<label class="col-md-3 col-form-label thlabel">Note</label>';
             cols += '<textarea type="text" id="reqnote" class="form-control reqnote" name="reqnote[]" rows="2" ></textarea>';
             cols += '</td>';
 
-            cols += '<td data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
+            cols += '<td class="dataTableTd" data-title="Action" style="vertical-align:middle;text-align:center;"><input type="button" class="ibtnDel btn btn-danger btn-focus"  value="Delete"></td>';
+            cols += '<label class="col-md-3 col-form-label thlabel">Delete</label>';
             cols += '<input type="hidden" class="op" name="op[]" value="A"/>';
             cols += '</tr>';
             counter++;
@@ -375,6 +432,87 @@
             var row = $(this).closest("tr");
             row.find(".siteto").val(siteTo);
 
+        });
+
+        $(document).on('change', 'select[name="spreq[]"]', function() {
+            // console.log('masuk');
+            var selectedValue = $(this).val();
+
+            // Mengubah data-spcode pada elemen <a> yang berada dalam <td> yang sama
+            $(this).closest('td').find('.viewstok').attr('data-spcode', selectedValue);
+            // console.log("Updated WO Number: ", $(this).closest('td').find('.viewstok').attr('data-spcode')); 
+        });
+
+        $(document).on('click', '.viewstok', function() {
+            // $('#loadingtable').modal('show');
+            var row = $(this).closest("tr");
+            const spcode = $(this).attr('data-spcode');
+            // const getassetsite = document.getElementById('hidden_assetsite').value;
+
+            $.ajax({
+                url: '/gettrfspwsastockfrom',
+                method: 'GET',
+                data: {
+                    spcode: spcode,
+                },
+                success: function(vamp) {
+
+                    // select elemen HTML tempat menampilkan tabel
+                    const tableContainer = document.getElementById("thistablemodal");
+
+                    // hapus tabel lama (jika ada)
+                    if (tableContainer.hasChildNodes()) {
+                        tableContainer.removeChild(tableContainer.firstChild);
+                    }
+
+                    // membuat elemen tabel
+                    const table = document.createElement("table");
+                    table.setAttribute("class", "table table-bordered table-hover");
+
+                    // membuat header tabel
+                    const headerRow = document.createElement("tr");
+                    const headerColumns = ["Part", "Site", "Location", "Lot", "Quantity", "UM"];
+                    headerColumns.forEach((columnTitle) => {
+                        const headerColumn = document.createElement("th");
+                        headerColumn.textContent = columnTitle;
+                        headerRow.appendChild(headerColumn);
+                    });
+                    table.appendChild(headerRow);
+
+                    // membuat baris record untuk setiap objek dalam dataLocLotFrom
+                    vamp.forEach((record) => {
+                        const rowtable = document.createElement("tr");
+                        const columns = ["t_part", "t_site", "t_loc", "t_lot", "t_qtyoh", "t_um"];
+                        columns.forEach((columnKey) => {
+                            const column = document.createElement("td");
+                            column.textContent = record[columnKey];
+                            rowtable.appendChild(column);
+                        });
+                        table.appendChild(rowtable);
+                    });
+
+                    // menampilkan tabel pada elemen HTML yang dituju
+                    tableContainer.appendChild(table);
+
+                    // memanggil modal setelah tabel dimuat
+                    $('#myModal').modal('show');
+
+
+                },
+                complete: function(vamp) {
+                    //  $('.modal-backdrop').modal('hide');
+                    // alert($('.modal-backdrop').hasClass('in'));
+
+                    setTimeout(function() {
+                        $('#loadingtable').modal('hide');
+                    }, 500);
+
+                    setTimeout(function() {
+                        $('#viewModal').modal('show');
+                    }, 1000);
+
+                }
+            })
         });
     });
 </script>

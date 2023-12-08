@@ -25,7 +25,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         ];
     }
 
-    function __construct($wonbr,$sasset,$per1,$per2,$dept,$loc,$eng,$type) {
+    function __construct($wonbr,$sasset,$per1,$per2,$dept,$loc,$eng,$type,$status) {
         $this->wonbr    = $wonbr;
         $this->sasset    = $sasset;
         $this->per1   = $per1;
@@ -34,6 +34,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         $this->loc = $loc;
         $this->eng = $eng;
         $this->type = $type;
+        $this->status = $status;
     }
 
     public function query()
@@ -46,6 +47,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         $loc = $this->loc;
         $eng = $this->eng;
         $type = $this->type;
+        $status = $this->status;
 
         
         /* 1 Mencari data sparepart dari wo detail */
@@ -57,13 +59,13 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
                 CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 2 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 3), ';', -1) ELSE '' END AS eng3,
                 CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 3 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 4), ';', -1) ELSE '' END AS eng4,
                 CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 4 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 5), ';', -1) ELSE '' END AS eng5,
-                wd_sp_spcode as spcode,spm_desc,spm_price,wd_sp_required as req,wd_sp_whtf,wd_sp_issued ")
+                wd_sp_spcode as spcode,spm_desc,wd_sp_itemcost as spm_price,wd_sp_required as req,wd_sp_whtf,wd_sp_issued ")
             ->join('wo_mstr','wo_number','=','wd_sp_wonumber')
             ->leftJoin('asset_mstr','asset_code','=','wo_asset_code')
             ->leftJoin('asset_loc','asloc_code','=','asset_loc')
             ->leftJoin('sp_mstr','spm_code','=','wd_sp_spcode')
             ->orderBy('wd_sp_wonumber');
-
+// dd($datadet->get());
 
         /* 2 Mencari data sparepart yang belum ada wo detail nya */
         
@@ -76,7 +78,7 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
             CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 2 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 3), ';', -1) ELSE '' END AS eng3,
             CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 3 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 4), ';', -1) ELSE '' END AS eng4,
             CASE WHEN LENGTH(wo_list_engineer) - LENGTH(REPLACE(wo_list_engineer, ';', '')) >= 4 THEN SUBSTRING_INDEX(SUBSTRING_INDEX(wo_list_engineer, ';', 5), ';', -1) ELSE '' END AS eng5,
-            spm_code as spcode,spm_desc,spm_price,spg_qtyreq as req,'0' as wd_sp_whtf,'0' as wd_sp_issued ")
+            spg_spcode as spcode,spm_desc,spm_price,spg_qtyreq as req,'0' as wd_sp_whtf,'0' as wd_sp_issued ")
             // ->where('wo_nbr','=','PM-23-004839')
             ->whereNotIn('wo_number', function($q){
                 $q->select('wd_sp_wonumber')->from('wo_dets_sp');
@@ -137,9 +139,14 @@ class DetailWOExport implements FromQuery, WithHeadings, ShouldAutoSize,WithStyl
         if($per1) {
             $per1 = $per1.' 00:00:00';
             $per2 = $per2.' 23:59:59';
-            $datadet = $datadet->whereBetween('wo_system_create',[$per1,$per2]);
-            $datawo = $datawo->whereBetween('wo_system_create',[$per1,$per2]);
-            $dataspg = $dataspg->whereBetween('wo_system_create',[$per1,$per2]);
+            $datadet = $datadet->whereBetween('wo_start_date',[$per1,$per2]);
+            $datawo = $datawo->whereBetween('wo_start_date',[$per1,$per2]);
+            $dataspg = $dataspg->whereBetween('wo_start_date',[$per1,$per2]);
+        }
+        if($status) {
+            $datadet = $datadet->where('wo_status','=',$status);
+            $datawo = $datawo->where('wo_status','=',$status);
+            $dataspg = $dataspg->where('wo_status','=',$status);
         }
 
         $data = $datadet->union($datawo)->union($dataspg)

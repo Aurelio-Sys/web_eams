@@ -42,13 +42,13 @@
   </td>
   @empty
 <tr>
-  <td colspan="12" style="color:red;">
+  <td colspan="8" style="color:red;">
     <center>No Task Available</center>
   </td>
 </tr>
 @endforelse
 <tr>
-  <td style="border: none !important;">
+  <td style="border: none !important;" colspan="8">
     {{ $data->links() }}
   </td>
 </tr>

@@ -45,7 +45,7 @@
                 <select class="form-control" id="s_site" name="s_site" required>
                         <option></option>
                     @foreach ( $datasite as $site )
-                        <option value="{{$site->site_code}}">{{$site->site_code}} -- {{$site->site_desc}}</option>
+                        <option value="{{$site->site_code}}" {{$site->site_code === $ssite ? "selected" : ""}}>{{$site->site_code}} -- {{$site->site_desc}}</option>
                     @endforeach
                 </select>
             </div>
@@ -96,7 +96,7 @@
   <div class="row mb-4">
       <label for="t_cust" class="col-form-label col-md-1 text-md-left">Customer</label>
       <div class="col-md-3">
-          <input type="text" class="form-control" id="t_cust" name="t_cust" value="eams" required> 
+          <input type="text" class="form-control" id="t_cust" name="t_cust" autocomplete="off" required> 
           <input type="hidden" class="form-control" id="site_genso" name="site_genso"> 
       </div>
 
@@ -224,6 +224,7 @@
             $('#s_per1').val('');
             $('#s_per2').val('');
             $('#s_sp').val('');
+	    $('#site_genso').val('');
         }
         
         $('#s_asset').select2({
