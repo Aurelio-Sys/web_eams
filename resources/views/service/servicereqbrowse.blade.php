@@ -4,7 +4,6 @@
   <div class="row mb-2">
     <div class="col-sm-6 mt-2">
       <h1 class="m-0 text-dark">Service Request Maintenance</h1>
-      <p class="pb-0 m-0">Menu ini berfungsi untuk melakukan view detail maupun status approval, edit, dan cancel pada Service Request</p>
     </div><!-- /.col -->
   </div><!-- /.row -->
 </div><!-- /.container-fluid -->
@@ -13,6 +12,16 @@
 
 @section('content')
 <style type="text/css">
+  @media screen and (min-width: 992px) {
+
+    .col-test {
+      width: 200px;
+      background-color: #c1e4f7;
+      border: 1px solid black !important;
+      text-decoration: double;
+    }
+  }
+
   @media screen and (max-width: 992px) {
 
     .mini-table {
@@ -59,6 +68,7 @@
       height: calc(100vh - 5em);
       overflow-x: auto;
     } */
+
   }
 </style>
 <!-- Daftar Perubahan 
@@ -209,24 +219,24 @@
 @endif
 
 <!-- table SR -->
-<div class="table-responsive col-12">
-  <table class="table table-bordered mt-4 no-footer mini-table" id="dataTable" width="100%" cellspacing="0">
+<div class="table-responsive col-lg-12 col-md-12 tag-container" style="overflow-x: auto;overflow-y: hidden ;display: inline-block;white-space: nowrap; position:relative;">
+  <table class="table table-bordered table-hover table-striped mt-4 no-footer mini-table" id="dataTable" cellspacing="0">
     <thead>
       <tr style="text-align: center;">
-        <th>SR Number</th>
+        <th class="col-test">SR Number</th>
         <!-- <th>WO Number</th> -->
-        <th>Asset</th>
-        <th>Asset Description</th>
+        <th class="col-test">Asset</th>
+        <th class="col-test">Asset Description</th>
         <!-- <th>Location</th> -->
-        <th>Status</th>
+        <th class="col-test">Status</th>
         <!-- <th>Priority</th> -->
         <!-- <th>Department</th> -->
-        <th>Req by</th>
-        <th width="8%">Req Date</th>
-        <th width="8%">Req Time</th>
-        <th>Eng Approver</th>
-        <th>Action</th>
-        <th>Approval</th>
+        <th class="col-test">Req by</th>
+        <th class="col-test">Req Date</th>
+        <th class="col-test">Req Time</th>
+        <th class="col-test">Eng Approver</th>
+        <th class="col-test">Action</th>
+        <th class="col-test">Approval</th>
         <!-- <th>Cancel</th> -->
       </tr>
     </thead>
@@ -1262,7 +1272,7 @@
 
       inputTime.addEventListener("input", function() {
         var valueTime = inputTime.value;
-        var substrtime = srtime.substr(0,5);
+        var substrtime = srtime.substr(0, 5);
         if (substrtime != valueTime) {
           e_btnconf.disabled = false;
         } else {
@@ -1272,54 +1282,54 @@
 
       inputFailType.on("change", function() {
         var selectedValue = inputFailType.val();
-         if (failtype != selectedValue) {
+        if (failtype != selectedValue) {
           e_btnconf.disabled = false;
-        }else{
+        } else {
           e_btnconf.disabled = true;
         }
       });
 
       inputPriority.on("change", function() {
         var selectedValue = inputPriority.val();
-         if (priority != selectedValue) {
+        if (priority != selectedValue) {
           e_btnconf.disabled = false;
-        }else{
+        } else {
           e_btnconf.disabled = true;
         }
       });
 
       inputFailCode.on("change", function() {
         var selectedValue = inputFailCode.val();
-         if (failcode != selectedValue) {
+        if (failcode != selectedValue) {
           e_btnconf.disabled = false;
-        }else{
+        } else {
           e_btnconf.disabled = true;
         }
       });
 
       inputImpact.on("change", function() {
         var selectedValue = inputImpact.val();
-         if (impact != selectedValue) {
+        if (impact != selectedValue) {
           e_btnconf.disabled = false;
-        }else{
+        } else {
           e_btnconf.disabled = true;
         }
       });
 
       inputNote.on("input", function() {
         var selectedValue = inputNote.val();
-         if (srnote != selectedValue) {
+        if (srnote != selectedValue) {
           e_btnconf.disabled = false;
-        }else{
+        } else {
           e_btnconf.disabled = true;
         }
       });
 
       inputApprover.on("change", function() {
         var selectedValue = inputApprover.val();
-         if (approver != selectedValue) {
+        if (approver != selectedValue) {
           e_btnconf.disabled = false;
-        }else{
+        } else {
           e_btnconf.disabled = true;
         }
       });
@@ -1330,15 +1340,15 @@
         var fileArray = [];
         if (valueFile != '') {
           var array = fileArray.push(valueFile);
-        }else{
+        } else {
           var array = fileArray.pop();
         }
 
         if (array == undefined) {
           e_btnconf.disabled = true;
-        } else if(cfile != array.length) {
+        } else if (cfile != array.length) {
           e_btnconf.disabled = false;
-        }else{
+        } else {
           e_btnconf.disabled = true;
 
         }
