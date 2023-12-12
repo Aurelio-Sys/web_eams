@@ -1618,8 +1618,7 @@ class SettingController extends Controller
             } else {
                 
                 foreach ($suppdata[0] as $datas) {
-                    $supp = SuppMstr::firstOrNew(['supp_code'=>$datas->t_suppcode,
-                                                    'supp_desc'=> $datas->t_suppname]);
+                    $supp = SuppMstr::firstOrNew(['supp_code'=>$datas->t_suppcode]);
                         $supp->supp_code = $datas->t_suppcode;
                         $supp->supp_desc = $datas->t_suppname;
                         $supp->created_at = Carbon::now()->toDateTimeString();

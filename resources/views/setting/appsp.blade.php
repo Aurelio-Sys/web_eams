@@ -14,7 +14,7 @@
 <form class="form-horizontal" method="post" action="/createappsp">
    {{ csrf_field() }}
 <div class="table-responsive col-12">
-    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+    <table class="table table-bordered order-list" id="dataTable" width="100%" cellspacing="0">
       <thead>
          <th width="15%">Sequence</th>
          <th width="70%">Role</th>
@@ -58,8 +58,18 @@
          getApp();
 
         $("table.order-list").on("click", ".ibtnDel", function(event) {
-          $(this).closest("tr").remove();
-          counter -= 1
+            console.log(1);
+            var row = $(this).closest("tr");
+            var line = row.find(".line").val();
+            // var colCount = $("#createTable tr").length;
+
+
+            if (line == counter - 1) {
+                // kalo line terakhir delete kurangin counter
+                counter -= 1
+            }
+
+            $(this).closest("tr").remove();
         });
 
         $("#ed_addrow").on("click", function() {
