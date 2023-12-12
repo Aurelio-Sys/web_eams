@@ -23,8 +23,10 @@ class StartnotifController extends Controller
             ->where('srta_eng_status', '=', 'Waiting for engineer approval');
 
         /** Notifaksi untuk pembuat SR jika ada SR yang perlu di revisi */
-        $dataaccep = DB::table('service_req_mstr')
-            ->where('sr_status', '=', 'acceptance');
+        // $dataaccep = DB::table('service_req_mstr')
+        //     ->where('sr_status', '=', 'acceptance');
+        $dataaccep = DB::table('wo_mstr')	// lihat dari menu user acceptance, datanya berdasarkan wo bukan sr
+            ->where('wo_status', '=', 'acceptance');
 
         /** Notifkasi untuk teknisi yang mendapatkan WO */
         $datawostart = DB::table('wo_mstr')

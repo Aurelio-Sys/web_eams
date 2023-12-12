@@ -422,8 +422,9 @@ class UserChartController extends Controller
                 $engDept = $sdept;
 
                 $datawo = $datawo
-                ->where('wo_list_engineer', 'LIKE', '%'.$engDept.'%')
-                ->orWhereExists(function ($query) use ($engDept) {
+                /*->where('wo_list_engineer', 'LIKE', '%'.$engDept.'%')
+                ->orWhereExists(function ($query) use ($engDept) {*/
+		        ->WhereExists(function ($query) use ($engDept) {
                     $query->select(DB::raw(1))
                         ->from('eng_mstr')
                         ->whereRaw("FIND_IN_SET(eng_code, REPLACE(wo_list_engineer, ';', ','))")
@@ -444,8 +445,11 @@ class UserChartController extends Controller
                 ->get();
 
         $datadept = DB::table('dept_mstr')
+            ->whereIn('dept_code', function($query) {
+                $query->select('eng_dept')->from('eng_mstr');
+            })
             ->orderBy('dept_code')
-            ->get();            
+            ->get();           
 
         return view('report.engsch',compact('skrg','hari','kosong','bulan','datawo','dataeng','fotoeng','engcode','datafn','wotype',
             'datadept','sdept'));
@@ -1025,12 +1029,15 @@ class UserChartController extends Controller
 		// Mendapatkan tanggal satu tahun kebelakang dari sekarang
         // Grafik ini hanya menampilkan data transaksi dalam satu tahun kebelakang
         $tahunKebelakang = Carbon::now()->subYear();
+	$now = Carbon::now();
 
         $datawo = DB::table('wo_mstr')
             ->join('asset_mstr','asset_code','=','wo_asset_code')
-            ->whereNotIn('wo_status', ['closed', 'finish', 'delete'])
+            //->whereNotIn('wo_status', ['closed', 'finish', 'delete'])
             ->where('wo_start_date', '>=', $tahunKebelakang)
-            ->where('wo_start_date', '<=', Carbon::now())
+	    ->whereMonth('wo_start_date','<=',$now->format("m"))
+            ->whereYear('wo_start_date','<=',$now->format("Y"))
+            //->where('wo_start_date', '<=', Carbon::now())
             ->orderBy('wo_start_date');
 
         if ($sasset) {
@@ -1116,13 +1123,16 @@ class UserChartController extends Controller
             // Mendapatkan tanggal satu tahun kebelakang dari sekarang
             // Grafik ini hanya menampilkan data transaksi satu tehun kebelakang
             $tahunKebelakang = Carbon::now()->subYear();
+	    $now = Carbon::now();
 
             $data = DB::table('wo_mstr')
                     ->join('asset_mstr','asset_code','=','wo_asset_code')
-                    ->whereNotIn('wo_status', ['closed','finish','delete'])
+                    //->whereNotIn('wo_status', ['closed','finish','delete'])
                     ->whereWo_asset_code($code)
                     ->where('wo_start_date', '>=', $tahunKebelakang)
-                    ->where('wo_start_date', '<=', Carbon::now())
+		    ->whereMonth('wo_start_date','<=',$now->format("m"))
+                    ->whereYear('wo_start_date','<=',$now->format("Y"))
+                    //->where('wo_start_date', '<=', Carbon::now())
                     ->orderBy('wo_start_date','desc');
 					
 			if($type) {
@@ -1168,7 +1178,7 @@ class UserChartController extends Controller
 
             $data = DB::table('wo_mstr')
                     ->join('asset_mstr','asset_code','=','wo_asset_code')
-                    ->whereNotIn('wo_status', ['closed','finish','delete'])
+                    //->whereNotIn('wo_status', ['closed','finish','delete'])
                     ->whereWo_asset_code($req->code)
                     ->whereMonth('wo_start_date','=',$dt->format("m"))
                     ->whereYear('wo_start_date','=',$dt->format("Y"));

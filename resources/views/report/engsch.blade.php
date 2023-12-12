@@ -75,10 +75,10 @@
                         <label class="col-md-12"></label>
                         <div>
                             <h1 class="m-0 text-dark text-center">
-                                <a href="/engsch?bulan={{$bulan}}&stat=mundur&engcode={{$engcode}}&wotype={{$wotype}}&dept={{$sdept}}" id="mundur"><i class="fas fa-angle-left"></i></a>
+                                <a href="/engsch?bulan={{$bulan}}&stat=mundur&engcode={{$engcode}}&wotype={{$wotype}}&s_dept={{$sdept}}" id="mundur"><i class="fas fa-angle-left"></i></a>
                                 &ensp;&ensp;{{$bulan}}&ensp;&ensp;
                                 <input type='hidden' name='bulan' id='bulan' value='{{$bulan}}'>
-                                <a href="/engsch?bulan={{$bulan}}&stat=maju&engcode={{$engcode}}&wotype={{$wotype}}&dept={{$sdept}}" id="maju" ><i class="fas fa-angle-right"></i></a>
+                                <a href="/engsch?bulan={{$bulan}}&stat=maju&engcode={{$engcode}}&wotype={{$wotype}}&s_dept={{$sdept}}" id="maju" ><i class="fas fa-angle-right"></i></a>
                             </h1>
                         </div>
                     </div>

@@ -278,6 +278,8 @@ class PmassetController extends Controller
                 ->wherePma_pmcode($req->d_pmcode)
                 ->delete();
 
+                DB::commit();
+
                 toast('Preventive Maintenance Deleted.', 'success');
                 return back();
             } catch (Exception $err) {

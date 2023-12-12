@@ -73,6 +73,7 @@ class UsageController extends Controller
         //     )
         //     ->get();
 
+        /* pakai yang ini tidak berhasil ambil yang paling besar
         $dataussage = DB::table('us_hist')
             ->select('us_asset', 'us_last_mea', 'us_date as tgl', 'us_mea_um')
             ->whereIn('us_last_mea', function ($query) {
@@ -80,6 +81,12 @@ class UsageController extends Controller
                     ->from('us_hist')
                     ->groupBy('us_asset', 'us_mea_um');
             })
+            ->get(); */
+
+        $dataussage = DB::table('us_hist')
+            ->select('us_asset', 'us_last_mea', 'us_date as tgl', 'us_mea_um')
+            ->orderBy('us_asset')
+            ->orderBy('us_date','desc')
             ->get();
         
         return view('schedule.usage',['data' => $data, 'asset' => $asset, 'dataussage' => $dataussage]);

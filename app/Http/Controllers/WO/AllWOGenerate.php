@@ -202,6 +202,7 @@ class AllWOGenerate extends Controller
                 ->join('pma_asset', 'pma_asset', '=', 'wo_asset_code')
                 ->whereNull('wo_mt_code')
                 ->whereNull('pma_pmcode')
+                ->whereWoType('PM')
                 ->orderBy('pma_asset');
 
             if($req->asset) {
@@ -212,6 +213,7 @@ class AllWOGenerate extends Controller
                 ->join('pma_asset', 'pma_asset', '=', 'wo_asset_code')
                 ->whereNotNull('wo_mt_code')
                 ->where('pma_pmcode', '=', DB::raw('wo_mt_code'))
+                ->whereWoType('PM')
                 ->orderBy('pma_asset');
 
             if($req->asset) {
@@ -296,19 +298,21 @@ class AllWOGenerate extends Controller
                                 break;
                         }
 
-                        DB::table('pml_log')
-                            ->insert([
-                                'pml_asset' => $tsch->pmt_asset,
-                                'pml_pmcode' => $tsch->pmt_pmcode,
-                                'pml_pm_number' => $tsch->id,
-                                'pml_pm_date' => $tsch->pmt_sch_date,
-                                'pml_wo_number' => $two->two_number,
-                                'pml_wo_date' => $two->two_date,
-                                'pml_message' => $mssg,
-                                'pml_user'  => Session::get('username'),
-                                'pml_dept'  => Session::get('department'),
-                                'created_at'    => Carbon::now()->toDateTimeString(),
-                            ]);
+                        if ($tsch->pmt_sch_date != $two->two_date) { // jika tanggal wo dan tgl sugess sama, tidak di simpan di action message
+                            DB::table('pml_log')
+                                ->insert([
+                                    'pml_asset' => $tsch->pmt_asset,
+                                    'pml_pmcode' => $tsch->pmt_pmcode,
+                                    'pml_pm_number' => $tsch->id,
+                                    'pml_pm_date' => $tsch->pmt_sch_date,
+                                    'pml_wo_number' => $two->two_number,
+                                    'pml_wo_date' => $two->two_date,
+                                    'pml_message' => $mssg,
+                                    'pml_user'  => Session::get('username'),
+                                    'pml_dept'  => Session::get('department'),
+                                    'created_at'    => Carbon::now()->toDateTimeString(),
+                                ]);
+                            }
 
 
                         // Field avail di update Yes agar tidak dibandingkan lagi pada saat looping berikutnya dari temp-pm
