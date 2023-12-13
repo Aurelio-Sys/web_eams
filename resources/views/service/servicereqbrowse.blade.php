@@ -1,8 +1,8 @@
 @extends('layout.newlayout')
 @section('content-header')
 <div class="container-fluid">
-  <div class="row mb-2">
-    <div class="col-sm-6 mt-2">
+  <div class="row">
+    <div class="col-sm-6">
       <h1 class="m-0 text-dark">Service Request</h1>
     </div><!-- /.col -->
   </div><!-- /.row -->
@@ -87,7 +87,7 @@
   </div>
 
   <div class="card-body">
-    <div class="container-fluid mb-2">
+    <div class="container-fluid mb-1">
       <div class="row">
         <div class="col-md-12">
           <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
@@ -232,7 +232,7 @@
 
     <!-- table SR -->
     <div class="table-responsive col-lg-12 col-md-12 tag-container" style="overflow-x: auto;overflow-y: hidden ;display: inline-block;white-space: nowrap; position:relative;">
-      <table class="table table-bordered table-hover table-striped mt-4 no-footer mini-table" id="dataTable" cellspacing="0">
+      <table class="table table-bordered table-hover table-striped mt-4 no-footer newtable mini-table" id="dataTable" cellspacing="0">
         <thead>
           <tr style="text-align: center;">
             <th class="col-test">SR Number</th>
