@@ -40,7 +40,7 @@
     <div class="container-fluid mb-1">
       <div class="row">
         <div class="col-md-12">
-          <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
+          <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample" style="font-weight: bolder;">Click Here To Search</button>
         </div>
       </div>
       <!-- Element div yang akan collapse atau expand -->

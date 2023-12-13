@@ -67,33 +67,43 @@
 <body>
     <div class="container-fluid h-100">
         <div class="row">
-            <div class="col-md-6 col-sm-12 mb-3">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <!-- Content for card 1 -->
+            <div class="col-md-3 col-sm-12 mb-2">
+                <a href="/servicerequest" class="card h-100 text-decoration-none">
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                        <i class="fas fa-tools fa-5x"></i> <!-- Font Awesome icon -->
+                        <h5 class="card-title text-center mt-3">Service Request Create</h5>
                     </div>
-                </div>
+                </a>
             </div>
-            <div class="col-md-6 col-sm-12 mb-3">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <!-- Content for card 2 -->
+            <div class="col-md-3 col-sm-12 mb-2">
+                <a href="/womaint" class="card h-100 text-decoration-none">
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                        <i class="fas fa-cogs fa-5x"></i> <!-- Font Awesome icon -->
+                        <h5 class="card-title text-center mt-3">Work Order Maintenance</h5>
                     </div>
-                </div>
+                </a>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6 col-sm-12 mb-3">
+            <div class="col-md-6 col-sm-12 mb-2">
                 <div class="card h-100">
                     <div class="card-body">
                         <!-- Content for card 3 -->
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-sm-12 mb-3">
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 col-sm-12 mb-3">
                 <div class="card h-100">
                     <div class="card-body">
                         <!-- Content for card 4 -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-12 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <!-- Content for card 5 -->
                     </div>
                 </div>
             </div>
