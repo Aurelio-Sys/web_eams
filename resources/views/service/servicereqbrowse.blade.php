@@ -3,7 +3,7 @@
 <div class="container-fluid">
   <div class="row mb-2">
     <div class="col-sm-6 mt-2">
-      <h1 class="m-0 text-dark">Service Request Maintenance</h1>
+      <h1 class="m-0 text-dark">Service Request</h1>
     </div><!-- /.col -->
   </div><!-- /.row -->
 </div><!-- /.container-fluid -->
@@ -19,6 +19,8 @@
       background-color: #c1e4f7;
       border: 1px solid black !important;
       text-decoration: double;
+      padding-left: 15px !important;
+      padding-right: 15px !important;
     }
   }
 
@@ -74,84 +76,62 @@
 <!-- Daftar Perubahan 
   A211015 : Merubah view SR 
 -->
-<div class="container-fluid mb-2">
-  <div class="row">
-    <div class="col-md-12">
-      <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Service Request Maintenance Browse</h3>
+    <div class="card-tools">
+      <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+        <i class="fas fa-minus"></i>
+      </button>
     </div>
   </div>
-  <!-- Element div yang akan collapse atau expand -->
-  <div class="collapse" id="collapseExample">
-    <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
-    <div class="card card-body bg-black rounded-0">
-      <div class="col-12 form-group row">
-        <!--FORM Search Disini-->
-        <label for="s_servicenbr" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Service Request Number') }}</label>
-        <div class="col-md-3 col-sm-4 mb-2 input-group">
-          <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off" placeholder="Search SR Number">
+
+  <div class="card-body">
+    <div class="container-fluid mb-2">
+      <div class="row">
+        <div class="col-md-12">
+          <button type="button" class="btn btn-block bg-black rounded-0" data-toggle="collapse" data-target="#collapseExample">Click Here To Search</button>
         </div>
-        <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Asset Description') }}</label>
-        <div class="col-md-3 col-sm-4 mb-2 input-group">
-          <!-- <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
+      </div>
+      <!-- Element div yang akan collapse atau expand -->
+      <div class="collapse" id="collapseExample">
+        <!-- Isi element div dengan konten yang ingin ditampilkan saat collapse diaktifkan -->
+        <div class="card card-body bg-black rounded-0">
+          <div class="col-12 form-group row">
+            <!--FORM Search Disini-->
+            <label for="s_servicenbr" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Service Request Number') }}</label>
+            <div class="col-md-3 col-sm-4 mb-2 input-group">
+              <input id="s_servicenbr" type="text" class="form-control" name="s_servicenbr" value="" autofocus autocomplete="off" placeholder="Search SR Number">
+            </div>
+            <label for="s_asset" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Asset Description') }}</label>
+            <div class="col-md-3 col-sm-4 mb-2 input-group">
+              <!-- <select id="s_asset" name="s_asset" class="form-control" value="" autofocus autocomplete="off">
                   <option value="">--Select Asset--</option>
                   @foreach($asset as $show)
                   <option value="{{$show->asset_desc}}">{{$show->asset_code}} -- {{$show->asset_desc}}</option>
                   @endforeach
                 </select> -->
-          <input id="s_asset" type="text" class="form-control" name="s_asset" value="" autofocus autocomplete="off" placeholder="Search Asset Desc">
-        </div>
-      </div>
-      <div class="col-12 form-group row">
-        <label for="s_status" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Status') }}</label>
-        <div class="col-md-3 col-sm-4 mb-2 input-group">
-          <select id="s_status" name="s_status" class="form-control" value="" autofocus autocomplete="off">
-            <option value="">--Select Status--</option>
-            @if($fromhome == 'open')
-            <option value="Open" selected>Open</option>
-            @else
-            <option value="Open">Open</option>
-            @endif
-            <option value="Revise">Revise</option>
-            <option value="Inprocess">Inprocess</option>
-            <option value="Canceled">Canceled</option>
-            <option value="Acceptance">Acceptance</option>
-            <option value="Closed">Closed</option>
-          </select>
-        </div>
-        <!-- <label for="s_priority" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Priority') }}</label>
-        <div class="col-md-3 col-sm-4 mb-2 input-group">
-          <select id="s_priority" name="s_priority" class="form-control" value="" autofocus autocomplete="off">
-            <option value="">--Select Priority--</option>
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
-        </div> -->
-        <!-- <label for="s_period" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('SR Period') }}</label>
-              <div class="col-md-3 col-sm-4 mb-2 input-group">
-                <select id="s_period" name="s_period" class="form-control" value="" autofocus autocomplete="off">
-                  <option value="">--Select Period--</option>
-                  <option value="1"> < 3 days </option>
-                  <option value="2"> 3-5 days </option>
-                  <option value="3"> > 5 days </option>
-                </select>
-              </div> -->
-        <label for="s_user" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Requested by') }}</label>
-        <div class="col-md-3 col-sm-4 mb-2 input-group">
-          <select id="s_user" name="s_user" class="form-control" value="" autofocus autocomplete="off">
-            <option value="">--Select User--</option>
-            @foreach($users as $usershow)
-            <option value="{{$usershow->username}}">{{$usershow->username}} - {{$usershow->name}}</option>
-            @endforeach
-          </select>
-        </div>
-      </div>
-      <div class="col-12 form-group row">
-        <label for="s_datefrom" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Date from') }}</label>
-        <div class="col-md-3 col-sm-4 mb-2 input-group">
-          <input type="text" id="s_datefrom" class="form-control" name='s_datefrom' placeholder="YYYY-MM-DD" required autofocus autocomplete="off">
-        </div>
-        <!-- <label for="s_priority" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Priority') }}</label>
+              <input id="s_asset" type="text" class="form-control" name="s_asset" value="" autofocus autocomplete="off" placeholder="Search Asset Desc">
+            </div>
+          </div>
+          <div class="col-12 form-group row">
+            <label for="s_status" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Status') }}</label>
+            <div class="col-md-3 col-sm-4 mb-2 input-group">
+              <select id="s_status" name="s_status" class="form-control" value="" autofocus autocomplete="off">
+                <option value="">--Select Status--</option>
+                @if($fromhome == 'open')
+                <option value="Open" selected>Open</option>
+                @else
+                <option value="Open">Open</option>
+                @endif
+                <option value="Revise">Revise</option>
+                <option value="Inprocess">Inprocess</option>
+                <option value="Canceled">Canceled</option>
+                <option value="Acceptance">Acceptance</option>
+                <option value="Closed">Closed</option>
+              </select>
+            </div>
+            <!-- <label for="s_priority" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Priority') }}</label>
         <div class="col-md-3 col-sm-4 mb-2 input-group">
           <select id="s_priority" name="s_priority" class="form-control" value="" autofocus autocomplete="off">
             <option value="">--Select Priority--</option>
@@ -160,7 +140,7 @@
             <option value="high">High</option>
           </select>
         </div> -->
-        <!-- <label for="s_period" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('SR Period') }}</label>
+            <!-- <label for="s_period" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('SR Period') }}</label>
               <div class="col-md-3 col-sm-4 mb-2 input-group">
                 <select id="s_period" name="s_period" class="form-control" value="" autofocus autocomplete="off">
                   <option value="">--Select Period--</option>
@@ -169,13 +149,46 @@
                   <option value="3"> > 5 days </option>
                 </select>
               </div> -->
-        <label for="s_dateto" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Date to') }}</label>
+            <label for="s_user" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Requested by') }}</label>
+            <div class="col-md-3 col-sm-4 mb-2 input-group">
+              <select id="s_user" name="s_user" class="form-control" value="" autofocus autocomplete="off">
+                <option value="">--Select User--</option>
+                @foreach($users as $usershow)
+                <option value="{{$usershow->username}}">{{$usershow->username}} - {{$usershow->name}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="col-12 form-group row">
+            <label for="s_datefrom" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Date from') }}</label>
+            <div class="col-md-3 col-sm-4 mb-2 input-group">
+              <input type="text" id="s_datefrom" class="form-control" name='s_datefrom' placeholder="YYYY-MM-DD" required autofocus autocomplete="off">
+            </div>
+            <!-- <label for="s_priority" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Priority') }}</label>
         <div class="col-md-3 col-sm-4 mb-2 input-group">
-          <input type="text" id="s_dateto" class="form-control" name='s_dateto' placeholder="YYYY-MM-DD" required autofocus autocomplete="off">
-        </div>
-      </div>
-      <div class="col-12 form-group row">
-        <!-- <label for="s_status" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Status') }}</label>
+          <select id="s_priority" name="s_priority" class="form-control" value="" autofocus autocomplete="off">
+            <option value="">--Select Priority--</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div> -->
+            <!-- <label for="s_period" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('SR Period') }}</label>
+              <div class="col-md-3 col-sm-4 mb-2 input-group">
+                <select id="s_period" name="s_period" class="form-control" value="" autofocus autocomplete="off">
+                  <option value="">--Select Period--</option>
+                  <option value="1"> < 3 days </option>
+                  <option value="2"> 3-5 days </option>
+                  <option value="3"> > 5 days </option>
+                </select>
+              </div> -->
+            <label for="s_dateto" class="col-md-2 col-sm-2 col-form-label text-md-right">{{ __('Date to') }}</label>
+            <div class="col-md-3 col-sm-4 mb-2 input-group">
+              <input type="text" id="s_dateto" class="form-control" name='s_dateto' placeholder="YYYY-MM-DD" required autofocus autocomplete="off">
+            </div>
+          </div>
+          <div class="col-12 form-group row">
+            <!-- <label for="s_status" class="col-md-3 col-sm-2 col-form-label text-md-left">{{ __('Status') }}</label>
         <div class="col-md-3 col-sm-4 mb-2 input-group">
           <select id="s_status" name="s_status" class="form-control" value="" autofocus autocomplete="off">
             <option value="">--Select Status--</option>
@@ -193,60 +206,61 @@
             <option value="8">Reprocess</option>
           </select>
         </div> -->
-        <div class="col-md-6 col-sm-4 mb-2 input-group">
-          <input type="button" class="btn btn-primary col-md-3" id="btnsearch" value="Search" style="float:right" />
-          &nbsp;&nbsp;&nbsp;
-          <button type="button" class="btn btn-primary col-md-2" id="btnrefresh"><i class="fas fa-redo-alt"></i></button>
-          &nbsp;&nbsp;&nbsp;
-          <input type="button" class="btn btn-primary col-md-4" id="btnexcel" value="Export to Excel" style="float:right" />
+            <div class="col-md-6 col-sm-4 mb-2 input-group">
+              <input type="button" class="btn btn-primary col-md-3" id="btnsearch" value="Search" style="float:right" />
+              &nbsp;&nbsp;&nbsp;
+              <button type="button" class="btn btn-primary col-md-2" id="btnrefresh"><i class="fas fa-redo-alt"></i></button>
+              &nbsp;&nbsp;&nbsp;
+              <input type="button" class="btn btn-primary col-md-4" id="btnexcel" value="Export to Excel" style="float:right" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
+    <input type="hidden" id="tmpsrnumber" />
+    <input type="hidden" id="tmpasset" />
+    <input type="hidden" id="tmppriority" />
+    <input type="hidden" id="tmpperiod" />
+    <input type="hidden" id="tmpuser" />
+    <input type="hidden" id="tmpdatefrom" />
+    <input type="hidden" id="tmpdateto" />
+    @if($fromhome == 'open')
+    <input type="hidden" id="tmpstatus" value="Open" />
+    @else
+    <input type="hidden" id="tmpstatus" />
+    @endif
+
+    <!-- table SR -->
+    <div class="table-responsive col-lg-12 col-md-12 tag-container" style="overflow-x: auto;overflow-y: hidden ;display: inline-block;white-space: nowrap; position:relative;">
+      <table class="table table-bordered table-hover table-striped mt-4 no-footer mini-table" id="dataTable" cellspacing="0">
+        <thead>
+          <tr style="text-align: center;">
+            <th class="col-test">SR Number</th>
+            <!-- <th>WO Number</th> -->
+            <th class="col-test">Asset</th>
+            <th class="col-test">Asset Description</th>
+            <!-- <th>Location</th> -->
+            <th class="col-test">Status</th>
+            <!-- <th>Priority</th> -->
+            <!-- <th>Department</th> -->
+            <th class="col-test">Req by</th>
+            <th class="col-test">Req Date</th>
+            <th class="col-test">Req Time</th>
+            <th class="col-test">Eng Approver</th>
+            <th class="col-test">Action</th>
+            <th class="col-test">Approval</th>
+            <!-- <th>Cancel</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          @include('service.table-srbrowse')
+        </tbody>
+      </table>
+      <input type="hidden" name="hidden_page" id="hidden_page" value="1" />
+      <input type="hidden" name="hidden_column_name" id="hidden_column_name" value="id" />
+      <input type="hidden" name="hidden_sort_type" id="hidden_sort_type" value="asc" />
+    </div>
   </div>
-</div>
-
-<input type="hidden" id="tmpsrnumber" />
-<input type="hidden" id="tmpasset" />
-<input type="hidden" id="tmppriority" />
-<input type="hidden" id="tmpperiod" />
-<input type="hidden" id="tmpuser" />
-<input type="hidden" id="tmpdatefrom" />
-<input type="hidden" id="tmpdateto" />
-@if($fromhome == 'open')
-<input type="hidden" id="tmpstatus" value="Open" />
-@else
-<input type="hidden" id="tmpstatus" />
-@endif
-
-<!-- table SR -->
-<div class="table-responsive col-lg-12 col-md-12 tag-container" style="overflow-x: auto;overflow-y: hidden ;display: inline-block;white-space: nowrap; position:relative;">
-  <table class="table table-bordered table-hover table-striped mt-4 no-footer mini-table" id="dataTable" cellspacing="0">
-    <thead>
-      <tr style="text-align: center;">
-        <th class="col-test">SR Number</th>
-        <!-- <th>WO Number</th> -->
-        <th class="col-test">Asset</th>
-        <th class="col-test">Asset Description</th>
-        <!-- <th>Location</th> -->
-        <th class="col-test">Status</th>
-        <!-- <th>Priority</th> -->
-        <!-- <th>Department</th> -->
-        <th class="col-test">Req by</th>
-        <th class="col-test">Req Date</th>
-        <th class="col-test">Req Time</th>
-        <th class="col-test">Eng Approver</th>
-        <th class="col-test">Action</th>
-        <th class="col-test">Approval</th>
-        <!-- <th>Cancel</th> -->
-      </tr>
-    </thead>
-    <tbody>
-      @include('service.table-srbrowse')
-    </tbody>
-  </table>
-  <input type="hidden" name="hidden_page" id="hidden_page" value="1" />
-  <input type="hidden" name="hidden_column_name" id="hidden_column_name" value="id" />
-  <input type="hidden" name="hidden_sort_type" id="hidden_sort_type" value="asc" />
 </div>
 
 <!--Modal Edit-->
@@ -712,7 +726,6 @@
     </div>
   </div>
 </div>
-
 @endsection
 
 
