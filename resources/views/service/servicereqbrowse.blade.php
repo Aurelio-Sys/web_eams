@@ -15,63 +15,13 @@
   @media screen and (min-width: 992px) {
 
     .col-test {
-      width: 200px;
-      background-color: #c1e4f7;
+      background-color: #1E90FF;
       border: 1px solid black !important;
       text-decoration: double;
-      padding-left: 15px !important;
-      padding-right: 15px !important;
+      color: white;
     }
   }
 
-  @media screen and (max-width: 992px) {
-
-    .mini-table {
-      border: 0;
-    }
-
-    .mini-table thead {
-      display: none;
-    }
-
-    .mini-table tr {
-      margin-bottom: 10px;
-      display: block;
-      border-bottom: 2px solid #ddd;
-    }
-
-    .mini-table td {
-      display: block;
-      text-align: right;
-      font-size: 13px;
-      border-bottom: 1px dotted #ccc;
-    }
-
-    .mini-table td:last-child {
-      border-bottom: 0;
-    }
-
-    .mini-table td:before {
-      content: attr(data-label);
-      float: left;
-      text-transform: uppercase;
-      font-weight: bold;
-    }
-
-    .select2-results__option--disabled {
-      color: grey !important;
-    }
-
-    /* .modal-dialog {
-      overflow-x: initial !important
-    } */
-
-    /* .modal-body {
-      height: calc(100vh - 5em);
-      overflow-x: auto;
-    } */
-
-  }
 </style>
 <!-- Daftar Perubahan 
   A211015 : Merubah view SR 
@@ -232,7 +182,7 @@
 
     <!-- table SR -->
     <div class="table-responsive col-lg-12 col-md-12 tag-container" style="overflow-x: auto;overflow-y: hidden ;display: inline-block;white-space: nowrap; position:relative;">
-      <table class="table table-bordered table-hover table-striped mt-4 no-footer newtable mini-table" id="dataTable" cellspacing="0">
+      <table class="table table-bordered table-hover mt-4 newtable mini-table" id="dataTable" cellspacing="0">
         <thead>
           <tr style="text-align: center;">
             <th class="col-test">SR Number</th>

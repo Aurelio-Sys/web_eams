@@ -34,8 +34,16 @@
     }
         
     .foottr .footend{
-        border-bottom: 1px solid black !important;
-        padding: 15px !important;
+        background-color: white;
+    }
+
+    .foottr .footerr{
+        border-bottom: 0px  !important;
+        background-color:rgb(154, 27, 27);
+        color: white !important;
+        padding:15px !important;
+        font-size: 13px;
+        font-weight: bold;
     }
         
 
@@ -64,6 +72,52 @@
     .nodata{
         display: none !important;
     }
+
+    .rowbtn{
+        margin-left: 8px;
+    }
+
+    .btnactionfilter{
+        margin-right: 20px;
+        margin-bottom: 10px;
+    }
+}
+
+@media (min-width: 992px){
+    .btnactionfilter{
+        margin-right: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse; /* Menghilangkan jarak antar border */
+      }
+      
+      th, td {
+        padding: 8px;
+        border: 1px solid #ddd; /* Memberi border */
+        text-align: left;
+      }
+    
+      /* Menerapkan strip pada baris genap */
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+    
+      /* Opsional: Mengubah warna baris saat di-hover */
+      tr:hover {
+        background-color: #ddd;
+      }
+    
+      /* Membuat header table lebih menonjol */
+      th {
+        background-color: #4CAF50;
+        color: white;
+      }
+
+      .table td, .table th{
+            padding:.3rem !important;
+        }
 }
 
 .lds-dual-ring.hidden {
@@ -109,12 +163,6 @@
     }
   }
 
-.table{
-    width:100% !important;
-}
-.table td, .table th{
-    padding:.3rem !important;
-}
 .select2-selection__rendered{
     color: black !important;
 }
@@ -135,10 +183,17 @@
     font-size:14px !important;
 }
 
+.newtable {
+    overflow-x:auto;
+    white-space: nowrap;
+}
+
 .newtable tbody tr td{
     padding-left: 20px !important;
     padding-right: 20px !important;
 }
 
-
+.btnfilter {
+    width: 50px;
+}
 

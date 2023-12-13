@@ -2,24 +2,24 @@
 <?php
 // dd($show->sr_req_by);
 ?>
-<tr>
-    <td>{{$show->sr_number}}</td>
-    <td>{{$show->sr_asset}}</td>
-    <td>{{$show->asset_desc}}</td>
+<tr class="foottr">
+    <td class="foot1" data-label="SR Number">{{$show->sr_number}}</td>
+    <td class="footend" data-label="Asset">{{$show->sr_asset}}</td>
+    <td class="footend" data-label="Asset Description">{{$show->asset_desc}}</td>
     <!-- <td>{{$show->asset_loc}}</td> -->
     <!-- <td>{{$show->sr_status}}</td> -->
     <!-- <td>{{is_null($show->wo_status) ? $show->sr_status : $show->wo_status}}</td> -->
-    <td>{{$show->sr_status}}</td>
+    <td class="footend" data-label="Status">{{$show->sr_status}}</td>
     <!-- <td>{{$show->sr_priority}}</td> -->
     <!-- <td>{{$show->dept_desc}}</td> -->
-    <td>{{$show->username}} - {{$show->name}}</td>
+    <td class="footend" data-label="Req By">{{$show->username}} - {{$show->name}}</td>
 
-    <td>{{date('d-m-Y', strtotime($show->sr_req_date))}}</td>
-    <td>{{date('H:i', strtotime($show->sr_req_time))}}</td>
-    <td>{{$show->sr_eng_approver}} - {{$show->u11}}</td>
+    <td class="footend" data-label="Req Date">{{date('d-m-Y', strtotime($show->sr_req_date))}}</td>
+    <td class="footend" data-label="Req Time">{{date('H:i', strtotime($show->sr_req_time))}}</td>
+    <td class="footend" data-label="Eng Approver">{{$show->sr_eng_approver}} - {{$show->u11}}</td>
 
     
-    <td style="text-align: center;">
+    <td class="footend" data-label="Action" style="text-align: center;">
     <a href="javascript:void(0)" class="view" type="button" data-toggle="tooltip" title="View Service Request" 
     data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_asset}}" data-assetdesc="{{$show->asset_desc}}"
     data-reqby="{{$show->name}}" data-srnote="{{$show->sr_note}}" data-priority="{{$show->sr_priority}}"
@@ -78,7 +78,7 @@
     <i class="icon-table fas fa-window-close fa-lg"></i></a>
     @endif
     </td>
-    <td style="text-align: center;">
+    <td class="footend" data-label="Approval" style="text-align: center;">
     <a href="javascript:void(0)" class="route" type="button" data-toggle="tooltip" title="Route SR Approval" data-target="#routeModal" data-id="{{$show->id}}" 
     data-srnumber="{{$show->sr_number}}" data-assetcode="{{$show->sr_asset}}" data-assetdesc="{{$show->asset_desc}}" data-srdate="{{$show->sr_req_date}}" data-reqby="{{$show->name}}" 
     data-srnote="{{$show->sr_note}}" data-priority="{{$show->sr_priority}}" data-deptdesc="{{$show->dept_desc}}" data-reqbyname="{{$show->sr_req_by}}" 
