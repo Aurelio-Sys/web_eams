@@ -39,6 +39,7 @@
 <head>
     <title>Dashboard</title>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
     <style>
         body,
         html {
@@ -153,15 +154,25 @@
             </a>
         </div>
         <div class="card">
-
+            <div id="container1" style="height: 100%"></div>
         </div>
         <div class="card">
             <!-- Year to Date Corrective Maitnenance -->
-            
+            <a href="/servicerequest" class="text-decoration-none">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                    <i class="fas fa-tools fa-5x"></i>
+                    <h5 class="card-title text-center mt-3">Service Request Create</h5>
+                </div>
+            </a>
 
         </div>
         <div class="card">
-
+            <a href="/servicerequest" class="text-decoration-none">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                    <i class="fas fa-tools fa-5x"></i>
+                    <h5 class="card-title text-center mt-3">Service Request Create</h5>
+                </div>
+            </a>
         </div>
     </div>
     <!-- </div> -->
@@ -198,6 +209,52 @@
             }
         }
     }
+
+    var chartDom = document.getElementById('container1');
+    var myChart = echarts.init(chartDom);
+    var option;
+
+    option = {
+        title: {
+            text: 'Work Order Status',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'value',
+            boundaryGap: [0, 0.01]
+        },
+        yAxis: {
+            type: 'category',
+            data: ['Open WO', 'Overdue WO', 'On Progress WO']
+        },
+        series: [{
+            type: 'bar',
+            data: [50, 30, 20], // Dummy data
+            itemStyle: {
+                normal: {
+                    // Define color for each bar
+                    color: function(params) {
+                        var colorList = ['#5470C6', '#EE6666', '#91CC75'];
+                        return colorList[params.dataIndex];
+                    }
+                }
+            }
+        }]
+    };
+
+    myChart.setOption(option);
 </script>
 <script>
 
