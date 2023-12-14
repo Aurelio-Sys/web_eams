@@ -37,7 +37,7 @@
 </ul>
 
 <head>
-    <title>Chart</title>
+    <title>Dashboard</title>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <style>
         body,
@@ -46,76 +46,131 @@
             margin: 0;
         }
 
-        .container-fluid {
-            padding: 10px;
-            height: 100%;
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            /* Adjust this to fit the layout */
+            grid-gap: 20px;
+            /* This sets the gap between the cards */
+            padding: 20px;
+            /* This adds some spacing around the grid */
         }
 
         .card {
-            height: calc(50% - 20px);
-            /* Adjust the 20px if you change the padding */
+            background-color: white;
+            /* The color for the card */
+            border-radius: 15px;
+            /* This makes the corners rounded */
+            padding: 20px;
+            /* Padding inside the cards */
+            color: #1E90FF;
+            font-weight: lighter;
+            /* Text color inside the card */
         }
 
-        .row {
-            margin-bottom: 20px;
+        /* For demonstration, we can force the first card to span two columns */
+        .card:nth-child(3) {
+            grid-column: span 2;
+            grid-row: span 4;
         }
 
-        /* If you have additional styling, you can add here */
+        .card:nth-child(1) {
+            grid-row: span 2;
+        }
+
+        .card:nth-child(2) {
+            grid-row: span 2;
+        }
+
+        .card:nth-child(4) {
+            grid-row: span 2;
+        }
+
+        .card:nth-child(5) {
+            grid-row: span 2;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container-fluid h-100">
-        <div class="row">
-            <div class="col-md-3 col-sm-12 mb-2">
+    <!-- <div class="container-fluid h-100"> -->
+
+    <!-- <div class="row">
+            <div class="col-md-3 col-sm-12">
                 <a href="/servicerequest" class="card h-100 text-decoration-none">
                     <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                        <i class="fas fa-tools fa-5x"></i> <!-- Font Awesome icon -->
+                        <i class="fas fa-tools fa-5x"></i> 
                         <h5 class="card-title text-center mt-3">Service Request Create</h5>
                     </div>
                 </a>
             </div>
-            <div class="col-md-3 col-sm-12 mb-2">
+            <div class="col-md-3 col-sm-12">
                 <a href="/womaint" class="card h-100 text-decoration-none">
                     <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                        <i class="fas fa-cogs fa-5x"></i> <!-- Font Awesome icon -->
+                        <i class="fas fa-cogs fa-5x"></i> 
                         <h5 class="card-title text-center mt-3">Work Order Maintenance</h5>
                     </div>
                 </a>
             </div>
-            <div class="col-md-6 col-sm-12 mb-2">
+            <div class="col-md-6 col-sm-12">
                 <div class="card h-100">
                     <div class="card-body">
-                        <!-- Content for card 3 -->
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="row">
-            <div class="col-md-3 col-sm-12 mb-3">
+            <div class="col-md-3 col-sm-12">
                 <div class="card h-100">
                     <div class="card-body">
-                        <!-- Content for card 4 -->
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-12 mb-3">
+            <div class="col-md-3 col-sm-12">
                 <div class="card h-100">
                     <div class="card-body">
-                        <!-- Content for card 5 -->
                     </div>
                 </div>
             </div>
+        </div> -->
+
+    <div class="grid-container">
+        <div class="card">
+            <a href="/servicerequest" class="text-decoration-none">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                    <i class="fas fa-tools fa-5x"></i>
+                    <h5 class="card-title text-center mt-3">Service Request Create</h5>
+                </div>
+            </a>
+        </div>
+        <div class="card">
+            <a href="/womaint" class="text-decoration-none">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                    <i class="fas fa-cogs fa-5x"></i>
+                    <h5 class="card-title text-center mt-3">Work Order Maintenance</h5>
+                </div>
+            </a>
+        </div>
+        <div class="card">
+
+        </div>
+        <div class="card">
+            <!-- Year to Date Corrective Maitnenance -->
+            
+
+        </div>
+        <div class="card">
+
         </div>
     </div>
+    <!-- </div> -->
 
 
 </body>
 
 @endsection
 @section('scripts')
-<script src="{{url('vendors\chart-js-datalabel\chartjs-plugin-datalabels-new.js')}}"></script>
 <script>
     function noexpitm(event, array) {
         if (array[0]) {
