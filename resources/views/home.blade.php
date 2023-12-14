@@ -1,6 +1,5 @@
 @extends('layout.newlayout')
 
-
 @section('content')
 <!-- Flash Menu -->
 @if(session()->has('updated'))
@@ -51,128 +50,171 @@
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             /* Adjust this to fit the layout */
-            grid-gap: 20px;
+            grid-gap: 10px;
             /* This sets the gap between the cards */
-            padding: 20px;
+            padding: 5px;
             /* This adds some spacing around the grid */
         }
 
         .card {
             background-color: white;
-            /* The color for the card */
-            border-radius: 15px;
-            /* This makes the corners rounded */
-            padding: 20px;
-            /* Padding inside the cards */
+            border-radius: 5px;
+            padding: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 0;
+
+        }
+
+        .card-icon {
+            font-size: 1.5em;
+            /* Icon size */
+        }
+
+        .card-title {
+            font-size: 14px;
+            /* Title font size */
+            color: #333;
+            /* Title text color */
+            margin-bottom: 8px;
+            text-align: center;
+            /* Space below title */
+
+            font-weight: 600;
+        }
+
+        .card-value {
+            font-size: 18px;
+            /* Value font size */
             color: #1E90FF;
-            font-weight: lighter;
-            /* Text color inside the card */
+            /* Value text color */
+            font-weight: bold;
+            /* Bold font weight for the value */
+
+            text-align: center;
+
+            font-weight: 600;
         }
 
-        /* For demonstration, we can force the first card to span two columns */
-        .card:nth-child(3) {
+        .card-subtitle {
+            font-size: 1em;
+            /* Subtitle font size */
+            color: #777;
+            /* Subtitle text color */
+        }
+        
+        .card-body {
+            padding: 3px;
+        }
+
+        .card:nth-child(9) {
             grid-column: span 2;
-            grid-row: span 4;
+            min-height: fit-content;
         }
 
-        .card:nth-child(1) {
-            grid-row: span 2;
-        }
+        .card:nth-child(10) {
+            grid-column: span 2;
+            min-height: fit-content;
 
-        .card:nth-child(2) {
-            grid-row: span 2;
-        }
-
-        .card:nth-child(4) {
-            grid-row: span 2;
-        }
-
-        .card:nth-child(5) {
-            grid-row: span 2;
         }
     </style>
 </head>
 
 <body>
-    <!-- <div class="container-fluid h-100"> -->
-
-    <!-- <div class="row">
-            <div class="col-md-3 col-sm-12">
-                <a href="/servicerequest" class="card h-100 text-decoration-none">
-                    <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                        <i class="fas fa-tools fa-5x"></i> 
-                        <h5 class="card-title text-center mt-3">Service Request Create</h5>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-3 col-sm-12">
-                <a href="/womaint" class="card h-100 text-decoration-none">
-                    <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                        <i class="fas fa-cogs fa-5x"></i> 
-                        <h5 class="card-title text-center mt-3">Work Order Maintenance</h5>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-6 col-sm-12">
-                <div class="card h-100">
-                    <div class="card-body">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-3 col-sm-12">
-                <div class="card h-100">
-                    <div class="card-body">
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-12">
-                <div class="card h-100">
-                    <div class="card-body">
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
     <div class="grid-container">
         <div class="card">
-            <a href="/servicerequest" class="text-decoration-none">
-                <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                    <i class="fas fa-tools fa-5x"></i>
-                    <h5 class="card-title text-center mt-3">Service Request Create</h5>
-                </div>
-            </a>
+            <div class="card-title">Spare part value</div>
+            <div class="card-value">535,222,000</div>
         </div>
         <div class="card">
-            <a href="/womaint" class="text-decoration-none">
-                <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                    <i class="fas fa-cogs fa-5x"></i>
-                    <h5 class="card-title text-center mt-3">Work Order Maintenance</h5>
-                </div>
-            </a>
+            <div class="card-title">YTD CM work order</div>
+            <div class="card-value">78</div>
         </div>
         <div class="card">
-            <div id="container1" style="height: 100%"></div>
+            <div class="card-title">YTD service request</div>
+            <div class="card-value">148</div>
         </div>
         <div class="card">
-            <!-- Year to Date Corrective Maitnenance -->
-            <a href="/servicerequest" class="text-decoration-none">
-                <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                    <i class="fas fa-tools fa-5x"></i>
-                    <h5 class="card-title text-center mt-3">Service Request Create</h5>
+            <div class="card-title">Late work order</div>
+            <div class="card-value">45</div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <i class="fas fas fa-tools card-icon"></i>
+                    </div>
+                    <div class="col">
+                        <div class="font-weight-small">
+                            34 Active
+                        </div>
+                        <div class="text-secondary">
+                            Service Request
+                        </div>
+                    </div>
                 </div>
-            </a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <i class="fas fa-cogs card-icon"></i>
+                    </div>
+                    <div class="col">
+                        <div class="font-weight-small">
+                            34 Active
+                        </div>
+                        <div class="text-secondary">
+                            Service Request
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <i class="fas fa-toolbox card-icon"></i>
+                    </div>
+                    <div class="col">
+                        <div class="font-weight-small">
+                            7 Assets
+                        </div>
+                        <div class="text-secondary">
+                            Being Repaired
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <i class="fas fa-wrench card-icon"></i>
+                    </div>
+                    <div class="col">
+                        <div class="font-weight-small">
+                            8 Assets
+                        </div>
+                        <div class="text-secondary">
+                            Being Maintained
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div id="topAssetsChart" style="width: 100%; min-height: 250px;"></div>
 
         </div>
         <div class="card">
-            <a href="/servicerequest" class="text-decoration-none">
-                <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                    <i class="fas fa-tools fa-5x"></i>
-                    <h5 class="card-title text-center mt-3">Service Request Create</h5>
-                </div>
-            </a>
+            <div class="card-title">25 Top Asset Issues</div>
+
         </div>
     </div>
     <!-- </div> -->
@@ -210,51 +252,61 @@
         }
     }
 
-    var chartDom = document.getElementById('container1');
-    var myChart = echarts.init(chartDom);
-    var option;
+    document.addEventListener("DOMContentLoaded", function(event) {
+        // Generate dummy data
+        var assetNames = Array.from({
+            length: 25
+        }, (v, i) => `Asset ${i + 1}`);
+        var assetCosts = Array.from({
+            length: 25
+        }, () => Math.floor(Math.random() * 100000));
 
-    option = {
-        title: {
-            text: 'Work Order Status',
-            left: 'center'
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'shadow'
-            }
-        },
-        grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-        },
-        xAxis: {
-            type: 'value',
-            boundaryGap: [0, 0.01]
-        },
-        yAxis: {
-            type: 'category',
-            data: ['Open WO', 'Overdue WO', 'On Progress WO']
-        },
-        series: [{
-            type: 'bar',
-            data: [50, 30, 20], // Dummy data
-            itemStyle: {
-                normal: {
-                    // Define color for each bar
-                    color: function(params) {
-                        var colorList = ['#5470C6', '#EE6666', '#91CC75'];
-                        return colorList[params.dataIndex];
-                    }
+        // Initialize ECharts
+        var chartDom = document.getElementById('topAssetsChart');
+        var myChart = echarts.init(chartDom);
+        var option;
+
+        option = {
+            title: {
+                text: 'Top 25 Assets Cost Consumption',
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
                 }
-            }
-        }]
-    };
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: assetNames // Categories (asset names) on the x-axis
+            },
+            yAxis: {
+                type: 'value', // Numeric scale on the y-axis
+                boundaryGap: [0, 0.01]
+            },
+            series: [{
+                type: 'bar',
+                data: assetCosts,
+                label: {
+                    show: false,
+                },
+                barWidth: '30%' 
+            }]
+        };
 
-    myChart.setOption(option);
+        myChart.setOption(option);
+
+        // Resize chart on window resize
+        window.addEventListener('resize', function() {
+            myChart.resize();
+        });
+    });
 </script>
 <script>
 
