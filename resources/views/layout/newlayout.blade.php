@@ -186,6 +186,16 @@ to get the desired effect
               </a>
             </li>
 
+            <li class="nav-item">
+              <a href="/fav_menu" class="nav-link ">
+                {{-- <i class="nav-icon fas fa-solid fa-bell"></i> --}}
+                <i class="nav-icon fas fa-star"></i>
+                <p>
+                  My Menu
+                </p>
+              </a>
+            </li>
+
             @if(str_contains( Session::get('menu_access'), 'SR'))
             <li class="nav-item has-treeview">
               <a href="javascript:void(0)" class="nav-link">

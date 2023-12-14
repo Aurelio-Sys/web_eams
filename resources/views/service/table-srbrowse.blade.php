@@ -101,6 +101,7 @@
 @endforelse
 <tr>
   <td style="border: none !important; background-color: white !important;" colspan="10">
+    {{-- {{ $datas->appends($_GET)->links() }} --}}
     {{ $datas->appends($_GET)->links() }}
   </td>
 </tr>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\favMenu\FavMenuController;
 use App\Http\Controllers\Master\AssetSiteController;
 use App\Http\Controllers\Master\AssetLocController;
 use App\Http\Controllers\Master\AssetMoveController;
@@ -906,7 +907,11 @@ Route::group(['middleware' => ['auth']], function() {
 
 	// Digunakan untuk menampilkan notifikasi setiap user
 	Route::get('/startnotif', [StartnotifController::class, 'index']);
-	
+
+	// Untuk buat menu user
+	Route::get('/fav_menu', [FavMenuController::class, 'index']);
+	Route::post('/saveFavMenu', [FavMenuController::class, 'store'])->name('saveFavMenu');
+	Route::post('/deleteFavMenu', [FavMenuController::class, 'destroy'])->name('deleteFavMenu');
 });
 
 Auth::routes();
