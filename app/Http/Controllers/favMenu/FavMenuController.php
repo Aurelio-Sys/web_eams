@@ -60,7 +60,7 @@ class FavMenuController extends Controller
             toast('Successfully deleted a fav. menu');
         } catch (\Exception $err) {
             DB::rollBack();
-            dd($err);
+            toast('failed deleted a fav. menu');
         }
         
         return redirect()->back();
