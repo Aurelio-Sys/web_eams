@@ -19,7 +19,7 @@ class CreateFavMenuTable extends Migration
             $table->foreign('fm_user_id')->references('id')->on('users')->onDelete('restrict');
             $table->string('fm_menu_name');
             $table->string('fm_menu_url');
-            $table->string('fm_menu_icon');
+            $table->string('fm_menu_icon')->nullable();
             $table->timestamps();
         });
     }

@@ -19,7 +19,8 @@ class FavMenuController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
+        $action = $request->favAction;
+
         $user_id = Auth::user()->id;
         $menuName = $request->menu_name;
         $menuUrl = $request->menu_url;
@@ -28,15 +29,23 @@ class FavMenuController extends Controller
         DB::beginTransaction();
 
         try {
-            $favMenu = new FavMenu();
-            $favMenu->fm_user_id = $user_id;
-            $favMenu->fm_menu_name = $menuName;
-            $favMenu->fm_menu_url = $menuUrl;
-            $favMenu->fm_menu_icon = $menuIcon;
-            $favMenu->save();
+            if ($action == 'add') {
+                $favMenu = new FavMenu();
+                $favMenu->fm_user_id = $user_id;
+                $favMenu->fm_menu_name = $menuName;
+                $favMenu->fm_menu_url = $menuUrl;
+                $favMenu->fm_menu_icon = $menuIcon;
+                $favMenu->save();
+
+                toast('Successfully added fav. menu');
+            } else {
+                $favMenu = FavMenu::where('id', $request->d_id)->first();
+                if ($favMenu) {
+                    $favMenu->delete();
+                }
+            }
 
             DB::commit();
-            toast('Successfully added fav. menu');
         } catch (\Exception $err) {
             DB::rollBack();
             dd($err);

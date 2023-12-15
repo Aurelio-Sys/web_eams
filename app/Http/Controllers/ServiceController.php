@@ -36,6 +36,7 @@ use Response;
 use App;
 use App\Exports\ExportSR;
 use App\Exports\ExportSRBrowse;
+use App\Models\favMenu\FavMenu;
 use App\ServiceReqMaster;
 use Barryvdh\DomPDF\Facade as PDF;
 use Exception;
@@ -86,6 +87,11 @@ class ServiceController extends Controller
 
     public function servicerequest(Request $req) /* route : servicerequest  blade : servicerequest_create */
     {
+
+        // Buat cek kalau menu fav
+        $isFav = FavMenu::where('fm_user_id', Auth::user()->id)
+            ->where('fm_menu_url', 'servicerequest')->first();
+
         /* Jika admin, data asset akan muncul semua, jika bukan akan muncul asset sesuai dengan departemen. kode lokasi = kode depatemen */
         if (Session::get('role') == 'ADMIN') {
             $asset = DB::table('asset_mstr')
@@ -175,7 +181,8 @@ class ServiceController extends Controller
 
         return view('service.servicerequest_create', [
             'showasset' => $asset, 'dept' => $datadepart,  'wotype' => $wotype,
-            'impact' => $impact, 'dataapp' => $dataapp, 'assetloc'=> $assetloc
+            'impact' => $impact, 'dataapp' => $dataapp, 'assetloc'=> $assetloc,
+            'isFav' => $isFav
         ]);
     }
 
@@ -2147,6 +2154,10 @@ class ServiceController extends Controller
     public function srbrowse(Request $req) /* route : srbrowse   blade : service.servicereqbrowse */
     {
 
+        // Buat cek menu fav
+        $isFav = FavMenu::where('fm_user_id', Auth::user()->id)
+            ->where('fm_menu_url', 'srbrowse')->first();
+
         $dataapps = DB::table('dept_mstr')
             ->leftjoin('service_req_mstr', 'service_req_mstr.sr_eng_approver', 'dept_mstr.dept_code')
             ->selectRaw('dept_mstr.*, service_req_mstr.*')
@@ -2233,6 +2244,7 @@ class ServiceController extends Controller
             'datas' => $data, 'asset' => $datasset, 'fromhome' => '',
             'users' => $datauser, 'ceksrfile' => $ceksrfile, 'fcode' => $fcode,
             'wotype' => $wotype, 'impact' => $impact, 'dataapp' => $dataapp, 'dataapps' => $dataapps,
+            'isFav' => $isFav
         ]);
     }
 
